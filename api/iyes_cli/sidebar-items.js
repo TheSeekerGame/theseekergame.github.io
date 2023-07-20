@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":["prelude"],"struct":["CliCommands","CliRunCommand"],"trait":["CliCommandsRegisterExt","CliCommandsRunExt"]};

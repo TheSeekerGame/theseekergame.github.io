@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":["blit","bloom","clear_color","core_2d","core_3d","fullscreen_vertex_shader","fxaa","msaa_writeback","prelude","prepass","tonemapping","upscaling"],"struct":["CorePipelinePlugin"]};

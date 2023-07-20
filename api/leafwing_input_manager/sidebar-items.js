@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"derive":["Actionlike"],"mod":["action_state","axislike","buttonlike","clashing_inputs","common_conditions","dynamic_action","errors","input_map","input_mocking","input_streams","orientation","plugin","prelude","press_scheduler","scan_codes","systems","user_input"],"struct":["ActionIter","InputManagerBundle"],"trait":["Actionlike"]};

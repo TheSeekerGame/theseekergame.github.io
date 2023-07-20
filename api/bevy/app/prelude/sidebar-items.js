@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"derive":["DynamicPlugin"],"enum":["CoreSchedule","CoreSet","StartupSet"],"struct":["App","AppTypeRegistry"],"trait":["IntoSystemAppConfig","IntoSystemAppConfigs","Plugin","PluginGroup"]};

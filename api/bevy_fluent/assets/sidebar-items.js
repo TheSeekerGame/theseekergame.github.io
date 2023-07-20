@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":["bundle","resource"],"struct":["BundleAsset","ResourceAsset"]};

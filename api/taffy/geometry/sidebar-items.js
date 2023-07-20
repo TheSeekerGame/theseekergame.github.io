@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["Line","MinMax","Point","Rect","Size"]};

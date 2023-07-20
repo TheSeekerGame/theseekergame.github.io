@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["ProgressSystemSet"],"fn":["dummy_system_wait_frames","dummy_system_wait_millis"],"mod":["prelude"],"struct":["HiddenProgress","Progress","ProgressCounter","ProgressPlugin","TrackedProgressSet"],"trait":["ApplyProgress","ProgressSystem"]};

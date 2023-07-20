@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["StandardDynamicAsset"],"struct":["RegisterStandardDynamicAsset","StandardDynamicAssetCollection"]};

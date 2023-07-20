@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":["asset_collection","dynamic_asset","loading_state","prelude","standard_dynamic_asset"]};

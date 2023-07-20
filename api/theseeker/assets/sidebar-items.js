@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["watch_preload_dynamic_collections"],"struct":["AssetsPlugin","LocaleAssets","PreloadedAssets","UiAssets"]};

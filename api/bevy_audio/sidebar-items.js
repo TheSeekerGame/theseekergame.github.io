@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["play_queued_audio_system"],"mod":["prelude"],"struct":["Audio","AudioLoader","AudioOutput","AudioPlugin","AudioSink","AudioSource","PlaybackSettings","SpatialAudioSink"],"trait":["AddAudioSource","AudioSinkPlayback","CpalSample","Decodable","Sample","Source"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["DEPTH_PREPASS_FORMAT","NORMAL_PREPASS_FORMAT"],"mod":["node"],"struct":["AlphaMask3dPrepass","DepthPrepass","NormalPrepass","Opaque3dPrepass","ViewPrepassTextures"]};

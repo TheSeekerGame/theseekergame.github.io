@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":["onclick","prelude"],"struct":["UiDisabled","UiExtrasPlugin"]};

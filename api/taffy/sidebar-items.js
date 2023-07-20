@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["compute_layout"],"mod":["axis","error","geometry","layout","math","node","prelude","style","style_helpers","tree"]};

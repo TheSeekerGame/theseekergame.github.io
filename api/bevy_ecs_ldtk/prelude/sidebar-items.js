@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"derive":["LdtkEntity","LdtkIntCell"],"enum":["IntGridRendering","LdtkSystemSet","LevelBackground","LevelEvent","LevelSelection","LevelSpawnBehavior","SetClearColor"],"struct":["GridCoords","IntGridCell","LayerMetadata","LdtkAsset","LdtkLevel","LdtkPlugin","LdtkSettings","LdtkWorldBundle","LevelSet","Respawn","TileEnumTags","TileMetadata","Worldly"]};
