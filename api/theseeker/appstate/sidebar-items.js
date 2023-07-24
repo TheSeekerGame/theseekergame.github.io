@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["AppState"],"fn":["cli_appstate"],"struct":["AppStatesPlugin","StateDespawnMarker"]};

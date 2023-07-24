@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["AppState"],"fn":["debug_progress","debug_setup_camera","main"],"mod":["assets","cli","locale","prelude","screens","ui"],"struct":["StateDespawnMarker"]};
+window.SIDEBAR_ITEMS = {"fn":["debug_progress","debug_setup_camera","main"],"mod":["appstate","assets","cli","locale","prelude","screens","time","ui"]};
