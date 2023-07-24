@@ -1,3 +1,3 @@
 (function() {var implementors = {
-"theseeker":[["impl <a class=\"trait\" href=\"theseeker/prelude/trait.States.html\" title=\"trait theseeker::prelude::States\">States</a> for <a class=\"enum\" href=\"theseeker/appstate/enum.AppState.html\" title=\"enum theseeker::appstate::AppState\">AppState</a>"]]
+"theseeker_game":[["impl <a class=\"trait\" href=\"theseeker_game/prelude/trait.States.html\" title=\"trait theseeker_game::prelude::States\">States</a> for <a class=\"enum\" href=\"theseeker_game/appstate/enum.AppState.html\" title=\"enum theseeker_game::appstate::AppState\">AppState</a>"]]
 };if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
