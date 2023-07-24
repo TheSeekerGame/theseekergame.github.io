@@ -81,6 +81,9 @@ var sourcesIndex = JSON.parse('{\
 "crc32fast":["",[["specialized",[],["mod.rs","pclmulqdq.rs"]]],["baseline.rs","combine.rs","lib.rs","table.rs"]],\
 "crossbeam_channel":["",[["flavors",[],["array.rs","at.rs","list.rs","mod.rs","never.rs","tick.rs","zero.rs"]]],["channel.rs","context.rs","counter.rs","err.rs","lib.rs","select.rs","select_macro.rs","utils.rs","waker.rs"]],\
 "crossbeam_utils":["",[["atomic",[],["atomic_cell.rs","consume.rs","mod.rs","seq_lock.rs"]],["sync",[],["mod.rs","once_lock.rs","parker.rs","sharded_lock.rs","wait_group.rs"]]],["backoff.rs","cache_padded.rs","lib.rs","thread.rs"]],\
+"darling":["",[],["lib.rs","macros_public.rs"]],\
+"darling_core":["",[["ast",[],["data.rs","generics.rs","mod.rs"]],["codegen",[],["attr_extractor.rs","default_expr.rs","error.rs","field.rs","from_attributes_impl.rs","from_derive_impl.rs","from_field.rs","from_meta_impl.rs","from_type_param.rs","from_variant_impl.rs","mod.rs","outer_from_impl.rs","postfix_transform.rs","trait_impl.rs","variant.rs","variant_data.rs"]],["error",[],["kind.rs","mod.rs"]],["options",[],["core.rs","forward_attrs.rs","from_attributes.rs","from_derive.rs","from_field.rs","from_meta.rs","from_type_param.rs","from_variant.rs","input_field.rs","input_variant.rs","mod.rs","outer_from.rs","shape.rs"]],["usage",[],["generics_ext.rs","ident_set.rs","lifetimes.rs","mod.rs","options.rs","type_params.rs"]],["util",[],["flag.rs","ident_string.rs","ignored.rs","mod.rs","over_ride.rs","parse_attribute.rs","parse_expr.rs","path_list.rs","path_to_string.rs","shape.rs","spanned_value.rs","with_original.rs"]]],["derive.rs","from_attributes.rs","from_derive_input.rs","from_field.rs","from_generic_param.rs","from_generics.rs","from_meta.rs","from_type_param.rs","from_variant.rs","lib.rs","macros_private.rs","macros_public.rs"]],\
+"darling_macro":["",[],["lib.rs"]],\
 "dasp_sample":["",[],["conv.rs","lib.rs","ops.rs","types.rs"]],\
 "derive_more":["",[],["add_assign_like.rs","add_helpers.rs","add_like.rs","as_mut.rs","as_ref.rs","constructor.rs","deref.rs","deref_mut.rs","display.rs","error.rs","from.rs","from_str.rs","index.rs","index_mut.rs","into.rs","into_iterator.rs","is_variant.rs","lib.rs","mul_assign_like.rs","mul_helpers.rs","mul_like.rs","not_like.rs","parsing.rs","sum_like.rs","try_into.rs","unwrap.rs","utils.rs"]],\
 "directories":["",[],["lib.rs","lin.rs"]],\
@@ -130,6 +133,7 @@ var sourcesIndex = JSON.parse('{\
 "hex":["",[],["error.rs","lib.rs"]],\
 "hexasphere":["",[],["interpolation.rs","lib.rs","shapes.rs","slice.rs"]],\
 "hexf_parse":["",[],["lib.rs"]],\
+"ident_case":["",[],["lib.rs"]],\
 "image":["",[["codecs",[["hdr",[],["decoder.rs","encoder.rs","mod.rs"]]],["png.rs"]],["imageops",[],["affine.rs","colorops.rs","mod.rs","sample.rs"]],["io",[],["free_functions.rs","mod.rs","reader.rs"]],["math",[],["mod.rs","rect.rs","utils.rs"]],["utils",[],["mod.rs"]]],["animation.rs","buffer.rs","color.rs","dynimage.rs","error.rs","flat.rs","image.rs","lib.rs","traits.rs"]],\
 "indexmap":["",[["map",[["core",[],["raw.rs"]]],["core.rs","iter.rs","slice.rs"]],["set",[],["iter.rs","slice.rs"]]],["arbitrary.rs","lib.rs","macros.rs","map.rs","mutable_keys.rs","set.rs","util.rs"]],\
 "instant":["",[],["lib.rs","native.rs"]],\
@@ -206,6 +210,8 @@ var sourcesIndex = JSON.parse('{\
 "serde_derive":["",[],["buffer.rs","bytecode.rs","lib.rs","lib_precompiled.rs"]],\
 "serde_json":["",[["features_check",[],["mod.rs"]],["io",[],["mod.rs"]],["value",[],["de.rs","from.rs","index.rs","mod.rs","partial_eq.rs","ser.rs"]]],["de.rs","error.rs","iter.rs","lib.rs","macros.rs","map.rs","number.rs","read.rs","ser.rs"]],\
 "serde_spanned":["",[],["lib.rs","spanned.rs"]],\
+"serde_with":["",[["content",[],["de.rs","mod.rs","ser.rs"]],["de",[],["duplicates.rs","impls.rs","mod.rs"]],["duplicate_key_impls",[],["error_on_duplicate.rs","first_value_wins.rs","last_value_wins.rs","mod.rs"]],["ser",[],["duplicates.rs","impls.rs","mod.rs"]],["utils",[],["duration.rs"]]],["enum_map.rs","flatten_maybe.rs","formats.rs","key_value_map.rs","lib.rs","rust.rs","serde_conv.rs","utils.rs","with_prefix.rs"]],\
+"serde_with_macros":["",[],["apply.rs","lib.rs","utils.rs"]],\
 "serde_yaml":["",[["libyaml",[],["cstr.rs","emitter.rs","error.rs","mod.rs","parser.rs","tag.rs","util.rs"]],["value",[],["de.rs","debug.rs","from.rs","index.rs","mod.rs","partial_eq.rs","ser.rs","tagged.rs"]]],["de.rs","error.rs","lib.rs","loader.rs","mapping.rs","number.rs","path.rs","ser.rs","with.rs"]],\
 "sha1_smol":["",[],["lib.rs","simd.rs"]],\
 "sharded_slab":["",[["page",[],["mod.rs","slot.rs","stack.rs"]]],["cfg.rs","clear.rs","implementation.rs","iter.rs","lib.rs","macros.rs","pool.rs","shard.rs","sync.rs","tid.rs"]],\
@@ -216,6 +222,7 @@ var sourcesIndex = JSON.parse('{\
 "smithay_client_toolkit":["",[["data_device",[],["device.rs","mod.rs","offer.rs","source.rs"]],["primary_selection",[],["device.rs","mod.rs","offer.rs","source.rs"]],["seat",[["keyboard",[],["ffi.rs","keysyms.rs","mod.rs","state.rs"]],["pointer",[],["mod.rs","theme.rs"]]],["mod.rs"]],["shell",[],["mod.rs","wl.rs","xdg.rs","zxdg.rs"]],["shm",[],["mempool.rs","mod.rs"]],["window",[],["fallback_frame.rs","mod.rs"]]],["environment.rs","event_loop.rs","lazy_global.rs","lib.rs","output.rs","surface.rs"]],\
 "spirv":["",[],["autogen_spirv.rs","lib.rs"]],\
 "static_assertions":["",[],["assert_cfg.rs","assert_eq_align.rs","assert_eq_size.rs","assert_fields.rs","assert_impl.rs","assert_obj_safe.rs","assert_trait.rs","assert_type.rs","const_assert.rs","lib.rs"]],\
+"strsim":["",[],["lib.rs"]],\
 "svg_fmt":["",[],["layout.rs","lib.rs","svg.rs"]],\
 "sysinfo":["",[["linux",[],["component.rs","cpu.rs","disk.rs","mod.rs","network.rs","process.rs","system.rs","utils.rs"]]],["common.rs","debug.rs","lib.rs","macros.rs","network.rs","network_helper_nix.rs","system.rs","traits.rs","users.rs","utils.rs"]],\
 "taffy":["",[["compute",[["common",[],["alignment.rs","mod.rs"]]],["flexbox.rs","leaf.rs","mod.rs"]],["style",[],["alignment.rs","dimension.rs","flex.rs","mod.rs"]]],["axis.rs","data.rs","debug.rs","error.rs","geometry.rs","layout.rs","lib.rs","math.rs","node.rs","prelude.rs","resolve.rs","style_helpers.rs","sys.rs","tree.rs"]],\
