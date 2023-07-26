@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["prelude","time"]};
+window.SIDEBAR_ITEMS = {"mod":["assets","prelude","time"]};

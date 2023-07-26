@@ -227,7 +227,7 @@ var sourcesIndex = JSON.parse('{\
 "sysinfo":["",[["linux",[],["component.rs","cpu.rs","disk.rs","mod.rs","network.rs","process.rs","system.rs","utils.rs"]]],["common.rs","debug.rs","lib.rs","macros.rs","network.rs","network_helper_nix.rs","system.rs","traits.rs","users.rs","utils.rs"]],\
 "taffy":["",[["compute",[["common",[],["alignment.rs","mod.rs"]]],["flexbox.rs","leaf.rs","mod.rs"]],["style",[],["alignment.rs","dimension.rs","flex.rs","mod.rs"]]],["axis.rs","data.rs","debug.rs","error.rs","geometry.rs","layout.rs","lib.rs","math.rs","node.rs","prelude.rs","resolve.rs","style_helpers.rs","sys.rs","tree.rs"]],\
 "termcolor":["",[],["lib.rs"]],\
-"theseeker_engine":["",[],["lib.rs","time.rs"]],\
+"theseeker_engine":["",[],["assets.rs","lib.rs","time.rs"]],\
 "theseeker_game":["",[["screens",[],["loading.rs"]],["ui",[],["console.rs"]]],["appstate.rs","assets.rs","cli.rs","locale.rs","main.rs","ui.rs"]],\
 "thiserror":["",[],["aserror.rs","display.rs","lib.rs"]],\
 "thiserror_impl":["",[],["ast.rs","attr.rs","expand.rs","fmt.rs","generics.rs","lib.rs","prop.rs","valid.rs"]],\
