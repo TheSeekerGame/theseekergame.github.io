@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/naga-0.11.1/src/front/glsl/context.rs`."><title>context.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="naga" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../../source-files.js"></script><script defer src="../../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../naga/index.html"><img class="rust-logo" src="../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/naga-0.12.3/src/front/glsl/context.rs`."><title>context.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="naga" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../../source-files.js"></script><script defer src="../../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../naga/index.html"><img class="rust-logo" src="../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1587,6 +1587,26 @@
 <a href="#1587" id="1587">1587</a>
 <a href="#1588" id="1588">1588</a>
 <a href="#1589" id="1589">1589</a>
+<a href="#1590" id="1590">1590</a>
+<a href="#1591" id="1591">1591</a>
+<a href="#1592" id="1592">1592</a>
+<a href="#1593" id="1593">1593</a>
+<a href="#1594" id="1594">1594</a>
+<a href="#1595" id="1595">1595</a>
+<a href="#1596" id="1596">1596</a>
+<a href="#1597" id="1597">1597</a>
+<a href="#1598" id="1598">1598</a>
+<a href="#1599" id="1599">1599</a>
+<a href="#1600" id="1600">1600</a>
+<a href="#1601" id="1601">1601</a>
+<a href="#1602" id="1602">1602</a>
+<a href="#1603" id="1603">1603</a>
+<a href="#1604" id="1604">1604</a>
+<a href="#1605" id="1605">1605</a>
+<a href="#1606" id="1606">1606</a>
+<a href="#1607" id="1607">1607</a>
+<a href="#1608" id="1608">1608</a>
+<a href="#1609" id="1609">1609</a>
 </pre></div><pre class="rust"><code><span class="kw">use super</span>::{
     ast::{
         GlobalLookup, GlobalLookupKind, HirExpr, HirExprKind, ParameterInfo, ParameterQualifier,
@@ -1594,7 +1614,7 @@
     },
     error::{Error, ErrorKind},
     types::{scalar_components, type_power},
-    Parser, <span class="prelude-ty">Result</span>,
+    Frontend, <span class="prelude-ty">Result</span>,
 };
 <span class="kw">use crate</span>::{
     front::{Emitter, Typifier},
@@ -1636,9 +1656,25 @@
 </span><span class="kw">pub struct </span>Context {
     <span class="kw">pub </span>expressions: Arena&lt;Expression&gt;,
     <span class="kw">pub </span>locals: Arena&lt;LocalVariable&gt;,
-    <span class="kw">pub </span>arguments: Vec&lt;FunctionArgument&gt;,
 
-    <span class="kw">pub </span>parameters: Vec&lt;Handle&lt;Type&gt;&gt;,
+    <span class="doccomment">/// The [`FunctionArgument`]s for the final [`crate::Function`].
+    ///
+    /// Parameters with the `out` and `inout` qualifiers have [`Pointer`] types
+    /// here. For example, an `inout vec2 a` argument would be a [`Pointer`] to
+    /// a [`Vector`].
+    ///
+    /// [`Pointer`]: crate::TypeInner::Pointer
+    /// [`Vector`]: crate::TypeInner::Vector
+    </span><span class="kw">pub </span>arguments: Vec&lt;FunctionArgument&gt;,
+
+    <span class="doccomment">/// The parameter types given in the source code.
+    ///
+    /// The `out` and `inout` qualifiers don&#39;t affect the types that appear
+    /// here. For example, an `inout vec2 a` argument would simply be a
+    /// [`Vector`], not a pointer to one.
+    ///
+    /// [`Vector`]: crate::TypeInner::Vector
+    </span><span class="kw">pub </span>parameters: Vec&lt;Handle&lt;Type&gt;&gt;,
     <span class="kw">pub </span>parameters_info: Vec&lt;ParameterInfo&gt;,
 
     <span class="kw">pub </span>symbol_table: <span class="kw">crate</span>::front::SymbolTable&lt;String, VariableReference&gt;,
@@ -1650,7 +1686,7 @@
 }
 
 <span class="kw">impl </span>Context {
-    <span class="kw">pub fn </span>new(parser: <span class="kw-2">&amp;</span>Parser, body: <span class="kw-2">&amp;mut </span>Block) -&gt; <span class="self">Self </span>{
+    <span class="kw">pub fn </span>new(frontend: <span class="kw-2">&amp;</span>Frontend, body: <span class="kw-2">&amp;mut </span>Block) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span><span class="kw-2">mut </span>this = Context {
             expressions: Arena::new(),
             locals: Arena::new(),
@@ -1669,8 +1705,8 @@
 
         this.emit_start();
 
-        <span class="kw">for </span><span class="kw-2">&amp;</span>(<span class="kw-2">ref </span>name, lookup) <span class="kw">in </span>parser.global_variables.iter() {
-            this.add_global(parser, name, lookup, body)
+        <span class="kw">for </span><span class="kw-2">&amp;</span>(<span class="kw-2">ref </span>name, lookup) <span class="kw">in </span>frontend.global_variables.iter() {
+            this.add_global(frontend, name, lookup, body)
         }
 
         this
@@ -1678,7 +1714,7 @@
 
     <span class="kw">pub fn </span>add_global(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        parser: <span class="kw-2">&amp;</span>Parser,
+        frontend: <span class="kw-2">&amp;</span>Frontend,
         name: <span class="kw-2">&amp;</span>str,
         GlobalLookup {
             kind,
@@ -1690,10 +1726,10 @@
         <span class="self">self</span>.emit_end(body);
         <span class="kw">let </span>(expr, load, constant) = <span class="kw">match </span>kind {
             GlobalLookupKind::Variable(v) =&gt; {
-                <span class="kw">let </span>span = parser.module.global_variables.get_span(v);
+                <span class="kw">let </span>span = frontend.module.global_variables.get_span(v);
                 <span class="kw">let </span>res = (
                     <span class="self">self</span>.expressions.append(Expression::GlobalVariable(v), span),
-                    parser.module.global_variables[v].space != AddressSpace::Handle,
+                    frontend.module.global_variables[v].space != AddressSpace::Handle,
                     <span class="prelude-val">None</span>,
                 );
                 <span class="self">self</span>.emit_start();
@@ -1701,7 +1737,7 @@
                 res
             }
             GlobalLookupKind::BlockSelect(handle, index) =&gt; {
-                <span class="kw">let </span>span = parser.module.global_variables.get_span(handle);
+                <span class="kw">let </span>span = frontend.module.global_variables.get_span(handle);
                 <span class="kw">let </span>base = <span class="self">self
                     </span>.expressions
                     .append(Expression::GlobalVariable(handle), span);
@@ -1713,14 +1749,14 @@
                 (
                     expr,
                     {
-                        <span class="kw">let </span>ty = parser.module.global_variables[handle].ty;
+                        <span class="kw">let </span>ty = frontend.module.global_variables[handle].ty;
 
-                        <span class="kw">match </span>parser.module.types[ty].inner {
+                        <span class="kw">match </span>frontend.module.types[ty].inner {
                             TypeInner::Struct { <span class="kw-2">ref </span>members, .. } =&gt; {
                                 <span class="kw">if let </span>TypeInner::Array {
                                     size: <span class="kw">crate</span>::ArraySize::Dynamic,
                                     ..
-                                } = parser.module.types[members[index <span class="kw">as </span>usize].ty].inner
+                                } = frontend.module.types[members[index <span class="kw">as </span>usize].ty].inner
                                 {
                                     <span class="bool-val">false
                                 </span>} <span class="kw">else </span>{
@@ -1734,7 +1770,7 @@
                 )
             }
             GlobalLookupKind::Constant(v, ty) =&gt; {
-                <span class="kw">let </span>span = parser.module.constants.get_span(v);
+                <span class="kw">let </span>span = frontend.module.constants.get_span(v);
                 <span class="kw">let </span>res = (
                     <span class="self">self</span>.expressions.append(Expression::Constant(v), span),
                     <span class="bool-val">false</span>,
@@ -1830,7 +1866,7 @@
     <span class="doccomment">/// Add function argument to current scope
     </span><span class="kw">pub fn </span>add_function_arg(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        parser: <span class="kw-2">&amp;mut </span>Parser,
+        frontend: <span class="kw-2">&amp;mut </span>Frontend,
         body: <span class="kw-2">&amp;mut </span>Block,
         name_meta: <span class="prelude-ty">Option</span>&lt;(String, Span)&gt;,
         ty: Handle&lt;Type&gt;,
@@ -1844,14 +1880,14 @@
         };
         <span class="self">self</span>.parameters.push(ty);
 
-        <span class="kw">let </span>opaque = <span class="kw">match </span>parser.module.types[ty].inner {
+        <span class="kw">let </span>opaque = <span class="kw">match </span>frontend.module.types[ty].inner {
             TypeInner::Image { .. } | TypeInner::Sampler { .. } =&gt; <span class="bool-val">true</span>,
             <span class="kw">_ </span>=&gt; <span class="bool-val">false</span>,
         };
 
         <span class="kw">if </span>qualifier.is_lhs() {
-            <span class="kw">let </span>span = parser.module.types.get_span(arg.ty);
-            arg.ty = parser.module.types.insert(
+            <span class="kw">let </span>span = frontend.module.types.get_span(arg.ty);
+            arg.ty = frontend.module.types.insert(
                 Type {
                     name: <span class="prelude-val">None</span>,
                     inner: TypeInner::Pointer {
@@ -1934,12 +1970,12 @@
     </span><span class="kw">pub fn </span>lower(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         <span class="kw-2">mut </span>stmt: StmtContext,
-        parser: <span class="kw-2">&amp;mut </span>Parser,
+        frontend: <span class="kw-2">&amp;mut </span>Frontend,
         expr: Handle&lt;HirExpr&gt;,
         pos: ExprPos,
         body: <span class="kw-2">&amp;mut </span>Block,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(<span class="prelude-ty">Option</span>&lt;Handle&lt;Expression&gt;&gt;, Span)&gt; {
-        <span class="kw">let </span>res = <span class="self">self</span>.lower_inner(<span class="kw-2">&amp;</span>stmt, parser, expr, pos, body);
+        <span class="kw">let </span>res = <span class="self">self</span>.lower_inner(<span class="kw-2">&amp;</span>stmt, frontend, expr, pos, body);
 
         stmt.hir_exprs.clear();
         <span class="self">self</span>.stmt_ctx = <span class="prelude-val">Some</span>(stmt);
@@ -1955,12 +1991,12 @@
     </span><span class="kw">pub fn </span>lower_expect(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         <span class="kw-2">mut </span>stmt: StmtContext,
-        parser: <span class="kw-2">&amp;mut </span>Parser,
+        frontend: <span class="kw-2">&amp;mut </span>Frontend,
         expr: Handle&lt;HirExpr&gt;,
         pos: ExprPos,
         body: <span class="kw-2">&amp;mut </span>Block,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(Handle&lt;Expression&gt;, Span)&gt; {
-        <span class="kw">let </span>res = <span class="self">self</span>.lower_expect_inner(<span class="kw-2">&amp;</span>stmt, parser, expr, pos, body);
+        <span class="kw">let </span>res = <span class="self">self</span>.lower_expect_inner(<span class="kw-2">&amp;</span>stmt, frontend, expr, pos, body);
 
         stmt.hir_exprs.clear();
         <span class="self">self</span>.stmt_ctx = <span class="prelude-val">Some</span>(stmt);
@@ -1971,17 +2007,17 @@
     <span class="doccomment">/// internal implementation of [`lower_expect`](Self::lower_expect)
     ///
     /// this method is only public because it&#39;s used in
-    /// [`function_call`](Parser::function_call), unless you know what
+    /// [`function_call`](Frontend::function_call), unless you know what
     /// you&#39;re doing use [`lower_expect`](Self::lower_expect)
     </span><span class="kw">pub fn </span>lower_expect_inner(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         stmt: <span class="kw-2">&amp;</span>StmtContext,
-        parser: <span class="kw-2">&amp;mut </span>Parser,
+        frontend: <span class="kw-2">&amp;mut </span>Frontend,
         expr: Handle&lt;HirExpr&gt;,
         pos: ExprPos,
         body: <span class="kw-2">&amp;mut </span>Block,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(Handle&lt;Expression&gt;, Span)&gt; {
-        <span class="kw">let </span>(maybe_expr, meta) = <span class="self">self</span>.lower_inner(stmt, parser, expr, pos, body)<span class="question-mark">?</span>;
+        <span class="kw">let </span>(maybe_expr, meta) = <span class="self">self</span>.lower_inner(stmt, frontend, expr, pos, body)<span class="question-mark">?</span>;
 
         <span class="kw">let </span>expr = <span class="kw">match </span>maybe_expr {
             <span class="prelude-val">Some</span>(e) =&gt; e,
@@ -2061,7 +2097,7 @@
     </span><span class="kw">fn </span>lower_inner(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         stmt: <span class="kw-2">&amp;</span>StmtContext,
-        parser: <span class="kw-2">&amp;mut </span>Parser,
+        frontend: <span class="kw-2">&amp;mut </span>Frontend,
         expr: Handle&lt;HirExpr&gt;,
         pos: ExprPos,
         body: <span class="kw-2">&amp;mut </span>Block,
@@ -2073,18 +2109,18 @@
         <span class="kw">let </span>handle = <span class="kw">match </span><span class="kw-2">*</span>kind {
             HirExprKind::Access { base, index } =&gt; {
                 <span class="kw">let </span>(index, index_meta) =
-                    <span class="self">self</span>.lower_expect_inner(stmt, parser, index, ExprPos::Rhs, body)<span class="question-mark">?</span>;
+                    <span class="self">self</span>.lower_expect_inner(stmt, frontend, index, ExprPos::Rhs, body)<span class="question-mark">?</span>;
                 <span class="kw">let </span>maybe_constant_index = <span class="kw">match </span>pos {
                     <span class="comment">// Don&#39;t try to generate `AccessIndex` if in a LHS position, since it
                     // wouldn&#39;t produce a pointer.
                     </span>ExprPos::Lhs =&gt; <span class="prelude-val">None</span>,
-                    <span class="kw">_ </span>=&gt; parser.solve_constant(<span class="self">self</span>, index, index_meta).ok(),
+                    <span class="kw">_ </span>=&gt; frontend.solve_constant(<span class="self">self</span>, index, index_meta).ok(),
                 };
 
                 <span class="kw">let </span>base = <span class="self">self
                     </span>.lower_expect_inner(
                         stmt,
-                        parser,
+                        frontend,
                         base,
                         pos.maybe_access_base(maybe_constant_index.is_some()),
                         body,
@@ -2096,7 +2132,7 @@
                         <span class="prelude-val">Some</span>(<span class="self">self</span>.add_expression(
                             Expression::AccessIndex {
                                 base,
-                                index: <span class="kw">match </span>parser.module.constants[constant].inner {
+                                index: <span class="kw">match </span>frontend.module.constants[constant].inner {
                                     <span class="kw">crate</span>::ConstantInner::Scalar {
                                         value: ScalarValue::Uint(i),
                                         ..
@@ -2117,7 +2153,7 @@
                     });
 
                 <span class="kw">if </span>ExprPos::Rhs == pos {
-                    <span class="kw">let </span>resolved = parser.resolve_type(<span class="self">self</span>, pointer, meta)<span class="question-mark">?</span>;
+                    <span class="kw">let </span>resolved = frontend.resolve_type(<span class="self">self</span>, pointer, meta)<span class="question-mark">?</span>;
                     <span class="kw">if </span>resolved.pointer_space().is_some() {
                         <span class="kw">return </span><span class="prelude-val">Ok</span>((
                             <span class="prelude-val">Some</span>(<span class="self">self</span>.add_expression(Expression::Load { pointer }, meta, body)),
@@ -2129,32 +2165,38 @@
                 pointer
             }
             HirExprKind::Select { base, <span class="kw-2">ref </span>field } =&gt; {
-                <span class="kw">let </span>base = <span class="self">self</span>.lower_expect_inner(stmt, parser, base, pos, body)<span class="question-mark">?</span>.<span class="number">0</span>;
+                <span class="kw">let </span>base = <span class="self">self</span>.lower_expect_inner(stmt, frontend, base, pos, body)<span class="question-mark">?</span>.<span class="number">0</span>;
 
-                parser.field_selection(<span class="self">self</span>, pos, body, base, field, meta)<span class="question-mark">?
+                frontend.field_selection(<span class="self">self</span>, pos, body, base, field, meta)<span class="question-mark">?
             </span>}
             HirExprKind::Constant(constant) <span class="kw">if </span>pos != ExprPos::Lhs =&gt; {
                 <span class="self">self</span>.add_expression(Expression::Constant(constant), meta, body)
             }
             HirExprKind::Binary { left, op, right } <span class="kw">if </span>pos != ExprPos::Lhs =&gt; {
                 <span class="kw">let </span>(<span class="kw-2">mut </span>left, left_meta) =
-                    <span class="self">self</span>.lower_expect_inner(stmt, parser, left, ExprPos::Rhs, body)<span class="question-mark">?</span>;
+                    <span class="self">self</span>.lower_expect_inner(stmt, frontend, left, ExprPos::Rhs, body)<span class="question-mark">?</span>;
                 <span class="kw">let </span>(<span class="kw-2">mut </span>right, right_meta) =
-                    <span class="self">self</span>.lower_expect_inner(stmt, parser, right, ExprPos::Rhs, body)<span class="question-mark">?</span>;
+                    <span class="self">self</span>.lower_expect_inner(stmt, frontend, right, ExprPos::Rhs, body)<span class="question-mark">?</span>;
 
                 <span class="kw">match </span>op {
                     BinaryOperator::ShiftLeft | BinaryOperator::ShiftRight =&gt; <span class="self">self
-                        </span>.implicit_conversion(parser, <span class="kw-2">&amp;mut </span>right, right_meta, ScalarKind::Uint, <span class="number">4</span>)<span class="question-mark">?</span>,
+                        </span>.implicit_conversion(
+                            frontend,
+                            <span class="kw-2">&amp;mut </span>right,
+                            right_meta,
+                            ScalarKind::Uint,
+                            <span class="number">4</span>,
+                        )<span class="question-mark">?</span>,
                     <span class="kw">_ </span>=&gt; <span class="self">self</span>.binary_implicit_conversion(
-                        parser, <span class="kw-2">&amp;mut </span>left, left_meta, <span class="kw-2">&amp;mut </span>right, right_meta,
+                        frontend, <span class="kw-2">&amp;mut </span>left, left_meta, <span class="kw-2">&amp;mut </span>right, right_meta,
                     )<span class="question-mark">?</span>,
                 }
 
-                parser.typifier_grow(<span class="self">self</span>, left, left_meta)<span class="question-mark">?</span>;
-                parser.typifier_grow(<span class="self">self</span>, right, right_meta)<span class="question-mark">?</span>;
+                frontend.typifier_grow(<span class="self">self</span>, left, left_meta)<span class="question-mark">?</span>;
+                frontend.typifier_grow(<span class="self">self</span>, right, right_meta)<span class="question-mark">?</span>;
 
-                <span class="kw">let </span>left_inner = <span class="self">self</span>.typifier.get(left, <span class="kw-2">&amp;</span>parser.module.types);
-                <span class="kw">let </span>right_inner = <span class="self">self</span>.typifier.get(right, <span class="kw-2">&amp;</span>parser.module.types);
+                <span class="kw">let </span>left_inner = <span class="self">self</span>.typifier.get(left, <span class="kw-2">&amp;</span>frontend.module.types);
+                <span class="kw">let </span>right_inner = <span class="self">self</span>.typifier.get(right, <span class="kw-2">&amp;</span>frontend.module.types);
 
                 <span class="kw">match </span>(left_inner, right_inner) {
                     (
@@ -2177,12 +2219,11 @@
 
                         <span class="comment">// Check that the two arguments have the same dimensions
                         </span><span class="kw">if </span>!dimensions_ok || left_width != right_width {
-                            parser.errors.push(Error {
+                            frontend.errors.push(Error {
                                 kind: ErrorKind::SemanticError(
                                     <span class="macro">format!</span>(
-                                        <span class="string">&quot;Cannot apply operation to {:?} and {:?}&quot;</span>,
-                                        left_inner, right_inner
-                                    )
+                                        <span class="string">&quot;Cannot apply operation to {left_inner:?} and {right_inner:?}&quot;
+                                    </span>)
                                     .into(),
                                 ),
                                 meta,
@@ -2224,7 +2265,7 @@
                                 <span class="comment">// Rebuild the matrix from the divided vectors
                                 </span><span class="self">self</span>.expressions.append(
                                     Expression::Compose {
-                                        ty: parser.module.types.insert(
+                                        ty: frontend.module.types.insert(
                                             Type {
                                                 name: <span class="prelude-val">None</span>,
                                                 inner: TypeInner::Matrix {
@@ -2409,12 +2450,11 @@
                     ) =&gt; {
                         <span class="comment">// Check that the two arguments have the same width
                         </span><span class="kw">if </span>left_width != right_width {
-                            parser.errors.push(Error {
+                            frontend.errors.push(Error {
                                 kind: ErrorKind::SemanticError(
                                     <span class="macro">format!</span>(
-                                        <span class="string">&quot;Cannot apply operation to {:?} and {:?}&quot;</span>,
-                                        left_inner, right_inner
-                                    )
+                                        <span class="string">&quot;Cannot apply operation to {left_inner:?} and {right_inner:?}&quot;
+                                    </span>)
                                     .into(),
                                 ),
                                 meta,
@@ -2465,7 +2505,7 @@
                                 <span class="comment">// Rebuild the matrix from the operation result vectors
                                 </span><span class="self">self</span>.expressions.append(
                                     Expression::Compose {
-                                        ty: parser.module.types.insert(
+                                        ty: frontend.module.types.insert(
                                             Type {
                                                 name: <span class="prelude-val">None</span>,
                                                 inner: TypeInner::Matrix {
@@ -2500,12 +2540,11 @@
                     ) =&gt; {
                         <span class="comment">// Check that the two arguments have the same width
                         </span><span class="kw">if </span>left_width != right_width {
-                            parser.errors.push(Error {
+                            frontend.errors.push(Error {
                                 kind: ErrorKind::SemanticError(
                                     <span class="macro">format!</span>(
-                                        <span class="string">&quot;Cannot apply operation to {:?} and {:?}&quot;</span>,
-                                        left_inner, right_inner
-                                    )
+                                        <span class="string">&quot;Cannot apply operation to {left_inner:?} and {right_inner:?}&quot;
+                                    </span>)
                                     .into(),
                                 ),
                                 meta,
@@ -2557,7 +2596,7 @@
                                 <span class="comment">// Rebuild the matrix from the operation result vectors
                                 </span><span class="self">self</span>.expressions.append(
                                     Expression::Compose {
-                                        ty: parser.module.types.insert(
+                                        ty: frontend.module.types.insert(
                                             Type {
                                                 name: <span class="prelude-val">None</span>,
                                                 inner: TypeInner::Matrix {
@@ -2585,7 +2624,7 @@
             }
             HirExprKind::Unary { op, expr } <span class="kw">if </span>pos != ExprPos::Lhs =&gt; {
                 <span class="kw">let </span>expr = <span class="self">self
-                    </span>.lower_expect_inner(stmt, parser, expr, ExprPos::Rhs, body)<span class="question-mark">?
+                    </span>.lower_expect_inner(stmt, frontend, expr, ExprPos::Rhs, body)<span class="question-mark">?
                     </span>.<span class="number">0</span>;
 
                 <span class="self">self</span>.add_expression(Expression::Unary { op, expr }, meta, body)
@@ -2593,7 +2632,7 @@
             HirExprKind::Variable(<span class="kw-2">ref </span>var) =&gt; <span class="kw">match </span>pos {
                 ExprPos::Lhs =&gt; {
                     <span class="kw">if </span>!var.mutable {
-                        parser.errors.push(Error {
+                        frontend.errors.push(Error {
                             kind: ErrorKind::SemanticError(
                                 <span class="string">&quot;Variable cannot be used in LHS position&quot;</span>.into(),
                             ),
@@ -2605,7 +2644,7 @@
                 }
                 ExprPos::AccessBase { constant_index } =&gt; {
                     <span class="comment">// If the index isn&#39;t constant all accesses backed by a constant base need
-                    // to be done trough a proxy local variable, since constants have a non
+                    // to be done through a proxy local variable, since constants have a non
                     // pointer type which is required for dynamic indexing
                     </span><span class="kw">if </span>!constant_index {
                         <span class="kw">if let </span><span class="prelude-val">Some</span>((constant, ty)) = var.constant {
@@ -2633,10 +2672,10 @@
                 <span class="kw">_ if </span>var.load =&gt; {
                     <span class="self">self</span>.add_expression(Expression::Load { pointer: var.expr }, meta, body)
                 }
-                <span class="kw">_ </span>=&gt; var.expr,
+                ExprPos::Rhs =&gt; var.expr,
             },
             HirExprKind::Call(<span class="kw-2">ref </span>call) <span class="kw">if </span>pos != ExprPos::Lhs =&gt; {
-                <span class="kw">let </span>maybe_expr = parser.function_or_constructor_call(
+                <span class="kw">let </span>maybe_expr = frontend.function_or_constructor_call(
                     <span class="self">self</span>,
                     stmt,
                     body,
@@ -2672,7 +2711,7 @@
 
                 // Lower the condition first to the current bodyy
                 </span><span class="kw">let </span>condition = <span class="self">self
-                    </span>.lower_expect_inner(stmt, parser, condition, ExprPos::Rhs, body)<span class="question-mark">?
+                    </span>.lower_expect_inner(stmt, frontend, condition, ExprPos::Rhs, body)<span class="question-mark">?
                     </span>.<span class="number">0</span>;
 
                 <span class="comment">// Emit all expressions since we will be adding statements to
@@ -2685,7 +2724,7 @@
 
                 <span class="comment">// Lower the `true` branch
                 </span><span class="kw">let </span>(<span class="kw-2">mut </span>accept, accept_meta) =
-                    <span class="self">self</span>.lower_expect_inner(stmt, parser, accept, pos, <span class="kw-2">&amp;mut </span>accept_body)<span class="question-mark">?</span>;
+                    <span class="self">self</span>.lower_expect_inner(stmt, frontend, accept, pos, <span class="kw-2">&amp;mut </span>accept_body)<span class="question-mark">?</span>;
 
                 <span class="comment">// Flush the body of the `true` branch, to start emitting on the
                 // `false` branch
@@ -2693,7 +2732,7 @@
 
                 <span class="comment">// Lower the `false` branch
                 </span><span class="kw">let </span>(<span class="kw-2">mut </span>reject, reject_meta) =
-                    <span class="self">self</span>.lower_expect_inner(stmt, parser, reject, pos, <span class="kw-2">&amp;mut </span>reject_body)<span class="question-mark">?</span>;
+                    <span class="self">self</span>.lower_expect_inner(stmt, frontend, reject, pos, <span class="kw-2">&amp;mut </span>reject_body)<span class="question-mark">?</span>;
 
                 <span class="comment">// Flush the body of the `false` branch
                 </span><span class="self">self</span>.emit_restart(<span class="kw-2">&amp;mut </span>reject_body);
@@ -2705,9 +2744,9 @@
                     <span class="prelude-val">Some</span>((reject_power, reject_width, reject_kind)),
                 ) = (
                     <span class="comment">// Get the components of both branches and calculate the type power
-                    </span><span class="self">self</span>.expr_scalar_components(parser, accept, accept_meta)<span class="question-mark">?
+                    </span><span class="self">self</span>.expr_scalar_components(frontend, accept, accept_meta)<span class="question-mark">?
                         </span>.and_then(|(kind, width)| <span class="prelude-val">Some</span>((type_power(kind, width)<span class="question-mark">?</span>, width, kind))),
-                    <span class="self">self</span>.expr_scalar_components(parser, reject, reject_meta)<span class="question-mark">?
+                    <span class="self">self</span>.expr_scalar_components(frontend, reject, reject_meta)<span class="question-mark">?
                         </span>.and_then(|(kind, width)| <span class="prelude-val">Some</span>((type_power(kind, width)<span class="question-mark">?</span>, width, kind))),
                 ) {
                     <span class="kw">match </span>accept_power.cmp(<span class="kw-2">&amp;</span>reject_power) {
@@ -2738,7 +2777,7 @@
                 <span class="comment">// We need to get the type of the resulting expression to create the local,
                 // this must be done after implicit conversions to ensure both branches have
                 // the same type.
-                </span><span class="kw">let </span>ty = parser.resolve_type_handle(<span class="self">self</span>, accept, accept_meta)<span class="question-mark">?</span>;
+                </span><span class="kw">let </span>ty = frontend.resolve_type_handle(<span class="self">self</span>, accept, accept_meta)<span class="question-mark">?</span>;
 
                 <span class="comment">// Add the local that will hold the result of our conditional
                 </span><span class="kw">let </span>local = <span class="self">self</span>.locals.append(
@@ -2797,17 +2836,17 @@
             }
             HirExprKind::Assign { tgt, value } <span class="kw">if </span>ExprPos::Lhs != pos =&gt; {
                 <span class="kw">let </span>(pointer, ptr_meta) =
-                    <span class="self">self</span>.lower_expect_inner(stmt, parser, tgt, ExprPos::Lhs, body)<span class="question-mark">?</span>;
+                    <span class="self">self</span>.lower_expect_inner(stmt, frontend, tgt, ExprPos::Lhs, body)<span class="question-mark">?</span>;
                 <span class="kw">let </span>(<span class="kw-2">mut </span>value, value_meta) =
-                    <span class="self">self</span>.lower_expect_inner(stmt, parser, value, ExprPos::Rhs, body)<span class="question-mark">?</span>;
+                    <span class="self">self</span>.lower_expect_inner(stmt, frontend, value, ExprPos::Rhs, body)<span class="question-mark">?</span>;
 
-                <span class="kw">let </span>ty = <span class="kw">match </span><span class="kw-2">*</span>parser.resolve_type(<span class="self">self</span>, pointer, ptr_meta)<span class="question-mark">? </span>{
-                    TypeInner::Pointer { base, .. } =&gt; <span class="kw-2">&amp;</span>parser.module.types[base].inner,
+                <span class="kw">let </span>ty = <span class="kw">match </span><span class="kw-2">*</span>frontend.resolve_type(<span class="self">self</span>, pointer, ptr_meta)<span class="question-mark">? </span>{
+                    TypeInner::Pointer { base, .. } =&gt; <span class="kw-2">&amp;</span>frontend.module.types[base].inner,
                     <span class="kw-2">ref </span>ty =&gt; ty,
                 };
 
                 <span class="kw">if let </span><span class="prelude-val">Some</span>((kind, width)) = scalar_components(ty) {
-                    <span class="self">self</span>.implicit_conversion(parser, <span class="kw-2">&amp;mut </span>value, value_meta, kind, width)<span class="question-mark">?</span>;
+                    <span class="self">self</span>.implicit_conversion(frontend, <span class="kw-2">&amp;mut </span>value, value_meta, kind, width)<span class="question-mark">?</span>;
                 }
 
                 <span class="self">self</span>.lower_store(pointer, value, meta, body);
@@ -2816,7 +2855,7 @@
             }
             HirExprKind::PrePostfix { op, postfix, expr } <span class="kw">if </span>ExprPos::Lhs != pos =&gt; {
                 <span class="kw">let </span>(pointer, <span class="kw">_</span>) =
-                    <span class="self">self</span>.lower_expect_inner(stmt, parser, expr, ExprPos::Lhs, body)<span class="question-mark">?</span>;
+                    <span class="self">self</span>.lower_expect_inner(stmt, frontend, expr, ExprPos::Lhs, body)<span class="question-mark">?</span>;
                 <span class="kw">let </span>left = <span class="kw">if let </span>Expression::Swizzle { .. } = <span class="self">self</span>.expressions[pointer] {
                     pointer
                 } <span class="kw">else </span>{
@@ -2833,7 +2872,7 @@
 
                     <span class="prelude-val">Some</span>(<span class="kw">crate</span>::ConstantInner::Scalar { width, value })
                 };
-                <span class="kw">let </span>res = <span class="kw">match </span><span class="kw-2">*</span>parser.resolve_type(<span class="self">self</span>, left, meta)<span class="question-mark">? </span>{
+                <span class="kw">let </span>res = <span class="kw">match </span><span class="kw-2">*</span>frontend.resolve_type(<span class="self">self</span>, left, meta)<span class="question-mark">? </span>{
                     TypeInner::Scalar { kind, width } =&gt; {
                         <span class="kw">let </span>ty = TypeInner::Scalar { kind, width };
                         make_constant_inner(kind, width).map(|i| (ty, i, <span class="prelude-val">None</span>, <span class="prelude-val">None</span>))
@@ -2860,7 +2899,7 @@
                 <span class="kw">let </span>(ty_inner, inner, rows, columns) = <span class="kw">match </span>res {
                     <span class="prelude-val">Some</span>(res) =&gt; res,
                     <span class="prelude-val">None </span>=&gt; {
-                        parser.errors.push(Error {
+                        frontend.errors.push(Error {
                             kind: ErrorKind::SemanticError(
                                 <span class="string">&quot;Increment/decrement only works on scalar/vector/matrix&quot;</span>.into(),
                             ),
@@ -2870,7 +2909,7 @@
                     }
                 };
 
-                <span class="kw">let </span>constant_1 = parser.module.constants.append(
+                <span class="kw">let </span>constant_1 = frontend.module.constants.append(
                     Constant {
                         name: <span class="prelude-val">None</span>,
                         specialization: <span class="prelude-val">None</span>,
@@ -2889,7 +2928,7 @@
                         <span class="self">self</span>.add_expression(Expression::Splat { size, value: right }, meta, body);
 
                     <span class="kw">if let </span><span class="prelude-val">Some</span>(cols) = columns {
-                        <span class="kw">let </span>ty = parser.module.types.insert(
+                        <span class="kw">let </span>ty = frontend.module.types.insert(
                             Type {
                                 name: <span class="prelude-val">None</span>,
                                 inner: ty_inner,
@@ -2925,21 +2964,22 @@
             } <span class="kw">if </span>ExprPos::Lhs != pos =&gt; {
                 <span class="kw">let </span>args = args
                     .iter()
-                    .map(|e| <span class="self">self</span>.lower_expect_inner(stmt, parser, <span class="kw-2">*</span>e, ExprPos::Rhs, body))
+                    .map(|e| <span class="self">self</span>.lower_expect_inner(stmt, frontend, <span class="kw-2">*</span>e, ExprPos::Rhs, body))
                     .collect::&lt;<span class="prelude-ty">Result</span>&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;&gt;()<span class="question-mark">?</span>;
                 <span class="kw">match </span>name.as_ref() {
                     <span class="string">&quot;length&quot; </span>=&gt; {
                         <span class="kw">if </span>!args.is_empty() {
-                            parser.errors.push(Error {
+                            frontend.errors.push(Error {
                                 kind: ErrorKind::SemanticError(
                                     <span class="string">&quot;.length() doesn&#39;t take any arguments&quot;</span>.into(),
                                 ),
                                 meta,
                             });
                         }
-                        <span class="kw">let </span>lowered_array =
-                            <span class="self">self</span>.lower_expect_inner(stmt, parser, object, pos, body)<span class="question-mark">?</span>.<span class="number">0</span>;
-                        <span class="kw">let </span>array_type = parser.resolve_type(<span class="self">self</span>, lowered_array, meta)<span class="question-mark">?</span>;
+                        <span class="kw">let </span>lowered_array = <span class="self">self
+                            </span>.lower_expect_inner(stmt, frontend, object, pos, body)<span class="question-mark">?
+                            </span>.<span class="number">0</span>;
+                        <span class="kw">let </span>array_type = frontend.resolve_type(<span class="self">self</span>, lowered_array, meta)<span class="question-mark">?</span>;
 
                         <span class="kw">match </span><span class="kw-2">*</span>array_type {
                             TypeInner::Array {
@@ -2949,7 +2989,7 @@
                                 <span class="kw">let </span><span class="kw-2">mut </span>array_length =
                                     <span class="self">self</span>.add_expression(Expression::Constant(size), meta, body);
                                 <span class="self">self</span>.forced_conversion(
-                                    parser,
+                                    frontend,
                                     <span class="kw-2">&amp;mut </span>array_length,
                                     meta,
                                     ScalarKind::Sint,
@@ -2972,7 +3012,7 @@
                     <span class="kw">_ </span>=&gt; {
                         <span class="kw">return </span><span class="prelude-val">Err</span>(Error {
                             kind: ErrorKind::SemanticError(
-                                <span class="macro">format!</span>(<span class="string">&quot;unknown method &#39;{}&#39;&quot;</span>, name).into(),
+                                <span class="macro">format!</span>(<span class="string">&quot;unknown method &#39;{name}&#39;&quot;</span>).into(),
                             ),
                             meta,
                         });
@@ -3003,22 +3043,22 @@
 
     <span class="kw">pub fn </span>expr_scalar_components(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        parser: <span class="kw-2">&amp;</span>Parser,
+        frontend: <span class="kw-2">&amp;</span>Frontend,
         expr: Handle&lt;Expression&gt;,
         meta: Span,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;(ScalarKind, <span class="kw">crate</span>::Bytes)&gt;&gt; {
-        <span class="kw">let </span>ty = parser.resolve_type(<span class="self">self</span>, expr, meta)<span class="question-mark">?</span>;
+        <span class="kw">let </span>ty = frontend.resolve_type(<span class="self">self</span>, expr, meta)<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(scalar_components(ty))
     }
 
     <span class="kw">pub fn </span>expr_power(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        parser: <span class="kw-2">&amp;</span>Parser,
+        frontend: <span class="kw-2">&amp;</span>Frontend,
         expr: Handle&lt;Expression&gt;,
         meta: Span,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;u32&gt;&gt; {
         <span class="prelude-val">Ok</span>(<span class="self">self
-            </span>.expr_scalar_components(parser, expr, meta)<span class="question-mark">?
+            </span>.expr_scalar_components(frontend, expr, meta)<span class="question-mark">?
             </span>.and_then(|(kind, width)| type_power(kind, width)))
     }
 
@@ -3043,7 +3083,7 @@
 
     <span class="kw">pub fn </span>implicit_conversion(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        parser: <span class="kw-2">&amp;</span>Parser,
+        frontend: <span class="kw-2">&amp;</span>Frontend,
         expr: <span class="kw-2">&amp;mut </span>Handle&lt;Expression&gt;,
         meta: Span,
         kind: ScalarKind,
@@ -3051,7 +3091,7 @@
     ) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="kw">if let </span>(<span class="prelude-val">Some</span>(tgt_power), <span class="prelude-val">Some</span>(expr_power)) = (
             type_power(kind, width),
-            <span class="self">self</span>.expr_power(parser, <span class="kw-2">*</span>expr, meta)<span class="question-mark">?</span>,
+            <span class="self">self</span>.expr_power(frontend, <span class="kw-2">*</span>expr, meta)<span class="question-mark">?</span>,
         ) {
             <span class="kw">if </span>tgt_power &gt; expr_power {
                 <span class="self">self</span>.conversion(expr, meta, kind, width)<span class="question-mark">?</span>;
@@ -3063,14 +3103,14 @@
 
     <span class="kw">pub fn </span>forced_conversion(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        parser: <span class="kw-2">&amp;</span>Parser,
+        frontend: <span class="kw-2">&amp;</span>Frontend,
         expr: <span class="kw-2">&amp;mut </span>Handle&lt;Expression&gt;,
         meta: Span,
         kind: ScalarKind,
         width: <span class="kw">crate</span>::Bytes,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="kw">if let </span><span class="prelude-val">Some</span>((expr_scalar_kind, expr_width)) =
-            <span class="self">self</span>.expr_scalar_components(parser, <span class="kw-2">*</span>expr, meta)<span class="question-mark">?
+            <span class="self">self</span>.expr_scalar_components(frontend, <span class="kw-2">*</span>expr, meta)<span class="question-mark">?
         </span>{
             <span class="kw">if </span>expr_scalar_kind != kind || expr_width != width {
                 <span class="self">self</span>.conversion(expr, meta, kind, width)<span class="question-mark">?</span>;
@@ -3082,14 +3122,14 @@
 
     <span class="kw">pub fn </span>binary_implicit_conversion(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        parser: <span class="kw-2">&amp;</span>Parser,
+        frontend: <span class="kw-2">&amp;</span>Frontend,
         left: <span class="kw-2">&amp;mut </span>Handle&lt;Expression&gt;,
         left_meta: Span,
         right: <span class="kw-2">&amp;mut </span>Handle&lt;Expression&gt;,
         right_meta: Span,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
-        <span class="kw">let </span>left_components = <span class="self">self</span>.expr_scalar_components(parser, <span class="kw-2">*</span>left, left_meta)<span class="question-mark">?</span>;
-        <span class="kw">let </span>right_components = <span class="self">self</span>.expr_scalar_components(parser, <span class="kw-2">*</span>right, right_meta)<span class="question-mark">?</span>;
+        <span class="kw">let </span>left_components = <span class="self">self</span>.expr_scalar_components(frontend, <span class="kw-2">*</span>left, left_meta)<span class="question-mark">?</span>;
+        <span class="kw">let </span>right_components = <span class="self">self</span>.expr_scalar_components(frontend, <span class="kw-2">*</span>right, right_meta)<span class="question-mark">?</span>;
 
         <span class="kw">if let </span>(
             <span class="prelude-val">Some</span>((left_power, left_width, left_kind)),
@@ -3115,12 +3155,12 @@
 
     <span class="kw">pub fn </span>implicit_splat(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        parser: <span class="kw-2">&amp;</span>Parser,
+        frontend: <span class="kw-2">&amp;</span>Frontend,
         expr: <span class="kw-2">&amp;mut </span>Handle&lt;Expression&gt;,
         meta: Span,
         vector_size: <span class="prelude-ty">Option</span>&lt;VectorSize&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
-        <span class="kw">let </span>expr_type = parser.resolve_type(<span class="self">self</span>, <span class="kw-2">*</span>expr, meta)<span class="question-mark">?</span>;
+        <span class="kw">let </span>expr_type = frontend.resolve_type(<span class="self">self</span>, <span class="kw-2">*</span>expr, meta)<span class="question-mark">?</span>;
 
         <span class="kw">if let </span>(<span class="kw-2">&amp;</span>TypeInner::Scalar { .. }, <span class="prelude-val">Some</span>(size)) = (expr_type, vector_size) {
             <span class="kw-2">*</span>expr = <span class="self">self
@@ -3160,11 +3200,11 @@
 
 <span class="doccomment">/// Helper struct passed when parsing expressions
 ///
-/// This struct should only be obtained trough [`stmt_ctx`](Context::stmt_ctx)
+/// This struct should only be obtained through [`stmt_ctx`](Context::stmt_ctx)
 /// and only one of these may be active at any time per context.
 </span><span class="attr">#[derive(Debug)]
 </span><span class="kw">pub struct </span>StmtContext {
-    <span class="doccomment">/// A arena of high level expressions which can be lowered trough a
+    <span class="doccomment">/// A arena of high level expressions which can be lowered through a
     /// [`Context`](Context) to naga&#39;s [`Expression`](crate::Expression)s
     </span><span class="kw">pub </span>hir_exprs: Arena&lt;HirExpr&gt;,
 }

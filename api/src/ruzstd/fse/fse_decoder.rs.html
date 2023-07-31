@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ruzstd-0.2.4/src/fse/fse_decoder.rs`."><title>fse_decoder.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="ruzstd" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../ruzstd/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ruzstd-0.4.0/src/fse/fse_decoder.rs`."><title>fse_decoder.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="ruzstd" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../ruzstd/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -294,15 +294,64 @@
 <a href="#294" id="294">294</a>
 <a href="#295" id="295">295</a>
 <a href="#296" id="296">296</a>
+<a href="#297" id="297">297</a>
+<a href="#298" id="298">298</a>
+<a href="#299" id="299">299</a>
+<a href="#300" id="300">300</a>
+<a href="#301" id="301">301</a>
+<a href="#302" id="302">302</a>
+<a href="#303" id="303">303</a>
+<a href="#304" id="304">304</a>
+<a href="#305" id="305">305</a>
+<a href="#306" id="306">306</a>
+<a href="#307" id="307">307</a>
+<a href="#308" id="308">308</a>
+<a href="#309" id="309">309</a>
+<a href="#310" id="310">310</a>
+<a href="#311" id="311">311</a>
+<a href="#312" id="312">312</a>
+<a href="#313" id="313">313</a>
+<a href="#314" id="314">314</a>
+<a href="#315" id="315">315</a>
+<a href="#316" id="316">316</a>
+<a href="#317" id="317">317</a>
+<a href="#318" id="318">318</a>
+<a href="#319" id="319">319</a>
+<a href="#320" id="320">320</a>
+<a href="#321" id="321">321</a>
+<a href="#322" id="322">322</a>
+<a href="#323" id="323">323</a>
+<a href="#324" id="324">324</a>
+<a href="#325" id="325">325</a>
+<a href="#326" id="326">326</a>
+<a href="#327" id="327">327</a>
+<a href="#328" id="328">328</a>
+<a href="#329" id="329">329</a>
+<a href="#330" id="330">330</a>
+<a href="#331" id="331">331</a>
+<a href="#332" id="332">332</a>
+<a href="#333" id="333">333</a>
+<a href="#334" id="334">334</a>
+<a href="#335" id="335">335</a>
+<a href="#336" id="336">336</a>
+<a href="#337" id="337">337</a>
+<a href="#338" id="338">338</a>
+<a href="#339" id="339">339</a>
+<a href="#340" id="340">340</a>
+<a href="#341" id="341">341</a>
+<a href="#342" id="342">342</a>
+<a href="#343" id="343">343</a>
+<a href="#344" id="344">344</a>
+<a href="#345" id="345">345</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::decoding::bit_reader::BitReader;
-<span class="kw">use </span><span class="kw">crate</span>::decoding::bit_reader_reverse::BitReaderReversed;
+<span class="kw">use </span><span class="kw">crate</span>::decoding::bit_reader_reverse::{BitReaderReversed, GetBitsError};
+<span class="kw">use </span>alloc::vec::Vec;
 
-<span class="attr">#[derive(Clone)]
-</span><span class="kw">pub struct </span>FSETable {
+<span class="kw">pub struct </span>FSETable {
     <span class="kw">pub </span>decode: Vec&lt;Entry&gt;, <span class="comment">//used to decode symbols, and calculate the next state
 
     </span><span class="kw">pub </span>accuracy_log: u8,
-    <span class="kw">pub </span>symbol_probablilities: Vec&lt;i32&gt;, <span class="comment">//used while building the decode Vector
+    <span class="kw">pub </span>symbol_probabilities: Vec&lt;i32&gt;, <span class="comment">//used while building the decode Vector
     </span>symbol_counter: Vec&lt;u32&gt;,
 }
 
@@ -312,54 +361,87 @@
     }
 }
 
+<span class="attr">#[derive(Debug, thiserror::Error)]
+#[non_exhaustive]
+</span><span class="kw">pub enum </span>FSETableError {
+    <span class="attr">#[error(<span class="string">&quot;Acclog must be at least 1&quot;</span>)]
+    </span>AccLogIsZero,
+    <span class="attr">#[error(<span class="string">&quot;Found FSE acc_log: {got} bigger than allowed maximum in this case: {max}&quot;</span>)]
+    </span>AccLogTooBig { got: u8, max: u8 },
+    <span class="attr">#[error(transparent)]
+    </span>GetBitsError(<span class="attr">#[from] </span>GetBitsError),
+    <span class="attr">#[error(<span class="string">&quot;The counter ({got}) exceeded the expected sum: {expected_sum}. This means an error or corrupted data \n {symbol_probabilities:?}&quot;</span>)]
+    </span>ProbabilityCounterMismatch {
+        got: u32,
+        expected_sum: u32,
+        symbol_probabilities: Vec&lt;i32&gt;,
+    },
+    <span class="attr">#[error(<span class="string">&quot;There are too many symbols in this distribution: {got}. Max: 256&quot;</span>)]
+    </span>TooManySymbols { got: usize },
+}
+
 <span class="kw">pub struct </span>FSEDecoder&lt;<span class="lifetime">&#39;table</span>&gt; {
-    <span class="kw">pub </span>state: usize,
+    <span class="kw">pub </span>state: Entry,
     table: <span class="kw-2">&amp;</span><span class="lifetime">&#39;table </span>FSETable,
+}
+
+<span class="attr">#[derive(Debug, thiserror::Error)]
+#[non_exhaustive]
+</span><span class="kw">pub enum </span>FSEDecoderError {
+    <span class="attr">#[error(transparent)]
+    </span>GetBitsError(<span class="attr">#[from] </span>GetBitsError),
+    <span class="attr">#[error(<span class="string">&quot;Tried to use an uninitialized table!&quot;</span>)]
+    </span>TableIsUninitialized,
 }
 
 <span class="attr">#[derive(Copy, Clone)]
 </span><span class="kw">pub struct </span>Entry {
-    <span class="kw">pub </span>base_line: usize,
+    <span class="kw">pub </span>base_line: u32,
     <span class="kw">pub </span>num_bits: u8,
     <span class="kw">pub </span>symbol: u8,
 }
 
 <span class="kw">const </span>ACC_LOG_OFFSET: u8 = <span class="number">5</span>;
 
-<span class="kw">const fn </span>num_bits&lt;T&gt;() -&gt; usize {
-    std::mem::size_of::&lt;T&gt;() * <span class="number">8
-</span>}
-
 <span class="kw">fn </span>highest_bit_set(x: u32) -&gt; u32 {
     <span class="macro">assert!</span>(x &gt; <span class="number">0</span>);
-    num_bits::&lt;u32&gt;() <span class="kw">as </span>u32 - x.leading_zeros()
+    u32::BITS - x.leading_zeros()
 }
 
 <span class="kw">impl</span>&lt;<span class="lifetime">&#39;t</span>&gt; FSEDecoder&lt;<span class="lifetime">&#39;t</span>&gt; {
     <span class="kw">pub fn </span>new(table: <span class="kw-2">&amp;</span><span class="lifetime">&#39;t </span>FSETable) -&gt; FSEDecoder&lt;<span class="lifetime">&#39;_</span>&gt; {
-        FSEDecoder { state: <span class="number">0</span>, table }
+        FSEDecoder {
+            state: table.decode.get(<span class="number">0</span>).copied().unwrap_or(Entry {
+                base_line: <span class="number">0</span>,
+                num_bits: <span class="number">0</span>,
+                symbol: <span class="number">0</span>,
+            }),
+            table,
+        }
     }
 
     <span class="kw">pub fn </span>decode_symbol(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u8 {
-        <span class="self">self</span>.table.decode[<span class="self">self</span>.state].symbol
+        <span class="self">self</span>.state.symbol
     }
 
-    <span class="kw">pub fn </span>init_state(<span class="kw-2">&amp;mut </span><span class="self">self</span>, bits: <span class="kw-2">&amp;mut </span>BitReaderReversed&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;(), String&gt; {
+    <span class="kw">pub fn </span>init_state(<span class="kw-2">&amp;mut </span><span class="self">self</span>, bits: <span class="kw-2">&amp;mut </span>BitReaderReversed&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;(), FSEDecoderError&gt; {
         <span class="kw">if </span><span class="self">self</span>.table.accuracy_log == <span class="number">0 </span>{
-            <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="string">&quot;Tried to use an unitizialized table!&quot;</span>.to_owned());
+            <span class="kw">return </span><span class="prelude-val">Err</span>(FSEDecoderError::TableIsUninitialized);
         }
-        <span class="self">self</span>.state = bits.get_bits(<span class="self">self</span>.table.accuracy_log <span class="kw">as </span>usize)<span class="question-mark">? </span><span class="kw">as </span>usize;
+        <span class="self">self</span>.state = <span class="self">self</span>.table.decode[bits.get_bits(<span class="self">self</span>.table.accuracy_log)<span class="question-mark">? </span><span class="kw">as </span>usize];
 
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="kw">pub fn </span>update_state(<span class="kw-2">&amp;mut </span><span class="self">self</span>, bits: <span class="kw-2">&amp;mut </span>BitReaderReversed&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;(), String&gt; {
-        <span class="kw">let </span>num_bits = <span class="self">self</span>.table.decode[<span class="self">self</span>.state].num_bits <span class="kw">as </span>usize;
+    <span class="kw">pub fn </span>update_state(
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+        bits: <span class="kw-2">&amp;mut </span>BitReaderReversed&lt;<span class="lifetime">&#39;_</span>&gt;,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;(), FSEDecoderError&gt; {
+        <span class="kw">let </span>num_bits = <span class="self">self</span>.state.num_bits;
         <span class="kw">let </span>add = bits.get_bits(num_bits)<span class="question-mark">?</span>;
-        <span class="kw">let </span>base_line = <span class="self">self</span>.table.decode[<span class="self">self</span>.state].base_line;
-        <span class="kw">let </span>new_state = base_line + add <span class="kw">as </span>usize;
-        <span class="macro">assert!</span>(new_state &lt; <span class="self">self</span>.table.decode.len());
-        <span class="self">self</span>.state = new_state;
+        <span class="kw">let </span>base_line = <span class="self">self</span>.state.base_line;
+        <span class="kw">let </span>new_state = base_line + add <span class="kw">as </span>u32;
+        <span class="self">self</span>.state = <span class="self">self</span>.table.decode[new_state <span class="kw">as </span>usize];
 
         <span class="comment">//println!(&quot;Update: {}, {} -&gt; {}&quot;, base_line, add,  self.state);
         </span><span class="prelude-val">Ok</span>(())
@@ -369,22 +451,31 @@
 <span class="kw">impl </span>FSETable {
     <span class="kw">pub fn </span>new() -&gt; FSETable {
         FSETable {
-            symbol_probablilities: Vec::with_capacity(<span class="number">256</span>), <span class="comment">//will never be more than 256 symbols because u8
+            symbol_probabilities: Vec::with_capacity(<span class="number">256</span>), <span class="comment">//will never be more than 256 symbols because u8
             </span>symbol_counter: Vec::with_capacity(<span class="number">256</span>), <span class="comment">//will never be more than 256 symbols because u8
             </span>decode: Vec::new(),                      <span class="comment">//depending on acc_log.
             </span>accuracy_log: <span class="number">0</span>,
         }
     }
 
+    <span class="kw">pub fn </span>reinit_from(<span class="kw-2">&amp;mut </span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="self">Self</span>) {
+        <span class="self">self</span>.reset();
+        <span class="self">self</span>.symbol_counter.extend_from_slice(<span class="kw-2">&amp;</span>other.symbol_counter);
+        <span class="self">self</span>.symbol_probabilities
+            .extend_from_slice(<span class="kw-2">&amp;</span>other.symbol_probabilities);
+        <span class="self">self</span>.decode.extend_from_slice(<span class="kw-2">&amp;</span>other.decode);
+        <span class="self">self</span>.accuracy_log = other.accuracy_log;
+    }
+
     <span class="kw">pub fn </span>reset(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
         <span class="self">self</span>.symbol_counter.clear();
-        <span class="self">self</span>.symbol_probablilities.clear();
+        <span class="self">self</span>.symbol_probabilities.clear();
         <span class="self">self</span>.decode.clear();
         <span class="self">self</span>.accuracy_log = <span class="number">0</span>;
     }
 
     <span class="comment">//returns how many BYTEs (not bits) were read while building the decoder
-    </span><span class="kw">pub fn </span>build_decoder(<span class="kw-2">&amp;mut </span><span class="self">self</span>, source: <span class="kw-2">&amp;</span>[u8], max_log: u8) -&gt; <span class="prelude-ty">Result</span>&lt;usize, String&gt; {
+    </span><span class="kw">pub fn </span>build_decoder(<span class="kw-2">&amp;mut </span><span class="self">self</span>, source: <span class="kw-2">&amp;</span>[u8], max_log: u8) -&gt; <span class="prelude-ty">Result</span>&lt;usize, FSETableError&gt; {
         <span class="self">self</span>.accuracy_log = <span class="number">0</span>;
 
         <span class="kw">let </span>bytes_read = <span class="self">self</span>.read_probabilities(source, max_log)<span class="question-mark">?</span>;
@@ -393,11 +484,15 @@
         <span class="prelude-val">Ok</span>(bytes_read)
     }
 
-    <span class="kw">pub fn </span>build_from_probabilities(<span class="kw-2">&amp;mut </span><span class="self">self</span>, acc_log: u8, probs: <span class="kw-2">&amp;</span>[i32]) -&gt; <span class="prelude-ty">Result</span>&lt;(), String&gt; {
+    <span class="kw">pub fn </span>build_from_probabilities(
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+        acc_log: u8,
+        probs: <span class="kw-2">&amp;</span>[i32],
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;(), FSETableError&gt; {
         <span class="kw">if </span>acc_log == <span class="number">0 </span>{
-            <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="string">&quot;Acclog must be at least 1&quot;</span>.to_owned());
+            <span class="kw">return </span><span class="prelude-val">Err</span>(FSETableError::AccLogIsZero);
         }
-        <span class="self">self</span>.symbol_probablilities = probs.to_vec();
+        <span class="self">self</span>.symbol_probabilities = probs.to_vec();
         <span class="self">self</span>.accuracy_log = acc_log;
         <span class="self">self</span>.build_decoding_table();
         <span class="prelude-val">Ok</span>(())
@@ -423,8 +518,8 @@
         <span class="kw">let </span><span class="kw-2">mut </span>negative_idx = table_size; <span class="comment">//will point to the highest index with is already occupied by a negative-probability-symbol
 
         //first scan for all -1 probabilities and place them at the top of the table
-        </span><span class="kw">for </span>symbol <span class="kw">in </span><span class="number">0</span>..<span class="self">self</span>.symbol_probablilities.len() {
-            <span class="kw">if </span><span class="self">self</span>.symbol_probablilities[symbol] == -<span class="number">1 </span>{
+        </span><span class="kw">for </span>symbol <span class="kw">in </span><span class="number">0</span>..<span class="self">self</span>.symbol_probabilities.len() {
+            <span class="kw">if </span><span class="self">self</span>.symbol_probabilities[symbol] == -<span class="number">1 </span>{
                 negative_idx -= <span class="number">1</span>;
                 <span class="kw">let </span>entry = <span class="kw-2">&amp;mut </span><span class="self">self</span>.decode[negative_idx];
                 entry.symbol = symbol <span class="kw">as </span>u8;
@@ -435,14 +530,14 @@
 
         <span class="comment">//then place in a semi-random order all of the other symbols
         </span><span class="kw">let </span><span class="kw-2">mut </span>position = <span class="number">0</span>;
-        <span class="kw">for </span>idx <span class="kw">in </span><span class="number">0</span>..<span class="self">self</span>.symbol_probablilities.len() {
+        <span class="kw">for </span>idx <span class="kw">in </span><span class="number">0</span>..<span class="self">self</span>.symbol_probabilities.len() {
             <span class="kw">let </span>symbol = idx <span class="kw">as </span>u8;
-            <span class="kw">if </span><span class="self">self</span>.symbol_probablilities[idx] &lt;= <span class="number">0 </span>{
+            <span class="kw">if </span><span class="self">self</span>.symbol_probabilities[idx] &lt;= <span class="number">0 </span>{
                 <span class="kw">continue</span>;
             }
 
             <span class="comment">//for each probability point the symbol gets on slot
-            </span><span class="kw">let </span>prob = <span class="self">self</span>.symbol_probablilities[idx];
+            </span><span class="kw">let </span>prob = <span class="self">self</span>.symbol_probabilities[idx];
             <span class="kw">for _ in </span><span class="number">0</span>..prob {
                 <span class="kw">let </span>entry = <span class="kw-2">&amp;mut </span><span class="self">self</span>.decode[position];
                 entry.symbol = symbol;
@@ -455,14 +550,14 @@
             }
         }
 
-        <span class="comment">// baselines and num_bits can only be caluclated when all symbols have been spread
+        <span class="comment">// baselines and num_bits can only be calculated when all symbols have been spread
         </span><span class="self">self</span>.symbol_counter.clear();
         <span class="self">self</span>.symbol_counter
-            .resize(<span class="self">self</span>.symbol_probablilities.len(), <span class="number">0</span>);
+            .resize(<span class="self">self</span>.symbol_probabilities.len(), <span class="number">0</span>);
         <span class="kw">for </span>idx <span class="kw">in </span><span class="number">0</span>..negative_idx {
             <span class="kw">let </span>entry = <span class="kw-2">&amp;mut </span><span class="self">self</span>.decode[idx];
             <span class="kw">let </span>symbol = entry.symbol;
-            <span class="kw">let </span>prob = <span class="self">self</span>.symbol_probablilities[symbol <span class="kw">as </span>usize];
+            <span class="kw">let </span>prob = <span class="self">self</span>.symbol_probabilities[symbol <span class="kw">as </span>usize];
 
             <span class="kw">let </span>symbol_count = <span class="self">self</span>.symbol_counter[symbol <span class="kw">as </span>usize];
             <span class="kw">let </span>(bl, nb) = calc_baseline_and_numbits(table_size <span class="kw">as </span>u32, prob <span class="kw">as </span>u32, symbol_count);
@@ -477,19 +572,19 @@
         }
     }
 
-    <span class="kw">fn </span>read_probabilities(<span class="kw-2">&amp;mut </span><span class="self">self</span>, source: <span class="kw-2">&amp;</span>[u8], max_log: u8) -&gt; <span class="prelude-ty">Result</span>&lt;usize, String&gt; {
-        <span class="self">self</span>.symbol_probablilities.clear(); <span class="comment">//just clear, we will fill a probability for each entry anyways. No need to force new allocs here
+    <span class="kw">fn </span>read_probabilities(<span class="kw-2">&amp;mut </span><span class="self">self</span>, source: <span class="kw-2">&amp;</span>[u8], max_log: u8) -&gt; <span class="prelude-ty">Result</span>&lt;usize, FSETableError&gt; {
+        <span class="self">self</span>.symbol_probabilities.clear(); <span class="comment">//just clear, we will fill a probability for each entry anyways. No need to force new allocs here
 
         </span><span class="kw">let </span><span class="kw-2">mut </span>br = BitReader::new(source);
         <span class="self">self</span>.accuracy_log = ACC_LOG_OFFSET + (br.get_bits(<span class="number">4</span>)<span class="question-mark">? </span><span class="kw">as </span>u8);
         <span class="kw">if </span><span class="self">self</span>.accuracy_log &gt; max_log {
-            <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">format!</span>(
-                <span class="string">&quot;Found FSE acc_log: {} bigger than allowed maximum in this case: {}&quot;</span>,
-                <span class="self">self</span>.accuracy_log, max_log
-            ));
+            <span class="kw">return </span><span class="prelude-val">Err</span>(FSETableError::AccLogTooBig {
+                got: <span class="self">self</span>.accuracy_log,
+                max: max_log,
+            });
         }
         <span class="kw">if </span><span class="self">self</span>.accuracy_log == <span class="number">0 </span>{
-            <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="string">&quot;Acclog must be at least 1&quot;</span>.to_owned());
+            <span class="kw">return </span><span class="prelude-val">Err</span>(FSETableError::AccLogIsZero);
         }
 
         <span class="kw">let </span>probablility_sum = <span class="number">1 </span>&lt;&lt; <span class="self">self</span>.accuracy_log;
@@ -517,7 +612,7 @@
 
             </span><span class="kw">let </span>prob = (value <span class="kw">as </span>i32) - <span class="number">1</span>;
 
-            <span class="self">self</span>.symbol_probablilities.push(prob);
+            <span class="self">self</span>.symbol_probabilities.push(prob);
             <span class="kw">if </span>prob != <span class="number">0 </span>{
                 <span class="kw">if </span>prob &gt; <span class="number">0 </span>{
                     probability_counter += prob <span class="kw">as </span>u32;
@@ -531,8 +626,8 @@
                 </span><span class="kw">loop </span>{
                     <span class="kw">let </span>skip_amount = br.get_bits(<span class="number">2</span>)<span class="question-mark">? </span><span class="kw">as </span>usize;
 
-                    <span class="self">self</span>.symbol_probablilities
-                        .resize(<span class="self">self</span>.symbol_probablilities.len() + skip_amount, <span class="number">0</span>);
+                    <span class="self">self</span>.symbol_probabilities
+                        .resize(<span class="self">self</span>.symbol_probabilities.len() + skip_amount, <span class="number">0</span>);
                     <span class="kw">if </span>skip_amount != <span class="number">3 </span>{
                         <span class="kw">break</span>;
                     }
@@ -541,13 +636,16 @@
         }
 
         <span class="kw">if </span>probability_counter != probablility_sum {
-            <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">format!</span>(<span class="string">&quot;The counter: {} exceeded the expected sum: {}. This means an error or corrupted data \n {:?}&quot;</span>, probability_counter, probablility_sum, <span class="self">self</span>.symbol_probablilities));
+            <span class="kw">return </span><span class="prelude-val">Err</span>(FSETableError::ProbabilityCounterMismatch {
+                got: probability_counter,
+                expected_sum: probablility_sum,
+                symbol_probabilities: <span class="self">self</span>.symbol_probabilities.clone(),
+            });
         }
-        <span class="kw">if </span><span class="self">self</span>.symbol_probablilities.len() &gt; <span class="number">256 </span>{
-            <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">format!</span>(
-                <span class="string">&quot;There are too many symbols in this distribution: {}. Max: 256&quot;</span>,
-                <span class="self">self</span>.symbol_probablilities.len()
-            ));
+        <span class="kw">if </span><span class="self">self</span>.symbol_probabilities.len() &gt; <span class="number">256 </span>{
+            <span class="kw">return </span><span class="prelude-val">Err</span>(FSETableError::TooManySymbols {
+                got: <span class="self">self</span>.symbol_probabilities.len(),
+            });
         }
 
         <span class="kw">let </span>bytes_read = <span class="kw">if </span>br.bits_read() % <span class="number">8 </span>== <span class="number">0 </span>{
@@ -570,24 +668,24 @@
     num_states_total: u32,
     num_states_symbol: u32,
     state_number: u32,
-) -&gt; (usize, u8) {
+) -&gt; (u32, u8) {
     <span class="kw">let </span>num_state_slices = <span class="kw">if </span><span class="number">1 </span>&lt;&lt; (highest_bit_set(num_states_symbol) - <span class="number">1</span>) == num_states_symbol {
         num_states_symbol
     } <span class="kw">else </span>{
         <span class="number">1 </span>&lt;&lt; (highest_bit_set(num_states_symbol))
     }; <span class="comment">//always power of two
 
-    </span><span class="kw">let </span>num_double_width_state_slices = num_state_slices - num_states_symbol; <span class="comment">//leftovers to the powerof two need to be distributed
+    </span><span class="kw">let </span>num_double_width_state_slices = num_state_slices - num_states_symbol; <span class="comment">//leftovers to the power of two need to be distributed
     </span><span class="kw">let </span>num_single_width_state_slices = num_states_symbol - num_double_width_state_slices; <span class="comment">//these will not receive a double width slice of states
     </span><span class="kw">let </span>slice_width = num_states_total / num_state_slices; <span class="comment">//size of a single width slice of states
     </span><span class="kw">let </span>num_bits = highest_bit_set(slice_width) - <span class="number">1</span>; <span class="comment">//number of bits needed to read for one slice
 
     </span><span class="kw">if </span>state_number &lt; num_double_width_state_slices {
         <span class="kw">let </span>baseline = num_single_width_state_slices * slice_width + state_number * slice_width * <span class="number">2</span>;
-        (baseline <span class="kw">as </span>usize, num_bits <span class="kw">as </span>u8 + <span class="number">1</span>)
+        (baseline, num_bits <span class="kw">as </span>u8 + <span class="number">1</span>)
     } <span class="kw">else </span>{
         <span class="kw">let </span>index_shifted = state_number - num_double_width_state_slices;
-        ((index_shifted * slice_width) <span class="kw">as </span>usize, num_bits <span class="kw">as </span>u8)
+        ((index_shifted * slice_width), num_bits <span class="kw">as </span>u8)
     }
 }
 </code></pre></div></section></main></body></html>

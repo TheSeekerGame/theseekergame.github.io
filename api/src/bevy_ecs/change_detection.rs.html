@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_ecs-0.10.1/src/change_detection.rs`."><title>change_detection.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bevy_ecs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../bevy_ecs/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_ecs-0.11.0/src/change_detection.rs`."><title>change_detection.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bevy_ecs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../bevy_ecs/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -913,6 +913,128 @@
 <a href="#913" id="913">913</a>
 <a href="#914" id="914">914</a>
 <a href="#915" id="915">915</a>
+<a href="#916" id="916">916</a>
+<a href="#917" id="917">917</a>
+<a href="#918" id="918">918</a>
+<a href="#919" id="919">919</a>
+<a href="#920" id="920">920</a>
+<a href="#921" id="921">921</a>
+<a href="#922" id="922">922</a>
+<a href="#923" id="923">923</a>
+<a href="#924" id="924">924</a>
+<a href="#925" id="925">925</a>
+<a href="#926" id="926">926</a>
+<a href="#927" id="927">927</a>
+<a href="#928" id="928">928</a>
+<a href="#929" id="929">929</a>
+<a href="#930" id="930">930</a>
+<a href="#931" id="931">931</a>
+<a href="#932" id="932">932</a>
+<a href="#933" id="933">933</a>
+<a href="#934" id="934">934</a>
+<a href="#935" id="935">935</a>
+<a href="#936" id="936">936</a>
+<a href="#937" id="937">937</a>
+<a href="#938" id="938">938</a>
+<a href="#939" id="939">939</a>
+<a href="#940" id="940">940</a>
+<a href="#941" id="941">941</a>
+<a href="#942" id="942">942</a>
+<a href="#943" id="943">943</a>
+<a href="#944" id="944">944</a>
+<a href="#945" id="945">945</a>
+<a href="#946" id="946">946</a>
+<a href="#947" id="947">947</a>
+<a href="#948" id="948">948</a>
+<a href="#949" id="949">949</a>
+<a href="#950" id="950">950</a>
+<a href="#951" id="951">951</a>
+<a href="#952" id="952">952</a>
+<a href="#953" id="953">953</a>
+<a href="#954" id="954">954</a>
+<a href="#955" id="955">955</a>
+<a href="#956" id="956">956</a>
+<a href="#957" id="957">957</a>
+<a href="#958" id="958">958</a>
+<a href="#959" id="959">959</a>
+<a href="#960" id="960">960</a>
+<a href="#961" id="961">961</a>
+<a href="#962" id="962">962</a>
+<a href="#963" id="963">963</a>
+<a href="#964" id="964">964</a>
+<a href="#965" id="965">965</a>
+<a href="#966" id="966">966</a>
+<a href="#967" id="967">967</a>
+<a href="#968" id="968">968</a>
+<a href="#969" id="969">969</a>
+<a href="#970" id="970">970</a>
+<a href="#971" id="971">971</a>
+<a href="#972" id="972">972</a>
+<a href="#973" id="973">973</a>
+<a href="#974" id="974">974</a>
+<a href="#975" id="975">975</a>
+<a href="#976" id="976">976</a>
+<a href="#977" id="977">977</a>
+<a href="#978" id="978">978</a>
+<a href="#979" id="979">979</a>
+<a href="#980" id="980">980</a>
+<a href="#981" id="981">981</a>
+<a href="#982" id="982">982</a>
+<a href="#983" id="983">983</a>
+<a href="#984" id="984">984</a>
+<a href="#985" id="985">985</a>
+<a href="#986" id="986">986</a>
+<a href="#987" id="987">987</a>
+<a href="#988" id="988">988</a>
+<a href="#989" id="989">989</a>
+<a href="#990" id="990">990</a>
+<a href="#991" id="991">991</a>
+<a href="#992" id="992">992</a>
+<a href="#993" id="993">993</a>
+<a href="#994" id="994">994</a>
+<a href="#995" id="995">995</a>
+<a href="#996" id="996">996</a>
+<a href="#997" id="997">997</a>
+<a href="#998" id="998">998</a>
+<a href="#999" id="999">999</a>
+<a href="#1000" id="1000">1000</a>
+<a href="#1001" id="1001">1001</a>
+<a href="#1002" id="1002">1002</a>
+<a href="#1003" id="1003">1003</a>
+<a href="#1004" id="1004">1004</a>
+<a href="#1005" id="1005">1005</a>
+<a href="#1006" id="1006">1006</a>
+<a href="#1007" id="1007">1007</a>
+<a href="#1008" id="1008">1008</a>
+<a href="#1009" id="1009">1009</a>
+<a href="#1010" id="1010">1010</a>
+<a href="#1011" id="1011">1011</a>
+<a href="#1012" id="1012">1012</a>
+<a href="#1013" id="1013">1013</a>
+<a href="#1014" id="1014">1014</a>
+<a href="#1015" id="1015">1015</a>
+<a href="#1016" id="1016">1016</a>
+<a href="#1017" id="1017">1017</a>
+<a href="#1018" id="1018">1018</a>
+<a href="#1019" id="1019">1019</a>
+<a href="#1020" id="1020">1020</a>
+<a href="#1021" id="1021">1021</a>
+<a href="#1022" id="1022">1022</a>
+<a href="#1023" id="1023">1023</a>
+<a href="#1024" id="1024">1024</a>
+<a href="#1025" id="1025">1025</a>
+<a href="#1026" id="1026">1026</a>
+<a href="#1027" id="1027">1027</a>
+<a href="#1028" id="1028">1028</a>
+<a href="#1029" id="1029">1029</a>
+<a href="#1030" id="1030">1030</a>
+<a href="#1031" id="1031">1031</a>
+<a href="#1032" id="1032">1032</a>
+<a href="#1033" id="1033">1033</a>
+<a href="#1034" id="1034">1034</a>
+<a href="#1035" id="1035">1035</a>
+<a href="#1036" id="1036">1036</a>
+<a href="#1037" id="1037">1037</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! Types that detect when their internal data mutate.
 
 </span><span class="kw">use crate</span>::{
@@ -961,7 +1083,12 @@
     <span class="doccomment">/// Returns `true` if this value was added after the system last ran.
     </span><span class="kw">fn </span>is_added(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool;
 
-    <span class="doccomment">/// Returns `true` if this value was added or mutably dereferenced after the system last ran.
+    <span class="doccomment">/// Returns `true` if this value was added or mutably dereferenced
+    /// either since the last time the system ran or, if the system never ran,
+    /// since the beginning of the program.
+    ///
+    /// To check if the value was mutably dereferenced only,
+    /// use `this.is_changed() &amp;&amp; !this.is_added()`.
     </span><span class="kw">fn </span>is_changed(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool;
 
     <span class="doccomment">/// Returns the change tick recording the time this data was most recently changed.
@@ -971,7 +1098,7 @@
     /// For comparison, the previous change tick of a system can be read using the
     /// [`SystemChangeTick`](crate::system::SystemChangeTick)
     /// [`SystemParam`](crate::system::SystemParam).
-    </span><span class="kw">fn </span>last_changed(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u32;
+    </span><span class="kw">fn </span>last_changed(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Tick;
 }
 
 <span class="doccomment">/// Types that implement reliable change detection.
@@ -1024,7 +1151,7 @@
     /// This is a complex and error-prone operation, primarily intended for use with rollback networking strategies.
     /// If you merely want to flag this data as changed, use [`set_changed`](DetectChangesMut::set_changed) instead.
     /// If you want to avoid triggering change detection, use [`bypass_change_detection`](DetectChangesMut::bypass_change_detection) instead.
-    </span><span class="kw">fn </span>set_last_changed(<span class="kw-2">&amp;mut </span><span class="self">self</span>, last_change_tick: u32);
+    </span><span class="kw">fn </span>set_last_changed(<span class="kw-2">&amp;mut </span><span class="self">self</span>, last_changed: Tick);
 
     <span class="doccomment">/// Manually bypasses change detection, allowing you to mutate the underlying value without updating the change tick.
     ///
@@ -1034,12 +1161,38 @@
     /// you are trying to synchronize representations using change detection and need to avoid infinite recursion.
     </span><span class="kw">fn </span>bypass_change_detection(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span><span class="self">Self</span>::Inner;
 
-    <span class="doccomment">/// Sets `self` to `value`, if and only if `*self != *value`
-    ///
-    /// `T` is the type stored within the smart pointer (e.g. [`Mut`] or [`ResMut`]).
+    <span class="doccomment">/// Overwrites this smart pointer with the given value, if and only if `*self != value`
     ///
     /// This is useful to ensure change detection is only triggered when the underlying value
-    /// changes, instead of every time [`DerefMut`] is used.
+    /// changes, instead of every time it is mutably accessed.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use bevy_ecs::{prelude::*, schedule::common_conditions::resource_changed};
+    /// #[derive(Resource, PartialEq, Eq)]
+    /// pub struct Score(u32);
+    ///
+    /// fn reset_score(mut score: ResMut&lt;Score&gt;) {
+    ///     // Set the score to zero, unless it is already zero.
+    ///     score.set_if_neq(Score(0));
+    /// }
+    /// # let mut world = World::new();
+    /// # world.insert_resource(Score(1));
+    /// # let mut score_changed = IntoSystem::into_system(resource_changed::&lt;Score&gt;());
+    /// # score_changed.initialize(&amp;mut world);
+    /// # score_changed.run((), &amp;mut world);
+    /// #
+    /// # let mut schedule = Schedule::new();
+    /// # schedule.add_systems(reset_score);
+    /// #
+    /// # // first time `reset_score` runs, the score is changed.
+    /// # schedule.run(&amp;mut world);
+    /// # assert!(score_changed.run((), &amp;mut world));
+    /// # // second time `reset_score` runs, the score is not changed.
+    /// # schedule.run(&amp;mut world);
+    /// # assert!(!score_changed.run((), &amp;mut world));
+    /// ```
     </span><span class="attr">#[inline]
     </span><span class="kw">fn </span>set_if_neq(<span class="kw-2">&amp;mut </span><span class="self">self</span>, value: <span class="self">Self</span>::Inner)
     <span class="kw">where
@@ -1060,19 +1213,19 @@
             </span><span class="kw">fn </span>is_added(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
                 <span class="self">self</span>.ticks
                     .added
-                    .is_newer_than(<span class="self">self</span>.ticks.last_change_tick, <span class="self">self</span>.ticks.change_tick)
+                    .is_newer_than(<span class="self">self</span>.ticks.last_run, <span class="self">self</span>.ticks.this_run)
             }
 
             <span class="attr">#[inline]
             </span><span class="kw">fn </span>is_changed(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
                 <span class="self">self</span>.ticks
                     .changed
-                    .is_newer_than(<span class="self">self</span>.ticks.last_change_tick, <span class="self">self</span>.ticks.change_tick)
+                    .is_newer_than(<span class="self">self</span>.ticks.last_run, <span class="self">self</span>.ticks.this_run)
             }
 
             <span class="attr">#[inline]
-            </span><span class="kw">fn </span>last_changed(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u32 {
-                <span class="self">self</span>.ticks.changed.tick
+            </span><span class="kw">fn </span>last_changed(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Tick {
+                <span class="kw-2">*</span><span class="self">self</span>.ticks.changed
             }
         }
 
@@ -1101,16 +1254,12 @@
 
             <span class="attr">#[inline]
             </span><span class="kw">fn </span>set_changed(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-                <span class="self">self</span>.ticks
-                    .changed
-                    .set_changed(<span class="self">self</span>.ticks.change_tick);
+                <span class="kw-2">*</span><span class="self">self</span>.ticks.changed = <span class="self">self</span>.ticks.this_run;
             }
 
             <span class="attr">#[inline]
-            </span><span class="kw">fn </span>set_last_changed(<span class="kw-2">&amp;mut </span><span class="self">self</span>, last_changed: u32) {
-                <span class="self">self</span>.ticks
-                    .changed
-                    .set_changed(last_changed);
+            </span><span class="kw">fn </span>set_last_changed(<span class="kw-2">&amp;mut </span><span class="self">self</span>, last_changed: Tick) {
+                <span class="kw-2">*</span><span class="self">self</span>.ticks.changed = last_changed;
             }
 
             <span class="attr">#[inline]
@@ -1157,8 +1306,8 @@
                     ticks: TicksMut {
                         added: <span class="self">self</span>.ticks.added,
                         changed: <span class="self">self</span>.ticks.changed,
-                        last_change_tick: <span class="self">self</span>.ticks.last_change_tick,
-                        change_tick: <span class="self">self</span>.ticks.change_tick,
+                        last_run: <span class="self">self</span>.ticks.last_run,
+                        this_run: <span class="self">self</span>.ticks.this_run,
                     }
                 }
             }
@@ -1214,8 +1363,8 @@
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>Ticks&lt;<span class="lifetime">&#39;a</span>&gt; {
     <span class="kw">pub</span>(<span class="kw">crate</span>) added: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Tick,
     <span class="kw">pub</span>(<span class="kw">crate</span>) changed: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Tick,
-    <span class="kw">pub</span>(<span class="kw">crate</span>) last_change_tick: u32,
-    <span class="kw">pub</span>(<span class="kw">crate</span>) change_tick: u32,
+    <span class="kw">pub</span>(<span class="kw">crate</span>) last_run: Tick,
+    <span class="kw">pub</span>(<span class="kw">crate</span>) this_run: Tick,
 }
 
 <span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; Ticks&lt;<span class="lifetime">&#39;a</span>&gt; {
@@ -1224,14 +1373,14 @@
     </span><span class="attr">#[inline]
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>from_tick_cells(
         cells: TickCells&lt;<span class="lifetime">&#39;a</span>&gt;,
-        last_change_tick: u32,
-        change_tick: u32,
+        last_run: Tick,
+        this_run: Tick,
     ) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             added: cells.added.deref(),
             changed: cells.changed.deref(),
-            last_change_tick,
-            change_tick,
+            last_run,
+            this_run,
         }
     }
 }
@@ -1239,8 +1388,8 @@
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>TicksMut&lt;<span class="lifetime">&#39;a</span>&gt; {
     <span class="kw">pub</span>(<span class="kw">crate</span>) added: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Tick,
     <span class="kw">pub</span>(<span class="kw">crate</span>) changed: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Tick,
-    <span class="kw">pub</span>(<span class="kw">crate</span>) last_change_tick: u32,
-    <span class="kw">pub</span>(<span class="kw">crate</span>) change_tick: u32,
+    <span class="kw">pub</span>(<span class="kw">crate</span>) last_run: Tick,
+    <span class="kw">pub</span>(<span class="kw">crate</span>) this_run: Tick,
 }
 
 <span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; TicksMut&lt;<span class="lifetime">&#39;a</span>&gt; {
@@ -1249,14 +1398,14 @@
     </span><span class="attr">#[inline]
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>from_tick_cells(
         cells: TickCells&lt;<span class="lifetime">&#39;a</span>&gt;,
-        last_change_tick: u32,
-        change_tick: u32,
+        last_run: Tick,
+        this_run: Tick,
     ) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             added: cells.added.deref_mut(),
             changed: cells.changed.deref_mut(),
-            last_change_tick,
-            change_tick,
+            last_run,
+            this_run,
         }
     }
 }
@@ -1266,8 +1415,8 @@
         Ticks {
             added: ticks.added,
             changed: ticks.changed,
-            last_change_tick: ticks.last_change_tick,
-            change_tick: ticks.change_tick,
+            last_run: ticks.last_run,
+            this_run: ticks.this_run,
         }
     }
 }
@@ -1289,7 +1438,10 @@
 }
 
 <span class="kw">impl</span>&lt;<span class="lifetime">&#39;w</span>, T: Resource&gt; Res&lt;<span class="lifetime">&#39;w</span>, T&gt; {
-    <span class="comment">// no it shouldn&#39;t clippy
+    <span class="doccomment">/// Copies a reference to a resource.
+    ///
+    /// Note that unless you actually need an instance of `Res&lt;T&gt;`, you should
+    /// prefer to just convert it to `&amp;T` which can be freely copied.
     </span><span class="attr">#[allow(clippy::should_implement_trait)]
     </span><span class="kw">pub fn </span>clone(this: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
@@ -1427,8 +1579,49 @@
 }
 
 <span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, T: <span class="question-mark">?</span>Sized&gt; Ref&lt;<span class="lifetime">&#39;a</span>, T&gt; {
-    <span class="kw">pub fn </span>into_inner(<span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>T {
+    <span class="doccomment">/// Returns the reference wrapped by this type. The reference is allowed to outlive `self`, which makes this method more flexible than simply borrowing `self`.
+    </span><span class="kw">pub fn </span>into_inner(<span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>T {
         <span class="self">self</span>.value
+    }
+
+    <span class="doccomment">/// Map `Ref` to a different type using `f`.
+    ///
+    /// This doesn&#39;t do anything else than call `f` on the wrapped value.
+    /// This is equivalent to [`Mut::map_unchanged`].
+    </span><span class="kw">pub fn </span>map&lt;U: <span class="question-mark">?</span>Sized&gt;(<span class="self">self</span>, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;</span>T) -&gt; <span class="kw-2">&amp;</span>U) -&gt; Ref&lt;<span class="lifetime">&#39;a</span>, U&gt; {
+        Ref {
+            value: f(<span class="self">self</span>.value),
+            ticks: <span class="self">self</span>.ticks,
+        }
+    }
+
+    <span class="doccomment">/// Create a new `Ref` using provided values.
+    ///
+    /// This is an advanced feature, `Ref`s are designed to be _created_ by
+    /// engine-internal code and _consumed_ by end-user code.
+    ///
+    /// - `value` - The value wrapped by `Ref`.
+    /// - `added` - A [`Tick`] that stores the tick when the wrapped value was created.
+    /// - `changed` - A [`Tick`] that stores the last time the wrapped value was changed.
+    /// - `last_run` - A [`Tick`], occurring before `this_run`, which is used
+    ///    as a reference to determine whether the wrapped value is newly added or changed.
+    /// - `this_run` - A [`Tick`] corresponding to the current point in time -- &quot;now&quot;.
+    </span><span class="kw">pub fn </span>new(
+        value: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>T,
+        added: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Tick,
+        changed: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Tick,
+        last_run: Tick,
+        this_run: Tick,
+    ) -&gt; Ref&lt;<span class="lifetime">&#39;a</span>, T&gt; {
+        Ref {
+            value,
+            ticks: Ticks {
+                added,
+                changed,
+                last_run,
+                this_run,
+            },
+        }
     }
 }
 
@@ -1450,6 +1643,41 @@
 </span><span class="kw">pub struct </span>Mut&lt;<span class="lifetime">&#39;a</span>, T: <span class="question-mark">?</span>Sized&gt; {
     <span class="kw">pub</span>(<span class="kw">crate</span>) value: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>T,
     <span class="kw">pub</span>(<span class="kw">crate</span>) ticks: TicksMut&lt;<span class="lifetime">&#39;a</span>&gt;,
+}
+
+<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, T: <span class="question-mark">?</span>Sized&gt; Mut&lt;<span class="lifetime">&#39;a</span>, T&gt; {
+    <span class="doccomment">/// Creates a new change-detection enabled smart pointer.
+    /// In almost all cases you do not need to call this method manually,
+    /// as instances of `Mut` will be created by engine-internal code.
+    ///
+    /// Many use-cases of this method would be better served by [`Mut::map_unchanged`]
+    /// or [`Mut::reborrow`].
+    ///
+    /// - `value` - The value wrapped by this smart pointer.
+    /// - `added` - A [`Tick`] that stores the tick when the wrapped value was created.
+    /// - `last_changed` - A [`Tick`] that stores the last time the wrapped value was changed.
+    ///   This will be updated to the value of `change_tick` if the returned smart pointer
+    ///   is modified.
+    /// - `last_run` - A [`Tick`], occurring before `this_run`, which is used
+    ///   as a reference to determine whether the wrapped value is newly added or changed.
+    /// - `this_run` - A [`Tick`] corresponding to the current point in time -- &quot;now&quot;.
+    </span><span class="kw">pub fn </span>new(
+        value: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>T,
+        added: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Tick,
+        last_changed: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Tick,
+        last_run: Tick,
+        this_run: Tick,
+    ) -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{
+            value,
+            ticks: TicksMut {
+                added,
+                changed: last_changed,
+                last_run,
+                this_run,
+            },
+        }
+    }
 }
 
 <span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, T: <span class="question-mark">?</span>Sized&gt; From&lt;Mut&lt;<span class="lifetime">&#39;a</span>, T&gt;&gt; <span class="kw">for </span>Ref&lt;<span class="lifetime">&#39;a</span>, T&gt; {
@@ -1523,8 +1751,8 @@
             ticks: TicksMut {
                 added: <span class="self">self</span>.ticks.added,
                 changed: <span class="self">self</span>.ticks.changed,
-                last_change_tick: <span class="self">self</span>.ticks.last_change_tick,
-                change_tick: <span class="self">self</span>.ticks.change_tick,
+                last_run: <span class="self">self</span>.ticks.last_run,
+                this_run: <span class="self">self</span>.ticks.this_run,
             },
         }
     }
@@ -1561,19 +1789,19 @@
     </span><span class="kw">fn </span>is_added(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
         <span class="self">self</span>.ticks
             .added
-            .is_newer_than(<span class="self">self</span>.ticks.last_change_tick, <span class="self">self</span>.ticks.change_tick)
+            .is_newer_than(<span class="self">self</span>.ticks.last_run, <span class="self">self</span>.ticks.this_run)
     }
 
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>is_changed(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
         <span class="self">self</span>.ticks
             .changed
-            .is_newer_than(<span class="self">self</span>.ticks.last_change_tick, <span class="self">self</span>.ticks.change_tick)
+            .is_newer_than(<span class="self">self</span>.ticks.last_run, <span class="self">self</span>.ticks.this_run)
     }
 
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>last_changed(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u32 {
-        <span class="self">self</span>.ticks.changed.tick
+    </span><span class="kw">fn </span>last_changed(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Tick {
+        <span class="kw-2">*</span><span class="self">self</span>.ticks.changed
     }
 }
 
@@ -1582,12 +1810,12 @@
 
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>set_changed(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-        <span class="self">self</span>.ticks.changed.set_changed(<span class="self">self</span>.ticks.change_tick);
+        <span class="kw-2">*</span><span class="self">self</span>.ticks.changed = <span class="self">self</span>.ticks.this_run;
     }
 
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>set_last_changed(<span class="kw-2">&amp;mut </span><span class="self">self</span>, last_changed: u32) {
-        <span class="self">self</span>.ticks.changed.set_changed(last_changed);
+    </span><span class="kw">fn </span>set_last_changed(<span class="kw-2">&amp;mut </span><span class="self">self</span>, last_changed: Tick) {
+        <span class="kw-2">*</span><span class="self">self</span>.ticks.changed = last_changed;
     }
 
     <span class="attr">#[inline]
@@ -1667,24 +1895,19 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>change_tick_wraparound() {
-        <span class="kw">fn </span>change_detected(query: Query&lt;Ref&lt;C&gt;&gt;) -&gt; bool {
-            query.single().is_changed()
-        }
-
         <span class="kw">let </span><span class="kw-2">mut </span>world = World::new();
-        world.last_change_tick = u32::MAX;
+        world.last_change_tick = Tick::new(u32::MAX);
         <span class="kw-2">*</span>world.change_tick.get_mut() = <span class="number">0</span>;
 
         <span class="comment">// component added: 0, changed: 0
         </span>world.spawn(C);
 
-        <span class="comment">// system last ran: u32::MAX
-        </span><span class="kw">let </span><span class="kw-2">mut </span>change_detected_system = IntoSystem::into_system(change_detected);
-        change_detected_system.initialize(<span class="kw-2">&amp;mut </span>world);
+        world.increment_change_tick();
 
         <span class="comment">// Since the world is always ahead, as long as changes can&#39;t get older than `u32::MAX` (which we ensure),
         // the wrapping difference will always be positive, so wraparound doesn&#39;t matter.
-        </span><span class="macro">assert!</span>(change_detected_system.run((), <span class="kw-2">&amp;mut </span>world));
+        </span><span class="kw">let </span><span class="kw-2">mut </span>query = world.query::&lt;Ref&lt;C&gt;&gt;();
+        <span class="macro">assert!</span>(query.single(<span class="kw-2">&amp;</span>world).is_changed());
     }
 
     <span class="attr">#[test]
@@ -1700,8 +1923,8 @@
 
         <span class="kw">let </span><span class="kw-2">mut </span>query = world.query::&lt;Ref&lt;C&gt;&gt;();
         <span class="kw">for </span>tracker <span class="kw">in </span>query.iter(<span class="kw-2">&amp;</span>world) {
-            <span class="kw">let </span>ticks_since_insert = change_tick.wrapping_sub(tracker.ticks.added.tick);
-            <span class="kw">let </span>ticks_since_change = change_tick.wrapping_sub(tracker.ticks.changed.tick);
+            <span class="kw">let </span>ticks_since_insert = change_tick.relative_to(<span class="kw-2">*</span>tracker.ticks.added).get();
+            <span class="kw">let </span>ticks_since_change = change_tick.relative_to(<span class="kw-2">*</span>tracker.ticks.changed).get();
             <span class="macro">assert!</span>(ticks_since_insert &gt; MAX_CHANGE_AGE);
             <span class="macro">assert!</span>(ticks_since_change &gt; MAX_CHANGE_AGE);
         }
@@ -1710,8 +1933,8 @@
         </span>world.check_change_ticks();
 
         <span class="kw">for </span>tracker <span class="kw">in </span>query.iter(<span class="kw-2">&amp;</span>world) {
-            <span class="kw">let </span>ticks_since_insert = change_tick.wrapping_sub(tracker.ticks.added.tick);
-            <span class="kw">let </span>ticks_since_change = change_tick.wrapping_sub(tracker.ticks.changed.tick);
+            <span class="kw">let </span>ticks_since_insert = change_tick.relative_to(<span class="kw-2">*</span>tracker.ticks.added).get();
+            <span class="kw">let </span>ticks_since_change = change_tick.relative_to(<span class="kw-2">*</span>tracker.ticks.changed).get();
             <span class="macro">assert!</span>(ticks_since_insert == MAX_CHANGE_AGE);
             <span class="macro">assert!</span>(ticks_since_change == MAX_CHANGE_AGE);
         }
@@ -1726,8 +1949,8 @@
         <span class="kw">let </span>ticks = TicksMut {
             added: <span class="kw-2">&amp;mut </span>component_ticks.added,
             changed: <span class="kw-2">&amp;mut </span>component_ticks.changed,
-            last_change_tick: <span class="number">3</span>,
-            change_tick: <span class="number">4</span>,
+            last_run: Tick::new(<span class="number">3</span>),
+            this_run: Tick::new(<span class="number">4</span>),
         };
         <span class="kw">let </span><span class="kw-2">mut </span>res = R {};
         <span class="kw">let </span>res_mut = ResMut {
@@ -1736,10 +1959,30 @@
         };
 
         <span class="kw">let </span>into_mut: Mut&lt;R&gt; = res_mut.into();
-        <span class="macro">assert_eq!</span>(<span class="number">1</span>, into_mut.ticks.added.tick);
-        <span class="macro">assert_eq!</span>(<span class="number">2</span>, into_mut.ticks.changed.tick);
-        <span class="macro">assert_eq!</span>(<span class="number">3</span>, into_mut.ticks.last_change_tick);
-        <span class="macro">assert_eq!</span>(<span class="number">4</span>, into_mut.ticks.change_tick);
+        <span class="macro">assert_eq!</span>(<span class="number">1</span>, into_mut.ticks.added.get());
+        <span class="macro">assert_eq!</span>(<span class="number">2</span>, into_mut.ticks.changed.get());
+        <span class="macro">assert_eq!</span>(<span class="number">3</span>, into_mut.ticks.last_run.get());
+        <span class="macro">assert_eq!</span>(<span class="number">4</span>, into_mut.ticks.this_run.get());
+    }
+
+    <span class="attr">#[test]
+    </span><span class="kw">fn </span>mut_new() {
+        <span class="kw">let </span><span class="kw-2">mut </span>component_ticks = ComponentTicks {
+            added: Tick::new(<span class="number">1</span>),
+            changed: Tick::new(<span class="number">3</span>),
+        };
+        <span class="kw">let </span><span class="kw-2">mut </span>res = R {};
+
+        <span class="kw">let </span>val = Mut::new(
+            <span class="kw-2">&amp;mut </span>res,
+            <span class="kw-2">&amp;mut </span>component_ticks.added,
+            <span class="kw-2">&amp;mut </span>component_ticks.changed,
+            Tick::new(<span class="number">2</span>), <span class="comment">// last_run
+            </span>Tick::new(<span class="number">4</span>), <span class="comment">// this_run
+        </span>);
+
+        <span class="macro">assert!</span>(!val.is_added());
+        <span class="macro">assert!</span>(val.is_changed());
     }
 
     <span class="attr">#[test]
@@ -1751,8 +1994,8 @@
         <span class="kw">let </span>ticks = TicksMut {
             added: <span class="kw-2">&amp;mut </span>component_ticks.added,
             changed: <span class="kw-2">&amp;mut </span>component_ticks.changed,
-            last_change_tick: <span class="number">3</span>,
-            change_tick: <span class="number">4</span>,
+            last_run: Tick::new(<span class="number">3</span>),
+            this_run: Tick::new(<span class="number">4</span>),
         };
         <span class="kw">let </span><span class="kw-2">mut </span>res = R {};
         <span class="kw">let </span>non_send_mut = NonSendMut {
@@ -1761,10 +2004,10 @@
         };
 
         <span class="kw">let </span>into_mut: Mut&lt;R&gt; = non_send_mut.into();
-        <span class="macro">assert_eq!</span>(<span class="number">1</span>, into_mut.ticks.added.tick);
-        <span class="macro">assert_eq!</span>(<span class="number">2</span>, into_mut.ticks.changed.tick);
-        <span class="macro">assert_eq!</span>(<span class="number">3</span>, into_mut.ticks.last_change_tick);
-        <span class="macro">assert_eq!</span>(<span class="number">4</span>, into_mut.ticks.change_tick);
+        <span class="macro">assert_eq!</span>(<span class="number">1</span>, into_mut.ticks.added.get());
+        <span class="macro">assert_eq!</span>(<span class="number">2</span>, into_mut.ticks.changed.get());
+        <span class="macro">assert_eq!</span>(<span class="number">3</span>, into_mut.ticks.last_run.get());
+        <span class="macro">assert_eq!</span>(<span class="number">4</span>, into_mut.ticks.this_run.get());
     }
 
     <span class="attr">#[test]
@@ -1772,7 +2015,8 @@
         <span class="kw">use super</span>::<span class="kw-2">*</span>;
         <span class="kw">struct </span>Outer(i64);
 
-        <span class="kw">let </span>(last_change_tick, change_tick) = (<span class="number">2</span>, <span class="number">3</span>);
+        <span class="kw">let </span>last_run = Tick::new(<span class="number">2</span>);
+        <span class="kw">let </span>this_run = Tick::new(<span class="number">3</span>);
         <span class="kw">let </span><span class="kw-2">mut </span>component_ticks = ComponentTicks {
             added: Tick::new(<span class="number">1</span>),
             changed: Tick::new(<span class="number">2</span>),
@@ -1780,8 +2024,8 @@
         <span class="kw">let </span>ticks = TicksMut {
             added: <span class="kw-2">&amp;mut </span>component_ticks.added,
             changed: <span class="kw-2">&amp;mut </span>component_ticks.changed,
-            last_change_tick,
-            change_tick,
+            last_run,
+            this_run,
         };
 
         <span class="kw">let </span><span class="kw-2">mut </span>outer = Outer(<span class="number">0</span>);
@@ -1799,7 +2043,7 @@
         </span><span class="kw-2">*</span>inner = <span class="number">64</span>;
         <span class="macro">assert!</span>(inner.is_changed());
         <span class="comment">// Modifying one field of a component should flag a change for the entire component.
-        </span><span class="macro">assert!</span>(component_ticks.is_changed(last_change_tick, change_tick));
+        </span><span class="macro">assert!</span>(component_ticks.is_changed(last_run, this_run));
     }
 
     <span class="attr">#[test]

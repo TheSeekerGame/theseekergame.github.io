@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/wgpu-core-0.15.1/src/instance.rs`."><title>instance.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="wgpu_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../wgpu_core/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/wgpu-core-0.16.1/src/instance.rs`."><title>instance.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="wgpu_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../wgpu_core/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1110,6 +1110,40 @@
 <a href="#1110" id="1110">1110</a>
 <a href="#1111" id="1111">1111</a>
 <a href="#1112" id="1112">1112</a>
+<a href="#1113" id="1113">1113</a>
+<a href="#1114" id="1114">1114</a>
+<a href="#1115" id="1115">1115</a>
+<a href="#1116" id="1116">1116</a>
+<a href="#1117" id="1117">1117</a>
+<a href="#1118" id="1118">1118</a>
+<a href="#1119" id="1119">1119</a>
+<a href="#1120" id="1120">1120</a>
+<a href="#1121" id="1121">1121</a>
+<a href="#1122" id="1122">1122</a>
+<a href="#1123" id="1123">1123</a>
+<a href="#1124" id="1124">1124</a>
+<a href="#1125" id="1125">1125</a>
+<a href="#1126" id="1126">1126</a>
+<a href="#1127" id="1127">1127</a>
+<a href="#1128" id="1128">1128</a>
+<a href="#1129" id="1129">1129</a>
+<a href="#1130" id="1130">1130</a>
+<a href="#1131" id="1131">1131</a>
+<a href="#1132" id="1132">1132</a>
+<a href="#1133" id="1133">1133</a>
+<a href="#1134" id="1134">1134</a>
+<a href="#1135" id="1135">1135</a>
+<a href="#1136" id="1136">1136</a>
+<a href="#1137" id="1137">1137</a>
+<a href="#1138" id="1138">1138</a>
+<a href="#1139" id="1139">1139</a>
+<a href="#1140" id="1140">1140</a>
+<a href="#1141" id="1141">1141</a>
+<a href="#1142" id="1142">1142</a>
+<a href="#1143" id="1143">1143</a>
+<a href="#1144" id="1144">1144</a>
+<a href="#1145" id="1145">1145</a>
+<a href="#1146" id="1146">1146</a>
 </pre></div><pre class="rust"><code><span class="kw">use crate</span>::{
     device::{Device, DeviceDescriptor},
     hub::{Global, GlobalIdentityHandlerFactory, HalApi, Input, Token},
@@ -1166,13 +1200,13 @@
 </span><span class="kw">pub struct </span>Instance {
     <span class="attr">#[allow(dead_code)]
     </span><span class="kw">pub </span>name: String,
-    <span class="attr">#[cfg(feature = <span class="string">&quot;vulkan&quot;</span>)]
+    <span class="attr">#[cfg(all(feature = <span class="string">&quot;vulkan&quot;</span>, not(target_arch = <span class="string">&quot;wasm32&quot;</span>)))]
     </span><span class="kw">pub </span>vulkan: <span class="prelude-ty">Option</span>&lt;HalInstance&lt;hal::api::Vulkan&gt;&gt;,
-    <span class="attr">#[cfg(feature = <span class="string">&quot;metal&quot;</span>)]
+    <span class="attr">#[cfg(all(feature = <span class="string">&quot;metal&quot;</span>, any(target_os = <span class="string">&quot;macos&quot;</span>, target_os = <span class="string">&quot;ios&quot;</span>)))]
     </span><span class="kw">pub </span>metal: <span class="prelude-ty">Option</span>&lt;HalInstance&lt;hal::api::Metal&gt;&gt;,
-    <span class="attr">#[cfg(feature = <span class="string">&quot;dx12&quot;</span>)]
+    <span class="attr">#[cfg(all(feature = <span class="string">&quot;dx12&quot;</span>, windows))]
     </span><span class="kw">pub </span>dx12: <span class="prelude-ty">Option</span>&lt;HalInstance&lt;hal::api::Dx12&gt;&gt;,
-    <span class="attr">#[cfg(feature = <span class="string">&quot;dx11&quot;</span>)]
+    <span class="attr">#[cfg(all(feature = <span class="string">&quot;dx11&quot;</span>, windows))]
     </span><span class="kw">pub </span>dx11: <span class="prelude-ty">Option</span>&lt;HalInstance&lt;hal::api::Dx11&gt;&gt;,
     <span class="attr">#[cfg(feature = <span class="string">&quot;gles&quot;</span>)]
     </span><span class="kw">pub </span>gl: <span class="prelude-ty">Option</span>&lt;HalInstance&lt;hal::api::Gles&gt;&gt;,
@@ -1200,13 +1234,13 @@
 
         <span class="self">Self </span>{
             name: name.to_string(),
-            <span class="attr">#[cfg(feature = <span class="string">&quot;vulkan&quot;</span>)]
+            <span class="attr">#[cfg(all(feature = <span class="string">&quot;vulkan&quot;</span>, not(target_arch = <span class="string">&quot;wasm32&quot;</span>)))]
             </span>vulkan: init(hal::api::Vulkan, <span class="kw-2">&amp;</span>instance_desc),
-            <span class="attr">#[cfg(feature = <span class="string">&quot;metal&quot;</span>)]
+            <span class="attr">#[cfg(all(feature = <span class="string">&quot;metal&quot;</span>, any(target_os = <span class="string">&quot;macos&quot;</span>, target_os = <span class="string">&quot;ios&quot;</span>)))]
             </span>metal: init(hal::api::Metal, <span class="kw-2">&amp;</span>instance_desc),
-            <span class="attr">#[cfg(feature = <span class="string">&quot;dx12&quot;</span>)]
+            <span class="attr">#[cfg(all(feature = <span class="string">&quot;dx12&quot;</span>, windows))]
             </span>dx12: init(hal::api::Dx12, <span class="kw-2">&amp;</span>instance_desc),
-            <span class="attr">#[cfg(feature = <span class="string">&quot;dx11&quot;</span>)]
+            <span class="attr">#[cfg(all(feature = <span class="string">&quot;dx11&quot;</span>, windows))]
             </span>dx11: init(hal::api::Dx11, <span class="kw-2">&amp;</span>instance_desc),
             <span class="attr">#[cfg(feature = <span class="string">&quot;gles&quot;</span>)]
             </span>gl: init(hal::api::Gles, <span class="kw-2">&amp;</span>instance_desc),
@@ -1225,13 +1259,13 @@
                 }
             }
         }
-        <span class="attr">#[cfg(feature = <span class="string">&quot;vulkan&quot;</span>)]
+        <span class="attr">#[cfg(all(feature = <span class="string">&quot;vulkan&quot;</span>, not(target_arch = <span class="string">&quot;wasm32&quot;</span>)))]
         </span>destroy(hal::api::Vulkan, <span class="kw-2">&amp;</span><span class="self">self</span>.vulkan, surface.vulkan);
-        <span class="attr">#[cfg(feature = <span class="string">&quot;metal&quot;</span>)]
+        <span class="attr">#[cfg(all(feature = <span class="string">&quot;metal&quot;</span>, any(target_os = <span class="string">&quot;macos&quot;</span>, target_os = <span class="string">&quot;ios&quot;</span>)))]
         </span>destroy(hal::api::Metal, <span class="kw-2">&amp;</span><span class="self">self</span>.metal, surface.metal);
-        <span class="attr">#[cfg(feature = <span class="string">&quot;dx12&quot;</span>)]
+        <span class="attr">#[cfg(all(feature = <span class="string">&quot;dx12&quot;</span>, windows))]
         </span>destroy(hal::api::Dx12, <span class="kw-2">&amp;</span><span class="self">self</span>.dx12, surface.dx12);
-        <span class="attr">#[cfg(feature = <span class="string">&quot;dx11&quot;</span>)]
+        <span class="attr">#[cfg(all(feature = <span class="string">&quot;dx11&quot;</span>, windows))]
         </span>destroy(hal::api::Dx11, <span class="kw-2">&amp;</span><span class="self">self</span>.dx11, surface.dx11);
         <span class="attr">#[cfg(feature = <span class="string">&quot;gles&quot;</span>)]
         </span>destroy(hal::api::Gles, <span class="kw-2">&amp;</span><span class="self">self</span>.gl, surface.gl);
@@ -1240,13 +1274,13 @@
 
 <span class="kw">pub struct </span>Surface {
     <span class="kw">pub</span>(<span class="kw">crate</span>) presentation: <span class="prelude-ty">Option</span>&lt;Presentation&gt;,
-    <span class="attr">#[cfg(feature = <span class="string">&quot;vulkan&quot;</span>)]
+    <span class="attr">#[cfg(all(feature = <span class="string">&quot;vulkan&quot;</span>, not(target_arch = <span class="string">&quot;wasm32&quot;</span>)))]
     </span><span class="kw">pub </span>vulkan: <span class="prelude-ty">Option</span>&lt;HalSurface&lt;hal::api::Vulkan&gt;&gt;,
-    <span class="attr">#[cfg(feature = <span class="string">&quot;metal&quot;</span>)]
+    <span class="attr">#[cfg(all(feature = <span class="string">&quot;metal&quot;</span>, any(target_os = <span class="string">&quot;macos&quot;</span>, target_os = <span class="string">&quot;ios&quot;</span>)))]
     </span><span class="kw">pub </span>metal: <span class="prelude-ty">Option</span>&lt;HalSurface&lt;hal::api::Metal&gt;&gt;,
-    <span class="attr">#[cfg(feature = <span class="string">&quot;dx12&quot;</span>)]
+    <span class="attr">#[cfg(all(feature = <span class="string">&quot;dx12&quot;</span>, windows))]
     </span><span class="kw">pub </span>dx12: <span class="prelude-ty">Option</span>&lt;HalSurface&lt;hal::api::Dx12&gt;&gt;,
-    <span class="attr">#[cfg(feature = <span class="string">&quot;dx11&quot;</span>)]
+    <span class="attr">#[cfg(all(feature = <span class="string">&quot;dx11&quot;</span>, windows))]
     </span><span class="kw">pub </span>dx11: <span class="prelude-ty">Option</span>&lt;HalSurface&lt;hal::api::Dx11&gt;&gt;,
     <span class="attr">#[cfg(feature = <span class="string">&quot;gles&quot;</span>)]
     </span><span class="kw">pub </span>gl: <span class="prelude-ty">Option</span>&lt;HalSurface&lt;hal::api::Gles&gt;&gt;,
@@ -1347,10 +1381,6 @@
 
         <span class="kw">let </span><span class="kw-2">mut </span>flags = wgt::TextureFormatFeatureFlags::empty();
         flags.set(
-            wgt::TextureFormatFeatureFlags::STORAGE_ATOMICS,
-            caps.contains(Tfc::STORAGE_ATOMIC),
-        );
-        flags.set(
             wgt::TextureFormatFeatureFlags::STORAGE_READ_WRITE,
             caps.contains(Tfc::STORAGE_READ_WRITE),
         );
@@ -1376,6 +1406,10 @@
         flags.set(
             wgt::TextureFormatFeatureFlags::MULTISAMPLE_X8,
             caps.contains(Tfc::MULTISAMPLE_X8),
+        );
+        flags.set(
+            wgt::TextureFormatFeatureFlags::MULTISAMPLE_X16,
+            caps.contains(Tfc::MULTISAMPLE_X16),
         );
 
         flags.set(
@@ -1477,39 +1511,42 @@
 }
 
 <span class="attr">#[derive(Clone, Debug, Error)]
+#[non_exhaustive]
 </span><span class="kw">pub enum </span>IsSurfaceSupportedError {
-    <span class="attr">#[error(<span class="string">&quot;invalid adapter&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Invalid adapter&quot;</span>)]
     </span>InvalidAdapter,
-    <span class="attr">#[error(<span class="string">&quot;invalid surface&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Invalid surface&quot;</span>)]
     </span>InvalidSurface,
 }
 
 <span class="attr">#[derive(Clone, Debug, Error)]
+#[non_exhaustive]
 </span><span class="kw">pub enum </span>GetSurfaceSupportError {
-    <span class="attr">#[error(<span class="string">&quot;invalid adapter&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Invalid adapter&quot;</span>)]
     </span>InvalidAdapter,
-    <span class="attr">#[error(<span class="string">&quot;invalid surface&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Invalid surface&quot;</span>)]
     </span>InvalidSurface,
-    <span class="attr">#[error(<span class="string">&quot;surface is not supported by the adapter&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Surface is not supported by the adapter&quot;</span>)]
     </span>Unsupported,
 }
 
 <span class="attr">#[derive(Clone, Debug, Error)]
 </span><span class="doccomment">/// Error when requesting a device from the adaptor
+</span><span class="attr">#[non_exhaustive]
 </span><span class="kw">pub enum </span>RequestDeviceError {
-    <span class="attr">#[error(<span class="string">&quot;parent adapter is invalid&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Parent adapter is invalid&quot;</span>)]
     </span>InvalidAdapter,
-    <span class="attr">#[error(<span class="string">&quot;connection to device was lost during initialization&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Connection to device was lost during initialization&quot;</span>)]
     </span>DeviceLost,
-    <span class="attr">#[error(<span class="string">&quot;device initialization failed due to implementation specific errors&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Device initialization failed due to implementation specific errors&quot;</span>)]
     </span>Internal,
     <span class="attr">#[error(transparent)]
     </span>LimitsExceeded(<span class="attr">#[from] </span>FailedLimit),
-    <span class="attr">#[error(<span class="string">&quot;device has no queue supporting graphics&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Device has no queue supporting graphics&quot;</span>)]
     </span>NoGraphicsQueue,
-    <span class="attr">#[error(<span class="string">&quot;not enough memory left&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Not enough memory left&quot;</span>)]
     </span>OutOfMemory,
-    <span class="attr">#[error(<span class="string">&quot;unsupported features were requested: {0:?}&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Unsupported features were requested: {0:?}&quot;</span>)]
     </span>UnsupportedFeature(wgt::Features),
 }
 
@@ -1534,14 +1571,15 @@
 }
 
 <span class="attr">#[derive(Clone, Debug, Error)]
-#[error(<span class="string">&quot;adapter is invalid&quot;</span>)]
+#[error(<span class="string">&quot;Adapter is invalid&quot;</span>)]
 </span><span class="kw">pub struct </span>InvalidAdapter;
 
 <span class="attr">#[derive(Clone, Debug, Error)]
+#[non_exhaustive]
 </span><span class="kw">pub enum </span>RequestAdapterError {
-    <span class="attr">#[error(<span class="string">&quot;no suitable adapter found&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;No suitable adapter found&quot;</span>)]
     </span>NotFound,
-    <span class="attr">#[error(<span class="string">&quot;surface {0:?} is invalid&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Surface {0:?} is invalid&quot;</span>)]
     </span>InvalidSurface(SurfaceId),
 }
 
@@ -1576,13 +1614,13 @@
 
         <span class="kw">let </span>surface = Surface {
             presentation: <span class="prelude-val">None</span>,
-            <span class="attr">#[cfg(feature = <span class="string">&quot;vulkan&quot;</span>)]
+            <span class="attr">#[cfg(all(feature = <span class="string">&quot;vulkan&quot;</span>, not(target_arch = <span class="string">&quot;wasm32&quot;</span>)))]
             </span>vulkan: init::&lt;hal::api::Vulkan&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>.instance.vulkan, display_handle, window_handle),
-            <span class="attr">#[cfg(feature = <span class="string">&quot;metal&quot;</span>)]
+            <span class="attr">#[cfg(all(feature = <span class="string">&quot;metal&quot;</span>, any(target_os = <span class="string">&quot;macos&quot;</span>, target_os = <span class="string">&quot;ios&quot;</span>)))]
             </span>metal: init::&lt;hal::api::Metal&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>.instance.metal, display_handle, window_handle),
-            <span class="attr">#[cfg(feature = <span class="string">&quot;dx12&quot;</span>)]
+            <span class="attr">#[cfg(all(feature = <span class="string">&quot;dx12&quot;</span>, windows))]
             </span>dx12: init::&lt;hal::api::Dx12&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>.instance.dx12, display_handle, window_handle),
-            <span class="attr">#[cfg(feature = <span class="string">&quot;dx11&quot;</span>)]
+            <span class="attr">#[cfg(all(feature = <span class="string">&quot;dx11&quot;</span>, windows))]
             </span>dx11: init::&lt;hal::api::Dx11&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>.instance.dx11, display_handle, window_handle),
             <span class="attr">#[cfg(feature = <span class="string">&quot;gles&quot;</span>)]
             </span>gl: init::&lt;hal::api::Gles&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>.instance.gl, display_handle, window_handle),
@@ -1593,8 +1631,11 @@
         id.<span class="number">0
     </span>}
 
-    <span class="attr">#[cfg(feature = <span class="string">&quot;metal&quot;</span>)]
-    </span><span class="kw">pub fn </span>instance_create_surface_metal(
+    <span class="doccomment">/// # Safety
+    ///
+    /// `layer` must be a valid pointer.
+    </span><span class="attr">#[cfg(all(feature = <span class="string">&quot;metal&quot;</span>, any(target_os = <span class="string">&quot;macos&quot;</span>, target_os = <span class="string">&quot;ios&quot;</span>)))]
+    </span><span class="kw">pub unsafe fn </span>instance_create_surface_metal(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         layer: <span class="kw-2">*mut </span>std::ffi::c_void,
         id_in: Input&lt;G, SurfaceId&gt;,
@@ -1611,7 +1652,7 @@
                 },
                 <span class="comment">//acquired_texture: None,
             </span>}),
-            <span class="attr">#[cfg(feature = <span class="string">&quot;vulkan&quot;</span>)]
+            <span class="attr">#[cfg(all(feature = <span class="string">&quot;vulkan&quot;</span>, not(target_arch = <span class="string">&quot;wasm32&quot;</span>)))]
             </span>vulkan: <span class="prelude-val">None</span>,
             <span class="attr">#[cfg(feature = <span class="string">&quot;gles&quot;</span>)]
             </span>gl: <span class="prelude-val">None</span>,
@@ -1625,7 +1666,7 @@
     <span class="attr">#[cfg(all(target_arch = <span class="string">&quot;wasm32&quot;</span>, not(target_os = <span class="string">&quot;emscripten&quot;</span>)))]
     </span><span class="kw">pub fn </span>create_surface_webgl_canvas(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        canvas: <span class="kw-2">&amp;</span>web_sys::HtmlCanvasElement,
+        canvas: web_sys::HtmlCanvasElement,
         id_in: Input&lt;G, SurfaceId&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;SurfaceId, hal::InstanceError&gt; {
         <span class="macro">profiling::scope!</span>(<span class="string">&quot;Instance::create_surface_webgl_canvas&quot;</span>);
@@ -1652,7 +1693,7 @@
     <span class="attr">#[cfg(all(target_arch = <span class="string">&quot;wasm32&quot;</span>, not(target_os = <span class="string">&quot;emscripten&quot;</span>)))]
     </span><span class="kw">pub fn </span>create_surface_webgl_offscreen_canvas(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        canvas: <span class="kw-2">&amp;</span>web_sys::OffscreenCanvas,
+        canvas: web_sys::OffscreenCanvas,
         id_in: Input&lt;G, SurfaceId&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;SurfaceId, hal::InstanceError&gt; {
         <span class="macro">profiling::scope!</span>(<span class="string">&quot;Instance::create_surface_webgl_offscreen_canvas&quot;</span>);
@@ -1676,7 +1717,7 @@
         <span class="prelude-val">Ok</span>(id.<span class="number">0</span>)
     }
 
-    <span class="attr">#[cfg(feature = <span class="string">&quot;dx12&quot;</span>)]
+    <span class="attr">#[cfg(all(feature = <span class="string">&quot;dx12&quot;</span>, windows))]
     </span><span class="doccomment">/// # Safety
     ///
     /// The visual must be valid and able to be used to make a swapchain with.
@@ -1689,7 +1730,7 @@
 
         <span class="kw">let </span>surface = Surface {
             presentation: <span class="prelude-val">None</span>,
-            <span class="attr">#[cfg(feature = <span class="string">&quot;vulkan&quot;</span>)]
+            <span class="attr">#[cfg(all(feature = <span class="string">&quot;vulkan&quot;</span>, not(target_arch = <span class="string">&quot;wasm32&quot;</span>)))]
             </span>vulkan: <span class="prelude-val">None</span>,
             dx12: <span class="self">self</span>.instance.dx12.as_ref().map(|inst| HalSurface {
                 raw: <span class="kw">unsafe </span>{ inst.create_surface_from_visual(visual <span class="kw">as _</span>) },
@@ -1704,7 +1745,7 @@
         id.<span class="number">0
     </span>}
 
-    <span class="attr">#[cfg(feature = <span class="string">&quot;dx12&quot;</span>)]
+    <span class="attr">#[cfg(all(feature = <span class="string">&quot;dx12&quot;</span>, windows))]
     </span><span class="doccomment">/// # Safety
     ///
     /// The surface_handle must be valid and able to be used to make a swapchain with.
@@ -1717,7 +1758,7 @@
 
         <span class="kw">let </span>surface = Surface {
             presentation: <span class="prelude-val">None</span>,
-            <span class="attr">#[cfg(feature = <span class="string">&quot;vulkan&quot;</span>)]
+            <span class="attr">#[cfg(all(feature = <span class="string">&quot;vulkan&quot;</span>, not(target_arch = <span class="string">&quot;wasm32&quot;</span>)))]
             </span>vulkan: <span class="prelude-val">None</span>,
             dx12: <span class="self">self</span>.instance.dx12.as_ref().map(|inst| HalSurface {
                 raw: <span class="kw">unsafe </span>{ inst.create_surface_from_surface_handle(surface_handle) },
@@ -1736,7 +1777,34 @@
         <span class="macro">profiling::scope!</span>(<span class="string">&quot;Surface::drop&quot;</span>);
         <span class="kw">let </span><span class="kw-2">mut </span>token = Token::root();
         <span class="kw">let </span>(surface, <span class="kw">_</span>) = <span class="self">self</span>.surfaces.unregister(id, <span class="kw-2">&amp;mut </span>token);
-        <span class="self">self</span>.instance.destroy_surface(surface.unwrap());
+        <span class="kw">let </span><span class="kw-2">mut </span>surface = surface.unwrap();
+
+        <span class="kw">fn </span>unconfigure&lt;G: GlobalIdentityHandlerFactory, A: HalApi&gt;(
+            global: <span class="kw-2">&amp;</span>Global&lt;G&gt;,
+            surface: <span class="kw-2">&amp;mut </span>HalSurface&lt;A&gt;,
+            present: <span class="kw-2">&amp;</span>Presentation,
+        ) {
+            <span class="kw">let </span>hub = HalApi::hub(global);
+            hub.surface_unconfigure(present.device_id.value, surface);
+        }
+
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(present) = surface.presentation.take() {
+            <span class="kw">match </span>present.backend() {
+                <span class="attr">#[cfg(all(feature = <span class="string">&quot;vulkan&quot;</span>, not(target_arch = <span class="string">&quot;wasm32&quot;</span>)))]
+                </span>Backend::Vulkan =&gt; unconfigure(<span class="self">self</span>, surface.vulkan.as_mut().unwrap(), <span class="kw-2">&amp;</span>present),
+                <span class="attr">#[cfg(all(feature = <span class="string">&quot;metal&quot;</span>, any(target_os = <span class="string">&quot;macos&quot;</span>, target_os = <span class="string">&quot;ios&quot;</span>)))]
+                </span>Backend::Metal =&gt; unconfigure(<span class="self">self</span>, surface.metal.as_mut().unwrap(), <span class="kw-2">&amp;</span>present),
+                <span class="attr">#[cfg(all(feature = <span class="string">&quot;dx12&quot;</span>, windows))]
+                </span>Backend::Dx12 =&gt; unconfigure(<span class="self">self</span>, surface.dx12.as_mut().unwrap(), <span class="kw-2">&amp;</span>present),
+                <span class="attr">#[cfg(all(feature = <span class="string">&quot;dx11&quot;</span>, windows))]
+                </span>Backend::Dx11 =&gt; unconfigure(<span class="self">self</span>, surface.dx11.as_mut().unwrap(), <span class="kw-2">&amp;</span>present),
+                <span class="attr">#[cfg(feature = <span class="string">&quot;gles&quot;</span>)]
+                </span>Backend::Gl =&gt; unconfigure(<span class="self">self</span>, surface.gl.as_mut().unwrap(), <span class="kw-2">&amp;</span>present),
+                <span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(),
+            }
+        }
+
+        <span class="self">self</span>.instance.destroy_surface(surface);
     }
 
     <span class="kw">fn </span>enumerate&lt;A: HalApi&gt;(
@@ -1776,23 +1844,23 @@
 
         <span class="kw">let </span><span class="kw-2">mut </span>adapters = Vec::new();
 
-        <span class="attr">#[cfg(feature = <span class="string">&quot;vulkan&quot;</span>)]
+        <span class="attr">#[cfg(all(feature = <span class="string">&quot;vulkan&quot;</span>, not(target_arch = <span class="string">&quot;wasm32&quot;</span>)))]
         </span><span class="self">self</span>.enumerate(
             hal::api::Vulkan,
             <span class="kw-2">&amp;</span><span class="self">self</span>.instance.vulkan,
             <span class="kw-2">&amp;</span>inputs,
             <span class="kw-2">&amp;mut </span>adapters,
         );
-        <span class="attr">#[cfg(feature = <span class="string">&quot;metal&quot;</span>)]
+        <span class="attr">#[cfg(all(feature = <span class="string">&quot;metal&quot;</span>, any(target_os = <span class="string">&quot;macos&quot;</span>, target_os = <span class="string">&quot;ios&quot;</span>)))]
         </span><span class="self">self</span>.enumerate(
             hal::api::Metal,
             <span class="kw-2">&amp;</span><span class="self">self</span>.instance.metal,
             <span class="kw-2">&amp;</span>inputs,
             <span class="kw-2">&amp;mut </span>adapters,
         );
-        <span class="attr">#[cfg(feature = <span class="string">&quot;dx12&quot;</span>)]
+        <span class="attr">#[cfg(all(feature = <span class="string">&quot;dx12&quot;</span>, windows))]
         </span><span class="self">self</span>.enumerate(hal::api::Dx12, <span class="kw-2">&amp;</span><span class="self">self</span>.instance.dx12, <span class="kw-2">&amp;</span>inputs, <span class="kw-2">&amp;mut </span>adapters);
-        <span class="attr">#[cfg(feature = <span class="string">&quot;dx11&quot;</span>)]
+        <span class="attr">#[cfg(all(feature = <span class="string">&quot;dx11&quot;</span>, windows))]
         </span><span class="self">self</span>.enumerate(hal::api::Dx11, <span class="kw-2">&amp;</span><span class="self">self</span>.instance.dx11, <span class="kw-2">&amp;</span>inputs, <span class="kw-2">&amp;mut </span>adapters);
         <span class="attr">#[cfg(feature = <span class="string">&quot;gles&quot;</span>)]
         </span><span class="self">self</span>.enumerate(hal::api::Gles, <span class="kw-2">&amp;</span><span class="self">self</span>.instance.gl, <span class="kw-2">&amp;</span>inputs, <span class="kw-2">&amp;mut </span>adapters);
@@ -1877,7 +1945,7 @@
             .transpose()<span class="question-mark">?</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>device_types = Vec::new();
 
-        <span class="attr">#[cfg(feature = <span class="string">&quot;vulkan&quot;</span>)]
+        <span class="attr">#[cfg(all(feature = <span class="string">&quot;vulkan&quot;</span>, not(target_arch = <span class="string">&quot;wasm32&quot;</span>)))]
         </span><span class="kw">let </span>(id_vulkan, adapters_vk) = gather(
             hal::api::Vulkan,
             <span class="self">self</span>.instance.vulkan.as_ref(),
@@ -1886,7 +1954,7 @@
             desc.force_fallback_adapter,
             <span class="kw-2">&amp;mut </span>device_types,
         );
-        <span class="attr">#[cfg(feature = <span class="string">&quot;metal&quot;</span>)]
+        <span class="attr">#[cfg(all(feature = <span class="string">&quot;metal&quot;</span>, any(target_os = <span class="string">&quot;macos&quot;</span>, target_os = <span class="string">&quot;ios&quot;</span>)))]
         </span><span class="kw">let </span>(id_metal, adapters_metal) = gather(
             hal::api::Metal,
             <span class="self">self</span>.instance.metal.as_ref(),
@@ -1895,7 +1963,7 @@
             desc.force_fallback_adapter,
             <span class="kw-2">&amp;mut </span>device_types,
         );
-        <span class="attr">#[cfg(feature = <span class="string">&quot;dx12&quot;</span>)]
+        <span class="attr">#[cfg(all(feature = <span class="string">&quot;dx12&quot;</span>, windows))]
         </span><span class="kw">let </span>(id_dx12, adapters_dx12) = gather(
             hal::api::Dx12,
             <span class="self">self</span>.instance.dx12.as_ref(),
@@ -1904,7 +1972,7 @@
             desc.force_fallback_adapter,
             <span class="kw-2">&amp;mut </span>device_types,
         );
-        <span class="attr">#[cfg(feature = <span class="string">&quot;dx11&quot;</span>)]
+        <span class="attr">#[cfg(all(feature = <span class="string">&quot;dx11&quot;</span>, windows))]
         </span><span class="kw">let </span>(id_dx11, adapters_dx11) = gather(
             hal::api::Dx11,
             <span class="self">self</span>.instance.dx11.as_ref(),
@@ -1966,19 +2034,19 @@
         };
 
         <span class="kw">let </span><span class="kw-2">mut </span>selected = preferred_gpu.unwrap_or(<span class="number">0</span>);
-        <span class="attr">#[cfg(feature = <span class="string">&quot;vulkan&quot;</span>)]
+        <span class="attr">#[cfg(all(feature = <span class="string">&quot;vulkan&quot;</span>, not(target_arch = <span class="string">&quot;wasm32&quot;</span>)))]
         </span><span class="kw">if let </span><span class="prelude-val">Some</span>(id) = <span class="self">self</span>.select(<span class="kw-2">&amp;mut </span>selected, id_vulkan, adapters_vk) {
             <span class="kw">return </span><span class="prelude-val">Ok</span>(id);
         }
-        <span class="attr">#[cfg(feature = <span class="string">&quot;metal&quot;</span>)]
+        <span class="attr">#[cfg(all(feature = <span class="string">&quot;metal&quot;</span>, any(target_os = <span class="string">&quot;macos&quot;</span>, target_os = <span class="string">&quot;ios&quot;</span>)))]
         </span><span class="kw">if let </span><span class="prelude-val">Some</span>(id) = <span class="self">self</span>.select(<span class="kw-2">&amp;mut </span>selected, id_metal, adapters_metal) {
             <span class="kw">return </span><span class="prelude-val">Ok</span>(id);
         }
-        <span class="attr">#[cfg(feature = <span class="string">&quot;dx12&quot;</span>)]
+        <span class="attr">#[cfg(all(feature = <span class="string">&quot;dx12&quot;</span>, windows))]
         </span><span class="kw">if let </span><span class="prelude-val">Some</span>(id) = <span class="self">self</span>.select(<span class="kw-2">&amp;mut </span>selected, id_dx12, adapters_dx12) {
             <span class="kw">return </span><span class="prelude-val">Ok</span>(id);
         }
-        <span class="attr">#[cfg(feature = <span class="string">&quot;dx11&quot;</span>)]
+        <span class="attr">#[cfg(all(feature = <span class="string">&quot;dx11&quot;</span>, windows))]
         </span><span class="kw">if let </span><span class="prelude-val">Some</span>(id) = <span class="self">self</span>.select(<span class="kw-2">&amp;mut </span>selected, id_dx11, adapters_dx11) {
             <span class="kw">return </span><span class="prelude-val">Ok</span>(id);
         }
@@ -2006,13 +2074,13 @@
         <span class="kw">let </span>fid = A::hub(<span class="self">self</span>).adapters.prepare(input);
 
         <span class="kw">match </span>A::VARIANT {
-            <span class="attr">#[cfg(feature = <span class="string">&quot;vulkan&quot;</span>)]
+            <span class="attr">#[cfg(all(feature = <span class="string">&quot;vulkan&quot;</span>, not(target_arch = <span class="string">&quot;wasm32&quot;</span>)))]
             </span>Backend::Vulkan =&gt; fid.assign(Adapter::new(hal_adapter), <span class="kw-2">&amp;mut </span>token).<span class="number">0</span>,
-            <span class="attr">#[cfg(feature = <span class="string">&quot;metal&quot;</span>)]
+            <span class="attr">#[cfg(all(feature = <span class="string">&quot;metal&quot;</span>, any(target_os = <span class="string">&quot;macos&quot;</span>, target_os = <span class="string">&quot;ios&quot;</span>)))]
             </span>Backend::Metal =&gt; fid.assign(Adapter::new(hal_adapter), <span class="kw-2">&amp;mut </span>token).<span class="number">0</span>,
-            <span class="attr">#[cfg(feature = <span class="string">&quot;dx12&quot;</span>)]
+            <span class="attr">#[cfg(all(feature = <span class="string">&quot;dx12&quot;</span>, windows))]
             </span>Backend::Dx12 =&gt; fid.assign(Adapter::new(hal_adapter), <span class="kw-2">&amp;mut </span>token).<span class="number">0</span>,
-            <span class="attr">#[cfg(feature = <span class="string">&quot;dx11&quot;</span>)]
+            <span class="attr">#[cfg(all(feature = <span class="string">&quot;dx11&quot;</span>, windows))]
             </span>Backend::Dx11 =&gt; fid.assign(Adapter::new(hal_adapter), <span class="kw-2">&amp;mut </span>token).<span class="number">0</span>,
             <span class="attr">#[cfg(feature = <span class="string">&quot;gles&quot;</span>)]
             </span>Backend::Gl =&gt; fid.assign(Adapter::new(hal_adapter), <span class="kw-2">&amp;mut </span>token).<span class="number">0</span>,

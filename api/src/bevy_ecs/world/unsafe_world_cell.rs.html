@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_ecs-0.10.1/src/world/unsafe_world_cell.rs`."><title>unsafe_world_cell.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_ecs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../bevy_ecs/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_ecs-0.11.0/src/world/unsafe_world_cell.rs`."><title>unsafe_world_cell.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_ecs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../bevy_ecs/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -862,23 +862,151 @@
 <a href="#862" id="862">862</a>
 <a href="#863" id="863">863</a>
 <a href="#864" id="864">864</a>
-</pre></div><pre class="rust"><code><span class="attr">#![warn(unsafe_op_in_unsafe_fn)]
+<a href="#865" id="865">865</a>
+<a href="#866" id="866">866</a>
+<a href="#867" id="867">867</a>
+<a href="#868" id="868">868</a>
+<a href="#869" id="869">869</a>
+<a href="#870" id="870">870</a>
+<a href="#871" id="871">871</a>
+<a href="#872" id="872">872</a>
+<a href="#873" id="873">873</a>
+<a href="#874" id="874">874</a>
+<a href="#875" id="875">875</a>
+<a href="#876" id="876">876</a>
+<a href="#877" id="877">877</a>
+<a href="#878" id="878">878</a>
+<a href="#879" id="879">879</a>
+<a href="#880" id="880">880</a>
+<a href="#881" id="881">881</a>
+<a href="#882" id="882">882</a>
+<a href="#883" id="883">883</a>
+<a href="#884" id="884">884</a>
+<a href="#885" id="885">885</a>
+<a href="#886" id="886">886</a>
+<a href="#887" id="887">887</a>
+<a href="#888" id="888">888</a>
+<a href="#889" id="889">889</a>
+<a href="#890" id="890">890</a>
+<a href="#891" id="891">891</a>
+<a href="#892" id="892">892</a>
+<a href="#893" id="893">893</a>
+<a href="#894" id="894">894</a>
+<a href="#895" id="895">895</a>
+<a href="#896" id="896">896</a>
+<a href="#897" id="897">897</a>
+<a href="#898" id="898">898</a>
+<a href="#899" id="899">899</a>
+<a href="#900" id="900">900</a>
+<a href="#901" id="901">901</a>
+<a href="#902" id="902">902</a>
+<a href="#903" id="903">903</a>
+<a href="#904" id="904">904</a>
+<a href="#905" id="905">905</a>
+<a href="#906" id="906">906</a>
+<a href="#907" id="907">907</a>
+<a href="#908" id="908">908</a>
+<a href="#909" id="909">909</a>
+<a href="#910" id="910">910</a>
+<a href="#911" id="911">911</a>
+<a href="#912" id="912">912</a>
+<a href="#913" id="913">913</a>
+<a href="#914" id="914">914</a>
+<a href="#915" id="915">915</a>
+<a href="#916" id="916">916</a>
+<a href="#917" id="917">917</a>
+<a href="#918" id="918">918</a>
+<a href="#919" id="919">919</a>
+<a href="#920" id="920">920</a>
+<a href="#921" id="921">921</a>
+<a href="#922" id="922">922</a>
+<a href="#923" id="923">923</a>
+<a href="#924" id="924">924</a>
+<a href="#925" id="925">925</a>
+<a href="#926" id="926">926</a>
+<a href="#927" id="927">927</a>
+<a href="#928" id="928">928</a>
+<a href="#929" id="929">929</a>
+<a href="#930" id="930">930</a>
+<a href="#931" id="931">931</a>
+<a href="#932" id="932">932</a>
+<a href="#933" id="933">933</a>
+<a href="#934" id="934">934</a>
+<a href="#935" id="935">935</a>
+<a href="#936" id="936">936</a>
+<a href="#937" id="937">937</a>
+<a href="#938" id="938">938</a>
+<a href="#939" id="939">939</a>
+<a href="#940" id="940">940</a>
+<a href="#941" id="941">941</a>
+<a href="#942" id="942">942</a>
+<a href="#943" id="943">943</a>
+<a href="#944" id="944">944</a>
+<a href="#945" id="945">945</a>
+<a href="#946" id="946">946</a>
+<a href="#947" id="947">947</a>
+<a href="#948" id="948">948</a>
+<a href="#949" id="949">949</a>
+<a href="#950" id="950">950</a>
+<a href="#951" id="951">951</a>
+<a href="#952" id="952">952</a>
+<a href="#953" id="953">953</a>
+<a href="#954" id="954">954</a>
+<a href="#955" id="955">955</a>
+<a href="#956" id="956">956</a>
+<a href="#957" id="957">957</a>
+<a href="#958" id="958">958</a>
+<a href="#959" id="959">959</a>
+<a href="#960" id="960">960</a>
+<a href="#961" id="961">961</a>
+<a href="#962" id="962">962</a>
+<a href="#963" id="963">963</a>
+<a href="#964" id="964">964</a>
+<a href="#965" id="965">965</a>
+<a href="#966" id="966">966</a>
+<a href="#967" id="967">967</a>
+<a href="#968" id="968">968</a>
+<a href="#969" id="969">969</a>
+<a href="#970" id="970">970</a>
+<a href="#971" id="971">971</a>
+<a href="#972" id="972">972</a>
+<a href="#973" id="973">973</a>
+<a href="#974" id="974">974</a>
+<a href="#975" id="975">975</a>
+<a href="#976" id="976">976</a>
+<a href="#977" id="977">977</a>
+<a href="#978" id="978">978</a>
+<a href="#979" id="979">979</a>
+<a href="#980" id="980">980</a>
+<a href="#981" id="981">981</a>
+<a href="#982" id="982">982</a>
+<a href="#983" id="983">983</a>
+<a href="#984" id="984">984</a>
+<a href="#985" id="985">985</a>
+<a href="#986" id="986">986</a>
+<a href="#987" id="987">987</a>
+<a href="#988" id="988">988</a>
+<a href="#989" id="989">989</a>
+<a href="#990" id="990">990</a>
+</pre></div><pre class="rust"><code><span class="doccomment">//! Contains types that allow disjoint mutable access to a [`World`].
 
-</span><span class="kw">use super</span>::{Mut, World};
+</span><span class="attr">#![warn(unsafe_op_in_unsafe_fn)]
+
+</span><span class="kw">use super</span>::{Mut, Ref, World, WorldId};
 <span class="kw">use crate</span>::{
     archetype::{Archetype, ArchetypeComponentId, Archetypes},
     bundle::Bundles,
-    change_detection::{MutUntyped, TicksMut},
+    change_detection::{MutUntyped, Ticks, TicksMut},
     component::{
-        ComponentId, ComponentStorage, ComponentTicks, Components, StorageType, TickCells,
+        ComponentId, ComponentStorage, ComponentTicks, Components, StorageType, Tick, TickCells,
     },
     entity::{Entities, Entity, EntityLocation},
     prelude::Component,
-    storage::{Column, ComponentSparseSet},
+    storage::{Column, ComponentSparseSet, Storages},
     system::Resource,
 };
 <span class="kw">use </span>bevy_ptr::Ptr;
-<span class="kw">use </span>std::{any::TypeId, cell::UnsafeCell, marker::PhantomData, sync::atomic::Ordering};
+<span class="kw">use </span>std::{any::TypeId, cell::UnsafeCell, marker::PhantomData};
 
 <span class="doccomment">/// Variant of the [`World`] where resource and component accesses take `&amp;self`, and the responsibility to avoid
 /// aliasing violations are given to the caller instead of being checked at compile-time by rust&#39;s unique XOR shared rule.
@@ -898,7 +1026,6 @@
 /// APIs like [`System::component_access`](crate::system::System::component_access).
 ///
 /// A system then can be executed using [`System::run_unsafe`](crate::system::System::run_unsafe) with a `&amp;World` and use methods with interior mutability to access resource values.
-/// access resource values.
 ///
 /// ### Example Usage
 ///
@@ -945,24 +1072,61 @@
 
 <span class="kw">impl</span>&lt;<span class="lifetime">&#39;w</span>&gt; UnsafeWorldCell&lt;<span class="lifetime">&#39;w</span>&gt; {
     <span class="doccomment">/// Creates a [`UnsafeWorldCell`] that can be used to access everything immutably
+    </span><span class="attr">#[inline]
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>new_readonly(world: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>World) -&gt; <span class="self">Self </span>{
         UnsafeWorldCell(world <span class="kw">as </span><span class="kw-2">*const </span>World <span class="kw">as </span><span class="kw-2">*mut </span>World, PhantomData)
     }
 
     <span class="doccomment">/// Creates [`UnsafeWorldCell`] that can be used to access everything mutably
+    </span><span class="attr">#[inline]
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>new_mutable(world: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span><span class="kw-2">mut </span>World) -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>(world <span class="kw">as </span><span class="kw-2">*mut </span>World, PhantomData)
     }
 
-    <span class="doccomment">/// This `&amp;mut World` counts as a mutable borrow of every resource and component for the purposes
-    /// of safety invariants that talk about borrows on component/resource data not existing. This is
-    /// true even for methods that do not explicitly call out `&amp;mut World` as problematic.
+    <span class="doccomment">/// Gets a mutable reference to the [`World`] this [`UnsafeWorldCell`] belongs to.
+    /// This is an incredibly error-prone operation and is only valid in a small number of circumstances.
     ///
     /// # Safety
-    /// - must have permission to access everything mutably
-    /// - there must be no other borrows on world
-    /// - returned borrow must not be used in any way if the world is accessed
-    ///   through other means than the `&amp;mut World` after this call.
+    /// - `self` must have been obtained from a call to [`World::as_unsafe_world_cell`]
+    ///   (*not* `as_unsafe_world_cell_readonly` or any other method of construction that
+    ///   does not provide mutable access to the entire world).
+    ///   - This means that if you have an `UnsafeWorldCell` that you didn&#39;t create yourself,
+    ///     it is likely *unsound* to call this method.
+    /// - The returned `&amp;mut World` *must* be unique: it must never be allowed to exist
+    ///   at the same time as any other borrows of the world or any accesses to its data.
+    ///   This includes safe ways of accessing world data, such as [`UnsafeWorldCell::archetypes`].
+    ///   - Note that the `&amp;mut World` *may* exist at the same time as instances of `UnsafeWorldCell`,
+    ///     so long as none of those instances are used to access world data in any way
+    ///     while the mutable borrow is active.
+    ///
+    /// [//]: # (This test fails miri.)
+    /// ```no_run
+    /// # use bevy_ecs::prelude::*;
+    /// # #[derive(Component)] struct Player;
+    /// # fn store_but_dont_use&lt;T&gt;(_: T) {}
+    /// # let mut world = World::new();
+    /// // Make an UnsafeWorldCell.
+    /// let world_cell = world.as_unsafe_world_cell();
+    ///
+    /// // SAFETY: `world_cell` was originally created from `&amp;mut World`.
+    /// // We must be sure not to access any world data while `world_mut` is active.
+    /// let world_mut = unsafe { world_cell.world_mut() };
+    ///
+    /// // We can still use `world_cell` so long as we don&#39;t access the world with it.
+    /// store_but_dont_use(world_cell);
+    ///
+    /// // !!This is unsound!! Even though this method is safe, we cannot call it until
+    /// // `world_mut` is no longer active.
+    /// let tick = world_cell.change_tick();
+    ///
+    /// // Use mutable access to spawn an entity.
+    /// world_mut.spawn(Player);
+    ///
+    /// // Since we never use `world_mut` after this, the borrow is released
+    /// // and we are once again allowed to access the world using `world_cell`.
+    /// let archetypes = world_cell.archetypes();
+    /// ```
+    </span><span class="attr">#[inline]
     </span><span class="kw">pub unsafe fn </span>world_mut(<span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span><span class="kw-2">mut </span>World {
         <span class="comment">// SAFETY:
         // - caller ensures the created `&amp;mut World` is the only borrow of world
@@ -976,6 +1140,7 @@
     /// - must have permission to access the whole world immutably
     /// - there must be no live exclusive borrows on world data
     /// - there must be no live exclusive borrow of world
+    </span><span class="attr">#[inline]
     </span><span class="kw">pub unsafe fn </span>world(<span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>World {
         <span class="comment">// SAFETY:
         // - caller ensures there is no `&amp;mut World` this makes it okay to make a `&amp;World`
@@ -992,6 +1157,7 @@
     ///
     /// # Safety
     /// - must only be used to access world metadata
+    </span><span class="attr">#[inline]
     </span><span class="kw">pub unsafe fn </span>world_metadata(<span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>World {
         <span class="comment">// SAFETY: caller ensures that returned reference is not used to violate aliasing rules
         </span><span class="kw">unsafe </span>{ <span class="self">self</span>.unsafe_world() }
@@ -1008,11 +1174,20 @@
     /// # Safety
     /// - must not be used in a way that would conflict with any
     ///   live exclusive borrows on world data
-    </span><span class="kw">unsafe fn </span>unsafe_world(<span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>World {
+    </span><span class="attr">#[inline]
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>unsafe_world(<span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>World {
         <span class="comment">// SAFETY:
         // - caller ensures that the returned `&amp;World` is not used in a way that would conflict
         //   with any existing mutable borrows of world data
         </span><span class="kw">unsafe </span>{ <span class="kw-2">&amp;*</span><span class="self">self</span>.<span class="number">0 </span>}
+    }
+
+    <span class="doccomment">/// Retrieves this world&#39;s unique [ID](WorldId).
+    </span><span class="attr">#[inline]
+    </span><span class="kw">pub fn </span>id(<span class="self">self</span>) -&gt; WorldId {
+        <span class="comment">// SAFETY:
+        // - we only access world metadata
+        </span><span class="kw">unsafe </span>{ <span class="self">self</span>.world_metadata() }.id()
     }
 
     <span class="doccomment">/// Retrieves this world&#39;s [Entities] collection
@@ -1049,28 +1224,55 @@
 
     <span class="doccomment">/// Reads the current change tick of this world.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>read_change_tick(<span class="self">self</span>) -&gt; u32 {
-        <span class="comment">// SAFETY:
-        // - we only access world metadata
-        </span><span class="kw">unsafe </span>{ <span class="self">self</span>.world_metadata() }
-            .change_tick
-            .load(Ordering::Acquire)
+    #[deprecated = <span class="string">&quot;this method has been renamed to `UnsafeWorldCell::change_tick`&quot;</span>]
+    </span><span class="kw">pub fn </span>read_change_tick(<span class="self">self</span>) -&gt; Tick {
+        <span class="self">self</span>.change_tick()
     }
 
-    <span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>last_change_tick(<span class="self">self</span>) -&gt; u32 {
+    <span class="doccomment">/// Gets the current change tick of this world.
+    </span><span class="attr">#[inline]
+    </span><span class="kw">pub fn </span>change_tick(<span class="self">self</span>) -&gt; Tick {
         <span class="comment">// SAFETY:
         // - we only access world metadata
-        </span><span class="kw">unsafe </span>{ <span class="self">self</span>.world_metadata() }.last_change_tick
+        </span><span class="kw">unsafe </span>{ <span class="self">self</span>.world_metadata() }.read_change_tick()
     }
 
-    <span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>increment_change_tick(<span class="self">self</span>) -&gt; u32 {
+    <span class="doccomment">/// Returns the [`Tick`] indicating the last time that [`World::clear_trackers`] was called.
+    ///
+    /// If this `UnsafeWorldCell` was created from inside of an exclusive system (a [`System`] that
+    /// takes `&amp;mut World` as its first parameter), this will instead return the `Tick` indicating
+    /// the last time the system was run.
+    ///
+    /// See [`World::last_change_tick()`].
+    ///
+    /// [`System`]: crate::system::System
+    </span><span class="attr">#[inline]
+    </span><span class="kw">pub fn </span>last_change_tick(<span class="self">self</span>) -&gt; Tick {
         <span class="comment">// SAFETY:
         // - we only access world metadata
-        </span><span class="kw">unsafe </span>{ <span class="self">self</span>.world_metadata() }
-            .change_tick
-            .fetch_add(<span class="number">1</span>, Ordering::AcqRel)
+        </span><span class="kw">unsafe </span>{ <span class="self">self</span>.world_metadata() }.last_change_tick()
+    }
+
+    <span class="doccomment">/// Increments the world&#39;s current change tick and returns the old value.
+    </span><span class="attr">#[inline]
+    </span><span class="kw">pub fn </span>increment_change_tick(<span class="self">self</span>) -&gt; Tick {
+        <span class="comment">// SAFETY:
+        // - we only access world metadata
+        </span><span class="kw">unsafe </span>{ <span class="self">self</span>.world_metadata() }.increment_change_tick()
+    }
+
+    <span class="doccomment">/// Provides unchecked access to the internal data stores of the [`World`].
+    ///
+    /// # Safety
+    ///
+    /// The caller must ensure that this is only used to access world data
+    /// that this [`UnsafeWorldCell`] is allowed to.
+    /// As always, any mutable access to a component must not exist at the same
+    /// time as any other accesses to that same component.
+    </span><span class="attr">#[inline]
+    </span><span class="kw">pub unsafe fn </span>storages(<span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>Storages {
+        <span class="comment">// SAFETY: The caller promises to only access world data allowed by this instance.
+        </span><span class="kw-2">&amp;</span><span class="kw">unsafe </span>{ <span class="self">self</span>.unsafe_world() }.storages
     }
 
     <span class="doccomment">/// Shorthand helper function for getting the [`ArchetypeComponentId`] for a resource.
@@ -1105,6 +1307,7 @@
 
     <span class="doccomment">/// Retrieves an [`UnsafeEntityCell`] that exposes read and write operations for the given `entity`.
     /// Similar to the [`UnsafeWorldCell`], you are in charge of making sure that no aliasing rules are violated.
+    </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>get_entity(<span class="self">self</span>, entity: Entity) -&gt; <span class="prelude-ty">Option</span>&lt;UnsafeEntityCell&lt;<span class="lifetime">&#39;w</span>&gt;&gt; {
         <span class="kw">let </span>location = <span class="self">self</span>.entities().get(entity)<span class="question-mark">?</span>;
         <span class="prelude-val">Some</span>(UnsafeEntityCell::new(<span class="self">self</span>, entity, location))
@@ -1143,8 +1346,7 @@
     </span><span class="kw">pub unsafe fn </span>get_resource_by_id(<span class="self">self</span>, component_id: ComponentId) -&gt; <span class="prelude-ty">Option</span>&lt;Ptr&lt;<span class="lifetime">&#39;w</span>&gt;&gt; {
         <span class="comment">// SAFETY: caller ensures that `self` has permission to access `R`
         //  caller ensures that no mutable reference exists to `R`
-        </span><span class="kw">unsafe </span>{ <span class="self">self</span>.unsafe_world() }
-            .storages
+        </span><span class="kw">unsafe </span>{ <span class="self">self</span>.storages() }
             .resources
             .get(component_id)<span class="question-mark">?
             </span>.get_data()
@@ -1186,8 +1388,7 @@
     </span><span class="kw">pub unsafe fn </span>get_non_send_resource_by_id(<span class="self">self</span>, component_id: ComponentId) -&gt; <span class="prelude-ty">Option</span>&lt;Ptr&lt;<span class="lifetime">&#39;w</span>&gt;&gt; {
         <span class="comment">// SAFETY: we only access data on world that the caller has ensured is unaliased and we have
         //  permission to access.
-        </span><span class="kw">unsafe </span>{ <span class="self">self</span>.unsafe_world() }
-            .storages
+        </span><span class="kw">unsafe </span>{ <span class="self">self</span>.storages() }
             .non_send_resources
             .get(component_id)<span class="question-mark">?
             </span>.get_data()
@@ -1230,8 +1431,7 @@
     ) -&gt; <span class="prelude-ty">Option</span>&lt;MutUntyped&lt;<span class="lifetime">&#39;w</span>&gt;&gt; {
         <span class="comment">// SAFETY: we only access data that the caller has ensured is unaliased and `self`
         //  has permission to access.
-        </span><span class="kw">let </span>(ptr, ticks) = <span class="kw">unsafe </span>{ <span class="self">self</span>.unsafe_world() }
-            .storages
+        </span><span class="kw">let </span>(ptr, ticks) = <span class="kw">unsafe </span>{ <span class="self">self</span>.storages() }
             .resources
             .get(component_id)<span class="question-mark">?
             </span>.get_with_ticks()<span class="question-mark">?</span>;
@@ -1240,11 +1440,13 @@
         // - index is in-bounds because the column is initialized and non-empty
         // - the caller promises that no other reference to the ticks of the same row can exist at the same time
         </span><span class="kw">let </span>ticks = <span class="kw">unsafe </span>{
-            TicksMut::from_tick_cells(ticks, <span class="self">self</span>.last_change_tick(), <span class="self">self</span>.read_change_tick())
+            TicksMut::from_tick_cells(ticks, <span class="self">self</span>.last_change_tick(), <span class="self">self</span>.change_tick())
         };
 
         <span class="prelude-val">Some</span>(MutUntyped {
-            <span class="comment">// SAFETY: This function has exclusive access to the world so nothing aliases `ptr`.
+            <span class="comment">// SAFETY:
+            // - caller ensures that `self` has permission to access the resource
+            // - caller ensures that the resource is unaliased
             </span>value: <span class="kw">unsafe </span>{ ptr.assert_unique() },
             ticks,
         })
@@ -1288,11 +1490,10 @@
         <span class="self">self</span>,
         component_id: ComponentId,
     ) -&gt; <span class="prelude-ty">Option</span>&lt;MutUntyped&lt;<span class="lifetime">&#39;w</span>&gt;&gt; {
-        <span class="kw">let </span>change_tick = <span class="self">self</span>.read_change_tick();
+        <span class="kw">let </span>change_tick = <span class="self">self</span>.change_tick();
         <span class="comment">// SAFETY: we only access data that the caller has ensured is unaliased and `self`
         //  has permission to access.
-        </span><span class="kw">let </span>(ptr, ticks) = <span class="kw">unsafe </span>{ <span class="self">self</span>.unsafe_world() }
-            .storages
+        </span><span class="kw">let </span>(ptr, ticks) = <span class="kw">unsafe </span>{ <span class="self">self</span>.storages() }
             .non_send_resources
             .get(component_id)<span class="question-mark">?
             </span>.get_with_ticks()<span class="question-mark">?</span>;
@@ -1325,8 +1526,7 @@
         // - caller ensures there is no `&amp;mut World`
         // - caller ensures there are no mutable borrows of this resource
         // - caller ensures that we have permission to access this resource
-        </span><span class="kw">unsafe </span>{ <span class="self">self</span>.unsafe_world() }
-            .storages
+        </span><span class="kw">unsafe </span>{ <span class="self">self</span>.storages() }
             .resources
             .get(component_id)<span class="question-mark">?
             </span>.get_with_ticks()
@@ -1350,8 +1550,7 @@
         // - caller ensures there is no `&amp;mut World`
         // - caller ensures there are no mutable borrows of this resource
         // - caller ensures that we have permission to access this resource
-        </span><span class="kw">unsafe </span>{ <span class="self">self</span>.unsafe_world() }
-            .storages
+        </span><span class="kw">unsafe </span>{ <span class="self">self</span>.storages() }
             .non_send_resources
             .get(component_id)<span class="question-mark">?
             </span>.get_with_ticks()
@@ -1367,7 +1566,8 @@
 }
 
 <span class="kw">impl</span>&lt;<span class="lifetime">&#39;w</span>&gt; UnsafeEntityCell&lt;<span class="lifetime">&#39;w</span>&gt; {
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>new(
+    <span class="attr">#[inline]
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>new(
         world: UnsafeWorldCell&lt;<span class="lifetime">&#39;w</span>&gt;,
         entity: Entity,
         location: EntityLocation,
@@ -1379,38 +1579,64 @@
         }
     }
 
-    <span class="attr">#[inline]
+    <span class="doccomment">/// Returns the [ID](Entity) of the current entity.
+    </span><span class="attr">#[inline]
     #[must_use = <span class="string">&quot;Omit the .id() call if you do not need to store the `Entity` identifier.&quot;</span>]
     </span><span class="kw">pub fn </span>id(<span class="self">self</span>) -&gt; Entity {
         <span class="self">self</span>.entity
     }
 
-    <span class="attr">#[inline]
+    <span class="doccomment">/// Gets metadata indicating the location where the current entity is stored.
+    </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>location(<span class="self">self</span>) -&gt; EntityLocation {
         <span class="self">self</span>.location
     }
 
-    <span class="attr">#[inline]
+    <span class="doccomment">/// Returns the archetype that the current entity belongs to.
+    </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>archetype(<span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>Archetype {
         <span class="kw-2">&amp;</span><span class="self">self</span>.world.archetypes()[<span class="self">self</span>.location.archetype_id]
     }
 
-    <span class="attr">#[inline]
+    <span class="doccomment">/// Gets the world that the current entity belongs to.
+    </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>world(<span class="self">self</span>) -&gt; UnsafeWorldCell&lt;<span class="lifetime">&#39;w</span>&gt; {
         <span class="self">self</span>.world
     }
 
-    <span class="attr">#[inline]
+    <span class="doccomment">/// Returns `true` if the current entity has a component of type `T`.
+    /// Otherwise, this returns `false`.
+    ///
+    /// ## Notes
+    ///
+    /// If you do not know the concrete type of a component, consider using
+    /// [`Self::contains_id`] or [`Self::contains_type_id`].
+    </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>contains&lt;T: Component&gt;(<span class="self">self</span>) -&gt; bool {
         <span class="self">self</span>.contains_type_id(TypeId::of::&lt;T&gt;())
     }
 
-    <span class="attr">#[inline]
+    <span class="doccomment">/// Returns `true` if the current entity has a component identified by `component_id`.
+    /// Otherwise, this returns false.
+    ///
+    /// ## Notes
+    ///
+    /// - If you know the concrete type of the component, you should prefer [`Self::contains`].
+    /// - If you know the component&#39;s [`TypeId`] but not its [`ComponentId`], consider using
+    /// [`Self::contains_type_id`].
+    </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>contains_id(<span class="self">self</span>, component_id: ComponentId) -&gt; bool {
         <span class="self">self</span>.archetype().contains(component_id)
     }
 
-    <span class="attr">#[inline]
+    <span class="doccomment">/// Returns `true` if the current entity has a component with the type identified by `type_id`.
+    /// Otherwise, this returns false.
+    ///
+    /// ## Notes
+    ///
+    /// - If you know the concrete type of the component, you should prefer [`Self::contains`].
+    /// - If you have a [`ComponentId`] instead of a [`TypeId`], consider using [`Self::contains_id`].
+    </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>contains_type_id(<span class="self">self</span>, type_id: TypeId) -&gt; bool {
         <span class="kw">let </span>id = <span class="kw">match </span><span class="self">self</span>.world.components().get_id(type_id) {
             <span class="prelude-val">Some</span>(id) =&gt; id,
@@ -1426,10 +1652,10 @@
     </span><span class="attr">#[inline]
     </span><span class="kw">pub unsafe fn </span>get&lt;T: Component&gt;(<span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>T&gt; {
         <span class="kw">let </span>component_id = <span class="self">self</span>.world.components().get_id(TypeId::of::&lt;T&gt;())<span class="question-mark">?</span>;
-
         <span class="comment">// SAFETY:
-        // - entity location is valid
-        // - proper world access is promised by caller
+        // - `storage_type` is correct (T component_id + T::STORAGE_TYPE)
+        // - `location` is valid
+        // - proper aliasing is promised by caller
         </span><span class="kw">unsafe </span>{
             get_component(
                 <span class="self">self</span>.world,
@@ -1440,6 +1666,36 @@
             )
             <span class="comment">// SAFETY: returned component is of type T
             </span>.map(|value| value.deref::&lt;T&gt;())
+        }
+    }
+
+    <span class="doccomment">/// # Safety
+    /// It is the callers responsibility to ensure that
+    /// - the [`UnsafeEntityCell`] has permission to access the component
+    /// - no other mutable references to the component exist at the same time
+    </span><span class="attr">#[inline]
+    </span><span class="kw">pub unsafe fn </span>get_ref&lt;T: Component&gt;(<span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Ref&lt;<span class="lifetime">&#39;w</span>, T&gt;&gt; {
+        <span class="kw">let </span>last_change_tick = <span class="self">self</span>.world.last_change_tick();
+        <span class="kw">let </span>change_tick = <span class="self">self</span>.world.change_tick();
+        <span class="kw">let </span>component_id = <span class="self">self</span>.world.components().get_id(TypeId::of::&lt;T&gt;())<span class="question-mark">?</span>;
+
+        <span class="comment">// SAFETY:
+        // - `storage_type` is correct (T component_id + T::STORAGE_TYPE)
+        // - `location` is valid
+        // - proper aliasing is promised by caller
+        </span><span class="kw">unsafe </span>{
+            get_component_and_ticks(
+                <span class="self">self</span>.world,
+                component_id,
+                T::Storage::STORAGE_TYPE,
+                <span class="self">self</span>.entity,
+                <span class="self">self</span>.location,
+            )
+            .map(|(value, cells)| Ref {
+                <span class="comment">// SAFETY: returned component is of type T
+                </span>value: value.deref::&lt;T&gt;(),
+                ticks: Ticks::from_tick_cells(cells, last_change_tick, change_tick),
+            })
         }
     }
 
@@ -1507,9 +1763,7 @@
     </span><span class="attr">#[inline]
     </span><span class="kw">pub unsafe fn </span>get_mut&lt;T: Component&gt;(<span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Mut&lt;<span class="lifetime">&#39;w</span>, T&gt;&gt; {
         <span class="comment">// SAFETY: same safety requirements
-        </span><span class="kw">unsafe </span>{
-            <span class="self">self</span>.get_mut_using_ticks(<span class="self">self</span>.world.last_change_tick(), <span class="self">self</span>.world.read_change_tick())
-        }
+        </span><span class="kw">unsafe </span>{ <span class="self">self</span>.get_mut_using_ticks(<span class="self">self</span>.world.last_change_tick(), <span class="self">self</span>.world.change_tick()) }
     }
 
     <span class="doccomment">/// # Safety
@@ -1519,8 +1773,8 @@
     </span><span class="attr">#[inline]
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>get_mut_using_ticks&lt;T: Component&gt;(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        last_change_tick: u32,
-        change_tick: u32,
+        last_change_tick: Tick,
+        change_tick: Tick,
     ) -&gt; <span class="prelude-ty">Option</span>&lt;Mut&lt;<span class="lifetime">&#39;w</span>, T&gt;&gt; {
         <span class="kw">let </span>component_id = <span class="self">self</span>.world.components().get_id(TypeId::of::&lt;T&gt;())<span class="question-mark">?</span>;
 
@@ -1537,7 +1791,8 @@
                 <span class="self">self</span>.location,
             )
             .map(|(value, cells)| Mut {
-                value: value.assert_unique().deref_mut::&lt;T&gt;(),
+                <span class="comment">// SAFETY: returned component is of type T
+                </span>value: value.assert_unique().deref_mut::&lt;T&gt;(),
                 ticks: TicksMut::from_tick_cells(cells, last_change_tick, change_tick),
             })
         }
@@ -1601,7 +1856,7 @@
                 ticks: TicksMut::from_tick_cells(
                     cells,
                     <span class="self">self</span>.world.last_change_tick(),
-                    <span class="self">self</span>.world.read_change_tick(),
+                    <span class="self">self</span>.world.change_tick(),
                 ),
             })
         }
@@ -1621,7 +1876,7 @@
     ) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>Column&gt; {
         <span class="comment">// SAFETY: caller ensures returned data is not misused and we have not created any borrows
         // of component/resource data
-        </span><span class="kw">unsafe </span>{ <span class="self">self</span>.unsafe_world() }.storages.tables[location.table_id].get_column(component_id)
+        </span><span class="kw">unsafe </span>{ <span class="self">self</span>.storages() }.tables[location.table_id].get_column(component_id)
     }
 
     <span class="attr">#[inline]
@@ -1632,10 +1887,7 @@
     </span><span class="kw">unsafe fn </span>fetch_sparse_set(<span class="self">self</span>, component_id: ComponentId) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>ComponentSparseSet&gt; {
         <span class="comment">// SAFETY: caller ensures returned data is not misused and we have not created any borrows
         // of component/resource data
-        </span><span class="kw">unsafe </span>{ <span class="self">self</span>.unsafe_world() }
-            .storages
-            .sparse_sets
-            .get(component_id)
+        </span><span class="kw">unsafe </span>{ <span class="self">self</span>.storages() }.sparse_sets.get(component_id)
     }
 }
 

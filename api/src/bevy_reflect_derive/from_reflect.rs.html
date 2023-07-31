@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_reflect_derive-0.10.1/src/from_reflect.rs`."><title>from_reflect.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bevy_reflect_derive" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../bevy_reflect_derive/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_reflect_derive-0.11.0/src/from_reflect.rs`."><title>from_reflect.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bevy_reflect_derive" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../bevy_reflect_derive/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -251,6 +251,26 @@
 <a href="#251" id="251">251</a>
 <a href="#252" id="252">252</a>
 <a href="#253" id="253">253</a>
+<a href="#254" id="254">254</a>
+<a href="#255" id="255">255</a>
+<a href="#256" id="256">256</a>
+<a href="#257" id="257">257</a>
+<a href="#258" id="258">258</a>
+<a href="#259" id="259">259</a>
+<a href="#260" id="260">260</a>
+<a href="#261" id="261">261</a>
+<a href="#262" id="262">262</a>
+<a href="#263" id="263">263</a>
+<a href="#264" id="264">264</a>
+<a href="#265" id="265">265</a>
+<a href="#266" id="266">266</a>
+<a href="#267" id="267">267</a>
+<a href="#268" id="268">268</a>
+<a href="#269" id="269">269</a>
+<a href="#270" id="270">270</a>
+<a href="#271" id="271">271</a>
+<a href="#272" id="272">272</a>
+<a href="#273" id="273">273</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::container_attributes::REFLECT_DEFAULT;
 <span class="kw">use </span><span class="kw">crate</span>::derive_data::ReflectEnum;
 <span class="kw">use </span><span class="kw">crate</span>::enum_utility::{get_variant_constructors, EnumVariantConstructors};
@@ -258,40 +278,40 @@
 <span class="kw">use </span><span class="kw">crate</span>::fq_std::{FQAny, FQClone, FQDefault, FQOption};
 <span class="kw">use </span><span class="kw">crate</span>::utility::{extend_where_clause, ident_or_index, WhereClauseOptions};
 <span class="kw">use crate</span>::{ReflectMeta, ReflectStruct};
-<span class="kw">use </span>proc_macro::TokenStream;
 <span class="kw">use </span>proc_macro2::Span;
 <span class="kw">use </span>quote::{quote, ToTokens};
 <span class="kw">use </span>syn::{Field, Ident, Lit, LitInt, LitStr, Member};
 
 <span class="doccomment">/// Implements `FromReflect` for the given struct
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>impl_struct(reflect_struct: <span class="kw-2">&amp;</span>ReflectStruct) -&gt; TokenStream {
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>impl_struct(reflect_struct: <span class="kw-2">&amp;</span>ReflectStruct) -&gt; proc_macro2::TokenStream {
     impl_struct_internal(reflect_struct, <span class="bool-val">false</span>)
 }
 
 <span class="doccomment">/// Implements `FromReflect` for the given tuple struct
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>impl_tuple_struct(reflect_struct: <span class="kw-2">&amp;</span>ReflectStruct) -&gt; TokenStream {
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>impl_tuple_struct(reflect_struct: <span class="kw-2">&amp;</span>ReflectStruct) -&gt; proc_macro2::TokenStream {
     impl_struct_internal(reflect_struct, <span class="bool-val">true</span>)
 }
 
-<span class="doccomment">/// Implements `FromReflect` for the given value type
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>impl_value(meta: <span class="kw-2">&amp;</span>ReflectMeta) -&gt; TokenStream {
-    <span class="kw">let </span>type_name = meta.type_name();
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>impl_value(meta: <span class="kw-2">&amp;</span>ReflectMeta) -&gt; proc_macro2::TokenStream {
+    <span class="kw">let </span>type_path = meta.type_path();
     <span class="kw">let </span>bevy_reflect_path = meta.bevy_reflect_path();
-    <span class="kw">let </span>(impl_generics, ty_generics, where_clause) = meta.generics().split_for_impl();
-    TokenStream::from(<span class="macro">quote! </span>{
-        <span class="kw">impl </span>#impl_generics #bevy_reflect_path::FromReflect <span class="kw">for </span>#type_name #ty_generics #where_clause  {
+    <span class="kw">let </span>(impl_generics, ty_generics, where_clause) = type_path.generics().split_for_impl();
+    <span class="kw">let </span>where_from_reflect_clause =
+        extend_where_clause(where_clause, <span class="kw-2">&amp;</span>WhereClauseOptions::new_value(meta));
+    <span class="macro">quote! </span>{
+        <span class="kw">impl </span>#impl_generics #bevy_reflect_path::FromReflect <span class="kw">for </span>#type_path #ty_generics #where_from_reflect_clause  {
             <span class="kw">fn </span>from_reflect(reflect: <span class="kw-2">&amp;</span><span class="kw">dyn </span>#bevy_reflect_path::Reflect) -&gt; #FQOption&lt;<span class="self">Self</span>&gt; {
-                #FQOption::Some(#FQClone::clone(&lt;<span class="kw">dyn </span>#FQAny&gt;::downcast_ref::&lt;#type_name #ty_generics&gt;(&lt;<span class="kw">dyn </span>#bevy_reflect_path::Reflect&gt;::as_any(reflect))<span class="question-mark">?</span>))
+                #FQOption::Some(#FQClone::clone(&lt;<span class="kw">dyn </span>#FQAny&gt;::downcast_ref::&lt;#type_path #ty_generics&gt;(&lt;<span class="kw">dyn </span>#bevy_reflect_path::Reflect&gt;::as_any(reflect))<span class="question-mark">?</span>))
             }
         }
-    })
+    }
 }
 
 <span class="doccomment">/// Implements `FromReflect` for the given enum type
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>impl_enum(reflect_enum: <span class="kw-2">&amp;</span>ReflectEnum) -&gt; TokenStream {
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>impl_enum(reflect_enum: <span class="kw-2">&amp;</span>ReflectEnum) -&gt; proc_macro2::TokenStream {
     <span class="kw">let </span>fqoption = FQOption.into_token_stream();
 
-    <span class="kw">let </span>type_name = reflect_enum.meta().type_name();
+    <span class="kw">let </span>enum_path = reflect_enum.meta().type_path();
     <span class="kw">let </span>bevy_reflect_path = reflect_enum.meta().bevy_reflect_path();
 
     <span class="kw">let </span>ref_value = Ident::new(<span class="string">&quot;__param0&quot;</span>, Span::call_site());
@@ -300,22 +320,28 @@
         variant_constructors,
     } = get_variant_constructors(reflect_enum, <span class="kw-2">&amp;</span>ref_value, <span class="bool-val">false</span>);
 
-    <span class="kw">let </span>(impl_generics, ty_generics, where_clause) =
-        reflect_enum.meta().generics().split_for_impl();
+    <span class="kw">let </span>(impl_generics, ty_generics, where_clause) = enum_path.generics().split_for_impl();
 
     <span class="comment">// Add FromReflect bound for each active field
     </span><span class="kw">let </span>where_from_reflect_clause = extend_where_clause(
         where_clause,
-        <span class="kw-2">&amp;</span>WhereClauseOptions {
-            active_types: reflect_enum.active_types().into_boxed_slice(),
-            ignored_types: reflect_enum.ignored_types().into_boxed_slice(),
-            active_trait_bounds: <span class="macro">quote!</span>(#bevy_reflect_path::FromReflect),
-            ignored_trait_bounds: <span class="macro">quote!</span>(#FQDefault),
-        },
+        <span class="kw-2">&amp;</span>WhereClauseOptions::new_with_bounds(
+            reflect_enum.meta(),
+            reflect_enum.active_fields(),
+            reflect_enum.ignored_fields(),
+            |field| <span class="kw">match </span><span class="kw-2">&amp;</span>field.attrs.default {
+                DefaultBehavior::Default =&gt; <span class="prelude-val">Some</span>(<span class="macro">quote!</span>(#FQDefault)),
+                <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
+            },
+            |field| <span class="kw">match </span><span class="kw-2">&amp;</span>field.attrs.default {
+                DefaultBehavior::Func(<span class="kw">_</span>) =&gt; <span class="prelude-val">None</span>,
+                <span class="kw">_ </span>=&gt; <span class="prelude-val">Some</span>(<span class="macro">quote!</span>(#FQDefault)),
+            },
+        ),
     );
 
-    TokenStream::from(<span class="macro">quote! </span>{
-        <span class="kw">impl </span>#impl_generics #bevy_reflect_path::FromReflect <span class="kw">for </span>#type_name #ty_generics #where_from_reflect_clause  {
+    <span class="macro">quote! </span>{
+        <span class="kw">impl </span>#impl_generics #bevy_reflect_path::FromReflect <span class="kw">for </span>#enum_path #ty_generics #where_from_reflect_clause  {
             <span class="kw">fn </span>from_reflect(#ref_value: <span class="kw-2">&amp;</span><span class="kw">dyn </span>#bevy_reflect_path::Reflect) -&gt; #FQOption&lt;<span class="self">Self</span>&gt; {
                 <span class="kw">if let </span>#bevy_reflect_path::ReflectRef::Enum(#ref_value) = #bevy_reflect_path::Reflect::reflect_ref(#ref_value) {
                     <span class="kw">match </span>#bevy_reflect_path::Enum::variant_name(#ref_value) {
@@ -327,7 +353,7 @@
                 }
             }
         }
-    })
+    }
 }
 
 <span class="doccomment">/// Container for a struct&#39;s members (field name or index) and their
@@ -340,11 +366,13 @@
     }
 }
 
-<span class="kw">fn </span>impl_struct_internal(reflect_struct: <span class="kw-2">&amp;</span>ReflectStruct, is_tuple: bool) -&gt; TokenStream {
+<span class="kw">fn </span>impl_struct_internal(
+    reflect_struct: <span class="kw-2">&amp;</span>ReflectStruct,
+    is_tuple: bool,
+) -&gt; proc_macro2::TokenStream {
     <span class="kw">let </span>fqoption = FQOption.into_token_stream();
 
-    <span class="kw">let </span>struct_name = reflect_struct.meta().type_name();
-    <span class="kw">let </span>generics = reflect_struct.meta().generics();
+    <span class="kw">let </span>struct_path = reflect_struct.meta().type_path();
     <span class="kw">let </span>bevy_reflect_path = reflect_struct.meta().bevy_reflect_path();
 
     <span class="kw">let </span>ref_struct = Ident::new(<span class="string">&quot;__ref_struct&quot;</span>, Span::call_site());
@@ -382,26 +410,38 @@
         )
     };
 
-    <span class="kw">let </span>(impl_generics, ty_generics, where_clause) = generics.split_for_impl();
+    <span class="kw">let </span>(impl_generics, ty_generics, where_clause) = reflect_struct
+        .meta()
+        .type_path()
+        .generics()
+        .split_for_impl();
 
     <span class="comment">// Add FromReflect bound for each active field
     </span><span class="kw">let </span>where_from_reflect_clause = extend_where_clause(
         where_clause,
-        <span class="kw-2">&amp;</span>WhereClauseOptions {
-            active_types: reflect_struct.active_types().into_boxed_slice(),
-            ignored_types: reflect_struct.ignored_types().into_boxed_slice(),
-            active_trait_bounds: <span class="macro">quote!</span>(#bevy_reflect_path::FromReflect),
-            ignored_trait_bounds: <span class="kw">if </span>is_defaultable {
-                <span class="macro">quote!</span>()
-            } <span class="kw">else </span>{
-                <span class="macro">quote!</span>(#FQDefault)
+        <span class="kw-2">&amp;</span>WhereClauseOptions::new_with_bounds(
+            reflect_struct.meta(),
+            reflect_struct.active_fields(),
+            reflect_struct.ignored_fields(),
+            |field| <span class="kw">match </span><span class="kw-2">&amp;</span>field.attrs.default {
+                DefaultBehavior::Default =&gt; <span class="prelude-val">Some</span>(<span class="macro">quote!</span>(#FQDefault)),
+                <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
             },
-        },
+            |field| {
+                <span class="kw">if </span>is_defaultable {
+                    <span class="prelude-val">None
+                </span>} <span class="kw">else </span>{
+                    <span class="kw">match </span><span class="kw-2">&amp;</span>field.attrs.default {
+                        DefaultBehavior::Func(<span class="kw">_</span>) =&gt; <span class="prelude-val">None</span>,
+                        <span class="kw">_ </span>=&gt; <span class="prelude-val">Some</span>(<span class="macro">quote!</span>(#FQDefault)),
+                    }
+                }
+            },
+        ),
     );
 
-    TokenStream::from(<span class="macro">quote! </span>{
-        <span class="kw">impl </span>#impl_generics #bevy_reflect_path::FromReflect <span class="kw">for </span>#struct_name #ty_generics #where_from_reflect_clause
-        {
+    <span class="macro">quote! </span>{
+        <span class="kw">impl </span>#impl_generics #bevy_reflect_path::FromReflect <span class="kw">for </span>#struct_path #ty_generics #where_from_reflect_clause {
             <span class="kw">fn </span>from_reflect(reflect: <span class="kw-2">&amp;</span><span class="kw">dyn </span>#bevy_reflect_path::Reflect) -&gt; #FQOption&lt;<span class="self">Self</span>&gt; {
                 <span class="kw">if let </span>#bevy_reflect_path::ReflectRef::#ref_struct_type(#ref_struct) = #bevy_reflect_path::Reflect::reflect_ref(reflect) {
                     #constructor
@@ -410,7 +450,7 @@
                 }
             }
         }
-    })
+    }
 }
 
 <span class="doccomment">/// Get the collection of ignored field definitions

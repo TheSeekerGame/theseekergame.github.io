@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/alsa-0.7.0/src/ctl_int.rs`."><title>ctl_int.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="alsa" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../alsa/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/alsa-0.7.1/src/ctl_int.rs`."><title>ctl_int.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="alsa" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../alsa/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -441,9 +441,56 @@
 <a href="#441" id="441">441</a>
 <a href="#442" id="442">442</a>
 <a href="#443" id="443">443</a>
+<a href="#444" id="444">444</a>
+<a href="#445" id="445">445</a>
+<a href="#446" id="446">446</a>
+<a href="#447" id="447">447</a>
+<a href="#448" id="448">448</a>
+<a href="#449" id="449">449</a>
+<a href="#450" id="450">450</a>
+<a href="#451" id="451">451</a>
+<a href="#452" id="452">452</a>
+<a href="#453" id="453">453</a>
+<a href="#454" id="454">454</a>
+<a href="#455" id="455">455</a>
+<a href="#456" id="456">456</a>
+<a href="#457" id="457">457</a>
+<a href="#458" id="458">458</a>
+<a href="#459" id="459">459</a>
+<a href="#460" id="460">460</a>
+<a href="#461" id="461">461</a>
+<a href="#462" id="462">462</a>
+<a href="#463" id="463">463</a>
+<a href="#464" id="464">464</a>
+<a href="#465" id="465">465</a>
+<a href="#466" id="466">466</a>
+<a href="#467" id="467">467</a>
+<a href="#468" id="468">468</a>
+<a href="#469" id="469">469</a>
+<a href="#470" id="470">470</a>
+<a href="#471" id="471">471</a>
+<a href="#472" id="472">472</a>
+<a href="#473" id="473">473</a>
+<a href="#474" id="474">474</a>
+<a href="#475" id="475">475</a>
+<a href="#476" id="476">476</a>
+<a href="#477" id="477">477</a>
+<a href="#478" id="478">478</a>
+<a href="#479" id="479">479</a>
+<a href="#480" id="480">480</a>
+<a href="#481" id="481">481</a>
+<a href="#482" id="482">482</a>
+<a href="#483" id="483">483</a>
+<a href="#484" id="484">484</a>
+<a href="#485" id="485">485</a>
+<a href="#486" id="486">486</a>
+<a href="#487" id="487">487</a>
+<a href="#488" id="488">488</a>
 </pre></div><pre class="rust"><code>
 <span class="kw">use </span><span class="kw">crate</span>::alsa;
+<span class="kw">use </span><span class="kw">super</span>::pcm::Info;
 <span class="kw">use </span>std::ffi::{CStr, CString};
+<span class="kw">use </span><span class="kw">super</span>::Direction;
 <span class="kw">use </span><span class="kw">super</span>::error::<span class="kw-2">*</span>;
 <span class="kw">use </span><span class="kw">super</span>::mixer::MilliBel;
 <span class="kw">use </span><span class="kw">super</span>::Round;
@@ -460,7 +507,29 @@
 <span class="comment">// const ELEM_VALUE_SIZE: usize = 1224;
 // const ELEM_INFO_SIZE: usize = 272;
 
-</span><span class="doccomment">/// [snd_ctl_t](http://www.alsa-project.org/alsa-doc/alsa-lib/group___control.html) wrapper
+</span><span class="doccomment">/// [snd_ctl_pcm_next_device](https://www.alsa-project.org/alsa-doc/alsa-lib/control_8c.html#accbb0be6e5ca7361ffec0ea304ed1b05) wrapper.
+/// Iterate over devices of a card.
+</span><span class="kw">pub struct </span>DeviceIter&lt;<span class="lifetime">&#39;a</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Ctl, c_int);
+
+<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; DeviceIter&lt;<span class="lifetime">&#39;a</span>&gt;{
+    <span class="kw">pub fn </span>new(ctl: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Ctl) -&gt; DeviceIter {
+        DeviceIter(ctl, -<span class="number">1</span>)
+    }
+}
+
+<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; Iterator <span class="kw">for </span>DeviceIter&lt;<span class="lifetime">&#39;a</span>&gt; {
+    <span class="kw">type </span>Item = c_int;
+
+    <span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;c_int&gt; {
+        <span class="kw">match </span><span class="macro">acheck!</span>(snd_ctl_pcm_next_device(<span class="self">self</span>.<span class="number">0.0</span>, <span class="kw-2">&amp;mut </span><span class="self">self</span>.<span class="number">1</span>)) {
+            <span class="prelude-val">Ok</span>(<span class="kw">_</span>) <span class="kw">if </span><span class="self">self</span>.<span class="number">1 </span>== -<span class="number">1 </span>=&gt; <span class="prelude-val">None</span>,
+            <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>(<span class="self">self</span>.<span class="number">1</span>),
+            <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="prelude-val">None</span>,
+        }
+    }
+}
+
+<span class="doccomment">/// [snd_ctl_t](http://www.alsa-project.org/alsa-doc/alsa-lib/group___control.html) wrapper
 </span><span class="kw">pub struct </span>Ctl(<span class="kw-2">*mut </span>alsa::snd_ctl_t);
 
 <span class="kw">unsafe impl </span>Send <span class="kw">for </span>Ctl {}
@@ -508,6 +577,14 @@
             .map(|<span class="kw">_</span>| m <span class="kw">as </span>i64)
     }
 
+    <span class="kw">pub fn </span>elem_read(<span class="kw-2">&amp;</span><span class="self">self</span>, val: <span class="kw-2">&amp;mut </span>ElemValue) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
+        <span class="macro">acheck!</span>(snd_ctl_elem_read(<span class="self">self</span>.<span class="number">0</span>, elem_value_ptr(val))).map(|<span class="kw">_</span>| ())
+    }
+
+    <span class="kw">pub fn </span>elem_write(<span class="kw-2">&amp;</span><span class="self">self</span>, val: <span class="kw-2">&amp;</span>ElemValue) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
+        <span class="macro">acheck!</span>(snd_ctl_elem_write(<span class="self">self</span>.<span class="number">0</span>, elem_value_ptr(val))).map(|<span class="kw">_</span>| ())
+    }
+
     <span class="doccomment">/// Note: According to alsa-lib documentation, you&#39;re also supposed to have functionality for
     /// returning whether or not you are subscribed. This does not work in practice, so I&#39;m not
     /// including that here.
@@ -518,6 +595,15 @@
     <span class="kw">pub fn </span>read(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;Event&gt;&gt; {
         <span class="kw">let </span>e = event_new()<span class="question-mark">?</span>;
         <span class="macro">acheck!</span>(snd_ctl_read(<span class="self">self</span>.<span class="number">0</span>, e.<span class="number">0</span>)).map(|r| <span class="kw">if </span>r == <span class="number">1 </span>{ <span class="prelude-val">Some</span>(e) } <span class="kw">else </span>{ <span class="prelude-val">None </span>})
+    }
+
+    <span class="kw">pub fn </span>pcm_info(<span class="kw-2">&amp;</span><span class="self">self</span>, device: u32, subdevice: u32, direction: Direction) -&gt; <span class="prelude-ty">Result</span>&lt;Info&gt; {
+        Info::new().and_then(|<span class="kw-2">mut </span>info| {
+            info.set_device(device);
+            info.set_subdevice(subdevice);
+            info.set_stream(direction);
+            <span class="macro">acheck!</span>(snd_ctl_pcm_info(<span class="self">self</span>.<span class="number">0</span>, info.<span class="number">0</span>)).map(|<span class="kw">_</span>| info )
+        })
     }
 }
 
@@ -617,6 +703,10 @@
 }
 
 <span class="kw">impl </span>ElemValue {
+
+    <span class="kw">pub fn </span>set_id(<span class="kw-2">&amp;mut </span><span class="self">self</span>, id: <span class="kw-2">&amp;</span>ElemId) {
+        <span class="kw">unsafe </span>{ alsa::snd_ctl_elem_value_set_id(<span class="self">self</span>.ptr, elem_id_ptr(id)) }
+    }
 
     <span class="comment">// Note: The get_bytes hands out a reference to inside the object. Therefore, we can&#39;t treat
     // the content as &quot;cell&quot;ed, but must take a &quot;&amp;mut self&quot; (to make sure the reference

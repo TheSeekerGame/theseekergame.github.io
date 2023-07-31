@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["Entry","FSEDecoder","FSETable"]};
+window.SIDEBAR_ITEMS = {"enum":["FSEDecoderError","FSETableError"],"struct":["Entry","FSEDecoder","FSETable"]};

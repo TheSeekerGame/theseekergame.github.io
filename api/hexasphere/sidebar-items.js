@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["interpolation","shapes"],"struct":["Subdivided","Triangle"],"trait":["BaseShape","EquilateralBaseShape"]};
+window.SIDEBAR_ITEMS = {"mod":["interpolation","shapes"],"struct":["Subdivided","Triangle"],"trait":["BaseShape"]};

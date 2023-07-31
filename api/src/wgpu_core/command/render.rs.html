@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/wgpu-core-0.15.1/src/command/render.rs`."><title>render.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="wgpu_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../wgpu_core/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/wgpu-core-0.16.1/src/command/render.rs`."><title>render.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="wgpu_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../wgpu_core/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -2508,6 +2508,86 @@
 <a href="#2508" id="2508">2508</a>
 <a href="#2509" id="2509">2509</a>
 <a href="#2510" id="2510">2510</a>
+<a href="#2511" id="2511">2511</a>
+<a href="#2512" id="2512">2512</a>
+<a href="#2513" id="2513">2513</a>
+<a href="#2514" id="2514">2514</a>
+<a href="#2515" id="2515">2515</a>
+<a href="#2516" id="2516">2516</a>
+<a href="#2517" id="2517">2517</a>
+<a href="#2518" id="2518">2518</a>
+<a href="#2519" id="2519">2519</a>
+<a href="#2520" id="2520">2520</a>
+<a href="#2521" id="2521">2521</a>
+<a href="#2522" id="2522">2522</a>
+<a href="#2523" id="2523">2523</a>
+<a href="#2524" id="2524">2524</a>
+<a href="#2525" id="2525">2525</a>
+<a href="#2526" id="2526">2526</a>
+<a href="#2527" id="2527">2527</a>
+<a href="#2528" id="2528">2528</a>
+<a href="#2529" id="2529">2529</a>
+<a href="#2530" id="2530">2530</a>
+<a href="#2531" id="2531">2531</a>
+<a href="#2532" id="2532">2532</a>
+<a href="#2533" id="2533">2533</a>
+<a href="#2534" id="2534">2534</a>
+<a href="#2535" id="2535">2535</a>
+<a href="#2536" id="2536">2536</a>
+<a href="#2537" id="2537">2537</a>
+<a href="#2538" id="2538">2538</a>
+<a href="#2539" id="2539">2539</a>
+<a href="#2540" id="2540">2540</a>
+<a href="#2541" id="2541">2541</a>
+<a href="#2542" id="2542">2542</a>
+<a href="#2543" id="2543">2543</a>
+<a href="#2544" id="2544">2544</a>
+<a href="#2545" id="2545">2545</a>
+<a href="#2546" id="2546">2546</a>
+<a href="#2547" id="2547">2547</a>
+<a href="#2548" id="2548">2548</a>
+<a href="#2549" id="2549">2549</a>
+<a href="#2550" id="2550">2550</a>
+<a href="#2551" id="2551">2551</a>
+<a href="#2552" id="2552">2552</a>
+<a href="#2553" id="2553">2553</a>
+<a href="#2554" id="2554">2554</a>
+<a href="#2555" id="2555">2555</a>
+<a href="#2556" id="2556">2556</a>
+<a href="#2557" id="2557">2557</a>
+<a href="#2558" id="2558">2558</a>
+<a href="#2559" id="2559">2559</a>
+<a href="#2560" id="2560">2560</a>
+<a href="#2561" id="2561">2561</a>
+<a href="#2562" id="2562">2562</a>
+<a href="#2563" id="2563">2563</a>
+<a href="#2564" id="2564">2564</a>
+<a href="#2565" id="2565">2565</a>
+<a href="#2566" id="2566">2566</a>
+<a href="#2567" id="2567">2567</a>
+<a href="#2568" id="2568">2568</a>
+<a href="#2569" id="2569">2569</a>
+<a href="#2570" id="2570">2570</a>
+<a href="#2571" id="2571">2571</a>
+<a href="#2572" id="2572">2572</a>
+<a href="#2573" id="2573">2573</a>
+<a href="#2574" id="2574">2574</a>
+<a href="#2575" id="2575">2575</a>
+<a href="#2576" id="2576">2576</a>
+<a href="#2577" id="2577">2577</a>
+<a href="#2578" id="2578">2578</a>
+<a href="#2579" id="2579">2579</a>
+<a href="#2580" id="2580">2580</a>
+<a href="#2581" id="2581">2581</a>
+<a href="#2582" id="2582">2582</a>
+<a href="#2583" id="2583">2583</a>
+<a href="#2584" id="2584">2584</a>
+<a href="#2585" id="2585">2585</a>
+<a href="#2586" id="2586">2586</a>
+<a href="#2587" id="2587">2587</a>
+<a href="#2588" id="2588">2588</a>
+<a href="#2589" id="2589">2589</a>
+<a href="#2590" id="2590">2590</a>
 </pre></div><pre class="rust"><code><span class="kw">use crate</span>::{
     binding_model::BindError,
     command::{
@@ -2521,14 +2601,14 @@
     },
     device::{
         AttachmentData, Device, MissingDownlevelFlags, MissingFeatures,
-        RenderPassCompatibilityError, RenderPassContext,
+        RenderPassCompatibilityCheckType, RenderPassCompatibilityError, RenderPassContext,
     },
     error::{ErrorFormatter, PrettyError},
     hub::{Global, GlobalIdentityHandlerFactory, HalApi, Storage, Token},
     id,
     init_tracker::{MemoryInitKind, TextureInitRange, TextureInitTrackerAction},
     pipeline::{<span class="self">self</span>, PipelineFlags},
-    resource::{<span class="self">self</span>, Buffer, Texture, TextureView},
+    resource::{<span class="self">self</span>, Buffer, Texture, TextureView, TextureViewNotRenderableReason},
     track::{TextureSelector, UsageConflict, UsageScope},
     validation::{
         check_buffer_usage, check_texture_usage, MissingBufferUsageError, MissingTextureUsageError,
@@ -2946,11 +3026,40 @@
     }
 }
 
+<span class="doccomment">/// Describes an attachment location in words.
+///
+/// Can be used as &quot;the {loc} has...&quot; or &quot;{loc} has...&quot;
+</span><span class="attr">#[derive(Debug, Copy, Clone)]
+</span><span class="kw">pub enum </span>AttachmentErrorLocation {
+    Color { index: usize, resolve: bool },
+    Depth,
+}
+
+<span class="kw">impl </span>fmt::Display <span class="kw">for </span>AttachmentErrorLocation {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
+        <span class="kw">match </span><span class="kw-2">*</span><span class="self">self </span>{
+            AttachmentErrorLocation::Color {
+                index,
+                resolve: <span class="bool-val">false</span>,
+            } =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;color attachment at index {index}&#39;s texture view&quot;</span>),
+            AttachmentErrorLocation::Color {
+                index,
+                resolve: <span class="bool-val">true</span>,
+            } =&gt; <span class="macro">write!</span>(
+                f,
+                <span class="string">&quot;color attachment at index {index}&#39;s resolve texture view&quot;
+            </span>),
+            AttachmentErrorLocation::Depth =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;depth attachment&#39;s texture view&quot;</span>),
+        }
+    }
+}
+
 <span class="attr">#[derive(Clone, Debug, Error)]
+#[non_exhaustive]
 </span><span class="kw">pub enum </span>ColorAttachmentError {
-    <span class="attr">#[error(<span class="string">&quot;attachment format {0:?} is not a color format&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Attachment format {0:?} is not a color format&quot;</span>)]
     </span>InvalidFormat(wgt::TextureFormat),
-    <span class="attr">#[error(<span class="string">&quot;the number of color attachments {given} exceeds the limit {limit}&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;The number of color attachments {given} exceeds the limit {limit}&quot;</span>)]
     </span>TooMany { given: usize, limit: usize },
 }
 
@@ -2961,75 +3070,92 @@
     </span>ColorAttachment(<span class="attr">#[from] </span>ColorAttachmentError),
     <span class="attr">#[error(transparent)]
     </span>Encoder(<span class="attr">#[from] </span>CommandEncoderError),
-    <span class="attr">#[error(<span class="string">&quot;attachment texture view {0:?} is invalid&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Attachment texture view {0:?} is invalid&quot;</span>)]
     </span>InvalidAttachment(id::TextureViewId),
-    <span class="attr">#[error(<span class="string">&quot;attachment format {0:?} is not a depth-stencil format&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;The format of the depth-stencil attachment ({0:?}) is not a depth-stencil format&quot;</span>)]
     </span>InvalidDepthStencilAttachmentFormat(wgt::TextureFormat),
-    <span class="attr">#[error(<span class="string">&quot;attachment format {0:?} can not be resolved&quot;</span>)]
-    </span>UnsupportedResolveTargetFormat(wgt::TextureFormat),
-    <span class="attr">#[error(<span class="string">&quot;missing color or depth_stencil attachments, at least one is required.&quot;</span>)]
-    </span>MissingAttachments,
-    <span class="attr">#[error(<span class="string">&quot;attachment texture view is not renderable&quot;</span>)]
-    </span>TextureViewIsNotRenderable,
-    <span class="attr">#[error(<span class="string">&quot;attachments have differing sizes: {previous:?} is followed by {mismatch:?}&quot;</span>)]
-    </span>AttachmentsDimensionMismatch {
-        previous: (<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str, wgt::Extent3d),
-        mismatch: (<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str, wgt::Extent3d),
+    <span class="attr">#[error(<span class="string">&quot;The format of the {location} ({format:?}) is not resolvable&quot;</span>)]
+    </span>UnsupportedResolveTargetFormat {
+        location: AttachmentErrorLocation,
+        format: wgt::TextureFormat,
     },
-    <span class="attr">#[error(<span class="string">&quot;attachment&#39;s sample count {0} is invalid&quot;</span>)]
-    </span>InvalidSampleCount(u32),
-    <span class="attr">#[error(<span class="string">&quot;resolve source must be multi-sampled (has {src} samples) while the resolve destination must not be multisampled (has {dst} samples)&quot;</span>)]
-    </span>InvalidResolveSampleCounts { src: u32, dst: u32 },
+    <span class="attr">#[error(<span class="string">&quot;No color attachments or depth attachments were provided, at least one attachment of any kind must be provided&quot;</span>)]
+    </span>MissingAttachments,
+    <span class="attr">#[error(<span class="string">&quot;The {location} is not renderable:&quot;</span>)]
+    </span>TextureViewIsNotRenderable {
+        location: AttachmentErrorLocation,
+        <span class="attr">#[source]
+        </span>reason: TextureViewNotRenderableReason,
+    },
+    <span class="attr">#[error(<span class="string">&quot;Attachments have differing sizes: the {expected_location} has extent {expected_extent:?} but is followed by the {actual_location} which has {actual_extent:?}&quot;</span>)]
+    </span>AttachmentsDimensionMismatch {
+        expected_location: AttachmentErrorLocation,
+        expected_extent: wgt::Extent3d,
+        actual_location: AttachmentErrorLocation,
+        actual_extent: wgt::Extent3d,
+    },
+    <span class="attr">#[error(<span class="string">&quot;Attachments have differing sample counts: the {expected_location} has count {expected_samples:?} but is followed by the {actual_location} which has count {actual_samples:?}&quot;</span>)]
+    </span>AttachmentSampleCountMismatch {
+        expected_location: AttachmentErrorLocation,
+        expected_samples: u32,
+        actual_location: AttachmentErrorLocation,
+        actual_samples: u32,
+    },
+    <span class="attr">#[error(<span class="string">&quot;The resolve source, {location}, must be multi-sampled (has {src} samples) while the resolve destination must not be multisampled (has {dst} samples)&quot;</span>)]
+    </span>InvalidResolveSampleCounts {
+        location: AttachmentErrorLocation,
+        src: u32,
+        dst: u32,
+    },
     <span class="attr">#[error(
-        <span class="string">&quot;resource source format ({src:?}) must match the resolve destination format ({dst:?})&quot;
+        <span class="string">&quot;Resource source, {location}, format ({src:?}) must match the resolve destination format ({dst:?})&quot;
     </span>)]
     </span>MismatchedResolveTextureFormat {
+        location: AttachmentErrorLocation,
         src: wgt::TextureFormat,
         dst: wgt::TextureFormat,
     },
-    <span class="attr">#[error(<span class="string">&quot;surface texture is dropped before the render pass is finished&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Surface texture is dropped before the render pass is finished&quot;</span>)]
     </span>SurfaceTextureDropped,
-    <span class="attr">#[error(<span class="string">&quot;not enough memory left&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Not enough memory left&quot;</span>)]
     </span>OutOfMemory,
-    <span class="attr">#[error(<span class="string">&quot;unable to clear non-present/read-only depth&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Unable to clear non-present/read-only depth&quot;</span>)]
     </span>InvalidDepthOps,
-    <span class="attr">#[error(<span class="string">&quot;unable to clear non-present/read-only stencil&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Unable to clear non-present/read-only stencil&quot;</span>)]
     </span>InvalidStencilOps,
-    <span class="attr">#[error(<span class="string">&quot;all attachments must have the same sample count, found {actual} != {expected}&quot;</span>)]
-    </span>SampleCountMismatch { actual: u32, expected: u32 },
-    <span class="attr">#[error(<span class="string">&quot;setting `values_offset` to be `None` is only for internal use in render bundles&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Setting `values_offset` to be `None` is only for internal use in render bundles&quot;</span>)]
     </span>InvalidValuesOffset,
     <span class="attr">#[error(transparent)]
     </span>MissingFeatures(<span class="attr">#[from] </span>MissingFeatures),
     <span class="attr">#[error(transparent)]
     </span>MissingDownlevelFlags(<span class="attr">#[from] </span>MissingDownlevelFlags),
-    <span class="attr">#[error(<span class="string">&quot;indirect draw uses bytes {offset}..{end_offset} {} which overruns indirect buffer of size {buffer_size}&quot;</span>,
-        count.map_or_else(String::new, |v| <span class="macro">format!</span>(<span class="string">&quot;(using count {})&quot;</span>, v)))]
+    <span class="attr">#[error(<span class="string">&quot;Indirect draw uses bytes {offset}..{end_offset} {} which overruns indirect buffer of size {buffer_size}&quot;</span>,
+        count.map_or_else(String::new, |v| <span class="macro">format!</span>(<span class="string">&quot;(using count {v})&quot;</span>)))]
     </span>IndirectBufferOverrun {
         count: <span class="prelude-ty">Option</span>&lt;NonZeroU32&gt;,
         offset: u64,
         end_offset: u64,
         buffer_size: u64,
     },
-    <span class="attr">#[error(<span class="string">&quot;indirect draw uses bytes {begin_count_offset}..{end_count_offset} which overruns indirect buffer of size {count_buffer_size}&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Indirect draw uses bytes {begin_count_offset}..{end_count_offset} which overruns indirect buffer of size {count_buffer_size}&quot;</span>)]
     </span>IndirectCountBufferOverrun {
         begin_count_offset: u64,
         end_count_offset: u64,
         count_buffer_size: u64,
     },
-    <span class="attr">#[error(<span class="string">&quot;cannot pop debug group, because number of pushed debug groups is zero&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Cannot pop debug group, because number of pushed debug groups is zero&quot;</span>)]
     </span>InvalidPopDebugGroup,
     <span class="attr">#[error(transparent)]
     </span>ResourceUsageConflict(<span class="attr">#[from] </span>UsageConflict),
-    <span class="attr">#[error(<span class="string">&quot;render bundle has incompatible targets, {0}&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Render bundle has incompatible targets, {0}&quot;</span>)]
     </span>IncompatibleBundleTargets(<span class="attr">#[from] </span>RenderPassCompatibilityError),
     <span class="attr">#[error(
-        <span class="string">&quot;render bundle has incompatible read-only flags: \
+        <span class="string">&quot;Render bundle has incompatible read-only flags: \
              bundle has flags depth = {bundle_depth} and stencil = {bundle_stencil}, \
              while the pass has flags depth = {pass_depth} and stencil = {pass_stencil}. \
              Read-only renderpasses are only compatible with read-only bundles for that aspect.&quot;
     </span>)]
-    </span>IncompatibleBundleRods {
+    </span>IncompatibleBundleReadOnlyDepthStencil {
         pass_depth: bool,
         pass_stencil: bool,
         bundle_depth: bool,
@@ -3043,10 +3169,10 @@
     </span>Bind(<span class="attr">#[from] </span>BindError),
     <span class="attr">#[error(transparent)]
     </span>QueryUse(<span class="attr">#[from] </span>QueryUseError),
-    <span class="attr">#[error(<span class="string">&quot;multiview layer count must match&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Multiview layer count must match&quot;</span>)]
     </span>MultiViewMismatch,
     <span class="attr">#[error(
-        <span class="string">&quot;multiview pass texture views with more than one array layer must have D2Array dimension&quot;
+        <span class="string">&quot;Multiview pass texture views with more than one array layer must have D2Array dimension&quot;
     </span>)]
     </span>MultiViewDimensionMismatch,
 }
@@ -3196,7 +3322,10 @@
         <span class="kw">let </span><span class="kw-2">mut </span>pending_discard_init_fixups = SurfacesInDiscardState::new();
         <span class="kw">let </span><span class="kw-2">mut </span>divergent_discarded_depth_stencil_aspect = <span class="prelude-val">None</span>;
 
-        <span class="kw">let </span><span class="kw-2">mut </span>attachment_type_name = <span class="string">&quot;&quot;</span>;
+        <span class="kw">let </span><span class="kw-2">mut </span>attachment_location = AttachmentErrorLocation::Color {
+            index: usize::MAX,
+            resolve: <span class="bool-val">false</span>,
+        };
         <span class="kw">let </span><span class="kw-2">mut </span>extent = <span class="prelude-val">None</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>sample_count = <span class="number">0</span>;
 
@@ -3233,15 +3362,17 @@
 
             <span class="prelude-val">Ok</span>(())
         };
-        <span class="kw">let </span><span class="kw-2">mut </span>add_view = |view: <span class="kw-2">&amp;</span>TextureView&lt;A&gt;, type_name| {
-            <span class="kw">let </span>render_extent = view
-                .render_extent
-                .ok_or(RenderPassErrorInner::TextureViewIsNotRenderable)<span class="question-mark">?</span>;
+        <span class="kw">let </span><span class="kw-2">mut </span>add_view = |view: <span class="kw-2">&amp;</span>TextureView&lt;A&gt;, location| {
+            <span class="kw">let </span>render_extent = view.render_extent.map_err(|reason| {
+                RenderPassErrorInner::TextureViewIsNotRenderable { location, reason }
+            })<span class="question-mark">?</span>;
             <span class="kw">if let </span><span class="prelude-val">Some</span>(ex) = extent {
                 <span class="kw">if </span>ex != render_extent {
                     <span class="kw">return </span><span class="prelude-val">Err</span>(RenderPassErrorInner::AttachmentsDimensionMismatch {
-                        previous: (attachment_type_name, ex),
-                        mismatch: (type_name, render_extent),
+                        expected_location: attachment_location,
+                        expected_extent: ex,
+                        actual_location: location,
+                        actual_extent: render_extent,
                     });
                 }
             } <span class="kw">else </span>{
@@ -3250,12 +3381,14 @@
             <span class="kw">if </span>sample_count == <span class="number">0 </span>{
                 sample_count = view.samples;
             } <span class="kw">else if </span>sample_count != view.samples {
-                <span class="kw">return </span><span class="prelude-val">Err</span>(RenderPassErrorInner::SampleCountMismatch {
-                    actual: view.samples,
-                    expected: sample_count,
+                <span class="kw">return </span><span class="prelude-val">Err</span>(RenderPassErrorInner::AttachmentSampleCountMismatch {
+                    expected_location: attachment_location,
+                    expected_samples: sample_count,
+                    actual_location: location,
+                    actual_samples: view.samples,
                 });
             }
-            attachment_type_name = type_name;
+            attachment_location = location;
             <span class="prelude-val">Ok</span>(())
         };
 
@@ -3270,7 +3403,7 @@
                 .add_single(view_guard, at.view)
                 .ok_or(RenderPassErrorInner::InvalidAttachment(at.view))<span class="question-mark">?</span>;
             check_multiview(view)<span class="question-mark">?</span>;
-            add_view(view, <span class="string">&quot;depth&quot;</span>)<span class="question-mark">?</span>;
+            add_view(view, AttachmentErrorLocation::Depth)<span class="question-mark">?</span>;
 
             <span class="kw">let </span>ds_aspects = view.desc.aspects();
             <span class="kw">if </span>ds_aspects.contains(hal::FormatAspects::COLOR) {
@@ -3389,8 +3522,8 @@
             });
         }
 
-        <span class="kw">for </span>at <span class="kw">in </span>color_attachments {
-            <span class="kw">let </span>at = <span class="kw">if let </span><span class="prelude-val">Some</span>(attachment) = at.as_ref() {
+        <span class="kw">for </span>(index, attachment) <span class="kw">in </span>color_attachments.iter().enumerate() {
+            <span class="kw">let </span>at = <span class="kw">if let </span><span class="prelude-val">Some</span>(attachment) = attachment.as_ref() {
                 attachment
             } <span class="kw">else </span>{
                 colors.push(<span class="prelude-val">None</span>);
@@ -3402,7 +3535,13 @@
                 .add_single(view_guard, at.view)
                 .ok_or(RenderPassErrorInner::InvalidAttachment(at.view))<span class="question-mark">?</span>;
             check_multiview(color_view)<span class="question-mark">?</span>;
-            add_view(color_view, <span class="string">&quot;color&quot;</span>)<span class="question-mark">?</span>;
+            add_view(
+                color_view,
+                AttachmentErrorLocation::Color {
+                    index,
+                    resolve: <span class="bool-val">false</span>,
+                },
+            )<span class="question-mark">?</span>;
 
             <span class="kw">if </span>!color_view
                 .desc
@@ -3434,23 +3573,35 @@
 
                 check_multiview(resolve_view)<span class="question-mark">?</span>;
 
-                <span class="kw">let </span>render_extent = resolve_view
-                    .render_extent
-                    .ok_or(RenderPassErrorInner::TextureViewIsNotRenderable)<span class="question-mark">?</span>;
+                <span class="kw">let </span>resolve_location = AttachmentErrorLocation::Color {
+                    index,
+                    resolve: <span class="bool-val">true</span>,
+                };
+
+                <span class="kw">let </span>render_extent = resolve_view.render_extent.map_err(|reason| {
+                    RenderPassErrorInner::TextureViewIsNotRenderable {
+                        location: resolve_location,
+                        reason,
+                    }
+                })<span class="question-mark">?</span>;
                 <span class="kw">if </span>color_view.render_extent.unwrap() != render_extent {
                     <span class="kw">return </span><span class="prelude-val">Err</span>(RenderPassErrorInner::AttachmentsDimensionMismatch {
-                        previous: (attachment_type_name, extent.unwrap_or_default()),
-                        mismatch: (<span class="string">&quot;resolve&quot;</span>, render_extent),
+                        expected_location: attachment_location,
+                        expected_extent: extent.unwrap_or_default(),
+                        actual_location: resolve_location,
+                        actual_extent: render_extent,
                     });
                 }
                 <span class="kw">if </span>color_view.samples == <span class="number">1 </span>|| resolve_view.samples != <span class="number">1 </span>{
                     <span class="kw">return </span><span class="prelude-val">Err</span>(RenderPassErrorInner::InvalidResolveSampleCounts {
+                        location: resolve_location,
                         src: color_view.samples,
                         dst: resolve_view.samples,
                     });
                 }
                 <span class="kw">if </span>color_view.desc.format != resolve_view.desc.format {
                     <span class="kw">return </span><span class="prelude-val">Err</span>(RenderPassErrorInner::MismatchedResolveTextureFormat {
+                        location: resolve_location,
                         src: color_view.desc.format,
                         dst: resolve_view.desc.format,
                     });
@@ -3460,9 +3611,10 @@
                     .flags
                     .contains(wgt::TextureFormatFeatureFlags::MULTISAMPLE_RESOLVE)
                 {
-                    <span class="kw">return </span><span class="prelude-val">Err</span>(RenderPassErrorInner::UnsupportedResolveTargetFormat(
-                        resolve_view.desc.format,
-                    ));
+                    <span class="kw">return </span><span class="prelude-val">Err</span>(RenderPassErrorInner::UnsupportedResolveTargetFormat {
+                        location: resolve_location,
+                        format: resolve_view.desc.format,
+                    });
                 }
 
                 cmd_buf.texture_memory_actions.register_implicit_init(
@@ -3743,7 +3895,7 @@
                     } =&gt; {
                         <span class="kw">let </span>scope = PassErrorScope::SetBindGroup(bind_group_id);
                         <span class="kw">let </span>max_bind_groups = device.limits.max_bind_groups;
-                        <span class="kw">if </span>(index <span class="kw">as </span>u32) &gt;= max_bind_groups {
+                        <span class="kw">if </span>index &gt;= max_bind_groups {
                             <span class="kw">return </span><span class="prelude-val">Err</span>(RenderCommandError::BindGroupIndexOutOfRange {
                                 index,
                                 max: max_bind_groups,
@@ -3810,7 +3962,7 @@
                                 <span class="kw">unsafe </span>{
                                     raw.set_bind_group(
                                         pipeline_layout,
-                                        index <span class="kw">as </span>u32 + i <span class="kw">as </span>u32,
+                                        index + i <span class="kw">as </span>u32,
                                         raw_bg,
                                         <span class="kw-2">&amp;</span>e.dynamic_offsets,
                                     );
@@ -3830,7 +3982,10 @@
                             .map_pass_err(scope)<span class="question-mark">?</span>;
 
                         info.context
-                            .check_compatible(<span class="kw-2">&amp;</span>pipeline.pass_context)
+                            .check_compatible(
+                                <span class="kw-2">&amp;</span>pipeline.pass_context,
+                                RenderPassCompatibilityCheckType::RenderPipeline,
+                            )
                             .map_err(RenderCommandError::IncompatiblePipelineTargets)
                             .map_pass_err(scope)<span class="question-mark">?</span>;
 
@@ -4438,7 +4593,7 @@
                         <span class="kw">let </span>scope = PassErrorScope::WriteTimestamp;
 
                         device
-                            .require_features(wgt::Features::WRITE_TIMESTAMP_INSIDE_PASSES)
+                            .require_features(wgt::Features::TIMESTAMP_QUERY_INSIDE_PASSES)
                             .map_pass_err(scope)<span class="question-mark">?</span>;
 
                         <span class="kw">let </span>query_set: <span class="kw-2">&amp;</span>resource::QuerySet&lt;A&gt; = cmd_buf
@@ -4496,19 +4651,24 @@
                             .map_pass_err(scope)<span class="question-mark">?</span>;
 
                         info.context
-                            .check_compatible(<span class="kw-2">&amp;</span>bundle.context)
+                            .check_compatible(
+                                <span class="kw-2">&amp;</span>bundle.context,
+                                RenderPassCompatibilityCheckType::RenderBundle,
+                            )
                             .map_err(RenderPassErrorInner::IncompatibleBundleTargets)
                             .map_pass_err(scope)<span class="question-mark">?</span>;
 
                         <span class="kw">if </span>(info.is_depth_read_only &amp;&amp; !bundle.is_depth_read_only)
                             || (info.is_stencil_read_only &amp;&amp; !bundle.is_stencil_read_only)
                         {
-                            <span class="kw">return </span><span class="prelude-val">Err</span>(RenderPassErrorInner::IncompatibleBundleRods {
-                                pass_depth: info.is_depth_read_only,
-                                pass_stencil: info.is_stencil_read_only,
-                                bundle_depth: bundle.is_depth_read_only,
-                                bundle_stencil: bundle.is_stencil_read_only,
-                            })
+                            <span class="kw">return </span><span class="prelude-val">Err</span>(
+                                RenderPassErrorInner::IncompatibleBundleReadOnlyDepthStencil {
+                                    pass_depth: info.is_depth_read_only,
+                                    pass_stencil: info.is_stencil_read_only,
+                                    bundle_depth: bundle.is_depth_read_only,
+                                    bundle_stencil: bundle.is_stencil_read_only,
+                                },
+                            )
                             .map_pass_err(scope);
                         }
 
@@ -4655,7 +4815,7 @@
         }
 
         pass.base.commands.push(RenderCommand::SetBindGroup {
-            index: index.try_into().unwrap(),
+            index,
             num_dynamic_offsets: offset_length.try_into().unwrap(),
             bind_group_id,
         });

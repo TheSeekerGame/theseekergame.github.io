@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ruzstd-0.2.4/src/frame.rs`."><title>frame.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="ruzstd" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../ruzstd/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ruzstd-0.4.0/src/frame.rs`."><title>frame.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="ruzstd" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../ruzstd/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -228,91 +228,30 @@
 <a href="#228" id="228">228</a>
 <a href="#229" id="229">229</a>
 <a href="#230" id="230">230</a>
-<a href="#231" id="231">231</a>
-<a href="#232" id="232">232</a>
-<a href="#233" id="233">233</a>
-<a href="#234" id="234">234</a>
-<a href="#235" id="235">235</a>
-<a href="#236" id="236">236</a>
-<a href="#237" id="237">237</a>
-<a href="#238" id="238">238</a>
-<a href="#239" id="239">239</a>
-<a href="#240" id="240">240</a>
-<a href="#241" id="241">241</a>
-<a href="#242" id="242">242</a>
-<a href="#243" id="243">243</a>
-<a href="#244" id="244">244</a>
-<a href="#245" id="245">245</a>
-<a href="#246" id="246">246</a>
-<a href="#247" id="247">247</a>
-<a href="#248" id="248">248</a>
-<a href="#249" id="249">249</a>
-<a href="#250" id="250">250</a>
-<a href="#251" id="251">251</a>
-<a href="#252" id="252">252</a>
-<a href="#253" id="253">253</a>
-<a href="#254" id="254">254</a>
-<a href="#255" id="255">255</a>
-<a href="#256" id="256">256</a>
-<a href="#257" id="257">257</a>
-<a href="#258" id="258">258</a>
-<a href="#259" id="259">259</a>
-<a href="#260" id="260">260</a>
-<a href="#261" id="261">261</a>
-<a href="#262" id="262">262</a>
-<a href="#263" id="263">263</a>
-<a href="#264" id="264">264</a>
-<a href="#265" id="265">265</a>
-<a href="#266" id="266">266</a>
-<a href="#267" id="267">267</a>
-<a href="#268" id="268">268</a>
-<a href="#269" id="269">269</a>
-<a href="#270" id="270">270</a>
-<a href="#271" id="271">271</a>
-<a href="#272" id="272">272</a>
-<a href="#273" id="273">273</a>
-<a href="#274" id="274">274</a>
-<a href="#275" id="275">275</a>
-<a href="#276" id="276">276</a>
-<a href="#277" id="277">277</a>
-<a href="#278" id="278">278</a>
-<a href="#279" id="279">279</a>
-<a href="#280" id="280">280</a>
-<a href="#281" id="281">281</a>
-<a href="#282" id="282">282</a>
-<a href="#283" id="283">283</a>
-<a href="#284" id="284">284</a>
-<a href="#285" id="285">285</a>
-<a href="#286" id="286">286</a>
-<a href="#287" id="287">287</a>
-<a href="#288" id="288">288</a>
-<a href="#289" id="289">289</a>
-<a href="#290" id="290">290</a>
-<a href="#291" id="291">291</a>
-<a href="#292" id="292">292</a>
-<a href="#293" id="293">293</a>
-<a href="#294" id="294">294</a>
-<a href="#295" id="295">295</a>
-<a href="#296" id="296">296</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span>std::convert::TryInto;
-
+</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::io::{Error, Read};
 <span class="kw">pub const </span>MAGIC_NUM: u32 = <span class="number">0xFD2F_B528</span>;
 <span class="kw">pub const </span>MIN_WINDOW_SIZE: u64 = <span class="number">1024</span>;
 <span class="kw">pub const </span>MAX_WINDOW_SIZE: u64 = (<span class="number">1 </span>&lt;&lt; <span class="number">41</span>) + <span class="number">7 </span>* (<span class="number">1 </span>&lt;&lt; <span class="number">38</span>);
 
 <span class="kw">pub struct </span>Frame {
-    magic_num: u32,
     <span class="kw">pub </span>header: FrameHeader,
 }
 
 <span class="kw">pub struct </span>FrameHeader {
     <span class="kw">pub </span>descriptor: FrameDescriptor,
     window_descriptor: u8,
-    dict_id: Vec&lt;u8&gt;,
-    frame_content_size: Vec&lt;u8&gt;,
+    dict_id: <span class="prelude-ty">Option</span>&lt;u32&gt;,
+    frame_content_size: u64,
 }
 
 <span class="kw">pub struct </span>FrameDescriptor(u8);
+
+<span class="attr">#[derive(Debug, thiserror::Error)]
+#[non_exhaustive]
+</span><span class="kw">pub enum </span>FrameDescriptorError {
+    <span class="attr">#[error(<span class="string">&quot;Invalid Frame_Content_Size_Flag; Is: {got}, Should be one of: 0, 1, 2, 3&quot;</span>)]
+    </span>InvalidFrameContentSizeFlag { got: u8 },
+}
 
 <span class="kw">impl </span>FrameDescriptor {
     <span class="kw">pub fn </span>frame_content_size_flag(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u8 {
@@ -336,7 +275,7 @@
     </span>}
 
     <span class="comment">// Deriving info from the flags
-    </span><span class="kw">pub fn </span>frame_content_size_bytes(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;u8, String&gt; {
+    </span><span class="kw">pub fn </span>frame_content_size_bytes(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;u8, FrameDescriptorError&gt; {
         <span class="kw">match </span><span class="self">self</span>.frame_content_size_flag() {
             <span class="number">0 </span>=&gt; {
                 <span class="kw">if </span><span class="self">self</span>.single_segment_flag() {
@@ -348,40 +287,51 @@
             <span class="number">1 </span>=&gt; <span class="prelude-val">Ok</span>(<span class="number">2</span>),
             <span class="number">2 </span>=&gt; <span class="prelude-val">Ok</span>(<span class="number">4</span>),
             <span class="number">3 </span>=&gt; <span class="prelude-val">Ok</span>(<span class="number">8</span>),
-            <span class="kw">_ </span>=&gt; <span class="prelude-val">Err</span>(<span class="macro">format!</span>(
-                <span class="string">&quot;Invalid Frame_Content_Size_Flag Is: {} Should be one of: 0,1,2,3&quot;</span>,
-                <span class="self">self</span>.frame_content_size_flag()
-            )),
+            other =&gt; <span class="prelude-val">Err</span>(FrameDescriptorError::InvalidFrameContentSizeFlag { got: other }),
         }
     }
 
-    <span class="kw">pub fn </span>dictionary_id_bytes(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;u8, String&gt; {
+    <span class="kw">pub fn </span>dictionary_id_bytes(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;u8, FrameDescriptorError&gt; {
         <span class="kw">match </span><span class="self">self</span>.dict_id_flag() {
             <span class="number">0 </span>=&gt; <span class="prelude-val">Ok</span>(<span class="number">0</span>),
             <span class="number">1 </span>=&gt; <span class="prelude-val">Ok</span>(<span class="number">1</span>),
             <span class="number">2 </span>=&gt; <span class="prelude-val">Ok</span>(<span class="number">2</span>),
             <span class="number">3 </span>=&gt; <span class="prelude-val">Ok</span>(<span class="number">4</span>),
-            <span class="kw">_ </span>=&gt; <span class="prelude-val">Err</span>(<span class="macro">format!</span>(
-                <span class="string">&quot;Invalid Frame_Content_Size_Flag Is: {} Should be one of: 0,1,2,3&quot;</span>,
-                <span class="self">self</span>.frame_content_size_flag()
-            )),
+            other =&gt; <span class="prelude-val">Err</span>(FrameDescriptorError::InvalidFrameContentSizeFlag { got: other }),
         }
     }
 }
+
+<span class="attr">#[derive(Debug, thiserror::Error)]
+#[non_exhaustive]
+</span><span class="kw">pub enum </span>FrameHeaderError {
+    <span class="attr">#[error(<span class="string">&quot;window_size bigger than allowed maximum. Is: {got}, Should be lower than: {MAX_WINDOW_SIZE}&quot;</span>)]
+    </span>WindowTooBig { got: u64 },
+    <span class="attr">#[error(<span class="string">&quot;window_size smaller than allowed minimum. Is: {got}, Should be greater than: {MIN_WINDOW_SIZE}&quot;</span>)]
+    </span>WindowTooSmall { got: u64 },
+    <span class="attr">#[error(transparent)]
+    </span>FrameDescriptorError(<span class="attr">#[from] </span>FrameDescriptorError),
+    <span class="attr">#[error(<span class="string">&quot;Not enough bytes in dict_id. Is: {got}, Should be: {expected}&quot;</span>)]
+    </span>DictIdTooSmall { got: usize, expected: usize },
+    <span class="attr">#[error(<span class="string">&quot;frame_content_size does not have the right length. Is: {got}, Should be: {expected}&quot;</span>)]
+    </span>MismatchedFrameSize { got: usize, expected: u8 },
+    <span class="attr">#[error(<span class="string">&quot;frame_content_size was zero&quot;</span>)]
+    </span>FrameSizeIsZero,
+    <span class="attr">#[error(<span class="string">&quot;Invalid frame_content_size. Is: {got}, Should be one of 1, 2, 4, 8 bytes&quot;</span>)]
+    </span>InvalidFrameSize { got: u8 },
+}
+
 <span class="kw">impl </span>FrameHeader {
-    <span class="kw">pub fn </span>window_size(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;u64, String&gt; {
+    <span class="kw">pub fn </span>window_size(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;u64, FrameHeaderError&gt; {
         <span class="kw">if </span><span class="self">self</span>.descriptor.single_segment_flag() {
-            <span class="kw">match </span><span class="self">self</span>.frame_content_size() {
-                <span class="prelude-val">Ok</span>(x) =&gt; <span class="prelude-val">Ok</span>(x),
-                <span class="prelude-val">Err</span>(m) =&gt; <span class="prelude-val">Err</span>(m),
-            }
+            <span class="prelude-val">Ok</span>(<span class="self">self</span>.frame_content_size())
         } <span class="kw">else </span>{
             <span class="kw">let </span>exp = <span class="self">self</span>.window_descriptor &gt;&gt; <span class="number">3</span>;
             <span class="kw">let </span>mantissa = <span class="self">self</span>.window_descriptor &amp; <span class="number">0x7</span>;
 
-            <span class="kw">let </span>window_log = <span class="number">10 </span>+ (exp <span class="kw">as </span>u64);
+            <span class="kw">let </span>window_log = <span class="number">10 </span>+ u64::from(exp);
             <span class="kw">let </span>window_base = <span class="number">1 </span>&lt;&lt; window_log;
-            <span class="kw">let </span>window_add = (window_base / <span class="number">8</span>) * (mantissa <span class="kw">as </span>u64);
+            <span class="kw">let </span>window_add = (window_base / <span class="number">8</span>) * u64::from(mantissa);
 
             <span class="kw">let </span>window_size = window_base + window_add;
 
@@ -389,202 +339,120 @@
                 <span class="kw">if </span>window_size &lt; MAX_WINDOW_SIZE {
                     <span class="prelude-val">Ok</span>(window_size)
                 } <span class="kw">else </span>{
-                    <span class="prelude-val">Err</span>(<span class="macro">format!</span>(
-                        <span class="string">&quot;window_size bigger than allowed maximum. Is: {}, Should be lower than: {}&quot;</span>,
-                        window_size, MAX_WINDOW_SIZE
-                    ))
+                    <span class="prelude-val">Err</span>(FrameHeaderError::WindowTooBig { got: window_size })
                 }
             } <span class="kw">else </span>{
-                <span class="prelude-val">Err</span>(<span class="macro">format!</span>(
-                    <span class="string">&quot;window_size smaller than allowed minimum. Is: {}, Should be greater than: {}&quot;</span>,
-                    window_size, MIN_WINDOW_SIZE
-                ))
+                <span class="prelude-val">Err</span>(FrameHeaderError::WindowTooSmall { got: window_size })
             }
         }
     }
 
-    <span class="kw">pub fn </span>dictiornary_id(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;u32&gt;, String&gt; {
-        <span class="kw">if </span><span class="self">self</span>.descriptor.dict_id_flag() == <span class="number">0 </span>{
-            <span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>)
-        } <span class="kw">else </span>{
-            <span class="kw">match </span><span class="self">self</span>.descriptor.dictionary_id_bytes() {
-                <span class="prelude-val">Err</span>(m) =&gt; <span class="prelude-val">Err</span>(m),
-                <span class="prelude-val">Ok</span>(bytes) =&gt; {
-                    <span class="kw">if </span><span class="self">self</span>.dict_id.len() != bytes <span class="kw">as </span>usize {
-                        <span class="prelude-val">Err</span>(<span class="macro">format!</span>(
-                            <span class="string">&quot;Not enough bytes in dict_id. Is: {}, Should be: {}&quot;</span>,
-                            <span class="self">self</span>.dict_id.len(),
-                            bytes
-                        ))
-                    } <span class="kw">else </span>{
-                        <span class="kw">let </span><span class="kw-2">mut </span>value: u32 = <span class="number">0</span>;
-                        <span class="kw">let </span><span class="kw-2">mut </span>shift = <span class="number">0</span>;
-                        <span class="kw">for </span>x <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.dict_id {
-                            value |= (<span class="kw-2">*</span>x <span class="kw">as </span>u32) &lt;&lt; shift;
-                            shift += <span class="number">8</span>;
-                        }
-
-                        <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(value))
-                    }
-                }
-            }
-        }
+    <span class="kw">pub fn </span>dictionary_id(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;u32&gt; {
+        <span class="self">self</span>.dict_id
     }
 
-    <span class="kw">pub fn </span>frame_content_size(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;u64, String&gt; {
-        <span class="kw">match </span><span class="self">self</span>.descriptor.frame_content_size_bytes() {
-            <span class="prelude-val">Err</span>(m) =&gt; <span class="prelude-val">Err</span>(m),
-            <span class="prelude-val">Ok</span>(bytes) =&gt; <span class="kw">match </span>bytes {
-                <span class="number">0 </span>=&gt; <span class="prelude-val">Err</span>(<span class="string">&quot;Bytes was zero&quot;</span>.to_owned()),
-                <span class="number">1 </span>=&gt; {
-                    <span class="kw">if </span><span class="self">self</span>.frame_content_size.len() == <span class="number">1 </span>{
-                        <span class="prelude-val">Ok</span>(u64::from(<span class="self">self</span>.frame_content_size[<span class="number">0</span>]))
-                    } <span class="kw">else </span>{
-                        <span class="prelude-val">Err</span>(<span class="macro">format!</span>(
-                            <span class="string">&quot;frame_content_size not long enough. Is: {}, Should be: {}&quot;</span>,
-                            <span class="self">self</span>.frame_content_size.len(),
-                            bytes
-                        ))
-                    }
-                }
-                <span class="number">2 </span>=&gt; {
-                    <span class="kw">if </span><span class="self">self</span>.frame_content_size.len() == <span class="number">2 </span>{
-                        <span class="kw">let </span>val = (u64::from(<span class="self">self</span>.frame_content_size[<span class="number">1</span>]) &lt;&lt; <span class="number">8</span>)
-                            + (u64::from(<span class="self">self</span>.frame_content_size[<span class="number">0</span>]));
-                        <span class="prelude-val">Ok</span>(val + <span class="number">256</span>) <span class="comment">//this weird offset is from the documentation. Only if bytes == 2
-                    </span>} <span class="kw">else </span>{
-                        <span class="prelude-val">Err</span>(<span class="macro">format!</span>(
-                            <span class="string">&quot;frame_content_size not long enough. Is: {}, Should be: {}&quot;</span>,
-                            <span class="self">self</span>.frame_content_size.len(),
-                            bytes
-                        ))
-                    }
-                }
-                <span class="number">4 </span>=&gt; {
-                    <span class="kw">if </span><span class="self">self</span>.frame_content_size.len() == <span class="number">4 </span>{
-                        <span class="kw">let </span>val = <span class="self">self</span>.frame_content_size[..<span class="number">4</span>]
-                            .try_into()
-                            .expect(<span class="string">&quot;optimized away&quot;</span>);
-                        <span class="kw">let </span>val = u32::from_le_bytes(val);
-                        <span class="prelude-val">Ok</span>(u64::from(val))
-                    } <span class="kw">else </span>{
-                        <span class="prelude-val">Err</span>(<span class="macro">format!</span>(
-                            <span class="string">&quot;frame_content_size not long enough. Is: {}, Should be: {}&quot;</span>,
-                            <span class="self">self</span>.frame_content_size.len(),
-                            bytes
-                        ))
-                    }
-                }
-                <span class="number">8 </span>=&gt; {
-                    <span class="kw">if </span><span class="self">self</span>.frame_content_size.len() == <span class="number">8 </span>{
-                        <span class="kw">let </span>val = <span class="self">self</span>.frame_content_size[..<span class="number">8</span>]
-                            .try_into()
-                            .expect(<span class="string">&quot;optimized away&quot;</span>);
-                        <span class="kw">let </span>val = u64::from_le_bytes(val);
-                        <span class="prelude-val">Ok</span>(val)
-                    } <span class="kw">else </span>{
-                        <span class="prelude-val">Err</span>(<span class="macro">format!</span>(
-                            <span class="string">&quot;frame_content_size not long enough. Is: {}, Should be: {}&quot;</span>,
-                            <span class="self">self</span>.frame_content_size.len(),
-                            bytes
-                        ))
-                    }
-                }
-                <span class="kw">_ </span>=&gt; <span class="prelude-val">Err</span>(<span class="macro">format!</span>(
-                    <span class="string">&quot;Invalid amount of bytes&#39;. Is: {}, Should be one of 1,2,4,8&quot;</span>,
-                    <span class="self">self</span>.frame_content_size.len()
-                )),
-            },
-        }
+    <span class="kw">pub fn </span>frame_content_size(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u64 {
+        <span class="self">self</span>.frame_content_size
     }
 }
 
-<span class="kw">impl </span>Frame {
-    <span class="kw">pub fn </span>check_valid(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), String&gt; {
-        <span class="kw">if </span><span class="self">self</span>.magic_num != MAGIC_NUM {
-            <span class="prelude-val">Err</span>(<span class="macro">format!</span>(
-                <span class="string">&quot;magic_num wrong. Is: {}. Should be: {}&quot;</span>,
-                <span class="self">self</span>.magic_num, MAGIC_NUM
-            ))
-        } <span class="kw">else if </span><span class="self">self</span>.header.descriptor.reserved_flag() {
-            <span class="prelude-val">Err</span>(<span class="string">&quot;Reserved Flag set. Must be zero&quot;</span>.to_string())
-        } <span class="kw">else </span>{
-            <span class="kw">match </span><span class="self">self</span>.header.dictiornary_id() {
-                <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; <span class="kw">match </span><span class="self">self</span>.header.window_size() {
-                    <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; {
-                        <span class="kw">if </span><span class="self">self</span>.header.descriptor.single_segment_flag() {
-                            <span class="kw">match </span><span class="self">self</span>.header.frame_content_size() {
-                                <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; <span class="prelude-val">Ok</span>(()),
-                                <span class="prelude-val">Err</span>(m) =&gt; <span class="prelude-val">Err</span>(m),
-                            }
-                        } <span class="kw">else </span>{
-                            <span class="prelude-val">Ok</span>(())
-                        }
-                    }
-                    <span class="prelude-val">Err</span>(m) =&gt; <span class="prelude-val">Err</span>(m),
-                },
-                <span class="prelude-val">Err</span>(m) =&gt; <span class="prelude-val">Err</span>(m),
-            }
-        }
-    }
+<span class="attr">#[derive(Debug, thiserror::Error)]
+#[non_exhaustive]
+</span><span class="kw">pub enum </span>ReadFrameHeaderError {
+    <span class="attr">#[error(<span class="string">&quot;Error while reading magic number: {0}&quot;</span>)]
+    </span>MagicNumberReadError(<span class="attr">#[source] </span>Error),
+    <span class="attr">#[error(<span class="string">&quot;Read wrong magic number: 0x{0:X}&quot;</span>)]
+    </span>BadMagicNumber(u32),
+    <span class="attr">#[error(<span class="string">&quot;Error while reading frame descriptor: {0}&quot;</span>)]
+    </span>FrameDescriptorReadError(<span class="attr">#[source] </span>Error),
+    <span class="attr">#[error(transparent)]
+    </span>InvalidFrameDescriptor(<span class="attr">#[from] </span>FrameDescriptorError),
+    <span class="attr">#[error(<span class="string">&quot;Error while reading window descriptor: {0}&quot;</span>)]
+    </span>WindowDescriptorReadError(<span class="attr">#[source] </span>Error),
+    <span class="attr">#[error(<span class="string">&quot;Error while reading dictionary id: {0}&quot;</span>)]
+    </span>DictionaryIdReadError(<span class="attr">#[source] </span>Error),
+    <span class="attr">#[error(<span class="string">&quot;Error while reading frame content size: {0}&quot;</span>)]
+    </span>FrameContentSizeReadError(<span class="attr">#[source] </span>Error),
+    <span class="attr">#[error(<span class="string">&quot;SkippableFrame encountered with MagicNumber 0x{0:X} and length {1} bytes&quot;</span>)]
+    </span>SkipFrame(u32, u32),
 }
 
-<span class="kw">use </span>std::io::Read;
-<span class="kw">pub fn </span>read_frame_header(r: <span class="kw-2">&amp;mut </span><span class="kw">dyn </span>Read) -&gt; <span class="prelude-ty">Result</span>&lt;(Frame, u8), String&gt; {
+<span class="kw">pub fn </span>read_frame_header(<span class="kw-2">mut </span>r: <span class="kw">impl </span>Read) -&gt; <span class="prelude-ty">Result</span>&lt;(Frame, u8), ReadFrameHeaderError&gt; {
+    <span class="kw">use </span>ReadFrameHeaderError <span class="kw">as </span>err;
     <span class="kw">let </span><span class="kw-2">mut </span>buf = [<span class="number">0u8</span>; <span class="number">4</span>];
-    <span class="kw">let </span>magic_num: u32 = <span class="kw">match </span>r.read_exact(<span class="kw-2">&amp;mut </span>buf) {
-        <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; u32::from_le_bytes(buf),
-        <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="string">&quot;Error while reading magic number&quot;</span>.to_owned()),
-    };
 
+    r.read_exact(<span class="kw-2">&amp;mut </span>buf).map_err(err::MagicNumberReadError)<span class="question-mark">?</span>;
     <span class="kw">let </span><span class="kw-2">mut </span>bytes_read = <span class="number">4</span>;
+    <span class="kw">let </span>magic_num = u32::from_le_bytes(buf);
 
-    <span class="kw">let </span>desc: FrameDescriptor = <span class="kw">match </span>r.read_exact(<span class="kw-2">&amp;mut </span>buf[<span class="number">0</span>..<span class="number">1</span>]) {
-        <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; FrameDescriptor(buf[<span class="number">0</span>]),
-        <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="string">&quot;Error while reading frame descriptor&quot;</span>.to_owned()),
-    };
+    <span class="comment">// Skippable frames have a magic number in this interval
+    </span><span class="kw">if </span>(<span class="number">0x184D2A50</span>..=<span class="number">0x184D2A5F</span>).contains(<span class="kw-2">&amp;</span>magic_num) {
+        r.read_exact(<span class="kw-2">&amp;mut </span>buf)
+            .map_err(err::FrameDescriptorReadError)<span class="question-mark">?</span>;
+        <span class="kw">let </span>skip_size = u32::from_le_bytes(buf);
+        <span class="kw">return </span><span class="prelude-val">Err</span>(ReadFrameHeaderError::SkipFrame(magic_num, skip_size));
+    }
+
+    <span class="kw">if </span>magic_num != MAGIC_NUM {
+        <span class="kw">return </span><span class="prelude-val">Err</span>(ReadFrameHeaderError::BadMagicNumber(magic_num));
+    }
+
+    r.read_exact(<span class="kw-2">&amp;mut </span>buf[<span class="number">0</span>..<span class="number">1</span>])
+        .map_err(err::FrameDescriptorReadError)<span class="question-mark">?</span>;
+    <span class="kw">let </span>desc = FrameDescriptor(buf[<span class="number">0</span>]);
 
     bytes_read += <span class="number">1</span>;
 
     <span class="kw">let </span><span class="kw-2">mut </span>frame_header = FrameHeader {
         descriptor: FrameDescriptor(desc.<span class="number">0</span>),
-        dict_id: <span class="kw">match </span>desc.dictionary_id_bytes() {
-            <span class="prelude-val">Ok</span>(bytes) =&gt; <span class="macro">vec!</span>[<span class="number">0</span>; bytes <span class="kw">as </span>usize],
-            <span class="prelude-val">Err</span>(m) =&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(m),
-        },
-        frame_content_size: <span class="kw">match </span>desc.frame_content_size_bytes() {
-            <span class="prelude-val">Ok</span>(bytes) =&gt; <span class="macro">vec!</span>[<span class="number">0</span>; bytes <span class="kw">as </span>usize],
-            <span class="prelude-val">Err</span>(m) =&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(m),
-        },
+        dict_id: <span class="prelude-val">None</span>,
+        frame_content_size: <span class="number">0</span>,
         window_descriptor: <span class="number">0</span>,
     };
 
     <span class="kw">if </span>!desc.single_segment_flag() {
-        <span class="kw">match </span>r.read_exact(<span class="kw-2">&amp;mut </span>buf[<span class="number">0</span>..<span class="number">1</span>]) {
-            <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; frame_header.window_descriptor = buf[<span class="number">0</span>],
-            <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="string">&quot;Error while reading window descriptor&quot;</span>.to_owned()),
-        }
+        r.read_exact(<span class="kw-2">&amp;mut </span>buf[<span class="number">0</span>..<span class="number">1</span>])
+            .map_err(err::WindowDescriptorReadError)<span class="question-mark">?</span>;
+        frame_header.window_descriptor = buf[<span class="number">0</span>];
         bytes_read += <span class="number">1</span>;
     }
 
-    <span class="kw">if </span>!frame_header.dict_id.is_empty() {
-        <span class="kw">match </span>r.read_exact(<span class="kw-2">&amp;mut </span>frame_header.dict_id.as_mut_slice()) {
-            <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; {}
-            <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="string">&quot;Error while reading dcitionary id&quot;</span>.to_owned()),
+    <span class="kw">let </span>dict_id_len = desc.dictionary_id_bytes()<span class="question-mark">? </span><span class="kw">as </span>usize;
+    <span class="kw">if </span>dict_id_len != <span class="number">0 </span>{
+        <span class="kw">let </span>buf = <span class="kw-2">&amp;mut </span>buf[..dict_id_len];
+        r.read_exact(buf).map_err(err::DictionaryIdReadError)<span class="question-mark">?</span>;
+        bytes_read += dict_id_len;
+        <span class="kw">let </span><span class="kw-2">mut </span>dict_id = <span class="number">0u32</span>;
+
+        <span class="attr">#[allow(clippy::needless_range_loop)]
+        </span><span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..dict_id_len {
+            dict_id += (buf[i] <span class="kw">as </span>u32) &lt;&lt; (<span class="number">8 </span>* i);
         }
-        bytes_read += frame_header.dict_id.len();
+        <span class="kw">if </span>dict_id != <span class="number">0 </span>{
+            frame_header.dict_id = <span class="prelude-val">Some</span>(dict_id);
+        }
     }
 
-    <span class="kw">if </span>!frame_header.frame_content_size.is_empty() {
-        <span class="kw">match </span>r.read_exact(<span class="kw-2">&amp;mut </span>frame_header.frame_content_size.as_mut_slice()) {
-            <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; {}
-            <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="string">&quot;Error while reading frame content size&quot;</span>.to_owned()),
+    <span class="kw">let </span>fcs_len = desc.frame_content_size_bytes()<span class="question-mark">? </span><span class="kw">as </span>usize;
+    <span class="kw">if </span>fcs_len != <span class="number">0 </span>{
+        <span class="kw">let </span><span class="kw-2">mut </span>fcs_buf = [<span class="number">0u8</span>; <span class="number">8</span>];
+        <span class="kw">let </span>fcs_buf = <span class="kw-2">&amp;mut </span>fcs_buf[..fcs_len];
+        r.read_exact(fcs_buf)
+            .map_err(err::FrameContentSizeReadError)<span class="question-mark">?</span>;
+        bytes_read += fcs_len;
+        <span class="kw">let </span><span class="kw-2">mut </span>fcs = <span class="number">0u64</span>;
+
+        <span class="attr">#[allow(clippy::needless_range_loop)]
+        </span><span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..fcs_len {
+            fcs += (fcs_buf[i] <span class="kw">as </span>u64) &lt;&lt; (<span class="number">8 </span>* i);
         }
-        bytes_read += frame_header.frame_content_size.len();
+        <span class="kw">if </span>fcs_len == <span class="number">2 </span>{
+            fcs += <span class="number">256</span>;
+        }
+        frame_header.frame_content_size = fcs;
     }
 
     <span class="kw">let </span>frame: Frame = Frame {
-        magic_num,
         header: frame_header,
     };
 

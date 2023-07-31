@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_ecs-0.10.1/src/schedule/state.rs`."><title>state.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_ecs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../bevy_ecs/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_ecs-0.11.0/src/schedule/state.rs`."><title>state.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_ecs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../bevy_ecs/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -109,13 +109,59 @@
 <a href="#109" id="109">109</a>
 <a href="#110" id="110">110</a>
 <a href="#111" id="111">111</a>
+<a href="#112" id="112">112</a>
+<a href="#113" id="113">113</a>
+<a href="#114" id="114">114</a>
+<a href="#115" id="115">115</a>
+<a href="#116" id="116">116</a>
+<a href="#117" id="117">117</a>
+<a href="#118" id="118">118</a>
+<a href="#119" id="119">119</a>
+<a href="#120" id="120">120</a>
+<a href="#121" id="121">121</a>
+<a href="#122" id="122">122</a>
+<a href="#123" id="123">123</a>
+<a href="#124" id="124">124</a>
+<a href="#125" id="125">125</a>
+<a href="#126" id="126">126</a>
+<a href="#127" id="127">127</a>
+<a href="#128" id="128">128</a>
+<a href="#129" id="129">129</a>
+<a href="#130" id="130">130</a>
+<a href="#131" id="131">131</a>
+<a href="#132" id="132">132</a>
+<a href="#133" id="133">133</a>
+<a href="#134" id="134">134</a>
+<a href="#135" id="135">135</a>
+<a href="#136" id="136">136</a>
+<a href="#137" id="137">137</a>
+<a href="#138" id="138">138</a>
+<a href="#139" id="139">139</a>
+<a href="#140" id="140">140</a>
+<a href="#141" id="141">141</a>
+<a href="#142" id="142">142</a>
+<a href="#143" id="143">143</a>
+<a href="#144" id="144">144</a>
+<a href="#145" id="145">145</a>
+<a href="#146" id="146">146</a>
+<a href="#147" id="147">147</a>
+<a href="#148" id="148">148</a>
+<a href="#149" id="149">149</a>
+<a href="#150" id="150">150</a>
+<a href="#151" id="151">151</a>
+<a href="#152" id="152">152</a>
+<a href="#153" id="153">153</a>
+<a href="#154" id="154">154</a>
+<a href="#155" id="155">155</a>
+<a href="#156" id="156">156</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::fmt::Debug;
 <span class="kw">use </span>std::hash::Hash;
 <span class="kw">use </span>std::mem;
+<span class="kw">use </span>std::ops::Deref;
 
 <span class="kw">use crate as </span>bevy_ecs;
 <span class="kw">use </span><span class="kw">crate</span>::change_detection::DetectChangesMut;
-<span class="kw">use </span><span class="kw">crate</span>::schedule::{ScheduleLabel, SystemSet};
+<span class="kw">use </span><span class="kw">crate</span>::schedule::ScheduleLabel;
 <span class="kw">use </span><span class="kw">crate</span>::system::Resource;
 <span class="kw">use </span><span class="kw">crate</span>::world::World;
 
@@ -131,8 +177,6 @@
 ///
 /// State transitions typically occur in the [`OnEnter&lt;T::Variant&gt;`] and [`OnExit&lt;T:Variant&gt;`] schedules,
 /// which can be run via the [`apply_state_transition::&lt;T&gt;`] system.
-/// Systems that run each frame in various states are typically stored in the main schedule,
-/// and are conventionally part of the [`OnUpdate(T::Variant)`] system set.
 ///
 /// # Example
 ///
@@ -149,7 +193,8 @@
 ///
 /// ```
 </span><span class="kw">pub trait </span>States: <span class="lifetime">&#39;static </span>+ Send + Sync + Clone + PartialEq + Eq + Hash + Debug + Default {
-    <span class="kw">type </span>Iter: Iterator&lt;Item = <span class="self">Self</span>&gt;;
+    <span class="doccomment">/// The type returned when iterating over all [`variants`](States::variants) of this type.
+    </span><span class="kw">type </span>Iter: Iterator&lt;Item = <span class="self">Self</span>&gt;;
 
     <span class="doccomment">/// Returns an iterator over all the state variants.
     </span><span class="kw">fn </span>variants() -&gt; <span class="self">Self</span>::Iter;
@@ -165,13 +210,17 @@
 </span><span class="attr">#[derive(ScheduleLabel, Clone, Debug, PartialEq, Eq, Hash)]
 </span><span class="kw">pub struct </span>OnExit&lt;S: States&gt;(<span class="kw">pub </span>S);
 
-<span class="doccomment">/// A [`SystemSet`] that will run within `CoreSet::Update` when this state is active.
+<span class="doccomment">/// The label of a [`Schedule`](super::Schedule) that **only** runs whenever [`State&lt;S&gt;`]
+/// exits the `from` state, AND enters the `to` state.
 ///
-/// This set, when created via `App::add_state`, is configured with both a base set and a run condition.
-/// If all you want is the run condition, use the [`in_state`](crate::schedule::common_conditions::in_state)
-/// [condition](super::Condition) directly.
-</span><span class="attr">#[derive(SystemSet, Clone, Debug, PartialEq, Eq, Hash)]
-</span><span class="kw">pub struct </span>OnUpdate&lt;S: States&gt;(<span class="kw">pub </span>S);
+/// Systems added to this schedule are always ran *after* [`OnExit`], and *before* [`OnEnter`].
+</span><span class="attr">#[derive(ScheduleLabel, Clone, Debug, PartialEq, Eq, Hash)]
+</span><span class="kw">pub struct </span>OnTransition&lt;S: States&gt; {
+    <span class="doccomment">/// The state being exited.
+    </span><span class="kw">pub </span>from: S,
+    <span class="doccomment">/// The state being entered.
+    </span><span class="kw">pub </span>to: S,
+}
 
 <span class="doccomment">/// A finite-state machine whose transitions have associated schedules
 /// ([`OnEnter(state)`] and [`OnExit(state)`]).
@@ -182,7 +231,35 @@
 ///
 /// The starting state is defined via the [`Default`] implementation for `S`.
 </span><span class="attr">#[derive(Resource, Default, Debug)]
-</span><span class="kw">pub struct </span>State&lt;S: States&gt;(<span class="kw">pub </span>S);
+</span><span class="kw">pub struct </span>State&lt;S: States&gt;(S);
+
+<span class="kw">impl</span>&lt;S: States&gt; State&lt;S&gt; {
+    <span class="doccomment">/// Creates a new state with a specific value.
+    ///
+    /// To change the state use [`NextState&lt;S&gt;`] rather than using this to modify the `State&lt;S&gt;`.
+    </span><span class="kw">pub fn </span>new(state: S) -&gt; <span class="self">Self </span>{
+        <span class="self">Self</span>(state)
+    }
+
+    <span class="doccomment">/// Get the current state.
+    </span><span class="kw">pub fn </span>get(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>S {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0
+    </span>}
+}
+
+<span class="kw">impl</span>&lt;S: States&gt; PartialEq&lt;S&gt; <span class="kw">for </span>State&lt;S&gt; {
+    <span class="kw">fn </span>eq(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span>S) -&gt; bool {
+        <span class="self">self</span>.get() == other
+    }
+}
+
+<span class="kw">impl</span>&lt;S: States&gt; Deref <span class="kw">for </span>State&lt;S&gt; {
+    <span class="kw">type </span>Target = S;
+
+    <span class="kw">fn </span>deref(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="self">Self</span>::Target {
+        <span class="self">self</span>.get()
+    }
+}
 
 <span class="doccomment">/// The next state of [`State&lt;S&gt;`].
 ///
@@ -199,15 +276,18 @@
     }
 }
 
-<span class="doccomment">/// Run the enter schedule for the current state
+<span class="doccomment">/// Run the enter schedule (if it exists) for the current state.
 </span><span class="kw">pub fn </span>run_enter_schedule&lt;S: States&gt;(world: <span class="kw-2">&amp;mut </span>World) {
-    world.run_schedule(OnEnter(world.resource::&lt;State&lt;S&gt;&gt;().<span class="number">0</span>.clone()));
+    world
+        .try_run_schedule(OnEnter(world.resource::&lt;State&lt;S&gt;&gt;().<span class="number">0</span>.clone()))
+        .ok();
 }
 
 <span class="doccomment">/// If a new state is queued in [`NextState&lt;S&gt;`], this system:
 /// - Takes the new state value from [`NextState&lt;S&gt;`] and updates [`State&lt;S&gt;`].
-/// - Runs the [`OnExit(exited_state)`] schedule.
-/// - Runs the [`OnEnter(entered_state)`] schedule.
+/// - Runs the [`OnExit(exited_state)`] schedule, if it exists.
+/// - Runs the [`OnTransition { from: exited_state, to: entered_state }`](OnTransition), if it exists.
+/// - Runs the [`OnEnter(entered_state)`] schedule, if it exists.
 </span><span class="kw">pub fn </span>apply_state_transition&lt;S: States&gt;(world: <span class="kw-2">&amp;mut </span>World) {
     <span class="comment">// We want to take the `NextState` resource,
     // but only mark it as changed if it wasn&#39;t empty.
@@ -215,9 +295,19 @@
     <span class="kw">if let </span><span class="prelude-val">Some</span>(entered) = next_state_resource.bypass_change_detection().<span class="number">0</span>.take() {
         next_state_resource.set_changed();
 
-        <span class="kw">let </span>exited = mem::replace(<span class="kw-2">&amp;mut </span>world.resource_mut::&lt;State&lt;S&gt;&gt;().<span class="number">0</span>, entered.clone());
-        world.run_schedule(OnExit(exited));
-        world.run_schedule(OnEnter(entered));
+        <span class="kw">let </span><span class="kw-2">mut </span>state_resource = world.resource_mut::&lt;State&lt;S&gt;&gt;();
+        <span class="kw">if </span><span class="kw-2">*</span>state_resource != entered {
+            <span class="kw">let </span>exited = mem::replace(<span class="kw-2">&amp;mut </span>state_resource.<span class="number">0</span>, entered.clone());
+            <span class="comment">// Try to run the schedules if they exist.
+            </span>world.try_run_schedule(OnExit(exited.clone())).ok();
+            world
+                .try_run_schedule(OnTransition {
+                    from: exited,
+                    to: entered.clone(),
+                })
+                .ok();
+            world.try_run_schedule(OnEnter(entered)).ok();
+        }
     }
 }
 </code></pre></div></section></main></body></html>

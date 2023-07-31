@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_ecs-0.10.1/src/system/query.rs`."><title>query.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_ecs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../bevy_ecs/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_ecs-0.11.0/src/system/query.rs`."><title>query.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_ecs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../bevy_ecs/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1501,14 +1501,113 @@
 <a href="#1501" id="1501">1501</a>
 <a href="#1502" id="1502">1502</a>
 <a href="#1503" id="1503">1503</a>
+<a href="#1504" id="1504">1504</a>
+<a href="#1505" id="1505">1505</a>
+<a href="#1506" id="1506">1506</a>
+<a href="#1507" id="1507">1507</a>
+<a href="#1508" id="1508">1508</a>
+<a href="#1509" id="1509">1509</a>
+<a href="#1510" id="1510">1510</a>
+<a href="#1511" id="1511">1511</a>
+<a href="#1512" id="1512">1512</a>
+<a href="#1513" id="1513">1513</a>
+<a href="#1514" id="1514">1514</a>
+<a href="#1515" id="1515">1515</a>
+<a href="#1516" id="1516">1516</a>
+<a href="#1517" id="1517">1517</a>
+<a href="#1518" id="1518">1518</a>
+<a href="#1519" id="1519">1519</a>
+<a href="#1520" id="1520">1520</a>
+<a href="#1521" id="1521">1521</a>
+<a href="#1522" id="1522">1522</a>
+<a href="#1523" id="1523">1523</a>
+<a href="#1524" id="1524">1524</a>
+<a href="#1525" id="1525">1525</a>
+<a href="#1526" id="1526">1526</a>
+<a href="#1527" id="1527">1527</a>
+<a href="#1528" id="1528">1528</a>
+<a href="#1529" id="1529">1529</a>
+<a href="#1530" id="1530">1530</a>
+<a href="#1531" id="1531">1531</a>
+<a href="#1532" id="1532">1532</a>
+<a href="#1533" id="1533">1533</a>
+<a href="#1534" id="1534">1534</a>
+<a href="#1535" id="1535">1535</a>
+<a href="#1536" id="1536">1536</a>
+<a href="#1537" id="1537">1537</a>
+<a href="#1538" id="1538">1538</a>
+<a href="#1539" id="1539">1539</a>
+<a href="#1540" id="1540">1540</a>
+<a href="#1541" id="1541">1541</a>
+<a href="#1542" id="1542">1542</a>
+<a href="#1543" id="1543">1543</a>
+<a href="#1544" id="1544">1544</a>
+<a href="#1545" id="1545">1545</a>
+<a href="#1546" id="1546">1546</a>
+<a href="#1547" id="1547">1547</a>
+<a href="#1548" id="1548">1548</a>
+<a href="#1549" id="1549">1549</a>
+<a href="#1550" id="1550">1550</a>
+<a href="#1551" id="1551">1551</a>
+<a href="#1552" id="1552">1552</a>
+<a href="#1553" id="1553">1553</a>
+<a href="#1554" id="1554">1554</a>
+<a href="#1555" id="1555">1555</a>
+<a href="#1556" id="1556">1556</a>
+<a href="#1557" id="1557">1557</a>
+<a href="#1558" id="1558">1558</a>
+<a href="#1559" id="1559">1559</a>
+<a href="#1560" id="1560">1560</a>
+<a href="#1561" id="1561">1561</a>
+<a href="#1562" id="1562">1562</a>
+<a href="#1563" id="1563">1563</a>
+<a href="#1564" id="1564">1564</a>
+<a href="#1565" id="1565">1565</a>
+<a href="#1566" id="1566">1566</a>
+<a href="#1567" id="1567">1567</a>
+<a href="#1568" id="1568">1568</a>
+<a href="#1569" id="1569">1569</a>
+<a href="#1570" id="1570">1570</a>
+<a href="#1571" id="1571">1571</a>
+<a href="#1572" id="1572">1572</a>
+<a href="#1573" id="1573">1573</a>
+<a href="#1574" id="1574">1574</a>
+<a href="#1575" id="1575">1575</a>
+<a href="#1576" id="1576">1576</a>
+<a href="#1577" id="1577">1577</a>
+<a href="#1578" id="1578">1578</a>
+<a href="#1579" id="1579">1579</a>
+<a href="#1580" id="1580">1580</a>
+<a href="#1581" id="1581">1581</a>
+<a href="#1582" id="1582">1582</a>
+<a href="#1583" id="1583">1583</a>
+<a href="#1584" id="1584">1584</a>
+<a href="#1585" id="1585">1585</a>
+<a href="#1586" id="1586">1586</a>
+<a href="#1587" id="1587">1587</a>
+<a href="#1588" id="1588">1588</a>
+<a href="#1589" id="1589">1589</a>
+<a href="#1590" id="1590">1590</a>
+<a href="#1591" id="1591">1591</a>
+<a href="#1592" id="1592">1592</a>
+<a href="#1593" id="1593">1593</a>
+<a href="#1594" id="1594">1594</a>
+<a href="#1595" id="1595">1595</a>
+<a href="#1596" id="1596">1596</a>
+<a href="#1597" id="1597">1597</a>
+<a href="#1598" id="1598">1598</a>
+<a href="#1599" id="1599">1599</a>
+<a href="#1600" id="1600">1600</a>
+<a href="#1601" id="1601">1601</a>
+<a href="#1602" id="1602">1602</a>
 </pre></div><pre class="rust"><code><span class="kw">use crate</span>::{
-    component::Component,
+    component::{Component, Tick},
     entity::Entity,
     query::{
         BatchingStrategy, QueryCombinationIter, QueryEntityError, QueryIter, QueryManyIter,
         QueryParIter, QuerySingleError, QueryState, ROQueryItem, ReadOnlyWorldQuery, WorldQuery,
     },
-    world::{Mut, World},
+    world::{unsafe_world_cell::UnsafeWorldCell, Mut},
 };
 <span class="kw">use </span>std::{any::TypeId, borrow::Borrow, fmt::Debug};
 
@@ -1526,6 +1625,8 @@
 /// - **`F` (query filter).**
 ///   A set of conditions that determines whether query items should be kept or discarded.
 ///   This type parameter is optional.
+///
+/// [`World`]: crate::world::World
 ///
 /// # System parameter declaration
 ///
@@ -1684,6 +1785,52 @@
 ///
 /// An alternative to this idiom is to wrap the conflicting queries into a [`ParamSet`](super::ParamSet).
 ///
+/// ## Whole Entity Access
+///
+/// [`EntityRef`]s can be fetched from a query. This will give read-only access to any component on the entity,
+/// and can be use to dynamically fetch any component without baking it into the query type. Due to this global
+/// access to the entity, this will block any other system from parallelizing with it. As such these queries
+/// should be sparingly used.
+///
+/// ```
+/// # use bevy_ecs::prelude::*;
+/// # #[derive(Component)]
+/// # struct ComponentA;
+/// # fn system(
+/// query: Query&lt;(EntityRef, &amp;ComponentA)&gt;
+/// # ) {}
+/// # bevy_ecs::system::assert_is_system(system);
+/// ```
+///
+/// As `EntityRef` can read any component on an entity, a query using it will conflict with *any* mutable
+/// access. It is strongly advised to couple `EntityRef` queries with the use of either `With`/`Without`
+/// filters or `ParamSets`. This also limits the scope of the query, which will improve iteration performance
+/// and also allows it to parallelize with other non-conflicting systems.
+///
+/// ```should_panic
+/// # use bevy_ecs::prelude::*;
+/// # #[derive(Component)]
+/// # struct ComponentA;
+/// # fn system(
+/// // This will panic!
+/// query: Query&lt;(EntityRef, &amp;mut ComponentA)&gt;
+/// # ) {}
+/// # bevy_ecs::system::assert_system_does_not_conflict(system);
+/// ```
+/// ```
+/// # use bevy_ecs::prelude::*;
+/// # #[derive(Component)]
+/// # struct ComponentA;
+/// # #[derive(Component)]
+/// # struct ComponentB;
+/// # fn system(
+/// // This will not panic.
+/// query_a: Query&lt;EntityRef, With&lt;ComponentA&gt;&gt;,
+/// query_b: Query&lt;&amp;mut ComponentB, Without&lt;ComponentA&gt;&gt;,
+/// # ) {}
+/// # bevy_ecs::system::assert_system_does_not_conflict(system);
+/// ```
+///
 /// # Accessing query items
 ///
 /// The following table summarizes the behavior of the safe methods that can be used to get query items.
@@ -1749,6 +1896,7 @@
 /// [`Changed`]: crate::query::Changed
 /// [components]: crate::component::Component
 /// [entity identifiers]: crate::entity::Entity
+/// [`EntityRef`]: crate::world::EntityRef
 /// [`for_each`]: Self::for_each
 /// [`for_each_mut`]: Self::for_each_mut
 /// [`get`]: Self::get
@@ -1777,10 +1925,11 @@
 /// [`With`]: crate::query::With
 /// [`Without`]: crate::query::Without
 </span><span class="kw">pub struct </span>Query&lt;<span class="lifetime">&#39;world</span>, <span class="lifetime">&#39;state</span>, Q: WorldQuery, F: ReadOnlyWorldQuery = ()&gt; {
-    world: <span class="kw-2">&amp;</span><span class="lifetime">&#39;world </span>World,
+    <span class="comment">// SAFETY: Must have access to the components registered in `state`.
+    </span>world: UnsafeWorldCell&lt;<span class="lifetime">&#39;world</span>&gt;,
     state: <span class="kw-2">&amp;</span><span class="lifetime">&#39;state </span>QueryState&lt;Q, F&gt;,
-    last_change_tick: u32,
-    change_tick: u32,
+    last_run: Tick,
+    this_run: Tick,
     <span class="comment">// SAFETY: This is used to ensure that `get_component_mut::&lt;C&gt;` properly fails when a Query writes C
     // and gets converted to a read-only query using `to_readonly`. Without checking this, `get_component_mut` relies on
     // QueryState&#39;s archetype_component_access, which will continue allowing write access to C after being cast to
@@ -1791,7 +1940,12 @@
 
 <span class="kw">impl</span>&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, Q: WorldQuery, F: ReadOnlyWorldQuery&gt; std::fmt::Debug <span class="kw">for </span>Query&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, Q, F&gt; {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>std::fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; std::fmt::Result {
-        <span class="macro">write!</span>(f, <span class="string">&quot;Query {{ matched entities: {}, world: {:?}, state: {:?}, last_change_tick: {}, change_tick: {} }}&quot;</span>, <span class="self">self</span>.iter().count(), <span class="self">self</span>.world, <span class="self">self</span>.state, <span class="self">self</span>.last_change_tick, <span class="self">self</span>.change_tick)
+        <span class="macro">write!</span>(
+            f, <span class="string">&quot;Query {{ matched entities: {}, world: {:?}, state: {:?}, last_run: {:?}, this_run: {:?} }}&quot;</span>,
+            <span class="self">self</span>.iter().count(),
+            <span class="comment">// SAFETY: World&#39;s Debug implementation only accesses metadata.
+            </span><span class="kw">unsafe </span>{ <span class="self">self</span>.world.world_metadata() },
+            <span class="self">self</span>.state, <span class="self">self</span>.last_run, <span class="self">self</span>.this_run)
     }
 }
 
@@ -1808,20 +1962,20 @@
     /// called in ways that ensure the queries have unique mutable access.
     </span><span class="attr">#[inline]
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>new(
-        world: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>World,
+        world: UnsafeWorldCell&lt;<span class="lifetime">&#39;w</span>&gt;,
         state: <span class="kw-2">&amp;</span><span class="lifetime">&#39;s </span>QueryState&lt;Q, F&gt;,
-        last_change_tick: u32,
-        change_tick: u32,
+        last_run: Tick,
+        this_run: Tick,
         force_read_only_component_access: bool,
     ) -&gt; <span class="self">Self </span>{
-        state.validate_world(world);
+        state.validate_world(world.id());
 
         <span class="self">Self </span>{
             force_read_only_component_access,
             world,
             state,
-            last_change_tick,
-            change_tick,
+            last_run,
+            this_run,
         }
     }
 
@@ -1837,8 +1991,8 @@
             Query::new(
                 <span class="self">self</span>.world,
                 new_state,
-                <span class="self">self</span>.last_change_tick,
-                <span class="self">self</span>.change_tick,
+                <span class="self">self</span>.last_run,
+                <span class="self">self</span>.this_run,
                 <span class="comment">// SAFETY: this must be set to true or `get_component_mut` will be unsound. See the comments
                 // on this field for more details
                 </span><span class="bool-val">true</span>,
@@ -1872,14 +2026,13 @@
     /// - [`for_each`](Self::for_each) for the closure based alternative.
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>iter(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; QueryIter&lt;<span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;s</span>, Q::ReadOnly, F::ReadOnly&gt; {
-        <span class="comment">// SAFETY: system runs without conflicts with other systems.
-        // same-system queries have runtime borrow checks when they conflict
+        <span class="comment">// SAFETY:
+        // - `self.world` has permission to access the required components.
+        // - The query is read-only, so it can be aliased even if it was originaly mutable.
         </span><span class="kw">unsafe </span>{
-            <span class="self">self</span>.state.as_readonly().iter_unchecked_manual(
-                <span class="self">self</span>.world,
-                <span class="self">self</span>.last_change_tick,
-                <span class="self">self</span>.change_tick,
-            )
+            <span class="self">self</span>.state
+                .as_readonly()
+                .iter_unchecked_manual(<span class="self">self</span>.world, <span class="self">self</span>.last_run, <span class="self">self</span>.this_run)
         }
     }
 
@@ -1909,11 +2062,10 @@
     /// - [`for_each_mut`](Self::for_each_mut) for the closure based alternative.
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>iter_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; QueryIter&lt;<span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;s</span>, Q, F&gt; {
-        <span class="comment">// SAFETY: system runs without conflicts with other systems.
-        // same-system queries have runtime borrow checks when they conflict
+        <span class="comment">// SAFETY: `self.world` has permission to access the required components.
         </span><span class="kw">unsafe </span>{
             <span class="self">self</span>.state
-                .iter_unchecked_manual(<span class="self">self</span>.world, <span class="self">self</span>.last_change_tick, <span class="self">self</span>.change_tick)
+                .iter_unchecked_manual(<span class="self">self</span>.world, <span class="self">self</span>.last_run, <span class="self">self</span>.this_run)
         }
     }
 
@@ -1940,13 +2092,14 @@
     </span><span class="kw">pub fn </span>iter_combinations&lt;<span class="kw">const </span>K: usize&gt;(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
     ) -&gt; QueryCombinationIter&lt;<span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;s</span>, Q::ReadOnly, F::ReadOnly, K&gt; {
-        <span class="comment">// SAFETY: system runs without conflicts with other systems.
-        // same-system queries have runtime borrow checks when they conflict
+        <span class="comment">// SAFETY:
+        // - `self.world` has permission to access the required components.
+        // - The query is read-only, so it can be aliased even if it was originaly mutable.
         </span><span class="kw">unsafe </span>{
             <span class="self">self</span>.state.as_readonly().iter_combinations_unchecked_manual(
                 <span class="self">self</span>.world,
-                <span class="self">self</span>.last_change_tick,
-                <span class="self">self</span>.change_tick,
+                <span class="self">self</span>.last_run,
+                <span class="self">self</span>.this_run,
             )
         }
     }
@@ -1974,14 +2127,10 @@
     </span><span class="kw">pub fn </span>iter_combinations_mut&lt;<span class="kw">const </span>K: usize&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
     ) -&gt; QueryCombinationIter&lt;<span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;s</span>, Q, F, K&gt; {
-        <span class="comment">// SAFETY: system runs without conflicts with other systems.
-        // same-system queries have runtime borrow checks when they conflict
+        <span class="comment">// SAFETY: `self.world` has permission to access the required components.
         </span><span class="kw">unsafe </span>{
-            <span class="self">self</span>.state.iter_combinations_unchecked_manual(
-                <span class="self">self</span>.world,
-                <span class="self">self</span>.last_change_tick,
-                <span class="self">self</span>.change_tick,
-            )
+            <span class="self">self</span>.state
+                .iter_combinations_unchecked_manual(<span class="self">self</span>.world, <span class="self">self</span>.last_run, <span class="self">self</span>.this_run)
         }
     }
 
@@ -2029,14 +2178,15 @@
     <span class="kw">where
         </span>EntityList::Item: Borrow&lt;Entity&gt;,
     {
-        <span class="comment">// SAFETY: system runs without conflicts with other systems.
-        // same-system queries have runtime borrow checks when they conflict
+        <span class="comment">// SAFETY:
+        // - `self.world` has permission to access the required components.
+        // - The query is read-only, so it can be aliased even if it was originaly mutable.
         </span><span class="kw">unsafe </span>{
             <span class="self">self</span>.state.as_readonly().iter_many_unchecked_manual(
                 entities,
                 <span class="self">self</span>.world,
-                <span class="self">self</span>.last_change_tick,
-                <span class="self">self</span>.change_tick,
+                <span class="self">self</span>.last_run,
+                <span class="self">self</span>.this_run,
             )
         }
     }
@@ -2082,14 +2232,13 @@
     <span class="kw">where
         </span>EntityList::Item: Borrow&lt;Entity&gt;,
     {
-        <span class="comment">// SAFETY: system runs without conflicts with other systems.
-        // same-system queries have runtime borrow checks when they conflict
+        <span class="comment">// SAFETY: `self.world` has permission to access the required components.
         </span><span class="kw">unsafe </span>{
             <span class="self">self</span>.state.iter_many_unchecked_manual(
                 entities,
                 <span class="self">self</span>.world,
-                <span class="self">self</span>.last_change_tick,
-                <span class="self">self</span>.change_tick,
+                <span class="self">self</span>.last_run,
+                <span class="self">self</span>.this_run,
             )
         }
     }
@@ -2106,10 +2255,11 @@
     /// - [`iter`](Self::iter) and [`iter_mut`](Self::iter_mut) for the safe versions.
     </span><span class="attr">#[inline]
     </span><span class="kw">pub unsafe fn </span>iter_unsafe(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; QueryIter&lt;<span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;s</span>, Q, F&gt; {
-        <span class="comment">// SEMI-SAFETY: system runs without conflicts with other systems.
-        // same-system queries have runtime borrow checks when they conflict
+        <span class="comment">// SAFETY:
+        // - `self.world` has permission to access the required components.
+        // - The caller ensures that this operation will not result in any aliased mutable accesses.
         </span><span class="self">self</span>.state
-            .iter_unchecked_manual(<span class="self">self</span>.world, <span class="self">self</span>.last_change_tick, <span class="self">self</span>.change_tick)
+            .iter_unchecked_manual(<span class="self">self</span>.world, <span class="self">self</span>.last_run, <span class="self">self</span>.this_run)
     }
 
     <span class="doccomment">/// Iterates over all possible combinations of `K` query items without repetition.
@@ -2126,13 +2276,11 @@
     </span><span class="kw">pub unsafe fn </span>iter_combinations_unsafe&lt;<span class="kw">const </span>K: usize&gt;(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
     ) -&gt; QueryCombinationIter&lt;<span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;s</span>, Q, F, K&gt; {
-        <span class="comment">// SEMI-SAFETY: system runs without conflicts with other systems.
-        // same-system queries have runtime borrow checks when they conflict
-        </span><span class="self">self</span>.state.iter_combinations_unchecked_manual(
-            <span class="self">self</span>.world,
-            <span class="self">self</span>.last_change_tick,
-            <span class="self">self</span>.change_tick,
-        )
+        <span class="comment">// SAFETY:
+        // - `self.world` has permission to access the required components.
+        // - The caller ensures that this operation will not result in any aliased mutable accesses.
+        </span><span class="self">self</span>.state
+            .iter_combinations_unchecked_manual(<span class="self">self</span>.world, <span class="self">self</span>.last_run, <span class="self">self</span>.this_run)
     }
 
     <span class="doccomment">/// Returns an [`Iterator`] over the query items generated from an [`Entity`] list.
@@ -2153,12 +2301,11 @@
     <span class="kw">where
         </span>EntityList::Item: Borrow&lt;Entity&gt;,
     {
-        <span class="self">self</span>.state.iter_many_unchecked_manual(
-            entities,
-            <span class="self">self</span>.world,
-            <span class="self">self</span>.last_change_tick,
-            <span class="self">self</span>.change_tick,
-        )
+        <span class="comment">// SAFETY:
+        // - `self.world` has permission to access the required components.
+        // - The caller ensures that this operation will not result in any aliased mutable accesses.
+        </span><span class="self">self</span>.state
+            .iter_many_unchecked_manual(entities, <span class="self">self</span>.world, <span class="self">self</span>.last_run, <span class="self">self</span>.this_run)
     }
 
     <span class="doccomment">/// Runs `f` on each read-only query item.
@@ -2187,14 +2334,15 @@
     /// - [`iter`](Self::iter) for the iterator based alternative.
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>for_each&lt;<span class="lifetime">&#39;this</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;this </span><span class="self">self</span>, f: <span class="kw">impl </span>FnMut(ROQueryItem&lt;<span class="lifetime">&#39;this</span>, Q&gt;)) {
-        <span class="comment">// SAFETY: system runs without conflicts with other systems.
-        // same-system queries have runtime borrow checks when they conflict
+        <span class="comment">// SAFETY:
+        // - `self.world` has permission to access the required components.
+        // - The query is read-only, so it can be aliased even if it was originaly mutable.
         </span><span class="kw">unsafe </span>{
             <span class="self">self</span>.state.as_readonly().for_each_unchecked_manual(
                 <span class="self">self</span>.world,
                 f,
-                <span class="self">self</span>.last_change_tick,
-                <span class="self">self</span>.change_tick,
+                <span class="self">self</span>.last_run,
+                <span class="self">self</span>.this_run,
             );
         };
     }
@@ -2225,15 +2373,10 @@
     /// - [`iter_mut`](Self::iter_mut) for the iterator based alternative.
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>for_each_mut&lt;<span class="lifetime">&#39;a</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span><span class="self">self</span>, f: <span class="kw">impl </span>FnMut(Q::Item&lt;<span class="lifetime">&#39;a</span>&gt;)) {
-        <span class="comment">// SAFETY: system runs without conflicts with other systems. same-system queries have runtime
-        // borrow checks when they conflict
+        <span class="comment">// SAFETY: `self.world` has permission to access the required components.
         </span><span class="kw">unsafe </span>{
-            <span class="self">self</span>.state.for_each_unchecked_manual(
-                <span class="self">self</span>.world,
-                f,
-                <span class="self">self</span>.last_change_tick,
-                <span class="self">self</span>.change_tick,
-            );
+            <span class="self">self</span>.state
+                .for_each_unchecked_manual(<span class="self">self</span>.world, f, <span class="self">self</span>.last_run, <span class="self">self</span>.this_run);
         };
     }
 
@@ -2242,11 +2385,14 @@
     /// This can only be called for read-only queries, see [`par_iter_mut`] for write-queries.
     ///
     /// [`par_iter_mut`]: Self::par_iter_mut
+    /// [`World`]: crate::world::World
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>par_iter(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; QueryParIter&lt;<span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>, Q::ReadOnly, F::ReadOnly&gt; {
         QueryParIter {
             world: <span class="self">self</span>.world,
             state: <span class="self">self</span>.state.as_readonly(),
+            last_run: <span class="self">self</span>.last_run,
+            this_run: <span class="self">self</span>.this_run,
             batching_strategy: BatchingStrategy::new(),
         }
     }
@@ -2256,11 +2402,14 @@
     /// This can only be called for mutable queries, see [`par_iter`] for read-only-queries.
     ///
     /// [`par_iter`]: Self::par_iter
+    /// [`World`]: crate::world::World
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>par_iter_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; QueryParIter&lt;<span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>, Q, F&gt; {
         QueryParIter {
             world: <span class="self">self</span>.world,
             state: <span class="self">self</span>.state,
+            last_run: <span class="self">self</span>.last_run,
+            this_run: <span class="self">self</span>.this_run,
             batching_strategy: BatchingStrategy::new(),
         }
     }
@@ -2304,14 +2453,15 @@
             <span class="self">self</span>.state.as_readonly().get_unchecked_manual(
                 <span class="self">self</span>.world,
                 entity,
-                <span class="self">self</span>.last_change_tick,
-                <span class="self">self</span>.change_tick,
+                <span class="self">self</span>.last_run,
+                <span class="self">self</span>.this_run,
             )
         }
     }
 
     <span class="doccomment">/// Returns the read-only query items for the given array of [`Entity`].
     ///
+    /// The returned query items are in the same order as the input.
     /// In case of a nonexisting entity or mismatched component, a [`QueryEntityError`] is returned instead.
     /// The elements of the array do not need to be unique, unlike `get_many_mut`.
     ///
@@ -2327,10 +2477,10 @@
         <span class="comment">// SAFETY: it is the scheduler&#39;s responsibility to ensure that `Query` is never handed out on the wrong `World`.
         </span><span class="kw">unsafe </span>{
             <span class="self">self</span>.state.get_many_read_only_manual(
-                <span class="self">self</span>.world,
+                <span class="self">self</span>.world.unsafe_world(),
                 entities,
-                <span class="self">self</span>.last_change_tick,
-                <span class="self">self</span>.change_tick,
+                <span class="self">self</span>.last_run,
+                <span class="self">self</span>.this_run,
             )
         }
     }
@@ -2413,17 +2563,14 @@
         <span class="comment">// SAFETY: system runs without conflicts with other systems.
         // same-system queries have runtime borrow checks when they conflict
         </span><span class="kw">unsafe </span>{
-            <span class="self">self</span>.state.get_unchecked_manual(
-                <span class="self">self</span>.world,
-                entity,
-                <span class="self">self</span>.last_change_tick,
-                <span class="self">self</span>.change_tick,
-            )
+            <span class="self">self</span>.state
+                .get_unchecked_manual(<span class="self">self</span>.world, entity, <span class="self">self</span>.last_run, <span class="self">self</span>.this_run)
         }
     }
 
     <span class="doccomment">/// Returns the query items for the given array of [`Entity`].
     ///
+    /// The returned query items are in the same order as the input.
     /// In case of a nonexisting entity, duplicate entities or mismatched component, a [`QueryEntityError`] is returned instead.
     ///
     /// # See also
@@ -2437,12 +2584,8 @@
     ) -&gt; <span class="prelude-ty">Result</span>&lt;[Q::Item&lt;<span class="lifetime">&#39;_</span>&gt;; N], QueryEntityError&gt; {
         <span class="comment">// SAFETY: scheduler ensures safe Query world access
         </span><span class="kw">unsafe </span>{
-            <span class="self">self</span>.state.get_many_unchecked_manual(
-                <span class="self">self</span>.world,
-                entities,
-                <span class="self">self</span>.last_change_tick,
-                <span class="self">self</span>.change_tick,
-            )
+            <span class="self">self</span>.state
+                .get_many_unchecked_manual(<span class="self">self</span>.world, entities, <span class="self">self</span>.last_run, <span class="self">self</span>.this_run)
         }
     }
 
@@ -2516,7 +2659,7 @@
         <span class="comment">// SEMI-SAFETY: system runs without conflicts with other systems.
         // same-system queries have runtime borrow checks when they conflict
         </span><span class="self">self</span>.state
-            .get_unchecked_manual(<span class="self">self</span>.world, entity, <span class="self">self</span>.last_change_tick, <span class="self">self</span>.change_tick)
+            .get_unchecked_manual(<span class="self">self</span>.world, entity, <span class="self">self</span>.last_run, <span class="self">self</span>.this_run)
     }
 
     <span class="doccomment">/// Returns a shared reference to the component `T` of the given [`Entity`].
@@ -2569,9 +2712,9 @@
             .archetype_component_access
             .has_read(archetype_component)
         {
-            entity_ref
-                .get::&lt;T&gt;()
-                .ok_or(QueryComponentError::MissingComponent)
+            <span class="comment">// SAFETY: `self.world` must have access to the component `T` for this entity,
+            // since it was registered in `self.state`&#39;s archetype component access set.
+            </span><span class="kw">unsafe </span>{ entity_ref.get::&lt;T&gt;() }.ok_or(QueryComponentError::MissingComponent)
         } <span class="kw">else </span>{
             <span class="prelude-val">Err</span>(QueryComponentError::MissingReadAccess)
         }
@@ -2579,7 +2722,7 @@
 
     <span class="doccomment">/// Returns a mutable reference to the component `T` of the given entity.
     ///
-    /// In case of a nonexisting entity or mismatched component, a [`QueryEntityError`] is returned instead.
+    /// In case of a nonexisting entity or mismatched component, a [`QueryComponentError`] is returned instead.
     ///
     /// # Example
     ///
@@ -2615,7 +2758,7 @@
 
     <span class="doccomment">/// Returns a mutable reference to the component `T` of the given entity.
     ///
-    /// In case of a nonexisting entity or mismatched component, a [`QueryEntityError`] is returned instead.
+    /// In case of a nonexisting entity or mismatched component, a [`QueryComponentError`] is returned instead.
     ///
     /// # Safety
     ///
@@ -2637,7 +2780,6 @@
         }
         <span class="kw">let </span>world = <span class="self">self</span>.world;
         <span class="kw">let </span>entity_ref = world
-            .as_unsafe_world_cell_migration_internal()
             .get_entity(entity)
             .ok_or(QueryComponentError::NoSuchEntity)<span class="question-mark">?</span>;
         <span class="kw">let </span>component_id = world
@@ -2654,7 +2796,7 @@
             .has_write(archetype_component)
         {
             entity_ref
-                .get_mut_using_ticks::&lt;T&gt;(<span class="self">self</span>.last_change_tick, <span class="self">self</span>.change_tick)
+                .get_mut_using_ticks::&lt;T&gt;(<span class="self">self</span>.last_run, <span class="self">self</span>.this_run)
                 .ok_or(QueryComponentError::MissingComponent)
         } <span class="kw">else </span>{
             <span class="prelude-val">Err</span>(QueryComponentError::MissingWriteAccess)
@@ -2730,8 +2872,8 @@
         </span><span class="kw">unsafe </span>{
             <span class="self">self</span>.state.as_readonly().get_single_unchecked_manual(
                 <span class="self">self</span>.world,
-                <span class="self">self</span>.last_change_tick,
-                <span class="self">self</span>.change_tick,
+                <span class="self">self</span>.last_run,
+                <span class="self">self</span>.this_run,
             )
         }
     }
@@ -2799,11 +2941,8 @@
         // the query ensures mutable access to the components it accesses, and the query
         // is uniquely borrowed
         </span><span class="kw">unsafe </span>{
-            <span class="self">self</span>.state.get_single_unchecked_manual(
-                <span class="self">self</span>.world,
-                <span class="self">self</span>.last_change_tick,
-                <span class="self">self</span>.change_tick,
-            )
+            <span class="self">self</span>.state
+                .get_single_unchecked_manual(<span class="self">self</span>.world, <span class="self">self</span>.last_run, <span class="self">self</span>.this_run)
         }
     }
 
@@ -2829,8 +2968,12 @@
     /// ```
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>is_empty(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        <span class="self">self</span>.state
-            .is_empty(<span class="self">self</span>.world, <span class="self">self</span>.last_change_tick, <span class="self">self</span>.change_tick)
+        <span class="self">self</span>.state.is_empty(
+            <span class="comment">// SAFETY: `QueryState::is_empty` does not access world data.
+            </span><span class="kw">unsafe </span>{ <span class="self">self</span>.world.unsafe_world() },
+            <span class="self">self</span>.last_run,
+            <span class="self">self</span>.this_run,
+        )
     }
 
     <span class="doccomment">/// Returns `true` if the given [`Entity`] matches the query.
@@ -2861,7 +3004,7 @@
         </span><span class="kw">unsafe </span>{
             <span class="self">self</span>.state
                 .as_nop()
-                .get_unchecked_manual(<span class="self">self</span>.world, entity, <span class="self">self</span>.last_change_tick, <span class="self">self</span>.change_tick)
+                .get_unchecked_manual(<span class="self">self</span>.world, entity, <span class="self">self</span>.last_run, <span class="self">self</span>.this_run)
                 .is_ok()
         }
     }
@@ -2885,13 +3028,70 @@
     }
 }
 
-<span class="doccomment">/// An error that occurs when retrieving a specific [`Entity`]&#39;s component from a [`Query`]
+<span class="doccomment">/// An error that occurs when retrieving a specific [`Entity`]&#39;s component from a [`Query`].
 </span><span class="attr">#[derive(Debug, PartialEq, Eq)]
 </span><span class="kw">pub enum </span>QueryComponentError {
-    MissingReadAccess,
-    MissingWriteAccess,
-    MissingComponent,
-    NoSuchEntity,
+    <span class="doccomment">/// The [`Query`] does not have read access to the requested component.
+    ///
+    /// This error occurs when the requested component is not included in the original query.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// # use bevy_ecs::{prelude::*, system::QueryComponentError};
+    /// #
+    /// # #[derive(Component)]
+    /// # struct OtherComponent;
+    /// #
+    /// # #[derive(Component, PartialEq, Debug)]
+    /// # struct RequestedComponent;
+    /// #
+    /// # #[derive(Resource)]
+    /// # struct SpecificEntity {
+    /// #     entity: Entity,
+    /// # }
+    /// #
+    /// fn get_missing_read_access_error(query: Query&lt;&amp;OtherComponent&gt;, res: Res&lt;SpecificEntity&gt;) {
+    ///     assert_eq!(
+    ///         query.get_component::&lt;RequestedComponent&gt;(res.entity),
+    ///         Err(QueryComponentError::MissingReadAccess),
+    ///     );
+    ///     println!(&quot;query doesn&#39;t have read access to RequestedComponent because it does not appear in Query&lt;&amp;OtherComponent&gt;&quot;);
+    /// }
+    /// # bevy_ecs::system::assert_is_system(get_missing_read_access_error);
+    /// ```
+    </span>MissingReadAccess,
+    <span class="doccomment">/// The [`Query`] does not have write access to the requested component.
+    ///
+    /// This error occurs when the requested component is not included in the original query, or the mutability of the requested component is mismatched with the original query.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// # use bevy_ecs::{prelude::*, system::QueryComponentError};
+    /// #
+    /// # #[derive(Component, PartialEq, Debug)]
+    /// # struct RequestedComponent;
+    /// #
+    /// # #[derive(Resource)]
+    /// # struct SpecificEntity {
+    /// #     entity: Entity,
+    /// # }
+    /// #
+    /// fn get_missing_write_access_error(mut query: Query&lt;&amp;RequestedComponent&gt;, res: Res&lt;SpecificEntity&gt;) {
+    ///     assert_eq!(
+    ///         query.get_component::&lt;RequestedComponent&gt;(res.entity),
+    ///         Err(QueryComponentError::MissingWriteAccess),
+    ///     );
+    ///     println!(&quot;query doesn&#39;t have write access to RequestedComponent because it doesn&#39;t have &amp;mut in Query&lt;&amp;RequestedComponent&gt;&quot;);
+    /// }
+    /// # bevy_ecs::system::assert_is_system(get_missing_write_access_error);
+    /// ```
+    </span>MissingWriteAccess,
+    <span class="doccomment">/// The given [`Entity`] does not have the requested component.
+    </span>MissingComponent,
+    <span class="doccomment">/// The requested [`Entity`] does not exist.
+    </span>NoSuchEntity,
 }
 
 <span class="kw">impl </span>std::error::Error <span class="kw">for </span>QueryComponentError {}
@@ -2962,8 +3162,8 @@
             <span class="self">self</span>.state.as_readonly().get_unchecked_manual(
                 <span class="self">self</span>.world,
                 entity,
-                <span class="self">self</span>.last_change_tick,
-                <span class="self">self</span>.change_tick,
+                <span class="self">self</span>.last_run,
+                <span class="self">self</span>.this_run,
             )
         }
     }
@@ -2996,11 +3196,9 @@
         <span class="comment">// SAFETY: system runs without conflicts with other systems.
         // same-system queries have runtime borrow checks when they conflict
         </span><span class="kw">unsafe </span>{
-            <span class="self">self</span>.state.as_readonly().iter_unchecked_manual(
-                <span class="self">self</span>.world,
-                <span class="self">self</span>.last_change_tick,
-                <span class="self">self</span>.change_tick,
-            )
+            <span class="self">self</span>.state
+                .as_readonly()
+                .iter_unchecked_manual(<span class="self">self</span>.world, <span class="self">self</span>.last_run, <span class="self">self</span>.this_run)
         }
     }
 }

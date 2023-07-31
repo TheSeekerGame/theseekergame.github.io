@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["BlockDecodingStrategy"],"struct":["FrameDecoder"]};
+window.SIDEBAR_ITEMS = {"enum":["BlockDecodingStrategy","FrameDecoderError"],"struct":["FrameDecoder"]};

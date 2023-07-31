@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_scene-0.10.1/src/dynamic_scene.rs`."><title>dynamic_scene.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bevy_scene" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../bevy_scene/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_scene-0.11.0/src/dynamic_scene.rs`."><title>dynamic_scene.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bevy_scene" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../bevy_scene/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -247,68 +247,90 @@
 <a href="#247" id="247">247</a>
 <a href="#248" id="248">248</a>
 <a href="#249" id="249">249</a>
+<a href="#250" id="250">250</a>
+<a href="#251" id="251">251</a>
+<a href="#252" id="252">252</a>
+<a href="#253" id="253">253</a>
+<a href="#254" id="254">254</a>
+<a href="#255" id="255">255</a>
+<a href="#256" id="256">256</a>
+<a href="#257" id="257">257</a>
+<a href="#258" id="258">258</a>
+<a href="#259" id="259">259</a>
+<a href="#260" id="260">260</a>
+<a href="#261" id="261">261</a>
+<a href="#262" id="262">262</a>
+<a href="#263" id="263">263</a>
+<a href="#264" id="264">264</a>
+<a href="#265" id="265">265</a>
+<a href="#266" id="266">266</a>
+<a href="#267" id="267">267</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::any::TypeId;
 
 <span class="kw">use crate</span>::{DynamicSceneBuilder, Scene, SceneSpawnError};
 <span class="kw">use </span>anyhow::Result;
-<span class="kw">use </span>bevy_app::AppTypeRegistry;
 <span class="kw">use </span>bevy_ecs::{
-    entity::EntityMap,
-    prelude::Entity,
-    reflect::{ReflectComponent, ReflectMapEntities},
+    entity::{Entity, EntityMap},
+    reflect::{AppTypeRegistry, ReflectComponent, ReflectMapEntities},
     world::World,
 };
-<span class="kw">use </span>bevy_reflect::{Reflect, TypeRegistryArc, TypeUuid};
+<span class="kw">use </span>bevy_reflect::{Reflect, TypePath, TypeRegistryArc, TypeUuid};
 <span class="kw">use </span>bevy_utils::HashMap;
 
 <span class="attr">#[cfg(feature = <span class="string">&quot;serialize&quot;</span>)]
 </span><span class="kw">use </span><span class="kw">crate</span>::serde::SceneSerializer;
+<span class="kw">use </span>bevy_ecs::reflect::ReflectResource;
 <span class="attr">#[cfg(feature = <span class="string">&quot;serialize&quot;</span>)]
 </span><span class="kw">use </span>serde::Serialize;
 
-<span class="doccomment">/// A collection of serializable dynamic entities, each with its own run-time defined set of components.
+<span class="doccomment">/// A collection of serializable resources and dynamic entities.
+///
+/// Each dynamic entity in the collection contains its own run-time defined set of components.
 /// To spawn a dynamic scene, you can use either:
 /// * [`SceneSpawner::spawn_dynamic`](crate::SceneSpawner::spawn_dynamic)
 /// * adding the [`DynamicSceneBundle`](crate::DynamicSceneBundle) to an entity
 /// * adding the [`Handle&lt;DynamicScene&gt;`](bevy_asset::Handle) to an entity (the scene will only be
 /// visible if the entity already has [`Transform`](bevy_transform::components::Transform) and
 /// [`GlobalTransform`](bevy_transform::components::GlobalTransform) components)
-</span><span class="attr">#[derive(Default, TypeUuid)]
+</span><span class="attr">#[derive(Default, TypeUuid, TypePath)]
 #[uuid = <span class="string">&quot;749479b1-fb8c-4ff8-a775-623aa76014f5&quot;</span>]
 </span><span class="kw">pub struct </span>DynamicScene {
+    <span class="kw">pub </span>resources: Vec&lt;Box&lt;<span class="kw">dyn </span>Reflect&gt;&gt;,
     <span class="kw">pub </span>entities: Vec&lt;DynamicEntity&gt;,
 }
 
 <span class="doccomment">/// A reflection-powered serializable representation of an entity and its components.
 </span><span class="kw">pub struct </span>DynamicEntity {
-    <span class="doccomment">/// The transiently unique identifier of a corresponding `Entity`.
-    </span><span class="kw">pub </span>entity: u32,
+    <span class="doccomment">/// The identifier of the entity, unique within a scene (and the world it may have been generated from).
+    ///
+    /// Components that reference this entity must consistently use this identifier.
+    </span><span class="kw">pub </span>entity: Entity,
     <span class="doccomment">/// A vector of boxed components that belong to the given entity and
-    /// implement the `Reflect` trait.
+    /// implement the [`Reflect`] trait.
     </span><span class="kw">pub </span>components: Vec&lt;Box&lt;<span class="kw">dyn </span>Reflect&gt;&gt;,
 }
 
 <span class="kw">impl </span>DynamicScene {
     <span class="doccomment">/// Create a new dynamic scene from a given scene.
-    </span><span class="kw">pub fn </span>from_scene(scene: <span class="kw-2">&amp;</span>Scene, type_registry: <span class="kw-2">&amp;</span>AppTypeRegistry) -&gt; <span class="self">Self </span>{
-        <span class="self">Self</span>::from_world(<span class="kw-2">&amp;</span>scene.world, type_registry)
+    </span><span class="kw">pub fn </span>from_scene(scene: <span class="kw-2">&amp;</span>Scene) -&gt; <span class="self">Self </span>{
+        <span class="self">Self</span>::from_world(<span class="kw-2">&amp;</span>scene.world)
     }
 
     <span class="doccomment">/// Create a new dynamic scene from a given world.
-    </span><span class="kw">pub fn </span>from_world(world: <span class="kw-2">&amp;</span>World, type_registry: <span class="kw-2">&amp;</span>AppTypeRegistry) -&gt; <span class="self">Self </span>{
-        <span class="kw">let </span><span class="kw-2">mut </span>builder =
-            DynamicSceneBuilder::from_world_with_type_registry(world, type_registry.clone());
+    </span><span class="kw">pub fn </span>from_world(world: <span class="kw-2">&amp;</span>World) -&gt; <span class="self">Self </span>{
+        <span class="kw">let </span><span class="kw-2">mut </span>builder = DynamicSceneBuilder::from_world(world);
 
         builder.extract_entities(world.iter_entities().map(|entity| entity.id()));
+        builder.extract_resources();
 
         builder.build()
     }
 
-    <span class="doccomment">/// Write the dynamic entities and their corresponding components to the given world.
+    <span class="doccomment">/// Write the resources, the dynamic entities, and their corresponding components to the given world.
     ///
     /// This method will return a [`SceneSpawnError`] if a type either is not registered
     /// in the provided [`AppTypeRegistry`] resource, or doesn&#39;t reflect the
-    /// [`Component`](bevy_ecs::component::Component) trait.
+    /// [`Component`](bevy_ecs::component::Component) or [`Resource`](bevy_ecs::prelude::Resource) trait.
     </span><span class="kw">pub fn </span>write_to_world_with(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         world: <span class="kw-2">&amp;mut </span>World,
@@ -316,6 +338,23 @@
         type_registry: <span class="kw-2">&amp;</span>AppTypeRegistry,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(), SceneSpawnError&gt; {
         <span class="kw">let </span>type_registry = type_registry.read();
+
+        <span class="kw">for </span>resource <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.resources {
+            <span class="kw">let </span>registration = type_registry
+                .get_with_name(resource.type_name())
+                .ok_or_else(|| SceneSpawnError::UnregisteredType {
+                    type_name: resource.type_name().to_string(),
+                })<span class="question-mark">?</span>;
+            <span class="kw">let </span>reflect_resource = registration.data::&lt;ReflectResource&gt;().ok_or_else(|| {
+                SceneSpawnError::UnregisteredResource {
+                    type_name: resource.type_name().to_string(),
+                }
+            })<span class="question-mark">?</span>;
+
+            <span class="comment">// If the world already contains an instance of the given resource
+            // just apply the (possibly) new value, otherwise insert the resource
+            </span>reflect_resource.apply_or_insert(world, <span class="kw-2">&amp;**</span>resource);
+        }
 
         <span class="comment">// For each component types that reference other entities, we keep track
         // of which entities in the scene use that component.
@@ -328,7 +367,7 @@
             // or spawn a new entity with a transiently unique id if there is
             // no corresponding entry.
             </span><span class="kw">let </span>entity = <span class="kw-2">*</span>entity_map
-                .entry(bevy_ecs::entity::Entity::from_raw(scene_entity.entity))
+                .entry(scene_entity.entity)
                 .or_insert_with(|| world.spawn_empty().id());
             <span class="kw">let </span>entity_mut = <span class="kw-2">&amp;mut </span>world.entity_mut(entity);
 
@@ -368,16 +407,14 @@
                 <span class="string">&quot;we should be getting TypeId from this TypeRegistration in the first place&quot;</span>,
             );
             <span class="kw">if let </span><span class="prelude-val">Some</span>(map_entities_reflect) = registration.data::&lt;ReflectMapEntities&gt;() {
-                map_entities_reflect
-                    .map_specific_entities(world, entity_map, <span class="kw-2">&amp;</span>entities)
-                    .unwrap();
+                map_entities_reflect.map_entities(world, entity_map, <span class="kw-2">&amp;</span>entities);
             }
         }
 
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="doccomment">/// Write the dynamic entities and their corresponding components to the given world.
+    <span class="doccomment">/// Write the resources, the dynamic entities, and their corresponding components to the given world.
     ///
     /// This method will return a [`SceneSpawnError`] if a type either is not registered
     /// in the world&#39;s [`AppTypeRegistry`] resource, or doesn&#39;t reflect the
@@ -413,8 +450,7 @@
 
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>tests {
-    <span class="kw">use </span>bevy_app::AppTypeRegistry;
-    <span class="kw">use </span>bevy_ecs::{entity::EntityMap, system::Command, world::World};
+    <span class="kw">use </span>bevy_ecs::{entity::EntityMap, reflect::AppTypeRegistry, system::Command, world::World};
     <span class="kw">use </span>bevy_hierarchy::{AddChild, Parent};
 
     <span class="kw">use </span><span class="kw">crate</span>::dynamic_scene_builder::DynamicSceneBuilder;
@@ -436,7 +472,7 @@
             parent: original_parent_entity,
             child: original_child_entity,
         }
-        .write(<span class="kw-2">&amp;mut </span>world);
+        .apply(<span class="kw-2">&amp;mut </span>world);
 
         <span class="comment">// We then write this relationship to a new scene, and then write that scene back to the
         // world to create another parent and child relationship
@@ -457,7 +493,7 @@
             parent: original_child_entity,
             child: from_scene_parent_entity,
         }
-        .write(<span class="kw-2">&amp;mut </span>world);
+        .apply(<span class="kw-2">&amp;mut </span>world);
 
         <span class="comment">// We then reload the scene to make sure that from_scene_parent_entity&#39;s parent component
         // isn&#39;t updated with the entity map, since this component isn&#39;t defined in the scene.

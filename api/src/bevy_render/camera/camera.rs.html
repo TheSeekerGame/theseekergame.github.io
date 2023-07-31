@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_render-0.10.1/src/camera/camera.rs`."><title>camera.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_render" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../bevy_render/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_render-0.11.0/src/camera/camera.rs`."><title>camera.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_render" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../bevy_render/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -687,12 +687,107 @@
 <a href="#687" id="687">687</a>
 <a href="#688" id="688">688</a>
 <a href="#689" id="689">689</a>
+<a href="#690" id="690">690</a>
+<a href="#691" id="691">691</a>
+<a href="#692" id="692">692</a>
+<a href="#693" id="693">693</a>
+<a href="#694" id="694">694</a>
+<a href="#695" id="695">695</a>
+<a href="#696" id="696">696</a>
+<a href="#697" id="697">697</a>
+<a href="#698" id="698">698</a>
+<a href="#699" id="699">699</a>
+<a href="#700" id="700">700</a>
+<a href="#701" id="701">701</a>
+<a href="#702" id="702">702</a>
+<a href="#703" id="703">703</a>
+<a href="#704" id="704">704</a>
+<a href="#705" id="705">705</a>
+<a href="#706" id="706">706</a>
+<a href="#707" id="707">707</a>
+<a href="#708" id="708">708</a>
+<a href="#709" id="709">709</a>
+<a href="#710" id="710">710</a>
+<a href="#711" id="711">711</a>
+<a href="#712" id="712">712</a>
+<a href="#713" id="713">713</a>
+<a href="#714" id="714">714</a>
+<a href="#715" id="715">715</a>
+<a href="#716" id="716">716</a>
+<a href="#717" id="717">717</a>
+<a href="#718" id="718">718</a>
+<a href="#719" id="719">719</a>
+<a href="#720" id="720">720</a>
+<a href="#721" id="721">721</a>
+<a href="#722" id="722">722</a>
+<a href="#723" id="723">723</a>
+<a href="#724" id="724">724</a>
+<a href="#725" id="725">725</a>
+<a href="#726" id="726">726</a>
+<a href="#727" id="727">727</a>
+<a href="#728" id="728">728</a>
+<a href="#729" id="729">729</a>
+<a href="#730" id="730">730</a>
+<a href="#731" id="731">731</a>
+<a href="#732" id="732">732</a>
+<a href="#733" id="733">733</a>
+<a href="#734" id="734">734</a>
+<a href="#735" id="735">735</a>
+<a href="#736" id="736">736</a>
+<a href="#737" id="737">737</a>
+<a href="#738" id="738">738</a>
+<a href="#739" id="739">739</a>
+<a href="#740" id="740">740</a>
+<a href="#741" id="741">741</a>
+<a href="#742" id="742">742</a>
+<a href="#743" id="743">743</a>
+<a href="#744" id="744">744</a>
+<a href="#745" id="745">745</a>
+<a href="#746" id="746">746</a>
+<a href="#747" id="747">747</a>
+<a href="#748" id="748">748</a>
+<a href="#749" id="749">749</a>
+<a href="#750" id="750">750</a>
+<a href="#751" id="751">751</a>
+<a href="#752" id="752">752</a>
+<a href="#753" id="753">753</a>
+<a href="#754" id="754">754</a>
+<a href="#755" id="755">755</a>
+<a href="#756" id="756">756</a>
+<a href="#757" id="757">757</a>
+<a href="#758" id="758">758</a>
+<a href="#759" id="759">759</a>
+<a href="#760" id="760">760</a>
+<a href="#761" id="761">761</a>
+<a href="#762" id="762">762</a>
+<a href="#763" id="763">763</a>
+<a href="#764" id="764">764</a>
+<a href="#765" id="765">765</a>
+<a href="#766" id="766">766</a>
+<a href="#767" id="767">767</a>
+<a href="#768" id="768">768</a>
+<a href="#769" id="769">769</a>
+<a href="#770" id="770">770</a>
+<a href="#771" id="771">771</a>
+<a href="#772" id="772">772</a>
+<a href="#773" id="773">773</a>
+<a href="#774" id="774">774</a>
+<a href="#775" id="775">775</a>
+<a href="#776" id="776">776</a>
+<a href="#777" id="777">777</a>
+<a href="#778" id="778">778</a>
+<a href="#779" id="779">779</a>
+<a href="#780" id="780">780</a>
+<a href="#781" id="781">781</a>
+<a href="#782" id="782">782</a>
+<a href="#783" id="783">783</a>
 </pre></div><pre class="rust"><code><span class="kw">use crate</span>::{
     camera::CameraProjection,
+    camera::{ManualTextureViewHandle, ManualTextureViews},
     prelude::Image,
     render_asset::RenderAssets,
     render_resource::TextureView,
-    view::{ColorGrading, ExtractedView, ExtractedWindows, VisibleEntities},
+    view::{ColorGrading, ExtractedView, ExtractedWindows, RenderLayers, VisibleEntities},
     Extract,
 };
 <span class="kw">use </span>bevy_asset::{AssetEvent, Assets, Handle};
@@ -707,15 +802,13 @@
     system::{Commands, Query, Res, ResMut, Resource},
 };
 <span class="kw">use </span>bevy_log::warn;
-<span class="kw">use </span>bevy_math::{Mat4, Ray, UVec2, UVec4, Vec2, Vec3};
+<span class="kw">use </span>bevy_math::{Mat4, Ray, Rect, UVec2, UVec4, Vec2, Vec3};
 <span class="kw">use </span>bevy_reflect::prelude::<span class="kw-2">*</span>;
-<span class="kw">use </span>bevy_reflect::FromReflect;
 <span class="kw">use </span>bevy_transform::components::GlobalTransform;
 <span class="kw">use </span>bevy_utils::{HashMap, HashSet};
 <span class="kw">use </span>bevy_window::{
     NormalizedWindowRef, PrimaryWindow, Window, WindowCreated, WindowRef, WindowResized,
 };
-
 <span class="kw">use </span>std::{borrow::Cow, ops::Range};
 <span class="kw">use </span>wgpu::{BlendState, Extent3d, LoadOp, TextureFormat};
 
@@ -724,7 +817,7 @@
 /// The viewport defines the area on the render target to which the camera renders its image.
 /// You can overlay multiple cameras in a single window using viewports to create effects like
 /// split screen, minimaps, and character viewers.
-</span><span class="attr">#[derive(Reflect, FromReflect, Debug, Clone)]
+</span><span class="attr">#[derive(Reflect, Debug, Clone)]
 #[reflect(Default)]
 </span><span class="kw">pub struct </span>Viewport {
     <span class="doccomment">/// The physical position to render this viewport to within the [`RenderTarget`] of this [`Camera`].
@@ -765,8 +858,8 @@
     </span>old_viewport_size: <span class="prelude-ty">Option</span>&lt;UVec2&gt;,
 }
 
-<span class="doccomment">/// The defining component for camera entities, storing information about how and what to render
-/// through this camera.
+<span class="doccomment">/// The defining [`Component`] for camera entities,
+/// storing information about how and what to render through this camera.
 ///
 /// The [`Camera`] component is added to an entity to define the properties of the viewpoint from
 /// which rendering occurs. It defines the position of the view to render, the projection method
@@ -775,7 +868,7 @@
 ///
 /// Adding a camera is typically done by adding a bundle, either the `Camera2dBundle` or the
 /// `Camera3dBundle`.
-</span><span class="attr">#[derive(Component, Debug, Reflect, FromReflect, Clone)]
+</span><span class="attr">#[derive(Component, Debug, Reflect, Clone)]
 #[reflect(Component)]
 </span><span class="kw">pub struct </span>Camera {
     <span class="doccomment">/// If set, this camera will render to the given [`Viewport`] rectangle within the configured [`RenderTarget`].
@@ -792,10 +885,7 @@
     </span><span class="attr">#[reflect(ignore)]
     </span><span class="kw">pub </span>target: RenderTarget,
     <span class="doccomment">/// If this is set to `true`, the camera will use an intermediate &quot;high dynamic range&quot; render texture.
-    /// Warning: we are still working on this feature. If MSAA is enabled, there will be artifacts in
-    /// some cases. When rendering with WebGL, this will crash if MSAA is enabled.
-    /// See &lt;https://github.com/bevyengine/bevy/pull/3425&gt; for details.
-    </span><span class="comment">// TODO: resolve the issues mentioned in the doc comment above, then remove the warning.
+    /// This allows rendering with a wider range of lighting values.
     </span><span class="kw">pub </span>hdr: bool,
     <span class="comment">// todo: reflect this when #6042 lands
     </span><span class="doccomment">/// The [`CameraOutputMode`] for this camera.
@@ -804,7 +894,7 @@
     <span class="doccomment">/// If this is enabled, a previous camera exists that shares this camera&#39;s render target, and this camera has MSAA enabled, then the previous camera&#39;s
     /// outputs will be written to the intermediate multi-sampled render target textures for this camera. This enables cameras with MSAA enabled to
     /// &quot;write their results on top&quot; of previous camera results, and include them as a part of their render results. This is enabled by default to ensure
-    /// cameras with MSAA enabled layer their results in the same way as cameras without MSAA enabled by default.  
+    /// cameras with MSAA enabled layer their results in the same way as cameras without MSAA enabled by default.
     </span><span class="kw">pub </span>msaa_writeback: bool,
 }
 
@@ -845,13 +935,16 @@
         <span class="prelude-val">Some</span>((min, max))
     }
 
-    <span class="doccomment">/// The rendered logical bounds (minimum, maximum) of the camera. If the `viewport` field is set
-    /// to [`Some`], this will be the rect of that custom viewport. Otherwise it will default to the
+    <span class="doccomment">/// The rendered logical bounds [`Rect`] of the camera. If the `viewport` field is set to
+    /// [`Some`], this will be the rect of that custom viewport. Otherwise it will default to the
     /// full logical rect of the current [`RenderTarget`].
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>logical_viewport_rect(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;(Vec2, Vec2)&gt; {
+    </span><span class="kw">pub fn </span>logical_viewport_rect(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Rect&gt; {
         <span class="kw">let </span>(min, max) = <span class="self">self</span>.physical_viewport_rect()<span class="question-mark">?</span>;
-        <span class="prelude-val">Some</span>((<span class="self">self</span>.to_logical(min)<span class="question-mark">?</span>, <span class="self">self</span>.to_logical(max)<span class="question-mark">?</span>))
+        <span class="prelude-val">Some</span>(Rect {
+            min: <span class="self">self</span>.to_logical(min)<span class="question-mark">?</span>,
+            max: <span class="self">self</span>.to_logical(max)<span class="question-mark">?</span>,
+        })
     }
 
     <span class="doccomment">/// The logical size of this camera&#39;s viewport. If the `viewport` field is set to [`Some`], this
@@ -922,7 +1015,10 @@
         }
 
         <span class="comment">// Once in NDC space, we can discard the z element and rescale x/y to fit the screen
-        </span><span class="prelude-val">Some</span>((ndc_space_coords.truncate() + Vec2::ONE) / <span class="number">2.0 </span>* target_size)
+        </span><span class="kw">let </span><span class="kw-2">mut </span>viewport_position = (ndc_space_coords.truncate() + Vec2::ONE) / <span class="number">2.0 </span>* target_size;
+        <span class="comment">// Flip the Y co-ordinate origin from the bottom to the top.
+        </span>viewport_position.y = target_size.y - viewport_position.y;
+        <span class="prelude-val">Some</span>(viewport_position)
     }
 
     <span class="doccomment">/// Returns a ray originating from the camera, that passes through everything beyond `viewport_position`.
@@ -936,9 +1032,11 @@
     </span><span class="kw">pub fn </span>viewport_to_world(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         camera_transform: <span class="kw-2">&amp;</span>GlobalTransform,
-        viewport_position: Vec2,
+        <span class="kw-2">mut </span>viewport_position: Vec2,
     ) -&gt; <span class="prelude-ty">Option</span>&lt;Ray&gt; {
         <span class="kw">let </span>target_size = <span class="self">self</span>.logical_viewport_size()<span class="question-mark">?</span>;
+        <span class="comment">// Flip the Y co-ordinate origin from the top to the bottom.
+        </span>viewport_position.y = target_size.y - viewport_position.y;
         <span class="kw">let </span>ndc = viewport_position * <span class="number">2. </span>/ target_size - Vec2::ONE;
 
         <span class="kw">let </span>ndc_to_world =
@@ -962,9 +1060,11 @@
     </span><span class="kw">pub fn </span>viewport_to_world_2d(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         camera_transform: <span class="kw-2">&amp;</span>GlobalTransform,
-        viewport_position: Vec2,
+        <span class="kw-2">mut </span>viewport_position: Vec2,
     ) -&gt; <span class="prelude-ty">Option</span>&lt;Vec2&gt; {
         <span class="kw">let </span>target_size = <span class="self">self</span>.logical_viewport_size()<span class="question-mark">?</span>;
+        <span class="comment">// Flip the Y co-ordinate origin from the top to the bottom.
+        </span>viewport_position.y = target_size.y - viewport_position.y;
         <span class="kw">let </span>ndc = viewport_position * <span class="number">2. </span>/ target_size - Vec2::ONE;
 
         <span class="kw">let </span>world_near_plane = <span class="self">self</span>.ndc_to_world(camera_transform, ndc.extend(<span class="number">1.</span>))<span class="question-mark">?</span>;
@@ -1050,8 +1150,8 @@
         <span class="self">Self</span>(name.into())
     }
 
-    <span class="attr">#[inline]
-    </span><span class="doccomment">/// Sets the graph name.
+    <span class="doccomment">/// Sets the graph name.
+    </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>set&lt;T: Into&lt;Cow&lt;<span class="lifetime">&#39;static</span>, str&gt;&gt;&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, name: T) {
         <span class="self">self</span>.<span class="number">0 </span>= name.into();
     }
@@ -1065,6 +1165,9 @@
     </span>Window(WindowRef),
     <span class="doccomment">/// Image to which the camera&#39;s view is rendered.
     </span>Image(Handle&lt;Image&gt;),
+    <span class="doccomment">/// Texture View to which the camera&#39;s view is rendered.
+    /// Useful when the texture view needs to be created outside of Bevy, for example OpenXR.
+    </span>TextureView(ManualTextureViewHandle),
 }
 
 <span class="doccomment">/// Normalized version of the render target.
@@ -1076,6 +1179,9 @@
     </span>Window(NormalizedWindowRef),
     <span class="doccomment">/// Image to which the camera&#39;s view is rendered.
     </span>Image(Handle&lt;Image&gt;),
+    <span class="doccomment">/// Texture View to which the camera&#39;s view is rendered.
+    /// Useful when the texture view needs to be created outside of Bevy, for example OpenXR.
+    </span>TextureView(ManualTextureViewHandle),
 }
 
 <span class="kw">impl </span>Default <span class="kw">for </span>RenderTarget {
@@ -1092,6 +1198,7 @@
                 .normalize(primary_window)
                 .map(NormalizedRenderTarget::Window),
             RenderTarget::Image(handle) =&gt; <span class="prelude-val">Some</span>(NormalizedRenderTarget::Image(handle.clone())),
+            RenderTarget::TextureView(id) =&gt; <span class="prelude-val">Some</span>(NormalizedRenderTarget::TextureView(<span class="kw-2">*</span>id)),
         }
     }
 }
@@ -1101,13 +1208,17 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         windows: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>ExtractedWindows,
         images: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>RenderAssets&lt;Image&gt;,
+        manual_texture_views: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>ManualTextureViews,
     ) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>TextureView&gt; {
         <span class="kw">match </span><span class="self">self </span>{
             NormalizedRenderTarget::Window(window_ref) =&gt; windows
                 .get(<span class="kw-2">&amp;</span>window_ref.entity())
-                .and_then(|window| window.swap_chain_texture.as_ref()),
+                .and_then(|window| window.swap_chain_texture_view.as_ref()),
             NormalizedRenderTarget::Image(image_handle) =&gt; {
                 images.get(image_handle).map(|image| <span class="kw-2">&amp;</span>image.texture_view)
+            }
+            NormalizedRenderTarget::TextureView(id) =&gt; {
+                manual_texture_views.get(id).map(|tex| <span class="kw-2">&amp;</span>tex.texture_view)
             }
         }
     }
@@ -1117,6 +1228,7 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         windows: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>ExtractedWindows,
         images: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>RenderAssets&lt;Image&gt;,
+        manual_texture_views: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>ManualTextureViews,
     ) -&gt; <span class="prelude-ty">Option</span>&lt;TextureFormat&gt; {
         <span class="kw">match </span><span class="self">self </span>{
             NormalizedRenderTarget::Window(window_ref) =&gt; windows
@@ -1125,6 +1237,9 @@
             NormalizedRenderTarget::Image(image_handle) =&gt; {
                 images.get(image_handle).map(|image| image.texture_format)
             }
+            NormalizedRenderTarget::TextureView(id) =&gt; {
+                manual_texture_views.get(id).map(|tex| tex.format)
+            }
         }
     }
 
@@ -1132,6 +1247,7 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         resolutions: <span class="kw">impl </span>IntoIterator&lt;Item = (Entity, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Window)&gt;,
         images: <span class="kw-2">&amp;</span>Assets&lt;Image&gt;,
+        manual_texture_views: <span class="kw-2">&amp;</span>ManualTextureViews,
     ) -&gt; <span class="prelude-ty">Option</span>&lt;RenderTargetInfo&gt; {
         <span class="kw">match </span><span class="self">self </span>{
             NormalizedRenderTarget::Window(window_ref) =&gt; resolutions
@@ -1152,6 +1268,12 @@
                     scale_factor: <span class="number">1.0</span>,
                 })
             }
+            NormalizedRenderTarget::TextureView(id) =&gt; {
+                manual_texture_views.get(id).map(|tex| RenderTargetInfo {
+                    physical_size: tex.size,
+                    scale_factor: <span class="number">1.0</span>,
+                })
+            }
         }
     }
 
@@ -1168,6 +1290,7 @@
             NormalizedRenderTarget::Image(image_handle) =&gt; {
                 changed_image_handles.contains(<span class="kw-2">&amp;</span>image_handle)
             }
+            NormalizedRenderTarget::TextureView(<span class="kw">_</span>) =&gt; <span class="bool-val">true</span>,
         }
     }
 }
@@ -1181,7 +1304,7 @@
 /// The system function is generic over the camera projection type, and only instances of
 /// [`OrthographicProjection`] and [`PerspectiveProjection`] are automatically added to
 /// the app, as well as the runtime-selected [`Projection`].
-/// The system runs during [`CoreSet::PostUpdate`].
+/// The system runs during [`PostUpdate`](bevy_app::PostUpdate).
 ///
 /// ## World Resources
 ///
@@ -1191,7 +1314,7 @@
 /// [`OrthographicProjection`]: crate::camera::OrthographicProjection
 /// [`PerspectiveProjection`]: crate::camera::PerspectiveProjection
 /// [`Projection`]: crate::camera::Projection
-/// [`CoreSet::PostUpdate`]: bevy_app::CoreSet::PostUpdate
+</span><span class="attr">#[allow(clippy::too_many_arguments)]
 </span><span class="kw">pub fn </span>camera_system&lt;T: CameraProjection + Component&gt;(
     <span class="kw-2">mut </span>window_resized_events: EventReader&lt;WindowResized&gt;,
     <span class="kw-2">mut </span>window_created_events: EventReader&lt;WindowCreated&gt;,
@@ -1199,6 +1322,7 @@
     primary_window: Query&lt;Entity, With&lt;PrimaryWindow&gt;&gt;,
     windows: Query&lt;(Entity, <span class="kw-2">&amp;</span>Window)&gt;,
     images: Res&lt;Assets&lt;Image&gt;&gt;,
+    manual_texture_views: Res&lt;ManualTextureViews&gt;,
     <span class="kw-2">mut </span>cameras: Query&lt;(<span class="kw-2">&amp;mut </span>Camera, <span class="kw-2">&amp;mut </span>T)&gt;,
 ) {
     <span class="kw">let </span>primary_window = primary_window.iter().next();
@@ -1230,13 +1354,20 @@
                 || camera_projection.is_changed()
                 || camera.computed.old_viewport_size != viewport_size
             {
-                camera.computed.target_info =
-                    normalized_target.get_render_target_info(<span class="kw-2">&amp;</span>windows, <span class="kw-2">&amp;</span>images);
+                camera.computed.target_info = normalized_target.get_render_target_info(
+                    <span class="kw-2">&amp;</span>windows,
+                    <span class="kw-2">&amp;</span>images,
+                    <span class="kw-2">&amp;</span>manual_texture_views,
+                );
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(size) = camera.logical_viewport_size() {
                     camera_projection.update(size.x, size.y);
                     camera.computed.projection_matrix = camera_projection.get_projection_matrix();
                 }
             }
+        }
+
+        <span class="kw">if </span>camera.computed.old_viewport_size != viewport_size {
+            camera.computed.old_viewport_size = viewport_size;
         }
     }
 }
@@ -1264,19 +1395,30 @@
             <span class="kw-2">&amp;</span>GlobalTransform,
             <span class="kw-2">&amp;</span>VisibleEntities,
             <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>ColorGrading&gt;,
+            <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>TemporalJitter&gt;,
+            <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>RenderLayers&gt;,
         )&gt;,
     &gt;,
     primary_window: Extract&lt;Query&lt;Entity, With&lt;PrimaryWindow&gt;&gt;&gt;,
 ) {
     <span class="kw">let </span>primary_window = primary_window.iter().next();
-    <span class="kw">for </span>(entity, camera, camera_render_graph, transform, visible_entities, color_grading) <span class="kw">in
-        </span>query.iter()
+    <span class="kw">for </span>(
+        entity,
+        camera,
+        camera_render_graph,
+        transform,
+        visible_entities,
+        color_grading,
+        temporal_jitter,
+        render_layers,
+    ) <span class="kw">in </span>query.iter()
     {
         <span class="kw">let </span>color_grading = <span class="kw-2">*</span>color_grading.unwrap_or(<span class="kw-2">&amp;</span>ColorGrading::default());
 
         <span class="kw">if </span>!camera.is_active {
             <span class="kw">continue</span>;
         }
+
         <span class="kw">if let </span>(<span class="prelude-val">Some</span>((viewport_origin, <span class="kw">_</span>)), <span class="prelude-val">Some</span>(viewport_size), <span class="prelude-val">Some</span>(target_size)) = (
             camera.physical_viewport_rect(),
             camera.physical_viewport_size(),
@@ -1285,7 +1427,10 @@
             <span class="kw">if </span>target_size.x == <span class="number">0 </span>|| target_size.y == <span class="number">0 </span>{
                 <span class="kw">continue</span>;
             }
-            commands.get_or_spawn(entity).insert((
+
+            <span class="kw">let </span><span class="kw-2">mut </span>commands = commands.get_or_spawn(entity);
+
+            commands.insert((
                 ExtractedCamera {
                     target: camera.target.normalize(primary_window),
                     viewport: camera.viewport.clone(),
@@ -1313,6 +1458,14 @@
                 },
                 visible_entities.clone(),
             ));
+
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(temporal_jitter) = temporal_jitter {
+                commands.insert(temporal_jitter.clone());
+            }
+
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(render_layers) = render_layers {
+                commands.insert(<span class="kw-2">*</span>render_layers);
+            }
         }
     }
 }
@@ -1376,4 +1529,39 @@
         );
     }
 }
+
+<span class="doccomment">/// A subpixel offset to jitter a perspective camera&#39;s fustrum by.
+///
+/// Useful for temporal rendering techniques.
+///
+/// Do not use with [`OrthographicProjection`].
+///
+/// [`OrthographicProjection`]: crate::camera::OrthographicProjection
+</span><span class="attr">#[derive(Component, Clone, Default)]
+</span><span class="kw">pub struct </span>TemporalJitter {
+    <span class="doccomment">/// Offset is in range [-0.5, 0.5].
+    </span><span class="kw">pub </span>offset: Vec2,
+}
+
+<span class="kw">impl </span>TemporalJitter {
+    <span class="kw">pub fn </span>jitter_projection(<span class="kw-2">&amp;</span><span class="self">self</span>, projection: <span class="kw-2">&amp;mut </span>Mat4, view_size: Vec2) {
+        <span class="kw">if </span>projection.w_axis.w == <span class="number">1.0 </span>{
+            <span class="macro">warn!</span>(
+                <span class="string">&quot;TemporalJitter not supported with OrthographicProjection. Use PerspectiveProjection instead.&quot;
+            </span>);
+            <span class="kw">return</span>;
+        }
+
+        <span class="kw">let </span>jitter = <span class="self">self</span>.offset / view_size;
+
+        projection.z_axis.x += jitter.x;
+        projection.z_axis.y += jitter.y;
+    }
+}
+
+<span class="doccomment">/// Camera component specifying a mip bias to apply when sampling from material textures.
+///
+/// Often used in conjunction with antialiasing post-process effects to reduce textures blurriness.
+</span><span class="attr">#[derive(Component)]
+</span><span class="kw">pub struct </span>MipBias(<span class="kw">pub </span>f32);
 </code></pre></div></section></main></body></html>

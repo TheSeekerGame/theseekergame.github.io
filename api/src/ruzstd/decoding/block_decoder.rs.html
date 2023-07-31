@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ruzstd-0.2.4/src/decoding/block_decoder.rs`."><title>block_decoder.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="ruzstd" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../ruzstd/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ruzstd-0.4.0/src/decoding/block_decoder.rs`."><title>block_decoder.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="ruzstd" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../ruzstd/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -317,16 +317,69 @@
 <a href="#317" id="317">317</a>
 <a href="#318" id="318">318</a>
 <a href="#319" id="319">319</a>
+<a href="#320" id="320">320</a>
+<a href="#321" id="321">321</a>
+<a href="#322" id="322">322</a>
+<a href="#323" id="323">323</a>
+<a href="#324" id="324">324</a>
+<a href="#325" id="325">325</a>
+<a href="#326" id="326">326</a>
+<a href="#327" id="327">327</a>
+<a href="#328" id="328">328</a>
+<a href="#329" id="329">329</a>
+<a href="#330" id="330">330</a>
+<a href="#331" id="331">331</a>
+<a href="#332" id="332">332</a>
+<a href="#333" id="333">333</a>
+<a href="#334" id="334">334</a>
+<a href="#335" id="335">335</a>
+<a href="#336" id="336">336</a>
+<a href="#337" id="337">337</a>
+<a href="#338" id="338">338</a>
+<a href="#339" id="339">339</a>
+<a href="#340" id="340">340</a>
+<a href="#341" id="341">341</a>
+<a href="#342" id="342">342</a>
+<a href="#343" id="343">343</a>
+<a href="#344" id="344">344</a>
+<a href="#345" id="345">345</a>
+<a href="#346" id="346">346</a>
+<a href="#347" id="347">347</a>
+<a href="#348" id="348">348</a>
+<a href="#349" id="349">349</a>
+<a href="#350" id="350">350</a>
+<a href="#351" id="351">351</a>
+<a href="#352" id="352">352</a>
+<a href="#353" id="353">353</a>
+<a href="#354" id="354">354</a>
+<a href="#355" id="355">355</a>
+<a href="#356" id="356">356</a>
+<a href="#357" id="357">357</a>
+<a href="#358" id="358">358</a>
+<a href="#359" id="359">359</a>
+<a href="#360" id="360">360</a>
+<a href="#361" id="361">361</a>
+<a href="#362" id="362">362</a>
+<a href="#363" id="363">363</a>
+<a href="#364" id="364">364</a>
+<a href="#365" id="365">365</a>
+<a href="#366" id="366">366</a>
+<a href="#367" id="367">367</a>
+<a href="#368" id="368">368</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::blocks::block::BlockHeader;
 <span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::blocks::block::BlockType;
 <span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::blocks::literals_section::LiteralsSection;
 <span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::blocks::literals_section::LiteralsSectionType;
 <span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::blocks::sequence_section::SequencesHeader;
-<span class="kw">use </span><span class="kw">super</span>::literals_section_decoder::decode_literals;
+<span class="kw">use </span><span class="kw">super</span>::literals_section_decoder::{decode_literals, DecompressLiteralsError};
+<span class="kw">use </span><span class="kw">super</span>::sequence_execution::ExecuteSequencesError;
 <span class="kw">use </span><span class="kw">super</span>::sequence_section_decoder::decode_sequences;
+<span class="kw">use </span><span class="kw">super</span>::sequence_section_decoder::DecodeSequenceError;
+<span class="kw">use </span><span class="kw">crate</span>::blocks::literals_section::LiteralsSectionParseError;
+<span class="kw">use </span><span class="kw">crate</span>::blocks::sequence_section::SequencesHeaderParseError;
 <span class="kw">use </span><span class="kw">crate</span>::decoding::scratch::DecoderScratch;
 <span class="kw">use </span><span class="kw">crate</span>::decoding::sequence_execution::execute_sequences;
-<span class="kw">use </span>std::io::Read;
+<span class="kw">use </span><span class="kw">crate</span>::io::{<span class="self">self</span>, Read};
 
 <span class="kw">pub struct </span>BlockDecoder {
     header_buffer: [u8; <span class="number">3</span>],
@@ -337,8 +390,76 @@
     ReadyToDecodeNextHeader,
     ReadyToDecodeNextBody,
     <span class="attr">#[allow(dead_code)]
-    </span>Failed, <span class="comment">//TODO put &quot;self.internal_state = DecoderState::Failed;&quot; everywhere a unresolveable error occurs
+    </span>Failed, <span class="comment">//TODO put &quot;self.internal_state = DecoderState::Failed;&quot; everywhere an unresolvable error occurs
 </span>}
+
+<span class="attr">#[derive(Debug, thiserror::Error)]
+#[non_exhaustive]
+</span><span class="kw">pub enum </span>BlockHeaderReadError {
+    <span class="attr">#[error(<span class="string">&quot;Error while reading the block header&quot;</span>)]
+    </span>ReadError(<span class="attr">#[from] </span>io::Error),
+    <span class="attr">#[error(<span class="string">&quot;Reserved block occured. This is considered corruption by the documentation&quot;</span>)]
+    </span>FoundReservedBlock,
+    <span class="attr">#[error(<span class="string">&quot;Error getting block type: {0}&quot;</span>)]
+    </span>BlockTypeError(<span class="attr">#[from] </span>BlockTypeError),
+    <span class="attr">#[error(<span class="string">&quot;Error getting block content size: {0}&quot;</span>)]
+    </span>BlockSizeError(<span class="attr">#[from] </span>BlockSizeError),
+}
+
+<span class="attr">#[derive(Debug, thiserror::Error)]
+#[non_exhaustive]
+</span><span class="kw">pub enum </span>BlockTypeError {
+    <span class="attr">#[error(
+        <span class="string">&quot;Invalid Blocktype number. Is: {num} Should be one of: 0, 1, 2, 3 (3 is reserved though&quot;
+    </span>)]
+    </span>InvalidBlocktypeNumber { num: u8 },
+}
+
+<span class="attr">#[derive(Debug, thiserror::Error)]
+#[non_exhaustive]
+</span><span class="kw">pub enum </span>BlockSizeError {
+    <span class="attr">#[error(<span class="string">&quot;Blocksize was bigger than the absolute maximum {ABSOLUTE_MAXIMUM_BLOCK_SIZE} (128kb). Is: {size}&quot;</span>)]
+    </span>BlockSizeTooLarge { size: u32 },
+}
+
+<span class="attr">#[derive(Debug, thiserror::Error)]
+#[non_exhaustive]
+</span><span class="kw">pub enum </span>DecompressBlockError {
+    <span class="attr">#[error(<span class="string">&quot;Error while reading the block content: {0}&quot;</span>)]
+    </span>BlockContentReadError(<span class="attr">#[from] </span>io::Error),
+    <span class="attr">#[error(<span class="string">&quot;Malformed section header. Says literals would be this long: {expected_len} but there are only {remaining_bytes} bytes left&quot;</span>)]
+    </span>MalformedSectionHeader {
+        expected_len: usize,
+        remaining_bytes: usize,
+    },
+    <span class="attr">#[error(transparent)]
+    </span>DecompressLiteralsError(<span class="attr">#[from] </span>DecompressLiteralsError),
+    <span class="attr">#[error(transparent)]
+    </span>LiteralsSectionParseError(<span class="attr">#[from] </span>LiteralsSectionParseError),
+    <span class="attr">#[error(transparent)]
+    </span>SequencesHeaderParseError(<span class="attr">#[from] </span>SequencesHeaderParseError),
+    <span class="attr">#[error(transparent)]
+    </span>DecodeSequenceError(<span class="attr">#[from] </span>DecodeSequenceError),
+    <span class="attr">#[error(transparent)]
+    </span>ExecuteSequencesError(<span class="attr">#[from] </span>ExecuteSequencesError),
+}
+
+<span class="attr">#[derive(Debug, thiserror::Error)]
+#[non_exhaustive]
+</span><span class="kw">pub enum </span>DecodeBlockContentError {
+    <span class="attr">#[error(<span class="string">&quot;Can&#39;t decode next block if failed along the way. Results will be nonsense&quot;</span>)]
+    </span>DecoderStateIsFailed,
+    <span class="attr">#[error(<span class="string">&quot;Cant decode next block body, while expecting to decode the header of the previous block. Results will be nonsense&quot;</span>)]
+    </span>ExpectedHeaderOfPreviousBlock,
+    <span class="attr">#[error(<span class="string">&quot;Error while reading bytes for {step}: {source}&quot;</span>)]
+    </span>ReadError {
+        step: BlockType,
+        <span class="attr">#[source]
+        </span>source: io::Error,
+    },
+    <span class="attr">#[error(transparent)]
+    </span>DecompressBlockError(<span class="attr">#[from] </span>DecompressBlockError),
+}
 
 <span class="kw">pub fn </span>new() -&gt; BlockDecoder {
     BlockDecoder {
@@ -354,27 +475,31 @@
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         header: <span class="kw-2">&amp;</span>BlockHeader,
         workspace: <span class="kw-2">&amp;mut </span>DecoderScratch, <span class="comment">//reuse this as often as possible. Not only if the trees are reused but also reuse the allocations when building new trees
-        </span>source: <span class="kw-2">&amp;mut </span><span class="kw">dyn </span>Read,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;u64, String&gt; {
+        </span><span class="kw-2">mut </span>source: <span class="kw">impl </span>Read,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;u64, DecodeBlockContentError&gt; {
         <span class="kw">match </span><span class="self">self</span>.internal_state {
-            DecoderState::ReadyToDecodeNextBody =&gt; {<span class="comment">/* Happy :) */</span>},
-            DecoderState::Failed =&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="string">&quot;Cant decode next block if failed along the way. Results will be nonsense&quot;</span>.to_string()),
-            DecoderState::ReadyToDecodeNextHeader =&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="string">&quot;Cant decode next block body, while expecting to decode the header of the previous block. Results will be nonsense&quot;</span>.to_string()),
+            DecoderState::ReadyToDecodeNextBody =&gt; { <span class="comment">/* Happy :) */ </span>}
+            DecoderState::Failed =&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(DecodeBlockContentError::DecoderStateIsFailed),
+            DecoderState::ReadyToDecodeNextHeader =&gt; {
+                <span class="kw">return </span><span class="prelude-val">Err</span>(DecodeBlockContentError::ExpectedHeaderOfPreviousBlock)
+            }
         }
 
-        <span class="kw">match </span>header.block_type {
+        <span class="kw">let </span>block_type = header.block_type;
+        <span class="kw">match </span>block_type {
             BlockType::RLE =&gt; {
                 <span class="kw">const </span>BATCH_SIZE: usize = <span class="number">512</span>;
                 <span class="kw">let </span><span class="kw-2">mut </span>buf = [<span class="number">0u8</span>; BATCH_SIZE];
                 <span class="kw">let </span>full_reads = header.decompressed_size / BATCH_SIZE <span class="kw">as </span>u32;
                 <span class="kw">let </span>single_read_size = header.decompressed_size % BATCH_SIZE <span class="kw">as </span>u32;
 
-                <span class="kw">match </span>source.read_exact(<span class="kw-2">&amp;mut </span>buf[<span class="number">0</span>..<span class="number">1</span>]) {
-                    <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; {
-                        <span class="self">self</span>.internal_state = DecoderState::ReadyToDecodeNextHeader;
+                source.read_exact(<span class="kw-2">&amp;mut </span>buf[<span class="number">0</span>..<span class="number">1</span>]).map_err(|err| {
+                    DecodeBlockContentError::ReadError {
+                        step: block_type,
+                        source: err,
                     }
-                    <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="string">&quot;Error while reading the one RLE byte&quot;</span>.to_string()),
-                }
+                })<span class="question-mark">?</span>;
+                <span class="self">self</span>.internal_state = DecoderState::ReadyToDecodeNextHeader;
 
                 <span class="kw">for </span>i <span class="kw">in </span><span class="number">1</span>..BATCH_SIZE {
                     buf[i] = buf[<span class="number">0</span>];
@@ -389,47 +514,43 @@
                 <span class="prelude-val">Ok</span>(<span class="number">1</span>)
             }
             BlockType::Raw =&gt; {
-                <span class="kw">const </span>BATCH_SIZE: usize = <span class="number">128</span><span class="kw-2">*</span><span class="number">1024</span>;
+                <span class="kw">const </span>BATCH_SIZE: usize = <span class="number">128 </span>* <span class="number">1024</span>;
                 <span class="kw">let </span><span class="kw-2">mut </span>buf = [<span class="number">0u8</span>; BATCH_SIZE];
                 <span class="kw">let </span>full_reads = header.decompressed_size / BATCH_SIZE <span class="kw">as </span>u32;
                 <span class="kw">let </span>single_read_size = header.decompressed_size % BATCH_SIZE <span class="kw">as </span>u32;
 
                 <span class="kw">for _ in </span><span class="number">0</span>..full_reads {
-                    <span class="kw">match </span>source.read_exact(<span class="kw-2">&amp;mut </span>buf[..]) {
-                        <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; {
-                            workspace.buffer.push(<span class="kw-2">&amp;</span>buf[..]);
+                    source.read_exact(<span class="kw-2">&amp;mut </span>buf[..]).map_err(|err| {
+                        DecodeBlockContentError::ReadError {
+                            step: block_type,
+                            source: err,
                         }
-                        <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; {
-                            <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="string">&quot;Error while reading bytes of the raw block&quot;</span>.to_string())
-                        }
-                    }
+                    })<span class="question-mark">?</span>;
+                    workspace.buffer.push(<span class="kw-2">&amp;</span>buf[..]);
                 }
 
                 <span class="kw">let </span>smaller = <span class="kw-2">&amp;mut </span>buf[..single_read_size <span class="kw">as </span>usize];
-                <span class="kw">match </span>source.read_exact(smaller) {
-                    <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; {
-                        workspace.buffer.push(smaller);
-                    }
-                    <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; {
-                       <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="string">&quot;Error while reading bytes of the raw block&quot;</span>.to_string())
-                    }
-                }
-
+                source
+                    .read_exact(smaller)
+                    .map_err(|err| DecodeBlockContentError::ReadError {
+                        step: block_type,
+                        source: err,
+                    })<span class="question-mark">?</span>;
+                workspace.buffer.push(smaller);
 
                 <span class="self">self</span>.internal_state = DecoderState::ReadyToDecodeNextHeader;
-                <span class="prelude-val">Ok</span>(header.decompressed_size <span class="kw">as </span>u64)
+                <span class="prelude-val">Ok</span>(u64::from(header.decompressed_size))
             }
 
             BlockType::Reserved =&gt; {
-                <span class="prelude-val">Err</span>(<span class="string">&quot;How did you even get this. The decoder should error out if it detects a reserved-type block&quot;</span>.to_owned())
+                <span class="macro">panic!</span>(<span class="string">&quot;How did you even get this. The decoder should error out if it detects a reserved-type block&quot;</span>);
             }
 
             BlockType::Compressed =&gt; {
                 <span class="self">self</span>.decompress_block(header, workspace, source)<span class="question-mark">?</span>;
-                <span class="comment">//unimplemented!(&quot;Decompression is not yet implemented...&quot;);
 
-                </span><span class="self">self</span>.internal_state = DecoderState::ReadyToDecodeNextHeader;
-                <span class="prelude-val">Ok</span>(header.content_size <span class="kw">as </span>u64)
+                <span class="self">self</span>.internal_state = DecoderState::ReadyToDecodeNextHeader;
+                <span class="prelude-val">Ok</span>(u64::from(header.content_size))
             }
         }
     }
@@ -438,28 +559,24 @@
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         header: <span class="kw-2">&amp;</span>BlockHeader,
         workspace: <span class="kw-2">&amp;mut </span>DecoderScratch, <span class="comment">//reuse this as often as possible. Not only if the trees are reused but also reuse the allocations when building new trees
-        </span>source: <span class="kw-2">&amp;mut </span><span class="kw">dyn </span>Read,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;(), String&gt; {
+        </span><span class="kw-2">mut </span>source: <span class="kw">impl </span>Read,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;(), DecompressBlockError&gt; {
         workspace
             .block_content_buffer
             .resize(header.content_size <span class="kw">as </span>usize, <span class="number">0</span>);
 
-        <span class="kw">match </span>source.read_exact(workspace.block_content_buffer.as_mut_slice()) {
-            <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; { <span class="comment">/* happy */ </span>}
-            <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="string">&quot;Error while reading the block content&quot;</span>.to_owned()),
-        }
-
+        source.read_exact(workspace.block_content_buffer.as_mut_slice())<span class="question-mark">?</span>;
         <span class="kw">let </span>raw = workspace.block_content_buffer.as_slice();
 
         <span class="kw">let </span><span class="kw-2">mut </span>section = LiteralsSection::new();
         <span class="kw">let </span>bytes_in_literals_header = section.parse_from_header(raw)<span class="question-mark">?</span>;
         <span class="kw">let </span>raw = <span class="kw-2">&amp;</span>raw[bytes_in_literals_header <span class="kw">as </span>usize..];
-        <span class="kw">if </span><span class="kw">crate</span>::VERBOSE {
-            <span class="macro">println!</span>(
-                <span class="string">&quot;Found {} literalssection with regenerated size: {}, and compressed size: {:?}&quot;</span>,
-                section.ls_type, section.regenerated_size, section.compressed_size
-            );
-        }
+        <span class="macro">vprintln!</span>(
+            <span class="string">&quot;Found {} literalssection with regenerated size: {}, and compressed size: {:?}&quot;</span>,
+            section.ls_type,
+            section.regenerated_size,
+            section.compressed_size
+        );
 
         <span class="kw">let </span>upper_limit_for_literals = <span class="kw">match </span>section.compressed_size {
             <span class="prelude-val">Some</span>(x) =&gt; x <span class="kw">as </span>usize,
@@ -471,13 +588,14 @@
         };
 
         <span class="kw">if </span>raw.len() &lt; upper_limit_for_literals {
-            <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">format!</span>(<span class="string">&quot;Malformed section header. Says literals would be this long: {} but there are only {} bytes left&quot;</span>, upper_limit_for_literals, raw.len()));
+            <span class="kw">return </span><span class="prelude-val">Err</span>(DecompressBlockError::MalformedSectionHeader {
+                expected_len: upper_limit_for_literals,
+                remaining_bytes: raw.len(),
+            });
         }
 
         <span class="kw">let </span>raw_literals = <span class="kw-2">&amp;</span>raw[..upper_limit_for_literals];
-        <span class="kw">if </span><span class="kw">crate</span>::VERBOSE {
-            <span class="macro">println!</span>(<span class="string">&quot;Slice for literals: {}&quot;</span>, raw_literals.len());
-        }
+        <span class="macro">vprintln!</span>(<span class="string">&quot;Slice for literals: {}&quot;</span>, raw_literals.len());
 
         workspace.literals_buffer.clear(); <span class="comment">//all literals of the previous block must have been used in the sequence execution anyways. just be defensive here
         </span><span class="kw">let </span>bytes_used_in_literals_section = decode_literals(
@@ -495,31 +613,25 @@
         <span class="macro">assert!</span>(bytes_used_in_literals_section == upper_limit_for_literals <span class="kw">as </span>u32);
 
         <span class="kw">let </span>raw = <span class="kw-2">&amp;</span>raw[upper_limit_for_literals..];
-        <span class="kw">if </span><span class="kw">crate</span>::VERBOSE {
-            <span class="macro">println!</span>(<span class="string">&quot;Slice for sequences with headers: {}&quot;</span>, raw.len());
-        }
+        <span class="macro">vprintln!</span>(<span class="string">&quot;Slice for sequences with headers: {}&quot;</span>, raw.len());
 
         <span class="kw">let </span><span class="kw-2">mut </span>seq_section = SequencesHeader::new();
         <span class="kw">let </span>bytes_in_sequence_header = seq_section.parse_from_header(raw)<span class="question-mark">?</span>;
         <span class="kw">let </span>raw = <span class="kw-2">&amp;</span>raw[bytes_in_sequence_header <span class="kw">as </span>usize..];
-        <span class="kw">if </span><span class="kw">crate</span>::VERBOSE {
-            <span class="macro">println!</span>(
-                <span class="string">&quot;Found sequencessection with sequences: {} and size: {}&quot;</span>,
-                seq_section.num_sequences,
-                raw.len()
-            );
-        }
+        <span class="macro">vprintln!</span>(
+            <span class="string">&quot;Found sequencessection with sequences: {} and size: {}&quot;</span>,
+            seq_section.num_sequences,
+            raw.len()
+        );
 
         <span class="macro">assert!</span>(
-            bytes_in_literals_header <span class="kw">as </span>u32
+            u32::from(bytes_in_literals_header)
                 + bytes_used_in_literals_section
-                + bytes_in_sequence_header <span class="kw">as </span>u32
+                + u32::from(bytes_in_sequence_header)
                 + raw.len() <span class="kw">as </span>u32
                 == header.content_size
         );
-        <span class="kw">if </span><span class="kw">crate</span>::VERBOSE {
-            <span class="macro">println!</span>(<span class="string">&quot;Slice for sequences: {}&quot;</span>, raw.len());
-        }
+        <span class="macro">vprintln!</span>(<span class="string">&quot;Slice for sequences: {}&quot;</span>, raw.len());
 
         <span class="kw">if </span>seq_section.num_sequences != <span class="number">0 </span>{
             decode_sequences(
@@ -528,9 +640,7 @@
                 <span class="kw-2">&amp;mut </span>workspace.fse,
                 <span class="kw-2">&amp;mut </span>workspace.sequences,
             )<span class="question-mark">?</span>;
-            <span class="kw">if </span><span class="kw">crate</span>::VERBOSE {
-                <span class="macro">println!</span>(<span class="string">&quot;Executing sequences&quot;</span>);
-            }
+            <span class="macro">vprintln!</span>(<span class="string">&quot;Executing sequences&quot;</span>);
             execute_sequences(workspace)<span class="question-mark">?</span>;
         } <span class="kw">else </span>{
             workspace.buffer.push(<span class="kw-2">&amp;</span>workspace.literals_buffer);
@@ -540,28 +650,22 @@
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="kw">pub fn </span>read_block_header(<span class="kw-2">&amp;mut </span><span class="self">self</span>, r: <span class="kw-2">&amp;mut </span><span class="kw">dyn </span>Read) -&gt; <span class="prelude-ty">Result</span>&lt;(BlockHeader, u8), String&gt; {
+    <span class="kw">pub fn </span>read_block_header(
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+        <span class="kw-2">mut </span>r: <span class="kw">impl </span>Read,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;(BlockHeader, u8), BlockHeaderReadError&gt; {
         <span class="comment">//match self.internal_state {
         //    DecoderState::ReadyToDecodeNextHeader =&gt; {/* Happy :) */},
         //    DecoderState::Failed =&gt; return Err(format!(&quot;Cant decode next block if failed along the way. Results will be nonsense&quot;)),
         //    DecoderState::ReadyToDecodeNextBody =&gt; return Err(format!(&quot;Cant decode next block header, while expecting to decode the body of the previous block. Results will be nonsense&quot;)),
         //}
 
-        </span><span class="kw">match </span>r.read_exact(<span class="kw-2">&amp;mut </span><span class="self">self</span>.header_buffer[<span class="number">0</span>..<span class="number">3</span>]) {
-            <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; {}
-            <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="string">&quot;Error while reading the block header&quot;</span>.to_string()),
-        }
+        </span>r.read_exact(<span class="kw-2">&amp;mut </span><span class="self">self</span>.header_buffer[<span class="number">0</span>..<span class="number">3</span>])<span class="question-mark">?</span>;
 
-        <span class="kw">let </span>btype = <span class="kw">match </span><span class="self">self</span>.block_type() {
-            <span class="prelude-val">Ok</span>(t) =&gt; <span class="kw">match </span>t {
-                BlockType::Reserved =&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(
-                    <span class="string">&quot;Reserved block occured. This is considered corruption by the documentation&quot;
-                        </span>.to_string(),
-                ),
-                <span class="kw">_ </span>=&gt; t,
-            },
-            <span class="prelude-val">Err</span>(m) =&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(m),
-        };
+        <span class="kw">let </span>btype = <span class="self">self</span>.block_type()<span class="question-mark">?</span>;
+        <span class="kw">if let </span>BlockType::Reserved = btype {
+            <span class="kw">return </span><span class="prelude-val">Err</span>(BlockHeaderReadError::FoundReservedBlock);
+        }
 
         <span class="kw">let </span>block_size = <span class="self">self</span>.block_content_size()<span class="question-mark">?</span>;
         <span class="kw">let </span>decompressed_size = <span class="kw">match </span>btype {
@@ -604,36 +708,30 @@
         <span class="self">self</span>.header_buffer[<span class="number">0</span>] &amp; <span class="number">0x1 </span>== <span class="number">1
     </span>}
 
-    <span class="kw">fn </span>block_type(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;BlockType, String&gt; {
+    <span class="kw">fn </span>block_type(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;BlockType, BlockTypeError&gt; {
         <span class="kw">let </span>t = (<span class="self">self</span>.header_buffer[<span class="number">0</span>] &gt;&gt; <span class="number">1</span>) &amp; <span class="number">0x3</span>;
         <span class="kw">match </span>t {
             <span class="number">0 </span>=&gt; <span class="prelude-val">Ok</span>(BlockType::Raw),
             <span class="number">1 </span>=&gt; <span class="prelude-val">Ok</span>(BlockType::RLE),
             <span class="number">2 </span>=&gt; <span class="prelude-val">Ok</span>(BlockType::Compressed),
             <span class="number">3 </span>=&gt; <span class="prelude-val">Ok</span>(BlockType::Reserved),
-            <span class="kw">_ </span>=&gt; <span class="prelude-val">Err</span>(<span class="macro">format!</span>(
-                <span class="string">&quot;Invalid Blocktype number. Is: {} Should be one of: 0,1,2,3 (3 is reserved though)&quot;</span>,
-                t
-            )),
+            other =&gt; <span class="prelude-val">Err</span>(BlockTypeError::InvalidBlocktypeNumber { num: other }),
         }
     }
 
-    <span class="kw">fn </span>block_content_size(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;u32, String&gt; {
+    <span class="kw">fn </span>block_content_size(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;u32, BlockSizeError&gt; {
         <span class="kw">let </span>val = <span class="self">self</span>.block_content_size_unchecked();
         <span class="kw">if </span>val &gt; ABSOLUTE_MAXIMUM_BLOCK_SIZE {
-            <span class="prelude-val">Err</span>(<span class="macro">format!</span>(
-                <span class="string">&quot;Blocksize was bigger than the absolute maximum 128kb. Is: {}&quot;</span>,
-                val
-            ))
+            <span class="prelude-val">Err</span>(BlockSizeError::BlockSizeTooLarge { size: val })
         } <span class="kw">else </span>{
             <span class="prelude-val">Ok</span>(val)
         }
     }
 
     <span class="kw">fn </span>block_content_size_unchecked(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u32 {
-        ((<span class="self">self</span>.header_buffer[<span class="number">0</span>] &gt;&gt; <span class="number">3</span>) <span class="kw">as </span>u32) <span class="comment">//push out type and last_block flags. Retain 5 bit
-            </span>| ((<span class="self">self</span>.header_buffer[<span class="number">1</span>] <span class="kw">as </span>u32) &lt;&lt; <span class="number">5</span>)
-            | ((<span class="self">self</span>.header_buffer[<span class="number">2</span>] <span class="kw">as </span>u32) &lt;&lt; <span class="number">13</span>)
+        u32::from(<span class="self">self</span>.header_buffer[<span class="number">0</span>] &gt;&gt; <span class="number">3</span>) <span class="comment">//push out type and last_block flags. Retain 5 bit
+            </span>| (u32::from(<span class="self">self</span>.header_buffer[<span class="number">1</span>]) &lt;&lt; <span class="number">5</span>)
+            | (u32::from(<span class="self">self</span>.header_buffer[<span class="number">2</span>]) &lt;&lt; <span class="number">13</span>)
     }
 }
 </code></pre></div></section></main></body></html>

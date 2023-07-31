@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["Decodebuffer"]};
+window.SIDEBAR_ITEMS = {"enum":["DecodebufferError"],"struct":["Decodebuffer"]};

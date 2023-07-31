@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["setup_loadscreen","update_loading_pct"],"struct":["LoadingProgressIndicator","LoadscreenCleanup","LoadscreenPlugin"]};
+window.SIDEBAR_ITEMS = {"fn":["setup_loadscreen","update_loading_pct"],"struct":["LoadingProgressIndicator","LoadscreenPlugin"]};

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["decode_literals"]};
+window.SIDEBAR_ITEMS = {"enum":["DecompressLiteralsError"],"fn":["decode_literals"]};

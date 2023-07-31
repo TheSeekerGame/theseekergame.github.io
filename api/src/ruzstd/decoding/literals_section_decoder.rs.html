@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ruzstd-0.2.4/src/decoding/literals_section_decoder.rs`."><title>literals_section_decoder.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="ruzstd" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../ruzstd/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ruzstd-0.4.0/src/decoding/literals_section_decoder.rs`."><title>literals_section_decoder.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="ruzstd" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../ruzstd/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -155,18 +155,69 @@
 <a href="#155" id="155">155</a>
 <a href="#156" id="156">156</a>
 <a href="#157" id="157">157</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::blocks::literals_section::LiteralsSection;
-<span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::blocks::literals_section::LiteralsSectionType;
-<span class="kw">use </span><span class="kw">super</span>::bit_reader_reverse::BitReaderReversed;
+<a href="#158" id="158">158</a>
+<a href="#159" id="159">159</a>
+<a href="#160" id="160">160</a>
+<a href="#161" id="161">161</a>
+<a href="#162" id="162">162</a>
+<a href="#163" id="163">163</a>
+<a href="#164" id="164">164</a>
+<a href="#165" id="165">165</a>
+<a href="#166" id="166">166</a>
+<a href="#167" id="167">167</a>
+<a href="#168" id="168">168</a>
+<a href="#169" id="169">169</a>
+<a href="#170" id="170">170</a>
+<a href="#171" id="171">171</a>
+<a href="#172" id="172">172</a>
+<a href="#173" id="173">173</a>
+<a href="#174" id="174">174</a>
+<a href="#175" id="175">175</a>
+<a href="#176" id="176">176</a>
+<a href="#177" id="177">177</a>
+<a href="#178" id="178">178</a>
+<a href="#179" id="179">179</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::blocks::literals_section::{LiteralsSection, LiteralsSectionType};
+<span class="kw">use </span><span class="kw">super</span>::bit_reader_reverse::{BitReaderReversed, GetBitsError};
 <span class="kw">use </span><span class="kw">super</span>::scratch::HuffmanScratch;
-<span class="kw">use </span><span class="kw">crate</span>::huff0::HuffmanDecoder;
+<span class="kw">use </span><span class="kw">crate</span>::huff0::{HuffmanDecoder, HuffmanDecoderError, HuffmanTableError};
+<span class="kw">use </span>alloc::vec::Vec;
+
+<span class="attr">#[derive(Debug, thiserror::Error)]
+#[non_exhaustive]
+</span><span class="kw">pub enum </span>DecompressLiteralsError {
+    <span class="attr">#[error(
+        <span class="string">&quot;compressed size was none even though it must be set to something for compressed literals&quot;
+    </span>)]
+    </span>MissingCompressedSize,
+    <span class="attr">#[error(<span class="string">&quot;num_streams was none even though it must be set to something (1 or 4) for compressed literals&quot;</span>)]
+    </span>MissingNumStreams,
+    <span class="attr">#[error(transparent)]
+    </span>GetBitsError(<span class="attr">#[from] </span>GetBitsError),
+    <span class="attr">#[error(transparent)]
+    </span>HuffmanTableError(<span class="attr">#[from] </span>HuffmanTableError),
+    <span class="attr">#[error(transparent)]
+    </span>HuffmanDecoderError(<span class="attr">#[from] </span>HuffmanDecoderError),
+    <span class="attr">#[error(<span class="string">&quot;Tried to reuse huffman table but it was never initialized&quot;</span>)]
+    </span>UninitializedHuffmanTable,
+    <span class="attr">#[error(<span class="string">&quot;Need 6 bytes to decode jump header, got {got} bytes&quot;</span>)]
+    </span>MissingBytesForJumpHeader { got: usize },
+    <span class="attr">#[error(<span class="string">&quot;Need at least {needed} bytes to decode literals. Have: {got} bytes&quot;</span>)]
+    </span>MissingBytesForLiterals { got: usize, needed: usize },
+    <span class="attr">#[error(<span class="string">&quot;Padding at the end of the sequence_section was more than a byte long: {skipped_bits} bits. Probably caused by data corruption&quot;</span>)]
+    </span>ExtraPadding { skipped_bits: i32 },
+    <span class="attr">#[error(<span class="string">&quot;Bitstream was read till: {read_til}, should have been: {expected}&quot;</span>)]
+    </span>BitstreamReadMismatch { read_til: isize, expected: isize },
+    <span class="attr">#[error(<span class="string">&quot;Did not decode enough literals: {decoded}, Should have been: {expected}&quot;</span>)]
+    </span>DecodedLiteralCountMismatch { decoded: usize, expected: usize },
+}
 
 <span class="kw">pub fn </span>decode_literals(
     section: <span class="kw-2">&amp;</span>LiteralsSection,
     scratch: <span class="kw-2">&amp;mut </span>HuffmanScratch,
     source: <span class="kw-2">&amp;</span>[u8],
     target: <span class="kw-2">&amp;mut </span>Vec&lt;u8&gt;,
-) -&gt; <span class="prelude-ty">Result</span>&lt;u32, String&gt; {
+) -&gt; <span class="prelude-ty">Result</span>&lt;u32, DecompressLiteralsError&gt; {
     <span class="kw">match </span>section.ls_type {
         LiteralsSectionType::Raw =&gt; {
             target.extend(<span class="kw-2">&amp;</span>source[<span class="number">0</span>..section.regenerated_size <span class="kw">as </span>usize]);
@@ -190,29 +241,25 @@
     scratch: <span class="kw-2">&amp;mut </span>HuffmanScratch,
     source: <span class="kw-2">&amp;</span>[u8],
     target: <span class="kw-2">&amp;mut </span>Vec&lt;u8&gt;,
-) -&gt; <span class="prelude-ty">Result</span>&lt;u32, String&gt; {
-    <span class="kw">if </span>section.compressed_size.is_none() {
-        <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="string">&quot;compressed size was none even though it must be set to something for compressed literals&quot;</span>.to_owned());
-    }
-    <span class="kw">if </span>section.num_streams.is_none() {
-        <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="string">&quot;num_streams was none even though it must be set to something (1 or 4) for compressed literals&quot;</span>.to_owned());
-    }
+) -&gt; <span class="prelude-ty">Result</span>&lt;u32, DecompressLiteralsError&gt; {
+    <span class="kw">use </span>DecompressLiteralsError <span class="kw">as </span>err;
+
+    <span class="kw">let </span>compressed_size = section.compressed_size.ok_or(err::MissingCompressedSize)<span class="question-mark">? </span><span class="kw">as </span>usize;
+    <span class="kw">let </span>num_streams = section.num_streams.ok_or(err::MissingNumStreams)<span class="question-mark">?</span>;
 
     target.reserve(section.regenerated_size <span class="kw">as </span>usize);
-    <span class="kw">let </span>source = <span class="kw-2">&amp;</span>source[<span class="number">0</span>..section.compressed_size.unwrap() <span class="kw">as </span>usize];
+    <span class="kw">let </span>source = <span class="kw-2">&amp;</span>source[<span class="number">0</span>..compressed_size];
     <span class="kw">let </span><span class="kw-2">mut </span>bytes_read = <span class="number">0</span>;
 
     <span class="kw">match </span>section.ls_type {
         LiteralsSectionType::Compressed =&gt; {
             <span class="comment">//read Huffman tree description
             </span>bytes_read += scratch.table.build_decoder(source)<span class="question-mark">?</span>;
-            <span class="kw">if </span><span class="kw">crate</span>::VERBOSE {
-                <span class="macro">println!</span>(<span class="string">&quot;Built huffman table using {} bytes&quot;</span>, bytes_read);
-            }
+            <span class="macro">vprintln!</span>(<span class="string">&quot;Built huffman table using {} bytes&quot;</span>, bytes_read);
         }
         LiteralsSectionType::Treeless =&gt; {
             <span class="kw">if </span>scratch.table.max_num_bits == <span class="number">0 </span>{
-                <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="string">&quot;Tried to reuse huffman table but it was never initialized&quot;</span>.to_owned());
+                <span class="kw">return </span><span class="prelude-val">Err</span>(err::UninitializedHuffmanTable);
             }
         }
         <span class="kw">_ </span>=&gt; { <span class="comment">/* nothing to do, huffman tree has been provided by previous block */ </span>}
@@ -220,10 +267,10 @@
 
     <span class="kw">let </span>source = <span class="kw-2">&amp;</span>source[bytes_read <span class="kw">as </span>usize..];
 
-    <span class="kw">if </span>section.num_streams.unwrap() == <span class="number">4 </span>{
+    <span class="kw">if </span>num_streams == <span class="number">4 </span>{
         <span class="comment">//build jumptable
         </span><span class="kw">if </span>source.len() &lt; <span class="number">6 </span>{
-            <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="string">&quot;Need 6 byte to decode jump header&quot;</span>.to_owned());
+            <span class="kw">return </span><span class="prelude-val">Err</span>(err::MissingBytesForJumpHeader { got: source.len() });
         }
         <span class="kw">let </span>jump1 = source[<span class="number">0</span>] <span class="kw">as </span>usize + ((source[<span class="number">1</span>] <span class="kw">as </span>usize) &lt;&lt; <span class="number">8</span>);
         <span class="kw">let </span>jump2 = jump1 + source[<span class="number">2</span>] <span class="kw">as </span>usize + ((source[<span class="number">3</span>] <span class="kw">as </span>usize) &lt;&lt; <span class="number">8</span>);
@@ -232,11 +279,10 @@
         <span class="kw">let </span>source = <span class="kw-2">&amp;</span>source[<span class="number">6</span>..];
 
         <span class="kw">if </span>source.len() &lt; jump3 {
-            <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">format!</span>(
-                <span class="string">&quot;Need at least {} byte to decode literals. Have: {}&quot;</span>,
-                jump3,
-                source.len()
-            ));
+            <span class="kw">return </span><span class="prelude-val">Err</span>(err::MissingBytesForLiterals {
+                got: source.len(),
+                needed: jump3,
+            });
         }
 
         <span class="comment">//decode 4 streams
@@ -259,7 +305,7 @@
             }
             <span class="kw">if </span>skipped_bits &gt; <span class="number">8 </span>{
                 <span class="comment">//if more than 7 bits are 0, this is not the correct end of the bitstream. Either a bug or corrupted data
-                </span><span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">format!</span>(<span class="string">&quot;Padding at the end of the sequence_section was more than a byte long: {}. Probably cause by data corruption&quot;</span>, skipped_bits));
+                </span><span class="kw">return </span><span class="prelude-val">Err</span>(DecompressLiteralsError::ExtraPadding { skipped_bits });
             }
             decoder.init_state(<span class="kw-2">&amp;mut </span>br)<span class="question-mark">?</span>;
 
@@ -268,18 +314,17 @@
                 decoder.next_state(<span class="kw-2">&amp;mut </span>br)<span class="question-mark">?</span>;
             }
             <span class="kw">if </span>br.bits_remaining() != -(scratch.table.max_num_bits <span class="kw">as </span>isize) {
-                <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">format!</span>(
-                    <span class="string">&quot;Bitstream was read till: {}, should have been: {}&quot;</span>,
-                    br.bits_remaining(),
-                    -(scratch.table.max_num_bits <span class="kw">as </span>isize)
-                ));
+                <span class="kw">return </span><span class="prelude-val">Err</span>(DecompressLiteralsError::BitstreamReadMismatch {
+                    read_til: br.bits_remaining(),
+                    expected: -(scratch.table.max_num_bits <span class="kw">as </span>isize),
+                });
             }
         }
 
         bytes_read += source.len() <span class="kw">as </span>u32;
     } <span class="kw">else </span>{
         <span class="comment">//just decode the one stream
-        </span><span class="macro">assert!</span>(section.num_streams.unwrap() == <span class="number">1</span>);
+        </span><span class="macro">assert!</span>(num_streams == <span class="number">1</span>);
         <span class="kw">let </span><span class="kw-2">mut </span>decoder = HuffmanDecoder::new(<span class="kw-2">&amp;</span>scratch.table);
         <span class="kw">let </span><span class="kw-2">mut </span>br = BitReaderReversed::new(source);
         <span class="kw">let </span><span class="kw-2">mut </span>skipped_bits = <span class="number">0</span>;
@@ -292,7 +337,7 @@
         }
         <span class="kw">if </span>skipped_bits &gt; <span class="number">8 </span>{
             <span class="comment">//if more than 7 bits are 0, this is not the correct end of the bitstream. Either a bug or corrupted data
-            </span><span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">format!</span>(<span class="string">&quot;Padding at the end of the sequence_section was more than a byte long: {}. Probably cause by data corruption&quot;</span>, skipped_bits));
+            </span><span class="kw">return </span><span class="prelude-val">Err</span>(DecompressLiteralsError::ExtraPadding { skipped_bits });
         }
         decoder.init_state(<span class="kw-2">&amp;mut </span>br)<span class="question-mark">?</span>;
         <span class="kw">while </span>br.bits_remaining() &gt; -(scratch.table.max_num_bits <span class="kw">as </span>isize) {
@@ -303,11 +348,10 @@
     }
 
     <span class="kw">if </span>target.len() != section.regenerated_size <span class="kw">as </span>usize {
-        <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">format!</span>(
-            <span class="string">&quot;Did not decode enough literals: {}, Should have been: {}&quot;</span>,
-            target.len(),
-            section.regenerated_size
-        ));
+        <span class="kw">return </span><span class="prelude-val">Err</span>(DecompressLiteralsError::DecodedLiteralCountMismatch {
+            decoded: target.len(),
+            expected: section.regenerated_size <span class="kw">as </span>usize,
+        });
     }
 
     <span class="prelude-val">Ok</span>(bytes_read)

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/wgpu-hal-0.15.4/src/vulkan/adapter.rs`."><title>adapter.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="wgpu_hal" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../wgpu_hal/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/wgpu-hal-0.16.2/src/vulkan/adapter.rs`."><title>adapter.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="wgpu_hal" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../wgpu_hal/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1717,6 +1717,33 @@
 <a href="#1717" id="1717">1717</a>
 <a href="#1718" id="1718">1718</a>
 <a href="#1719" id="1719">1719</a>
+<a href="#1720" id="1720">1720</a>
+<a href="#1721" id="1721">1721</a>
+<a href="#1722" id="1722">1722</a>
+<a href="#1723" id="1723">1723</a>
+<a href="#1724" id="1724">1724</a>
+<a href="#1725" id="1725">1725</a>
+<a href="#1726" id="1726">1726</a>
+<a href="#1727" id="1727">1727</a>
+<a href="#1728" id="1728">1728</a>
+<a href="#1729" id="1729">1729</a>
+<a href="#1730" id="1730">1730</a>
+<a href="#1731" id="1731">1731</a>
+<a href="#1732" id="1732">1732</a>
+<a href="#1733" id="1733">1733</a>
+<a href="#1734" id="1734">1734</a>
+<a href="#1735" id="1735">1735</a>
+<a href="#1736" id="1736">1736</a>
+<a href="#1737" id="1737">1737</a>
+<a href="#1738" id="1738">1738</a>
+<a href="#1739" id="1739">1739</a>
+<a href="#1740" id="1740">1740</a>
+<a href="#1741" id="1741">1741</a>
+<a href="#1742" id="1742">1742</a>
+<a href="#1743" id="1743">1743</a>
+<a href="#1744" id="1744">1744</a>
+<a href="#1745" id="1745">1745</a>
+<a href="#1746" id="1746">1746</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::conv;
 
 <span class="kw">use </span>ash::{extensions::khr, vk};
@@ -1859,7 +1886,7 @@
                     requested_features.contains(wgt::Features::TEXTURE_COMPRESSION_ETC2),
                 )
                 .texture_compression_astc_ldr(
-                    requested_features.contains(wgt::Features::TEXTURE_COMPRESSION_ASTC_LDR),
+                    requested_features.contains(wgt::Features::TEXTURE_COMPRESSION_ASTC),
                 )
                 .texture_compression_bc(
                     requested_features.contains(wgt::Features::TEXTURE_COMPRESSION_BC),
@@ -1893,10 +1920,10 @@
                 <span class="comment">//.shader_storage_image_array_dynamic_indexing(
                 //.shader_clip_distance(requested_features.contains(wgt::Features::SHADER_CLIP_DISTANCE))
                 //.shader_cull_distance(requested_features.contains(wgt::Features::SHADER_CULL_DISTANCE))
-                </span>.shader_float64(requested_features.contains(wgt::Features::SHADER_FLOAT64))
+                </span>.shader_float64(requested_features.contains(wgt::Features::SHADER_F64))
                 <span class="comment">//.shader_int64(requested_features.contains(wgt::Features::SHADER_INT64))
-                //.shader_int16(requested_features.contains(wgt::Features::SHADER_INT16))
-                //.shader_resource_residency(requested_features.contains(wgt::Features::SHADER_RESOURCE_RESIDENCY))
+                </span>.shader_int16(requested_features.contains(wgt::Features::SHADER_I16))
+                <span class="comment">//.shader_resource_residency(requested_features.contains(wgt::Features::SHADER_RESOURCE_RESIDENCY))
                 </span>.geometry_shader(requested_features.contains(wgt::Features::SHADER_PRIMITIVE_INDEX))
                 .build(),
             descriptor_indexing: <span class="kw">if </span>requested_features.intersects(indexing_features()) {
@@ -1997,7 +2024,7 @@
             } <span class="kw">else </span>{
                 <span class="prelude-val">None
             </span>},
-            shader_float16: <span class="kw">if </span>requested_features.contains(wgt::Features::SHADER_FLOAT16) {
+            shader_float16: <span class="kw">if </span>requested_features.contains(wgt::Features::SHADER_F16) {
                 <span class="prelude-val">Some</span>((
                     vk::PhysicalDeviceShaderFloat16Int8Features::builder()
                         .shader_float16(<span class="bool-val">true</span>)
@@ -2041,7 +2068,7 @@
             | F::ADDRESS_MODE_CLAMP_TO_BORDER
             | F::ADDRESS_MODE_CLAMP_TO_ZERO
             | F::TIMESTAMP_QUERY
-            | F::WRITE_TIMESTAMP_INSIDE_PASSES
+            | F::TIMESTAMP_QUERY_INSIDE_PASSES
             | F::TEXTURE_ADAPTER_SPECIFIC_FORMAT_FEATURES
             | F::CLEAR_TEXTURE;
 
@@ -2093,7 +2120,7 @@
             <span class="self">self</span>.core.texture_compression_etc2 != <span class="number">0</span>,
         );
         features.set(
-            F::TEXTURE_COMPRESSION_ASTC_LDR,
+            F::TEXTURE_COMPRESSION_ASTC,
             <span class="self">self</span>.core.texture_compression_astc_ldr != <span class="number">0</span>,
         );
         features.set(
@@ -2137,11 +2164,11 @@
         <span class="comment">//if self.core.shader_storage_image_array_dynamic_indexing != 0 {
         //if self.core.shader_clip_distance != 0 {
         //if self.core.shader_cull_distance != 0 {
-        </span>features.set(F::SHADER_FLOAT64, <span class="self">self</span>.core.shader_float64 != <span class="number">0</span>);
+        </span>features.set(F::SHADER_F64, <span class="self">self</span>.core.shader_float64 != <span class="number">0</span>);
         <span class="comment">//if self.core.shader_int64 != 0 {
-        //if self.core.shader_int16 != 0 {
+        </span>features.set(F::SHADER_I16, <span class="self">self</span>.core.shader_int16 != <span class="number">0</span>);
 
-        //if caps.supports_extension(vk::KhrSamplerMirrorClampToEdgeFn::name()) {
+        <span class="comment">//if caps.supports_extension(vk::KhrSamplerMirrorClampToEdgeFn::name()) {
         //if caps.supports_extension(vk::ExtSamplerFilterMinmaxFn::name()) {
         </span>features.set(
             F::MULTI_DRAW_INDIRECT_COUNT,
@@ -2213,7 +2240,7 @@
 
         <span class="kw">if let </span><span class="prelude-val">Some</span>((<span class="kw-2">ref </span>f16_i8, <span class="kw-2">ref </span>bit16)) = <span class="self">self</span>.shader_float16 {
             features.set(
-                F::SHADER_FLOAT16,
+                F::SHADER_F16,
                 f16_i8.shader_float16 != <span class="number">0
                     </span>&amp;&amp; bit16.storage_buffer16_bit_access != <span class="number">0
                     </span>&amp;&amp; bit16.uniform_and_storage_buffer16_bit_access != <span class="number">0</span>,
@@ -2245,6 +2272,16 @@
 
         features.set(F::DEPTH32FLOAT_STENCIL8, texture_d32_s8);
 
+        <span class="kw">let </span>rg11b10ufloat_renderable = supports_format(
+            instance,
+            phd,
+            vk::Format::B10G11R11_UFLOAT_PACK32,
+            vk::ImageTiling::OPTIMAL,
+            vk::FormatFeatureFlags::COLOR_ATTACHMENT
+                | vk::FormatFeatureFlags::COLOR_ATTACHMENT_BLEND,
+        );
+        features.set(F::RG11B10UFLOAT_RENDERABLE, rg11b10ufloat_renderable);
+
         (features, dl_flags)
     }
 
@@ -2263,6 +2300,7 @@
 </span><span class="kw">pub struct </span>PhysicalDeviceCapabilities {
     supported_extensions: Vec&lt;vk::ExtensionProperties&gt;,
     properties: vk::PhysicalDeviceProperties,
+    maintenance_3: <span class="prelude-ty">Option</span>&lt;vk::PhysicalDeviceMaintenance3Properties&gt;,
     descriptor_indexing: <span class="prelude-ty">Option</span>&lt;vk::PhysicalDeviceDescriptorIndexingPropertiesEXT&gt;,
     driver: <span class="prelude-ty">Option</span>&lt;vk::PhysicalDeviceDriverPropertiesKHR&gt;,
     <span class="doccomment">/// The effective driver api version supported by the physical device.
@@ -2321,6 +2359,11 @@
                 extensions.push(vk::KhrMaintenance2Fn::name());
             }
 
+            <span class="comment">// Optional `VK_KHR_maintenance3`
+            </span><span class="kw">if </span><span class="self">self</span>.supports_extension(vk::KhrMaintenance3Fn::name()) {
+                extensions.push(vk::KhrMaintenance3Fn::name());
+            }
+
             <span class="comment">// Require `VK_KHR_storage_buffer_storage_class`
             </span>extensions.push(vk::KhrStorageBufferStorageClassFn::name());
 
@@ -2358,15 +2401,10 @@
             <span class="comment">// Require `VK_EXT_descriptor_indexing` if one of the associated features was requested
             </span><span class="kw">if </span>requested_features.intersects(indexing_features()) {
                 extensions.push(vk::ExtDescriptorIndexingFn::name());
-
-                <span class="comment">// Require `VK_KHR_maintenance3` due to it being a dependency
-                </span><span class="kw">if </span><span class="self">self</span>.effective_api_version &lt; vk::API_VERSION_1_1 {
-                    extensions.push(vk::KhrMaintenance3Fn::name());
-                }
             }
 
             <span class="comment">// Require `VK_KHR_shader_float16_int8` and `VK_KHR_16bit_storage` if the associated feature was requested
-            </span><span class="kw">if </span>requested_features.contains(wgt::Features::SHADER_FLOAT16) {
+            </span><span class="kw">if </span>requested_features.contains(wgt::Features::SHADER_F16) {
                 extensions.push(vk::KhrShaderFloat16Int8Fn::name());
                 <span class="comment">// `VK_KHR_16bit_storage` requires `VK_KHR_storage_buffer_storage_class`, however we require that one already
                 </span><span class="kw">if </span><span class="self">self</span>.effective_api_version &lt; vk::API_VERSION_1_1 {
@@ -2517,6 +2555,13 @@
                     || capabilities.supports_extension(vk::KhrDriverPropertiesFn::name());
 
                 <span class="kw">let </span><span class="kw-2">mut </span>builder = vk::PhysicalDeviceProperties2KHR::builder();
+                <span class="kw">if </span><span class="self">self</span>.driver_api_version &gt;= vk::API_VERSION_1_1
+                    || capabilities.supports_extension(vk::KhrMaintenance3Fn::name())
+                {
+                    capabilities.maintenance_3 =
+                        <span class="prelude-val">Some</span>(vk::PhysicalDeviceMaintenance3Properties::default());
+                    builder = builder.push_next(capabilities.maintenance_3.as_mut().unwrap());
+                }
 
                 <span class="kw">if </span>supports_descriptor_indexing {
                     <span class="kw">let </span>next = capabilities
@@ -3031,7 +3076,6 @@
             },
             vendor_id: <span class="self">self</span>.phd_capabilities.properties.vendor_id,
             timestamp_period: <span class="self">self</span>.phd_capabilities.properties.limits.timestamp_period,
-            downlevel_flags: <span class="self">self</span>.downlevel_flags,
             private_caps: <span class="self">self</span>.private_caps.clone(),
             workarounds: <span class="self">self</span>.workarounds,
             render_passes: Mutex::new(Default::default()),
@@ -3057,10 +3101,16 @@
         <span class="kw">let </span>mem_allocator = {
             <span class="kw">let </span>limits = <span class="self">self</span>.phd_capabilities.properties.limits;
             <span class="kw">let </span>config = gpu_alloc::Config::i_am_prototyping(); <span class="comment">//TODO
-            </span><span class="kw">let </span>properties = gpu_alloc::DeviceProperties {
+            </span><span class="kw">let </span>max_memory_allocation_size =
+                <span class="kw">if let </span><span class="prelude-val">Some</span>(maintenance_3) = <span class="self">self</span>.phd_capabilities.maintenance_3 {
+                    maintenance_3.max_memory_allocation_size
+                } <span class="kw">else </span>{
+                    u64::max_value()
+                };
+            <span class="kw">let </span>properties = gpu_alloc::DeviceProperties {
                 max_memory_allocation_count: limits.max_memory_allocation_count,
-                max_memory_allocation_size: u64::max_value(), <span class="comment">// TODO
-                </span>non_coherent_atom_size: limits.non_coherent_atom_size,
+                max_memory_allocation_size,
+                non_coherent_atom_size: limits.non_coherent_atom_size,
                 memory_types: memory_types
                     .iter()
                     .map(|memory_type| gpu_alloc::MemoryType {
@@ -3206,7 +3256,7 @@
             features.intersects(vk::FormatFeatureFlags::TRANSFER_DST),
         );
         <span class="comment">// Vulkan is very permissive about MSAA
-        </span>flags.set(Tfc::MULTISAMPLE_RESOLVE, !format.describe().is_compressed());
+        </span>flags.set(Tfc::MULTISAMPLE_RESOLVE, !format.is_compressed());
 
         <span class="comment">// get the supported sample counts
         </span><span class="kw">let </span>format_aspect = <span class="kw">crate</span>::FormatAspects::from(format);
@@ -3221,7 +3271,7 @@
                 .framebuffer_stencil_sample_counts
                 .min(limits.sampled_image_stencil_sample_counts)
         } <span class="kw">else </span>{
-            <span class="kw">match </span>format.describe().sample_type {
+            <span class="kw">match </span>format.sample_type(<span class="prelude-val">None</span>).unwrap() {
                 wgt::TextureSampleType::Float { filterable: <span class="kw">_ </span>} =&gt; limits
                     .framebuffer_color_sample_counts
                     .min(limits.sampled_image_color_sample_counts),
@@ -3243,6 +3293,10 @@
         flags.set(
             Tfc::MULTISAMPLE_X8,
             sample_flags.contains(vk::SampleCountFlags::TYPE_8),
+        );
+        flags.set(
+            Tfc::MULTISAMPLE_X16,
+            sample_flags.contains(vk::SampleCountFlags::TYPE_16),
         );
 
         flags

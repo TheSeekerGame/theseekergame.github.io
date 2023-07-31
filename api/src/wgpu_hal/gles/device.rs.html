@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/wgpu-hal-0.15.4/src/gles/device.rs`."><title>device.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="wgpu_hal" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../wgpu_hal/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/wgpu-hal-0.16.2/src/gles/device.rs`."><title>device.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="wgpu_hal" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../wgpu_hal/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1326,28 +1326,6 @@
 <a href="#1326" id="1326">1326</a>
 <a href="#1327" id="1327">1327</a>
 <a href="#1328" id="1328">1328</a>
-<a href="#1329" id="1329">1329</a>
-<a href="#1330" id="1330">1330</a>
-<a href="#1331" id="1331">1331</a>
-<a href="#1332" id="1332">1332</a>
-<a href="#1333" id="1333">1333</a>
-<a href="#1334" id="1334">1334</a>
-<a href="#1335" id="1335">1335</a>
-<a href="#1336" id="1336">1336</a>
-<a href="#1337" id="1337">1337</a>
-<a href="#1338" id="1338">1338</a>
-<a href="#1339" id="1339">1339</a>
-<a href="#1340" id="1340">1340</a>
-<a href="#1341" id="1341">1341</a>
-<a href="#1342" id="1342">1342</a>
-<a href="#1343" id="1343">1343</a>
-<a href="#1344" id="1344">1344</a>
-<a href="#1345" id="1345">1345</a>
-<a href="#1346" id="1346">1346</a>
-<a href="#1347" id="1347">1347</a>
-<a href="#1348" id="1348">1348</a>
-<a href="#1349" id="1349">1349</a>
-<a href="#1350" id="1350">1350</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::conv;
 <span class="kw">use </span><span class="kw">crate</span>::auxil::map_naga_stage;
 <span class="kw">use </span>glow::HasContext;
@@ -1366,7 +1344,7 @@
     naga::ShaderStage,
     <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw">crate</span>::ProgrammableStage&lt;<span class="lifetime">&#39;a</span>, <span class="kw">super</span>::Api&gt;,
 );
-<span class="kw">type </span>NameBindingMap = fxhash::FxHashMap&lt;String, (<span class="kw">super</span>::BindingRegister, u8)&gt;;
+<span class="kw">type </span>NameBindingMap = rustc_hash::FxHashMap&lt;String, (<span class="kw">super</span>::BindingRegister, u8)&gt;;
 
 <span class="kw">struct </span>CompilationContext&lt;<span class="lifetime">&#39;a</span>&gt; {
     layout: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw">super</span>::PipelineLayout,
@@ -1444,16 +1422,14 @@
     /// - If `drop_guard` is [`None`], wgpu-hal will take ownership of the texture. If `drop_guard` is
     ///   [`Some`], the texture must be valid until the drop implementation
     ///   of the drop guard is called.
-    </span><span class="attr">#[cfg(any(not(target_arch = <span class="string">&quot;wasm32&quot;</span>), feature = <span class="string">&quot;emscripten&quot;</span>))]
+    </span><span class="attr">#[cfg(any(not(target_arch = <span class="string">&quot;wasm32&quot;</span>), target_os = <span class="string">&quot;emscripten&quot;</span>))]
     </span><span class="kw">pub unsafe fn </span>texture_from_raw(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         name: std::num::NonZeroU32,
         desc: <span class="kw-2">&amp;</span><span class="kw">crate</span>::TextureDescriptor,
         drop_guard: <span class="prelude-ty">Option</span>&lt;<span class="kw">crate</span>::DropGuard&gt;,
     ) -&gt; <span class="kw">super</span>::Texture {
-        <span class="kw">let </span><span class="kw-2">mut </span>copy_size = <span class="kw">crate</span>::CopyExtent::map_extent_to_copy_size(<span class="kw-2">&amp;</span>desc.size, desc.dimension);
-
-        <span class="kw">let </span>(target, <span class="kw">_</span>, is_cubemap) = <span class="kw">super</span>::Texture::get_info_from_desc(<span class="kw-2">&amp;mut </span>copy_size, desc);
+        <span class="kw">let </span>(target, <span class="kw">_</span>, is_cubemap) = <span class="kw">super</span>::Texture::get_info_from_desc(desc);
 
         <span class="kw">super</span>::Texture {
             inner: <span class="kw">super</span>::TextureInner::Texture {
@@ -1462,14 +1438,10 @@
             },
             drop_guard,
             mip_level_count: desc.mip_level_count,
-            array_layer_count: <span class="kw">if </span>desc.dimension == wgt::TextureDimension::D2 {
-                desc.size.depth_or_array_layers
-            } <span class="kw">else </span>{
-                <span class="number">1
-            </span>},
+            array_layer_count: desc.array_layer_count(),
             format: desc.format,
             format_desc: <span class="self">self</span>.shared.describe_texture_format(desc.format),
-            copy_size,
+            copy_size: desc.copy_extent(),
             is_cubemap,
         }
     }
@@ -1481,29 +1453,23 @@
     /// - If `drop_guard` is [`None`], wgpu-hal will take ownership of the renderbuffer. If `drop_guard` is
     ///   [`Some`], the renderbuffer must be valid until the drop implementation
     ///   of the drop guard is called.
-    </span><span class="attr">#[cfg(any(not(target_arch = <span class="string">&quot;wasm32&quot;</span>), feature = <span class="string">&quot;emscripten&quot;</span>))]
+    </span><span class="attr">#[cfg(any(not(target_arch = <span class="string">&quot;wasm32&quot;</span>), target_os = <span class="string">&quot;emscripten&quot;</span>))]
     </span><span class="kw">pub unsafe fn </span>texture_from_raw_renderbuffer(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         name: std::num::NonZeroU32,
         desc: <span class="kw-2">&amp;</span><span class="kw">crate</span>::TextureDescriptor,
         drop_guard: <span class="prelude-ty">Option</span>&lt;<span class="kw">crate</span>::DropGuard&gt;,
     ) -&gt; <span class="kw">super</span>::Texture {
-        <span class="kw">let </span>copy_size = <span class="kw">crate</span>::CopyExtent::map_extent_to_copy_size(<span class="kw-2">&amp;</span>desc.size, desc.dimension);
-
         <span class="kw">super</span>::Texture {
             inner: <span class="kw">super</span>::TextureInner::Renderbuffer {
                 raw: glow::NativeRenderbuffer(name),
             },
             drop_guard,
             mip_level_count: desc.mip_level_count,
-            array_layer_count: <span class="kw">if </span>desc.dimension == wgt::TextureDimension::D2 {
-                desc.size.depth_or_array_layers
-            } <span class="kw">else </span>{
-                <span class="number">1
-            </span>},
+            array_layer_count: desc.array_layer_count(),
             format: desc.format,
             format_desc: <span class="self">self</span>.shared.describe_texture_format(desc.format),
-            copy_size,
+            copy_size: desc.copy_extent(),
             is_cubemap: <span class="bool-val">false</span>,
         }
     }
@@ -1597,12 +1563,12 @@
             policies,
         )
         .map_err(|e| {
-            <span class="kw">let </span>msg = <span class="macro">format!</span>(<span class="string">&quot;{}&quot;</span>, e);
+            <span class="kw">let </span>msg = <span class="macro">format!</span>(<span class="string">&quot;{e}&quot;</span>);
             <span class="kw">crate</span>::PipelineError::Linkage(map_naga_stage(naga_stage), msg)
         })<span class="question-mark">?</span>;
 
         <span class="kw">let </span>reflection_info = writer.write().map_err(|e| {
-            <span class="kw">let </span>msg = <span class="macro">format!</span>(<span class="string">&quot;{}&quot;</span>, e);
+            <span class="kw">let </span>msg = <span class="macro">format!</span>(<span class="string">&quot;{e}&quot;</span>);
             <span class="kw">crate</span>::PipelineError::Linkage(map_naga_stage(naga_stage), msg)
         })<span class="question-mark">?</span>;
 
@@ -1708,7 +1674,7 @@
 
         <span class="comment">// Create empty fragment shader if only vertex shader is present
         </span><span class="kw">if </span>has_stages == wgt::ShaderStages::VERTEX {
-            <span class="kw">let </span>shader_src = <span class="macro">format!</span>(<span class="string">&quot;#version {} es \n void main(void) {{}}&quot;</span>, glsl_version,);
+            <span class="kw">let </span>shader_src = <span class="macro">format!</span>(<span class="string">&quot;#version {glsl_version} es \n void main(void) {{}}&quot;</span>,);
             <span class="macro">log::info!</span>(<span class="string">&quot;Only vertex shader is present. Creating an empty fragment shader&quot;</span>,);
             <span class="kw">let </span>shader = <span class="kw">unsafe </span>{
                 <span class="self">Self</span>::compile_shader(
@@ -2025,12 +1991,6 @@
             | <span class="kw">crate</span>::TextureUses::DEPTH_STENCIL_READ;
         <span class="kw">let </span>format_desc = <span class="self">self</span>.shared.describe_texture_format(desc.format);
 
-        <span class="kw">let </span><span class="kw-2">mut </span>copy_size = <span class="kw">crate</span>::CopyExtent {
-            width: desc.size.width,
-            height: desc.size.height,
-            depth: <span class="number">1</span>,
-        };
-
         <span class="kw">let </span>(inner, is_cubemap) = <span class="kw">if </span>render_usage.contains(desc.usage)
             &amp;&amp; desc.dimension == wgt::TextureDimension::D2
             &amp;&amp; desc.size.depth_or_array_layers == <span class="number">1
@@ -2070,15 +2030,16 @@
             (<span class="kw">super</span>::TextureInner::Renderbuffer { raw }, <span class="bool-val">false</span>)
         } <span class="kw">else </span>{
             <span class="kw">let </span>raw = <span class="kw">unsafe </span>{ gl.create_texture().unwrap() };
-            <span class="kw">let </span>(target, is_3d, is_cubemap) =
-                <span class="kw">super</span>::Texture::get_info_from_desc(<span class="kw-2">&amp;mut </span>copy_size, desc);
+            <span class="kw">let </span>(target, is_3d, is_cubemap) = <span class="kw">super</span>::Texture::get_info_from_desc(desc);
 
             <span class="kw">unsafe </span>{ gl.bind_texture(target, <span class="prelude-val">Some</span>(raw)) };
             <span class="comment">//Note: this has to be done before defining the storage!
-            </span><span class="kw">match </span>desc.format.describe().sample_type {
-                wgt::TextureSampleType::Float { filterable: <span class="bool-val">false </span>}
-                | wgt::TextureSampleType::Uint
-                | wgt::TextureSampleType::Sint =&gt; {
+            </span><span class="kw">match </span>desc.format.sample_type(<span class="prelude-val">None</span>) {
+                <span class="prelude-val">Some</span>(
+                    wgt::TextureSampleType::Float { filterable: <span class="bool-val">false </span>}
+                    | wgt::TextureSampleType::Uint
+                    | wgt::TextureSampleType::Sint,
+                ) =&gt; {
                     <span class="comment">// reset default filtering mode
                     </span><span class="kw">unsafe </span>{
                         gl.tex_parameter_i32(target, glow::TEXTURE_MIN_FILTER, glow::NEAREST <span class="kw">as </span>i32)
@@ -2087,8 +2048,7 @@
                         gl.tex_parameter_i32(target, glow::TEXTURE_MAG_FILTER, glow::NEAREST <span class="kw">as </span>i32)
                     };
                 }
-                wgt::TextureSampleType::Float { filterable: <span class="bool-val">true </span>}
-                | wgt::TextureSampleType::Depth =&gt; {}
+                <span class="kw">_ </span>=&gt; {}
             }
 
             <span class="kw">if </span>is_3d {
@@ -2141,14 +2101,10 @@
             inner,
             drop_guard: <span class="prelude-val">None</span>,
             mip_level_count: desc.mip_level_count,
-            array_layer_count: <span class="kw">if </span>desc.dimension == wgt::TextureDimension::D2 {
-                desc.size.depth_or_array_layers
-            } <span class="kw">else </span>{
-                <span class="number">1
-            </span>},
+            array_layer_count: desc.array_layer_count(),
             format: desc.format,
             format_desc,
-            copy_size,
+            copy_size: desc.copy_extent(),
             is_cubemap,
         })
     }
@@ -2178,22 +2134,12 @@
         texture: <span class="kw-2">&amp;</span><span class="kw">super</span>::Texture,
         desc: <span class="kw-2">&amp;</span><span class="kw">crate</span>::TextureViewDescriptor,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw">super</span>::TextureView, <span class="kw">crate</span>::DeviceError&gt; {
-        <span class="kw">let </span>end_array_layer = <span class="kw">match </span>desc.range.array_layer_count {
-            <span class="prelude-val">Some</span>(count) =&gt; desc.range.base_array_layer + count.get(),
-            <span class="prelude-val">None </span>=&gt; texture.array_layer_count,
-        };
-        <span class="kw">let </span>end_mip_level = <span class="kw">match </span>desc.range.mip_level_count {
-            <span class="prelude-val">Some</span>(count) =&gt; desc.range.base_mip_level + count.get(),
-            <span class="prelude-val">None </span>=&gt; texture.mip_level_count,
-        };
         <span class="prelude-val">Ok</span>(<span class="kw">super</span>::TextureView {
             <span class="comment">//TODO: use `conv::map_view_dimension(desc.dimension)`?
             </span>inner: texture.inner.clone(),
-            sample_type: texture.format.describe().sample_type,
-            aspects: <span class="kw">crate</span>::FormatAspects::from(texture.format)
-                &amp; <span class="kw">crate</span>::FormatAspects::from(desc.range.aspect),
-            mip_levels: desc.range.base_mip_level..end_mip_level,
-            array_layers: desc.range.base_array_layer..end_array_layer,
+            aspects: <span class="kw">crate</span>::FormatAspects::new(texture.format, desc.range.aspect),
+            mip_levels: desc.range.mip_range(texture.mip_level_count),
+            array_layers: desc.range.layer_range(texture.array_layer_count),
             format: texture.format,
         })
     }
@@ -2246,14 +2192,17 @@
             <span class="kw">unsafe </span>{ gl.sampler_parameter_f32_slice(raw, glow::TEXTURE_BORDER_COLOR, <span class="kw-2">&amp;</span>border) };
         }
 
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref </span>range) = desc.lod_clamp {
-            <span class="kw">unsafe </span>{ gl.sampler_parameter_f32(raw, glow::TEXTURE_MIN_LOD, range.start) };
-            <span class="kw">unsafe </span>{ gl.sampler_parameter_f32(raw, glow::TEXTURE_MAX_LOD, range.end) };
-        }
+        <span class="kw">unsafe </span>{ gl.sampler_parameter_f32(raw, glow::TEXTURE_MIN_LOD, desc.lod_clamp.start) };
+        <span class="kw">unsafe </span>{ gl.sampler_parameter_f32(raw, glow::TEXTURE_MAX_LOD, desc.lod_clamp.end) };
 
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(anisotropy) = desc.anisotropy_clamp {
+        <span class="comment">// If clamp is not 1, we know anisotropy is supported up to 16x
+        </span><span class="kw">if </span>desc.anisotropy_clamp != <span class="number">1 </span>{
             <span class="kw">unsafe </span>{
-                gl.sampler_parameter_i32(raw, glow::TEXTURE_MAX_ANISOTROPY, anisotropy.get() <span class="kw">as </span>i32)
+                gl.sampler_parameter_i32(
+                    raw,
+                    glow::TEXTURE_MAX_ANISOTROPY,
+                    desc.anisotropy_clamp <span class="kw">as </span>i32,
+                )
             };
         }
 
@@ -2333,6 +2282,9 @@
                 .private_caps
                 .contains(<span class="kw">super</span>::PrivateCapabilities::SHADER_TEXTURE_SHADOW_LOD),
         );
+        <span class="comment">// We always force point size to be written and it will be ignored by the driver if it&#39;s not a point list primitive.
+        // https://github.com/gfx-rs/wgpu/pull/3440/files#r1095726950
+        </span>writer_flags.set(glsl::WriterFlags::FORCE_POINT_SIZE, <span class="bool-val">true</span>);
         <span class="kw">let </span><span class="kw-2">mut </span>binding_map = glsl::BindingMap::default();
 
         <span class="kw">for </span>(group_index, bg_layout) <span class="kw">in </span>desc.bind_group_layouts.iter().enumerate() {
@@ -2418,7 +2370,11 @@
                             <span class="string">&quot;This is an implementation problem of wgpu-hal/gles backend.&quot;</span>)
                     }
                     <span class="kw">let </span>(raw, target) = view.inner.as_native();
-                    <span class="kw">super</span>::RawBinding::Texture { raw, target }
+                    <span class="kw">super</span>::RawBinding::Texture {
+                        raw,
+                        target,
+                        aspects: view.aspects,
+                    }
                 }
                 wgt::BindingType::StorageTexture {
                     access,
@@ -2598,7 +2554,7 @@
 
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(label) = desc.label {
                     temp_string.clear();
-                    <span class="kw">let _ </span>= <span class="macro">write!</span>(temp_string, <span class="string">&quot;{}[{}]&quot;</span>, label, i);
+                    <span class="kw">let _ </span>= <span class="macro">write!</span>(temp_string, <span class="string">&quot;{label}[{i}]&quot;</span>);
                     <span class="kw">let </span>name = <span class="kw">unsafe </span>{ mem::transmute(query) };
                     <span class="kw">unsafe </span>{ gl.object_label(glow::QUERY, name, <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>temp_string)) };
                 }
@@ -2676,7 +2632,7 @@
     }
 
     <span class="kw">unsafe fn </span>start_capture(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        <span class="attr">#[cfg(feature = <span class="string">&quot;renderdoc&quot;</span>)]
+        <span class="attr">#[cfg(all(not(target_arch = <span class="string">&quot;wasm32&quot;</span>), feature = <span class="string">&quot;renderdoc&quot;</span>))]
         </span><span class="kw">return unsafe </span>{
             <span class="self">self</span>.render_doc
                 .start_frame_capture(<span class="self">self</span>.shared.context.raw_context(), ptr::null_mut())
@@ -2685,7 +2641,7 @@
         </span><span class="bool-val">false
     </span>}
     <span class="kw">unsafe fn </span>stop_capture(<span class="kw-2">&amp;</span><span class="self">self</span>) {
-        <span class="attr">#[cfg(feature = <span class="string">&quot;renderdoc&quot;</span>)]
+        <span class="attr">#[cfg(all(not(target_arch = <span class="string">&quot;wasm32&quot;</span>), feature = <span class="string">&quot;renderdoc&quot;</span>))]
         </span><span class="kw">unsafe </span>{
             <span class="self">self</span>.render_doc
                 .end_frame_capture(ptr::null_mut(), ptr::null_mut())

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"constant":["VERBOSE"],"mod":["blocks","decoding","errors","frame","frame_decoder","fse","huff0","streaming_decoder"]};
+window.SIDEBAR_ITEMS = {"constant":["VERBOSE"],"mod":["blocks","decoding","frame","frame_decoder","fse","huff0","io","streaming_decoder"]};

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["text_constraint","text_system","update_image_calculated_size_system"],"struct":["Button","Label"]};
+window.SIDEBAR_ITEMS = {"fn":["measure_text_system","text_system","update_atlas_content_size_system","update_image_content_size_system"],"struct":["Button","ImageMeasure","Label","TextFlags","TextMeasure","UiImageSize"]};

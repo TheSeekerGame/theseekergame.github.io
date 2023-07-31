@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["ModeType"],"struct":["CompressionModes","Sequence","SequencesHeader"]};
+window.SIDEBAR_ITEMS = {"enum":["ModeType","SequencesHeaderParseError"],"struct":["CompressionModes","Sequence","SequencesHeader"]};

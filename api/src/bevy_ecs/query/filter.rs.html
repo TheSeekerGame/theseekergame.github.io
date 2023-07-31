@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_ecs-0.10.1/src/query/filter.rs`."><title>filter.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_ecs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../bevy_ecs/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_ecs-0.11.0/src/query/filter.rs`."><title>filter.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_ecs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../bevy_ecs/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -661,15 +661,13 @@
 <a href="#661" id="661">661</a>
 <a href="#662" id="662">662</a>
 <a href="#663" id="663">663</a>
-<a href="#664" id="664">664</a>
-<a href="#665" id="665">665</a>
 </pre></div><pre class="rust"><code><span class="kw">use crate</span>::{
     archetype::{Archetype, ArchetypeComponentId},
     component::{Component, ComponentId, ComponentStorage, StorageType, Tick},
     entity::Entity,
     query::{Access, DebugCheckedUnwrap, FilteredAccess, WorldQuery},
     storage::{Column, ComponentSparseSet, Table, TableRow},
-    world::World,
+    world::{unsafe_world_cell::UnsafeWorldCell, World},
 };
 <span class="kw">use </span>bevy_ptr::{ThinSlicePtr, UnsafeCellDeref};
 <span class="kw">use </span>bevy_utils::all_tuples;
@@ -715,11 +713,12 @@
 
     <span class="kw">fn </span>shrink&lt;<span class="lifetime">&#39;wlong</span>: <span class="lifetime">&#39;wshort</span>, <span class="lifetime">&#39;wshort</span>&gt;(<span class="kw">_</span>: <span class="self">Self</span>::Item&lt;<span class="lifetime">&#39;wlong</span>&gt;) -&gt; <span class="self">Self</span>::Item&lt;<span class="lifetime">&#39;wshort</span>&gt; {}
 
-    <span class="kw">unsafe fn </span>init_fetch(
-        _world: <span class="kw-2">&amp;</span>World,
+    <span class="attr">#[inline]
+    </span><span class="kw">unsafe fn </span>init_fetch(
+        _world: UnsafeWorldCell,
         _state: <span class="kw-2">&amp;</span>ComponentId,
-        _last_change_tick: u32,
-        _change_tick: u32,
+        _last_run: Tick,
+        _this_run: Tick,
     ) {
     }
 
@@ -756,7 +755,7 @@
 
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>update_component_access(<span class="kw-2">&amp;</span>id: <span class="kw-2">&amp;</span>ComponentId, access: <span class="kw-2">&amp;mut </span>FilteredAccess&lt;ComponentId&gt;) {
-        access.add_with(id);
+        access.and_with(id);
     }
 
     <span class="attr">#[inline]
@@ -817,11 +816,12 @@
 
     <span class="kw">fn </span>shrink&lt;<span class="lifetime">&#39;wlong</span>: <span class="lifetime">&#39;wshort</span>, <span class="lifetime">&#39;wshort</span>&gt;(<span class="kw">_</span>: <span class="self">Self</span>::Item&lt;<span class="lifetime">&#39;wlong</span>&gt;) -&gt; <span class="self">Self</span>::Item&lt;<span class="lifetime">&#39;wshort</span>&gt; {}
 
-    <span class="kw">unsafe fn </span>init_fetch(
-        _world: <span class="kw-2">&amp;</span>World,
+    <span class="attr">#[inline]
+    </span><span class="kw">unsafe fn </span>init_fetch(
+        _world: UnsafeWorldCell,
         _state: <span class="kw-2">&amp;</span>ComponentId,
-        _last_change_tick: u32,
-        _change_tick: u32,
+        _last_run: Tick,
+        _this_run: Tick,
     ) {
     }
 
@@ -858,7 +858,7 @@
 
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>update_component_access(<span class="kw-2">&amp;</span>id: <span class="kw-2">&amp;</span>ComponentId, access: <span class="kw-2">&amp;mut </span>FilteredAccess&lt;ComponentId&gt;) {
-        access.add_without(id);
+        access.and_without(id);
     }
 
     <span class="attr">#[inline]
@@ -914,7 +914,7 @@
 /// }
 /// # bevy_ecs::system::assert_is_system(print_cool_entity_system);
 /// ```
-</span><span class="kw">pub struct </span>Or&lt;T&gt;(<span class="kw">pub </span>T);
+</span><span class="kw">pub struct </span>Or&lt;T&gt;(PhantomData&lt;T&gt;);
 
 <span class="attr">#[doc(hidden)]
 </span><span class="kw">pub struct </span>OrFetch&lt;<span class="lifetime">&#39;w</span>, T: WorldQuery&gt; {
@@ -942,10 +942,11 @@
 
             <span class="kw">const </span>IS_ARCHETYPAL: bool = <span class="bool-val">true </span>$(&amp;&amp; <span class="macro-nonterminal">$filter::IS_ARCHETYPAL</span>)<span class="kw-2">*</span>;
 
-            <span class="kw">unsafe fn </span>init_fetch&lt;<span class="lifetime">&#39;w</span>&gt;(world: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>World, state: <span class="kw-2">&amp;</span><span class="self">Self</span>::State, last_change_tick: u32, change_tick: u32) -&gt; <span class="self">Self</span>::Fetch&lt;<span class="lifetime">&#39;w</span>&gt; {
+            <span class="attr">#[inline]
+            </span><span class="kw">unsafe fn </span>init_fetch&lt;<span class="lifetime">&#39;w</span>&gt;(world: UnsafeWorldCell&lt;<span class="lifetime">&#39;w</span>&gt;, state: <span class="kw-2">&amp;</span><span class="self">Self</span>::State, last_run: Tick, this_run: Tick) -&gt; <span class="self">Self</span>::Fetch&lt;<span class="lifetime">&#39;w</span>&gt; {
                 <span class="kw">let </span>($(<span class="macro-nonterminal">$filter</span>,)<span class="kw-2">*</span>) = state;
                 ($(OrFetch {
-                    fetch: <span class="macro-nonterminal">$filter::init_fetch</span>(world, <span class="macro-nonterminal">$filter</span>, last_change_tick, change_tick),
+                    fetch: <span class="macro-nonterminal">$filter::init_fetch</span>(world, <span class="macro-nonterminal">$filter</span>, last_run, this_run),
                     matches: <span class="bool-val">false</span>,
                 },)<span class="kw-2">*</span>)
             }
@@ -1002,8 +1003,8 @@
             }
 
             <span class="attr">#[inline(always)]
-            </span><span class="kw">unsafe fn </span>filter_fetch&lt;<span class="lifetime">&#39;w</span>&gt;(
-                fetch: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::Fetch&lt;<span class="lifetime">&#39;w</span>&gt;,
+            </span><span class="kw">unsafe fn </span>filter_fetch(
+                fetch: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::Fetch&lt;<span class="lifetime">&#39;_</span>&gt;,
                 entity: Entity,
                 table_row: TableRow
             ) -&gt; bool {
@@ -1013,33 +1014,21 @@
             <span class="kw">fn </span>update_component_access(state: <span class="kw-2">&amp;</span><span class="self">Self</span>::State, access: <span class="kw-2">&amp;mut </span>FilteredAccess&lt;ComponentId&gt;) {
                 <span class="kw">let </span>($(<span class="macro-nonterminal">$filter</span>,)<span class="kw-2">*</span>) = state;
 
-                <span class="comment">// We do not unconditionally add `$filter`&#39;s `with`/`without` accesses to `access`
-                // as this would be unsound. For example the following two queries should conflict:
-                // - Query&lt;&amp;mut B, Or&lt;(With&lt;A&gt;, ())&gt;&gt;
-                // - Query&lt;&amp;mut B, Without&lt;A&gt;&gt;
-                //
-                // If we were to unconditionally add `$name`&#39;s `with`/`without` accesses then `Or&lt;(With&lt;A&gt;, ())&gt;`
-                // would have a `With&lt;A&gt;` access which is incorrect as this `WorldQuery` will match entities that
-                // do not have the `A` component. This is the same logic as the `AnyOf&lt;...&gt;: WorldQuery` impl.
-                //
-                // The correct thing to do here is to only add a `with`/`without` access to `_access` if all
-                // `$filter` params have that `with`/`without` access. More jargony put- we add the intersection
-                // of all `with`/`without` accesses of the `$filter` params to `access`.
-                </span><span class="kw">let </span><span class="kw-2">mut </span>_intersected_access = access.clone();
+                <span class="kw">let </span><span class="kw-2">mut </span>_new_access = access.clone();
                 <span class="kw">let </span><span class="kw-2">mut </span>_not_first = <span class="bool-val">false</span>;
                 $(
                     <span class="kw">if </span>_not_first {
                         <span class="kw">let </span><span class="kw-2">mut </span>intermediate = access.clone();
                         <span class="macro-nonterminal">$filter::update_component_access</span>(<span class="macro-nonterminal">$filter</span>, <span class="kw-2">&amp;mut </span>intermediate);
-                        _intersected_access.extend_intersect_filter(<span class="kw-2">&amp;</span>intermediate);
-                        _intersected_access.extend_access(<span class="kw-2">&amp;</span>intermediate);
+                        _new_access.append_or(<span class="kw-2">&amp;</span>intermediate);
+                        _new_access.extend_access(<span class="kw-2">&amp;</span>intermediate);
                     } <span class="kw">else </span>{
-                        <span class="macro-nonterminal">$filter::update_component_access</span>(<span class="macro-nonterminal">$filter</span>, <span class="kw-2">&amp;mut </span>_intersected_access);
+                        <span class="macro-nonterminal">$filter::update_component_access</span>(<span class="macro-nonterminal">$filter</span>, <span class="kw-2">&amp;mut </span>_new_access);
                         _not_first = <span class="bool-val">true</span>;
                     }
                 )*
 
-                <span class="kw-2">*</span>access = _intersected_access;
+                <span class="kw-2">*</span>access = _new_access;
             }
 
             <span class="kw">fn </span>update_archetype_component_access(state: <span class="kw-2">&amp;</span><span class="self">Self</span>::State, archetype: <span class="kw-2">&amp;</span>Archetype, access: <span class="kw-2">&amp;mut </span>Access&lt;ArchetypeComponentId&gt;) {
@@ -1082,8 +1071,8 @@
             table_ticks: <span class="prelude-ty">Option</span>&lt; ThinSlicePtr&lt;<span class="lifetime">&#39;w</span>, UnsafeCell&lt;Tick&gt;&gt;&gt;,
             marker: PhantomData&lt;T&gt;,
             sparse_set: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>ComponentSparseSet&gt;,
-            last_change_tick: u32,
-            change_tick: u32,
+            last_run: Tick,
+            this_run: Tick,
         }
 
         <span class="comment">// SAFETY: `Self::ReadOnly` is the same as `Self`
@@ -1097,19 +1086,26 @@
                 item
             }
 
-            <span class="kw">unsafe fn </span>init_fetch&lt;<span class="lifetime">&#39;w</span>&gt;(world: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>World, <span class="kw-2">&amp;</span>id: <span class="kw-2">&amp;</span>ComponentId, last_change_tick: u32, change_tick: u32) -&gt; <span class="self">Self</span>::Fetch&lt;<span class="lifetime">&#39;w</span>&gt; {
+            <span class="attr">#[inline]
+            </span><span class="kw">unsafe fn </span>init_fetch&lt;<span class="lifetime">&#39;w</span>&gt;(
+                world: UnsafeWorldCell&lt;<span class="lifetime">&#39;w</span>&gt;,
+                <span class="kw-2">&amp;</span>id: <span class="kw-2">&amp;</span>ComponentId,
+                last_run: Tick,
+                this_run: Tick
+            ) -&gt; <span class="self">Self</span>::Fetch&lt;<span class="lifetime">&#39;w</span>&gt; {
                 <span class="self">Self</span>::Fetch::&lt;<span class="lifetime">&#39;w</span>&gt; {
                     table_ticks: <span class="prelude-val">None</span>,
                     sparse_set: (T::Storage::STORAGE_TYPE == StorageType::SparseSet)
                         .then(|| {
-                            world.storages()
+                            world.unsafe_world()
+                                 .storages()
                                  .sparse_sets
                                  .get(id)
                                  .debug_checked_unwrap()
                         }),
                     marker: PhantomData,
-                    last_change_tick,
-                    change_tick,
+                    last_run,
+                    this_run,
                 }
             }
 
@@ -1119,8 +1115,8 @@
                 <span class="macro-nonterminal">$fetch_name </span>{
                     table_ticks: fetch.table_ticks,
                     sparse_set: fetch.sparse_set,
-                    last_change_tick: fetch.last_change_tick,
-                    change_tick: fetch.change_tick,
+                    last_run: fetch.last_run,
+                    this_run: fetch.this_run,
                     marker: PhantomData,
                 }
             }
@@ -1174,7 +1170,7 @@
                             .debug_checked_unwrap()
                             .get(table_row.index())
                             .deref()
-                            .is_newer_than(fetch.last_change_tick, fetch.change_tick)
+                            .is_newer_than(fetch.last_run, fetch.this_run)
                     }
                     StorageType::SparseSet =&gt; {
                         <span class="kw">let </span>sparse_set = <span class="kw-2">&amp;</span>fetch
@@ -1183,14 +1179,14 @@
                         <span class="macro-nonterminal">$get_sparse_set</span>(sparse_set, entity)
                             .debug_checked_unwrap()
                             .deref()
-                            .is_newer_than(fetch.last_change_tick, fetch.change_tick)
+                            .is_newer_than(fetch.last_run, fetch.this_run)
                     }
                 }
             }
 
             <span class="attr">#[inline(always)]
-            </span><span class="kw">unsafe fn </span>filter_fetch&lt;<span class="lifetime">&#39;w</span>&gt;(
-                fetch: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::Fetch&lt;<span class="lifetime">&#39;w</span>&gt;,
+            </span><span class="kw">unsafe fn </span>filter_fetch(
+                fetch: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::Fetch&lt;<span class="lifetime">&#39;_</span>&gt;,
                 entity: Entity,
                 table_row: TableRow
             ) -&gt; bool {
@@ -1273,7 +1269,7 @@
     /// Bevy does not compare components to their previous values.
     ///
     /// To retain all results without filtering but still check whether they were changed after the
-    /// system last ran, use [`ChangeTrackers&lt;T&gt;`](crate::query::ChangeTrackers).
+    /// system last ran, use [`Ref&lt;T&gt;`](crate::change_detection::Ref).
     ///
     /// # Examples
     ///

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/naga-0.11.1/src/back/wgsl/writer.rs`."><title>writer.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="naga" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../../source-files.js"></script><script defer src="../../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../naga/index.html"><img class="rust-logo" src="../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/naga-0.12.3/src/back/wgsl/writer.rs`."><title>writer.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="naga" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../../source-files.js"></script><script defer src="../../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../naga/index.html"><img class="rust-logo" src="../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1951,127 +1951,6 @@
 <a href="#1951" id="1951">1951</a>
 <a href="#1952" id="1952">1952</a>
 <a href="#1953" id="1953">1953</a>
-<a href="#1954" id="1954">1954</a>
-<a href="#1955" id="1955">1955</a>
-<a href="#1956" id="1956">1956</a>
-<a href="#1957" id="1957">1957</a>
-<a href="#1958" id="1958">1958</a>
-<a href="#1959" id="1959">1959</a>
-<a href="#1960" id="1960">1960</a>
-<a href="#1961" id="1961">1961</a>
-<a href="#1962" id="1962">1962</a>
-<a href="#1963" id="1963">1963</a>
-<a href="#1964" id="1964">1964</a>
-<a href="#1965" id="1965">1965</a>
-<a href="#1966" id="1966">1966</a>
-<a href="#1967" id="1967">1967</a>
-<a href="#1968" id="1968">1968</a>
-<a href="#1969" id="1969">1969</a>
-<a href="#1970" id="1970">1970</a>
-<a href="#1971" id="1971">1971</a>
-<a href="#1972" id="1972">1972</a>
-<a href="#1973" id="1973">1973</a>
-<a href="#1974" id="1974">1974</a>
-<a href="#1975" id="1975">1975</a>
-<a href="#1976" id="1976">1976</a>
-<a href="#1977" id="1977">1977</a>
-<a href="#1978" id="1978">1978</a>
-<a href="#1979" id="1979">1979</a>
-<a href="#1980" id="1980">1980</a>
-<a href="#1981" id="1981">1981</a>
-<a href="#1982" id="1982">1982</a>
-<a href="#1983" id="1983">1983</a>
-<a href="#1984" id="1984">1984</a>
-<a href="#1985" id="1985">1985</a>
-<a href="#1986" id="1986">1986</a>
-<a href="#1987" id="1987">1987</a>
-<a href="#1988" id="1988">1988</a>
-<a href="#1989" id="1989">1989</a>
-<a href="#1990" id="1990">1990</a>
-<a href="#1991" id="1991">1991</a>
-<a href="#1992" id="1992">1992</a>
-<a href="#1993" id="1993">1993</a>
-<a href="#1994" id="1994">1994</a>
-<a href="#1995" id="1995">1995</a>
-<a href="#1996" id="1996">1996</a>
-<a href="#1997" id="1997">1997</a>
-<a href="#1998" id="1998">1998</a>
-<a href="#1999" id="1999">1999</a>
-<a href="#2000" id="2000">2000</a>
-<a href="#2001" id="2001">2001</a>
-<a href="#2002" id="2002">2002</a>
-<a href="#2003" id="2003">2003</a>
-<a href="#2004" id="2004">2004</a>
-<a href="#2005" id="2005">2005</a>
-<a href="#2006" id="2006">2006</a>
-<a href="#2007" id="2007">2007</a>
-<a href="#2008" id="2008">2008</a>
-<a href="#2009" id="2009">2009</a>
-<a href="#2010" id="2010">2010</a>
-<a href="#2011" id="2011">2011</a>
-<a href="#2012" id="2012">2012</a>
-<a href="#2013" id="2013">2013</a>
-<a href="#2014" id="2014">2014</a>
-<a href="#2015" id="2015">2015</a>
-<a href="#2016" id="2016">2016</a>
-<a href="#2017" id="2017">2017</a>
-<a href="#2018" id="2018">2018</a>
-<a href="#2019" id="2019">2019</a>
-<a href="#2020" id="2020">2020</a>
-<a href="#2021" id="2021">2021</a>
-<a href="#2022" id="2022">2022</a>
-<a href="#2023" id="2023">2023</a>
-<a href="#2024" id="2024">2024</a>
-<a href="#2025" id="2025">2025</a>
-<a href="#2026" id="2026">2026</a>
-<a href="#2027" id="2027">2027</a>
-<a href="#2028" id="2028">2028</a>
-<a href="#2029" id="2029">2029</a>
-<a href="#2030" id="2030">2030</a>
-<a href="#2031" id="2031">2031</a>
-<a href="#2032" id="2032">2032</a>
-<a href="#2033" id="2033">2033</a>
-<a href="#2034" id="2034">2034</a>
-<a href="#2035" id="2035">2035</a>
-<a href="#2036" id="2036">2036</a>
-<a href="#2037" id="2037">2037</a>
-<a href="#2038" id="2038">2038</a>
-<a href="#2039" id="2039">2039</a>
-<a href="#2040" id="2040">2040</a>
-<a href="#2041" id="2041">2041</a>
-<a href="#2042" id="2042">2042</a>
-<a href="#2043" id="2043">2043</a>
-<a href="#2044" id="2044">2044</a>
-<a href="#2045" id="2045">2045</a>
-<a href="#2046" id="2046">2046</a>
-<a href="#2047" id="2047">2047</a>
-<a href="#2048" id="2048">2048</a>
-<a href="#2049" id="2049">2049</a>
-<a href="#2050" id="2050">2050</a>
-<a href="#2051" id="2051">2051</a>
-<a href="#2052" id="2052">2052</a>
-<a href="#2053" id="2053">2053</a>
-<a href="#2054" id="2054">2054</a>
-<a href="#2055" id="2055">2055</a>
-<a href="#2056" id="2056">2056</a>
-<a href="#2057" id="2057">2057</a>
-<a href="#2058" id="2058">2058</a>
-<a href="#2059" id="2059">2059</a>
-<a href="#2060" id="2060">2060</a>
-<a href="#2061" id="2061">2061</a>
-<a href="#2062" id="2062">2062</a>
-<a href="#2063" id="2063">2063</a>
-<a href="#2064" id="2064">2064</a>
-<a href="#2065" id="2065">2065</a>
-<a href="#2066" id="2066">2066</a>
-<a href="#2067" id="2067">2067</a>
-<a href="#2068" id="2068">2068</a>
-<a href="#2069" id="2069">2069</a>
-<a href="#2070" id="2070">2070</a>
-<a href="#2071" id="2071">2071</a>
-<a href="#2072" id="2072">2072</a>
-<a href="#2073" id="2073">2073</a>
-<a href="#2074" id="2074">2074</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::Error;
 <span class="kw">use crate</span>::{
     back,
@@ -2261,12 +2140,12 @@
         <span class="kw">use </span><span class="kw">crate</span>::ScalarValue <span class="kw">as </span>Sv;
 
         <span class="kw">match </span>value {
-            Sv::Sint(value) =&gt; <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{}&quot;</span>, value)<span class="question-mark">?</span>,
-            Sv::Uint(value) =&gt; <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{}u&quot;</span>, value)<span class="question-mark">?</span>,
+            Sv::Sint(value) =&gt; <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{value}&quot;</span>)<span class="question-mark">?</span>,
+            Sv::Uint(value) =&gt; <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{value}u&quot;</span>)<span class="question-mark">?</span>,
             <span class="comment">// Floats are written using `Debug` instead of `Display` because it always appends the
             // decimal part even it&#39;s zero
-            </span>Sv::Float(value) =&gt; <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{:?}&quot;</span>, value)<span class="question-mark">?</span>,
-            Sv::Bool(value) =&gt; <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{}&quot;</span>, value)<span class="question-mark">?</span>,
+            </span>Sv::Float(value) =&gt; <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{value:?}&quot;</span>)<span class="question-mark">?</span>,
+            Sv::Bool(value) =&gt; <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{value}&quot;</span>)<span class="question-mark">?</span>,
         }
 
         <span class="prelude-val">Ok</span>(())
@@ -2285,7 +2164,7 @@
                     ShaderStage::Vertex =&gt; <span class="string">&quot;VertexOutput&quot;</span>,
                 };
 
-                <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{}&quot;</span>, name)<span class="question-mark">?</span>;
+                <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{name}&quot;</span>)<span class="question-mark">?</span>;
                 <span class="kw">return </span><span class="prelude-val">Ok</span>(());
             }
         }
@@ -2312,16 +2191,13 @@
         };
 
         <span class="comment">// Write function name
-        </span><span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;fn {}(&quot;</span>, func_name)<span class="question-mark">?</span>;
+        </span><span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;fn {func_name}(&quot;</span>)<span class="question-mark">?</span>;
 
         <span class="comment">// Write function arguments
         </span><span class="kw">for </span>(index, arg) <span class="kw">in </span>func.arguments.iter().enumerate() {
             <span class="comment">// Write argument attribute if a binding is present
             </span><span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref </span>binding) = arg.binding {
-                <span class="self">self</span>.write_attributes(<span class="kw-2">&amp;</span>map_binding_to_attribute(
-                    binding,
-                    module.types[arg.ty].inner.scalar_kind(),
-                ))<span class="question-mark">?</span>;
+                <span class="self">self</span>.write_attributes(<span class="kw-2">&amp;</span>map_binding_to_attribute(binding))<span class="question-mark">?</span>;
             }
             <span class="comment">// Write argument name
             </span><span class="kw">let </span>argument_name = <span class="kw">match </span>func_ctx.ty {
@@ -2333,7 +2209,7 @@
                 }
             };
 
-            <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{}: &quot;</span>, argument_name)<span class="question-mark">?</span>;
+            <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{argument_name}: &quot;</span>)<span class="question-mark">?</span>;
             <span class="comment">// Write argument type
             </span><span class="self">self</span>.write_type(module, arg.ty)<span class="question-mark">?</span>;
             <span class="kw">if </span>index &lt; func.arguments.len() - <span class="number">1 </span>{
@@ -2348,10 +2224,7 @@
         </span><span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref </span>result) = func.result {
             <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot; -&gt; &quot;</span>)<span class="question-mark">?</span>;
             <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref </span>binding) = result.binding {
-                <span class="self">self</span>.write_attributes(<span class="kw-2">&amp;</span>map_binding_to_attribute(
-                    binding,
-                    module.types[result.ty].inner.scalar_kind(),
-                ))<span class="question-mark">?</span>;
+                <span class="self">self</span>.write_attributes(<span class="kw-2">&amp;</span>map_binding_to_attribute(binding))<span class="question-mark">?</span>;
             }
             <span class="self">self</span>.write_type(module, result.ty)<span class="question-mark">?</span>;
         }
@@ -2407,13 +2280,10 @@
     </span><span class="kw">fn </span>write_attributes(<span class="kw-2">&amp;mut </span><span class="self">self</span>, attributes: <span class="kw-2">&amp;</span>[Attribute]) -&gt; BackendResult {
         <span class="kw">for </span>attribute <span class="kw">in </span>attributes {
             <span class="kw">match </span><span class="kw-2">*</span>attribute {
-                Attribute::Location(id) =&gt; <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;@location({}) &quot;</span>, id)<span class="question-mark">?</span>,
+                Attribute::Location(id) =&gt; <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;@location({id}) &quot;</span>)<span class="question-mark">?</span>,
                 Attribute::BuiltIn(builtin_attrib) =&gt; {
-                    <span class="kw">if let </span><span class="prelude-val">Some</span>(builtin) = builtin_str(builtin_attrib) {
-                        <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;@builtin({}) &quot;</span>, builtin)<span class="question-mark">?</span>;
-                    } <span class="kw">else </span>{
-                        <span class="macro">log::warn!</span>(<span class="string">&quot;Unsupported builtin attribute: {:?}&quot;</span>, builtin_attrib);
-                    }
+                    <span class="kw">let </span>builtin = builtin_str(builtin_attrib)<span class="question-mark">?</span>;
+                    <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;@builtin({builtin}) &quot;</span>)<span class="question-mark">?</span>;
                 }
                 Attribute::Stage(shader_stage) =&gt; {
                     <span class="kw">let </span>stage_str = <span class="kw">match </span>shader_stage {
@@ -2421,7 +2291,7 @@
                         ShaderStage::Fragment =&gt; <span class="string">&quot;fragment&quot;</span>,
                         ShaderStage::Compute =&gt; <span class="string">&quot;compute&quot;</span>,
                     };
-                    <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;@{} &quot;</span>, stage_str)<span class="question-mark">?</span>;
+                    <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;@{stage_str} &quot;</span>)<span class="question-mark">?</span>;
                 }
                 Attribute::WorkGroupSize(size) =&gt; {
                     <span class="macro">write!</span>(
@@ -2430,8 +2300,8 @@
                         size[<span class="number">0</span>], size[<span class="number">1</span>], size[<span class="number">2</span>]
                     )<span class="question-mark">?</span>;
                 }
-                Attribute::Binding(id) =&gt; <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;@binding({}) &quot;</span>, id)<span class="question-mark">?</span>,
-                Attribute::Group(id) =&gt; <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;@group({}) &quot;</span>, id)<span class="question-mark">?</span>,
+                Attribute::Binding(id) =&gt; <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;@binding({id}) &quot;</span>)<span class="question-mark">?</span>,
+                Attribute::Group(id) =&gt; <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;@group({id}) &quot;</span>)<span class="question-mark">?</span>,
                 Attribute::Invariant =&gt; <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;@invariant &quot;</span>)<span class="question-mark">?</span>,
                 Attribute::Interpolate(interpolation, sampling) =&gt; {
                     <span class="kw">if </span>sampling.is_some() &amp;&amp; sampling != <span class="prelude-val">Some</span>(<span class="kw">crate</span>::Sampling::Center) {
@@ -2475,25 +2345,14 @@
         <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot; {{&quot;</span>)<span class="question-mark">?</span>;
         <span class="macro">writeln!</span>(<span class="self">self</span>.out)<span class="question-mark">?</span>;
         <span class="kw">for </span>(index, member) <span class="kw">in </span>members.iter().enumerate() {
-            <span class="comment">// Skip struct member with unsupported built in
-            </span><span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw">crate</span>::Binding::BuiltIn(built_in)) = member.binding {
-                <span class="kw">if </span>builtin_str(built_in).is_none() {
-                    <span class="macro">log::warn!</span>(<span class="string">&quot;Skip member with unsupported builtin {:?}&quot;</span>, built_in);
-                    <span class="kw">continue</span>;
-                }
-            }
-
             <span class="comment">// The indentation is only for readability
             </span><span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{}&quot;</span>, back::INDENT)<span class="question-mark">?</span>;
             <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref </span>binding) = member.binding {
-                <span class="self">self</span>.write_attributes(<span class="kw-2">&amp;</span>map_binding_to_attribute(
-                    binding,
-                    module.types[member.ty].inner.scalar_kind(),
-                ))<span class="question-mark">?</span>;
+                <span class="self">self</span>.write_attributes(<span class="kw-2">&amp;</span>map_binding_to_attribute(binding))<span class="question-mark">?</span>;
             }
             <span class="comment">// Write struct member name and type
             </span><span class="kw">let </span>member_name = <span class="kw-2">&amp;</span><span class="self">self</span>.names[<span class="kw-2">&amp;</span>NameKey::StructMember(handle, index <span class="kw">as </span>u32)];
-            <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{}: &quot;</span>, member_name)<span class="question-mark">?</span>;
+            <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{member_name}: &quot;</span>)<span class="question-mark">?</span>;
             <span class="self">self</span>.write_type(module, member.ty)<span class="question-mark">?</span>;
             <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;,&quot;</span>)<span class="question-mark">?</span>;
             <span class="macro">writeln!</span>(<span class="self">self</span>.out)<span class="question-mark">?</span>;
@@ -2574,12 +2433,11 @@
                 };
                 <span class="macro">write!</span>(
                     <span class="self">self</span>.out,
-                    <span class="string">&quot;texture_{}{}{}{}&quot;</span>,
-                    class_str, multisampled_str, dim_str, arrayed_str
-                )<span class="question-mark">?</span>;
+                    <span class="string">&quot;texture_{class_str}{multisampled_str}{dim_str}{arrayed_str}&quot;
+                </span>)<span class="question-mark">?</span>;
 
                 <span class="kw">if </span>!format_str.is_empty() {
-                    <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;&lt;{}{}&gt;&quot;</span>, format_str, storage_str)<span class="question-mark">?</span>;
+                    <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;&lt;{format_str}{storage_str}&gt;&quot;</span>)<span class="question-mark">?</span>;
                 }
             }
             TypeInner::Scalar { kind, width } =&gt; {
@@ -2643,12 +2501,12 @@
                 // Naga IR never produces pointers to handles, so it doesn&#39;t matter much
                 // how we write such a type. Just write it as the base type alone.
                 </span><span class="kw">if let </span><span class="prelude-val">Some</span>(space) = address {
-                    <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;ptr&lt;{}, &quot;</span>, space)<span class="question-mark">?</span>;
+                    <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;ptr&lt;{space}, &quot;</span>)<span class="question-mark">?</span>;
                 }
                 <span class="self">self</span>.write_type(module, base)<span class="question-mark">?</span>;
                 <span class="kw">if </span>address.is_some() {
                     <span class="kw">if let </span><span class="prelude-val">Some</span>(access) = maybe_access {
-                        <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;, {}&quot;</span>, access)<span class="question-mark">?</span>;
+                        <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;, {access}&quot;</span>)<span class="question-mark">?</span>;
                     }
                     <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;&gt;&quot;</span>)<span class="question-mark">?</span>;
                 }
@@ -2663,14 +2521,13 @@
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(space) = address {
                     <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;ptr&lt;{}, {}&quot;</span>, space, scalar_kind_str(kind, width))<span class="question-mark">?</span>;
                     <span class="kw">if let </span><span class="prelude-val">Some</span>(access) = maybe_access {
-                        <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;, {}&quot;</span>, access)<span class="question-mark">?</span>;
+                        <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;, {access}&quot;</span>)<span class="question-mark">?</span>;
                     }
                     <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;&gt;&quot;</span>)<span class="question-mark">?</span>;
                 } <span class="kw">else </span>{
                     <span class="kw">return </span><span class="prelude-val">Err</span>(Error::Unimplemented(<span class="macro">format!</span>(
-                        <span class="string">&quot;ValuePointer to AddressSpace::Handle {:?}&quot;</span>,
-                        inner
-                    )));
+                        <span class="string">&quot;ValuePointer to AddressSpace::Handle {inner:?}&quot;
+                    </span>)));
                 }
             }
             TypeInner::ValuePointer {
@@ -2689,22 +2546,18 @@
                         scalar_kind_str(kind, width)
                     )<span class="question-mark">?</span>;
                     <span class="kw">if let </span><span class="prelude-val">Some</span>(access) = maybe_access {
-                        <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;, {}&quot;</span>, access)<span class="question-mark">?</span>;
+                        <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;, {access}&quot;</span>)<span class="question-mark">?</span>;
                     }
                     <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;&gt;&quot;</span>)<span class="question-mark">?</span>;
                 } <span class="kw">else </span>{
                     <span class="kw">return </span><span class="prelude-val">Err</span>(Error::Unimplemented(<span class="macro">format!</span>(
-                        <span class="string">&quot;ValuePointer to AddressSpace::Handle {:?}&quot;</span>,
-                        inner
-                    )));
+                        <span class="string">&quot;ValuePointer to AddressSpace::Handle {inner:?}&quot;
+                    </span>)));
                 }
                 <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;&gt;&quot;</span>)<span class="question-mark">?</span>;
             }
             <span class="kw">_ </span>=&gt; {
-                <span class="kw">return </span><span class="prelude-val">Err</span>(Error::Unimplemented(<span class="macro">format!</span>(
-                    <span class="string">&quot;write_value_type {:?}&quot;</span>,
-                    inner
-                )));
+                <span class="kw">return </span><span class="prelude-val">Err</span>(Error::Unimplemented(<span class="macro">format!</span>(<span class="string">&quot;write_value_type {inner:?}&quot;</span>)));
             }
         }
 
@@ -2734,7 +2587,7 @@
                         // Also, we use sanitized names! It defense backend from generating variable with name from reserved keywords.
                         </span><span class="prelude-val">Some</span>(<span class="self">self</span>.namer.call(name))
                     } <span class="kw">else if </span>info.ref_count == <span class="number">0 </span>{
-                        <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{}_ = &quot;</span>, level)<span class="question-mark">?</span>;
+                        <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{level}_ = &quot;</span>)<span class="question-mark">?</span>;
                         <span class="self">self</span>.write_expr(module, handle, func_ctx)<span class="question-mark">?</span>;
                         <span class="macro">writeln!</span>(<span class="self">self</span>.out, <span class="string">&quot;;&quot;</span>)<span class="question-mark">?</span>;
                         <span class="kw">continue</span>;
@@ -2749,22 +2602,6 @@
                             <span class="kw">_ </span>=&gt; <span class="bool-val">false</span>,
                         };
                         <span class="kw">if </span>min_ref_count &lt;= info.ref_count || required_baking_expr {
-                            <span class="comment">// If expression contains unsupported builtin we should skip it
-                            </span><span class="kw">if let </span>Expression::Load { pointer } = func_ctx.expressions[handle] {
-                                <span class="kw">if let </span>Expression::AccessIndex { base, index } =
-                                    func_ctx.expressions[pointer]
-                                {
-                                    <span class="kw">if </span>access_to_unsupported_builtin(
-                                        base,
-                                        index,
-                                        module,
-                                        func_ctx.info,
-                                    ) {
-                                        <span class="kw">return </span><span class="prelude-val">Ok</span>(());
-                                    }
-                                }
-                            }
-
                             <span class="prelude-val">Some</span>(<span class="macro">format!</span>(<span class="string">&quot;{}{}&quot;</span>, back::BAKE_PREFIX, handle.index()))
                         } <span class="kw">else </span>{
                             <span class="prelude-val">None
@@ -2772,7 +2609,7 @@
                     };
 
                     <span class="kw">if let </span><span class="prelude-val">Some</span>(name) = expr_name {
-                        <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{}&quot;</span>, level)<span class="question-mark">?</span>;
+                        <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{level}&quot;</span>)<span class="question-mark">?</span>;
                         <span class="self">self</span>.start_named_expr(module, handle, func_ctx, <span class="kw-2">&amp;</span>name)<span class="question-mark">?</span>;
                         <span class="self">self</span>.write_expr(module, handle, func_ctx)<span class="question-mark">?</span>;
                         <span class="self">self</span>.named_expressions.insert(handle, name);
@@ -2786,7 +2623,7 @@
                 <span class="kw-2">ref </span>accept,
                 <span class="kw-2">ref </span>reject,
             } =&gt; {
-                <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{}&quot;</span>, level)<span class="question-mark">?</span>;
+                <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{level}&quot;</span>)<span class="question-mark">?</span>;
                 <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;if &quot;</span>)<span class="question-mark">?</span>;
                 <span class="self">self</span>.write_expr(module, condition, func_ctx)<span class="question-mark">?</span>;
                 <span class="macro">writeln!</span>(<span class="self">self</span>.out, <span class="string">&quot; {{&quot;</span>)<span class="question-mark">?</span>;
@@ -2800,7 +2637,7 @@
                 <span class="comment">// If there are no statements in the reject block we skip writing it
                 // This is only for readability
                 </span><span class="kw">if </span>!reject.is_empty() {
-                    <span class="macro">writeln!</span>(<span class="self">self</span>.out, <span class="string">&quot;{}}} else {{&quot;</span>, level)<span class="question-mark">?</span>;
+                    <span class="macro">writeln!</span>(<span class="self">self</span>.out, <span class="string">&quot;{level}}} else {{&quot;</span>)<span class="question-mark">?</span>;
 
                     <span class="kw">for </span>sta <span class="kw">in </span>reject {
                         <span class="comment">// Increase indentation to help with readability
@@ -2808,10 +2645,10 @@
                     }
                 }
 
-                <span class="macro">writeln!</span>(<span class="self">self</span>.out, <span class="string">&quot;{}}}&quot;</span>, level)<span class="question-mark">?
+                <span class="macro">writeln!</span>(<span class="self">self</span>.out, <span class="string">&quot;{level}}}&quot;</span>)<span class="question-mark">?
             </span>}
             Statement::Return { value } =&gt; {
-                <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{}&quot;</span>, level)<span class="question-mark">?</span>;
+                <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{level}&quot;</span>)<span class="question-mark">?</span>;
                 <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;return&quot;</span>)<span class="question-mark">?</span>;
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(return_value) = value {
                     <span class="comment">// The leading space is important
@@ -2822,19 +2659,11 @@
             }
             <span class="comment">// TODO: copy-paste from glsl-out
             </span>Statement::Kill =&gt; {
-                <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{}&quot;</span>, level)<span class="question-mark">?</span>;
+                <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{level}&quot;</span>)<span class="question-mark">?</span>;
                 <span class="macro">writeln!</span>(<span class="self">self</span>.out, <span class="string">&quot;discard;&quot;</span>)<span class="question-mark">?
             </span>}
             Statement::Store { pointer, value } =&gt; {
-                <span class="comment">// WGSL does not support all SPIR-V builtins and we should skip it in generated shaders.
-                // We already skip them when we generate struct type.
-                // Now we need to find expression that used struct with ignored builtins
-                </span><span class="kw">if let </span>Expression::AccessIndex { base, index } = func_ctx.expressions[pointer] {
-                    <span class="kw">if </span>access_to_unsupported_builtin(base, index, module, func_ctx.info) {
-                        <span class="kw">return </span><span class="prelude-val">Ok</span>(());
-                    }
-                }
-                <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{}&quot;</span>, level)<span class="question-mark">?</span>;
+                <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{level}&quot;</span>)<span class="question-mark">?</span>;
 
                 <span class="kw">let </span>is_atomic = <span class="kw">match </span><span class="kw-2">*</span>func_ctx.info[pointer].ty.inner_with(<span class="kw-2">&amp;</span>module.types) {
                     <span class="kw">crate</span>::TypeInner::Pointer { base, .. } =&gt; <span class="kw">match </span>module.types[base].inner {
@@ -2866,14 +2695,14 @@
                 <span class="kw-2">ref </span>arguments,
                 result,
             } =&gt; {
-                <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{}&quot;</span>, level)<span class="question-mark">?</span>;
+                <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{level}&quot;</span>)<span class="question-mark">?</span>;
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(expr) = result {
                     <span class="kw">let </span>name = <span class="macro">format!</span>(<span class="string">&quot;{}{}&quot;</span>, back::BAKE_PREFIX, expr.index());
                     <span class="self">self</span>.start_named_expr(module, expr, func_ctx, <span class="kw-2">&amp;</span>name)<span class="question-mark">?</span>;
                     <span class="self">self</span>.named_expressions.insert(expr, name);
                 }
                 <span class="kw">let </span>func_name = <span class="kw-2">&amp;</span><span class="self">self</span>.names[<span class="kw-2">&amp;</span>NameKey::Function(function)];
-                <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{}(&quot;</span>, func_name)<span class="question-mark">?</span>;
+                <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{func_name}(&quot;</span>)<span class="question-mark">?</span>;
                 <span class="kw">for </span>(index, <span class="kw-2">&amp;</span>argument) <span class="kw">in </span>arguments.iter().enumerate() {
                     <span class="self">self</span>.write_expr(module, argument, func_ctx)<span class="question-mark">?</span>;
                     <span class="comment">// Only write a comma if isn&#39;t the last element
@@ -2890,13 +2719,13 @@
                 value,
                 result,
             } =&gt; {
-                <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{}&quot;</span>, level)<span class="question-mark">?</span>;
+                <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{level}&quot;</span>)<span class="question-mark">?</span>;
                 <span class="kw">let </span>res_name = <span class="macro">format!</span>(<span class="string">&quot;{}{}&quot;</span>, back::BAKE_PREFIX, result.index());
                 <span class="self">self</span>.start_named_expr(module, result, func_ctx, <span class="kw-2">&amp;</span>res_name)<span class="question-mark">?</span>;
                 <span class="self">self</span>.named_expressions.insert(result, res_name);
 
                 <span class="kw">let </span>fun_str = fun.to_wgsl();
-                <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;atomic{}(&quot;</span>, fun_str)<span class="question-mark">?</span>;
+                <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;atomic{fun_str}(&quot;</span>)<span class="question-mark">?</span>;
                 <span class="self">self</span>.write_expr(module, pointer, func_ctx)<span class="question-mark">?</span>;
                 <span class="kw">if let </span><span class="kw">crate</span>::AtomicFunction::Exchange { compare: <span class="prelude-val">Some</span>(cmp) } = <span class="kw-2">*</span>fun {
                     <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;, &quot;</span>)<span class="question-mark">?</span>;
@@ -2912,7 +2741,7 @@
                 array_index,
                 value,
             } =&gt; {
-                <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{}&quot;</span>, level)<span class="question-mark">?</span>;
+                <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{level}&quot;</span>)<span class="question-mark">?</span>;
                 <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;textureStore(&quot;</span>)<span class="question-mark">?</span>;
                 <span class="self">self</span>.write_expr(module, image, func_ctx)<span class="question-mark">?</span>;
                 <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;, &quot;</span>)<span class="question-mark">?</span>;
@@ -2927,31 +2756,23 @@
             }
             <span class="comment">// TODO: copy-paste from glsl-out
             </span>Statement::Block(<span class="kw-2">ref </span>block) =&gt; {
-                <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{}&quot;</span>, level)<span class="question-mark">?</span>;
+                <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{level}&quot;</span>)<span class="question-mark">?</span>;
                 <span class="macro">writeln!</span>(<span class="self">self</span>.out, <span class="string">&quot;{{&quot;</span>)<span class="question-mark">?</span>;
                 <span class="kw">for </span>sta <span class="kw">in </span>block.iter() {
                     <span class="comment">// Increase the indentation to help with readability
                     </span><span class="self">self</span>.write_stmt(module, sta, func_ctx, level.next())<span class="question-mark">?
                 </span>}
-                <span class="macro">writeln!</span>(<span class="self">self</span>.out, <span class="string">&quot;{}}}&quot;</span>, level)<span class="question-mark">?
+                <span class="macro">writeln!</span>(<span class="self">self</span>.out, <span class="string">&quot;{level}}}&quot;</span>)<span class="question-mark">?
             </span>}
             Statement::Switch {
                 selector,
                 <span class="kw-2">ref </span>cases,
             } =&gt; {
                 <span class="comment">// Start the switch
-                </span><span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{}&quot;</span>, level)<span class="question-mark">?</span>;
+                </span><span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{level}&quot;</span>)<span class="question-mark">?</span>;
                 <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;switch &quot;</span>)<span class="question-mark">?</span>;
                 <span class="self">self</span>.write_expr(module, selector, func_ctx)<span class="question-mark">?</span>;
                 <span class="macro">writeln!</span>(<span class="self">self</span>.out, <span class="string">&quot; {{&quot;</span>)<span class="question-mark">?</span>;
-
-                <span class="kw">let </span>type_postfix = <span class="kw">match </span><span class="kw-2">*</span>func_ctx.info[selector].ty.inner_with(<span class="kw-2">&amp;</span>module.types) {
-                    <span class="kw">crate</span>::TypeInner::Scalar {
-                        kind: <span class="kw">crate</span>::ScalarKind::Uint,
-                        ..
-                    } =&gt; <span class="string">&quot;u&quot;</span>,
-                    <span class="kw">_ </span>=&gt; <span class="string">&quot;&quot;</span>,
-                };
 
                 <span class="kw">let </span>l2 = level.next();
                 <span class="kw">let </span><span class="kw-2">mut </span>new_case = <span class="bool-val">true</span>;
@@ -2964,18 +2785,24 @@
                     }
 
                     <span class="kw">match </span>case.value {
-                        <span class="kw">crate</span>::SwitchValue::Integer(value) =&gt; {
+                        <span class="kw">crate</span>::SwitchValue::I32(value) =&gt; {
                             <span class="kw">if </span>new_case {
-                                <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{}case &quot;</span>, l2)<span class="question-mark">?</span>;
+                                <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{l2}case &quot;</span>)<span class="question-mark">?</span>;
                             }
-                            <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{}{}&quot;</span>, value, type_postfix)<span class="question-mark">?</span>;
+                            <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{value}&quot;</span>)<span class="question-mark">?</span>;
+                        }
+                        <span class="kw">crate</span>::SwitchValue::U32(value) =&gt; {
+                            <span class="kw">if </span>new_case {
+                                <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{l2}case &quot;</span>)<span class="question-mark">?</span>;
+                            }
+                            <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{value}u&quot;</span>)<span class="question-mark">?</span>;
                         }
                         <span class="kw">crate</span>::SwitchValue::Default =&gt; {
                             <span class="kw">if </span>new_case {
                                 <span class="kw">if </span>case.fall_through {
-                                    <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{}case &quot;</span>, l2)<span class="question-mark">?</span>;
+                                    <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{l2}case &quot;</span>)<span class="question-mark">?</span>;
                                 } <span class="kw">else </span>{
-                                    <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{}&quot;</span>, l2)<span class="question-mark">?</span>;
+                                    <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{l2}&quot;</span>)<span class="question-mark">?</span>;
                                 }
                             }
                             <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;default&quot;</span>)<span class="question-mark">?</span>;
@@ -2995,18 +2822,18 @@
                     }
 
                     <span class="kw">if </span>!case.fall_through {
-                        <span class="macro">writeln!</span>(<span class="self">self</span>.out, <span class="string">&quot;{}}}&quot;</span>, l2)<span class="question-mark">?</span>;
+                        <span class="macro">writeln!</span>(<span class="self">self</span>.out, <span class="string">&quot;{l2}}}&quot;</span>)<span class="question-mark">?</span>;
                     }
                 }
 
-                <span class="macro">writeln!</span>(<span class="self">self</span>.out, <span class="string">&quot;{}}}&quot;</span>, level)<span class="question-mark">?
+                <span class="macro">writeln!</span>(<span class="self">self</span>.out, <span class="string">&quot;{level}}}&quot;</span>)<span class="question-mark">?
             </span>}
             Statement::Loop {
                 <span class="kw-2">ref </span>body,
                 <span class="kw-2">ref </span>continuing,
                 break_if,
             } =&gt; {
-                <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{}&quot;</span>, level)<span class="question-mark">?</span>;
+                <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{level}&quot;</span>)<span class="question-mark">?</span>;
                 <span class="macro">writeln!</span>(<span class="self">self</span>.out, <span class="string">&quot;loop {{&quot;</span>)<span class="question-mark">?</span>;
 
                 <span class="kw">let </span>l2 = level.next();
@@ -3019,7 +2846,7 @@
                 // so even if `continuing` is empty we must generate it if a
                 // `break if` exists
                 </span><span class="kw">if </span>!continuing.is_empty() || break_if.is_some() {
-                    <span class="macro">writeln!</span>(<span class="self">self</span>.out, <span class="string">&quot;{}continuing {{&quot;</span>, l2)<span class="question-mark">?</span>;
+                    <span class="macro">writeln!</span>(<span class="self">self</span>.out, <span class="string">&quot;{l2}continuing {{&quot;</span>)<span class="question-mark">?</span>;
                     <span class="kw">for </span>sta <span class="kw">in </span>continuing.iter() {
                         <span class="self">self</span>.write_stmt(module, sta, func_ctx, l2.next())<span class="question-mark">?</span>;
                     }
@@ -3034,26 +2861,27 @@
                         </span><span class="macro">writeln!</span>(<span class="self">self</span>.out, <span class="string">&quot;;&quot;</span>)<span class="question-mark">?</span>;
                     }
 
-                    <span class="macro">writeln!</span>(<span class="self">self</span>.out, <span class="string">&quot;{}}}&quot;</span>, l2)<span class="question-mark">?</span>;
+                    <span class="macro">writeln!</span>(<span class="self">self</span>.out, <span class="string">&quot;{l2}}}&quot;</span>)<span class="question-mark">?</span>;
                 }
 
-                <span class="macro">writeln!</span>(<span class="self">self</span>.out, <span class="string">&quot;{}}}&quot;</span>, level)<span class="question-mark">?
+                <span class="macro">writeln!</span>(<span class="self">self</span>.out, <span class="string">&quot;{level}}}&quot;</span>)<span class="question-mark">?
             </span>}
             Statement::Break =&gt; {
-                <span class="macro">writeln!</span>(<span class="self">self</span>.out, <span class="string">&quot;{}break;&quot;</span>, level)<span class="question-mark">?</span>;
+                <span class="macro">writeln!</span>(<span class="self">self</span>.out, <span class="string">&quot;{level}break;&quot;</span>)<span class="question-mark">?</span>;
             }
             Statement::Continue =&gt; {
-                <span class="macro">writeln!</span>(<span class="self">self</span>.out, <span class="string">&quot;{}continue;&quot;</span>, level)<span class="question-mark">?</span>;
+                <span class="macro">writeln!</span>(<span class="self">self</span>.out, <span class="string">&quot;{level}continue;&quot;</span>)<span class="question-mark">?</span>;
             }
             Statement::Barrier(barrier) =&gt; {
                 <span class="kw">if </span>barrier.contains(<span class="kw">crate</span>::Barrier::STORAGE) {
-                    <span class="macro">writeln!</span>(<span class="self">self</span>.out, <span class="string">&quot;{}storageBarrier();&quot;</span>, level)<span class="question-mark">?</span>;
+                    <span class="macro">writeln!</span>(<span class="self">self</span>.out, <span class="string">&quot;{level}storageBarrier();&quot;</span>)<span class="question-mark">?</span>;
                 }
 
                 <span class="kw">if </span>barrier.contains(<span class="kw">crate</span>::Barrier::WORK_GROUP) {
-                    <span class="macro">writeln!</span>(<span class="self">self</span>.out, <span class="string">&quot;{}workgroupBarrier();&quot;</span>, level)<span class="question-mark">?</span>;
+                    <span class="macro">writeln!</span>(<span class="self">self</span>.out, <span class="string">&quot;{level}workgroupBarrier();&quot;</span>)<span class="question-mark">?</span>;
                 }
             }
+            Statement::RayQuery { .. } =&gt; <span class="macro">unreachable!</span>(),
         }
 
         <span class="prelude-val">Ok</span>(())
@@ -3126,7 +2954,7 @@
         name: <span class="kw-2">&amp;</span>str,
     ) -&gt; BackendResult {
         <span class="comment">// Write variable name
-        </span><span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;let {}&quot;</span>, name)<span class="question-mark">?</span>;
+        </span><span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;let {name}&quot;</span>)<span class="question-mark">?</span>;
         <span class="kw">if </span><span class="self">self</span>.flags.contains(WriterFlags::EXPLICIT_TYPES) {
             <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;: &quot;</span>)<span class="question-mark">?</span>;
             <span class="kw">let </span>ty = <span class="kw-2">&amp;</span>func_ctx.info[handle].ty;
@@ -3213,7 +3041,7 @@
         <span class="kw">use </span><span class="kw">crate</span>::Expression;
 
         <span class="kw">if let </span><span class="prelude-val">Some</span>(name) = <span class="self">self</span>.named_expressions.get(<span class="kw-2">&amp;</span>expr) {
-            <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{}&quot;</span>, name)<span class="question-mark">?</span>;
+            <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{name}&quot;</span>)<span class="question-mark">?</span>;
             <span class="kw">return </span><span class="prelude-val">Ok</span>(());
         }
 
@@ -3232,42 +3060,10 @@
             Expression::Compose { ty, <span class="kw-2">ref </span>components } =&gt; {
                 <span class="self">self</span>.write_type(module, ty)<span class="question-mark">?</span>;
                 <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;(&quot;</span>)<span class="question-mark">?</span>;
-                <span class="comment">// !spv-in specific notes!
-                // WGSL does not support all SPIR-V builtins and we should skip it in generated shaders.
-                // We already skip them when we generate struct type.
-                // Now we need to find components that used struct with ignored builtins.
-
-                // So, why we can&#39;t just return the error to a user?
-                // We can, but otherwise, we can&#39;t generate WGSL shader from any glslang SPIR-V shaders.
-                // glslang generates gl_PerVertex struct with gl_CullDistance, gl_ClipDistance and gl_PointSize builtin inside by default.
-                // All of them are not supported by WGSL.
-
-                // We need to copy components to another vec because we don&#39;t know which of them we should write.
-                </span><span class="kw">let </span><span class="kw-2">mut </span>components_to_write = Vec::with_capacity(components.len());
-                <span class="kw">for </span>component <span class="kw">in </span>components {
-                    <span class="kw">let </span><span class="kw-2">mut </span>skip_component = <span class="bool-val">false</span>;
-                    <span class="kw">if let </span>Expression::Load { pointer } = func_ctx.expressions[<span class="kw-2">*</span>component] {
-                        <span class="kw">if let </span>Expression::AccessIndex { base, index } =
-                            func_ctx.expressions[pointer]
-                        {
-                            <span class="kw">if </span>access_to_unsupported_builtin(base, index, module, func_ctx.info) {
-                                skip_component = <span class="bool-val">true</span>;
-                            }
-                        }
-                    }
-                    <span class="kw">if </span>skip_component {
-                        <span class="kw">continue</span>;
-                    } <span class="kw">else </span>{
-                        components_to_write.push(<span class="kw-2">*</span>component);
-                    }
-                }
-
-                <span class="comment">// non spv-in specific notes!
-                // Real `Expression::Compose` logic generates here.
-                </span><span class="kw">for </span>(index, component) <span class="kw">in </span>components_to_write.iter().enumerate() {
+                <span class="kw">for </span>(index, component) <span class="kw">in </span>components.iter().enumerate() {
                     <span class="self">self</span>.write_expr(module, <span class="kw-2">*</span>component, func_ctx)<span class="question-mark">?</span>;
                     <span class="comment">// Only write a comma if isn&#39;t the last element
-                    </span><span class="kw">if </span>index != components_to_write.len().saturating_sub(<span class="number">1</span>) {
+                    </span><span class="kw">if </span>index != components.len().saturating_sub(<span class="number">1</span>) {
                         <span class="comment">// The leading space is for readability only
                         </span><span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;, &quot;</span>)<span class="question-mark">?</span>;
                     }
@@ -3277,7 +3073,7 @@
             Expression::FunctionArgument(pos) =&gt; {
                 <span class="kw">let </span>name_key = func_ctx.argument_key(pos);
                 <span class="kw">let </span>name = <span class="kw-2">&amp;</span><span class="self">self</span>.names[<span class="kw-2">&amp;</span>name_key];
-                <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{}&quot;</span>, name)<span class="question-mark">?</span>;
+                <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{name}&quot;</span>)<span class="question-mark">?</span>;
             }
             Expression::Binary { op, left, right } =&gt; {
                 <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;(&quot;</span>)<span class="question-mark">?</span>;
@@ -3314,7 +3110,7 @@
                     TypeInner::Matrix { .. }
                     | TypeInner::Array { .. }
                     | TypeInner::BindingArray { .. }
-                    | TypeInner::ValuePointer { .. } =&gt; <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;[{}]&quot;</span>, index)<span class="question-mark">?</span>,
+                    | TypeInner::ValuePointer { .. } =&gt; <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;[{index}]&quot;</span>)<span class="question-mark">?</span>,
                     TypeInner::Struct { .. } =&gt; {
                         <span class="comment">// This will never panic in case the type is a `Struct`, this is not true
                         // for other types so we can only check while inside this match arm
@@ -3326,7 +3122,7 @@
                             <span class="kw-2">&amp;</span><span class="self">self</span>.names[<span class="kw-2">&amp;</span>NameKey::StructMember(ty, index)]
                         )<span class="question-mark">?
                     </span>}
-                    <span class="kw-2">ref </span>other =&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(Error::Custom(<span class="macro">format!</span>(<span class="string">&quot;Cannot index {:?}&quot;</span>, other))),
+                    <span class="kw-2">ref </span>other =&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(Error::Custom(<span class="macro">format!</span>(<span class="string">&quot;Cannot index {other:?}&quot;</span>))),
                 }
             }
             Expression::ImageSample {
@@ -3352,7 +3148,7 @@
                     Sl::Gradient { .. } =&gt; <span class="string">&quot;Grad&quot;</span>,
                 };
 
-                <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;textureSample{}{}(&quot;</span>, suffix_cmp, suffix_level)<span class="question-mark">?</span>;
+                <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;textureSample{suffix_cmp}{suffix_level}(&quot;</span>)<span class="question-mark">?</span>;
                 <span class="self">self</span>.write_expr(module, image, func_ctx)<span class="question-mark">?</span>;
                 <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;, &quot;</span>)<span class="question-mark">?</span>;
                 <span class="self">self</span>.write_expr(module, sampler, func_ctx)<span class="question-mark">?</span>;
@@ -3415,7 +3211,7 @@
                     <span class="prelude-val">None </span>=&gt; <span class="string">&quot;&quot;</span>,
                 };
 
-                <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;textureGather{}(&quot;</span>, suffix_cmp)<span class="question-mark">?</span>;
+                <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;textureGather{suffix_cmp}(&quot;</span>)<span class="question-mark">?</span>;
                 <span class="kw">match </span><span class="kw-2">*</span>func_ctx.info[image].ty.inner_with(<span class="kw-2">&amp;</span>module.types) {
                     TypeInner::Image {
                         class: <span class="kw">crate</span>::ImageClass::Depth { multi: <span class="kw">_ </span>},
@@ -3458,7 +3254,7 @@
                     Iq::NumSamples =&gt; <span class="string">&quot;textureNumSamples&quot;</span>,
                 };
 
-                <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{}(&quot;</span>, texture_function)<span class="question-mark">?</span>;
+                <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{texture_function}(&quot;</span>)<span class="question-mark">?</span>;
                 <span class="self">self</span>.write_expr(module, image, func_ctx)<span class="question-mark">?</span>;
                 <span class="kw">if let </span>Iq::Size { level: <span class="prelude-val">Some</span>(level) } = query {
                     <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;, &quot;</span>)<span class="question-mark">?</span>;
@@ -3489,7 +3285,7 @@
             }
             Expression::GlobalVariable(handle) =&gt; {
                 <span class="kw">let </span>name = <span class="kw-2">&amp;</span><span class="self">self</span>.names[<span class="kw-2">&amp;</span>NameKey::GlobalVariable(handle)];
-                <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{}&quot;</span>, name)<span class="question-mark">?</span>;
+                <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{name}&quot;</span>)<span class="question-mark">?</span>;
             }
             Expression::As {
                 expr,
@@ -3517,28 +3313,23 @@
                         <span class="kw">let </span>vector_size_str = back::vector_size_str(size);
                         <span class="kw">let </span>scalar_kind_str = scalar_kind_str(kind, convert.unwrap_or(width));
                         <span class="kw">if </span>convert.is_some() {
-                            <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;vec{}&lt;{}&gt;&quot;</span>, vector_size_str, scalar_kind_str)<span class="question-mark">?</span>;
+                            <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;vec{vector_size_str}&lt;{scalar_kind_str}&gt;&quot;</span>)<span class="question-mark">?</span>;
                         } <span class="kw">else </span>{
-                            <span class="macro">write!</span>(
-                                <span class="self">self</span>.out,
-                                <span class="string">&quot;bitcast&lt;vec{}&lt;{}&gt;&gt;&quot;</span>,
-                                vector_size_str, scalar_kind_str
-                            )<span class="question-mark">?</span>;
+                            <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;bitcast&lt;vec{vector_size_str}&lt;{scalar_kind_str}&gt;&gt;&quot;</span>)<span class="question-mark">?</span>;
                         }
                     }
                     TypeInner::Scalar { width, .. } =&gt; {
                         <span class="kw">let </span>scalar_kind_str = scalar_kind_str(kind, convert.unwrap_or(width));
                         <span class="kw">if </span>convert.is_some() {
-                            <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{}&quot;</span>, scalar_kind_str)<span class="question-mark">?
+                            <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{scalar_kind_str}&quot;</span>)<span class="question-mark">?
                         </span>} <span class="kw">else </span>{
-                            <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;bitcast&lt;{}&gt;&quot;</span>, scalar_kind_str)<span class="question-mark">?
+                            <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;bitcast&lt;{scalar_kind_str}&gt;&quot;</span>)<span class="question-mark">?
                         </span>}
                     }
                     <span class="kw">_ </span>=&gt; {
                         <span class="kw">return </span><span class="prelude-val">Err</span>(Error::Unimplemented(<span class="macro">format!</span>(
-                            <span class="string">&quot;write_expr expression::as {:?}&quot;</span>,
-                            inner
-                        )));
+                            <span class="string">&quot;write_expr expression::as {inner:?}&quot;
+                        </span>)));
                     }
                 };
                 <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;(&quot;</span>)<span class="question-mark">?</span>;
@@ -3551,15 +3342,14 @@
                     <span class="kw">crate</span>::TypeInner::Scalar { kind, width } =&gt; (kind, width),
                     <span class="kw">_ </span>=&gt; {
                         <span class="kw">return </span><span class="prelude-val">Err</span>(Error::Unimplemented(<span class="macro">format!</span>(
-                            <span class="string">&quot;write_expr expression::splat {:?}&quot;</span>,
-                            inner
-                        )));
+                            <span class="string">&quot;write_expr expression::splat {inner:?}&quot;
+                        </span>)));
                     }
                 };
                 <span class="kw">let </span>scalar = scalar_kind_str(scalar_kind, scalar_width);
                 <span class="kw">let </span>size = back::vector_size_str(size);
 
-                <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;vec{}&lt;{}&gt;(&quot;</span>, size, scalar)<span class="question-mark">?</span>;
+                <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;vec{size}&lt;{scalar}&gt;(&quot;</span>)<span class="question-mark">?</span>;
                 <span class="self">self</span>.write_expr(module, value, func_ctx)<span class="question-mark">?</span>;
                 <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;)&quot;</span>)<span class="question-mark">?</span>;
             }
@@ -3664,7 +3454,9 @@
                     Mf::Transpose =&gt; Function::Regular(<span class="string">&quot;transpose&quot;</span>),
                     Mf::Determinant =&gt; Function::Regular(<span class="string">&quot;determinant&quot;</span>),
                     <span class="comment">// bits
-                    </span>Mf::CountOneBits =&gt; Function::Regular(<span class="string">&quot;countOneBits&quot;</span>),
+                    </span>Mf::CountTrailingZeros =&gt; Function::Regular(<span class="string">&quot;countTrailingZeros&quot;</span>),
+                    Mf::CountLeadingZeros =&gt; Function::Regular(<span class="string">&quot;countLeadingZeros&quot;</span>),
+                    Mf::CountOneBits =&gt; Function::Regular(<span class="string">&quot;countOneBits&quot;</span>),
                     Mf::ReverseBits =&gt; Function::Regular(<span class="string">&quot;reverseBits&quot;</span>),
                     Mf::ExtractBits =&gt; Function::Regular(<span class="string">&quot;extractBits&quot;</span>),
                     Mf::InsertBits =&gt; Function::Regular(<span class="string">&quot;insertBits&quot;</span>),
@@ -3682,14 +3474,14 @@
                     Mf::Unpack2x16snorm =&gt; Function::Regular(<span class="string">&quot;unpack2x16snorm&quot;</span>),
                     Mf::Unpack2x16unorm =&gt; Function::Regular(<span class="string">&quot;unpack2x16unorm&quot;</span>),
                     Mf::Unpack2x16float =&gt; Function::Regular(<span class="string">&quot;unpack2x16float&quot;</span>),
-                    <span class="kw">_ </span>=&gt; {
+                    Mf::Inverse =&gt; {
                         <span class="kw">return </span><span class="prelude-val">Err</span>(Error::UnsupportedMathFunction(fun));
                     }
                 };
 
                 <span class="kw">match </span>function {
                     Function::Regular(fun_name) =&gt; {
-                        <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{}(&quot;</span>, fun_name)<span class="question-mark">?</span>;
+                        <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{fun_name}(&quot;</span>)<span class="question-mark">?</span>;
                         <span class="self">self</span>.write_expr(module, arg, func_ctx)<span class="question-mark">?</span>;
                         <span class="kw">for </span>arg <span class="kw">in </span>IntoIterator::into_iter([arg1, arg2, arg3]).flatten() {
                             <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;, &quot;</span>)<span class="question-mark">?</span>;
@@ -3725,7 +3517,7 @@
                     }
                 };
 
-                <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{}(&quot;</span>, unary)<span class="question-mark">?</span>;
+                <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{unary}(&quot;</span>)<span class="question-mark">?</span>;
                 <span class="self">self</span>.write_expr(module, expr, func_ctx)<span class="question-mark">?</span>;
 
                 <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;)&quot;</span>)<span class="question-mark">?
@@ -3743,15 +3535,20 @@
                 <span class="self">self</span>.write_expr(module, condition, func_ctx)<span class="question-mark">?</span>;
                 <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;)&quot;</span>)<span class="question-mark">?
             </span>}
-            Expression::Derivative { axis, expr } =&gt; {
-                <span class="kw">use </span><span class="kw">crate</span>::DerivativeAxis <span class="kw">as </span>Da;
-
-                <span class="kw">let </span>op = <span class="kw">match </span>axis {
-                    Da::X =&gt; <span class="string">&quot;dpdx&quot;</span>,
-                    Da::Y =&gt; <span class="string">&quot;dpdy&quot;</span>,
-                    Da::Width =&gt; <span class="string">&quot;fwidth&quot;</span>,
+            Expression::Derivative { axis, ctrl, expr } =&gt; {
+                <span class="kw">use crate</span>::{DerivativeAxis <span class="kw">as </span>Axis, DerivativeControl <span class="kw">as </span>Ctrl};
+                <span class="kw">let </span>op = <span class="kw">match </span>(axis, ctrl) {
+                    (Axis::X, Ctrl::Coarse) =&gt; <span class="string">&quot;dpdxCoarse&quot;</span>,
+                    (Axis::X, Ctrl::Fine) =&gt; <span class="string">&quot;dpdxFine&quot;</span>,
+                    (Axis::X, Ctrl::None) =&gt; <span class="string">&quot;dpdx&quot;</span>,
+                    (Axis::Y, Ctrl::Coarse) =&gt; <span class="string">&quot;dpdyCoarse&quot;</span>,
+                    (Axis::Y, Ctrl::Fine) =&gt; <span class="string">&quot;dpdyFine&quot;</span>,
+                    (Axis::Y, Ctrl::None) =&gt; <span class="string">&quot;dpdy&quot;</span>,
+                    (Axis::Width, Ctrl::Coarse) =&gt; <span class="string">&quot;fwidthCoarse&quot;</span>,
+                    (Axis::Width, Ctrl::Fine) =&gt; <span class="string">&quot;fwidthFine&quot;</span>,
+                    (Axis::Width, Ctrl::None) =&gt; <span class="string">&quot;fwidth&quot;</span>,
                 };
-                <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{}(&quot;</span>, op)<span class="question-mark">?</span>;
+                <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{op}(&quot;</span>)<span class="question-mark">?</span>;
                 <span class="self">self</span>.write_expr(module, expr, func_ctx)<span class="question-mark">?</span>;
                 <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;)&quot;</span>)<span class="question-mark">?
             </span>}
@@ -3763,14 +3560,18 @@
                     Rf::Any =&gt; <span class="string">&quot;any&quot;</span>,
                     <span class="kw">_ </span>=&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(Error::UnsupportedRelationalFunction(fun)),
                 };
-                <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{}(&quot;</span>, fun_name)<span class="question-mark">?</span>;
+                <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;{fun_name}(&quot;</span>)<span class="question-mark">?</span>;
 
                 <span class="self">self</span>.write_expr(module, argument, func_ctx)<span class="question-mark">?</span>;
 
                 <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;)&quot;</span>)<span class="question-mark">?
             </span>}
+            <span class="comment">// Not supported yet
+            </span>Expression::RayQueryGetIntersection { .. } =&gt; <span class="macro">unreachable!</span>(),
             <span class="comment">// Nothing to do here, since call expression already cached
-            </span>Expression::CallResult(<span class="kw">_</span>) | Expression::AtomicResult { .. } =&gt; {}
+            </span>Expression::CallResult(<span class="kw">_</span>)
+            | Expression::AtomicResult { .. }
+            | Expression::RayQueryProceedResult =&gt; {}
         }
 
         <span class="prelude-val">Ok</span>(())
@@ -3798,9 +3599,9 @@
         </span><span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;var&quot;</span>)<span class="question-mark">?</span>;
         <span class="kw">let </span>(address, maybe_access) = address_space_str(global.space);
         <span class="kw">if let </span><span class="prelude-val">Some</span>(space) = address {
-            <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;&lt;{}&quot;</span>, space)<span class="question-mark">?</span>;
+            <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;&lt;{space}&quot;</span>)<span class="question-mark">?</span>;
             <span class="kw">if let </span><span class="prelude-val">Some</span>(access) = maybe_access {
-                <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;, {}&quot;</span>, access)<span class="question-mark">?</span>;
+                <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;, {access}&quot;</span>)<span class="question-mark">?</span>;
             }
             <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;&gt;&quot;</span>)<span class="question-mark">?</span>;
         }
@@ -3850,25 +3651,8 @@
                 <span class="self">self</span>.write_type(module, ty)<span class="question-mark">?</span>;
                 <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;(&quot;</span>)<span class="question-mark">?</span>;
 
-                <span class="kw">let </span>members = <span class="kw">match </span>module.types[ty].inner {
-                    TypeInner::Struct { <span class="kw-2">ref </span>members, .. } =&gt; <span class="prelude-val">Some</span>(members),
-                    <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
-                };
-
                 <span class="comment">// Write the comma separated constants
                 </span><span class="kw">for </span>(index, constant) <span class="kw">in </span>components.iter().enumerate() {
-                    <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="kw">crate</span>::Binding::BuiltIn(built_in)) =
-                        members.and_then(|members| members.get(index)<span class="question-mark">?</span>.binding.as_ref())
-                    {
-                        <span class="kw">if </span>builtin_str(built_in).is_none() {
-                            <span class="macro">log::warn!</span>(
-                                <span class="string">&quot;Skip constant for struct member with unsupported builtin {:?}&quot;</span>,
-                                built_in
-                            );
-                            <span class="kw">continue</span>;
-                        }
-                    }
-
                     <span class="self">self</span>.write_constant(module, <span class="kw-2">*</span>constant)<span class="question-mark">?</span>;
                     <span class="comment">// Only write a comma if isn&#39;t the last element
                     </span><span class="kw">if </span>index != components.len().saturating_sub(<span class="number">1</span>) {
@@ -3900,22 +3684,22 @@
             } =&gt; {
                 <span class="kw">let </span>name = <span class="kw-2">&amp;</span><span class="self">self</span>.names[<span class="kw-2">&amp;</span>NameKey::Constant(handle)];
                 <span class="comment">// First write only constant name
-                </span><span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;const {}: &quot;</span>, name)<span class="question-mark">?</span>;
+                </span><span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;const {name}: &quot;</span>)<span class="question-mark">?</span>;
                 <span class="comment">// Next write constant type and value
                 </span><span class="kw">match </span><span class="kw-2">*</span>value {
                     <span class="kw">crate</span>::ScalarValue::Sint(value) =&gt; {
-                        <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;i32 = {}&quot;</span>, value)<span class="question-mark">?</span>;
+                        <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;i32 = {value}&quot;</span>)<span class="question-mark">?</span>;
                     }
                     <span class="kw">crate</span>::ScalarValue::Uint(value) =&gt; {
-                        <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;u32 = {}u&quot;</span>, value)<span class="question-mark">?</span>;
+                        <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;u32 = {value}u&quot;</span>)<span class="question-mark">?</span>;
                     }
                     <span class="kw">crate</span>::ScalarValue::Float(value) =&gt; {
                         <span class="comment">// Floats are written using `Debug` instead of `Display` because it always appends the
                         // decimal part even it&#39;s zero
-                        </span><span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;f32 = {:?}&quot;</span>, value)<span class="question-mark">?</span>;
+                        </span><span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;f32 = {value:?}&quot;</span>)<span class="question-mark">?</span>;
                     }
                     <span class="kw">crate</span>::ScalarValue::Bool(value) =&gt; {
-                        <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;bool = {}&quot;</span>, value)<span class="question-mark">?</span>;
+                        <span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;bool = {value}&quot;</span>)<span class="question-mark">?</span>;
                     }
                 };
                 <span class="comment">// End with semicolon
@@ -3924,7 +3708,7 @@
             <span class="kw">crate</span>::ConstantInner::Composite { ty, <span class="kw-2">ref </span>components } =&gt; {
                 <span class="kw">let </span>name = <span class="kw-2">&amp;</span><span class="self">self</span>.names[<span class="kw-2">&amp;</span>NameKey::Constant(handle)];
                 <span class="comment">// First write only constant name
-                </span><span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;const {}: &quot;</span>, name)<span class="question-mark">?</span>;
+                </span><span class="macro">write!</span>(<span class="self">self</span>.out, <span class="string">&quot;const {name}: &quot;</span>)<span class="question-mark">?</span>;
                 <span class="comment">// Next write constant type
                 </span><span class="self">self</span>.write_type(module, ty)<span class="question-mark">?</span>;
 
@@ -3955,26 +3739,34 @@
     }
 }
 
-<span class="kw">const fn </span>builtin_str(built_in: <span class="kw">crate</span>::BuiltIn) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str&gt; {
+<span class="kw">fn </span>builtin_str(built_in: <span class="kw">crate</span>::BuiltIn) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str, Error&gt; {
     <span class="kw">use </span><span class="kw">crate</span>::BuiltIn <span class="kw">as </span>Bi;
 
-    <span class="kw">match </span>built_in {
-        Bi::VertexIndex =&gt; <span class="prelude-val">Some</span>(<span class="string">&quot;vertex_index&quot;</span>),
-        Bi::InstanceIndex =&gt; <span class="prelude-val">Some</span>(<span class="string">&quot;instance_index&quot;</span>),
-        Bi::Position { .. } =&gt; <span class="prelude-val">Some</span>(<span class="string">&quot;position&quot;</span>),
-        Bi::FrontFacing =&gt; <span class="prelude-val">Some</span>(<span class="string">&quot;front_facing&quot;</span>),
-        Bi::FragDepth =&gt; <span class="prelude-val">Some</span>(<span class="string">&quot;frag_depth&quot;</span>),
-        Bi::LocalInvocationId =&gt; <span class="prelude-val">Some</span>(<span class="string">&quot;local_invocation_id&quot;</span>),
-        Bi::LocalInvocationIndex =&gt; <span class="prelude-val">Some</span>(<span class="string">&quot;local_invocation_index&quot;</span>),
-        Bi::GlobalInvocationId =&gt; <span class="prelude-val">Some</span>(<span class="string">&quot;global_invocation_id&quot;</span>),
-        Bi::WorkGroupId =&gt; <span class="prelude-val">Some</span>(<span class="string">&quot;workgroup_id&quot;</span>),
-        Bi::NumWorkGroups =&gt; <span class="prelude-val">Some</span>(<span class="string">&quot;num_workgroups&quot;</span>),
-        Bi::SampleIndex =&gt; <span class="prelude-val">Some</span>(<span class="string">&quot;sample_index&quot;</span>),
-        Bi::SampleMask =&gt; <span class="prelude-val">Some</span>(<span class="string">&quot;sample_mask&quot;</span>),
-        Bi::PrimitiveIndex =&gt; <span class="prelude-val">Some</span>(<span class="string">&quot;primitive_index&quot;</span>),
-        Bi::ViewIndex =&gt; <span class="prelude-val">Some</span>(<span class="string">&quot;view_index&quot;</span>),
-        <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
-    }
+    <span class="prelude-val">Ok</span>(<span class="kw">match </span>built_in {
+        Bi::VertexIndex =&gt; <span class="string">&quot;vertex_index&quot;</span>,
+        Bi::InstanceIndex =&gt; <span class="string">&quot;instance_index&quot;</span>,
+        Bi::Position { .. } =&gt; <span class="string">&quot;position&quot;</span>,
+        Bi::FrontFacing =&gt; <span class="string">&quot;front_facing&quot;</span>,
+        Bi::FragDepth =&gt; <span class="string">&quot;frag_depth&quot;</span>,
+        Bi::LocalInvocationId =&gt; <span class="string">&quot;local_invocation_id&quot;</span>,
+        Bi::LocalInvocationIndex =&gt; <span class="string">&quot;local_invocation_index&quot;</span>,
+        Bi::GlobalInvocationId =&gt; <span class="string">&quot;global_invocation_id&quot;</span>,
+        Bi::WorkGroupId =&gt; <span class="string">&quot;workgroup_id&quot;</span>,
+        Bi::NumWorkGroups =&gt; <span class="string">&quot;num_workgroups&quot;</span>,
+        Bi::SampleIndex =&gt; <span class="string">&quot;sample_index&quot;</span>,
+        Bi::SampleMask =&gt; <span class="string">&quot;sample_mask&quot;</span>,
+        Bi::PrimitiveIndex =&gt; <span class="string">&quot;primitive_index&quot;</span>,
+        Bi::ViewIndex =&gt; <span class="string">&quot;view_index&quot;</span>,
+        Bi::BaseInstance
+        | Bi::BaseVertex
+        | Bi::ClipDistance
+        | Bi::CullDistance
+        | Bi::PointSize
+        | Bi::PointCoord
+        | Bi::WorkGroupSize =&gt; {
+            <span class="kw">return </span><span class="prelude-val">Err</span>(Error::Custom(<span class="macro">format!</span>(<span class="string">&quot;Unsupported builtin {built_in:?}&quot;</span>)))
+        }
+    })
 }
 
 <span class="kw">const fn </span>image_dimension_str(dim: <span class="kw">crate</span>::ImageDimension) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str {
@@ -4093,10 +3885,7 @@
     )
 }
 
-<span class="kw">fn </span>map_binding_to_attribute(
-    binding: <span class="kw-2">&amp;</span><span class="kw">crate</span>::Binding,
-    scalar_kind: <span class="prelude-ty">Option</span>&lt;<span class="kw">crate</span>::ScalarKind&gt;,
-) -&gt; Vec&lt;Attribute&gt; {
+<span class="kw">fn </span>map_binding_to_attribute(binding: <span class="kw-2">&amp;</span><span class="kw">crate</span>::Binding) -&gt; Vec&lt;Attribute&gt; {
     <span class="kw">match </span><span class="kw-2">*</span>binding {
         <span class="kw">crate</span>::Binding::BuiltIn(built_in) =&gt; {
             <span class="kw">if let </span><span class="kw">crate</span>::BuiltIn::Position { invariant: <span class="bool-val">true </span>} = built_in {
@@ -4109,41 +3898,10 @@
             location,
             interpolation,
             sampling,
-        } =&gt; <span class="kw">match </span>scalar_kind {
-            <span class="prelude-val">Some</span>(<span class="kw">crate</span>::ScalarKind::Float) =&gt; <span class="macro">vec!</span>[
-                Attribute::Location(location),
-                Attribute::Interpolate(interpolation, sampling),
-            ],
-            <span class="kw">_ </span>=&gt; <span class="macro">vec!</span>[Attribute::Location(location)],
-        },
+        } =&gt; <span class="macro">vec!</span>[
+            Attribute::Location(location),
+            Attribute::Interpolate(interpolation, sampling),
+        ],
     }
 }
-
-<span class="doccomment">/// Helper function that check that expression don&#39;t access to structure member with unsupported builtin.
-</span><span class="kw">fn </span>access_to_unsupported_builtin(
-    expr: Handle&lt;<span class="kw">crate</span>::Expression&gt;,
-    index: u32,
-    module: <span class="kw-2">&amp;</span>Module,
-    info: <span class="kw-2">&amp;</span>valid::FunctionInfo,
-) -&gt; bool {
-    <span class="kw">let </span>base_ty_res = <span class="kw-2">&amp;</span>info[expr].ty;
-    <span class="kw">let </span>resolved = base_ty_res.inner_with(<span class="kw-2">&amp;</span>module.types);
-    <span class="kw">if let </span>TypeInner::Pointer {
-        base: pointer_base_handle,
-        ..
-    } = <span class="kw-2">*</span>resolved
-    {
-        <span class="comment">// Let&#39;s check that we try to access a struct member with unsupported built-in and skip it.
-        </span><span class="kw">if let </span>TypeInner::Struct { <span class="kw-2">ref </span>members, .. } = module.types[pointer_base_handle].inner {
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw">crate</span>::Binding::BuiltIn(built_in)) = members[index <span class="kw">as </span>usize].binding {
-                <span class="kw">if </span>builtin_str(built_in).is_none() {
-                    <span class="macro">log::warn!</span>(<span class="string">&quot;Skip component with unsupported builtin {:?}&quot;</span>, built_in);
-                    <span class="kw">return </span><span class="bool-val">true</span>;
-                }
-            }
-        }
-    }
-
-    <span class="bool-val">false
-</span>}
 </code></pre></div></section></main></body></html>

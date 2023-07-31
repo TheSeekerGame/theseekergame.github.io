@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/wgpu-core-0.15.1/src/validation.rs`."><title>validation.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="wgpu_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../wgpu_core/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/wgpu-core-0.16.1/src/validation.rs`."><title>validation.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="wgpu_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../wgpu_core/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1233,6 +1233,10 @@
 <a href="#1233" id="1233">1233</a>
 <a href="#1234" id="1234">1234</a>
 <a href="#1235" id="1235">1235</a>
+<a href="#1236" id="1236">1236</a>
+<a href="#1237" id="1237">1237</a>
+<a href="#1238" id="1238">1238</a>
+<a href="#1239" id="1239">1239</a>
 </pre></div><pre class="rust"><code><span class="kw">use crate</span>::{binding_model::BindEntryMap, FastHashMap, FastHashSet};
 <span class="kw">use </span>naga::valid::GlobalUse;
 <span class="kw">use </span>std::{collections::hash_map::Entry, fmt};
@@ -1363,7 +1367,7 @@
 }
 
 <span class="attr">#[derive(Clone, Debug, Error)]
-#[error(<span class="string">&quot;buffer usage is {actual:?} which does not contain required usage {expected:?}&quot;</span>)]
+#[error(<span class="string">&quot;Buffer usage is {actual:?} which does not contain required usage {expected:?}&quot;</span>)]
 </span><span class="kw">pub struct </span>MissingBufferUsageError {
     <span class="kw">pub</span>(<span class="kw">crate</span>) actual: wgt::BufferUsages,
     <span class="kw">pub</span>(<span class="kw">crate</span>) expected: wgt::BufferUsages,
@@ -1383,7 +1387,7 @@
 }
 
 <span class="attr">#[derive(Clone, Debug, Error)]
-#[error(<span class="string">&quot;texture usage is {actual:?} which does not contain required usage {expected:?}&quot;</span>)]
+#[error(<span class="string">&quot;Texture usage is {actual:?} which does not contain required usage {expected:?}&quot;</span>)]
 </span><span class="kw">pub struct </span>MissingTextureUsageError {
     <span class="kw">pub</span>(<span class="kw">crate</span>) actual: wgt::TextureUsages,
     <span class="kw">pub</span>(<span class="kw">crate</span>) expected: wgt::TextureUsages,
@@ -1403,75 +1407,79 @@
 }
 
 <span class="attr">#[derive(Clone, Debug, Error)]
+#[non_exhaustive]
 </span><span class="kw">pub enum </span>BindingError {
-    <span class="attr">#[error(<span class="string">&quot;binding is missing from the pipeline layout&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Binding is missing from the pipeline layout&quot;</span>)]
     </span>Missing,
-    <span class="attr">#[error(<span class="string">&quot;visibility flags don&#39;t include the shader stage&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Visibility flags don&#39;t include the shader stage&quot;</span>)]
     </span>Invisible,
     <span class="attr">#[error(<span class="string">&quot;The shader requires the load/store access flags {required:?} but only {allowed:?} is allowed&quot;</span>)]
     </span>WrongUsage {
         required: GlobalUse,
         allowed: GlobalUse,
     },
-    <span class="attr">#[error(<span class="string">&quot;type on the shader side does not match the pipeline binding&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Type on the shader side does not match the pipeline binding&quot;</span>)]
     </span>WrongType,
-    <span class="attr">#[error(<span class="string">&quot;storage class {binding:?} doesn&#39;t match the shader {shader:?}&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Storage class {binding:?} doesn&#39;t match the shader {shader:?}&quot;</span>)]
     </span>WrongAddressSpace {
         binding: naga::AddressSpace,
         shader: naga::AddressSpace,
     },
-    <span class="attr">#[error(<span class="string">&quot;buffer structure size {0}, added to one element of an unbound array, if it&#39;s the last field, ended up greater than the given `min_binding_size`&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Buffer structure size {0}, added to one element of an unbound array, if it&#39;s the last field, ended up greater than the given `min_binding_size`&quot;</span>)]
     </span>WrongBufferSize(wgt::BufferSize),
-    <span class="attr">#[error(<span class="string">&quot;view dimension {dim:?} (is array: {is_array}) doesn&#39;t match the binding {binding:?}&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;View dimension {dim:?} (is array: {is_array}) doesn&#39;t match the binding {binding:?}&quot;</span>)]
     </span>WrongTextureViewDimension {
         dim: naga::ImageDimension,
         is_array: bool,
         binding: BindingType,
     },
-    <span class="attr">#[error(<span class="string">&quot;texture class {binding:?} doesn&#39;t match the shader {shader:?}&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Texture class {binding:?} doesn&#39;t match the shader {shader:?}&quot;</span>)]
     </span>WrongTextureClass {
         binding: naga::ImageClass,
         shader: naga::ImageClass,
     },
-    <span class="attr">#[error(<span class="string">&quot;comparison flag doesn&#39;t match the shader&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Comparison flag doesn&#39;t match the shader&quot;</span>)]
     </span>WrongSamplerComparison,
-    <span class="attr">#[error(<span class="string">&quot;derived bind group layout type is not consistent between stages&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Derived bind group layout type is not consistent between stages&quot;</span>)]
     </span>InconsistentlyDerivedType,
-    <span class="attr">#[error(<span class="string">&quot;texture format {0:?} is not supported for storage use&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Texture format {0:?} is not supported for storage use&quot;</span>)]
     </span>BadStorageFormat(wgt::TextureFormat),
     <span class="attr">#[error(
-        <span class="string">&quot;storage texture usage {0:?} doesn&#39;t have a matching supported `StorageTextureAccess`&quot;
+        <span class="string">&quot;Storage texture usage {0:?} doesn&#39;t have a matching supported `StorageTextureAccess`&quot;
     </span>)]
     </span>UnsupportedTextureStorageAccess(GlobalUse),
 }
 
 <span class="attr">#[derive(Clone, Debug, Error)]
+#[non_exhaustive]
 </span><span class="kw">pub enum </span>FilteringError {
-    <span class="attr">#[error(<span class="string">&quot;integer textures can&#39;t be sampled with a filtering sampler&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Integer textures can&#39;t be sampled with a filtering sampler&quot;</span>)]
     </span>Integer,
-    <span class="attr">#[error(<span class="string">&quot;non-filterable float textures can&#39;t be sampled with a filtering sampler&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Non-filterable float textures can&#39;t be sampled with a filtering sampler&quot;</span>)]
     </span>Float,
 }
 
 <span class="attr">#[derive(Clone, Debug, Error)]
+#[non_exhaustive]
 </span><span class="kw">pub enum </span>InputError {
-    <span class="attr">#[error(<span class="string">&quot;input is not provided by the earlier stage in the pipeline&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Input is not provided by the earlier stage in the pipeline&quot;</span>)]
     </span>Missing,
-    <span class="attr">#[error(<span class="string">&quot;input type is not compatible with the provided {0}&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Input type is not compatible with the provided {0}&quot;</span>)]
     </span>WrongType(NumericType),
-    <span class="attr">#[error(<span class="string">&quot;input interpolation doesn&#39;t match provided {0:?}&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Input interpolation doesn&#39;t match provided {0:?}&quot;</span>)]
     </span>InterpolationMismatch(<span class="prelude-ty">Option</span>&lt;naga::Interpolation&gt;),
-    <span class="attr">#[error(<span class="string">&quot;input sampling doesn&#39;t match provided {0:?}&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Input sampling doesn&#39;t match provided {0:?}&quot;</span>)]
     </span>SamplingMismatch(<span class="prelude-ty">Option</span>&lt;naga::Sampling&gt;),
 }
 
 <span class="doccomment">/// Errors produced when validating a programmable stage of a pipeline.
 </span><span class="attr">#[derive(Clone, Debug, Error)]
+#[non_exhaustive]
 </span><span class="kw">pub enum </span>StageError {
-    <span class="attr">#[error(<span class="string">&quot;shader module is invalid&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Shader module is invalid&quot;</span>)]
     </span>InvalidModule,
     <span class="attr">#[error(
-        <span class="string">&quot;shader entry point&#39;s workgroup size {current:?} ({current_total} total invocations) must be less or equal to the per-dimension limit {limit:?} and the total invocation limit {total}&quot;
+        <span class="string">&quot;Shader entry point&#39;s workgroup size {current:?} ({current_total} total invocations) must be less or equal to the per-dimension limit {limit:?} and the total invocation limit {total}&quot;
     </span>)]
     </span>InvalidWorkgroupSize {
         current: [u32; <span class="number">3</span>],
@@ -1479,27 +1487,27 @@
         limit: [u32; <span class="number">3</span>],
         total: u32,
     },
-    <span class="attr">#[error(<span class="string">&quot;shader uses {used} inter-stage components above the limit of {limit}&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Shader uses {used} inter-stage components above the limit of {limit}&quot;</span>)]
     </span>TooManyVaryings { used: u32, limit: u32 },
-    <span class="attr">#[error(<span class="string">&quot;unable to find entry point &#39;{0}&#39;&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Unable to find entry point &#39;{0}&#39;&quot;</span>)]
     </span>MissingEntryPoint(String),
-    <span class="attr">#[error(<span class="string">&quot;shader global {0:?} is not available in the layout pipeline layout&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Shader global {0:?} is not available in the layout pipeline layout&quot;</span>)]
     </span>Binding(naga::ResourceBinding, <span class="attr">#[source] </span>BindingError),
-    <span class="attr">#[error(<span class="string">&quot;unable to filter the texture ({texture:?}) by the sampler ({sampler:?})&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Unable to filter the texture ({texture:?}) by the sampler ({sampler:?})&quot;</span>)]
     </span>Filtering {
         texture: naga::ResourceBinding,
         sampler: naga::ResourceBinding,
         <span class="attr">#[source]
         </span>error: FilteringError,
     },
-    <span class="attr">#[error(<span class="string">&quot;location[{location}] {var} is not provided by the previous stage outputs&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Location[{location}] {var} is not provided by the previous stage outputs&quot;</span>)]
     </span>Input {
         location: wgt::ShaderLocation,
         var: InterfaceVar,
         <span class="attr">#[source]
         </span>error: InputError,
     },
-    <span class="attr">#[error(<span class="string">&quot;location[{location}] is provided by the previous stage output but is not consumed as input by this stage.&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Location[{location}] is provided by the previous stage output but is not consumed as input by this stage.&quot;</span>)]
     </span>InputNotConsumed { location: wgt::ShaderLocation },
 }
 
@@ -1981,7 +1989,7 @@
             Tf::Bc5RgUnorm | Tf::Bc5RgSnorm | Tf::EacRg11Unorm | Tf::EacRg11Snorm =&gt; {
                 (NumericDimension::Vector(Vs::Bi), Sk::Float)
             }
-            Tf::Bc6hRgbUfloat | Tf::Bc6hRgbSfloat | Tf::Etc2Rgb8Unorm | Tf::Etc2Rgb8UnormSrgb =&gt; {
+            Tf::Bc6hRgbUfloat | Tf::Bc6hRgbFloat | Tf::Etc2Rgb8Unorm | Tf::Etc2Rgb8UnormSrgb =&gt; {
                 (NumericDimension::Vector(Vs::Tri), Sk::Float)
             }
             Tf::Astc {

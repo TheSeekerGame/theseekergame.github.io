@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/naga-0.11.1/src/front/glsl/parser/declarations.rs`."><title>declarations.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../../../" data-static-root-path="../../../../../static.files/" data-current-crate="naga" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../../../source-files.js"></script><script defer src="../../../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../naga/index.html"><img class="rust-logo" src="../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/naga-0.12.3/src/front/glsl/parser/declarations.rs`."><title>declarations.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../../../" data-static-root-path="../../../../../static.files/" data-current-crate="naga" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../../../source-files.js"></script><script defer src="../../../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../naga/index.html"><img class="rust-logo" src="../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -667,6 +667,8 @@
 <a href="#667" id="667">667</a>
 <a href="#668" id="668">668</a>
 <a href="#669" id="669">669</a>
+<a href="#670" id="670">670</a>
+<a href="#671" id="671">671</a>
 </pre></div><pre class="rust"><code><span class="kw">use crate</span>::{
     front::glsl::{
         ast::{
@@ -679,7 +681,7 @@
         token::{Token, TokenValue},
         types::scalar_components,
         variables::{GlobalOrConstant, VarDeclaration},
-        Error, ErrorKind, Parser, Span,
+        Error, ErrorKind, Frontend, Span,
     },
     proc::Alignment,
     AddressSpace, Block, Expression, FunctionResult, Handle, ScalarKind, Statement, StructMember,
@@ -740,19 +742,19 @@
 <span class="kw">impl</span>&lt;<span class="lifetime">&#39;source</span>&gt; ParsingContext&lt;<span class="lifetime">&#39;source</span>&gt; {
     <span class="kw">pub fn </span>parse_external_declaration(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        parser: <span class="kw-2">&amp;mut </span>Parser,
+        frontend: <span class="kw-2">&amp;mut </span>Frontend,
         global_ctx: <span class="kw-2">&amp;mut </span>Context,
         global_body: <span class="kw-2">&amp;mut </span>Block,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="kw">if </span><span class="self">self
-            </span>.parse_declaration(parser, global_ctx, global_body, <span class="bool-val">true</span>)<span class="question-mark">?
+            </span>.parse_declaration(frontend, global_ctx, global_body, <span class="bool-val">true</span>)<span class="question-mark">?
             </span>.is_none()
         {
-            <span class="kw">let </span>token = <span class="self">self</span>.bump(parser)<span class="question-mark">?</span>;
+            <span class="kw">let </span>token = <span class="self">self</span>.bump(frontend)<span class="question-mark">?</span>;
             <span class="kw">match </span>token.value {
-                TokenValue::Semicolon <span class="kw">if </span>parser.meta.version == <span class="number">460 </span>=&gt; <span class="prelude-val">Ok</span>(()),
+                TokenValue::Semicolon <span class="kw">if </span>frontend.meta.version == <span class="number">460 </span>=&gt; <span class="prelude-val">Ok</span>(()),
                 <span class="kw">_ </span>=&gt; {
-                    <span class="kw">let </span>expected = <span class="kw">match </span>parser.meta.version {
+                    <span class="kw">let </span>expected = <span class="kw">match </span>frontend.meta.version {
                         <span class="number">460 </span>=&gt; <span class="macro">vec!</span>[TokenValue::Semicolon.into(), ExpectedToken::Eof],
                         <span class="kw">_ </span>=&gt; <span class="macro">vec!</span>[ExpectedToken::Eof],
                     };
@@ -769,7 +771,7 @@
 
     <span class="kw">pub fn </span>parse_initializer(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        parser: <span class="kw-2">&amp;mut </span>Parser,
+        frontend: <span class="kw-2">&amp;mut </span>Frontend,
         ty: Handle&lt;Type&gt;,
         ctx: <span class="kw-2">&amp;mut </span>Context,
         body: <span class="kw-2">&amp;mut </span>Block,
@@ -782,20 +784,21 @@
         // initializer_list:
         //     initializer
         //     initializer_list COMMA initializer
-        </span><span class="kw">if let </span><span class="prelude-val">Some</span>(Token { <span class="kw-2">mut </span>meta, .. }) = <span class="self">self</span>.bump_if(parser, TokenValue::LeftBrace) {
+        </span><span class="kw">if let </span><span class="prelude-val">Some</span>(Token { <span class="kw-2">mut </span>meta, .. }) = <span class="self">self</span>.bump_if(frontend, TokenValue::LeftBrace) {
             <span class="comment">// initializer_list
             </span><span class="kw">let </span><span class="kw-2">mut </span>components = Vec::new();
             <span class="kw">loop </span>{
                 <span class="comment">// The type expected to be parsed inside the initializer list
-                </span><span class="kw">let </span>new_ty = element_or_member_type(ty, components.len(), <span class="kw-2">&amp;mut </span>parser.module.types);
+                </span><span class="kw">let </span>new_ty =
+                    element_or_member_type(ty, components.len(), <span class="kw-2">&amp;mut </span>frontend.module.types);
 
-                components.push(<span class="self">self</span>.parse_initializer(parser, new_ty, ctx, body)<span class="question-mark">?</span>.<span class="number">0</span>);
+                components.push(<span class="self">self</span>.parse_initializer(frontend, new_ty, ctx, body)<span class="question-mark">?</span>.<span class="number">0</span>);
 
-                <span class="kw">let </span>token = <span class="self">self</span>.bump(parser)<span class="question-mark">?</span>;
+                <span class="kw">let </span>token = <span class="self">self</span>.bump(frontend)<span class="question-mark">?</span>;
                 <span class="kw">match </span>token.value {
                     TokenValue::Comma =&gt; {
                         <span class="kw">if let </span><span class="prelude-val">Some</span>(Token { meta: end_meta, .. }) =
-                            <span class="self">self</span>.bump_if(parser, TokenValue::RightBrace)
+                            <span class="self">self</span>.bump_if(frontend, TokenValue::RightBrace)
                         {
                             meta.subsume(end_meta);
                             <span class="kw">break</span>;
@@ -823,12 +826,13 @@
             ))
         } <span class="kw">else </span>{
             <span class="kw">let </span><span class="kw-2">mut </span>stmt = ctx.stmt_ctx();
-            <span class="kw">let </span>expr = <span class="self">self</span>.parse_assignment(parser, ctx, <span class="kw-2">&amp;mut </span>stmt, body)<span class="question-mark">?</span>;
-            <span class="kw">let </span>(<span class="kw-2">mut </span>init, init_meta) = ctx.lower_expect(stmt, parser, expr, ExprPos::Rhs, body)<span class="question-mark">?</span>;
+            <span class="kw">let </span>expr = <span class="self">self</span>.parse_assignment(frontend, ctx, <span class="kw-2">&amp;mut </span>stmt, body)<span class="question-mark">?</span>;
+            <span class="kw">let </span>(<span class="kw-2">mut </span>init, init_meta) =
+                ctx.lower_expect(stmt, frontend, expr, ExprPos::Rhs, body)<span class="question-mark">?</span>;
 
-            <span class="kw">let </span>scalar_components = scalar_components(<span class="kw-2">&amp;</span>parser.module.types[ty].inner);
+            <span class="kw">let </span>scalar_components = scalar_components(<span class="kw-2">&amp;</span>frontend.module.types[ty].inner);
             <span class="kw">if let </span><span class="prelude-val">Some</span>((kind, width)) = scalar_components {
-                ctx.implicit_conversion(parser, <span class="kw-2">&amp;mut </span>init, init_meta, kind, width)<span class="question-mark">?</span>;
+                ctx.implicit_conversion(frontend, <span class="kw-2">&amp;mut </span>init, init_meta, kind, width)<span class="question-mark">?</span>;
             }
 
             <span class="prelude-val">Ok</span>((init, init_meta))
@@ -840,7 +844,7 @@
     // produced Error::InvalidToken if it isn&#39;t consumed
     </span><span class="kw">pub fn </span>parse_init_declarator_list(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        parser: <span class="kw-2">&amp;mut </span>Parser,
+        frontend: <span class="kw-2">&amp;mut </span>Frontend,
         <span class="kw-2">mut </span>ty: Handle&lt;Type&gt;,
         ctx: <span class="kw-2">&amp;mut </span>DeclarationContext,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
@@ -860,14 +864,14 @@
 
         // Consume any leading comma, e.g. this is valid: `float, a=1;`
         </span><span class="kw">if </span><span class="self">self
-            </span>.peek(parser)
+            </span>.peek(frontend)
             .map_or(<span class="bool-val">false</span>, |t| t.value == TokenValue::Comma)
         {
-            <span class="self">self</span>.next(parser);
+            <span class="self">self</span>.next(frontend);
         }
 
         <span class="kw">loop </span>{
-            <span class="kw">let </span>token = <span class="self">self</span>.bump(parser)<span class="question-mark">?</span>;
+            <span class="kw">let </span>token = <span class="self">self</span>.bump(frontend)<span class="question-mark">?</span>;
             <span class="kw">let </span>name = <span class="kw">match </span>token.value {
                 TokenValue::Semicolon =&gt; <span class="kw">break</span>,
                 TokenValue::Identifier(name) =&gt; name,
@@ -890,18 +894,18 @@
             // parse an array specifier if it exists
             // NOTE: unlike other parse methods this one doesn&#39;t expect an array specifier and
             // returns Ok(None) rather than an error if there is not one
-            </span><span class="self">self</span>.parse_array_specifier(parser, <span class="kw-2">&amp;mut </span>meta, <span class="kw-2">&amp;mut </span>ty)<span class="question-mark">?</span>;
+            </span><span class="self">self</span>.parse_array_specifier(frontend, <span class="kw-2">&amp;mut </span>meta, <span class="kw-2">&amp;mut </span>ty)<span class="question-mark">?</span>;
 
             <span class="kw">let </span>init = <span class="self">self
-                </span>.bump_if(parser, TokenValue::Assign)
+                </span>.bump_if(frontend, TokenValue::Assign)
                 .map::&lt;<span class="prelude-ty">Result</span>&lt;<span class="kw">_</span>&gt;, <span class="kw">_</span>&gt;(|<span class="kw">_</span>| {
                     <span class="kw">let </span>(<span class="kw-2">mut </span>expr, init_meta) =
-                        <span class="self">self</span>.parse_initializer(parser, ty, ctx.ctx, ctx.body)<span class="question-mark">?</span>;
+                        <span class="self">self</span>.parse_initializer(frontend, ty, ctx.ctx, ctx.body)<span class="question-mark">?</span>;
 
-                    <span class="kw">let </span>scalar_components = scalar_components(<span class="kw-2">&amp;</span>parser.module.types[ty].inner);
+                    <span class="kw">let </span>scalar_components = scalar_components(<span class="kw-2">&amp;</span>frontend.module.types[ty].inner);
                     <span class="kw">if let </span><span class="prelude-val">Some</span>((kind, width)) = scalar_components {
                         ctx.ctx
-                            .implicit_conversion(parser, <span class="kw-2">&amp;mut </span>expr, init_meta, kind, width)<span class="question-mark">?</span>;
+                            .implicit_conversion(frontend, <span class="kw-2">&amp;mut </span>expr, init_meta, kind, width)<span class="question-mark">?</span>;
                     }
 
                     meta.subsume(init_meta);
@@ -913,7 +917,7 @@
             <span class="kw">let </span>is_const = ctx.qualifiers.storage.<span class="number">0 </span>== StorageQualifier::Const;
             <span class="kw">let </span>maybe_constant = <span class="kw">if </span>ctx.external {
                 <span class="kw">if let </span><span class="prelude-val">Some</span>((root, meta)) = init {
-                    <span class="kw">match </span>parser.solve_constant(ctx.ctx, root, meta) {
+                    <span class="kw">match </span>frontend.solve_constant(ctx.ctx, root, meta) {
                         <span class="prelude-val">Ok</span>(res) =&gt; <span class="prelude-val">Some</span>(res),
                         <span class="comment">// If the declaration is external (global scope) and is constant qualified
                         // then the initializer must be a constant expression
@@ -927,14 +931,14 @@
                 <span class="prelude-val">None
             </span>};
 
-            <span class="kw">let </span>pointer = ctx.add_var(parser, ty, name, maybe_constant, meta)<span class="question-mark">?</span>;
+            <span class="kw">let </span>pointer = ctx.add_var(frontend, ty, name, maybe_constant, meta)<span class="question-mark">?</span>;
 
             <span class="kw">if let </span><span class="prelude-val">Some</span>((value, <span class="kw">_</span>)) = init.filter(|<span class="kw">_</span>| maybe_constant.is_none()) {
                 ctx.flush_expressions();
                 ctx.body.push(Statement::Store { pointer, value }, meta);
             }
 
-            <span class="kw">let </span>token = <span class="self">self</span>.bump(parser)<span class="question-mark">?</span>;
+            <span class="kw">let </span>token = <span class="self">self</span>.bump(frontend)<span class="question-mark">?</span>;
             <span class="kw">match </span>token.value {
                 TokenValue::Semicolon =&gt; <span class="kw">break</span>,
                 TokenValue::Comma =&gt; {}
@@ -956,7 +960,7 @@
     <span class="doccomment">/// `external` whether or not we are in a global or local context
     </span><span class="kw">pub fn </span>parse_declaration(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        parser: <span class="kw-2">&amp;mut </span>Parser,
+        frontend: <span class="kw-2">&amp;mut </span>Frontend,
         ctx: <span class="kw-2">&amp;mut </span>Context,
         body: <span class="kw-2">&amp;mut </span>Block,
         external: bool,
@@ -973,36 +977,36 @@
         //    type_qualifier SEMICOLON type_qualifier IDENTIFIER SEMICOLON
         //    type_qualifier IDENTIFIER identifier_list SEMICOLON
 
-        </span><span class="kw">if </span><span class="self">self</span>.peek_type_qualifier(parser) || <span class="self">self</span>.peek_type_name(parser) {
-            <span class="kw">let </span><span class="kw-2">mut </span>qualifiers = <span class="self">self</span>.parse_type_qualifiers(parser)<span class="question-mark">?</span>;
+        </span><span class="kw">if </span><span class="self">self</span>.peek_type_qualifier(frontend) || <span class="self">self</span>.peek_type_name(frontend) {
+            <span class="kw">let </span><span class="kw-2">mut </span>qualifiers = <span class="self">self</span>.parse_type_qualifiers(frontend)<span class="question-mark">?</span>;
 
-            <span class="kw">if </span><span class="self">self</span>.peek_type_name(parser) {
+            <span class="kw">if </span><span class="self">self</span>.peek_type_name(frontend) {
                 <span class="comment">// This branch handles variables and function prototypes and if
                 // external is true also function definitions
-                </span><span class="kw">let </span>(ty, <span class="kw-2">mut </span>meta) = <span class="self">self</span>.parse_type(parser)<span class="question-mark">?</span>;
+                </span><span class="kw">let </span>(ty, <span class="kw-2">mut </span>meta) = <span class="self">self</span>.parse_type(frontend)<span class="question-mark">?</span>;
 
-                <span class="kw">let </span>token = <span class="self">self</span>.bump(parser)<span class="question-mark">?</span>;
+                <span class="kw">let </span>token = <span class="self">self</span>.bump(frontend)<span class="question-mark">?</span>;
                 <span class="kw">let </span>token_fallthrough = <span class="kw">match </span>token.value {
-                    TokenValue::Identifier(name) =&gt; <span class="kw">match </span><span class="self">self</span>.expect_peek(parser)<span class="question-mark">?</span>.value {
+                    TokenValue::Identifier(name) =&gt; <span class="kw">match </span><span class="self">self</span>.expect_peek(frontend)<span class="question-mark">?</span>.value {
                         TokenValue::LeftParen =&gt; {
                             <span class="comment">// This branch handles function definition and prototypes
-                            </span><span class="self">self</span>.bump(parser)<span class="question-mark">?</span>;
+                            </span><span class="self">self</span>.bump(frontend)<span class="question-mark">?</span>;
 
                             <span class="kw">let </span>result = ty.map(|ty| FunctionResult { ty, binding: <span class="prelude-val">None </span>});
                             <span class="kw">let </span><span class="kw-2">mut </span>body = Block::new();
 
-                            <span class="kw">let </span><span class="kw-2">mut </span>context = Context::new(parser, <span class="kw-2">&amp;mut </span>body);
+                            <span class="kw">let </span><span class="kw-2">mut </span>context = Context::new(frontend, <span class="kw-2">&amp;mut </span>body);
 
-                            <span class="self">self</span>.parse_function_args(parser, <span class="kw-2">&amp;mut </span>context, <span class="kw-2">&amp;mut </span>body)<span class="question-mark">?</span>;
+                            <span class="self">self</span>.parse_function_args(frontend, <span class="kw-2">&amp;mut </span>context, <span class="kw-2">&amp;mut </span>body)<span class="question-mark">?</span>;
 
-                            <span class="kw">let </span>end_meta = <span class="self">self</span>.expect(parser, TokenValue::RightParen)<span class="question-mark">?</span>.meta;
+                            <span class="kw">let </span>end_meta = <span class="self">self</span>.expect(frontend, TokenValue::RightParen)<span class="question-mark">?</span>.meta;
                             meta.subsume(end_meta);
 
-                            <span class="kw">let </span>token = <span class="self">self</span>.bump(parser)<span class="question-mark">?</span>;
+                            <span class="kw">let </span>token = <span class="self">self</span>.bump(frontend)<span class="question-mark">?</span>;
                             <span class="kw">return match </span>token.value {
                                 TokenValue::Semicolon =&gt; {
                                     <span class="comment">// This branch handles function prototypes
-                                    </span>parser.add_prototype(context, name, result, meta);
+                                    </span>frontend.add_prototype(context, name, result, meta);
 
                                     <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(meta))
                                 }
@@ -1014,13 +1018,13 @@
                                     // parse the body
                                     </span><span class="self">self</span>.parse_compound_statement(
                                         token.meta,
-                                        parser,
+                                        frontend,
                                         <span class="kw-2">&amp;mut </span>context,
                                         <span class="kw-2">&amp;mut </span>body,
                                         <span class="kw-2">&amp;mut </span><span class="prelude-val">None</span>,
                                     )<span class="question-mark">?</span>;
 
-                                    parser.add_function(context, name, result, body, meta);
+                                    frontend.add_function(context, name, result, body, meta);
 
                                     <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(meta))
                                 }
@@ -1055,7 +1059,7 @@
 
                 <span class="comment">// If program execution has reached here then this will be a
                 // init_declarator_list
-                // token_falltrough will have a token that was already bumped
+                // token_fallthrough will have a token that was already bumped
                 </span><span class="kw">if let </span><span class="prelude-val">Some</span>(ty) = ty {
                     <span class="kw">let </span><span class="kw-2">mut </span>ctx = DeclarationContext {
                         qualifiers,
@@ -1065,9 +1069,9 @@
                     };
 
                     <span class="self">self</span>.backtrack(token_fallthrough)<span class="question-mark">?</span>;
-                    <span class="self">self</span>.parse_init_declarator_list(parser, ty, <span class="kw-2">&amp;mut </span>ctx)<span class="question-mark">?</span>;
+                    <span class="self">self</span>.parse_init_declarator_list(frontend, ty, <span class="kw-2">&amp;mut </span>ctx)<span class="question-mark">?</span>;
                 } <span class="kw">else </span>{
-                    parser.errors.push(Error {
+                    frontend.errors.push(Error {
                         kind: ErrorKind::SemanticError(<span class="string">&quot;Declaration cannot have void type&quot;</span>.into()),
                         meta,
                     })
@@ -1079,12 +1083,12 @@
                 // ```glsl
                 // layout(early_fragment_tests);
                 // ```
-                </span><span class="kw">let </span>token = <span class="self">self</span>.bump(parser)<span class="question-mark">?</span>;
+                </span><span class="kw">let </span>token = <span class="self">self</span>.bump(frontend)<span class="question-mark">?</span>;
                 <span class="kw">match </span>token.value {
                     TokenValue::Identifier(ty_name) =&gt; {
-                        <span class="kw">if </span><span class="self">self</span>.bump_if(parser, TokenValue::LeftBrace).is_some() {
+                        <span class="kw">if </span><span class="self">self</span>.bump_if(frontend, TokenValue::LeftBrace).is_some() {
                             <span class="self">self</span>.parse_block_declaration(
-                                parser,
+                                frontend,
                                 ctx,
                                 body,
                                 <span class="kw-2">&amp;mut </span>qualifiers,
@@ -1094,10 +1098,10 @@
                             .map(<span class="prelude-val">Some</span>)
                         } <span class="kw">else </span>{
                             <span class="kw">if </span>qualifiers.invariant.take().is_some() {
-                                parser.make_variable_invariant(ctx, body, <span class="kw-2">&amp;</span>ty_name, token.meta);
+                                frontend.make_variable_invariant(ctx, body, <span class="kw-2">&amp;</span>ty_name, token.meta);
 
-                                qualifiers.unused_errors(<span class="kw-2">&amp;mut </span>parser.errors);
-                                <span class="self">self</span>.expect(parser, TokenValue::Semicolon)<span class="question-mark">?</span>;
+                                qualifiers.unused_errors(<span class="kw-2">&amp;mut </span>frontend.errors);
+                                <span class="self">self</span>.expect(frontend, TokenValue::Semicolon)<span class="question-mark">?</span>;
                                 <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(qualifiers.span));
                             }
 
@@ -1112,25 +1116,25 @@
                     }
                     TokenValue::Semicolon =&gt; {
                         <span class="kw">if let </span><span class="prelude-val">Some</span>(value) =
-                            qualifiers.uint_layout_qualifier(<span class="string">&quot;local_size_x&quot;</span>, <span class="kw-2">&amp;mut </span>parser.errors)
+                            qualifiers.uint_layout_qualifier(<span class="string">&quot;local_size_x&quot;</span>, <span class="kw-2">&amp;mut </span>frontend.errors)
                         {
-                            parser.meta.workgroup_size[<span class="number">0</span>] = value;
+                            frontend.meta.workgroup_size[<span class="number">0</span>] = value;
                         }
                         <span class="kw">if let </span><span class="prelude-val">Some</span>(value) =
-                            qualifiers.uint_layout_qualifier(<span class="string">&quot;local_size_y&quot;</span>, <span class="kw-2">&amp;mut </span>parser.errors)
+                            qualifiers.uint_layout_qualifier(<span class="string">&quot;local_size_y&quot;</span>, <span class="kw-2">&amp;mut </span>frontend.errors)
                         {
-                            parser.meta.workgroup_size[<span class="number">1</span>] = value;
+                            frontend.meta.workgroup_size[<span class="number">1</span>] = value;
                         }
                         <span class="kw">if let </span><span class="prelude-val">Some</span>(value) =
-                            qualifiers.uint_layout_qualifier(<span class="string">&quot;local_size_z&quot;</span>, <span class="kw-2">&amp;mut </span>parser.errors)
+                            qualifiers.uint_layout_qualifier(<span class="string">&quot;local_size_z&quot;</span>, <span class="kw-2">&amp;mut </span>frontend.errors)
                         {
-                            parser.meta.workgroup_size[<span class="number">2</span>] = value;
+                            frontend.meta.workgroup_size[<span class="number">2</span>] = value;
                         }
 
-                        parser.meta.early_fragment_tests |= qualifiers
-                            .none_layout_qualifier(<span class="string">&quot;early_fragment_tests&quot;</span>, <span class="kw-2">&amp;mut </span>parser.errors);
+                        frontend.meta.early_fragment_tests |= qualifiers
+                            .none_layout_qualifier(<span class="string">&quot;early_fragment_tests&quot;</span>, <span class="kw-2">&amp;mut </span>frontend.errors);
 
-                        qualifiers.unused_errors(<span class="kw-2">&amp;mut </span>parser.errors);
+                        qualifiers.unused_errors(<span class="kw-2">&amp;mut </span>frontend.errors);
 
                         <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(qualifiers.span))
                     }
@@ -1144,12 +1148,12 @@
                 }
             }
         } <span class="kw">else </span>{
-            <span class="kw">match </span><span class="self">self</span>.peek(parser).map(|t| <span class="kw-2">&amp;</span>t.value) {
+            <span class="kw">match </span><span class="self">self</span>.peek(frontend).map(|t| <span class="kw-2">&amp;</span>t.value) {
                 <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>TokenValue::Precision) =&gt; {
                     <span class="comment">// PRECISION precision_qualifier type_specifier SEMICOLON
-                    </span><span class="self">self</span>.bump(parser)<span class="question-mark">?</span>;
+                    </span><span class="self">self</span>.bump(frontend)<span class="question-mark">?</span>;
 
-                    <span class="kw">let </span>token = <span class="self">self</span>.bump(parser)<span class="question-mark">?</span>;
+                    <span class="kw">let </span>token = <span class="self">self</span>.bump(frontend)<span class="question-mark">?</span>;
                     <span class="kw">let _ </span>= <span class="kw">match </span>token.value {
                         TokenValue::PrecisionQualifier(p) =&gt; p,
                         <span class="kw">_ </span>=&gt; {
@@ -1167,14 +1171,14 @@
                         }
                     };
 
-                    <span class="kw">let </span>(ty, meta) = <span class="self">self</span>.parse_type_non_void(parser)<span class="question-mark">?</span>;
+                    <span class="kw">let </span>(ty, meta) = <span class="self">self</span>.parse_type_non_void(frontend)<span class="question-mark">?</span>;
 
-                    <span class="kw">match </span>parser.module.types[ty].inner {
+                    <span class="kw">match </span>frontend.module.types[ty].inner {
                         TypeInner::Scalar {
                             kind: ScalarKind::Float | ScalarKind::Sint,
                             ..
                         } =&gt; {}
-                        <span class="kw">_ </span>=&gt; parser.errors.push(Error {
+                        <span class="kw">_ </span>=&gt; frontend.errors.push(Error {
                             kind: ErrorKind::SemanticError(
                                 <span class="string">&quot;Precision statement can only work on floats and ints&quot;</span>.into(),
                             ),
@@ -1182,7 +1186,7 @@
                         }),
                     }
 
-                    <span class="self">self</span>.expect(parser, TokenValue::Semicolon)<span class="question-mark">?</span>;
+                    <span class="self">self</span>.expect(frontend, TokenValue::Semicolon)<span class="question-mark">?</span>;
 
                     <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(meta))
                 }
@@ -1193,7 +1197,7 @@
 
     <span class="kw">pub fn </span>parse_block_declaration(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        parser: <span class="kw-2">&amp;mut </span>Parser,
+        frontend: <span class="kw-2">&amp;mut </span>Frontend,
         ctx: <span class="kw-2">&amp;mut </span>Context,
         body: <span class="kw-2">&amp;mut </span>Block,
         qualifiers: <span class="kw-2">&amp;mut </span>TypeQualifiers,
@@ -1215,10 +1219,10 @@
         };
 
         <span class="kw">let </span><span class="kw-2">mut </span>members = Vec::new();
-        <span class="kw">let </span>span = <span class="self">self</span>.parse_struct_declaration_list(parser, <span class="kw-2">&amp;mut </span>members, layout)<span class="question-mark">?</span>;
-        <span class="self">self</span>.expect(parser, TokenValue::RightBrace)<span class="question-mark">?</span>;
+        <span class="kw">let </span>span = <span class="self">self</span>.parse_struct_declaration_list(frontend, <span class="kw-2">&amp;mut </span>members, layout)<span class="question-mark">?</span>;
+        <span class="self">self</span>.expect(frontend, TokenValue::RightBrace)<span class="question-mark">?</span>;
 
-        <span class="kw">let </span><span class="kw-2">mut </span>ty = parser.module.types.insert(
+        <span class="kw">let </span><span class="kw-2">mut </span>ty = frontend.module.types.insert(
             Type {
                 name: <span class="prelude-val">Some</span>(ty_name),
                 inner: TypeInner::Struct {
@@ -1229,13 +1233,13 @@
             Default::default(),
         );
 
-        <span class="kw">let </span>token = <span class="self">self</span>.bump(parser)<span class="question-mark">?</span>;
+        <span class="kw">let </span>token = <span class="self">self</span>.bump(frontend)<span class="question-mark">?</span>;
         <span class="kw">let </span>name = <span class="kw">match </span>token.value {
             TokenValue::Semicolon =&gt; <span class="prelude-val">None</span>,
             TokenValue::Identifier(name) =&gt; {
-                <span class="self">self</span>.parse_array_specifier(parser, <span class="kw-2">&amp;mut </span>meta, <span class="kw-2">&amp;mut </span>ty)<span class="question-mark">?</span>;
+                <span class="self">self</span>.parse_array_specifier(frontend, <span class="kw-2">&amp;mut </span>meta, <span class="kw-2">&amp;mut </span>ty)<span class="question-mark">?</span>;
 
-                <span class="self">self</span>.expect(parser, TokenValue::Semicolon)<span class="question-mark">?</span>;
+                <span class="self">self</span>.expect(frontend, TokenValue::Semicolon)<span class="question-mark">?</span>;
 
                 <span class="prelude-val">Some</span>(name)
             }
@@ -1250,7 +1254,7 @@
             }
         };
 
-        <span class="kw">let </span>global = parser.add_global_var(
+        <span class="kw">let </span>global = frontend.add_global_var(
             ctx,
             body,
             VarDeclaration {
@@ -1274,9 +1278,9 @@
                 entry_arg: <span class="prelude-val">None</span>,
                 mutable: <span class="bool-val">true</span>,
             };
-            ctx.add_global(parser, <span class="kw-2">&amp;</span>k, lookup, body);
+            ctx.add_global(frontend, <span class="kw-2">&amp;</span>k, lookup, body);
 
-            parser.global_variables.push((k, lookup));
+            frontend.global_variables.push((k, lookup));
         }
 
         <span class="prelude-val">Ok</span>(meta)
@@ -1285,7 +1289,7 @@
     <span class="comment">// TODO: Accept layout arguments
     </span><span class="kw">pub fn </span>parse_struct_declaration_list(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        parser: <span class="kw-2">&amp;mut </span>Parser,
+        frontend: <span class="kw-2">&amp;mut </span>Frontend,
         members: <span class="kw-2">&amp;mut </span>Vec&lt;StructMember&gt;,
         layout: StructLayout,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;u32&gt; {
@@ -1295,22 +1299,22 @@
         <span class="kw">loop </span>{
             <span class="comment">// TODO: type_qualifier
 
-            </span><span class="kw">let </span>(<span class="kw-2">mut </span>ty, <span class="kw-2">mut </span>meta) = <span class="self">self</span>.parse_type_non_void(parser)<span class="question-mark">?</span>;
-            <span class="kw">let </span>(name, end_meta) = <span class="self">self</span>.expect_ident(parser)<span class="question-mark">?</span>;
+            </span><span class="kw">let </span>(<span class="kw-2">mut </span>ty, <span class="kw-2">mut </span>meta) = <span class="self">self</span>.parse_type_non_void(frontend)<span class="question-mark">?</span>;
+            <span class="kw">let </span>(name, end_meta) = <span class="self">self</span>.expect_ident(frontend)<span class="question-mark">?</span>;
 
             meta.subsume(end_meta);
 
-            <span class="self">self</span>.parse_array_specifier(parser, <span class="kw-2">&amp;mut </span>meta, <span class="kw-2">&amp;mut </span>ty)<span class="question-mark">?</span>;
+            <span class="self">self</span>.parse_array_specifier(frontend, <span class="kw-2">&amp;mut </span>meta, <span class="kw-2">&amp;mut </span>ty)<span class="question-mark">?</span>;
 
-            <span class="self">self</span>.expect(parser, TokenValue::Semicolon)<span class="question-mark">?</span>;
+            <span class="self">self</span>.expect(frontend, TokenValue::Semicolon)<span class="question-mark">?</span>;
 
             <span class="kw">let </span>info = offset::calculate_offset(
                 ty,
                 meta,
                 layout,
-                <span class="kw-2">&amp;mut </span>parser.module.types,
-                <span class="kw-2">&amp;</span>parser.module.constants,
-                <span class="kw-2">&amp;mut </span>parser.errors,
+                <span class="kw-2">&amp;mut </span>frontend.module.types,
+                <span class="kw-2">&amp;</span>frontend.module.constants,
+                <span class="kw-2">&amp;mut </span>frontend.errors,
             );
 
             <span class="kw">let </span>member_alignment = info.align;
@@ -1326,7 +1330,7 @@
 
             span += info.span;
 
-            <span class="kw">if let </span>TokenValue::RightBrace = <span class="self">self</span>.expect_peek(parser)<span class="question-mark">?</span>.value {
+            <span class="kw">if let </span>TokenValue::RightBrace = <span class="self">self</span>.expect_peek(frontend)<span class="question-mark">?</span>.value {
                 <span class="kw">break</span>;
             }
         }

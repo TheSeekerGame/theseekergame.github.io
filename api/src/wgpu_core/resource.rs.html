@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/wgpu-core-0.15.1/src/resource.rs`."><title>resource.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="wgpu_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../wgpu_core/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/wgpu-core-0.16.1/src/resource.rs`."><title>resource.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="wgpu_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../wgpu_core/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -768,6 +768,42 @@
 <a href="#768" id="768">768</a>
 <a href="#769" id="769">769</a>
 <a href="#770" id="770">770</a>
+<a href="#771" id="771">771</a>
+<a href="#772" id="772">772</a>
+<a href="#773" id="773">773</a>
+<a href="#774" id="774">774</a>
+<a href="#775" id="775">775</a>
+<a href="#776" id="776">776</a>
+<a href="#777" id="777">777</a>
+<a href="#778" id="778">778</a>
+<a href="#779" id="779">779</a>
+<a href="#780" id="780">780</a>
+<a href="#781" id="781">781</a>
+<a href="#782" id="782">782</a>
+<a href="#783" id="783">783</a>
+<a href="#784" id="784">784</a>
+<a href="#785" id="785">785</a>
+<a href="#786" id="786">786</a>
+<a href="#787" id="787">787</a>
+<a href="#788" id="788">788</a>
+<a href="#789" id="789">789</a>
+<a href="#790" id="790">790</a>
+<a href="#791" id="791">791</a>
+<a href="#792" id="792">792</a>
+<a href="#793" id="793">793</a>
+<a href="#794" id="794">794</a>
+<a href="#795" id="795">795</a>
+<a href="#796" id="796">796</a>
+<a href="#797" id="797">797</a>
+<a href="#798" id="798">798</a>
+<a href="#799" id="799">799</a>
+<a href="#800" id="800">800</a>
+<a href="#801" id="801">801</a>
+<a href="#802" id="802">802</a>
+<a href="#803" id="803">803</a>
+<a href="#804" id="804">804</a>
+<a href="#805" id="805">805</a>
+<a href="#806" id="806">806</a>
 </pre></div><pre class="rust"><code><span class="kw">use crate</span>::{
     device::{DeviceError, HostMap, MissingDownlevelFlags, MissingFeatures},
     hub::{Global, GlobalIdentityHandlerFactory, HalApi, Resource, Token},
@@ -781,7 +817,7 @@
 <span class="kw">use </span>smallvec::SmallVec;
 <span class="kw">use </span>thiserror::Error;
 
-<span class="kw">use </span>std::{borrow::Borrow, num::NonZeroU8, ops::Range, ptr::NonNull};
+<span class="kw">use </span>std::{borrow::Borrow, ops::Range, ptr::NonNull};
 
 <span class="doccomment">/// The status code provided to the buffer mapping callback.
 ///
@@ -937,49 +973,50 @@
 }
 
 <span class="attr">#[derive(Clone, Debug, Error)]
+#[non_exhaustive]
 </span><span class="kw">pub enum </span>BufferAccessError {
     <span class="attr">#[error(transparent)]
     </span>Device(<span class="attr">#[from] </span>DeviceError),
-    <span class="attr">#[error(<span class="string">&quot;buffer map failed&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Buffer map failed&quot;</span>)]
     </span>Failed,
-    <span class="attr">#[error(<span class="string">&quot;buffer is invalid&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Buffer is invalid&quot;</span>)]
     </span>Invalid,
-    <span class="attr">#[error(<span class="string">&quot;buffer is destroyed&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Buffer is destroyed&quot;</span>)]
     </span>Destroyed,
-    <span class="attr">#[error(<span class="string">&quot;buffer is already mapped&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Buffer is already mapped&quot;</span>)]
     </span>AlreadyMapped,
-    <span class="attr">#[error(<span class="string">&quot;buffer map is pending&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Buffer map is pending&quot;</span>)]
     </span>MapAlreadyPending,
     <span class="attr">#[error(transparent)]
     </span>MissingBufferUsage(<span class="attr">#[from] </span>MissingBufferUsageError),
-    <span class="attr">#[error(<span class="string">&quot;buffer is not mapped&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Buffer is not mapped&quot;</span>)]
     </span>NotMapped,
     <span class="attr">#[error(
-        <span class="string">&quot;buffer map range must start aligned to `MAP_ALIGNMENT` and end to `COPY_BUFFER_ALIGNMENT`&quot;
+        <span class="string">&quot;Buffer map range must start aligned to `MAP_ALIGNMENT` and end to `COPY_BUFFER_ALIGNMENT`&quot;
     </span>)]
     </span>UnalignedRange,
-    <span class="attr">#[error(<span class="string">&quot;buffer offset invalid: offset {offset} must be multiple of 8&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Buffer offset invalid: offset {offset} must be multiple of 8&quot;</span>)]
     </span>UnalignedOffset { offset: wgt::BufferAddress },
-    <span class="attr">#[error(<span class="string">&quot;buffer range size invalid: range_size {range_size} must be multiple of 4&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Buffer range size invalid: range_size {range_size} must be multiple of 4&quot;</span>)]
     </span>UnalignedRangeSize { range_size: wgt::BufferAddress },
-    <span class="attr">#[error(<span class="string">&quot;buffer access out of bounds: index {index} would underrun the buffer (limit: {min})&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Buffer access out of bounds: index {index} would underrun the buffer (limit: {min})&quot;</span>)]
     </span>OutOfBoundsUnderrun {
         index: wgt::BufferAddress,
         min: wgt::BufferAddress,
     },
     <span class="attr">#[error(
-        <span class="string">&quot;buffer access out of bounds: last index {index} would overrun the buffer (limit: {max})&quot;
+        <span class="string">&quot;Buffer access out of bounds: last index {index} would overrun the buffer (limit: {max})&quot;
     </span>)]
     </span>OutOfBoundsOverrun {
         index: wgt::BufferAddress,
         max: wgt::BufferAddress,
     },
-    <span class="attr">#[error(<span class="string">&quot;buffer map range start {start} is greater than end {end}&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Buffer map range start {start} is greater than end {end}&quot;</span>)]
     </span>NegativeRange {
         start: wgt::BufferAddress,
         end: wgt::BufferAddress,
     },
-    <span class="attr">#[error(<span class="string">&quot;buffer map aborted&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Buffer map aborted&quot;</span>)]
     </span>MapAborted,
 }
 
@@ -1005,12 +1042,13 @@
 }
 
 <span class="attr">#[derive(Clone, Debug, Error)]
+#[non_exhaustive]
 </span><span class="kw">pub enum </span>CreateBufferError {
     <span class="attr">#[error(transparent)]
     </span>Device(<span class="attr">#[from] </span>DeviceError),
-    <span class="attr">#[error(<span class="string">&quot;failed to map buffer while creating: {0}&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Failed to map buffer while creating: {0}&quot;</span>)]
     </span>AccessError(<span class="attr">#[from] </span>BufferAccessError),
-    <span class="attr">#[error(<span class="string">&quot;buffers that are mapped at creation have to be aligned to `COPY_BUFFER_ALIGNMENT`&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Buffers that are mapped at creation have to be aligned to `COPY_BUFFER_ALIGNMENT`&quot;</span>)]
     </span>UnalignedSize,
     <span class="attr">#[error(<span class="string">&quot;Invalid usage flags {0:?}&quot;</span>)]
     </span>InvalidUsage(wgt::BufferUsages),
@@ -1229,6 +1267,7 @@
 }
 
 <span class="attr">#[derive(Clone, Debug, Error)]
+#[non_exhaustive]
 </span><span class="kw">pub enum </span>TextureDimensionError {
     <span class="attr">#[error(<span class="string">&quot;Dimension {0:?} is zero&quot;</span>)]
     </span>Zero(TextureErrorDimension),
@@ -1257,6 +1296,7 @@
 }
 
 <span class="attr">#[derive(Clone, Debug, Error)]
+#[non_exhaustive]
 </span><span class="kw">pub enum </span>CreateTextureError {
     <span class="attr">#[error(transparent)]
     </span>Device(<span class="attr">#[from] </span>DeviceError),
@@ -1342,8 +1382,24 @@
 
 <span class="kw">impl </span>HalTextureViewDescriptor {
     <span class="kw">pub fn </span>aspects(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; hal::FormatAspects {
-        hal::FormatAspects::from(<span class="self">self</span>.format) &amp; hal::FormatAspects::from(<span class="self">self</span>.range.aspect)
+        hal::FormatAspects::new(<span class="self">self</span>.format, <span class="self">self</span>.range.aspect)
     }
+}
+
+<span class="attr">#[derive(Debug, Copy, Clone, Error)]
+</span><span class="kw">pub enum </span>TextureViewNotRenderableReason {
+    <span class="attr">#[error(<span class="string">&quot;The texture this view references doesn&#39;t include the RENDER_ATTACHMENT usage. Provided usages: {0:?}&quot;</span>)]
+    </span>Usage(wgt::TextureUsages),
+    <span class="attr">#[error(<span class="string">&quot;The dimension of this texture view is not 2D. View dimension: {0:?}&quot;</span>)]
+    </span>Dimension(wgt::TextureViewDimension),
+    <span class="attr">#[error(<span class="string">&quot;This texture view has more than one mipmap level. View mipmap levels: {0:?}&quot;</span>)]
+    </span>MipLevelCount(u32),
+    <span class="attr">#[error(<span class="string">&quot;This texture view has more than one array layer. View array layers: {0:?}&quot;</span>)]
+    </span>ArrayLayerCount(u32),
+    <span class="attr">#[error(
+        <span class="string">&quot;The aspects of this texture view are a subset of the aspects in the original texture. Aspects: {0:?}&quot;
+    </span>)]
+    </span>Aspects(hal::FormatAspects),
 }
 
 <span class="attr">#[derive(Debug)]
@@ -1356,18 +1412,19 @@
     <span class="comment">//TODO: store device_id for quick access?
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) desc: HalTextureViewDescriptor,
     <span class="kw">pub</span>(<span class="kw">crate</span>) format_features: wgt::TextureFormatFeatures,
-    <span class="doccomment">/// This is `None` only if the texture view is not renderable
-    </span><span class="kw">pub</span>(<span class="kw">crate</span>) render_extent: <span class="prelude-ty">Option</span>&lt;wgt::Extent3d&gt;,
+    <span class="doccomment">/// This is `Err` only if the texture view is not renderable
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) render_extent: <span class="prelude-ty">Result</span>&lt;wgt::Extent3d, TextureViewNotRenderableReason&gt;,
     <span class="kw">pub</span>(<span class="kw">crate</span>) samples: u32,
     <span class="kw">pub</span>(<span class="kw">crate</span>) selector: TextureSelector,
     <span class="kw">pub</span>(<span class="kw">crate</span>) life_guard: LifeGuard,
 }
 
 <span class="attr">#[derive(Clone, Debug, Error)]
+#[non_exhaustive]
 </span><span class="kw">pub enum </span>CreateTextureViewError {
-    <span class="attr">#[error(<span class="string">&quot;parent texture is invalid or destroyed&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Parent texture is invalid or destroyed&quot;</span>)]
     </span>InvalidTexture,
-    <span class="attr">#[error(<span class="string">&quot;not enough memory left&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Not enough memory left&quot;</span>)]
     </span>OutOfMemory,
     <span class="attr">#[error(<span class="string">&quot;Invalid texture view dimension `{view:?}` with texture of dimension `{texture:?}`&quot;</span>)]
     </span>InvalidTextureViewDimension {
@@ -1382,9 +1439,9 @@
     </span>InvalidCubemapArrayTextureDepth { depth: u32 },
     <span class="attr">#[error(<span class="string">&quot;Source texture width and height must be equal for a texture view of dimension `Cube`/`CubeArray`&quot;</span>)]
     </span>InvalidCubeTextureViewSize,
-    <span class="attr">#[error(<span class="string">&quot;mip level count is 0&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Mip level count is 0&quot;</span>)]
     </span>ZeroMipLevelCount,
-    <span class="attr">#[error(<span class="string">&quot;array layer count is 0&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Array layer count is 0&quot;</span>)]
     </span>ZeroArrayLayerCount,
     <span class="attr">#[error(
         <span class="string">&quot;TextureView mip level count + base mip level {requested} must be &lt;= Texture mip level count {total}&quot;
@@ -1410,6 +1467,7 @@
 }
 
 <span class="attr">#[derive(Clone, Debug, Error)]
+#[non_exhaustive]
 </span><span class="kw">pub enum </span>TextureViewDestroyError {}
 
 <span class="kw">impl</span>&lt;A: hal::Api&gt; Resource <span class="kw">for </span>TextureView&lt;A&gt; {
@@ -1443,28 +1501,11 @@
     </span><span class="kw">pub </span>lod_max_clamp: f32,
     <span class="doccomment">/// If this is enabled, this is a comparison sampler using the given comparison function.
     </span><span class="kw">pub </span>compare: <span class="prelude-ty">Option</span>&lt;wgt::CompareFunction&gt;,
-    <span class="doccomment">/// Valid values: 1, 2, 4, 8, and 16.
-    </span><span class="kw">pub </span>anisotropy_clamp: <span class="prelude-ty">Option</span>&lt;NonZeroU8&gt;,
+    <span class="doccomment">/// Must be at least 1. If this is not 1, all filter modes must be linear.
+    </span><span class="kw">pub </span>anisotropy_clamp: u16,
     <span class="doccomment">/// Border color to use when address_mode is
     /// [`AddressMode::ClampToBorder`](wgt::AddressMode::ClampToBorder)
     </span><span class="kw">pub </span>border_color: <span class="prelude-ty">Option</span>&lt;wgt::SamplerBorderColor&gt;,
-}
-
-<span class="kw">impl </span>Default <span class="kw">for </span>SamplerDescriptor&lt;<span class="lifetime">&#39;_</span>&gt; {
-    <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{
-            label: <span class="prelude-val">None</span>,
-            address_modes: Default::default(),
-            mag_filter: Default::default(),
-            min_filter: Default::default(),
-            mipmap_filter: Default::default(),
-            lod_min_clamp: <span class="number">0.0</span>,
-            lod_max_clamp: std::f32::MAX,
-            compare: <span class="prelude-val">None</span>,
-            anisotropy_clamp: <span class="prelude-val">None</span>,
-            border_color: <span class="prelude-val">None</span>,
-        }
-    }
 }
 
 <span class="attr">#[derive(Debug)]
@@ -1478,15 +1519,44 @@
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) filtering: bool,
 }
 
+<span class="attr">#[derive(Copy, Clone)]
+</span><span class="kw">pub enum </span>SamplerFilterErrorType {
+    MagFilter,
+    MinFilter,
+    MipmapFilter,
+}
+
+<span class="kw">impl </span>std::fmt::Debug <span class="kw">for </span>SamplerFilterErrorType {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>std::fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; std::fmt::Result {
+        <span class="kw">match </span><span class="kw-2">*</span><span class="self">self </span>{
+            SamplerFilterErrorType::MagFilter =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;magFilter&quot;</span>),
+            SamplerFilterErrorType::MinFilter =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;minFilter&quot;</span>),
+            SamplerFilterErrorType::MipmapFilter =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;mipmapFilter&quot;</span>),
+        }
+    }
+}
+
 <span class="attr">#[derive(Clone, Debug, Error)]
+#[non_exhaustive]
 </span><span class="kw">pub enum </span>CreateSamplerError {
     <span class="attr">#[error(transparent)]
     </span>Device(<span class="attr">#[from] </span>DeviceError),
-    <span class="attr">#[error(<span class="string">&quot;invalid lod clamp lod_min_clamp:{} lod_max_clamp:{}, must satisfy lod_min_clamp &gt;= 0 and lod_max_clamp &gt;= lod_min_clamp &quot;</span>, .<span class="number">0</span>.start, .<span class="number">0</span>.end)]
-    </span>InvalidLodClamp(Range&lt;f32&gt;),
-    <span class="attr">#[error(<span class="string">&quot;invalid anisotropic clamp {0}, must be one of 1, 2, 4, 8 or 16&quot;</span>)]
-    </span>InvalidClamp(u8),
-    <span class="attr">#[error(<span class="string">&quot;cannot create any more samplers&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Invalid lodMinClamp: {0}. Must be greater or equal to 0.0&quot;</span>)]
+    </span>InvalidLodMinClamp(f32),
+    <span class="attr">#[error(<span class="string">&quot;Invalid lodMaxClamp: {lod_max_clamp}. Must be greater or equal to lodMinClamp (which is {lod_min_clamp}).&quot;</span>)]
+    </span>InvalidLodMaxClamp {
+        lod_min_clamp: f32,
+        lod_max_clamp: f32,
+    },
+    <span class="attr">#[error(<span class="string">&quot;Invalid anisotropic clamp: {0}. Must be at least 1.&quot;</span>)]
+    </span>InvalidAnisotropy(u16),
+    <span class="attr">#[error(<span class="string">&quot;Invalid filter mode for {filter_type:?}: {filter_mode:?}. When anistropic clamp is not 1 (it is {anisotropic_clamp}), all filter modes must be linear.&quot;</span>)]
+    </span>InvalidFilterModeWithAnisotropy {
+        filter_type: SamplerFilterErrorType,
+        filter_mode: wgt::FilterMode,
+        anisotropic_clamp: u16,
+    },
+    <span class="attr">#[error(<span class="string">&quot;Cannot create any more samplers&quot;</span>)]
     </span>TooManyObjects,
     <span class="doccomment">/// AddressMode::ClampToBorder requires feature ADDRESS_MODE_CLAMP_TO_BORDER.
     </span><span class="attr">#[error(transparent)]
@@ -1502,6 +1572,7 @@
 }
 
 <span class="attr">#[derive(Clone, Debug, Error)]
+#[non_exhaustive]
 </span><span class="kw">pub enum </span>CreateQuerySetError {
     <span class="attr">#[error(transparent)]
     </span>Device(<span class="attr">#[from] </span>DeviceError),
@@ -1532,10 +1603,11 @@
 }
 
 <span class="attr">#[derive(Clone, Debug, Error)]
+#[non_exhaustive]
 </span><span class="kw">pub enum </span>DestroyError {
-    <span class="attr">#[error(<span class="string">&quot;resource is invalid&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Resource is invalid&quot;</span>)]
     </span>Invalid,
-    <span class="attr">#[error(<span class="string">&quot;resource is already destroyed&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Resource is already destroyed&quot;</span>)]
     </span>AlreadyDestroyed,
 }
 </code></pre></div></section></main></body></html>

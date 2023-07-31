@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/wgpu-core-0.15.1/src/command/draw.rs`."><title>draw.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="wgpu_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../wgpu_core/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/wgpu-core-0.16.1/src/command/draw.rs`."><title>draw.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="wgpu_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../wgpu_core/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -248,6 +248,8 @@
 <a href="#248" id="248">248</a>
 <a href="#249" id="249">249</a>
 <a href="#250" id="250">250</a>
+<a href="#251" id="251">251</a>
+<a href="#252" id="252">252</a>
 </pre></div><pre class="rust"><code><span class="doccomment">/*! Draw structures - shared between render passes and bundles.
 !*/
 
@@ -265,37 +267,38 @@
 
 <span class="doccomment">/// Error validating a draw call.
 </span><span class="attr">#[derive(Clone, Debug, Error, Eq, PartialEq)]
+#[non_exhaustive]
 </span><span class="kw">pub enum </span>DrawError {
-    <span class="attr">#[error(<span class="string">&quot;blend constant needs to be set&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Blend constant needs to be set&quot;</span>)]
     </span>MissingBlendConstant,
-    <span class="attr">#[error(<span class="string">&quot;render pipeline must be set&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Render pipeline must be set&quot;</span>)]
     </span>MissingPipeline,
-    <span class="attr">#[error(<span class="string">&quot;vertex buffer {index} must be set&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Vertex buffer {index} must be set&quot;</span>)]
     </span>MissingVertexBuffer { index: u32 },
-    <span class="attr">#[error(<span class="string">&quot;index buffer must be set&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Index buffer must be set&quot;</span>)]
     </span>MissingIndexBuffer,
-    <span class="attr">#[error(<span class="string">&quot;the pipeline layout, associated with the current render pipeline, contains a bind group layout at index {index} which is incompatible with the bind group layout associated with the bind group at {index}&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;The pipeline layout, associated with the current render pipeline, contains a bind group layout at index {index} which is incompatible with the bind group layout associated with the bind group at {index}&quot;</span>)]
     </span>IncompatibleBindGroup {
         index: u32,
         <span class="comment">//expected: BindGroupLayoutId,
         //provided: Option&lt;(BindGroupLayoutId, BindGroupId)&gt;,
     </span>},
-    <span class="attr">#[error(<span class="string">&quot;vertex {last_vertex} extends beyond limit {vertex_limit} imposed by the buffer in slot {slot}. Did you bind the correct `Vertex` step-rate vertex buffer?&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Vertex {last_vertex} extends beyond limit {vertex_limit} imposed by the buffer in slot {slot}. Did you bind the correct `Vertex` step-rate vertex buffer?&quot;</span>)]
     </span>VertexBeyondLimit {
         last_vertex: u32,
         vertex_limit: u32,
         slot: u32,
     },
-    <span class="attr">#[error(<span class="string">&quot;instance {last_instance} extends beyond limit {instance_limit} imposed by the buffer in slot {slot}. Did you bind the correct `Instance` step-rate vertex buffer?&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Instance {last_instance} extends beyond limit {instance_limit} imposed by the buffer in slot {slot}. Did you bind the correct `Instance` step-rate vertex buffer?&quot;</span>)]
     </span>InstanceBeyondLimit {
         last_instance: u32,
         instance_limit: u32,
         slot: u32,
     },
-    <span class="attr">#[error(<span class="string">&quot;index {last_index} extends beyond limit {index_limit}. Did you bind the correct index buffer?&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Index {last_index} extends beyond limit {index_limit}. Did you bind the correct index buffer?&quot;</span>)]
     </span>IndexBeyondLimit { last_index: u32, index_limit: u32 },
     <span class="attr">#[error(
-        <span class="string">&quot;pipeline index format ({pipeline:?}) and buffer index format ({buffer:?}) do not match&quot;
+        <span class="string">&quot;Pipeline index format ({pipeline:?}) and buffer index format ({buffer:?}) do not match&quot;
     </span>)]
     </span>UnmatchedIndexFormats {
         pipeline: wgt::IndexFormat,
@@ -308,28 +311,29 @@
 <span class="doccomment">/// Error encountered when encoding a render command.
 /// This is the shared error set between render bundles and passes.
 </span><span class="attr">#[derive(Clone, Debug, Error)]
+#[non_exhaustive]
 </span><span class="kw">pub enum </span>RenderCommandError {
-    <span class="attr">#[error(<span class="string">&quot;bind group {0:?} is invalid&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Bind group {0:?} is invalid&quot;</span>)]
     </span>InvalidBindGroup(id::BindGroupId),
-    <span class="attr">#[error(<span class="string">&quot;render bundle {0:?} is invalid&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Render bundle {0:?} is invalid&quot;</span>)]
     </span>InvalidRenderBundle(id::RenderBundleId),
-    <span class="attr">#[error(<span class="string">&quot;bind group index {index} is greater than the device&#39;s requested `max_bind_group` limit {max}&quot;</span>)]
-    </span>BindGroupIndexOutOfRange { index: u8, max: u32 },
-    <span class="attr">#[error(<span class="string">&quot;dynamic buffer offset {0} does not respect device&#39;s requested `{1}` limit {2}&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Bind group index {index} is greater than the device&#39;s requested `max_bind_group` limit {max}&quot;</span>)]
+    </span>BindGroupIndexOutOfRange { index: u32, max: u32 },
+    <span class="attr">#[error(<span class="string">&quot;Dynamic buffer offset {0} does not respect device&#39;s requested `{1}` limit {2}&quot;</span>)]
     </span>UnalignedBufferOffset(u64, <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str, u32),
-    <span class="attr">#[error(<span class="string">&quot;number of buffer offsets ({actual}) does not match the number of dynamic bindings ({expected})&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Number of buffer offsets ({actual}) does not match the number of dynamic bindings ({expected})&quot;</span>)]
     </span>InvalidDynamicOffsetCount { actual: usize, expected: usize },
-    <span class="attr">#[error(<span class="string">&quot;render pipeline {0:?} is invalid&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Render pipeline {0:?} is invalid&quot;</span>)]
     </span>InvalidPipeline(id::RenderPipelineId),
     <span class="attr">#[error(<span class="string">&quot;QuerySet {0:?} is invalid&quot;</span>)]
     </span>InvalidQuerySet(id::QuerySetId),
     <span class="attr">#[error(<span class="string">&quot;Render pipeline targets are incompatible with render pass&quot;</span>)]
     </span>IncompatiblePipelineTargets(<span class="attr">#[from] </span><span class="kw">crate</span>::device::RenderPassCompatibilityError),
-    <span class="attr">#[error(<span class="string">&quot;pipeline writes to depth/stencil, while the pass has read-only depth/stencil&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Pipeline writes to depth/stencil, while the pass has read-only depth/stencil&quot;</span>)]
     </span>IncompatiblePipelineRods,
     <span class="attr">#[error(transparent)]
     </span>UsageConflict(<span class="attr">#[from] </span>UsageConflict),
-    <span class="attr">#[error(<span class="string">&quot;buffer {0:?} is destroyed&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Buffer {0:?} is destroyed&quot;</span>)]
     </span>DestroyedBuffer(id::BufferId),
     <span class="attr">#[error(transparent)]
     </span>MissingBufferUsage(<span class="attr">#[from] </span>MissingBufferUsageError),
@@ -396,7 +400,7 @@
 )]
 </span><span class="kw">pub enum </span>RenderCommand {
     SetBindGroup {
-        index: u8,
+        index: u32,
         num_dynamic_offsets: u8,
         bind_group_id: id::BindGroupId,
     },

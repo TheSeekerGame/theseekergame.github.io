@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_ecs-0.10.1/src/schedule/executor/multi_threaded.rs`."><title>multi_threaded.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="bevy_ecs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../../source-files.js"></script><script defer src="../../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../bevy_ecs/index.html"><img class="rust-logo" src="../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_ecs-0.11.0/src/schedule/executor/multi_threaded.rs`."><title>multi_threaded.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="bevy_ecs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../../source-files.js"></script><script defer src="../../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../bevy_ecs/index.html"><img class="rust-logo" src="../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -634,7 +634,119 @@
 <a href="#634" id="634">634</a>
 <a href="#635" id="635">635</a>
 <a href="#636" id="636">636</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span>std::sync::Arc;
+<a href="#637" id="637">637</a>
+<a href="#638" id="638">638</a>
+<a href="#639" id="639">639</a>
+<a href="#640" id="640">640</a>
+<a href="#641" id="641">641</a>
+<a href="#642" id="642">642</a>
+<a href="#643" id="643">643</a>
+<a href="#644" id="644">644</a>
+<a href="#645" id="645">645</a>
+<a href="#646" id="646">646</a>
+<a href="#647" id="647">647</a>
+<a href="#648" id="648">648</a>
+<a href="#649" id="649">649</a>
+<a href="#650" id="650">650</a>
+<a href="#651" id="651">651</a>
+<a href="#652" id="652">652</a>
+<a href="#653" id="653">653</a>
+<a href="#654" id="654">654</a>
+<a href="#655" id="655">655</a>
+<a href="#656" id="656">656</a>
+<a href="#657" id="657">657</a>
+<a href="#658" id="658">658</a>
+<a href="#659" id="659">659</a>
+<a href="#660" id="660">660</a>
+<a href="#661" id="661">661</a>
+<a href="#662" id="662">662</a>
+<a href="#663" id="663">663</a>
+<a href="#664" id="664">664</a>
+<a href="#665" id="665">665</a>
+<a href="#666" id="666">666</a>
+<a href="#667" id="667">667</a>
+<a href="#668" id="668">668</a>
+<a href="#669" id="669">669</a>
+<a href="#670" id="670">670</a>
+<a href="#671" id="671">671</a>
+<a href="#672" id="672">672</a>
+<a href="#673" id="673">673</a>
+<a href="#674" id="674">674</a>
+<a href="#675" id="675">675</a>
+<a href="#676" id="676">676</a>
+<a href="#677" id="677">677</a>
+<a href="#678" id="678">678</a>
+<a href="#679" id="679">679</a>
+<a href="#680" id="680">680</a>
+<a href="#681" id="681">681</a>
+<a href="#682" id="682">682</a>
+<a href="#683" id="683">683</a>
+<a href="#684" id="684">684</a>
+<a href="#685" id="685">685</a>
+<a href="#686" id="686">686</a>
+<a href="#687" id="687">687</a>
+<a href="#688" id="688">688</a>
+<a href="#689" id="689">689</a>
+<a href="#690" id="690">690</a>
+<a href="#691" id="691">691</a>
+<a href="#692" id="692">692</a>
+<a href="#693" id="693">693</a>
+<a href="#694" id="694">694</a>
+<a href="#695" id="695">695</a>
+<a href="#696" id="696">696</a>
+<a href="#697" id="697">697</a>
+<a href="#698" id="698">698</a>
+<a href="#699" id="699">699</a>
+<a href="#700" id="700">700</a>
+<a href="#701" id="701">701</a>
+<a href="#702" id="702">702</a>
+<a href="#703" id="703">703</a>
+<a href="#704" id="704">704</a>
+<a href="#705" id="705">705</a>
+<a href="#706" id="706">706</a>
+<a href="#707" id="707">707</a>
+<a href="#708" id="708">708</a>
+<a href="#709" id="709">709</a>
+<a href="#710" id="710">710</a>
+<a href="#711" id="711">711</a>
+<a href="#712" id="712">712</a>
+<a href="#713" id="713">713</a>
+<a href="#714" id="714">714</a>
+<a href="#715" id="715">715</a>
+<a href="#716" id="716">716</a>
+<a href="#717" id="717">717</a>
+<a href="#718" id="718">718</a>
+<a href="#719" id="719">719</a>
+<a href="#720" id="720">720</a>
+<a href="#721" id="721">721</a>
+<a href="#722" id="722">722</a>
+<a href="#723" id="723">723</a>
+<a href="#724" id="724">724</a>
+<a href="#725" id="725">725</a>
+<a href="#726" id="726">726</a>
+<a href="#727" id="727">727</a>
+<a href="#728" id="728">728</a>
+<a href="#729" id="729">729</a>
+<a href="#730" id="730">730</a>
+<a href="#731" id="731">731</a>
+<a href="#732" id="732">732</a>
+<a href="#733" id="733">733</a>
+<a href="#734" id="734">734</a>
+<a href="#735" id="735">735</a>
+<a href="#736" id="736">736</a>
+<a href="#737" id="737">737</a>
+<a href="#738" id="738">738</a>
+<a href="#739" id="739">739</a>
+<a href="#740" id="740">740</a>
+<a href="#741" id="741">741</a>
+<a href="#742" id="742">742</a>
+<a href="#743" id="743">743</a>
+<a href="#744" id="744">744</a>
+<a href="#745" id="745">745</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span>std::{
+    any::Any,
+    sync::{Arc, Mutex},
+};
 
 <span class="kw">use </span>bevy_tasks::{ComputeTaskPool, Scope, TaskPool, ThreadExecutor};
 <span class="kw">use </span>bevy_utils::default;
@@ -650,11 +762,9 @@
     archetype::ArchetypeComponentId,
     prelude::Resource,
     query::Access,
-    schedule::{
-        is_apply_system_buffers, BoxedCondition, ExecutorKind, SystemExecutor, SystemSchedule,
-    },
+    schedule::{is_apply_deferred, BoxedCondition, ExecutorKind, SystemExecutor, SystemSchedule},
     system::BoxedSystem,
-    world::World,
+    world::{unsafe_world_cell::UnsafeWorldCell, World},
 };
 
 <span class="kw">use crate as </span>bevy_ecs;
@@ -689,7 +799,7 @@
 <span class="doccomment">/// Per-system data used by the [`MultiThreadedExecutor`].
 </span><span class="comment">// Copied here because it can&#39;t be read from the system when it&#39;s running.
 </span><span class="kw">struct </span>SystemTaskMetadata {
-    <span class="doccomment">/// The `ArchetypeComponentId` access of the system.
+    <span class="doccomment">/// The [`ArchetypeComponentId`] access of the system.
     </span>archetype_component_access: Access&lt;ArchetypeComponentId&gt;,
     <span class="doccomment">/// Indices of the systems that directly depend on the system.
     </span>dependents: Vec&lt;usize&gt;,
@@ -699,12 +809,18 @@
     </span>is_exclusive: bool,
 }
 
+<span class="doccomment">/// The result of running a system that is sent across a channel.
+</span><span class="kw">struct </span>SystemResult {
+    system_index: usize,
+    success: bool,
+}
+
 <span class="doccomment">/// Runs the schedule using a thread pool. Non-conflicting systems can run in parallel.
 </span><span class="kw">pub struct </span>MultiThreadedExecutor {
     <span class="doccomment">/// Sends system completion events.
-    </span>sender: Sender&lt;usize&gt;,
+    </span>sender: Sender&lt;SystemResult&gt;,
     <span class="doccomment">/// Receives system completion events.
-    </span>receiver: Receiver&lt;usize&gt;,
+    </span>receiver: Receiver&lt;SystemResult&gt;,
     <span class="doccomment">/// Metadata for scheduling and running system tasks.
     </span>system_task_metadata: Vec&lt;SystemTaskMetadata&gt;,
     <span class="doccomment">/// Union of the accesses of all currently running systems.
@@ -713,6 +829,8 @@
     </span>local_thread_running: bool,
     <span class="doccomment">/// Returns `true` if an exclusive system is running.
     </span>exclusive_running: bool,
+    <span class="doccomment">/// The number of systems expected to run.
+    </span>num_systems: usize,
     <span class="doccomment">/// The number of systems that are running.
     </span>num_running_systems: usize,
     <span class="doccomment">/// The number of systems that have completed.
@@ -733,8 +851,12 @@
     </span>completed_systems: FixedBitSet,
     <span class="doccomment">/// Systems that have run but have not had their buffers applied.
     </span>unapplied_systems: FixedBitSet,
-    <span class="doccomment">/// Setting when true applies system buffers after all systems have run
-    </span>apply_final_buffers: bool,
+    <span class="doccomment">/// Setting when true applies deferred system buffers after all systems have run
+    </span>apply_final_deferred: bool,
+    <span class="doccomment">/// When set, tells the executor that a thread has panicked.
+    </span>panic_payload: Arc&lt;Mutex&lt;<span class="prelude-ty">Option</span>&lt;Box&lt;<span class="kw">dyn </span>Any + Send&gt;&gt;&gt;&gt;,
+    <span class="doccomment">/// When set, stops the executor from running any more systems.
+    </span>stop_spawning: bool,
 }
 
 <span class="kw">impl </span>Default <span class="kw">for </span>MultiThreadedExecutor {
@@ -748,8 +870,8 @@
         ExecutorKind::MultiThreaded
     }
 
-    <span class="kw">fn </span>set_apply_final_buffers(<span class="kw-2">&amp;mut </span><span class="self">self</span>, value: bool) {
-        <span class="self">self</span>.apply_final_buffers = value;
+    <span class="kw">fn </span>set_apply_final_deferred(<span class="kw-2">&amp;mut </span><span class="self">self</span>, value: bool) {
+        <span class="self">self</span>.apply_final_deferred = value;
     }
 
     <span class="kw">fn </span>init(<span class="kw-2">&amp;mut </span><span class="self">self</span>, schedule: <span class="kw-2">&amp;</span>SystemSchedule) {
@@ -784,8 +906,8 @@
 
     <span class="kw">fn </span>run(<span class="kw-2">&amp;mut </span><span class="self">self</span>, schedule: <span class="kw-2">&amp;mut </span>SystemSchedule, world: <span class="kw-2">&amp;mut </span>World) {
         <span class="comment">// reset counts
-        </span><span class="kw">let </span>num_systems = schedule.systems.len();
-        <span class="kw">if </span>num_systems == <span class="number">0 </span>{
+        </span><span class="self">self</span>.num_systems = schedule.systems.len();
+        <span class="kw">if </span><span class="self">self</span>.num_systems == <span class="number">0 </span>{
             <span class="kw">return</span>;
         }
         <span class="self">self</span>.num_running_systems = <span class="number">0</span>;
@@ -805,7 +927,6 @@
             .map(|e| e.<span class="number">0</span>.clone());
         <span class="kw">let </span>thread_executor = thread_executor.as_deref();
 
-        <span class="kw">let </span>world = SyncUnsafeCell::from_mut(world);
         <span class="kw">let </span>SyncUnsafeSchedule {
             systems,
             <span class="kw-2">mut </span>conditions,
@@ -818,23 +939,25 @@
                 <span class="comment">// the executor itself is a `Send` future so that it can run
                 // alongside systems that claim the local thread
                 </span><span class="kw">let </span>executor = <span class="kw">async </span>{
-                    <span class="kw">while </span><span class="self">self</span>.num_completed_systems &lt; num_systems {
-                        <span class="comment">// SAFETY: self.ready_systems does not contain running systems
+                    <span class="kw">let </span>world_cell = world.as_unsafe_world_cell();
+                    <span class="kw">while </span><span class="self">self</span>.num_completed_systems &lt; <span class="self">self</span>.num_systems {
+                        <span class="comment">// SAFETY:
+                        // - self.ready_systems does not contain running systems.
+                        // - `world_cell` has mutable access to the entire world.
                         </span><span class="kw">unsafe </span>{
-                            <span class="self">self</span>.spawn_system_tasks(scope, systems, <span class="kw-2">&amp;mut </span>conditions, world);
+                            <span class="self">self</span>.spawn_system_tasks(scope, systems, <span class="kw-2">&amp;mut </span>conditions, world_cell);
                         }
 
                         <span class="kw">if </span><span class="self">self</span>.num_running_systems &gt; <span class="number">0 </span>{
                             <span class="comment">// wait for systems to complete
-                            </span><span class="kw">let </span>index =
-                                <span class="self">self</span>.receiver.recv().<span class="kw">await</span>.expect(
-                                    <span class="string">&quot;A system has panicked so the executor cannot continue.&quot;</span>,
-                                );
+                            </span><span class="kw">if let </span><span class="prelude-val">Ok</span>(result) = <span class="self">self</span>.receiver.recv().<span class="kw">await </span>{
+                                <span class="self">self</span>.finish_system_and_handle_dependents(result);
+                            } <span class="kw">else </span>{
+                                <span class="macro">panic!</span>(<span class="string">&quot;Channel closed unexpectedly!&quot;</span>);
+                            }
 
-                            <span class="self">self</span>.finish_system_and_signal_dependents(index);
-
-                            <span class="kw">while let </span><span class="prelude-val">Ok</span>(index) = <span class="self">self</span>.receiver.try_recv() {
-                                <span class="self">self</span>.finish_system_and_signal_dependents(index);
+                            <span class="kw">while let </span><span class="prelude-val">Ok</span>(result) = <span class="self">self</span>.receiver.try_recv() {
+                                <span class="self">self</span>.finish_system_and_handle_dependents(result);
                             }
 
                             <span class="self">self</span>.rebuild_active_access();
@@ -850,14 +973,22 @@
             },
         );
 
-        <span class="kw">if </span><span class="self">self</span>.apply_final_buffers {
+        <span class="kw">if </span><span class="self">self</span>.apply_final_deferred {
             <span class="comment">// Do one final apply buffers after all systems have completed
-            // SAFETY: all systems have completed, and so no outstanding accesses remain
-            </span><span class="kw">let </span>world = <span class="kw">unsafe </span>{ <span class="kw-2">&amp;mut *</span>world.get() };
-            <span class="comment">// Commands should be applied while on the scope&#39;s thread, not the executor&#39;s thread
-            </span>apply_system_buffers(<span class="kw-2">&amp;</span><span class="self">self</span>.unapplied_systems, systems, world);
+            // Commands should be applied while on the scope&#39;s thread, not the executor&#39;s thread
+            </span><span class="kw">let </span>res = apply_deferred(<span class="kw-2">&amp;</span><span class="self">self</span>.unapplied_systems, systems, world);
+            <span class="kw">if let </span><span class="prelude-val">Err</span>(payload) = res {
+                <span class="kw">let </span><span class="kw-2">mut </span>panic_payload = <span class="self">self</span>.panic_payload.lock().unwrap();
+                <span class="kw-2">*</span>panic_payload = <span class="prelude-val">Some</span>(payload);
+            }
             <span class="self">self</span>.unapplied_systems.clear();
             <span class="macro">debug_assert!</span>(<span class="self">self</span>.unapplied_systems.is_clear());
+        }
+
+        <span class="comment">// check to see if there was a panic
+        </span><span class="kw">let </span><span class="kw-2">mut </span>payload = <span class="self">self</span>.panic_payload.lock().unwrap();
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(payload) = payload.take() {
+            std::panic::resume_unwind(payload);
         }
 
         <span class="macro">debug_assert!</span>(<span class="self">self</span>.ready_systems.is_clear());
@@ -870,12 +1001,16 @@
 }
 
 <span class="kw">impl </span>MultiThreadedExecutor {
-    <span class="kw">pub fn </span>new() -&gt; <span class="self">Self </span>{
+    <span class="doccomment">/// Creates a new multi-threaded executor for use with a [`Schedule`].
+    ///
+    /// [`Schedule`]: crate::schedule::Schedule
+    </span><span class="kw">pub fn </span>new() -&gt; <span class="self">Self </span>{
         <span class="kw">let </span>(sender, receiver) = async_channel::unbounded();
         <span class="self">Self </span>{
             sender,
             receiver,
             system_task_metadata: Vec::new(),
+            num_systems: <span class="number">0</span>,
             num_running_systems: <span class="number">0</span>,
             num_completed_systems: <span class="number">0</span>,
             num_dependencies_remaining: Vec::new(),
@@ -889,19 +1024,23 @@
             skipped_systems: FixedBitSet::new(),
             completed_systems: FixedBitSet::new(),
             unapplied_systems: FixedBitSet::new(),
-            apply_final_buffers: <span class="bool-val">true</span>,
+            apply_final_deferred: <span class="bool-val">true</span>,
+            panic_payload: Arc::new(Mutex::new(<span class="prelude-val">None</span>)),
+            stop_spawning: <span class="bool-val">false</span>,
         }
     }
 
     <span class="doccomment">/// # Safety
-    /// Caller must ensure that `self.ready_systems` does not contain any systems that
-    /// have been mutably borrowed (such as the systems currently running).
+    /// - Caller must ensure that `self.ready_systems` does not contain any systems that
+    ///   have been mutably borrowed (such as the systems currently running).
+    /// - `world_cell` must have permission to access all world data (not counting
+    ///   any world data that is claimed by systems currently running on this executor).
     </span><span class="kw">unsafe fn </span>spawn_system_tasks&lt;<span class="lifetime">&#39;scope</span>&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         scope: <span class="kw-2">&amp;</span>Scope&lt;<span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;scope</span>, ()&gt;,
         systems: <span class="kw-2">&amp;</span><span class="lifetime">&#39;scope </span>[SyncUnsafeCell&lt;BoxedSystem&gt;],
         conditions: <span class="kw-2">&amp;mut </span>Conditions,
-        cell: <span class="kw-2">&amp;</span><span class="lifetime">&#39;scope </span>SyncUnsafeCell&lt;World&gt;,
+        world_cell: UnsafeWorldCell&lt;<span class="lifetime">&#39;scope</span>&gt;,
     ) {
         <span class="kw">if </span><span class="self">self</span>.exclusive_running {
             <span class="kw">return</span>;
@@ -918,10 +1057,7 @@
             // Therefore, no other reference to this system exists and there is no aliasing.
             </span><span class="kw">let </span>system = <span class="kw">unsafe </span>{ <span class="kw-2">&amp;mut *</span>systems[system_index].get() };
 
-            <span class="comment">// SAFETY: No exclusive system is running.
-            // Therefore, there is no existing mutable reference to the world.
-            </span><span class="kw">let </span>world = <span class="kw">unsafe </span>{ <span class="kw-2">&amp;*</span>cell.get() };
-            <span class="kw">if </span>!<span class="self">self</span>.can_run(system_index, system, conditions, world) {
+            <span class="kw">if </span>!<span class="self">self</span>.can_run(system_index, system, conditions, world_cell) {
                 <span class="comment">// NOTE: exclusive systems with ambiguities are susceptible to
                 // being significantly displaced here (compared to single-threaded order)
                 // if systems after them in topological order can run
@@ -931,7 +1067,10 @@
 
             <span class="self">self</span>.ready_systems.set(system_index, <span class="bool-val">false</span>);
 
-            <span class="kw">if </span>!<span class="self">self</span>.should_run(system_index, system, conditions, world) {
+            <span class="comment">// SAFETY: `can_run` returned true, which means that:
+            // - It must have called `update_archetype_component_access` for each run condition.
+            // - There can be no systems running whose accesses would conflict with any conditions.
+            </span><span class="kw">if </span>!<span class="self">self</span>.should_run(system_index, system, conditions, world_cell) {
                 <span class="self">self</span>.skip_system_and_signal_dependents(system_index);
                 <span class="kw">continue</span>;
             }
@@ -940,18 +1079,23 @@
             <span class="self">self</span>.num_running_systems += <span class="number">1</span>;
 
             <span class="kw">if </span><span class="self">self</span>.system_task_metadata[system_index].is_exclusive {
-                <span class="comment">// SAFETY: `can_run` confirmed that no systems are running.
-                // Therefore, there is no existing reference to the world.
+                <span class="comment">// SAFETY: `can_run` returned true for this system, which means
+                // that no other systems currently have access to the world.
+                </span><span class="kw">let </span>world = <span class="kw">unsafe </span>{ world_cell.world_mut() };
+                <span class="comment">// SAFETY: `can_run` returned true for this system,
+                // which means no systems are currently borrowed.
                 </span><span class="kw">unsafe </span>{
-                    <span class="kw">let </span>world = <span class="kw-2">&amp;mut *</span>cell.get();
                     <span class="self">self</span>.spawn_exclusive_system_task(scope, system_index, systems, world);
                 }
                 <span class="kw">break</span>;
             }
 
-            <span class="comment">// SAFETY: No other reference to this system exists.
+            <span class="comment">// SAFETY:
+            // - No other reference to this system exists.
+            // - `can_run` has been called, which calls `update_archetype_component_access` with this system.
+            // - `can_run` returned true, so no systems with conflicting world access are running.
             </span><span class="kw">unsafe </span>{
-                <span class="self">self</span>.spawn_system_task(scope, system_index, systems, world);
+                <span class="self">self</span>.spawn_system_task(scope, system_index, systems, world_cell);
             }
         }
 
@@ -964,7 +1108,7 @@
         system_index: usize,
         system: <span class="kw-2">&amp;mut </span>BoxedSystem,
         conditions: <span class="kw-2">&amp;mut </span>Conditions,
-        world: <span class="kw-2">&amp;</span>World,
+        world: UnsafeWorldCell,
     ) -&gt; bool {
         <span class="kw">let </span>system_meta = <span class="kw-2">&amp;</span><span class="self">self</span>.system_task_metadata[system_index];
         <span class="kw">if </span>system_meta.is_exclusive &amp;&amp; <span class="self">self</span>.num_running_systems &gt; <span class="number">0 </span>{
@@ -1019,12 +1163,18 @@
         <span class="bool-val">true
     </span>}
 
-    <span class="kw">fn </span>should_run(
+    <span class="doccomment">/// # Safety
+    /// * `world` must have permission to read any world data required by
+    ///   the system&#39;s conditions: this includes conditions for the system
+    ///   itself, and conditions for any of the system&#39;s sets.
+    /// * `update_archetype_component` must have been called with `world`
+    ///   for each run condition in `conditions`.
+    </span><span class="kw">unsafe fn </span>should_run(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         system_index: usize,
         _system: <span class="kw-2">&amp;</span>BoxedSystem,
         conditions: <span class="kw-2">&amp;mut </span>Conditions,
-        world: <span class="kw-2">&amp;</span>World,
+        world: UnsafeWorldCell,
     ) -&gt; bool {
         <span class="kw">let </span><span class="kw-2">mut </span>should_run = !<span class="self">self</span>.skipped_systems.contains(system_index);
         <span class="kw">for </span>set_idx <span class="kw">in </span>conditions.sets_with_conditions_of_systems[system_index].ones() {
@@ -1032,7 +1182,11 @@
                 <span class="kw">continue</span>;
             }
 
-            <span class="comment">// evaluate system set&#39;s conditions
+            <span class="comment">// Evaluate the system set&#39;s conditions.
+            // SAFETY:
+            // - The caller ensures that `world` has permission to read any data
+            //   required by the conditions.
+            // - `update_archetype_component_access` has been called for each run condition.
             </span><span class="kw">let </span>set_conditions_met =
                 evaluate_and_fold_conditions(<span class="kw-2">&amp;mut </span>conditions.set_conditions[set_idx], world);
 
@@ -1045,7 +1199,11 @@
             <span class="self">self</span>.evaluated_sets.insert(set_idx);
         }
 
-        <span class="comment">// evaluate system&#39;s conditions
+        <span class="comment">// Evaluate the system&#39;s conditions.
+        // SAFETY:
+        // - The caller ensures that `world` has permission to read any data
+        //   required by the conditions.
+        // - `update_archetype_component_access` has been called for each run condition.
         </span><span class="kw">let </span>system_conditions_met =
             evaluate_and_fold_conditions(<span class="kw-2">&amp;mut </span>conditions.system_conditions[system_index], world);
 
@@ -1059,13 +1217,17 @@
     }
 
     <span class="doccomment">/// # Safety
-    /// Caller must not alias systems that are running.
+    /// - Caller must not alias systems that are running.
+    /// - `world` must have permission to access the world data
+    ///   used by the specified system.
+    /// - `update_archetype_component_access` must have been called with `world`
+    ///   on the system assocaited with `system_index`.
     </span><span class="kw">unsafe fn </span>spawn_system_task&lt;<span class="lifetime">&#39;scope</span>&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         scope: <span class="kw-2">&amp;</span>Scope&lt;<span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;scope</span>, ()&gt;,
         system_index: usize,
         systems: <span class="kw-2">&amp;</span><span class="lifetime">&#39;scope </span>[SyncUnsafeCell&lt;BoxedSystem&gt;],
-        world: <span class="kw-2">&amp;</span><span class="lifetime">&#39;scope </span>World,
+        world: UnsafeWorldCell&lt;<span class="lifetime">&#39;scope</span>&gt;,
     ) {
         <span class="comment">// SAFETY: this system is not running, no other reference exists
         </span><span class="kw">let </span>system = <span class="kw">unsafe </span>{ <span class="kw-2">&amp;mut *</span>systems[system_index].get() };
@@ -1076,23 +1238,33 @@
         </span><span class="kw">let </span>system_span = <span class="macro">info_span!</span>(<span class="string">&quot;system&quot;</span>, name = <span class="kw-2">&amp;*</span>system.name());
 
         <span class="kw">let </span>sender = <span class="self">self</span>.sender.clone();
+        <span class="kw">let </span>panic_payload = <span class="self">self</span>.panic_payload.clone();
         <span class="kw">let </span>task = <span class="kw">async move </span>{
             <span class="attr">#[cfg(feature = <span class="string">&quot;trace&quot;</span>)]
             </span><span class="kw">let </span>system_guard = system_span.enter();
             <span class="kw">let </span>res = std::panic::catch_unwind(AssertUnwindSafe(|| {
-                <span class="comment">// SAFETY: access is compatible
+                <span class="comment">// SAFETY:
+                // - The caller ensures that we have permission to
+                // access the world data used by the system.
+                // - `update_archetype_component_access` has been called.
                 </span><span class="kw">unsafe </span>{ system.run_unsafe((), world) };
             }));
             <span class="attr">#[cfg(feature = <span class="string">&quot;trace&quot;</span>)]
             </span>drop(system_guard);
-            <span class="kw">if </span>res.is_err() {
-                <span class="comment">// close the channel to propagate the error to the
-                // multithreaded executor
-                </span>sender.close();
-            } <span class="kw">else </span>{
-                sender
-                    .try_send(system_index)
-                    .unwrap_or_else(|error| <span class="macro">unreachable!</span>(<span class="string">&quot;{}&quot;</span>, error));
+            <span class="comment">// tell the executor that the system finished
+            </span>sender
+                .try_send(SystemResult {
+                    system_index,
+                    success: res.is_ok(),
+                })
+                .unwrap_or_else(|error| <span class="macro">unreachable!</span>(<span class="string">&quot;{}&quot;</span>, error));
+            <span class="kw">if let </span><span class="prelude-val">Err</span>(payload) = res {
+                <span class="macro">eprintln!</span>(<span class="string">&quot;Encountered a panic in system `{}`!&quot;</span>, <span class="kw-2">&amp;*</span>system.name());
+                <span class="comment">// set the payload to propagate the error
+                </span>{
+                    <span class="kw">let </span><span class="kw-2">mut </span>panic_payload = panic_payload.lock().unwrap();
+                    <span class="kw-2">*</span>panic_payload = <span class="prelude-val">Some</span>(payload);
+                }
             }
         };
 
@@ -1129,26 +1301,28 @@
         </span><span class="kw">let </span>system_span = <span class="macro">info_span!</span>(<span class="string">&quot;system&quot;</span>, name = <span class="kw-2">&amp;*</span>system.name());
 
         <span class="kw">let </span>sender = <span class="self">self</span>.sender.clone();
-        <span class="kw">if </span>is_apply_system_buffers(system) {
+        <span class="kw">let </span>panic_payload = <span class="self">self</span>.panic_payload.clone();
+        <span class="kw">if </span>is_apply_deferred(system) {
             <span class="comment">// TODO: avoid allocation
             </span><span class="kw">let </span>unapplied_systems = <span class="self">self</span>.unapplied_systems.clone();
             <span class="self">self</span>.unapplied_systems.clear();
             <span class="kw">let </span>task = <span class="kw">async move </span>{
                 <span class="attr">#[cfg(feature = <span class="string">&quot;trace&quot;</span>)]
                 </span><span class="kw">let </span>system_guard = system_span.enter();
-                <span class="kw">let </span>res = std::panic::catch_unwind(AssertUnwindSafe(|| {
-                    apply_system_buffers(<span class="kw-2">&amp;</span>unapplied_systems, systems, world);
-                }));
+                <span class="kw">let </span>res = apply_deferred(<span class="kw-2">&amp;</span>unapplied_systems, systems, world);
                 <span class="attr">#[cfg(feature = <span class="string">&quot;trace&quot;</span>)]
                 </span>drop(system_guard);
-                <span class="kw">if </span>res.is_err() {
-                    <span class="comment">// close the channel to propagate the error to the
-                    // multithreaded executor
-                    </span>sender.close();
-                } <span class="kw">else </span>{
-                    sender
-                        .try_send(system_index)
-                        .unwrap_or_else(|error| <span class="macro">unreachable!</span>(<span class="string">&quot;{}&quot;</span>, error));
+                <span class="comment">// tell the executor that the system finished
+                </span>sender
+                    .try_send(SystemResult {
+                        system_index,
+                        success: res.is_ok(),
+                    })
+                    .unwrap_or_else(|error| <span class="macro">unreachable!</span>(<span class="string">&quot;{}&quot;</span>, error));
+                <span class="kw">if let </span><span class="prelude-val">Err</span>(payload) = res {
+                    <span class="comment">// set the payload to propagate the error
+                    </span><span class="kw">let </span><span class="kw-2">mut </span>panic_payload = panic_payload.lock().unwrap();
+                    <span class="kw-2">*</span>panic_payload = <span class="prelude-val">Some</span>(payload);
                 }
             };
 
@@ -1164,14 +1338,21 @@
                 }));
                 <span class="attr">#[cfg(feature = <span class="string">&quot;trace&quot;</span>)]
                 </span>drop(system_guard);
-                <span class="kw">if </span>res.is_err() {
-                    <span class="comment">// close the channel to propagate the error to the
-                    // multithreaded executor
-                    </span>sender.close();
-                } <span class="kw">else </span>{
-                    sender
-                        .try_send(system_index)
-                        .unwrap_or_else(|error| <span class="macro">unreachable!</span>(<span class="string">&quot;{}&quot;</span>, error));
+                <span class="comment">// tell the executor that the system finished
+                </span>sender
+                    .try_send(SystemResult {
+                        system_index,
+                        success: res.is_ok(),
+                    })
+                    .unwrap_or_else(|error| <span class="macro">unreachable!</span>(<span class="string">&quot;{}&quot;</span>, error));
+                <span class="kw">if let </span><span class="prelude-val">Err</span>(payload) = res {
+                    <span class="macro">eprintln!</span>(
+                        <span class="string">&quot;Encountered a panic in exclusive system `{}`!&quot;</span>,
+                        <span class="kw-2">&amp;*</span>system.name()
+                    );
+                    <span class="comment">// set the payload to propagate the error
+                    </span><span class="kw">let </span><span class="kw-2">mut </span>panic_payload = panic_payload.lock().unwrap();
+                    <span class="kw-2">*</span>panic_payload = <span class="prelude-val">Some</span>(payload);
                 }
             };
 
@@ -1184,7 +1365,12 @@
         <span class="self">self</span>.local_thread_running = <span class="bool-val">true</span>;
     }
 
-    <span class="kw">fn </span>finish_system_and_signal_dependents(<span class="kw-2">&amp;mut </span><span class="self">self</span>, system_index: usize) {
+    <span class="kw">fn </span>finish_system_and_handle_dependents(<span class="kw-2">&amp;mut </span><span class="self">self</span>, result: SystemResult) {
+        <span class="kw">let </span>SystemResult {
+            system_index,
+            success,
+        } = result;
+
         <span class="kw">if </span><span class="self">self</span>.system_task_metadata[system_index].is_exclusive {
             <span class="self">self</span>.exclusive_running = <span class="bool-val">false</span>;
         }
@@ -1199,7 +1385,12 @@
         <span class="self">self</span>.running_systems.set(system_index, <span class="bool-val">false</span>);
         <span class="self">self</span>.completed_systems.insert(system_index);
         <span class="self">self</span>.unapplied_systems.insert(system_index);
+
         <span class="self">self</span>.signal_dependents(system_index);
+
+        <span class="kw">if </span>!success {
+            <span class="self">self</span>.stop_spawning_systems();
+        }
     }
 
     <span class="kw">fn </span>skip_system_and_signal_dependents(<span class="kw-2">&amp;mut </span><span class="self">self</span>, system_index: usize) {
@@ -1219,6 +1410,13 @@
         }
     }
 
+    <span class="kw">fn </span>stop_spawning_systems(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+        <span class="kw">if </span>!<span class="self">self</span>.stop_spawning {
+            <span class="self">self</span>.num_systems = <span class="self">self</span>.num_completed_systems + <span class="self">self</span>.num_running_systems;
+            <span class="self">self</span>.stop_spawning = <span class="bool-val">true</span>;
+        }
+    }
+
     <span class="kw">fn </span>rebuild_active_access(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
         <span class="self">self</span>.active_access.clear();
         <span class="kw">for </span>index <span class="kw">in </span><span class="self">self</span>.running_systems.ones() {
@@ -1229,19 +1427,37 @@
     }
 }
 
-<span class="kw">fn </span>apply_system_buffers(
+<span class="kw">fn </span>apply_deferred(
     unapplied_systems: <span class="kw-2">&amp;</span>FixedBitSet,
     systems: <span class="kw-2">&amp;</span>[SyncUnsafeCell&lt;BoxedSystem&gt;],
     world: <span class="kw-2">&amp;mut </span>World,
-) {
+) -&gt; <span class="prelude-ty">Result</span>&lt;(), Box&lt;<span class="kw">dyn </span>std::any::Any + Send&gt;&gt; {
     <span class="kw">for </span>system_index <span class="kw">in </span>unapplied_systems.ones() {
         <span class="comment">// SAFETY: none of these systems are running, no other references exist
         </span><span class="kw">let </span>system = <span class="kw">unsafe </span>{ <span class="kw-2">&amp;mut *</span>systems[system_index].get() };
-        system.apply_buffers(world);
+        <span class="kw">let </span>res = std::panic::catch_unwind(AssertUnwindSafe(|| {
+            system.apply_deferred(world);
+        }));
+        <span class="kw">if let </span><span class="prelude-val">Err</span>(payload) = res {
+            <span class="macro">eprintln!</span>(
+                <span class="string">&quot;Encountered a panic when applying buffers for system `{}`!&quot;</span>,
+                <span class="kw-2">&amp;*</span>system.name()
+            );
+            <span class="kw">return </span><span class="prelude-val">Err</span>(payload);
+        }
     }
+    <span class="prelude-val">Ok</span>(())
 }
 
-<span class="kw">fn </span>evaluate_and_fold_conditions(conditions: <span class="kw-2">&amp;mut </span>[BoxedCondition], world: <span class="kw-2">&amp;</span>World) -&gt; bool {
+<span class="doccomment">/// # Safety
+/// - `world` must have permission to read any world data
+///   required by `conditions`.
+/// - `update_archetype_component_access` must have been called
+///   with `world` for each condition in `conditions`.
+</span><span class="kw">unsafe fn </span>evaluate_and_fold_conditions(
+    conditions: <span class="kw-2">&amp;mut </span>[BoxedCondition],
+    world: UnsafeWorldCell,
+) -&gt; bool {
     <span class="comment">// not short-circuiting is intentional
     </span><span class="attr">#[allow(clippy::unnecessary_fold)]
     </span>conditions
@@ -1249,7 +1465,8 @@
         .map(|condition| {
             <span class="attr">#[cfg(feature = <span class="string">&quot;trace&quot;</span>)]
             </span><span class="kw">let </span>_condition_span = <span class="macro">info_span!</span>(<span class="string">&quot;condition&quot;</span>, name = <span class="kw-2">&amp;*</span>condition.name()).entered();
-            <span class="comment">// SAFETY: caller ensures system access is compatible
+            <span class="comment">// SAFETY: The caller ensures that `world` has permission to
+            // access any data required by the condition.
             </span><span class="kw">unsafe </span>{ condition.run_unsafe((), world) }
         })
         .fold(<span class="bool-val">true</span>, |acc, res| acc &amp;&amp; res)
@@ -1266,7 +1483,8 @@
 }
 
 <span class="kw">impl </span>MainThreadExecutor {
-    <span class="kw">pub fn </span>new() -&gt; <span class="self">Self </span>{
+    <span class="doccomment">/// Creates a new executor that can be used to run systems on the main thread.
+    </span><span class="kw">pub fn </span>new() -&gt; <span class="self">Self </span>{
         MainThreadExecutor(TaskPool::get_thread_executor())
     }
 }

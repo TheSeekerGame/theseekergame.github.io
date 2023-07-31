@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_ecs-0.10.1/src/event.rs`."><title>event.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bevy_ecs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../bevy_ecs/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_ecs-0.11.0/src/event.rs`."><title>event.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bevy_ecs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../bevy_ecs/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1008,27 +1008,85 @@
 <a href="#1008" id="1008">1008</a>
 <a href="#1009" id="1009">1009</a>
 <a href="#1010" id="1010">1010</a>
+<a href="#1011" id="1011">1011</a>
+<a href="#1012" id="1012">1012</a>
+<a href="#1013" id="1013">1013</a>
+<a href="#1014" id="1014">1014</a>
+<a href="#1015" id="1015">1015</a>
+<a href="#1016" id="1016">1016</a>
+<a href="#1017" id="1017">1017</a>
+<a href="#1018" id="1018">1018</a>
+<a href="#1019" id="1019">1019</a>
+<a href="#1020" id="1020">1020</a>
+<a href="#1021" id="1021">1021</a>
+<a href="#1022" id="1022">1022</a>
+<a href="#1023" id="1023">1023</a>
+<a href="#1024" id="1024">1024</a>
+<a href="#1025" id="1025">1025</a>
+<a href="#1026" id="1026">1026</a>
+<a href="#1027" id="1027">1027</a>
+<a href="#1028" id="1028">1028</a>
+<a href="#1029" id="1029">1029</a>
+<a href="#1030" id="1030">1030</a>
+<a href="#1031" id="1031">1031</a>
+<a href="#1032" id="1032">1032</a>
+<a href="#1033" id="1033">1033</a>
+<a href="#1034" id="1034">1034</a>
+<a href="#1035" id="1035">1035</a>
+<a href="#1036" id="1036">1036</a>
+<a href="#1037" id="1037">1037</a>
+<a href="#1038" id="1038">1038</a>
+<a href="#1039" id="1039">1039</a>
+<a href="#1040" id="1040">1040</a>
+<a href="#1041" id="1041">1041</a>
+<a href="#1042" id="1042">1042</a>
+<a href="#1043" id="1043">1043</a>
+<a href="#1044" id="1044">1044</a>
+<a href="#1045" id="1045">1045</a>
+<a href="#1046" id="1046">1046</a>
+<a href="#1047" id="1047">1047</a>
+<a href="#1048" id="1048">1048</a>
+<a href="#1049" id="1049">1049</a>
+<a href="#1050" id="1050">1050</a>
+<a href="#1051" id="1051">1051</a>
+<a href="#1052" id="1052">1052</a>
+<a href="#1053" id="1053">1053</a>
+<a href="#1054" id="1054">1054</a>
+<a href="#1055" id="1055">1055</a>
+<a href="#1056" id="1056">1056</a>
+<a href="#1057" id="1057">1057</a>
+<a href="#1058" id="1058">1058</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! Event handling types.
 
 </span><span class="kw">use crate as </span>bevy_ecs;
 <span class="kw">use </span><span class="kw">crate</span>::system::{Local, Res, ResMut, Resource, SystemParam};
-<span class="kw">use </span>bevy_utils::tracing::trace;
+<span class="kw">pub use </span>bevy_ecs_macros::Event;
+<span class="kw">use </span>bevy_utils::detailed_trace;
 <span class="kw">use </span>std::ops::{Deref, DerefMut};
-<span class="kw">use </span>std::{fmt, hash::Hash, iter::Chain, marker::PhantomData, slice::Iter};
+<span class="kw">use </span>std::{
+    cmp::Ordering,
+    fmt,
+    hash::{Hash, Hasher},
+    iter::Chain,
+    marker::PhantomData,
+    slice::Iter,
+};
 <span class="doccomment">/// A type that can be stored in an [`Events&lt;E&gt;`] resource
 /// You can conveniently access events using the [`EventReader`] and [`EventWriter`] system parameter.
 ///
 /// Events must be thread-safe.
 </span><span class="kw">pub trait </span>Event: Send + Sync + <span class="lifetime">&#39;static </span>{}
-<span class="kw">impl</span>&lt;T&gt; Event <span class="kw">for </span>T <span class="kw">where </span>T: Send + Sync + <span class="lifetime">&#39;static </span>{}
 
-<span class="doccomment">/// An `EventId` uniquely identifies an event.
+<span class="doccomment">/// An `EventId` uniquely identifies an event stored in a specific [`World`].
 ///
 /// An `EventId` can among other things be used to trace the flow of an event from the point it was
 /// sent to the point it was processed.
-</span><span class="attr">#[derive(Eq, PartialEq, Ord, PartialOrd, Hash)]
+///
+/// [`World`]: crate::world::World
 </span><span class="kw">pub struct </span>EventId&lt;E: Event&gt; {
-    <span class="kw">pub </span>id: usize,
+    <span class="doccomment">/// Uniquely identifies the event associated with this ID.
+    </span><span class="comment">// This value corresponds to the order in which each event was added to the world.
+    </span><span class="kw">pub </span>id: usize,
     _marker: PhantomData&lt;E&gt;,
 }
 
@@ -1053,6 +1111,32 @@
             std::any::type_name::&lt;E&gt;().split(<span class="string">&quot;::&quot;</span>).last().unwrap(),
             <span class="self">self</span>.id,
         )
+    }
+}
+
+<span class="kw">impl</span>&lt;E: Event&gt; PartialEq <span class="kw">for </span>EventId&lt;E&gt; {
+    <span class="kw">fn </span>eq(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; bool {
+        <span class="self">self</span>.id == other.id
+    }
+}
+
+<span class="kw">impl</span>&lt;E: Event&gt; Eq <span class="kw">for </span>EventId&lt;E&gt; {}
+
+<span class="kw">impl</span>&lt;E: Event&gt; PartialOrd <span class="kw">for </span>EventId&lt;E&gt; {
+    <span class="kw">fn </span>partial_cmp(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Ordering&gt; {
+        <span class="prelude-val">Some</span>(<span class="self">self</span>.cmp(other))
+    }
+}
+
+<span class="kw">impl</span>&lt;E: Event&gt; Ord <span class="kw">for </span>EventId&lt;E&gt; {
+    <span class="kw">fn </span>cmp(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; Ordering {
+        <span class="self">self</span>.id.cmp(<span class="kw-2">&amp;</span>other.id)
+    }
+}
+
+<span class="kw">impl</span>&lt;E: Event&gt; Hash <span class="kw">for </span>EventId&lt;E&gt; {
+    <span class="kw">fn </span>hash&lt;H: Hasher&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>H) {
+        Hash::hash(<span class="kw-2">&amp;</span><span class="self">self</span>.id, state);
     }
 }
 
@@ -1087,8 +1171,9 @@
 ///
 /// # Example
 /// ```
-/// use bevy_ecs::event::Events;
+/// use bevy_ecs::event::{Event, Events};
 ///
+/// #[derive(Event)]
 /// struct MyEvent {
 ///     value: usize
 /// }
@@ -1155,7 +1240,8 @@
 }
 
 <span class="kw">impl</span>&lt;E: Event&gt; Events&lt;E&gt; {
-    <span class="kw">pub fn </span>oldest_event_count(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
+    <span class="doccomment">/// Returns the index of the oldest event stored in the event buffer.
+    </span><span class="kw">pub fn </span>oldest_event_count(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
         <span class="self">self</span>.events_a
             .start_event_count
             .min(<span class="self">self</span>.events_b.start_event_count)
@@ -1221,11 +1307,13 @@
     ///
     /// # Example
     ///
-    /// The following example shows a useful pattern where some behaviour is triggered if new events are available.
-    /// [`EventReader::clear()`] is used so the same events don&#39;t re-trigger the behaviour the next time the system runs.
+    /// The following example shows a useful pattern where some behavior is triggered if new events are available.
+    /// [`EventReader::clear()`] is used so the same events don&#39;t re-trigger the behavior the next time the system runs.
     ///
     /// ```
     /// # use bevy_ecs::prelude::*;
+    /// #
+    /// #[derive(Event)]
     /// struct CollisionEvent;
     ///
     /// fn play_collision_sound(mut events: EventReader&lt;CollisionEvent&gt;) {
@@ -1267,6 +1355,7 @@
 /// ```
 /// # use bevy_ecs::prelude::*;
 ///
+/// #[derive(Event)]
 /// pub struct MyEvent; // Custom event type.
 /// fn my_system(mut writer: EventWriter&lt;MyEvent&gt;) {
 ///     writer.send(MyEvent);
@@ -1283,7 +1372,7 @@
 ///
 /// ```
 /// # use bevy_ecs::{prelude::*, event::Events};
-///
+/// # #[derive(Event)]
 /// # pub struct MyEvent;
 /// fn send_untyped(mut commands: Commands) {
 ///     // Send an event of a specific type without having to declare that
@@ -1294,7 +1383,7 @@
 ///     // custom events to unknown 3rd party plugins (modding API).
 ///     //
 ///     // NOTE: the event won&#39;t actually be sent until commands get applied during
-///     // apply_system_buffers.
+///     // apply_deferred.
 ///     commands.add(|w: &amp;mut World| {
 ///         w.send_event(MyEvent);
 ///     });
@@ -1307,13 +1396,18 @@
 }
 
 <span class="kw">impl</span>&lt;<span class="lifetime">&#39;w</span>, E: Event&gt; EventWriter&lt;<span class="lifetime">&#39;w</span>, E&gt; {
-    <span class="doccomment">/// Sends an `event`. [`EventReader`]s can then read the event.
+    <span class="doccomment">/// Sends an `event`, which can later be read by [`EventReader`]s.
+    ///
     /// See [`Events`] for details.
     </span><span class="kw">pub fn </span>send(<span class="kw-2">&amp;mut </span><span class="self">self</span>, event: E) {
         <span class="self">self</span>.events.send(event);
     }
 
-    <span class="kw">pub fn </span>send_batch(<span class="kw-2">&amp;mut </span><span class="self">self</span>, events: <span class="kw">impl </span>IntoIterator&lt;Item = E&gt;) {
+    <span class="doccomment">/// Sends a list of `events` all at once, which can later be read by [`EventReader`]s.
+    /// This is more efficient than sending each event individually.
+    ///
+    /// See [`Events`] for details.
+    </span><span class="kw">pub fn </span>send_batch(<span class="kw-2">&amp;mut </span><span class="self">self</span>, events: <span class="kw">impl </span>IntoIterator&lt;Item = E&gt;) {
         <span class="self">self</span>.events.extend(events);
     }
 
@@ -1326,7 +1420,9 @@
     }
 }
 
-<span class="attr">#[derive(Debug)]
+<span class="doccomment">/// Stores the state for an [`EventReader`].
+/// Access to the [`Events&lt;E&gt;`] resource is required to read any incoming events.
+</span><span class="attr">#[derive(Debug)]
 </span><span class="kw">pub struct </span>ManualEventReader&lt;E: Event&gt; {
     last_event_count: usize,
     _marker: PhantomData&lt;E&gt;,
@@ -1386,7 +1482,8 @@
     }
 }
 
-<span class="kw">pub struct </span>ManualEventIterator&lt;<span class="lifetime">&#39;a</span>, E: Event&gt; {
+<span class="doccomment">/// An iterator that yields any unread events from an [`EventReader`] or [`ManualEventReader`].
+</span><span class="kw">pub struct </span>ManualEventIterator&lt;<span class="lifetime">&#39;a</span>, E: Event&gt; {
     iter: ManualEventIteratorWithId&lt;<span class="lifetime">&#39;a</span>, E&gt;,
 }
 
@@ -1422,19 +1519,17 @@
     }
 }
 
-<span class="attr">#[derive(Debug)]
+<span class="doccomment">/// An iterator that yields any unread events (and their IDs) from an [`EventReader`] or [`ManualEventReader`].
+</span><span class="attr">#[derive(Debug)]
 </span><span class="kw">pub struct </span>ManualEventIteratorWithId&lt;<span class="lifetime">&#39;a</span>, E: Event&gt; {
     reader: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>ManualEventReader&lt;E&gt;,
     chain: Chain&lt;Iter&lt;<span class="lifetime">&#39;a</span>, EventInstance&lt;E&gt;&gt;, Iter&lt;<span class="lifetime">&#39;a</span>, EventInstance&lt;E&gt;&gt;&gt;,
     unread: usize,
 }
 
-<span class="kw">fn </span>event_trace&lt;E: Event&gt;(id: EventId&lt;E&gt;) {
-    <span class="macro">trace!</span>(<span class="string">&quot;EventReader::iter() -&gt; {}&quot;</span>, id);
-}
-
 <span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, E: Event&gt; ManualEventIteratorWithId&lt;<span class="lifetime">&#39;a</span>, E&gt; {
-    <span class="kw">pub fn </span>new(reader: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>ManualEventReader&lt;E&gt;, events: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Events&lt;E&gt;) -&gt; <span class="self">Self </span>{
+    <span class="doccomment">/// Creates a new iterator that yields any `events` that have not yet been seen by `reader`.
+    </span><span class="kw">pub fn </span>new(reader: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>ManualEventReader&lt;E&gt;, events: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Events&lt;E&gt;) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span>a_index = (reader.last_event_count).saturating_sub(events.events_a.start_event_count);
         <span class="kw">let </span>b_index = (reader.last_event_count).saturating_sub(events.events_b.start_event_count);
         <span class="kw">let </span>a = events.events_a.get(a_index..).unwrap_or_default();
@@ -1469,7 +1564,7 @@
             .map(|instance| (<span class="kw-2">&amp;</span>instance.event, instance.event_id))
         {
             <span class="prelude-val">Some</span>(item) =&gt; {
-                event_trace(item.<span class="number">1</span>);
+                <span class="macro">detailed_trace!</span>(<span class="string">&quot;EventReader::iter() -&gt; {}&quot;</span>, item.<span class="number">1</span>);
                 <span class="self">self</span>.reader.last_event_count += <span class="number">1</span>;
                 <span class="self">self</span>.unread -= <span class="number">1</span>;
                 <span class="prelude-val">Some</span>(item)
@@ -1523,7 +1618,7 @@
             id: <span class="self">self</span>.event_count,
             _marker: PhantomData,
         };
-        <span class="macro">trace!</span>(<span class="string">&quot;Events::send() -&gt; id: {}&quot;</span>, event_id);
+        <span class="macro">detailed_trace!</span>(<span class="string">&quot;Events::send() -&gt; id: {}&quot;</span>, event_id);
 
         <span class="kw">let </span>event_instance = EventInstance { event_id, event };
 
@@ -1584,12 +1679,13 @@
         <span class="self">self</span>.events_b.clear();
     }
 
-    <span class="attr">#[inline]
+    <span class="doccomment">/// Returns the number of events currently stored in the event buffer.
+    </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>len(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
         <span class="self">self</span>.events_a.len() + <span class="self">self</span>.events_b.len()
     }
 
-    <span class="doccomment">/// Returns true if there are no events in this collection.
+    <span class="doccomment">/// Returns true if there are no events currently stored in the event buffer.
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>is_empty(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
         <span class="self">self</span>.len() == <span class="number">0
@@ -1664,7 +1760,7 @@
         <span class="self">self</span>.events_b.extend(events);
 
         <span class="kw">if </span>old_count != event_count {
-            <span class="macro">trace!</span>(
+            <span class="macro">detailed_trace!</span>(
                 <span class="string">&quot;Events::extend() -&gt; ids: ({}..{})&quot;</span>,
                 <span class="self">self</span>.event_count,
                 event_count
@@ -1681,7 +1777,7 @@
 
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
 
-    <span class="attr">#[derive(Copy, Clone, PartialEq, Eq, Debug)]
+    <span class="attr">#[derive(Event, Copy, Clone, PartialEq, Eq, Debug)]
     </span><span class="kw">struct </span>TestEvent {
         i: usize,
     }
@@ -1784,7 +1880,7 @@
         reader.iter(events).cloned().collect::&lt;Vec&lt;E&gt;&gt;()
     }
 
-    <span class="attr">#[derive(PartialEq, Eq, Debug)]
+    <span class="attr">#[derive(Event, PartialEq, Eq, Debug)]
     </span><span class="kw">struct </span>E(usize);
 
     <span class="kw">fn </span>events_clear_and_read_impl(clear_func: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span>Events&lt;E&gt;)) {
@@ -1949,7 +2045,7 @@
         world.send_event(TestEvent { i: <span class="number">4 </span>});
 
         <span class="kw">let </span><span class="kw-2">mut </span>schedule = Schedule::new();
-        schedule.add_system(|<span class="kw-2">mut </span>events: EventReader&lt;TestEvent&gt;| {
+        schedule.add_systems(|<span class="kw-2">mut </span>events: EventReader&lt;TestEvent&gt;| {
             <span class="kw">let </span><span class="kw-2">mut </span>iter = events.iter();
 
             <span class="macro">assert_eq!</span>(iter.next(), <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>TestEvent { i: <span class="number">0 </span>}));
@@ -1991,7 +2087,7 @@
         <span class="macro">assert!</span>(last.is_none(), <span class="string">&quot;EventReader should be empty&quot;</span>);
     }
 
-    <span class="attr">#[derive(Clone, PartialEq, Debug, Default)]
+    <span class="attr">#[derive(Event, Clone, PartialEq, Debug, Default)]
     </span><span class="kw">struct </span>EmptyTestEvent;
 
     <span class="attr">#[test]

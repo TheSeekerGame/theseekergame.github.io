@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_ecs-0.10.1/src/system/system.rs`."><title>system.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_ecs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../bevy_ecs/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_ecs-0.11.0/src/system/system.rs`."><title>system.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_ecs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../bevy_ecs/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -128,13 +128,48 @@
 <a href="#128" id="128">128</a>
 <a href="#129" id="129">129</a>
 <a href="#130" id="130">130</a>
+<a href="#131" id="131">131</a>
+<a href="#132" id="132">132</a>
+<a href="#133" id="133">133</a>
+<a href="#134" id="134">134</a>
+<a href="#135" id="135">135</a>
+<a href="#136" id="136">136</a>
+<a href="#137" id="137">137</a>
+<a href="#138" id="138">138</a>
+<a href="#139" id="139">139</a>
+<a href="#140" id="140">140</a>
+<a href="#141" id="141">141</a>
+<a href="#142" id="142">142</a>
+<a href="#143" id="143">143</a>
+<a href="#144" id="144">144</a>
+<a href="#145" id="145">145</a>
+<a href="#146" id="146">146</a>
+<a href="#147" id="147">147</a>
+<a href="#148" id="148">148</a>
+<a href="#149" id="149">149</a>
+<a href="#150" id="150">150</a>
+<a href="#151" id="151">151</a>
+<a href="#152" id="152">152</a>
+<a href="#153" id="153">153</a>
+<a href="#154" id="154">154</a>
+<a href="#155" id="155">155</a>
+<a href="#156" id="156">156</a>
+<a href="#157" id="157">157</a>
+<a href="#158" id="158">158</a>
+<a href="#159" id="159">159</a>
+<a href="#160" id="160">160</a>
+<a href="#161" id="161">161</a>
+<a href="#162" id="162">162</a>
+<a href="#163" id="163">163</a>
+<a href="#164" id="164">164</a>
+<a href="#165" id="165">165</a>
+<a href="#166" id="166">166</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>bevy_utils::tracing::warn;
 <span class="kw">use </span>core::fmt::Debug;
 
-<span class="kw">use crate</span>::{
-    archetype::ArchetypeComponentId, change_detection::MAX_CHANGE_AGE, component::ComponentId,
-    query::Access, world::World,
-};
+<span class="kw">use </span><span class="kw">crate</span>::component::Tick;
+<span class="kw">use </span><span class="kw">crate</span>::world::unsafe_world_cell::UnsafeWorldCell;
+<span class="kw">use crate</span>::{archetype::ArchetypeComponentId, component::ComponentId, query::Access, world::World};
 
 <span class="kw">use </span>std::any::TypeId;
 <span class="kw">use </span>std::borrow::Cow;
@@ -144,12 +179,12 @@
 /// Systems are functions with all arguments implementing
 /// [`SystemParam`](crate::system::SystemParam).
 ///
-/// Systems are added to an application using `App::add_system(my_system)`
+/// Systems are added to an application using `App::add_systems(Update, my_system)`
 /// or similar methods, and will generally run once per pass of the main loop.
 ///
 /// Systems are executed in parallel, in opportunistic order; data access is managed automatically.
 /// It&#39;s possible to specify explicit execution order between specific systems,
-/// see [`IntoSystemConfig`](crate::schedule::IntoSystemConfig).
+/// see [`IntoSystemConfigs`](crate::schedule::IntoSystemConfigs).
 </span><span class="kw">pub trait </span>System: Send + Sync + <span class="lifetime">&#39;static </span>{
     <span class="doccomment">/// The system&#39;s input. See [`In`](crate::system::In) for
     /// [`FunctionSystem`](crate::system::FunctionSystem)s.
@@ -171,73 +206,110 @@
     </span><span class="kw">fn </span>is_exclusive(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool;
 
     <span class="doccomment">/// Runs the system with the given input in the world. Unlike [`System::run`], this function
-    /// takes a shared reference to [`World`] and may therefore break Rust&#39;s aliasing rules, making
-    /// it unsafe to call.
+    /// can be called in parallel with other systems and may break Rust&#39;s aliasing rules
+    /// if used incorrectly, making it unsafe to call.
     ///
     /// # Safety
     ///
-    /// This might access world and resources in an unsafe manner. This should only be called in one
-    /// of the following contexts:
-    ///     1. This system is the only system running on the given world across all threads.
-    ///     2. This system only runs in parallel with other systems that do not conflict with the
-    ///        [`System::archetype_component_access()`].
-    </span><span class="kw">unsafe fn </span>run_unsafe(<span class="kw-2">&amp;mut </span><span class="self">self</span>, input: <span class="self">Self</span>::In, world: <span class="kw-2">&amp;</span>World) -&gt; <span class="self">Self</span>::Out;
+    /// - The caller must ensure that `world` has permission to access any world data
+    ///   registered in [`Self::archetype_component_access`]. There must be no conflicting
+    ///   simultaneous accesses while the system is running.
+    /// - The method [`Self::update_archetype_component_access`] must be called at some
+    ///   point before this one, with the same exact [`World`]. If `update_archetype_component_access`
+    ///   panics (or otherwise does not return for any reason), this method must not be called.
+    </span><span class="kw">unsafe fn </span>run_unsafe(<span class="kw-2">&amp;mut </span><span class="self">self</span>, input: <span class="self">Self</span>::In, world: UnsafeWorldCell) -&gt; <span class="self">Self</span>::Out;
+
     <span class="doccomment">/// Runs the system with the given input in the world.
+    ///
+    /// For [read-only](ReadOnlySystem) systems, see [`run_readonly`], which can be called using `&amp;World`.
+    ///
+    /// [`run_readonly`]: ReadOnlySystem::run_readonly
     </span><span class="kw">fn </span>run(<span class="kw-2">&amp;mut </span><span class="self">self</span>, input: <span class="self">Self</span>::In, world: <span class="kw-2">&amp;mut </span>World) -&gt; <span class="self">Self</span>::Out {
+        <span class="kw">let </span>world = world.as_unsafe_world_cell();
         <span class="self">self</span>.update_archetype_component_access(world);
-        <span class="comment">// SAFETY: world and resources are exclusively borrowed
+        <span class="comment">// SAFETY:
+        // - We have exclusive access to the entire world.
+        // - `update_archetype_component_access` has been called.
         </span><span class="kw">unsafe </span>{ <span class="self">self</span>.run_unsafe(input, world) }
     }
-    <span class="kw">fn </span>apply_buffers(<span class="kw-2">&amp;mut </span><span class="self">self</span>, world: <span class="kw-2">&amp;mut </span>World);
+
+    <span class="doccomment">/// Applies any [`Deferred`](crate::system::Deferred) system parameters (or other system buffers) of this system to the world.
+    ///
+    /// This is where [`Commands`](crate::system::Commands) get applied.
+    </span><span class="kw">fn </span>apply_deferred(<span class="kw-2">&amp;mut </span><span class="self">self</span>, world: <span class="kw-2">&amp;mut </span>World);
+
     <span class="doccomment">/// Initialize the system.
     </span><span class="kw">fn </span>initialize(<span class="kw-2">&amp;mut </span><span class="self">self</span>, _world: <span class="kw-2">&amp;mut </span>World);
+
     <span class="doccomment">/// Update the system&#39;s archetype component [`Access`].
-    </span><span class="kw">fn </span>update_archetype_component_access(<span class="kw-2">&amp;mut </span><span class="self">self</span>, world: <span class="kw-2">&amp;</span>World);
-    <span class="kw">fn </span>check_change_tick(<span class="kw-2">&amp;mut </span><span class="self">self</span>, change_tick: u32);
+    ///
+    /// ## Note for implementors
+    /// `world` may only be used to access metadata. This can be done in safe code
+    /// via functions such as [`UnsafeWorldCell::archetypes`].
+    </span><span class="kw">fn </span>update_archetype_component_access(<span class="kw-2">&amp;mut </span><span class="self">self</span>, world: UnsafeWorldCell);
+
+    <span class="doccomment">/// Checks any [`Tick`]s stored on this system and wraps their value if they get too old.
+    ///
+    /// This method must be called periodically to ensure that change detection behaves correctly.
+    /// When using bevy&#39;s default configuration, this will be called for you as needed.
+    </span><span class="kw">fn </span>check_change_tick(<span class="kw-2">&amp;mut </span><span class="self">self</span>, change_tick: Tick);
+
     <span class="doccomment">/// Returns the system&#39;s default [system sets](crate::schedule::SystemSet).
     </span><span class="kw">fn </span>default_system_sets(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Vec&lt;Box&lt;<span class="kw">dyn </span><span class="kw">crate</span>::schedule::SystemSet&gt;&gt; {
         Vec::new()
     }
-    <span class="doccomment">/// Gets the system&#39;s last change tick
-    </span><span class="kw">fn </span>get_last_change_tick(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u32;
-    <span class="doccomment">/// Sets the system&#39;s last change tick
+
+    <span class="doccomment">/// Gets the tick indicating the last time this system ran.
+    </span><span class="kw">fn </span>get_last_run(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Tick;
+
+    <span class="doccomment">/// Overwrites the tick indicating the last time this system ran.
+    ///
     /// # Warning
     /// This is a complex and error-prone operation, that can have unexpected consequences on any system relying on this code.
     /// However, it can be an essential escape hatch when, for example,
     /// you are trying to synchronize representations using change detection and need to avoid infinite recursion.
-    </span><span class="kw">fn </span>set_last_change_tick(<span class="kw-2">&amp;mut </span><span class="self">self</span>, last_change_tick: u32);
+    </span><span class="kw">fn </span>set_last_run(<span class="kw-2">&amp;mut </span><span class="self">self</span>, last_run: Tick);
 }
 
 <span class="doccomment">/// [`System`] types that do not modify the [`World`] when run.
 /// This is implemented for any systems whose parameters all implement [`ReadOnlySystemParam`].
 ///
+/// Note that systems which perform [deferred](System::apply_deferred) mutations (such as with [`Commands`])
+/// may implement this trait.
+///
 /// [`ReadOnlySystemParam`]: crate::system::ReadOnlySystemParam
+/// [`Commands`]: crate::system::Commands
 ///
 /// # Safety
 ///
-/// This must only be implemented for system types which do not mutate the `World`.
-</span><span class="kw">pub unsafe trait </span>ReadOnlySystem: System {}
+/// This must only be implemented for system types which do not mutate the `World`
+/// when [`System::run_unsafe`] is called.
+</span><span class="kw">pub unsafe trait </span>ReadOnlySystem: System {
+    <span class="doccomment">/// Runs this system with the given input in the world.
+    ///
+    /// Unlike [`System::run`], this can be called with a shared reference to the world,
+    /// since this system is known not to modify the world.
+    </span><span class="kw">fn </span>run_readonly(<span class="kw-2">&amp;mut </span><span class="self">self</span>, input: <span class="self">Self</span>::In, world: <span class="kw-2">&amp;</span>World) -&gt; <span class="self">Self</span>::Out {
+        <span class="kw">let </span>world = world.as_unsafe_world_cell_readonly();
+        <span class="self">self</span>.update_archetype_component_access(world);
+        <span class="comment">// SAFETY:
+        // - We have read-only access to the entire world.
+        // - `update_archetype_component_access` has been called.
+        </span><span class="kw">unsafe </span>{ <span class="self">self</span>.run_unsafe(input, world) }
+    }
+}
 
 <span class="doccomment">/// A convenience type alias for a boxed [`System`] trait object.
 </span><span class="kw">pub type </span>BoxedSystem&lt;In = (), Out = ()&gt; = Box&lt;<span class="kw">dyn </span>System&lt;In = In, Out = Out&gt;&gt;;
 
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>check_system_change_tick(
-    last_change_tick: <span class="kw-2">&amp;mut </span>u32,
-    change_tick: u32,
-    system_name: <span class="kw-2">&amp;</span>str,
-) {
-    <span class="kw">let </span>age = change_tick.wrapping_sub(<span class="kw-2">*</span>last_change_tick);
-    <span class="comment">// This comparison assumes that `age` has not overflowed `u32::MAX` before, which will be true
-    // so long as this check always runs before that can happen.
-    </span><span class="kw">if </span>age &gt; MAX_CHANGE_AGE {
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>check_system_change_tick(last_run: <span class="kw-2">&amp;mut </span>Tick, this_run: Tick, system_name: <span class="kw-2">&amp;</span>str) {
+    <span class="kw">if </span>last_run.check_tick(this_run) {
+        <span class="kw">let </span>age = this_run.relative_to(<span class="kw-2">*</span>last_run).get();
         <span class="macro">warn!</span>(
-            <span class="string">&quot;System &#39;{}&#39; has not run for {} ticks. \
+            <span class="string">&quot;System &#39;{system_name}&#39; has not run for {age} ticks. \
             Changes older than {} ticks will not be detected.&quot;</span>,
-            system_name,
-            age,
-            MAX_CHANGE_AGE - <span class="number">1</span>,
+            Tick::MAX.get() - <span class="number">1</span>,
         );
-        <span class="kw-2">*</span>last_change_tick = change_tick.wrapping_sub(MAX_CHANGE_AGE);
     }
 }
 

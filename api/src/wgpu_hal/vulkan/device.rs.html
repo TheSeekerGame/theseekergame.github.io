@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/wgpu-hal-0.15.4/src/vulkan/device.rs`."><title>device.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="wgpu_hal" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../wgpu_hal/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/wgpu-hal-0.16.2/src/vulkan/device.rs`."><title>device.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="wgpu_hal" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../wgpu_hal/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -2030,24 +2030,6 @@
 <a href="#2030" id="2030">2030</a>
 <a href="#2031" id="2031">2031</a>
 <a href="#2032" id="2032">2032</a>
-<a href="#2033" id="2033">2033</a>
-<a href="#2034" id="2034">2034</a>
-<a href="#2035" id="2035">2035</a>
-<a href="#2036" id="2036">2036</a>
-<a href="#2037" id="2037">2037</a>
-<a href="#2038" id="2038">2038</a>
-<a href="#2039" id="2039">2039</a>
-<a href="#2040" id="2040">2040</a>
-<a href="#2041" id="2041">2041</a>
-<a href="#2042" id="2042">2042</a>
-<a href="#2043" id="2043">2043</a>
-<a href="#2044" id="2044">2044</a>
-<a href="#2045" id="2045">2045</a>
-<a href="#2046" id="2046">2046</a>
-<a href="#2047" id="2047">2047</a>
-<a href="#2048" id="2048">2048</a>
-<a href="#2049" id="2049">2049</a>
-<a href="#2050" id="2050">2050</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::conv;
 
 <span class="kw">use </span>arrayvec::ArrayVec;
@@ -2383,7 +2365,7 @@
                 <span class="prelude-val">Err</span>(gpu_alloc::OutOfMemory::OutOfHostMemory)
             }
             <span class="prelude-val">Err</span>(vk::Result::ERROR_TOO_MANY_OBJECTS) =&gt; <span class="macro">panic!</span>(<span class="string">&quot;Too many objects&quot;</span>),
-            <span class="prelude-val">Err</span>(err) =&gt; <span class="macro">panic!</span>(<span class="string">&quot;Unexpected Vulkan error: `{}`&quot;</span>, err),
+            <span class="prelude-val">Err</span>(err) =&gt; <span class="macro">panic!</span>(<span class="string">&quot;Unexpected Vulkan error: `{err}`&quot;</span>),
         }
     }
 
@@ -2410,7 +2392,7 @@
                 <span class="prelude-val">Err</span>(gpu_alloc::DeviceMapError::OutOfHostMemory)
             }
             <span class="prelude-val">Err</span>(vk::Result::ERROR_MEMORY_MAP_FAILED) =&gt; <span class="prelude-val">Err</span>(gpu_alloc::DeviceMapError::MapFailed),
-            <span class="prelude-val">Err</span>(err) =&gt; <span class="macro">panic!</span>(<span class="string">&quot;Unexpected Vulkan error: `{}`&quot;</span>, err),
+            <span class="prelude-val">Err</span>(err) =&gt; <span class="macro">panic!</span>(<span class="string">&quot;Unexpected Vulkan error: `{err}`&quot;</span>),
         }
     }
 
@@ -2723,10 +2705,9 @@
             drop_guard,
             block: <span class="prelude-val">None</span>,
             usage: desc.usage,
-            aspects: <span class="kw">crate</span>::FormatAspects::from(desc.format),
-            format_info: desc.format.describe(),
+            format: desc.format,
             raw_flags: vk::ImageCreateFlags::empty(),
-            copy_size: <span class="kw">crate</span>::CopyExtent::map_extent_to_copy_size(<span class="kw-2">&amp;</span>desc.size, desc.dimension),
+            copy_size: desc.copy_extent(),
             view_formats,
         }
     }
@@ -2791,7 +2772,7 @@
                         <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>pipeline_options),
                     )
                 }
-                .map_err(|e| <span class="kw">crate</span>::PipelineError::Linkage(stage_flags, <span class="macro">format!</span>(<span class="string">&quot;{}&quot;</span>, e)))<span class="question-mark">?</span>;
+                .map_err(|e| <span class="kw">crate</span>::PipelineError::Linkage(stage_flags, <span class="macro">format!</span>(<span class="string">&quot;{e}&quot;</span>)))<span class="question-mark">?</span>;
                 <span class="self">self</span>.create_shader_module_impl(<span class="kw-2">&amp;</span>spv)<span class="question-mark">?
             </span>}
         };
@@ -2984,18 +2965,10 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         desc: <span class="kw-2">&amp;</span><span class="kw">crate</span>::TextureDescriptor,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw">super</span>::Texture, <span class="kw">crate</span>::DeviceError&gt; {
-        <span class="kw">let </span>array_layer_count = <span class="kw">match </span>desc.dimension {
-            wgt::TextureDimension::D3 =&gt; <span class="number">1</span>,
-            <span class="kw">_ </span>=&gt; desc.size.depth_or_array_layers,
-        };
-        <span class="kw">let </span>copy_size = conv::map_extent_to_copy_size(<span class="kw-2">&amp;</span>desc.size, desc.dimension);
+        <span class="kw">let </span>copy_size = desc.copy_extent();
 
         <span class="kw">let </span><span class="kw-2">mut </span>raw_flags = vk::ImageCreateFlags::empty();
-        <span class="kw">if </span>desc.dimension == wgt::TextureDimension::D2
-            &amp;&amp; desc.size.depth_or_array_layers % <span class="number">6 </span>== <span class="number">0
-            </span>&amp;&amp; desc.sample_count == <span class="number">1
-            </span>&amp;&amp; desc.size.width == desc.size.height
-        {
+        <span class="kw">if </span>desc.is_cube_compatible() {
             raw_flags |= vk::ImageCreateFlags::CUBE_COMPATIBLE;
         }
 
@@ -3025,13 +2998,9 @@
             .flags(raw_flags)
             .image_type(conv::map_texture_dimension(desc.dimension))
             .format(original_format)
-            .extent(vk::Extent3D {
-                width: copy_size.width,
-                height: copy_size.height,
-                depth: copy_size.depth,
-            })
+            .extent(conv::map_copy_extent(<span class="kw-2">&amp;</span>copy_size))
             .mip_levels(desc.mip_level_count)
-            .array_layers(array_layer_count)
+            .array_layers(desc.array_layer_count())
             .samples(vk::SampleCountFlags::from_raw(desc.sample_count))
             .tiling(vk::ImageTiling::OPTIMAL)
             .usage(conv::map_texture_usage(desc.usage))
@@ -3077,8 +3046,7 @@
             drop_guard: <span class="prelude-val">None</span>,
             block: <span class="prelude-val">Some</span>(block),
             usage: desc.usage,
-            aspects: <span class="kw">crate</span>::FormatAspects::from(desc.format),
-            format_info: desc.format.describe(),
+            format: desc.format,
             raw_flags,
             copy_size,
             view_formats: wgt_view_formats,
@@ -3098,7 +3066,7 @@
         texture: <span class="kw-2">&amp;</span><span class="kw">super</span>::Texture,
         desc: <span class="kw-2">&amp;</span><span class="kw">crate</span>::TextureViewDescriptor,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw">super</span>::TextureView, <span class="kw">crate</span>::DeviceError&gt; {
-        <span class="kw">let </span>subresource_range = conv::map_subresource_range(<span class="kw-2">&amp;</span>desc.range, texture.aspects);
+        <span class="kw">let </span>subresource_range = conv::map_subresource_range(<span class="kw-2">&amp;</span>desc.range, desc.format);
         <span class="kw">let </span><span class="kw-2">mut </span>vk_info = vk::ImageViewCreateInfo::builder()
             .flags(vk::ImageViewCreateFlags::empty())
             .image(texture.raw)
@@ -3167,8 +3135,6 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         desc: <span class="kw-2">&amp;</span><span class="kw">crate</span>::SamplerDescriptor,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw">super</span>::Sampler, <span class="kw">crate</span>::DeviceError&gt; {
-        <span class="kw">let </span>lod_range = desc.lod_clamp.clone().unwrap_or(<span class="number">0.0</span>..<span class="number">16.0</span>);
-
         <span class="kw">let </span><span class="kw-2">mut </span>vk_info = vk::SamplerCreateInfo::builder()
             .flags(vk::SamplerCreateFlags::empty())
             .mag_filter(conv::map_filter_mode(desc.mag_filter))
@@ -3177,8 +3143,8 @@
             .address_mode_u(conv::map_address_mode(desc.address_modes[<span class="number">0</span>]))
             .address_mode_v(conv::map_address_mode(desc.address_modes[<span class="number">1</span>]))
             .address_mode_w(conv::map_address_mode(desc.address_modes[<span class="number">2</span>]))
-            .min_lod(lod_range.start)
-            .max_lod(lod_range.end);
+            .min_lod(desc.lod_clamp.start)
+            .max_lod(desc.lod_clamp.end);
 
         <span class="kw">if let </span><span class="prelude-val">Some</span>(fun) = desc.compare {
             vk_info = vk_info
@@ -3186,16 +3152,12 @@
                 .compare_op(conv::map_comparison(fun));
         }
 
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(aniso) = desc.anisotropy_clamp {
-            <span class="kw">if </span><span class="self">self
-                </span>.shared
-                .downlevel_flags
-                .contains(wgt::DownlevelFlags::ANISOTROPIC_FILTERING)
-            {
-                vk_info = vk_info
-                    .anisotropy_enable(<span class="bool-val">true</span>)
-                    .max_anisotropy(aniso.get() <span class="kw">as </span>f32);
-            }
+        <span class="kw">if </span>desc.anisotropy_clamp != <span class="number">1 </span>{
+            <span class="comment">// We only enable anisotropy if it is supported, and wgpu-hal interface guarentees
+            // the clamp is in the range [1, 16] which is always supported if anisotropy is.
+            </span>vk_info = vk_info
+                .anisotropy_enable(<span class="bool-val">true</span>)
+                .max_anisotropy(desc.anisotropy_clamp <span class="kw">as </span>f32);
         }
 
         <span class="kw">if let </span><span class="prelude-val">Some</span>(color) = desc.border_color {
@@ -3506,8 +3468,10 @@
                     <span class="kw">let </span>end = start + entry.count;
                     image_infos.extend(desc.textures[start <span class="kw">as </span>usize..end <span class="kw">as </span>usize].iter().map(
                         |binding| {
-                            <span class="kw">let </span>layout =
-                                conv::derive_image_layout(binding.usage, binding.view.aspects());
+                            <span class="kw">let </span>layout = conv::derive_image_layout(
+                                binding.usage,
+                                binding.view.attachment.view_format,
+                            );
                             vk::DescriptorImageInfo::builder()
                                 .image_view(binding.view.raw)
                                 .image_layout(layout)
@@ -3583,7 +3547,7 @@
                         <span class="kw-2">&amp;</span>naga_options,
                         <span class="prelude-val">None</span>,
                     )
-                    .map_err(|e| <span class="kw">crate</span>::ShaderError::Compilation(<span class="macro">format!</span>(<span class="string">&quot;{}&quot;</span>, e)))<span class="question-mark">?</span>,
+                    .map_err(|e| <span class="kw">crate</span>::ShaderError::Compilation(<span class="macro">format!</span>(<span class="string">&quot;{e}&quot;</span>)))<span class="question-mark">?</span>,
                 )
             }
             <span class="kw">crate</span>::ShaderInput::SpirV(spv) =&gt; Cow::Borrowed(spv),
@@ -3701,7 +3665,7 @@
         <span class="kw">let </span><span class="kw-2">mut </span>vk_depth_stencil = vk::PipelineDepthStencilStateCreateInfo::builder();
         <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref </span>ds) = desc.depth_stencil {
             <span class="kw">let </span>vk_format = <span class="self">self</span>.shared.private_caps.map_texture_format(ds.format);
-            <span class="kw">let </span>vk_layout = <span class="kw">if </span>ds.is_read_only() {
+            <span class="kw">let </span>vk_layout = <span class="kw">if </span>ds.is_read_only(desc.primitive.cull_mode) {
                 vk::ImageLayout::DEPTH_STENCIL_READ_ONLY_OPTIMAL
             } <span class="kw">else </span>{
                 vk::ImageLayout::DEPTH_STENCIL_ATTACHMENT_OPTIMAL

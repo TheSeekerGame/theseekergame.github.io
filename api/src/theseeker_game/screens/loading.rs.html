@@ -83,7 +83,6 @@
 <a href="#83" id="83">83</a>
 <a href="#84" id="84">84</a>
 <a href="#85" id="85">85</a>
-<a href="#86" id="86">86</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>bevy::core_pipeline::clear_color::ClearColorConfig;
 
 <span class="kw">use </span><span class="kw">crate</span>::prelude::<span class="kw-2">*</span>;
@@ -94,24 +93,23 @@
 
 <span class="kw">impl</span>&lt;S: States&gt; Plugin <span class="kw">for </span>LoadscreenPlugin&lt;S&gt; {
     <span class="kw">fn </span>build(<span class="kw-2">&amp;</span><span class="self">self</span>, app: <span class="kw-2">&amp;mut </span>App) {
-        app.add_system(setup_loadscreen.in_schedule(OnEnter(<span class="self">self</span>.state.clone())));
-        app.add_system(
-            despawn_all_recursive::&lt;With&lt;LoadscreenCleanup&gt;&gt;
-                .in_schedule(OnExit(<span class="self">self</span>.state.clone())),
+        app.add_systems(
+            OnEnter(<span class="self">self</span>.state.clone()),
+            setup_loadscreen,
         );
-        app.add_system(update_loading_pct.run_if(in_state(<span class="self">self</span>.state.clone())));
+        app.add_systems(
+            Update,
+            update_loading_pct.run_if(in_state(<span class="self">self</span>.state.clone())),
+        );
     }
 }
-
-<span class="attr">#[derive(Component)]
-</span><span class="kw">struct </span>LoadscreenCleanup;
 
 <span class="attr">#[derive(Component)]
 </span><span class="kw">struct </span>LoadingProgressIndicator;
 
 <span class="kw">fn </span>setup_loadscreen(<span class="kw-2">mut </span>commands: Commands) {
     commands.spawn((
-        LoadscreenCleanup,
+        StateDespawnMarker,
         Camera2dBundle {
             camera_2d: Camera2d {
                 clear_color: ClearColorConfig::Custom(Color::BLACK),
@@ -122,18 +120,17 @@
 
     <span class="kw">let </span>container = commands
         .spawn((
-            LoadscreenCleanup,
+            StateDespawnMarker,
             NodeBundle {
                 background_color: BackgroundColor(Color::GRAY),
                 style: Style {
-                    size: Size::new(Val::Auto, Val::Auto),
+                    width: Val::Auto,
+                    height: Val::Auto,
                     position_type: PositionType::Absolute,
-                    position: UiRect {
-                        bottom: Val::Percent(<span class="number">48.0</span>),
-                        top: Val::Percent(<span class="number">48.0</span>),
-                        left: Val::Percent(<span class="number">20.0</span>),
-                        right: Val::Percent(<span class="number">20.0</span>),
-                    },
+                    bottom: Val::Percent(<span class="number">48.0</span>),
+                    top: Val::Percent(<span class="number">48.0</span>),
+                    left: Val::Percent(<span class="number">20.0</span>),
+                    right: Val::Percent(<span class="number">20.0</span>),
                     padding: UiRect::all(Val::Px(<span class="number">2.0</span>)),
                     flex_direction: FlexDirection::Column,
                     justify_content: JustifyContent::Center,
@@ -150,7 +147,8 @@
             NodeBundle {
                 background_color: BackgroundColor(Color::WHITE),
                 style: Style {
-                    size: Size::new(Val::Percent(<span class="number">0.0</span>), Val::Percent(<span class="number">100.0</span>)),
+                    width: Val::Percent(<span class="number">0.0</span>),
+                    height: Val::Percent(<span class="number">100.0</span>),
                     ..Default::default()
                 },
                 ..Default::default()
@@ -167,7 +165,7 @@
 ) {
     <span class="kw">let </span>progress: f32 = progress.progress().into();
     <span class="kw">for </span><span class="kw-2">mut </span>style <span class="kw">in </span>q.iter_mut() {
-        style.size.width = Val::Percent(progress * <span class="number">100.0</span>);
+        style.width = Val::Percent(progress * <span class="number">100.0</span>);
     }
 }
 </code></pre></div></section></main></body></html>

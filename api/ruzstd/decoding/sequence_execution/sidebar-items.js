@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["execute_sequences"]};
+window.SIDEBAR_ITEMS = {"enum":["ExecuteSequencesError"],"fn":["execute_sequences"]};

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/wgpu-0.15.1/src/backend/direct.rs`."><title>direct.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="wgpu" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../wgpu/index.html"><img src="https://raw.githubusercontent.com/gfx-rs/wgpu/master/logo.png" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/wgpu-0.16.3/src/backend/direct.rs`."><title>direct.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="wgpu" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../wgpu/index.html"><img src="https://raw.githubusercontent.com/gfx-rs/wgpu/master/logo.png" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -3068,11 +3068,6 @@
 <a href="#3068" id="3068">3068</a>
 <a href="#3069" id="3069">3069</a>
 <a href="#3070" id="3070">3070</a>
-<a href="#3071" id="3071">3071</a>
-<a href="#3072" id="3072">3072</a>
-<a href="#3073" id="3073">3073</a>
-<a href="#3074" id="3074">3074</a>
-<a href="#3075" id="3075">3075</a>
 </pre></div><pre class="rust"><code><span class="kw">use crate</span>::{
     context::{ObjectId, Unused},
     AdapterInfo, BindGroupDescriptor, BindGroupLayoutDescriptor, BindingResource, BufferBinding,
@@ -3116,8 +3111,7 @@
 }
 
 <span class="kw">impl </span>Context {
-    <span class="attr">#[cfg(any(not(target_arch = <span class="string">&quot;wasm32&quot;</span>), feature = <span class="string">&quot;emscripten&quot;</span>))]
-    </span><span class="kw">pub unsafe fn </span>from_hal_instance&lt;A: wgc::hub::HalApi&gt;(hal_instance: A::Instance) -&gt; <span class="self">Self </span>{
+    <span class="kw">pub unsafe fn </span>from_hal_instance&lt;A: wgc::hub::HalApi&gt;(hal_instance: A::Instance) -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>(<span class="kw">unsafe </span>{
             wgc::hub::Global::from_hal_instance::&lt;A&gt;(
                 <span class="string">&quot;wgpu&quot;</span>,
@@ -3144,14 +3138,12 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0
     </span>}
 
-    <span class="attr">#[cfg(any(not(target_arch = <span class="string">&quot;wasm32&quot;</span>), feature = <span class="string">&quot;emscripten&quot;</span>))]
-    </span><span class="kw">pub fn </span>enumerate_adapters(<span class="kw-2">&amp;</span><span class="self">self</span>, backends: wgt::Backends) -&gt; Vec&lt;wgc::id::AdapterId&gt; {
+    <span class="kw">pub fn </span>enumerate_adapters(<span class="kw-2">&amp;</span><span class="self">self</span>, backends: wgt::Backends) -&gt; Vec&lt;wgc::id::AdapterId&gt; {
         <span class="self">self</span>.<span class="number">0
             </span>.enumerate_adapters(wgc::instance::AdapterInputs::Mask(backends, |<span class="kw">_</span>| ()))
     }
 
-    <span class="attr">#[cfg(any(not(target_arch = <span class="string">&quot;wasm32&quot;</span>), feature = <span class="string">&quot;emscripten&quot;</span>))]
-    </span><span class="kw">pub unsafe fn </span>create_adapter_from_hal&lt;A: wgc::hub::HalApi&gt;(
+    <span class="kw">pub unsafe fn </span>create_adapter_from_hal&lt;A: wgc::hub::HalApi&gt;(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         hal_adapter: hal::ExposedAdapter&lt;A&gt;,
     ) -&gt; wgc::id::AdapterId {
@@ -3169,8 +3161,7 @@
         }
     }
 
-    <span class="attr">#[cfg(any(not(target_arch = <span class="string">&quot;wasm32&quot;</span>), feature = <span class="string">&quot;emscripten&quot;</span>))]
-    </span><span class="kw">pub unsafe fn </span>create_device_from_hal&lt;A: wgc::hub::HalApi&gt;(
+    <span class="kw">pub unsafe fn </span>create_device_from_hal&lt;A: wgc::hub::HalApi&gt;(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         adapter: <span class="kw-2">&amp;</span>wgc::id::AdapterId,
         hal_device: hal::OpenDevice&lt;A&gt;,
@@ -3203,8 +3194,7 @@
         <span class="prelude-val">Ok</span>((device, queue))
     }
 
-    <span class="attr">#[cfg(any(not(target_arch = <span class="string">&quot;wasm32&quot;</span>), feature = <span class="string">&quot;emscripten&quot;</span>, feature = <span class="string">&quot;webgl&quot;</span>))]
-    </span><span class="kw">pub unsafe fn </span>create_texture_from_hal&lt;A: wgc::hub::HalApi&gt;(
+    <span class="kw">pub unsafe fn </span>create_texture_from_hal&lt;A: wgc::hub::HalApi&gt;(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         hal_texture: A::Texture,
         device: <span class="kw-2">&amp;</span>Device,
@@ -3229,8 +3219,7 @@
         }
     }
 
-    <span class="attr">#[cfg(any(not(target_arch = <span class="string">&quot;wasm32&quot;</span>), feature = <span class="string">&quot;emscripten&quot;</span>))]
-    </span><span class="kw">pub unsafe fn </span>device_as_hal&lt;A: wgc::hub::HalApi, F: FnOnce(<span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>A::Device&gt;) -&gt; R, R&gt;(
+    <span class="kw">pub unsafe fn </span>device_as_hal&lt;A: wgc::hub::HalApi, F: FnOnce(<span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>A::Device&gt;) -&gt; R, R&gt;(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         device: <span class="kw-2">&amp;</span>Device,
         hal_device_callback: F,
@@ -3241,8 +3230,7 @@
         }
     }
 
-    <span class="attr">#[cfg(any(not(target_arch = <span class="string">&quot;wasm32&quot;</span>), feature = <span class="string">&quot;emscripten&quot;</span>))]
-    </span><span class="kw">pub unsafe fn </span>surface_as_hal_mut&lt;
+    <span class="kw">pub unsafe fn </span>surface_as_hal_mut&lt;
         A: wgc::hub::HalApi,
         F: FnOnce(<span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;mut </span>A::Surface&gt;) -&gt; R,
         R,
@@ -3257,8 +3245,7 @@
         }
     }
 
-    <span class="attr">#[cfg(any(not(target_arch = <span class="string">&quot;wasm32&quot;</span>), feature = <span class="string">&quot;emscripten&quot;</span>))]
-    </span><span class="kw">pub unsafe fn </span>texture_as_hal&lt;A: wgc::hub::HalApi, F: FnOnce(<span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>A::Texture&gt;)&gt;(
+    <span class="kw">pub unsafe fn </span>texture_as_hal&lt;A: wgc::hub::HalApi, F: FnOnce(<span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>A::Texture&gt;)&gt;(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         texture: <span class="kw-2">&amp;</span>Texture,
         hal_texture_callback: F,
@@ -3269,8 +3256,7 @@
         }
     }
 
-    <span class="attr">#[cfg(any(not(target_arch = <span class="string">&quot;wasm32&quot;</span>), feature = <span class="string">&quot;emscripten&quot;</span>))]
-    </span><span class="kw">pub fn </span>generate_report(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; wgc::hub::GlobalReport {
+    <span class="kw">pub fn </span>generate_report(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; wgc::hub::GlobalReport {
         <span class="self">self</span>.<span class="number">0</span>.generate_report()
     }
 
@@ -3279,17 +3265,17 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         layer: <span class="kw-2">*mut </span>std::ffi::c_void,
     ) -&gt; Surface {
-        <span class="kw">let </span>id = <span class="self">self</span>.<span class="number">0</span>.instance_create_surface_metal(layer, ());
+        <span class="kw">let </span>id = <span class="kw">unsafe </span>{ <span class="self">self</span>.<span class="number">0</span>.instance_create_surface_metal(layer, ()) };
         Surface {
             id,
             configured_device: Mutex::default(),
         }
     }
 
-    <span class="attr">#[cfg(all(target_arch = <span class="string">&quot;wasm32&quot;</span>, feature = <span class="string">&quot;webgl&quot;</span>, not(feature = <span class="string">&quot;emscripten&quot;</span>)))]
+    <span class="attr">#[cfg(all(target_arch = <span class="string">&quot;wasm32&quot;</span>, not(target_os = <span class="string">&quot;emscripten&quot;</span>)))]
     </span><span class="kw">pub fn </span>instance_create_surface_from_canvas(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        canvas: <span class="kw-2">&amp;</span>web_sys::HtmlCanvasElement,
+        canvas: web_sys::HtmlCanvasElement,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;Surface, <span class="kw">crate</span>::CreateSurfaceError&gt; {
         <span class="kw">let </span>id = <span class="self">self
             </span>.<span class="number">0
@@ -3301,10 +3287,10 @@
         })
     }
 
-    <span class="attr">#[cfg(all(target_arch = <span class="string">&quot;wasm32&quot;</span>, feature = <span class="string">&quot;webgl&quot;</span>, not(feature = <span class="string">&quot;emscripten&quot;</span>)))]
+    <span class="attr">#[cfg(all(target_arch = <span class="string">&quot;wasm32&quot;</span>, not(target_os = <span class="string">&quot;emscripten&quot;</span>)))]
     </span><span class="kw">pub fn </span>instance_create_surface_from_offscreen_canvas(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        canvas: <span class="kw-2">&amp;</span>web_sys::OffscreenCanvas,
+        canvas: web_sys::OffscreenCanvas,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;Surface, <span class="kw">crate</span>::CreateSurfaceError&gt; {
         <span class="kw">let </span>id = <span class="self">self
             </span>.<span class="number">0
@@ -3383,12 +3369,13 @@
         <span class="self">self</span>.handle_error(sink_mutex, cause, <span class="string">&quot;&quot;</span>, <span class="prelude-val">None</span>, string)
     }
 
-    <span class="kw">fn </span>handle_error_fatal(
+    <span class="attr">#[track_caller]
+    </span><span class="kw">fn </span>handle_error_fatal(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         cause: <span class="kw">impl </span>Error + Send + Sync + <span class="lifetime">&#39;static</span>,
-        string: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
+        operation: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
     ) -&gt; ! {
-        <span class="macro">panic!</span>(<span class="string">&quot;Error in {}: {}&quot;</span>, string, cause);
+        <span class="macro">panic!</span>(<span class="string">&quot;Error in {operation}: {f}&quot;</span>, f = <span class="self">self</span>.format_error(<span class="kw-2">&amp;</span>cause));
     }
 
     <span class="kw">fn </span>format_error(<span class="kw-2">&amp;</span><span class="self">self</span>, err: <span class="kw-2">&amp;</span>(<span class="kw">impl </span>Error + <span class="lifetime">&#39;static</span>)) -&gt; String {
@@ -3428,7 +3415,7 @@
 }
 
 <span class="attr">#[cfg_attr(
-    any(not(target_arch = <span class="string">&quot;wasm32&quot;</span>), feature = <span class="string">&quot;emscripten&quot;</span>),
+    any(not(target_arch = <span class="string">&quot;wasm32&quot;</span>), target_os = <span class="string">&quot;emscripten&quot;</span>),
     allow(unused)
 )]
 </span><span class="kw">fn </span>map_texture_tagged_copy_view(
@@ -3944,7 +3931,7 @@
                     </span>strict_capabilities: <span class="bool-val">true</span>,
                     block_ctx_dump_prefix: <span class="prelude-val">None</span>,
                 };
-                <span class="kw">let </span>parser = naga::front::spv::Parser::new(spv.iter().cloned(), <span class="kw-2">&amp;</span>options);
+                <span class="kw">let </span>parser = naga::front::spv::Frontend::new(spv.iter().cloned(), <span class="kw-2">&amp;</span>options);
                 <span class="kw">let </span>module = parser.parse().unwrap();
                 wgc::pipeline::ShaderModuleSource::Naga(Owned(module))
             }
@@ -3959,7 +3946,7 @@
                     stage,
                     defines: defines.clone(),
                 };
-                <span class="kw">let </span><span class="kw-2">mut </span>parser = naga::front::glsl::Parser::default();
+                <span class="kw">let </span><span class="kw-2">mut </span>parser = naga::front::glsl::Frontend::default();
                 <span class="kw">let </span>module = parser.parse(<span class="kw-2">&amp;</span>options, shader).unwrap();
 
                 wgc::pipeline::ShaderModuleSource::Naga(Owned(module))
@@ -4476,14 +4463,14 @@
         };
         <span class="kw">match </span>wgc::command::RenderBundleEncoder::new(<span class="kw-2">&amp;</span>descriptor, <span class="kw-2">*</span>device, <span class="prelude-val">None</span>) {
             <span class="prelude-val">Ok</span>(encoder) =&gt; (Unused, encoder),
-            <span class="prelude-val">Err</span>(e) =&gt; <span class="macro">panic!</span>(<span class="string">&quot;Error in Device::create_render_bundle_encoder: {}&quot;</span>, e),
+            <span class="prelude-val">Err</span>(e) =&gt; <span class="macro">panic!</span>(<span class="string">&quot;Error in Device::create_render_bundle_encoder: {e}&quot;</span>),
         }
     }
     <span class="attr">#[cfg_attr(target_arch = <span class="string">&quot;wasm32&quot;</span>, allow(unused))]
     </span><span class="kw">fn </span>device_drop(<span class="kw-2">&amp;</span><span class="self">self</span>, device: <span class="kw-2">&amp;</span><span class="self">Self</span>::DeviceId, _device_data: <span class="kw-2">&amp;</span><span class="self">Self</span>::DeviceData) {
         <span class="kw">let </span>global = <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0</span>;
 
-        <span class="attr">#[cfg(any(not(target_arch = <span class="string">&quot;wasm32&quot;</span>), feature = <span class="string">&quot;emscripten&quot;</span>))]
+        <span class="attr">#[cfg(any(not(target_arch = <span class="string">&quot;wasm32&quot;</span>), target_os = <span class="string">&quot;emscripten&quot;</span>))]
         </span>{
             <span class="kw">match </span><span class="macro">wgc::gfx_select!</span>(device =&gt; global.device_poll(<span class="kw-2">*</span>device, wgt::Maintain::Wait)) {
                 <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; (),
@@ -4632,10 +4619,9 @@
         (id, ())
     }
 
-    <span class="kw">fn </span>surface_drop(<span class="kw-2">&amp;</span><span class="self">self</span>, _surface: <span class="kw-2">&amp;</span><span class="self">Self</span>::SurfaceId, _surface_data: <span class="kw-2">&amp;</span><span class="self">Self</span>::SurfaceData) {
-        <span class="comment">//TODO: swapchain needs to hold the surface alive
-        //self.0.surface_drop(*surface)
-    </span>}
+    <span class="kw">fn </span>surface_drop(<span class="kw-2">&amp;</span><span class="self">self</span>, surface: <span class="kw-2">&amp;</span><span class="self">Self</span>::SurfaceId, _surface_data: <span class="kw-2">&amp;</span><span class="self">Self</span>::SurfaceData) {
+        <span class="self">self</span>.<span class="number">0</span>.surface_drop(<span class="kw-2">*</span>surface)
+    }
 
     <span class="kw">fn </span>adapter_drop(<span class="kw-2">&amp;</span><span class="self">self</span>, adapter: <span class="kw-2">&amp;</span><span class="self">Self</span>::AdapterId, _adapter_data: <span class="kw-2">&amp;</span><span class="self">Self</span>::AdapterData) {
         <span class="kw">let </span>global = <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0</span>;
@@ -4773,7 +4759,7 @@
         <span class="kw">let </span>global = <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0</span>;
         <span class="kw">let </span>(id, error) = <span class="macro">wgc::gfx_select!</span>(<span class="kw-2">*</span>pipeline =&gt; global.compute_pipeline_get_bind_group_layout(<span class="kw-2">*</span>pipeline, index, ()));
         <span class="kw">if let </span><span class="prelude-val">Some</span>(err) = error {
-            <span class="macro">panic!</span>(<span class="string">&quot;Error reflecting bind group {}: {}&quot;</span>, index, err);
+            <span class="macro">panic!</span>(<span class="string">&quot;Error reflecting bind group {index}: {err}&quot;</span>);
         }
         (id, ())
     }
@@ -4787,7 +4773,7 @@
         <span class="kw">let </span>global = <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0</span>;
         <span class="kw">let </span>(id, error) = <span class="macro">wgc::gfx_select!</span>(<span class="kw-2">*</span>pipeline =&gt; global.render_pipeline_get_bind_group_layout(<span class="kw-2">*</span>pipeline, index, ()));
         <span class="kw">if let </span><span class="prelude-val">Some</span>(err) = error {
-            <span class="macro">panic!</span>(<span class="string">&quot;Error reflecting bind group {}: {}&quot;</span>, index, err);
+            <span class="macro">panic!</span>(<span class="string">&quot;Error reflecting bind group {index}: {err}&quot;</span>);
         }
         (id, ())
     }
@@ -4929,11 +4915,11 @@
         }
     }
 
-    <span class="kw">fn </span>command_encoder_begin_render_pass&lt;<span class="lifetime">&#39;a</span>&gt;(
+    <span class="kw">fn </span>command_encoder_begin_render_pass(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         encoder: <span class="kw-2">&amp;</span><span class="self">Self</span>::CommandEncoderId,
         _encoder_data: <span class="kw-2">&amp;</span><span class="self">Self</span>::CommandEncoderData,
-        desc: <span class="kw-2">&amp;</span><span class="kw">crate</span>::RenderPassDescriptor&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;_</span>&gt;,
+        desc: <span class="kw-2">&amp;</span><span class="kw">crate</span>::RenderPassDescriptor&lt;<span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>&gt;,
     ) -&gt; (<span class="self">Self</span>::RenderPassId, <span class="self">Self</span>::RenderPassData) {
         <span class="kw">if </span>desc.color_attachments.len() &gt; wgc::MAX_COLOR_ATTACHMENTS {
             <span class="self">self</span>.handle_error_fatal(
@@ -5294,7 +5280,7 @@
         }
     }
 
-    <span class="attr">#[cfg(all(target_arch = <span class="string">&quot;wasm32&quot;</span>, not(feature = <span class="string">&quot;emscripten&quot;</span>)))]
+    <span class="attr">#[cfg(all(target_arch = <span class="string">&quot;wasm32&quot;</span>, not(target_os = <span class="string">&quot;emscripten&quot;</span>)))]
     </span><span class="kw">fn </span>queue_copy_external_image_to_texture(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         queue: <span class="kw-2">&amp;</span><span class="self">Self</span>::QueueId,
@@ -5319,13 +5305,15 @@
         }
     }
 
-    <span class="kw">fn </span>queue_submit&lt;I: Iterator&lt;Item = <span class="self">Self</span>::CommandBufferId&gt;&gt;(
+    <span class="kw">fn </span>queue_submit&lt;I: Iterator&lt;Item = (<span class="self">Self</span>::CommandBufferId, <span class="self">Self</span>::CommandBufferData)&gt;&gt;(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         queue: <span class="kw-2">&amp;</span><span class="self">Self</span>::QueueId,
         _queue_data: <span class="kw-2">&amp;</span><span class="self">Self</span>::QueueData,
         command_buffers: I,
     ) -&gt; (<span class="self">Self</span>::SubmissionIndex, <span class="self">Self</span>::SubmissionIndexData) {
-        <span class="kw">let </span>temp_command_buffers = command_buffers.collect::&lt;SmallVec&lt;[<span class="kw">_</span>; <span class="number">4</span>]&gt;&gt;();
+        <span class="kw">let </span>temp_command_buffers = command_buffers
+            .map(|(i, <span class="kw">_</span>)| i)
+            .collect::&lt;SmallVec&lt;[<span class="kw">_</span>; <span class="number">4</span>]&gt;&gt;();
 
         <span class="kw">let </span>global = <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0</span>;
         <span class="kw">let </span>index = <span class="kw">match </span><span class="macro">wgc::gfx_select!</span>(<span class="kw-2">*</span>queue =&gt; global.queue_submit(<span class="kw-2">*</span>queue, <span class="kw-2">&amp;</span>temp_command_buffers))
@@ -6008,9 +5996,11 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         _pass: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::RenderPassId,
         pass_data: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::RenderPassData,
-        render_bundles: Box&lt;<span class="kw">dyn </span>Iterator&lt;Item = <span class="self">Self</span>::RenderBundleId&gt; + <span class="lifetime">&#39;a</span>&gt;,
+        render_bundles: Box&lt;
+            <span class="kw">dyn </span>Iterator&lt;Item = (<span class="self">Self</span>::RenderBundleId, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">Self</span>::RenderBundleData)&gt; + <span class="lifetime">&#39;a</span>,
+        &gt;,
     ) {
-        <span class="kw">let </span>temp_render_bundles = render_bundles.collect::&lt;SmallVec&lt;[<span class="kw">_</span>; <span class="number">4</span>]&gt;&gt;();
+        <span class="kw">let </span>temp_render_bundles = render_bundles.map(|(i, <span class="kw">_</span>)| i).collect::&lt;SmallVec&lt;[<span class="kw">_</span>; <span class="number">4</span>]&gt;&gt;();
         <span class="kw">unsafe </span>{
             wgpu_render_pass_execute_bundles(
                 pass_data,
@@ -6096,7 +6086,7 @@
 
 <span class="kw">fn </span>default_error_handler(err: <span class="kw">crate</span>::Error) {
     <span class="macro">log::error!</span>(<span class="string">&quot;Handling wgpu errors as fatal by default&quot;</span>);
-    <span class="macro">panic!</span>(<span class="string">&quot;wgpu error: {}\n&quot;</span>, err);
+    <span class="macro">panic!</span>(<span class="string">&quot;wgpu error: {err}\n&quot;</span>);
 }
 
 <span class="attr">#[derive(Debug)]

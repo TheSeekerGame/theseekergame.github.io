@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["BloomCompositeMode"],"struct":["BloomNode","BloomPlugin","BloomPrefilterSettings","BloomSettings"]};
+window.SIDEBAR_ITEMS = {"enum":["BloomCompositeMode"],"struct":["BloomPlugin","BloomPrefilterSettings","BloomSettings"]};

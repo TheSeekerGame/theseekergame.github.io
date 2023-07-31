@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["BitReader"]};
+window.SIDEBAR_ITEMS = {"enum":["GetBitsError"],"struct":["BitReader"]};

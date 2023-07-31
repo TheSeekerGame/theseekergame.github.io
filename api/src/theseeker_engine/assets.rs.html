@@ -145,8 +145,8 @@
 <a href="#145" id="145">145</a>
 <a href="#146" id="146">146</a>
 <a href="#147" id="147">147</a>
+<a href="#148" id="148">148</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>bevy::asset::Asset;
-<span class="kw">use </span>bevy_common_assets::ron::RonAssetPlugin;
 
 <span class="kw">use </span><span class="kw">crate</span>::prelude::<span class="kw-2">*</span>;
 
@@ -162,7 +162,8 @@
 
         <span class="comment">// asset preloading
         </span>app.init_resource::&lt;PreloadedAssets&gt;();
-        app.add_system(
+        app.add_systems(
+            Update,
             watch_preload_dynamic_collections
                 .track_progress()
                 .run_if(in_state(<span class="self">self</span>.loading_state.clone()))
@@ -170,8 +171,9 @@
                 // even though we might be adding more handles for tracking
                 </span>.after(AssetsTrackProgress),
         );
-        app.add_system(
-            finalize_preloaded_dynamic_assets.in_schedule(OnExit(<span class="self">self</span>.loading_state.clone())),
+        app.add_systems(
+            OnExit(<span class="self">self</span>.loading_state.clone()),
+            finalize_preloaded_dynamic_assets,
         );
     }
 }

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["new"],"struct":["BlockDecoder"]};
+window.SIDEBAR_ITEMS = {"enum":["BlockHeaderReadError","BlockSizeError","BlockTypeError","DecodeBlockContentError","DecompressBlockError"],"fn":["new"],"struct":["BlockDecoder"]};

@@ -131,11 +131,11 @@
     <span class="kw">fn </span>build(<span class="kw-2">&amp;</span><span class="self">self</span>, app: <span class="kw-2">&amp;mut </span>App) {
         app.register_clicommand_args(<span class="string">&quot;locale&quot;</span>, cli_locale);
         app.add_systems(
-            (detect_locales, init_l10n)
-                .chain()
-                .in_schedule(OnExit(AppState::AssetsLoading)),
+            OnExit(AppState::AssetsLoading),
+            (detect_locales, init_l10n).chain(),
         );
-        app.add_system(
+        app.add_systems(
+            Update,
             resolve_l10n
                 .in_set(L10nResolveSet)
                 .run_if(not(in_state(AppState::AssetsLoading))),

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_ecs-0.10.1/src/system/function_system.rs`."><title>function_system.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_ecs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../bevy_ecs/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_ecs-0.11.0/src/system/function_system.rs`."><title>function_system.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_ecs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../bevy_ecs/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -656,27 +656,19 @@
 <a href="#656" id="656">656</a>
 <a href="#657" id="657">657</a>
 <a href="#658" id="658">658</a>
-<a href="#659" id="659">659</a>
-<a href="#660" id="660">660</a>
-<a href="#661" id="661">661</a>
-<a href="#662" id="662">662</a>
-<a href="#663" id="663">663</a>
-<a href="#664" id="664">664</a>
-<a href="#665" id="665">665</a>
 </pre></div><pre class="rust"><code><span class="kw">use crate</span>::{
     archetype::{ArchetypeComponentId, ArchetypeGeneration, ArchetypeId},
-    change_detection::MAX_CHANGE_AGE,
-    component::ComponentId,
+    component::{ComponentId, Tick},
     prelude::FromWorld,
     query::{Access, FilteredAccessSet},
     system::{check_system_change_tick, ReadOnlySystemParam, System, SystemParam, SystemParamItem},
-    world::{World, WorldId},
+    world::{unsafe_world_cell::UnsafeWorldCell, World, WorldId},
 };
 
 <span class="kw">use </span>bevy_utils::all_tuples;
 <span class="kw">use </span>std::{any::TypeId, borrow::Cow, marker::PhantomData};
 
-<span class="kw">use </span><span class="kw">super</span>::ReadOnlySystem;
+<span class="kw">use super</span>::{In, IntoSystem, ReadOnlySystem};
 
 <span class="doccomment">/// The metadata of a [`System`].
 </span><span class="attr">#[derive(Clone)]
@@ -687,7 +679,7 @@
     <span class="comment">// NOTE: this must be kept private. making a SystemMeta non-send is irreversible to prevent
     // SystemParams from overriding each other
     </span>is_send: bool,
-    <span class="kw">pub</span>(<span class="kw">crate</span>) last_change_tick: u32,
+    <span class="kw">pub</span>(<span class="kw">crate</span>) last_run: Tick,
 }
 
 <span class="kw">impl </span>SystemMeta {
@@ -697,7 +689,7 @@
             archetype_component_access: Access::default(),
             component_access_set: FilteredAccessSet::default(),
             is_send: <span class="bool-val">true</span>,
-            last_change_tick: <span class="number">0</span>,
+            last_run: Tick::new(<span class="number">0</span>),
         }
     }
 
@@ -747,17 +739,18 @@
 ///
 /// Basic usage:
 /// ```rust
-/// use bevy_ecs::prelude::*;
-/// use bevy_ecs::{system::SystemState};
-/// use bevy_ecs::event::Events;
-///
-/// struct MyEvent;
-/// #[derive(Resource)]
-/// struct MyResource(u32);
-///
-/// #[derive(Component)]
-/// struct MyComponent;
-///
+/// # use bevy_ecs::prelude::*;
+/// # use bevy_ecs::system::SystemState;
+/// # use bevy_ecs::event::Events;
+/// #
+/// # #[derive(Event)]
+/// # struct MyEvent;
+/// # #[derive(Resource)]
+/// # struct MyResource(u32);
+/// #
+/// # #[derive(Component)]
+/// # struct MyComponent;
+/// #
 /// // Work directly on the `World`
 /// let mut world = World::new();
 /// world.init_resource::&lt;Events&lt;MyEvent&gt;&gt;();
@@ -768,34 +761,37 @@
 ///     EventWriter&lt;MyEvent&gt;,
 ///     Option&lt;ResMut&lt;MyResource&gt;&gt;,
 ///     Query&lt;&amp;MyComponent&gt;,
-///     )&gt; = SystemState::new(&amp;mut world);
+/// )&gt; = SystemState::new(&amp;mut world);
 ///
 /// // Use system_state.get_mut(&amp;mut world) and unpack your system parameters into variables!
 /// // system_state.get(&amp;world) provides read-only versions of your system parameters instead.
 /// let (event_writer, maybe_resource, query) = system_state.get_mut(&amp;mut world);
 ///
-/// // If you are using [`Commands`], you can choose when you want to apply them to the world.
-/// // You need to manually call `.apply(world)` on the [`SystemState`] to apply them.
+/// // If you are using `Commands`, you can choose when you want to apply them to the world.
+/// // You need to manually call `.apply(world)` on the `SystemState` to apply them.
 /// ```
 /// Caching:
 /// ```rust
-/// use bevy_ecs::prelude::*;
-/// use bevy_ecs::{system::SystemState};
-/// use bevy_ecs::event::Events;
-///
-/// struct MyEvent;
+/// # use bevy_ecs::prelude::*;
+/// # use bevy_ecs::system::SystemState;
+/// # use bevy_ecs::event::Events;
+/// #
+/// # #[derive(Event)]
+/// # struct MyEvent;
 /// #[derive(Resource)]
 /// struct CachedSystemState {
-///    event_state: SystemState&lt;EventReader&lt;&#39;static, &#39;static, MyEvent&gt;&gt;
+///     event_state: SystemState&lt;EventReader&lt;&#39;static, &#39;static, MyEvent&gt;&gt;,
 /// }
 ///
 /// // Create and store a system state once
 /// let mut world = World::new();
 /// world.init_resource::&lt;Events&lt;MyEvent&gt;&gt;();
-/// let initial_state: SystemState&lt;EventReader&lt;MyEvent&gt;&gt;  = SystemState::new(&amp;mut world);
+/// let initial_state: SystemState&lt;EventReader&lt;MyEvent&gt;&gt; = SystemState::new(&amp;mut world);
 ///
 /// // The system state is cached in a resource
-/// world.insert_resource(CachedSystemState{event_state: initial_state});
+/// world.insert_resource(CachedSystemState {
+///     event_state: initial_state,
+/// });
 ///
 /// // Later, fetch the cached system state, saving on overhead
 /// world.resource_scope(|world, mut cached_state: Mut&lt;CachedSystemState&gt;| {
@@ -803,7 +799,7 @@
 ///
 ///     for events in event_reader.iter() {
 ///         println!(&quot;Hello World!&quot;);
-///     };
+///     }
 /// });
 /// ```
 </span><span class="kw">pub struct </span>SystemState&lt;Param: SystemParam + <span class="lifetime">&#39;static</span>&gt; {
@@ -814,9 +810,16 @@
 }
 
 <span class="kw">impl</span>&lt;Param: SystemParam&gt; SystemState&lt;Param&gt; {
-    <span class="kw">pub fn </span>new(world: <span class="kw-2">&amp;mut </span>World) -&gt; <span class="self">Self </span>{
+    <span class="doccomment">/// Creates a new [`SystemState`] with default state.
+    ///
+    /// ## Note
+    /// For users of [`SystemState::get_manual`] or [`get_manual_mut`](SystemState::get_manual_mut):
+    ///
+    /// `new` does not cache any of the world&#39;s archetypes, so you must call [`SystemState::update_archetypes`]
+    /// manually before calling `get_manual{_mut}`.
+    </span><span class="kw">pub fn </span>new(world: <span class="kw-2">&amp;mut </span>World) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span><span class="kw-2">mut </span>meta = SystemMeta::new::&lt;Param&gt;();
-        meta.last_change_tick = world.change_tick().wrapping_sub(MAX_CHANGE_AGE);
+        meta.last_run = world.change_tick().relative_to(Tick::MAX);
         <span class="kw">let </span>param_state = Param::init_state(world, <span class="kw-2">&amp;mut </span>meta);
         <span class="self">Self </span>{
             meta,
@@ -826,7 +829,8 @@
         }
     }
 
-    <span class="attr">#[inline]
+    <span class="doccomment">/// Gets the metadata for this instance.
+    </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>meta(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>SystemMeta {
         <span class="kw-2">&amp;</span><span class="self">self</span>.meta
     }
@@ -837,19 +841,20 @@
     <span class="kw">where
         </span>Param: ReadOnlySystemParam,
     {
-        <span class="self">self</span>.validate_world(world);
+        <span class="self">self</span>.validate_world(world.id());
         <span class="self">self</span>.update_archetypes(world);
-        <span class="comment">// SAFETY: Param is read-only and doesn&#39;t allow mutable access to World. It also matches the World this SystemState was created with.
-        </span><span class="kw">unsafe </span>{ <span class="self">self</span>.get_unchecked_manual(world) }
+        <span class="comment">// SAFETY: Param is read-only and doesn&#39;t allow mutable access to World.
+        // It also matches the World this SystemState was created with.
+        </span><span class="kw">unsafe </span>{ <span class="self">self</span>.get_unchecked_manual(world.as_unsafe_world_cell_readonly()) }
     }
 
     <span class="doccomment">/// Retrieve the mutable [`SystemParam`] values.
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>get_mut&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;s </span><span class="kw-2">mut </span><span class="self">self</span>, world: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span><span class="kw-2">mut </span>World) -&gt; SystemParamItem&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, Param&gt; {
-        <span class="self">self</span>.validate_world(world);
+        <span class="self">self</span>.validate_world(world.id());
         <span class="self">self</span>.update_archetypes(world);
         <span class="comment">// SAFETY: World is uniquely borrowed and matches the World this SystemState was created with.
-        </span><span class="kw">unsafe </span>{ <span class="self">self</span>.get_unchecked_manual(world) }
+        </span><span class="kw">unsafe </span>{ <span class="self">self</span>.get_unchecked_manual(world.as_unsafe_world_cell()) }
     }
 
     <span class="doccomment">/// Applies all state queued up for [`SystemParam`] values. For example, this will apply commands queued up
@@ -860,15 +865,28 @@
         Param::apply(<span class="kw-2">&amp;mut </span><span class="self">self</span>.param_state, <span class="kw-2">&amp;</span><span class="self">self</span>.meta, world);
     }
 
-    <span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>matches_world(<span class="kw-2">&amp;</span><span class="self">self</span>, world: <span class="kw-2">&amp;</span>World) -&gt; bool {
-        <span class="self">self</span>.world_id == world.id()
+    <span class="doccomment">/// Returns `true` if `world_id` matches the [`World`] that was used to call [`SystemState::new`].
+    /// Otherwise, this returns false.
+    </span><span class="attr">#[inline]
+    </span><span class="kw">pub fn </span>matches_world(<span class="kw-2">&amp;</span><span class="self">self</span>, world_id: WorldId) -&gt; bool {
+        <span class="self">self</span>.world_id == world_id
     }
 
-    <span class="doccomment">/// Asserts that the [`SystemState`] matches the provided [`World`].
+    <span class="doccomment">/// Asserts that the [`SystemState`] matches the provided world.
     </span><span class="attr">#[inline]
-    </span><span class="kw">fn </span>validate_world(<span class="kw-2">&amp;</span><span class="self">self</span>, world: <span class="kw-2">&amp;</span>World) {
-        <span class="macro">assert!</span>(<span class="self">self</span>.matches_world(world), <span class="string">&quot;Encountered a mismatched World. A SystemState cannot be used with Worlds other than the one it was created with.&quot;</span>);
+    </span><span class="kw">fn </span>validate_world(<span class="kw-2">&amp;</span><span class="self">self</span>, world_id: WorldId) {
+        <span class="macro">assert!</span>(<span class="self">self</span>.matches_world(world_id), <span class="string">&quot;Encountered a mismatched World. A SystemState cannot be used with Worlds other than the one it was created with.&quot;</span>);
+    }
+
+    <span class="doccomment">/// Updates the state&#39;s internal view of the [`World`]&#39;s archetypes. If this is not called before fetching the parameters,
+    /// the results may not accurately reflect what is in the `world`.
+    ///
+    /// This is only required if [`SystemState::get_manual`] or [`SystemState::get_manual_mut`] is being called, and it only needs to
+    /// be called if the `world` has been structurally mutated (i.e. added/removed a component or resource). Users using
+    /// [`SystemState::get`] or [`SystemState::get_mut`] do not need to call this as it will be automatically called for them.
+    </span><span class="attr">#[inline]
+    </span><span class="kw">pub fn </span>update_archetypes(<span class="kw-2">&amp;mut </span><span class="self">self</span>, world: <span class="kw-2">&amp;</span>World) {
+        <span class="self">self</span>.update_archetypes_unsafe_world_cell(world.as_unsafe_world_cell_readonly());
     }
 
     <span class="doccomment">/// Updates the state&#39;s internal view of the `world`&#39;s archetypes. If this is not called before fetching the parameters,
@@ -877,8 +895,12 @@
     /// This is only required if [`SystemState::get_manual`] or [`SystemState::get_manual_mut`] is being called, and it only needs to
     /// be called if the `world` has been structurally mutated (i.e. added/removed a component or resource). Users using
     /// [`SystemState::get`] or [`SystemState::get_mut`] do not need to call this as it will be automatically called for them.
+    ///
+    /// # Note
+    ///
+    /// This method only accesses world metadata.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>update_archetypes(<span class="kw-2">&amp;mut </span><span class="self">self</span>, world: <span class="kw-2">&amp;</span>World) {
+    </span><span class="kw">pub fn </span>update_archetypes_unsafe_world_cell(<span class="kw-2">&amp;mut </span><span class="self">self</span>, world: UnsafeWorldCell) {
         <span class="kw">let </span>archetypes = world.archetypes();
         <span class="kw">let </span>new_generation = archetypes.generation();
         <span class="kw">let </span>old_generation = std::mem::replace(<span class="kw-2">&amp;mut </span><span class="self">self</span>.archetype_generation, new_generation);
@@ -906,10 +928,11 @@
     <span class="kw">where
         </span>Param: ReadOnlySystemParam,
     {
-        <span class="self">self</span>.validate_world(world);
+        <span class="self">self</span>.validate_world(world.id());
         <span class="kw">let </span>change_tick = world.read_change_tick();
-        <span class="comment">// SAFETY: Param is read-only and doesn&#39;t allow mutable access to World. It also matches the World this SystemState was created with.
-        </span><span class="kw">unsafe </span>{ <span class="self">self</span>.fetch(world, change_tick) }
+        <span class="comment">// SAFETY: Param is read-only and doesn&#39;t allow mutable access to World.
+        // It also matches the World this SystemState was created with.
+        </span><span class="kw">unsafe </span>{ <span class="self">self</span>.fetch(world.as_unsafe_world_cell_readonly(), change_tick) }
     }
 
     <span class="doccomment">/// Retrieve the mutable [`SystemParam`] values.  This will not update the state&#39;s view of the world&#39;s archetypes
@@ -924,10 +947,10 @@
         <span class="kw-2">&amp;</span><span class="lifetime">&#39;s </span><span class="kw-2">mut </span><span class="self">self</span>,
         world: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span><span class="kw-2">mut </span>World,
     ) -&gt; SystemParamItem&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, Param&gt; {
-        <span class="self">self</span>.validate_world(world);
+        <span class="self">self</span>.validate_world(world.id());
         <span class="kw">let </span>change_tick = world.change_tick();
         <span class="comment">// SAFETY: World is uniquely borrowed and matches the World this SystemState was created with.
-        </span><span class="kw">unsafe </span>{ <span class="self">self</span>.fetch(world, change_tick) }
+        </span><span class="kw">unsafe </span>{ <span class="self">self</span>.fetch(world.as_unsafe_world_cell(), change_tick) }
     }
 
     <span class="doccomment">/// Retrieve the [`SystemParam`] values. This will not update archetypes automatically.
@@ -939,7 +962,7 @@
     </span><span class="attr">#[inline]
     </span><span class="kw">pub unsafe fn </span>get_unchecked_manual&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>&gt;(
         <span class="kw-2">&amp;</span><span class="lifetime">&#39;s </span><span class="kw-2">mut </span><span class="self">self</span>,
-        world: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>World,
+        world: UnsafeWorldCell&lt;<span class="lifetime">&#39;w</span>&gt;,
     ) -&gt; SystemParamItem&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, Param&gt; {
         <span class="kw">let </span>change_tick = world.increment_change_tick();
         <span class="self">self</span>.fetch(world, change_tick)
@@ -952,11 +975,11 @@
     </span><span class="attr">#[inline]
     </span><span class="kw">unsafe fn </span>fetch&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>&gt;(
         <span class="kw-2">&amp;</span><span class="lifetime">&#39;s </span><span class="kw-2">mut </span><span class="self">self</span>,
-        world: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>World,
-        change_tick: u32,
+        world: UnsafeWorldCell&lt;<span class="lifetime">&#39;w</span>&gt;,
+        change_tick: Tick,
     ) -&gt; SystemParamItem&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, Param&gt; {
         <span class="kw">let </span>param = Param::get_param(<span class="kw-2">&amp;mut </span><span class="self">self</span>.param_state, <span class="kw-2">&amp;</span><span class="self">self</span>.meta, world, change_tick);
-        <span class="self">self</span>.meta.last_change_tick = change_tick;
+        <span class="self">self</span>.meta.last_run = change_tick;
         param
     }
 }
@@ -967,65 +990,6 @@
     }
 }
 
-<span class="doccomment">/// Conversion trait to turn something into a [`System`].
-///
-/// Use this to get a system from a function. Also note that every system implements this trait as
-/// well.
-///
-/// # Examples
-///
-/// ```
-/// use bevy_ecs::prelude::*;
-///
-/// fn my_system_function(a_usize_local: Local&lt;usize&gt;) {}
-///
-/// let system = IntoSystem::into_system(my_system_function);
-/// ```
-</span><span class="comment">// This trait has to be generic because we have potentially overlapping impls, in particular
-// because Rust thinks a type could impl multiple different `FnMut` combinations
-// even though none can currently
-</span><span class="kw">pub trait </span>IntoSystem&lt;In, Out, Marker&gt;: Sized {
-    <span class="kw">type </span>System: System&lt;In = In, Out = Out&gt;;
-    <span class="doccomment">/// Turns this value into its corresponding [`System`].
-    </span><span class="kw">fn </span>into_system(this: <span class="self">Self</span>) -&gt; <span class="self">Self</span>::System;
-}
-
-<span class="comment">// Systems implicitly implement IntoSystem
-</span><span class="kw">impl</span>&lt;In, Out, Sys: System&lt;In = In, Out = Out&gt;&gt; IntoSystem&lt;In, Out, ()&gt; <span class="kw">for </span>Sys {
-    <span class="kw">type </span>System = Sys;
-    <span class="kw">fn </span>into_system(this: <span class="self">Self</span>) -&gt; Sys {
-        this
-    }
-}
-
-<span class="doccomment">/// Wrapper type to mark a [`SystemParam`] as an input.
-///
-/// [`System`]s may take an optional input which they require to be passed to them when they
-/// are being [`run`](System::run). For [`FunctionSystems`](FunctionSystem) the input may be marked
-/// with this `In` type, but only the first param of a function may be tagged as an input. This also
-/// means a system can only have one or zero input parameters.
-///
-/// # Examples
-///
-/// Here is a simple example of a system that takes a [`usize`] returning the square of it.
-///
-/// ```
-/// use bevy_ecs::prelude::*;
-///
-/// fn main() {
-///     let mut square_system = IntoSystem::into_system(square);
-///
-///     let mut world = World::default();
-///     square_system.initialize(&amp;mut world);
-///     assert_eq!(square_system.run(12, &amp;mut world), 144);
-/// }
-///
-/// fn square(In(input): In&lt;usize&gt;) -&gt; usize {
-///     input * input
-/// }
-/// ```
-</span><span class="kw">pub struct </span>In&lt;In&gt;(<span class="kw">pub </span>In);
-
 <span class="doccomment">/// The [`System`] counter part of an ordinary function.
 ///
 /// You get this by calling [`IntoSystem::into_system`]  on a function that only accepts
@@ -1033,6 +997,9 @@
 /// becomes the functions [`In`] tagged parameter or `()` if no such parameter exists.
 ///
 /// [`FunctionSystem`] must be `.initialized` before they can be run.
+///
+/// The [`Clone`] implementation for [`FunctionSystem`] returns a new instance which
+/// is NOT initialized. The cloned system must also be `.initialized` before it can be run.
 </span><span class="kw">pub struct </span>FunctionSystem&lt;Marker, F&gt;
 <span class="kw">where
     </span>F: SystemParamFunction&lt;Marker&gt;,
@@ -1046,7 +1013,26 @@
     </span>marker: PhantomData&lt;<span class="kw">fn</span>() -&gt; Marker&gt;,
 }
 
-<span class="kw">pub struct </span>IsFunctionSystem;
+<span class="comment">// De-initializes the cloned system.
+</span><span class="kw">impl</span>&lt;Marker, F&gt; Clone <span class="kw">for </span>FunctionSystem&lt;Marker, F&gt;
+<span class="kw">where
+    </span>F: SystemParamFunction&lt;Marker&gt; + Clone,
+{
+    <span class="kw">fn </span>clone(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{
+            func: <span class="self">self</span>.func.clone(),
+            param_state: <span class="prelude-val">None</span>,
+            system_meta: SystemMeta::new::&lt;F&gt;(),
+            world_id: <span class="prelude-val">None</span>,
+            archetype_generation: ArchetypeGeneration::initial(),
+            marker: PhantomData,
+        }
+    }
+}
+
+<span class="doccomment">/// A marker type used to distinguish regular function systems from exclusive function systems.
+</span><span class="attr">#[doc(hidden)]
+</span><span class="kw">pub struct </span>IsFunctionSystem;
 
 <span class="kw">impl</span>&lt;Marker, F&gt; IntoSystem&lt;F::In, F::Out, (IsFunctionSystem, Marker)&gt; <span class="kw">for </span>F
 <span class="kw">where
@@ -1115,13 +1101,14 @@
     </span>}
 
     <span class="attr">#[inline]
-    </span><span class="kw">unsafe fn </span>run_unsafe(<span class="kw-2">&amp;mut </span><span class="self">self</span>, input: <span class="self">Self</span>::In, world: <span class="kw-2">&amp;</span>World) -&gt; <span class="self">Self</span>::Out {
+    </span><span class="kw">unsafe fn </span>run_unsafe(<span class="kw-2">&amp;mut </span><span class="self">self</span>, input: <span class="self">Self</span>::In, world: UnsafeWorldCell) -&gt; <span class="self">Self</span>::Out {
         <span class="kw">let </span>change_tick = world.increment_change_tick();
 
-        <span class="comment">// Safety:
-        // We update the archetype component access correctly based on `Param`&#39;s requirements
-        // in `update_archetype_component_access`.
-        // Our caller upholds the requirements.
+        <span class="comment">// SAFETY:
+        // - The caller has invoked `update_archetype_component_access`, which will panic
+        //   if the world does not match.
+        // - All world accesses used by `F::Param` have been registered, so the caller
+        //   will ensure that there are no data access conflicts.
         </span><span class="kw">let </span>params = F::Param::get_param(
             <span class="self">self</span>.param_state.as_mut().expect(<span class="self">Self</span>::PARAM_MESSAGE),
             <span class="kw-2">&amp;</span><span class="self">self</span>.system_meta,
@@ -1129,20 +1116,20 @@
             change_tick,
         );
         <span class="kw">let </span>out = <span class="self">self</span>.func.run(input, params);
-        <span class="self">self</span>.system_meta.last_change_tick = change_tick;
+        <span class="self">self</span>.system_meta.last_run = change_tick;
         out
     }
 
-    <span class="kw">fn </span>get_last_change_tick(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u32 {
-        <span class="self">self</span>.system_meta.last_change_tick
+    <span class="kw">fn </span>get_last_run(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Tick {
+        <span class="self">self</span>.system_meta.last_run
     }
 
-    <span class="kw">fn </span>set_last_change_tick(<span class="kw-2">&amp;mut </span><span class="self">self</span>, last_change_tick: u32) {
-        <span class="self">self</span>.system_meta.last_change_tick = last_change_tick;
+    <span class="kw">fn </span>set_last_run(<span class="kw-2">&amp;mut </span><span class="self">self</span>, last_run: Tick) {
+        <span class="self">self</span>.system_meta.last_run = last_run;
     }
 
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>apply_buffers(<span class="kw-2">&amp;mut </span><span class="self">self</span>, world: <span class="kw-2">&amp;mut </span>World) {
+    </span><span class="kw">fn </span>apply_deferred(<span class="kw-2">&amp;mut </span><span class="self">self</span>, world: <span class="kw-2">&amp;mut </span>World) {
         <span class="kw">let </span>param_state = <span class="self">self</span>.param_state.as_mut().expect(<span class="self">Self</span>::PARAM_MESSAGE);
         F::Param::apply(param_state, <span class="kw-2">&amp;</span><span class="self">self</span>.system_meta, world);
     }
@@ -1150,11 +1137,11 @@
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>initialize(<span class="kw-2">&amp;mut </span><span class="self">self</span>, world: <span class="kw-2">&amp;mut </span>World) {
         <span class="self">self</span>.world_id = <span class="prelude-val">Some</span>(world.id());
-        <span class="self">self</span>.system_meta.last_change_tick = world.change_tick().wrapping_sub(MAX_CHANGE_AGE);
+        <span class="self">self</span>.system_meta.last_run = world.change_tick().relative_to(Tick::MAX);
         <span class="self">self</span>.param_state = <span class="prelude-val">Some</span>(F::Param::init_state(world, <span class="kw-2">&amp;mut </span><span class="self">self</span>.system_meta));
     }
 
-    <span class="kw">fn </span>update_archetype_component_access(<span class="kw-2">&amp;mut </span><span class="self">self</span>, world: <span class="kw-2">&amp;</span>World) {
+    <span class="kw">fn </span>update_archetype_component_access(<span class="kw-2">&amp;mut </span><span class="self">self</span>, world: UnsafeWorldCell) {
         <span class="macro">assert!</span>(<span class="self">self</span>.world_id == <span class="prelude-val">Some</span>(world.id()), <span class="string">&quot;Encountered a mismatched World. A System cannot be used with Worlds other than the one it was initialized with.&quot;</span>);
         <span class="kw">let </span>archetypes = world.archetypes();
         <span class="kw">let </span>new_generation = archetypes.generation();
@@ -1172,9 +1159,9 @@
     }
 
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>check_change_tick(<span class="kw-2">&amp;mut </span><span class="self">self</span>, change_tick: u32) {
+    </span><span class="kw">fn </span>check_change_tick(<span class="kw-2">&amp;mut </span><span class="self">self</span>, change_tick: Tick) {
         check_system_change_tick(
-            <span class="kw-2">&amp;mut </span><span class="self">self</span>.system_meta.last_change_tick,
+            <span class="kw-2">&amp;mut </span><span class="self">self</span>.system_meta.last_run,
             change_tick,
             <span class="self">self</span>.system_meta.name.as_ref(),
         );
@@ -1186,7 +1173,7 @@
     }
 }
 
-<span class="doccomment">/// SAFETY: `F`&#39;s param is `ReadOnlySystemParam`, so this system will only read from the world.
+<span class="doccomment">/// SAFETY: `F`&#39;s param is [`ReadOnlySystemParam`], so this system will only read from the world.
 </span><span class="kw">unsafe impl</span>&lt;Marker, F&gt; ReadOnlySystem <span class="kw">for </span>FunctionSystem&lt;Marker, F&gt;
 <span class="kw">where
     </span>Marker: <span class="lifetime">&#39;static</span>,
@@ -1212,7 +1199,6 @@
 /// use std::num::ParseIntError;
 ///
 /// use bevy_ecs::prelude::*;
-/// use bevy_ecs::system::{SystemParam, SystemParamItem};
 ///
 /// /// Pipe creates a new system which calls `a`, then calls `b` with the output of `a`
 /// pub fn pipe&lt;A, B, AMarker, BMarker&gt;(
@@ -1284,7 +1270,7 @@
             <span class="attr">#[inline]
             </span><span class="kw">fn </span>run(<span class="kw-2">&amp;mut </span><span class="self">self</span>, _input: (), param_value: SystemParamItem&lt; ($(<span class="macro-nonterminal">$param</span>,)<span class="kw-2">*</span>)&gt;) -&gt; Out {
                 <span class="comment">// Yes, this is strange, but `rustc` fails to compile this impl
-                // without using this function. It fails to recognise that `func`
+                // without using this function. It fails to recognize that `func`
                 // is a function, potentially because of the multiple impls of `FnMut`
                 </span><span class="attr">#[allow(clippy::too_many_arguments)]
                 </span><span class="kw">fn </span>call_inner&lt;Out, $(<span class="macro-nonterminal">$param</span>,)<span class="kw-2">*</span>&gt;(

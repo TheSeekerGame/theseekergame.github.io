@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["AHashMap","AHashSet","AHasher","RandomState"],"trait":["CallHasher"]};
+window.SIDEBAR_ITEMS = {"mod":["random_state"],"struct":["AHashMap","AHashSet","AHasher"],"trait":["HashMapExt","HashSetExt"],"type":["HashMap","HashSet"]};

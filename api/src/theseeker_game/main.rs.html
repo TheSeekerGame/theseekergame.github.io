@@ -111,6 +111,12 @@
 <a href="#111" id="111">111</a>
 <a href="#112" id="112">112</a>
 <a href="#113" id="113">113</a>
+<a href="#114" id="114">114</a>
+<a href="#115" id="115">115</a>
+<a href="#116" id="116">116</a>
+<a href="#117" id="117">117</a>
+<a href="#118" id="118">118</a>
+<a href="#119" id="119">119</a>
 </pre></div><pre class="rust"><code><span class="doccomment">/// Custom prelude, for stuff we&#39;d like to access all over the codebase
 /// Use in every file. :)
 </span><span class="kw">mod </span>prelude {
@@ -163,40 +169,46 @@
     app.add_plugins(bevy_plugins);
 
     <span class="comment">// configure our app states
-    </span>app.add_plugin(<span class="kw">crate</span>::appstate::AppStatesPlugin);
+    </span>app.add_plugins(<span class="kw">crate</span>::appstate::AppStatesPlugin);
+
     <span class="comment">// and custom fixed timestep thingy
-    </span>app.add_plugin(theseeker_engine::time::GameTimePlugin);
+    </span>app.add_plugins(theseeker_engine::time::GameTimePlugin);
 
     <span class="comment">// external plugins
-    </span>app.add_plugin(LdtkPlugin);
-    app.add_plugin(bevy_tweening::TweeningPlugin);
-    app.add_plugin(bevy_fluent::FluentPlugin);
-    app.add_plugin(iyes_bevy_extras::d2::WorldCursorPlugin);
-    app.add_plugin(
+    </span>app.add_plugins((
+        LdtkPlugin,
+        bevy_tweening::TweeningPlugin,
+        bevy_fluent::FluentPlugin,
+        iyes_bevy_extras::d2::WorldCursorPlugin,
         ProgressPlugin::new(AppState::AssetsLoading)
             .track_assets()
             .continue_to(AppState::MainMenu),
-    );
+    ));
+
+    <span class="comment">// our stuff
+    </span>app.add_plugins((
+        <span class="kw">crate</span>::screens::loading::LoadscreenPlugin {
+            state: AppState::AssetsLoading,
+        },
+        <span class="kw">crate</span>::assets::AssetsPlugin,
+        <span class="kw">crate</span>::locale::LocalePlugin,
+        <span class="kw">crate</span>::cli::CliPlugin,
+        <span class="kw">crate</span>::ui::UiPlugin,
+    ));
+
     <span class="attr">#[cfg(feature = <span class="string">&quot;dev&quot;</span>)]
-    </span>app.add_system(
+    </span>app.add_systems(
+        Update,
         debug_progress
             .run_if(resource_exists::&lt;ProgressCounter&gt;())
             .in_base_set(iyes_progress::ProgressSystemSet::CheckProgress),
     );
 
-    <span class="comment">// our stuff
-    </span>app.add_plugin(
-        <span class="kw">crate</span>::screens::loading::LoadscreenPlugin {
-            state: AppState::AssetsLoading,
-        },
-    );
-    app.add_plugin(<span class="kw">crate</span>::assets::AssetsPlugin);
-    app.add_plugin(<span class="kw">crate</span>::locale::LocalePlugin);
-    app.add_plugin(<span class="kw">crate</span>::cli::CliPlugin);
-    app.add_plugin(<span class="kw">crate</span>::ui::UiPlugin);
-
     <span class="comment">// FIXME: temporary
-    </span>app.add_system(debug_setup_camera.in_schedule(OnEnter(AppState::MainMenu)));
+    </span>app.add_systems(
+        OnEnter(AppState::MainMenu),
+        debug_setup_camera,
+    );
 
     app.run();
 }

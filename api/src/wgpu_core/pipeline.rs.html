@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/wgpu-core-0.15.1/src/pipeline.rs`."><title>pipeline.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="wgpu_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../wgpu_core/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/wgpu-core-0.16.1/src/pipeline.rs`."><title>pipeline.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="wgpu_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../wgpu_core/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -427,6 +427,15 @@
 <a href="#427" id="427">427</a>
 <a href="#428" id="428">428</a>
 <a href="#429" id="429">429</a>
+<a href="#430" id="430">430</a>
+<a href="#431" id="431">431</a>
+<a href="#432" id="432">432</a>
+<a href="#433" id="433">433</a>
+<a href="#434" id="434">434</a>
+<a href="#435" id="435">435</a>
+<a href="#436" id="436">436</a>
+<a href="#437" id="437">437</a>
+<a href="#438" id="438">438</a>
 </pre></div><pre class="rust"><code><span class="kw">use crate</span>::{
     binding_model::{CreateBindGroupLayoutError, CreatePipelineLayoutError},
     command::ColorAttachmentError,
@@ -503,7 +512,7 @@
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
         <span class="kw">let </span>label = <span class="self">self</span>.label.as_deref().unwrap_or_default();
         <span class="kw">let </span>string = <span class="self">self</span>.inner.emit_to_string(<span class="kw-2">&amp;</span><span class="self">self</span>.source);
-        <span class="macro">write!</span>(f, <span class="string">&quot;\nShader &#39;{}&#39; parsing {}&quot;</span>, label, string)
+        <span class="macro">write!</span>(f, <span class="string">&quot;\nShader &#39;{label}&#39; parsing {string}&quot;</span>)
     }
 }
 <span class="kw">impl </span>fmt::Display <span class="kw">for </span>ShaderError&lt;naga::WithSpan&lt;naga::valid::ValidationError&gt;&gt; {
@@ -517,7 +526,7 @@
         <span class="kw">let </span>label = <span class="self">self</span>.label.as_deref().unwrap_or_default();
         <span class="kw">let </span>files = SimpleFile::new(label, <span class="kw-2">&amp;</span><span class="self">self</span>.source);
         <span class="kw">let </span>config = term::Config::default();
-        <span class="kw">let </span><span class="kw-2">mut </span>writer = term::termcolor::Ansi::new(Vec::new());
+        <span class="kw">let </span><span class="kw-2">mut </span>writer = term::termcolor::NoColor::new(Vec::new());
 
         <span class="kw">let </span>diagnostic = Diagnostic::error().with_labels(
             <span class="self">self</span>.inner
@@ -549,6 +558,7 @@
 
 <span class="comment">//Note: `Clone` would require `WithSpan: Clone`.
 </span><span class="attr">#[derive(Debug, Error)]
+#[non_exhaustive]
 </span><span class="kw">pub enum </span>CreateShaderModuleError {
     <span class="attr">#[cfg(feature = <span class="string">&quot;wgsl&quot;</span>)]
     #[error(transparent)]
@@ -562,7 +572,7 @@
     <span class="attr">#[error(transparent)]
     </span>MissingFeatures(<span class="attr">#[from] </span>MissingFeatures),
     <span class="attr">#[error(
-        <span class="string">&quot;shader global {bind:?} uses a group index {group} that exceeds the max_bind_groups limit of {limit}.&quot;
+        <span class="string">&quot;Shader global {bind:?} uses a group index {group} that exceeds the max_bind_groups limit of {limit}.&quot;
     </span>)]
     </span>InvalidGroupIndex {
         bind: naga::ResourceBinding,
@@ -598,10 +608,11 @@
 </span><span class="kw">pub type </span>ImplicitBindGroupCount = u8;
 
 <span class="attr">#[derive(Clone, Debug, Error)]
+#[non_exhaustive]
 </span><span class="kw">pub enum </span>ImplicitLayoutError {
-    <span class="attr">#[error(<span class="string">&quot;missing IDs for deriving {0} bind groups&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Missing IDs for deriving {0} bind groups&quot;</span>)]
     </span>MissingIds(ImplicitBindGroupCount),
-    <span class="attr">#[error(<span class="string">&quot;unable to reflect the shader {0:?} interface&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Unable to reflect the shader {0:?} interface&quot;</span>)]
     </span>ReflectionError(wgt::ShaderStages),
     <span class="attr">#[error(transparent)]
     </span>BindGroup(<span class="attr">#[from] </span>CreateBindGroupLayoutError),
@@ -622,14 +633,15 @@
 }
 
 <span class="attr">#[derive(Clone, Debug, Error)]
+#[non_exhaustive]
 </span><span class="kw">pub enum </span>CreateComputePipelineError {
     <span class="attr">#[error(transparent)]
     </span>Device(<span class="attr">#[from] </span>DeviceError),
-    <span class="attr">#[error(<span class="string">&quot;pipeline layout is invalid&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Pipeline layout is invalid&quot;</span>)]
     </span>InvalidLayout,
-    <span class="attr">#[error(<span class="string">&quot;unable to derive an implicit layout&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Unable to derive an implicit layout&quot;</span>)]
     </span>Implicit(<span class="attr">#[from] </span>ImplicitLayoutError),
-    <span class="attr">#[error(<span class="string">&quot;error matching shader requirements against the pipeline&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Error matching shader requirements against the pipeline&quot;</span>)]
     </span>Stage(<span class="attr">#[from] </span>validation::StageError),
     <span class="attr">#[error(<span class="string">&quot;Internal error: {0}&quot;</span>)]
     </span>Internal(String),
@@ -717,71 +729,76 @@
 }
 
 <span class="attr">#[derive(Clone, Debug, Error)]
+#[non_exhaustive]
 </span><span class="kw">pub enum </span>ColorStateError {
-    <span class="attr">#[error(<span class="string">&quot;format {0:?} is not renderable&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Format {0:?} is not renderable&quot;</span>)]
     </span>FormatNotRenderable(wgt::TextureFormat),
-    <span class="attr">#[error(<span class="string">&quot;format {0:?} is not blendable&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Format {0:?} is not blendable&quot;</span>)]
     </span>FormatNotBlendable(wgt::TextureFormat),
-    <span class="attr">#[error(<span class="string">&quot;format {0:?} does not have a color aspect&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Format {0:?} does not have a color aspect&quot;</span>)]
     </span>FormatNotColor(wgt::TextureFormat),
-    <span class="attr">#[error(<span class="string">&quot;format {0:?} can&#39;t be multisampled&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Format {0:?} can&#39;t be multisampled&quot;</span>)]
     </span>FormatNotMultisampled(wgt::TextureFormat),
-    <span class="attr">#[error(<span class="string">&quot;output format {pipeline} is incompatible with the shader {shader}&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Output format {pipeline} is incompatible with the shader {shader}&quot;</span>)]
     </span>IncompatibleFormat {
         pipeline: validation::NumericType,
         shader: validation::NumericType,
     },
-    <span class="attr">#[error(<span class="string">&quot;blend factors for {0:?} must be `One`&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Blend factors for {0:?} must be `One`&quot;</span>)]
     </span>InvalidMinMaxBlendFactors(wgt::BlendComponent),
-    <span class="attr">#[error(<span class="string">&quot;invalid write mask {0:?}&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Invalid write mask {0:?}&quot;</span>)]
     </span>InvalidWriteMask(wgt::ColorWrites),
 }
 
 <span class="attr">#[derive(Clone, Debug, Error)]
+#[non_exhaustive]
 </span><span class="kw">pub enum </span>DepthStencilStateError {
-    <span class="attr">#[error(<span class="string">&quot;format {0:?} is not renderable&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Format {0:?} is not renderable&quot;</span>)]
     </span>FormatNotRenderable(wgt::TextureFormat),
-    <span class="attr">#[error(<span class="string">&quot;format {0:?} does not have a depth aspect, but depth test/write is enabled&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Format {0:?} does not have a depth aspect, but depth test/write is enabled&quot;</span>)]
     </span>FormatNotDepth(wgt::TextureFormat),
-    <span class="attr">#[error(<span class="string">&quot;format {0:?} does not have a stencil aspect, but stencil test/write is enabled&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Format {0:?} does not have a stencil aspect, but stencil test/write is enabled&quot;</span>)]
     </span>FormatNotStencil(wgt::TextureFormat),
-    <span class="attr">#[error(<span class="string">&quot;format {0:?} can&#39;t be multisampled&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Format {0:?} can&#39;t be multisampled&quot;</span>)]
     </span>FormatNotMultisampled(wgt::TextureFormat),
 }
 
 <span class="attr">#[derive(Clone, Debug, Error)]
+#[non_exhaustive]
 </span><span class="kw">pub enum </span>CreateRenderPipelineError {
     <span class="attr">#[error(transparent)]
     </span>ColorAttachment(<span class="attr">#[from] </span>ColorAttachmentError),
     <span class="attr">#[error(transparent)]
     </span>Device(<span class="attr">#[from] </span>DeviceError),
-    <span class="attr">#[error(<span class="string">&quot;pipeline layout is invalid&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Pipeline layout is invalid&quot;</span>)]
     </span>InvalidLayout,
-    <span class="attr">#[error(<span class="string">&quot;unable to derive an implicit layout&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Unable to derive an implicit layout&quot;</span>)]
     </span>Implicit(<span class="attr">#[from] </span>ImplicitLayoutError),
-    <span class="attr">#[error(<span class="string">&quot;color state [{0}] is invalid&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Color state [{0}] is invalid&quot;</span>)]
     </span>ColorState(u8, <span class="attr">#[source] </span>ColorStateError),
-    <span class="attr">#[error(<span class="string">&quot;depth/stencil state is invalid&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Depth/stencil state is invalid&quot;</span>)]
     </span>DepthStencilState(<span class="attr">#[from] </span>DepthStencilStateError),
-    <span class="attr">#[error(<span class="string">&quot;invalid sample count {0}&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Invalid sample count {0}&quot;</span>)]
     </span>InvalidSampleCount(u32),
-    <span class="attr">#[error(<span class="string">&quot;the number of vertex buffers {given} exceeds the limit {limit}&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;The number of vertex buffers {given} exceeds the limit {limit}&quot;</span>)]
     </span>TooManyVertexBuffers { given: u32, limit: u32 },
-    <span class="attr">#[error(<span class="string">&quot;the total number of vertex attributes {given} exceeds the limit {limit}&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;The total number of vertex attributes {given} exceeds the limit {limit}&quot;</span>)]
     </span>TooManyVertexAttributes { given: u32, limit: u32 },
-    <span class="attr">#[error(<span class="string">&quot;vertex buffer {index} stride {given} exceeds the limit {limit}&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Vertex buffer {index} stride {given} exceeds the limit {limit}&quot;</span>)]
     </span>VertexStrideTooLarge { index: u32, given: u32, limit: u32 },
-    <span class="attr">#[error(<span class="string">&quot;vertex buffer {index} stride {stride} does not respect `VERTEX_STRIDE_ALIGNMENT`&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Vertex buffer {index} stride {stride} does not respect `VERTEX_STRIDE_ALIGNMENT`&quot;</span>)]
     </span>UnalignedVertexStride {
         index: u32,
         stride: wgt::BufferAddress,
     },
-    <span class="attr">#[error(<span class="string">&quot;vertex attribute at location {location} has invalid offset {offset}&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Vertex attribute at location {location} has invalid offset {offset}&quot;</span>)]
     </span>InvalidVertexAttributeOffset {
         location: wgt::ShaderLocation,
         offset: wgt::BufferAddress,
     },
-    <span class="attr">#[error(<span class="string">&quot;strip index format was not set to None but to {strip_index_format:?} while using the non-strip topology {topology:?}&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Two or more vertex attributes were assigned to the same location in the shader: {0}&quot;</span>)]
+    </span>ShaderLocationClash(u32),
+    <span class="attr">#[error(<span class="string">&quot;Strip index format was not set to None but to {strip_index_format:?} while using the non-strip topology {topology:?}&quot;</span>)]
     </span>StripIndexFormatForNonStripTopology {
         strip_index_format: <span class="prelude-ty">Option</span>&lt;wgt::IndexFormat&gt;,
         topology: wgt::PrimitiveTopology,
@@ -792,7 +809,7 @@
     </span>MissingFeatures(<span class="attr">#[from] </span>MissingFeatures),
     <span class="attr">#[error(transparent)]
     </span>MissingDownlevelFlags(<span class="attr">#[from] </span>MissingDownlevelFlags),
-    <span class="attr">#[error(<span class="string">&quot;error matching {stage:?} shader requirements against the pipeline&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Error matching {stage:?} shader requirements against the pipeline&quot;</span>)]
     </span>Stage {
         stage: wgt::ShaderStages,
         <span class="attr">#[source]
@@ -809,6 +826,7 @@
 
 <span class="macro">bitflags::bitflags! </span>{
     <span class="attr">#[repr(transparent)]
+    #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
     </span><span class="kw">pub struct </span>PipelineFlags: u32 {
         <span class="kw">const </span>BLEND_CONSTANT = <span class="number">1 </span>&lt;&lt; <span class="number">0</span>;
         <span class="kw">const </span>STENCIL_REFERENCE = <span class="number">1 </span>&lt;&lt; <span class="number">1</span>;

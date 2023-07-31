@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ruzstd-0.2.4/src/huff0/huff0_decoder.rs`."><title>huff0_decoder.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="ruzstd" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../ruzstd/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ruzstd-0.4.0/src/huff0/huff0_decoder.rs`."><title>huff0_decoder.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="ruzstd" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../ruzstd/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -343,12 +343,62 @@
 <a href="#343" id="343">343</a>
 <a href="#344" id="344">344</a>
 <a href="#345" id="345">345</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::decoding::bit_reader_reverse::BitReaderReversed;
-<span class="kw">use </span><span class="kw">crate</span>::fse::FSEDecoder;
-<span class="kw">use </span><span class="kw">crate</span>::fse::FSETable;
+<a href="#346" id="346">346</a>
+<a href="#347" id="347">347</a>
+<a href="#348" id="348">348</a>
+<a href="#349" id="349">349</a>
+<a href="#350" id="350">350</a>
+<a href="#351" id="351">351</a>
+<a href="#352" id="352">352</a>
+<a href="#353" id="353">353</a>
+<a href="#354" id="354">354</a>
+<a href="#355" id="355">355</a>
+<a href="#356" id="356">356</a>
+<a href="#357" id="357">357</a>
+<a href="#358" id="358">358</a>
+<a href="#359" id="359">359</a>
+<a href="#360" id="360">360</a>
+<a href="#361" id="361">361</a>
+<a href="#362" id="362">362</a>
+<a href="#363" id="363">363</a>
+<a href="#364" id="364">364</a>
+<a href="#365" id="365">365</a>
+<a href="#366" id="366">366</a>
+<a href="#367" id="367">367</a>
+<a href="#368" id="368">368</a>
+<a href="#369" id="369">369</a>
+<a href="#370" id="370">370</a>
+<a href="#371" id="371">371</a>
+<a href="#372" id="372">372</a>
+<a href="#373" id="373">373</a>
+<a href="#374" id="374">374</a>
+<a href="#375" id="375">375</a>
+<a href="#376" id="376">376</a>
+<a href="#377" id="377">377</a>
+<a href="#378" id="378">378</a>
+<a href="#379" id="379">379</a>
+<a href="#380" id="380">380</a>
+<a href="#381" id="381">381</a>
+<a href="#382" id="382">382</a>
+<a href="#383" id="383">383</a>
+<a href="#384" id="384">384</a>
+<a href="#385" id="385">385</a>
+<a href="#386" id="386">386</a>
+<a href="#387" id="387">387</a>
+<a href="#388" id="388">388</a>
+<a href="#389" id="389">389</a>
+<a href="#390" id="390">390</a>
+<a href="#391" id="391">391</a>
+<a href="#392" id="392">392</a>
+<a href="#393" id="393">393</a>
+<a href="#394" id="394">394</a>
+<a href="#395" id="395">395</a>
+<a href="#396" id="396">396</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::decoding::bit_reader_reverse::{BitReaderReversed, GetBitsError};
+<span class="kw">use </span><span class="kw">crate</span>::fse::{FSEDecoder, FSEDecoderError, FSETable, FSETableError};
+<span class="kw">use </span>alloc::vec::Vec;
 
-<span class="attr">#[derive(Clone)]
-</span><span class="kw">pub struct </span>HuffmanTable {
+<span class="kw">pub struct </span>HuffmanTable {
     decode: Vec&lt;Entry&gt;,
 
     weights: Vec&lt;u8&gt;,
@@ -360,9 +410,52 @@
     fse_table: FSETable,
 }
 
+<span class="attr">#[derive(Debug, thiserror::Error)]
+#[non_exhaustive]
+</span><span class="kw">pub enum </span>HuffmanTableError {
+    <span class="attr">#[error(transparent)]
+    </span>GetBitsError(<span class="attr">#[from] </span>GetBitsError),
+    <span class="attr">#[error(transparent)]
+    </span>FSEDecoderError(<span class="attr">#[from] </span>FSEDecoderError),
+    <span class="attr">#[error(transparent)]
+    </span>FSETableError(<span class="attr">#[from] </span>FSETableError),
+    <span class="attr">#[error(<span class="string">&quot;Source needs to have at least one byte&quot;</span>)]
+    </span>SourceIsEmpty,
+    <span class="attr">#[error(<span class="string">&quot;Header says there should be {expected_bytes} bytes for the weights but there are only {got_bytes} bytes in the stream&quot;</span>)]
+    </span>NotEnoughBytesForWeights {
+        got_bytes: usize,
+        expected_bytes: u8,
+    },
+    <span class="attr">#[error(<span class="string">&quot;Padding at the end of the sequence_section was more than a byte long: {skipped_bits} bits. Probably caused by data corruption&quot;</span>)]
+    </span>ExtraPadding { skipped_bits: i32 },
+    <span class="attr">#[error(<span class="string">&quot;More than 255 weights decoded (got {got} weights). Stream is probably corrupted&quot;</span>)]
+    </span>TooManyWeights { got: usize },
+    <span class="attr">#[error(<span class="string">&quot;Can&#39;t build huffman table without any weights&quot;</span>)]
+    </span>MissingWeights,
+    <span class="attr">#[error(<span class="string">&quot;Leftover must be power of two but is: {got}&quot;</span>)]
+    </span>LeftoverIsNotAPowerOf2 { got: u32 },
+    <span class="attr">#[error(<span class="string">&quot;Not enough bytes in stream to decompress weights. Is: {have}, Should be: {need}&quot;</span>)]
+    </span>NotEnoughBytesToDecompressWeights { have: usize, need: usize },
+    <span class="attr">#[error(<span class="string">&quot;FSE table used more bytes: {used} than were meant to be used for the whole stream of huffman weights ({available_bytes})&quot;</span>)]
+    </span>FSETableUsedTooManyBytes { used: usize, available_bytes: u8 },
+    <span class="attr">#[error(<span class="string">&quot;Source needs to have at least {need} bytes, got: {got}&quot;</span>)]
+    </span>NotEnoughBytesInSource { got: usize, need: usize },
+    <span class="attr">#[error(<span class="string">&quot;Cant have weight: {got} bigger than max_num_bits: {MAX_MAX_NUM_BITS}&quot;</span>)]
+    </span>WeightBiggerThanMaxNumBits { got: u8 },
+    <span class="attr">#[error(<span class="string">&quot;max_bits derived from weights is: {got} should be lower than: {MAX_MAX_NUM_BITS}&quot;</span>)]
+    </span>MaxBitsTooHigh { got: u8 },
+}
+
 <span class="kw">pub struct </span>HuffmanDecoder&lt;<span class="lifetime">&#39;table</span>&gt; {
     table: <span class="kw-2">&amp;</span><span class="lifetime">&#39;table </span>HuffmanTable,
     <span class="kw">pub </span>state: u64,
+}
+
+<span class="attr">#[derive(Debug, thiserror::Error)]
+#[non_exhaustive]
+</span><span class="kw">pub enum </span>HuffmanDecoderError {
+    <span class="attr">#[error(transparent)]
+    </span>GetBitsError(<span class="attr">#[from] </span>GetBitsError),
 }
 
 <span class="attr">#[derive(Copy, Clone)]
@@ -373,13 +466,9 @@
 
 <span class="kw">const </span>MAX_MAX_NUM_BITS: u8 = <span class="number">11</span>;
 
-<span class="kw">const fn </span>num_bits&lt;T&gt;() -&gt; usize {
-    std::mem::size_of::&lt;T&gt;() * <span class="number">8
-</span>}
-
 <span class="kw">fn </span>highest_bit_set(x: u32) -&gt; u32 {
     <span class="macro">assert!</span>(x &gt; <span class="number">0</span>);
-    num_bits::&lt;u32&gt;() <span class="kw">as </span>u32 - x.leading_zeros()
+    u32::BITS - x.leading_zeros()
 }
 
 <span class="kw">impl</span>&lt;<span class="lifetime">&#39;t</span>&gt; HuffmanDecoder&lt;<span class="lifetime">&#39;t</span>&gt; {
@@ -398,16 +487,22 @@
         <span class="self">self</span>.table.decode[<span class="self">self</span>.state <span class="kw">as </span>usize].symbol
     }
 
-    <span class="kw">pub fn </span>init_state(<span class="kw-2">&amp;mut </span><span class="self">self</span>, br: <span class="kw-2">&amp;mut </span>BitReaderReversed&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;u8, String&gt; {
+    <span class="kw">pub fn </span>init_state(
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+        br: <span class="kw-2">&amp;mut </span>BitReaderReversed&lt;<span class="lifetime">&#39;_</span>&gt;,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;u8, HuffmanDecoderError&gt; {
         <span class="kw">let </span>num_bits = <span class="self">self</span>.table.max_num_bits;
-        <span class="kw">let </span>new_bits = br.get_bits(num_bits <span class="kw">as </span>usize)<span class="question-mark">?</span>;
+        <span class="kw">let </span>new_bits = br.get_bits(num_bits)<span class="question-mark">?</span>;
         <span class="self">self</span>.state = new_bits;
         <span class="prelude-val">Ok</span>(num_bits)
     }
 
-    <span class="kw">pub fn </span>next_state(<span class="kw-2">&amp;mut </span><span class="self">self</span>, br: <span class="kw-2">&amp;mut </span>BitReaderReversed&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;u8, String&gt; {
+    <span class="kw">pub fn </span>next_state(
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+        br: <span class="kw-2">&amp;mut </span>BitReaderReversed&lt;<span class="lifetime">&#39;_</span>&gt;,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;u8, HuffmanDecoderError&gt; {
         <span class="kw">let </span>num_bits = <span class="self">self</span>.table.decode[<span class="self">self</span>.state <span class="kw">as </span>usize].num_bits;
-        <span class="kw">let </span>new_bits = br.get_bits(num_bits <span class="kw">as </span>usize)<span class="question-mark">?</span>;
+        <span class="kw">let </span>new_bits = br.get_bits(num_bits)<span class="question-mark">?</span>;
         <span class="self">self</span>.state &lt;&lt;= num_bits;
         <span class="self">self</span>.state &amp;= <span class="self">self</span>.table.decode.len() <span class="kw">as </span>u64 - <span class="number">1</span>;
         <span class="self">self</span>.state |= new_bits;
@@ -435,6 +530,16 @@
         }
     }
 
+    <span class="kw">pub fn </span>reinit_from(<span class="kw-2">&amp;mut </span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="self">Self</span>) {
+        <span class="self">self</span>.reset();
+        <span class="self">self</span>.decode.extend_from_slice(<span class="kw-2">&amp;</span>other.decode);
+        <span class="self">self</span>.weights.extend_from_slice(<span class="kw-2">&amp;</span>other.weights);
+        <span class="self">self</span>.max_num_bits = other.max_num_bits;
+        <span class="self">self</span>.bits.extend_from_slice(<span class="kw-2">&amp;</span>other.bits);
+        <span class="self">self</span>.rank_indexes.extend_from_slice(<span class="kw-2">&amp;</span>other.rank_indexes);
+        <span class="self">self</span>.fse_table.reinit_from(<span class="kw-2">&amp;</span>other.fse_table);
+    }
+
     <span class="kw">pub fn </span>reset(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
         <span class="self">self</span>.decode.clear();
         <span class="self">self</span>.weights.clear();
@@ -445,7 +550,7 @@
         <span class="self">self</span>.fse_table.reset();
     }
 
-    <span class="kw">pub fn </span>build_decoder(<span class="kw-2">&amp;mut </span><span class="self">self</span>, source: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="prelude-ty">Result</span>&lt;u32, String&gt; {
+    <span class="kw">pub fn </span>build_decoder(<span class="kw-2">&amp;mut </span><span class="self">self</span>, source: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="prelude-ty">Result</span>&lt;u32, HuffmanTableError&gt; {
         <span class="self">self</span>.decode.clear();
 
         <span class="kw">let </span>bytes_used = <span class="self">self</span>.read_weights(source)<span class="question-mark">?</span>;
@@ -453,9 +558,11 @@
         <span class="prelude-val">Ok</span>(bytes_used)
     }
 
-    <span class="kw">fn </span>read_weights(<span class="kw-2">&amp;mut </span><span class="self">self</span>, source: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="prelude-ty">Result</span>&lt;u32, String&gt; {
+    <span class="kw">fn </span>read_weights(<span class="kw-2">&amp;mut </span><span class="self">self</span>, source: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="prelude-ty">Result</span>&lt;u32, HuffmanTableError&gt; {
+        <span class="kw">use </span>HuffmanTableError <span class="kw">as </span>err;
+
         <span class="kw">if </span>source.is_empty() {
-            <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="string">&quot;Source needs to have at least one byte&quot;</span>.to_owned());
+            <span class="kw">return </span><span class="prelude-val">Err</span>(err::SourceIsEmpty);
         }
         <span class="kw">let </span>header = source[<span class="number">0</span>];
         <span class="kw">let </span><span class="kw-2">mut </span>bits_read = <span class="number">8</span>;
@@ -464,7 +571,10 @@
             <span class="number">0</span>..=<span class="number">127 </span>=&gt; {
                 <span class="kw">let </span>fse_stream = <span class="kw-2">&amp;</span>source[<span class="number">1</span>..];
                 <span class="kw">if </span>header <span class="kw">as </span>usize &gt; fse_stream.len() {
-                    <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">format!</span>(<span class="string">&quot;Header says there should be {} bytes for the weights but there are only {} bytes in the stream&quot;</span>, header, fse_stream.len()));
+                    <span class="kw">return </span><span class="prelude-val">Err</span>(err::NotEnoughBytesForWeights {
+                        got_bytes: fse_stream.len(),
+                        expected_bytes: header,
+                    });
                 }
                 <span class="comment">//fse decompress weights
                 </span><span class="kw">let </span>bytes_used_by_fse_header = <span class="self">self
@@ -472,15 +582,16 @@
                     .build_decoder(fse_stream, <span class="comment">/*TODO find actual max*/ </span><span class="number">100</span>)<span class="question-mark">?</span>;
 
                 <span class="kw">if </span>bytes_used_by_fse_header &gt; header <span class="kw">as </span>usize {
-                    <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">format!</span>(<span class="string">&quot;FSE table used more bytes: {} than were meant to be used for the whole stream of huffman weights&quot;</span>, bytes_used_by_fse_header));
+                    <span class="kw">return </span><span class="prelude-val">Err</span>(err::FSETableUsedTooManyBytes {
+                        used: bytes_used_by_fse_header,
+                        available_bytes: header,
+                    });
                 }
 
-                <span class="kw">if </span><span class="kw">crate</span>::VERBOSE {
-                    <span class="macro">println!</span>(
-                        <span class="string">&quot;Building fse table for huffman weights used: {}&quot;</span>,
-                        bytes_used_by_fse_header
-                    );
-                }
+                <span class="macro">vprintln!</span>(
+                    <span class="string">&quot;Building fse table for huffman weights used: {}&quot;</span>,
+                    bytes_used_by_fse_header
+                );
                 <span class="kw">let </span><span class="kw-2">mut </span>dec1 = FSEDecoder::new(<span class="kw-2">&amp;</span><span class="self">self</span>.fse_table);
                 <span class="kw">let </span><span class="kw-2">mut </span>dec2 = FSEDecoder::new(<span class="kw-2">&amp;</span><span class="self">self</span>.fse_table);
 
@@ -489,11 +600,10 @@
 
                 <span class="kw">let </span>compressed_weights = <span class="kw-2">&amp;</span>fse_stream[compressed_start..];
                 <span class="kw">if </span>compressed_weights.len() &lt; compressed_length {
-                    <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">format!</span>(
-                        <span class="string">&quot;Not enough bytes in stream to decompress weights. Is: {}, Should be: {}&quot;</span>,
-                        compressed_weights.len(),
-                        compressed_length
-                    ));
+                    <span class="kw">return </span><span class="prelude-val">Err</span>(err::NotEnoughBytesToDecompressWeights {
+                        have: compressed_weights.len(),
+                        need: compressed_length,
+                    });
                 }
                 <span class="kw">let </span>compressed_weights = <span class="kw-2">&amp;</span>compressed_weights[..compressed_length];
                 <span class="kw">let </span><span class="kw-2">mut </span>br = BitReaderReversed::new(compressed_weights);
@@ -511,7 +621,7 @@
                 }
                 <span class="kw">if </span>skipped_bits &gt; <span class="number">8 </span>{
                     <span class="comment">//if more than 7 bits are 0, this is not the correct end of the bitstream. Either a bug or corrupted data
-                    </span><span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">format!</span>(<span class="string">&quot;Padding at the end of the sequence_section was more than a byte long: {}. Probably cause by data corruption&quot;</span>, skipped_bits));
+                    </span><span class="kw">return </span><span class="prelude-val">Err</span>(err::ExtraPadding { skipped_bits });
                 }
 
                 dec1.init_state(<span class="kw-2">&amp;mut </span>br)<span class="question-mark">?</span>;
@@ -539,12 +649,11 @@
                         </span><span class="self">self</span>.weights.push(dec1.decode_symbol());
                         <span class="kw">break</span>;
                     }
-                    <span class="comment">//maximum number of weights is 255 because we use u8 symbols and the last weight is infered from the sum of all others
+                    <span class="comment">//maximum number of weights is 255 because we use u8 symbols and the last weight is inferred from the sum of all others
                     </span><span class="kw">if </span><span class="self">self</span>.weights.len() &gt; <span class="number">255 </span>{
-                        <span class="kw">return </span><span class="prelude-val">Err</span>(
-                            <span class="string">&quot;More than 255 weights decoded. Stream is probably corrupted&quot;
-                                </span>.to_owned(),
-                        );
+                        <span class="kw">return </span><span class="prelude-val">Err</span>(err::TooManyWeights {
+                            got: <span class="self">self</span>.weights.len(),
+                        });
                     }
                 }
             }
@@ -561,10 +670,10 @@
                 </span>};
 
                 <span class="kw">if </span>weights_raw.len() &lt; bytes_needed {
-                    <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">format!</span>(
-                        <span class="string">&quot;Source needs to have at least {} bytes&quot;</span>,
-                        bytes_needed
-                    ));
+                    <span class="kw">return </span><span class="prelude-val">Err</span>(err::NotEnoughBytesInSource {
+                        got: weights_raw.len(),
+                        need: bytes_needed,
+                    });
                 }
 
                 <span class="kw">for </span>idx <span class="kw">in </span><span class="number">0</span>..num_weights {
@@ -586,34 +695,30 @@
         <span class="prelude-val">Ok</span>(bytes_read <span class="kw">as </span>u32)
     }
 
-    <span class="kw">fn </span>build_table_from_weights(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), String&gt; {
+    <span class="kw">fn </span>build_table_from_weights(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), HuffmanTableError&gt; {
+        <span class="kw">use </span>HuffmanTableError <span class="kw">as </span>err;
+
         <span class="self">self</span>.bits.clear();
         <span class="self">self</span>.bits.resize(<span class="self">self</span>.weights.len() + <span class="number">1</span>, <span class="number">0</span>);
 
         <span class="kw">let </span><span class="kw-2">mut </span>weight_sum: u32 = <span class="number">0</span>;
         <span class="kw">for </span>w <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.weights {
             <span class="kw">if </span><span class="kw-2">*</span>w &gt; MAX_MAX_NUM_BITS {
-                <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">format!</span>(
-                    <span class="string">&quot;Cant have weight: {} bigger than max_num_bits: {}&quot;</span>,
-                    <span class="kw-2">*</span>w, MAX_MAX_NUM_BITS
-                ));
+                <span class="kw">return </span><span class="prelude-val">Err</span>(err::WeightBiggerThanMaxNumBits { got: <span class="kw-2">*</span>w });
             }
             weight_sum += <span class="kw">if </span><span class="kw-2">*</span>w &gt; <span class="number">0 </span>{ <span class="number">1_u32 </span>&lt;&lt; (<span class="kw-2">*</span>w - <span class="number">1</span>) } <span class="kw">else </span>{ <span class="number">0 </span>};
         }
 
         <span class="kw">if </span>weight_sum == <span class="number">0 </span>{
-            <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="string">&quot;Cant build huffman table without any weights&quot;</span>.to_owned());
+            <span class="kw">return </span><span class="prelude-val">Err</span>(err::MissingWeights);
         }
 
         <span class="kw">let </span>max_bits = highest_bit_set(weight_sum) <span class="kw">as </span>u8;
         <span class="kw">let </span>left_over = (<span class="number">1 </span>&lt;&lt; max_bits) - weight_sum;
 
         <span class="comment">//left_over must be power of two
-        </span><span class="kw">if </span>left_over &amp; (left_over - <span class="number">1</span>) != <span class="number">0 </span>{
-            <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">format!</span>(
-                <span class="string">&quot;Leftover must be power of two but is: {}&quot;</span>,
-                left_over
-            ));
+        </span><span class="kw">if </span>!left_over.is_power_of_two() {
+            <span class="kw">return </span><span class="prelude-val">Err</span>(err::LeftoverIsNotAPowerOf2 { got: left_over });
         }
 
         <span class="kw">let </span>last_weight = highest_bit_set(left_over) <span class="kw">as </span>u8;
@@ -631,10 +736,7 @@
         <span class="self">self</span>.max_num_bits = max_bits;
 
         <span class="kw">if </span>max_bits &gt; MAX_MAX_NUM_BITS {
-            <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">format!</span>(
-                <span class="string">&quot;max_bits derived from weights is: {} should be lower than: {} &quot;</span>,
-                max_bits, MAX_MAX_NUM_BITS
-            ));
+            <span class="kw">return </span><span class="prelude-val">Err</span>(err::MaxBitsTooHigh { got: max_bits });
         }
 
         <span class="self">self</span>.bit_ranks.clear();

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/wgpu-core-0.15.1/src/device/queue.rs`."><title>queue.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="wgpu_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../wgpu_core/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/wgpu-core-0.16.1/src/device/queue.rs`."><title>queue.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="wgpu_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../wgpu_core/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1421,6 +1421,12 @@
 <a href="#1421" id="1421">1421</a>
 <a href="#1422" id="1422">1422</a>
 <a href="#1423" id="1423">1423</a>
+<a href="#1424" id="1424">1424</a>
+<a href="#1425" id="1425">1425</a>
+<a href="#1426" id="1426">1426</a>
+<a href="#1427" id="1427">1427</a>
+<a href="#1428" id="1428">1428</a>
+<a href="#1429" id="1429">1429</a>
 </pre></div><pre class="rust"><code><span class="attr">#[cfg(feature = <span class="string">&quot;trace&quot;</span>)]
 </span><span class="kw">use </span><span class="kw">crate</span>::device::trace::Action;
 <span class="kw">use crate</span>::{
@@ -1441,7 +1447,7 @@
 <span class="kw">use </span>hal::{CommandEncoder <span class="kw">as _</span>, Device <span class="kw">as _</span>, Queue <span class="kw">as _</span>};
 <span class="kw">use </span>parking_lot::Mutex;
 <span class="kw">use </span>smallvec::SmallVec;
-<span class="kw">use </span>std::{iter, mem, num::NonZeroU32, ptr};
+<span class="kw">use </span>std::{iter, mem, ptr};
 <span class="kw">use </span>thiserror::Error;
 
 <span class="doccomment">/// Number of command buffers that we generate from the same pool
@@ -1707,10 +1713,11 @@
 }
 
 <span class="attr">#[derive(Clone, Debug, Error)]
-#[error(<span class="string">&quot;queue is invalid&quot;</span>)]
+#[error(<span class="string">&quot;Queue is invalid&quot;</span>)]
 </span><span class="kw">pub struct </span>InvalidQueue;
 
 <span class="attr">#[derive(Clone, Debug, Error)]
+#[non_exhaustive]
 </span><span class="kw">pub enum </span>QueueWriteError {
     <span class="attr">#[error(transparent)]
     </span>Queue(<span class="attr">#[from] </span>DeviceError),
@@ -1721,20 +1728,21 @@
 }
 
 <span class="attr">#[derive(Clone, Debug, Error)]
+#[non_exhaustive]
 </span><span class="kw">pub enum </span>QueueSubmitError {
     <span class="attr">#[error(transparent)]
     </span>Queue(<span class="attr">#[from] </span>DeviceError),
-    <span class="attr">#[error(<span class="string">&quot;buffer {0:?} is destroyed&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Buffer {0:?} is destroyed&quot;</span>)]
     </span>DestroyedBuffer(id::BufferId),
-    <span class="attr">#[error(<span class="string">&quot;texture {0:?} is destroyed&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Texture {0:?} is destroyed&quot;</span>)]
     </span>DestroyedTexture(id::TextureId),
     <span class="attr">#[error(transparent)]
     </span>Unmap(<span class="attr">#[from] </span>BufferAccessError),
     <span class="attr">#[error(<span class="string">&quot;Buffer {0:?} is still mapped&quot;</span>)]
     </span>BufferStillMapped(id::BufferId),
-    <span class="attr">#[error(<span class="string">&quot;surface output was dropped before the command buffer got submitted&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Surface output was dropped before the command buffer got submitted&quot;</span>)]
     </span>SurfaceOutputDropped,
-    <span class="attr">#[error(<span class="string">&quot;surface was unconfigured before the command buffer got submitted&quot;</span>)]
+    <span class="attr">#[error(<span class="string">&quot;Surface was unconfigured before the command buffer got submitted&quot;</span>)]
     </span>SurfaceUnconfigured,
     <span class="attr">#[error(<span class="string">&quot;GPU got stuck :(&quot;</span>)]
     </span>StuckGpu,
@@ -2025,10 +2033,6 @@
             .get_mut(destination.texture)
             .map_err(|<span class="kw">_</span>| TransferError::InvalidTexture(destination.texture))<span class="question-mark">?</span>;
 
-        <span class="kw">let </span>(selector, dst_base, texture_format) =
-            extract_texture_selector(destination, size, dst)<span class="question-mark">?</span>;
-        <span class="kw">let </span>format_desc = texture_format.describe();
-
         <span class="kw">if </span>!dst.desc.usage.contains(wgt::TextureUsages::COPY_DST) {
             <span class="kw">return </span><span class="prelude-val">Err</span>(
                 TransferError::MissingCopyDstUsageFlag(<span class="prelude-val">None</span>, <span class="prelude-val">Some</span>(destination.texture)).into(),
@@ -2040,47 +2044,58 @@
         </span><span class="kw">let </span>(hal_copy_size, array_layer_count) =
             validate_texture_copy_range(destination, <span class="kw-2">&amp;</span>dst.desc, CopySide::Destination, size)<span class="question-mark">?</span>;
 
-        <span class="comment">// Note: `_source_bytes_per_array_layer` is ignored since we
-        // have a staging copy, and it can have a different value.
-        </span><span class="kw">let </span>(<span class="kw">_</span>, _source_bytes_per_array_layer) = validate_linear_texture_data(
-            data_layout,
-            texture_format,
-            data.len() <span class="kw">as </span>wgt::BufferAddress,
-            CopySide::Source,
-            format_desc.block_size <span class="kw">as </span>wgt::BufferAddress,
-            size,
-            <span class="bool-val">false</span>,
-        )<span class="question-mark">?</span>;
+        <span class="kw">let </span>(selector, dst_base) = extract_texture_selector(destination, size, dst)<span class="question-mark">?</span>;
 
-        <span class="kw">if </span>!conv::is_valid_copy_dst_texture_format(texture_format, destination.aspect) {
+        <span class="kw">if </span>!dst_base.aspect.is_one() {
+            <span class="kw">return </span><span class="prelude-val">Err</span>(TransferError::CopyAspectNotOne.into());
+        }
+
+        <span class="kw">if </span>!conv::is_valid_copy_dst_texture_format(dst.desc.format, destination.aspect) {
             <span class="kw">return </span><span class="prelude-val">Err</span>(TransferError::CopyToForbiddenTextureFormat {
-                format: texture_format,
+                format: dst.desc.format,
                 aspect: destination.aspect,
             }
             .into());
         }
-        <span class="kw">let </span>(block_width, block_height) = format_desc.block_dimensions;
-        <span class="kw">let </span>width_blocks = size.width / block_width <span class="kw">as </span>u32;
-        <span class="kw">let </span>height_blocks = size.height / block_height <span class="kw">as </span>u32;
 
-        <span class="kw">let </span>block_rows_per_image = <span class="kw">match </span>data_layout.rows_per_image {
-            <span class="prelude-val">Some</span>(rows_per_image) =&gt; rows_per_image.get(),
-            <span class="prelude-val">None </span>=&gt; {
-                <span class="comment">// doesn&#39;t really matter because we need this only if we copy
-                // more than one layer, and then we validate for this being not
-                // None
-                </span>size.height
-            }
-        };
+        <span class="comment">// Note: `_source_bytes_per_array_layer` is ignored since we
+        // have a staging copy, and it can have a different value.
+        </span><span class="kw">let </span>(<span class="kw">_</span>, _source_bytes_per_array_layer) = validate_linear_texture_data(
+            data_layout,
+            dst.desc.format,
+            destination.aspect,
+            data.len() <span class="kw">as </span>wgt::BufferAddress,
+            CopySide::Source,
+            size,
+            <span class="bool-val">false</span>,
+        )<span class="question-mark">?</span>;
 
-        <span class="kw">let </span>bytes_per_row_alignment = get_lowest_common_denom(
-            device.alignments.buffer_copy_pitch.get() <span class="kw">as </span>u32,
-            format_desc.block_size <span class="kw">as </span>u32,
+        <span class="kw">if </span>dst.desc.format.is_depth_stencil_format() {
+            device
+                .require_downlevel_flags(wgt::DownlevelFlags::DEPTH_TEXTURE_AND_BUFFER_COPIES)
+                .map_err(TransferError::from)<span class="question-mark">?</span>;
+        }
+
+        <span class="kw">let </span>(block_width, block_height) = dst.desc.format.block_dimensions();
+        <span class="kw">let </span>width_blocks = size.width / block_width;
+        <span class="kw">let </span>height_blocks = size.height / block_height;
+
+        <span class="kw">let </span>block_rows_per_image = data_layout.rows_per_image.unwrap_or(
+            <span class="comment">// doesn&#39;t really matter because we need this only if we copy
+            // more than one layer, and then we validate for this being not
+            // None
+            </span>size.height,
         );
-        <span class="kw">let </span>stage_bytes_per_row = hal::auxil::align_to(
-            format_desc.block_size <span class="kw">as </span>u32 * width_blocks,
-            bytes_per_row_alignment,
-        );
+
+        <span class="kw">let </span>block_size = dst
+            .desc
+            .format
+            .block_size(<span class="prelude-val">Some</span>(destination.aspect))
+            .unwrap();
+        <span class="kw">let </span>bytes_per_row_alignment =
+            get_lowest_common_denom(device.alignments.buffer_copy_pitch.get() <span class="kw">as </span>u32, block_size);
+        <span class="kw">let </span>stage_bytes_per_row =
+            wgt::math::align_to(block_size * width_blocks, bytes_per_row_alignment);
 
         <span class="kw">let </span>block_rows_in_copy =
             (size.depth_or_array_layers - <span class="number">1</span>) * block_rows_per_image + height_blocks;
@@ -2151,11 +2166,9 @@
             .as_raw()
             .ok_or(TransferError::InvalidTexture(destination.texture))<span class="question-mark">?</span>;
 
-        <span class="kw">let </span>bytes_per_row = <span class="kw">if let </span><span class="prelude-val">Some</span>(bytes_per_row) = data_layout.bytes_per_row {
-            bytes_per_row.get()
-        } <span class="kw">else </span>{
-            width_blocks * format_desc.block_size <span class="kw">as </span>u32
-        };
+        <span class="kw">let </span>bytes_per_row = data_layout
+            .bytes_per_row
+            .unwrap_or(width_blocks * block_size);
 
         <span class="comment">// Platform validation requires that the staging buffer always be
         // freed, even if an error occurs. All paths from here must call
@@ -2209,8 +2222,8 @@
                     offset: rel_array_layer <span class="kw">as </span>u64
                         * block_rows_per_image <span class="kw">as </span>u64
                         * stage_bytes_per_row <span class="kw">as </span>u64,
-                    bytes_per_row: NonZeroU32::new(stage_bytes_per_row),
-                    rows_per_image: NonZeroU32::new(block_rows_per_image),
+                    bytes_per_row: <span class="prelude-val">Some</span>(stage_bytes_per_row),
+                    rows_per_image: <span class="prelude-val">Some</span>(block_rows_per_image),
                 },
                 texture_base,
                 size: hal_copy_size,
@@ -2222,8 +2235,7 @@
         };
 
         <span class="kw">unsafe </span>{
-            encoder
-                .transition_textures(transition.map(|pending| pending.into_hal(dst)).into_iter());
+            encoder.transition_textures(transition.map(|pending| pending.into_hal(dst)));
             encoder.transition_buffers(iter::once(barrier));
             encoder.copy_buffer_to_texture(<span class="kw-2">&amp;</span>staging_buffer.raw, dst_raw, regions);
         }
@@ -2237,7 +2249,7 @@
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="attr">#[cfg(all(target_arch = <span class="string">&quot;wasm32&quot;</span>, not(feature = <span class="string">&quot;emscripten&quot;</span>)))]
+    <span class="attr">#[cfg(all(target_arch = <span class="string">&quot;wasm32&quot;</span>, not(target_os = <span class="string">&quot;emscripten&quot;</span>)))]
     </span><span class="kw">pub fn </span>queue_copy_external_image_to_texture&lt;A: HalApi&gt;(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         queue_id: id::QueueId,
@@ -2280,9 +2292,6 @@
 
         <span class="kw">let </span>(<span class="kw-2">mut </span>texture_guard, <span class="kw">_</span>) = hub.textures.write(<span class="kw-2">&amp;mut </span>token); <span class="comment">// For clear we need write access to the texture. TODO: Can we acquire write lock later?
         </span><span class="kw">let </span>dst = texture_guard.get_mut(destination.texture).unwrap();
-
-        <span class="kw">let </span>(selector, dst_base, <span class="kw">_</span>) =
-            extract_texture_selector(<span class="kw-2">&amp;</span>destination.to_untagged(), <span class="kw-2">&amp;</span>size, dst)<span class="question-mark">?</span>;
 
         <span class="kw">if </span>!conv::is_valid_external_image_copy_dst_texture_format(dst.desc.format) {
             <span class="kw">return </span><span class="prelude-val">Err</span>(
@@ -2352,6 +2361,9 @@
             CopySide::Destination,
             <span class="kw-2">&amp;</span>size,
         )<span class="question-mark">?</span>;
+
+        <span class="kw">let </span>(selector, dst_base) =
+            extract_texture_selector(<span class="kw-2">&amp;</span>destination.to_untagged(), <span class="kw-2">&amp;</span>size, dst)<span class="question-mark">?</span>;
 
         <span class="kw">let </span><span class="kw-2">mut </span>trackers = device.trackers.lock();
         <span class="kw">let </span>encoder = device.pending_writes.activate();

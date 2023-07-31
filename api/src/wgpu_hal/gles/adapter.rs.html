@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/wgpu-hal-0.15.4/src/gles/adapter.rs`."><title>adapter.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="wgpu_hal" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../wgpu_hal/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/wgpu-hal-0.16.2/src/gles/adapter.rs`."><title>adapter.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="wgpu_hal" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../wgpu_hal/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -959,6 +959,19 @@
 <a href="#959" id="959">959</a>
 <a href="#960" id="960">960</a>
 <a href="#961" id="961">961</a>
+<a href="#962" id="962">962</a>
+<a href="#963" id="963">963</a>
+<a href="#964" id="964">964</a>
+<a href="#965" id="965">965</a>
+<a href="#966" id="966">966</a>
+<a href="#967" id="967">967</a>
+<a href="#968" id="968">968</a>
+<a href="#969" id="969">969</a>
+<a href="#970" id="970">970</a>
+<a href="#971" id="971">971</a>
+<a href="#972" id="972">972</a>
+<a href="#973" id="973">973</a>
+<a href="#974" id="974">974</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>glow::HasContext;
 <span class="kw">use </span>std::sync::Arc;
 <span class="kw">use </span>wgt::AstcChannel;
@@ -1149,14 +1162,14 @@
         <span class="kw">let </span>(vendor_const, renderer_const) = <span class="kw">if </span>extensions.contains(<span class="string">&quot;WEBGL_debug_renderer_info&quot;</span>) {
             <span class="comment">// emscripten doesn&#39;t enable &quot;WEBGL_debug_renderer_info&quot; extension by default. so, we do it manually.
             // See https://github.com/gfx-rs/wgpu/issues/3245 for context
-            </span><span class="attr">#[cfg(feature = <span class="string">&quot;emscripten&quot;</span>)]
+            </span><span class="attr">#[cfg(target_os = <span class="string">&quot;emscripten&quot;</span>)]
             </span><span class="kw">if unsafe </span>{ <span class="kw">super</span>::emscripten::enable_extension(<span class="string">&quot;WEBGL_debug_renderer_info\0&quot;</span>) } {
                 (GL_UNMASKED_VENDOR_WEBGL, GL_UNMASKED_RENDERER_WEBGL)
             } <span class="kw">else </span>{
                 (glow::VENDOR, glow::RENDERER)
             }
             <span class="comment">// glow already enables WEBGL_debug_renderer_info on wasm32-unknown-unknown target by default.
-            </span><span class="attr">#[cfg(not(feature = <span class="string">&quot;emscripten&quot;</span>))]
+            </span><span class="attr">#[cfg(not(target_os = <span class="string">&quot;emscripten&quot;</span>))]
             </span>(GL_UNMASKED_VENDOR_WEBGL, GL_UNMASKED_RENDERER_WEBGL)
         } <span class="kw">else </span>{
             (glow::VENDOR, glow::RENDERER)
@@ -1276,10 +1289,11 @@
                 </span>&amp;&amp; (vertex_shader_storage_blocks != <span class="number">0 </span>|| vertex_ssbo_false_zero),
         );
         downlevel_flags.set(wgt::DownlevelFlags::FRAGMENT_STORAGE, supports_storage);
-        downlevel_flags.set(
-            wgt::DownlevelFlags::ANISOTROPIC_FILTERING,
-            extensions.contains(<span class="string">&quot;EXT_texture_filter_anisotropic&quot;</span>),
-        );
+        <span class="kw">if </span>extensions.contains(<span class="string">&quot;EXT_texture_filter_anisotropic&quot;</span>) {
+            <span class="kw">let </span>max_aniso =
+                <span class="kw">unsafe </span>{ gl.get_parameter_i32(glow::MAX_TEXTURE_MAX_ANISOTROPY_EXT) } <span class="kw">as </span>u32;
+            downlevel_flags.set(wgt::DownlevelFlags::ANISOTROPIC_FILTERING, max_aniso &gt;= <span class="number">16</span>);
+        }
         downlevel_flags.set(
             wgt::DownlevelFlags::BUFFER_BINDINGS_NOT_16_BYTE_ALIGNED,
             !(<span class="macro">cfg!</span>(target_arch = <span class="string">&quot;wasm32&quot;</span>) || is_angle),
@@ -1296,6 +1310,10 @@
         downlevel_flags.set(
             wgt::DownlevelFlags::FULL_DRAW_INDEX_UINT32,
             max_element_index == u32::MAX,
+        );
+        downlevel_flags.set(
+            wgt::DownlevelFlags::MULTISAMPLED_SHADING,
+            ver &gt;= (<span class="number">3</span>, <span class="number">2</span>) || extensions.contains(<span class="string">&quot;OES_sample_variables&quot;</span>),
         );
 
         <span class="kw">let </span><span class="kw-2">mut </span>features = wgt::Features::empty()
@@ -1323,6 +1341,7 @@
             wgt::Features::SHADER_PRIMITIVE_INDEX,
             ver &gt;= (<span class="number">3</span>, <span class="number">2</span>) || extensions.contains(<span class="string">&quot;OES_geometry_shader&quot;</span>),
         );
+        features.set(wgt::Features::SHADER_EARLY_DEPTH_TEST, ver &gt;= (<span class="number">3</span>, <span class="number">1</span>));
         <span class="kw">let </span>gles_bcn_exts = [
             <span class="string">&quot;GL_EXT_texture_compression_s3tc_srgb&quot;</span>,
             <span class="string">&quot;GL_EXT_texture_compression_rgtc&quot;</span>,
@@ -1352,11 +1371,11 @@
         </span><span class="kw">if </span>extensions.contains(<span class="string">&quot;WEBGL_compressed_texture_astc&quot;</span>)
             || extensions.contains(<span class="string">&quot;GL_OES_texture_compression_astc&quot;</span>)
         {
-            features.insert(wgt::Features::TEXTURE_COMPRESSION_ASTC_LDR);
+            features.insert(wgt::Features::TEXTURE_COMPRESSION_ASTC);
             features.insert(wgt::Features::TEXTURE_COMPRESSION_ASTC_HDR);
         } <span class="kw">else </span>{
             features.set(
-                wgt::Features::TEXTURE_COMPRESSION_ASTC_LDR,
+                wgt::Features::TEXTURE_COMPRESSION_ASTC,
                 extensions.contains(<span class="string">&quot;GL_KHR_texture_compression_astc_ldr&quot;</span>),
             );
             features.set(
@@ -1627,7 +1646,7 @@
             device: <span class="kw">super</span>::Device {
                 shared: Arc::clone(<span class="kw-2">&amp;</span><span class="self">self</span>.shared),
                 main_vao,
-                <span class="attr">#[cfg(feature = <span class="string">&quot;renderdoc&quot;</span>)]
+                <span class="attr">#[cfg(all(not(target_arch = <span class="string">&quot;wasm32&quot;</span>), feature = <span class="string">&quot;renderdoc&quot;</span>))]
                 </span>render_doc: Default::default(),
             },
             queue: <span class="kw">super</span>::Queue {
@@ -1661,12 +1680,19 @@
                     .lock()
                     .get_parameter_i32(glow::MAX_SAMPLES)
             };
-            <span class="kw">if </span>max_samples &gt;= <span class="number">8 </span>{
-                Tfc::MULTISAMPLE_X2 | Tfc::MULTISAMPLE_X4 | Tfc::MULTISAMPLE_X8
-            } <span class="kw">else if </span>max_samples &gt;= <span class="number">4 </span>{
-                Tfc::MULTISAMPLE_X2 | Tfc::MULTISAMPLE_X4
-            } <span class="kw">else </span>{
+            <span class="kw">if </span>max_samples &gt;= <span class="number">16 </span>{
                 Tfc::MULTISAMPLE_X2
+                    | Tfc::MULTISAMPLE_X4
+                    | Tfc::MULTISAMPLE_X8
+                    | Tfc::MULTISAMPLE_X16
+            } <span class="kw">else if </span>max_samples &gt;= <span class="number">8 </span>{
+                Tfc::MULTISAMPLE_X2 | Tfc::MULTISAMPLE_X4 | Tfc::MULTISAMPLE_X8
+            } <span class="kw">else </span>{
+                <span class="comment">// The lowest supported level in GLE3.0/WebGL2 is 4X
+                // (see GL_MAX_SAMPLES in https://registry.khronos.org/OpenGL-Refpages/es3.0/html/glGet.xhtml).
+                // On some platforms, like iOS Safari, `get_parameter_i32(MAX_SAMPLES)` returns 0,
+                // so we always fall back to supporting 4x here.
+                </span>Tfc::MULTISAMPLE_X2 | Tfc::MULTISAMPLE_X4
             }
         };
 
@@ -1694,7 +1720,7 @@
 
         <span class="kw">let </span>bcn_features = feature_fn(wgt::Features::TEXTURE_COMPRESSION_BC, filterable);
         <span class="kw">let </span>etc2_features = feature_fn(wgt::Features::TEXTURE_COMPRESSION_ETC2, filterable);
-        <span class="kw">let </span>astc_features = feature_fn(wgt::Features::TEXTURE_COMPRESSION_ASTC_LDR, filterable);
+        <span class="kw">let </span>astc_features = feature_fn(wgt::Features::TEXTURE_COMPRESSION_ASTC, filterable);
         <span class="kw">let </span>astc_hdr_features = feature_fn(wgt::Features::TEXTURE_COMPRESSION_ASTC_HDR, filterable);
 
         <span class="kw">let </span>private_caps_fn = |f, caps| {
@@ -1781,7 +1807,7 @@
             | Tf::Bc4RSnorm
             | Tf::Bc5RgUnorm
             | Tf::Bc5RgSnorm
-            | Tf::Bc6hRgbSfloat
+            | Tf::Bc6hRgbFloat
             | Tf::Bc6hRgbUfloat
             | Tf::Bc7RgbaUnorm
             | Tf::Bc7RgbaUnormSrgb =&gt; bcn_features,

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["Dictionary"]};
+window.SIDEBAR_ITEMS = {"constant":["MAGIC_NUM"],"enum":["DictionaryDecodeError"],"struct":["Dictionary"]};
