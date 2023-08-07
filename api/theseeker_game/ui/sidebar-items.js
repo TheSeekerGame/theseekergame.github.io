@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["console"],"struct":["UiPlugin"]};
+window.SIDEBAR_ITEMS = {"fn":["spawn_menuentry"],"mod":["console","mainmenu"],"struct":["UiPlugin"]};

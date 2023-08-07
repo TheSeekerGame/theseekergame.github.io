@@ -140,7 +140,7 @@ var sourcesIndex = JSON.parse('{\
 "hexasphere":["",[],["interpolation.rs","lib.rs","shapes.rs","slice.rs"]],\
 "hexf_parse":["",[],["lib.rs"]],\
 "ident_case":["",[],["lib.rs"]],\
-"image":["",[["codecs",[["hdr",[],["decoder.rs","encoder.rs","mod.rs"]]],["png.rs"]],["imageops",[],["affine.rs","colorops.rs","mod.rs","sample.rs"]],["io",[],["free_functions.rs","mod.rs","reader.rs"]],["math",[],["mod.rs","rect.rs","utils.rs"]],["utils",[],["mod.rs"]]],["animation.rs","buffer.rs","color.rs","dynimage.rs","error.rs","flat.rs","image.rs","lib.rs","traits.rs"]],\
+"image":["",[["codecs",[["hdr",[],["decoder.rs","encoder.rs","mod.rs"]],["jpeg",[],["decoder.rs","encoder.rs","entropy.rs","mod.rs","transform.rs"]]],["png.rs"]],["imageops",[],["affine.rs","colorops.rs","mod.rs","sample.rs"]],["io",[],["free_functions.rs","mod.rs","reader.rs"]],["math",[],["mod.rs","rect.rs","utils.rs"]],["utils",[],["mod.rs"]]],["animation.rs","buffer.rs","color.rs","dynimage.rs","error.rs","flat.rs","image.rs","lib.rs","traits.rs"]],\
 "indexmap":["",[["map",[["core",[],["raw.rs"]]],["core.rs","iter.rs","serde_seq.rs","slice.rs"]],["set",[],["iter.rs","slice.rs"]]],["arbitrary.rs","lib.rs","macros.rs","map.rs","mutable_keys.rs","serde.rs","set.rs","util.rs"]],\
 "instant":["",[],["lib.rs","native.rs"]],\
 "interpolation":["",[],["ease.rs","lerp.rs","lib.rs"]],\
@@ -152,6 +152,7 @@ var sourcesIndex = JSON.parse('{\
 "iyes_cli":["",[],["lib.rs"]],\
 "iyes_progress":["",[],["asset.rs","lib.rs"]],\
 "iyes_ui":["",[],["lib.rs","onclick.rs"]],\
+"jpeg_decoder":["",[["arch",[],["mod.rs","neon.rs","ssse3.rs"]],["decoder",[],["lossless.rs"]],["worker",[],["immediate.rs","mod.rs","multithreaded.rs"]]],["decoder.rs","error.rs","huffman.rs","idct.rs","lib.rs","marker.rs","parser.rs","upsampler.rs"]],\
 "khronos_egl":["",[],["lib.rs"]],\
 "ktx2":["",[],["enums.rs","error.rs","lib.rs"]],\
 "lazy_static":["",[],["inline_lazy.rs","lib.rs"]],\
@@ -216,7 +217,7 @@ var sourcesIndex = JSON.parse('{\
 "scopeguard":["",[],["lib.rs"]],\
 "sctk_adwaita":["",[["title",[],["ab_glyph_renderer.rs","config.rs","font_preference.rs"]]],["buttons.rs","config.rs","lib.rs","parts.rs","pointer.rs","surface.rs","theme.rs","title.rs"]],\
 "self_cell":["",[],["lib.rs","unsafe_self_cell.rs"]],\
-"serde":["",[["de",[],["format.rs","ignored_any.rs","impls.rs","mod.rs","seed.rs","utf8.rs","value.rs"]],["private",[],["de.rs","doc.rs","mod.rs","ser.rs","size_hint.rs"]],["ser",[],["fmt.rs","impls.rs","impossible.rs","mod.rs"]]],["integer128.rs","lib.rs","macros.rs"]],\
+"serde":["",[["de",[],["format.rs","ignored_any.rs","impls.rs","mod.rs","seed.rs","size_hint.rs","utf8.rs","value.rs"]],["private",[],["de.rs","doc.rs","mod.rs","ser.rs"]],["ser",[],["fmt.rs","impls.rs","impossible.rs","mod.rs"]]],["integer128.rs","lib.rs","macros.rs"]],\
 "serde_derive":["",[],["buffer.rs","bytecode.rs","lib.rs","lib_precompiled.rs"]],\
 "serde_json":["",[["features_check",[],["mod.rs"]],["io",[],["mod.rs"]],["value",[],["de.rs","from.rs","index.rs","mod.rs","partial_eq.rs","ser.rs"]]],["de.rs","error.rs","iter.rs","lib.rs","macros.rs","map.rs","number.rs","read.rs","ser.rs"]],\
 "serde_spanned":["",[],["lib.rs","spanned.rs"]],\
@@ -240,7 +241,7 @@ var sourcesIndex = JSON.parse('{\
 "taffy":["",[["compute",[["common",[],["alignment.rs","mod.rs"]],["grid",[["types",[],["cell_occupancy.rs","coordinates.rs","grid_item.rs","grid_track.rs","grid_track_counts.rs","mod.rs"]],["util",[],["mod.rs"]]],["alignment.rs","explicit_grid.rs","implicit_grid.rs","mod.rs","placement.rs","track_sizing.rs"]]],["flexbox.rs","leaf.rs","mod.rs"]],["style",[],["alignment.rs","dimension.rs","flex.rs","grid.rs","mod.rs"]]],["axis.rs","data.rs","debug.rs","error.rs","geometry.rs","layout.rs","lib.rs","math.rs","node.rs","prelude.rs","resolve.rs","style_helpers.rs","sys.rs","tree.rs"]],\
 "termcolor":["",[],["lib.rs"]],\
 "theseeker_engine":["",[],["assets.rs","lib.rs","time.rs"]],\
-"theseeker_game":["",[["screens",[],["loading.rs"]],["ui",[],["console.rs"]]],["appstate.rs","assets.rs","cli.rs","locale.rs","main.rs","ui.rs"]],\
+"theseeker_game":["",[["screens",[],["loading.rs"]],["ui",[],["console.rs","mainmenu.rs"]]],["appstate.rs","assets.rs","cli.rs","locale.rs","main.rs","ui.rs"]],\
 "thiserror":["",[],["aserror.rs","display.rs","lib.rs"]],\
 "thiserror_core":["",[],["aserror.rs","display.rs","lib.rs"]],\
 "thiserror_core_impl":["",[],["ast.rs","attr.rs","expand.rs","fmt.rs","generics.rs","lib.rs","prop.rs","valid.rs"]],\
