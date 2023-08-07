@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["manage_camera_projection","setup_main_camera"],"struct":["CameraPlugin","GameViewLimits","MainCamera","MainCameraBundle"]};

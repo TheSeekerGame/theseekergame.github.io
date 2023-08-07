@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["debug_progress","debug_setup_camera","main"],"mod":["appstate","assets","cli","locale","prelude","screens","ui"]};
+window.SIDEBAR_ITEMS = {"fn":["debug_progress","debug_setup_camera","main"],"mod":["appstate","assets","camera","cli","level","locale","prelude","screens","ui"]};

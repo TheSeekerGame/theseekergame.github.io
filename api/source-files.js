@@ -241,7 +241,7 @@ var sourcesIndex = JSON.parse('{\
 "taffy":["",[["compute",[["common",[],["alignment.rs","mod.rs"]],["grid",[["types",[],["cell_occupancy.rs","coordinates.rs","grid_item.rs","grid_track.rs","grid_track_counts.rs","mod.rs"]],["util",[],["mod.rs"]]],["alignment.rs","explicit_grid.rs","implicit_grid.rs","mod.rs","placement.rs","track_sizing.rs"]]],["flexbox.rs","leaf.rs","mod.rs"]],["style",[],["alignment.rs","dimension.rs","flex.rs","grid.rs","mod.rs"]]],["axis.rs","data.rs","debug.rs","error.rs","geometry.rs","layout.rs","lib.rs","math.rs","node.rs","prelude.rs","resolve.rs","style_helpers.rs","sys.rs","tree.rs"]],\
 "termcolor":["",[],["lib.rs"]],\
 "theseeker_engine":["",[],["assets.rs","lib.rs","time.rs"]],\
-"theseeker_game":["",[["screens",[],["loading.rs"]],["ui",[],["console.rs","mainmenu.rs"]]],["appstate.rs","assets.rs","cli.rs","locale.rs","main.rs","ui.rs"]],\
+"theseeker_game":["",[["screens",[],["loading.rs"]],["ui",[],["console.rs","mainmenu.rs"]]],["appstate.rs","assets.rs","camera.rs","cli.rs","level.rs","locale.rs","main.rs","ui.rs"]],\
 "thiserror":["",[],["aserror.rs","display.rs","lib.rs"]],\
 "thiserror_core":["",[],["aserror.rs","display.rs","lib.rs"]],\
 "thiserror_core_impl":["",[],["ast.rs","attr.rs","expand.rs","fmt.rs","generics.rs","lib.rs","prop.rs","valid.rs"]],\

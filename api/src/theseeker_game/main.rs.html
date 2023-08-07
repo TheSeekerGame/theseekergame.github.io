@@ -116,7 +116,6 @@
 <a href="#116" id="116">116</a>
 <a href="#117" id="117">117</a>
 <a href="#118" id="118">118</a>
-<a href="#119" id="119">119</a>
 </pre></div><pre class="rust"><code><span class="doccomment">/// Custom prelude, for stuff we&#39;d like to access all over the codebase
 /// Use in every file. :)
 </span><span class="kw">mod </span>prelude {
@@ -129,7 +128,9 @@
 
 <span class="kw">mod </span>appstate;
 <span class="kw">mod </span>assets;
+<span class="kw">mod </span>camera;
 <span class="kw">mod </span>cli;
+<span class="kw">mod </span>level;
 <span class="kw">mod </span>locale;
 <span class="kw">mod </span>screens {
     <span class="kw">pub mod </span>loading;
@@ -194,6 +195,8 @@
         <span class="kw">crate</span>::locale::LocalePlugin,
         <span class="kw">crate</span>::cli::CliPlugin,
         <span class="kw">crate</span>::ui::UiPlugin,
+        <span class="kw">crate</span>::camera::CameraPlugin,
+        <span class="kw">crate</span>::level::LevelManagerPlugin,
     ));
 
     <span class="attr">#[cfg(feature = <span class="string">&quot;dev&quot;</span>)]
@@ -202,12 +205,6 @@
         debug_progress
             .run_if(resource_exists::&lt;ProgressCounter&gt;())
             .after(iyes_progress::TrackedProgressSet),
-    );
-
-    <span class="comment">// FIXME: temporary
-    </span>app.add_systems(
-        OnEnter(AppState::MainMenu),
-        debug_setup_camera,
     );
 
     app.run();
@@ -230,6 +227,7 @@
 ///
 /// If there is no proper code to set up a camera in a given app state (or whatever)
 /// yet, use this to spawn a default 2d camera.
+</span><span class="attr">#[allow(dead_code)]
 </span><span class="kw">fn </span>debug_setup_camera(<span class="kw-2">mut </span>commands: Commands) {
     commands.spawn((
         Camera2dBundle::default(),
