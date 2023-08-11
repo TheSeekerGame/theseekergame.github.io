@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["convex_hull","convex_hull_idx","convex_polygons_intersection","convex_polygons_intersection_points","hertel_mehlhorn","hertel_mehlhorn_idx"],"mod":["utils","vhacd","voxelization"]};

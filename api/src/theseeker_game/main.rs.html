@@ -95,27 +95,6 @@
 <a href="#95" id="95">95</a>
 <a href="#96" id="96">96</a>
 <a href="#97" id="97">97</a>
-<a href="#98" id="98">98</a>
-<a href="#99" id="99">99</a>
-<a href="#100" id="100">100</a>
-<a href="#101" id="101">101</a>
-<a href="#102" id="102">102</a>
-<a href="#103" id="103">103</a>
-<a href="#104" id="104">104</a>
-<a href="#105" id="105">105</a>
-<a href="#106" id="106">106</a>
-<a href="#107" id="107">107</a>
-<a href="#108" id="108">108</a>
-<a href="#109" id="109">109</a>
-<a href="#110" id="110">110</a>
-<a href="#111" id="111">111</a>
-<a href="#112" id="112">112</a>
-<a href="#113" id="113">113</a>
-<a href="#114" id="114">114</a>
-<a href="#115" id="115">115</a>
-<a href="#116" id="116">116</a>
-<a href="#117" id="117">117</a>
-<a href="#118" id="118">118</a>
 </pre></div><pre class="rust"><code><span class="doccomment">/// Custom prelude, for stuff we&#39;d like to access all over the codebase
 /// Use in every file. :)
 </span><span class="kw">mod </span>prelude {
@@ -130,12 +109,16 @@
 <span class="kw">mod </span>assets;
 <span class="kw">mod </span>camera;
 <span class="kw">mod </span>cli;
+<span class="kw">mod </span>game;
 <span class="kw">mod </span>level;
 <span class="kw">mod </span>locale;
 <span class="kw">mod </span>screens {
     <span class="kw">pub mod </span>loading;
 }
 <span class="kw">mod </span>ui;
+
+<span class="attr">#[cfg(feature = <span class="string">&quot;dev&quot;</span>)]
+</span><span class="kw">mod </span>dev;
 
 <span class="kw">fn </span>main() {
     <span class="kw">let </span><span class="kw-2">mut </span>app = App::new();
@@ -175,6 +158,9 @@
     <span class="comment">// and custom fixed timestep thingy
     </span>app.add_plugins(theseeker_engine::time::GameTimePlugin);
 
+    app.insert_resource(PhysicsTimestep::FixedOnce(<span class="number">1.0 </span>/ <span class="number">96.0</span>));
+    app.insert_resource(Gravity::default());
+
     <span class="comment">// external plugins
     </span>app.add_plugins((
         LdtkPlugin,
@@ -184,6 +170,7 @@
         ProgressPlugin::new(AppState::AssetsLoading)
             .track_assets()
             .continue_to(AppState::MainMenu),
+        PhysicsPlugins::new(theseeker_engine::time::GameTickUpdate),
     ));
 
     <span class="comment">// our stuff
@@ -197,41 +184,12 @@
         <span class="kw">crate</span>::ui::UiPlugin,
         <span class="kw">crate</span>::camera::CameraPlugin,
         <span class="kw">crate</span>::level::LevelManagerPlugin,
+        <span class="kw">crate</span>::game::GameplayPlugin,
     ));
 
     <span class="attr">#[cfg(feature = <span class="string">&quot;dev&quot;</span>)]
-    </span>app.add_systems(
-        Last,
-        debug_progress
-            .run_if(resource_exists::&lt;ProgressCounter&gt;())
-            .after(iyes_progress::TrackedProgressSet),
-    );
+    </span>app.add_plugins(<span class="kw">crate</span>::dev::DevPlugin);
 
     app.run();
-}
-
-<span class="attr">#[allow(dead_code)]
-</span><span class="kw">fn </span>debug_progress(counter: Res&lt;ProgressCounter&gt;) {
-    <span class="kw">let </span>progress = counter.progress();
-    <span class="kw">let </span>progress_full = counter.progress_complete();
-    <span class="macro">trace!</span>(
-        <span class="string">&quot;Progress: {}/{}; Full Progress: {}/{}&quot;</span>,
-        progress.done,
-        progress.total,
-        progress_full.done,
-        progress_full.total,
-    );
-}
-
-<span class="doccomment">/// Temporary function to use during development
-///
-/// If there is no proper code to set up a camera in a given app state (or whatever)
-/// yet, use this to spawn a default 2d camera.
-</span><span class="attr">#[allow(dead_code)]
-</span><span class="kw">fn </span>debug_setup_camera(<span class="kw-2">mut </span>commands: Commands) {
-    commands.spawn((
-        Camera2dBundle::default(),
-        StateDespawnMarker,
-    ));
 }
 </code></pre></div></section></main></body></html>

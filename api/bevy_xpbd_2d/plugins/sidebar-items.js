@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":["broad_phase","integrator","prepare","setup","sleeping","solver","spatial_query","sync"],"struct":["PhysicsPlugins"]};

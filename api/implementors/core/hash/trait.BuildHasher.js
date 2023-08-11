@@ -1,5 +1,6 @@
 (function() {var implementors = {
 "ahash":[["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.71.1/core/hash/trait.BuildHasher.html\" title=\"trait core::hash::BuildHasher\">BuildHasher</a> for <a class=\"struct\" href=\"ahash/random_state/struct.RandomState.html\" title=\"struct ahash::random_state::RandomState\">RandomState</a>"]],
 "bevy_utils":[["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.71.1/core/hash/trait.BuildHasher.html\" title=\"trait core::hash::BuildHasher\">BuildHasher</a> for <a class=\"struct\" href=\"bevy_utils/struct.PassHash.html\" title=\"struct bevy_utils::PassHash\">PassHash</a>"],["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.71.1/core/hash/trait.BuildHasher.html\" title=\"trait core::hash::BuildHasher\">BuildHasher</a> for <a class=\"struct\" href=\"bevy_utils/struct.FixedState.html\" title=\"struct bevy_utils::FixedState\">FixedState</a>"]],
-"no_std_compat":[]
+"no_std_compat":[],
+"parry2d_f64":[["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.71.1/core/hash/trait.BuildHasher.html\" title=\"trait core::hash::BuildHasher\">BuildHasher</a> for <a class=\"struct\" href=\"parry2d_f64/utils/struct.DeterministicState.html\" title=\"struct parry2d_f64::utils::DeterministicState\">DeterministicState</a>"]]
 };if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

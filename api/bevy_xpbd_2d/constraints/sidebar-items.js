@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":["joints","penetration"],"trait":["AngularConstraint","PositionConstraint","XpbdConstraint"]};

@@ -1,0 +1,305 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Bevy XPBD"><title>bevy_xpbd_2d - Rust</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="bevy_xpbd_2d" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.1 (eb26296b5 2023-08-03)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../crates.js"></script><script defer src="../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc mod crate"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="logo-container" href="../bevy_xpbd_2d/index.html"><img class="rust-logo" src="../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><h2></h2></nav><nav class="sidebar"><a class="logo-container" href="../bevy_xpbd_2d/index.html"><img class="rust-logo" src="../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><h2 class="location"><a href="#">Crate bevy_xpbd_2d</a></h2><div class="sidebar-elems"><ul class="block"><li class="version">Version 0.2.0</li><li><a id="all-types" href="all.html">All Items</a></li></ul><section><ul class="block"><li><a href="#reexports">Re-exports</a></li><li><a href="#modules">Modules</a></li><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li></ul></section></div></nav><main><div class="width-limiter"><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="main-heading"><h1>Crate <a class="mod" href="#">bevy_xpbd_2d</a><button id="copy-path" title="Copy item path to clipboard"><img src="../static.files/clipboard-7571035ce49a181d.svg" width="19" height="18" alt="Copy item path"></button></h1><span class="out-of-band"><a class="srclink" href="../src/bevy_xpbd_2d/lib.rs.html#1-565">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><h2 id="bevy-xpbd"><a href="#bevy-xpbd">Bevy XPBD</a></h2>
+<p><strong>Bevy XPBD</strong> is a 2D and 3D physics engine based on <a href="#what-is-xpbd"><em>Extended Position Based Dynamics</em> (XPBD)</a>
+for the <a href="https://bevyengine.org/">Bevy game engine</a>.</p>
+<h3 id="design"><a href="#design">Design</a></h3>
+<p>Below are some of the core design principles used in Bevy XPBD.</p>
+<ul>
+<li>Made with Bevy, for Bevy. No wrappers around existing engines.</li>
+<li>Provide an ergonomic and familiar API. Ergonomics is key for a good experience.</li>
+<li>Utilize the ECS as much as possible. The engine should feel like a part of Bevy, and it shouldn’t
+need to maintain a separate physics world.</li>
+<li>Use a highly modular <a href="plugins/index.html" title="mod bevy_xpbd_2d::plugins">plugin architecture</a>. Users should be able to
+replace parts of the engine with their own implementations.</li>
+<li>Have good documentation. A physics engine is pointless if you don’t know how to use it.</li>
+</ul>
+<h3 id="features"><a href="#features">Features</a></h3>
+<p>Below are some of the features of Bevy XPBD.</p>
+<ul>
+<li>Dynamic, kinematic and static <a href="components/enum.RigidBody.html" title="enum bevy_xpbd_2d::components::RigidBody">rigid bodies</a></li>
+<li><a href="components/struct.Collider.html" title="struct bevy_xpbd_2d::components::Collider">Colliders</a> powered by <a href="../parry2d_f64/index.html" title="mod parry2d_f64">parry</a>
+<ul>
+<li>Collision events: <a href="collision/struct.Collision.html" title="struct bevy_xpbd_2d::collision::Collision"><code>Collision</code></a>, <a href="collision/struct.CollisionStarted.html" title="struct bevy_xpbd_2d::collision::CollisionStarted"><code>CollisionStarted</code></a>, <a href="collision/struct.CollisionEnded.html" title="struct bevy_xpbd_2d::collision::CollisionEnded"><code>CollisionEnded</code></a></li>
+<li>Access to <a href="components/struct.CollidingEntities.html" title="struct bevy_xpbd_2d::components::CollidingEntities">colliding entities</a></li>
+<li><a href="components/struct.Sensor.html" title="struct bevy_xpbd_2d::components::Sensor">Sensor colliders</a></li>
+<li><a href="components/struct.CollisionLayers.html" title="struct bevy_xpbd_2d::components::CollisionLayers">Collision layers</a></li>
+</ul>
+</li>
+<li>Material properties like <a href="components/struct.Restitution.html" title="struct bevy_xpbd_2d::components::Restitution">restitution</a> and <a href="components/struct.Friction.html" title="struct bevy_xpbd_2d::components::Friction">friction</a></li>
+<li><a href="components/struct.LinearDamping.html" title="struct bevy_xpbd_2d::components::LinearDamping">Linear damping</a> and <a href="components/struct.AngularDamping.html" title="struct bevy_xpbd_2d::components::AngularDamping">angular damping</a> for simulating drag</li>
+<li><a href="resources/struct.Gravity.html" title="struct bevy_xpbd_2d::resources::Gravity">Gravity</a> and <a href="components/struct.GravityScale.html" title="struct bevy_xpbd_2d::components::GravityScale">gravity scale</a></li>
+<li>External <a href="components/struct.ExternalForce.html" title="struct bevy_xpbd_2d::components::ExternalForce">forces</a> and <a href="components/struct.ExternalTorque.html" title="struct bevy_xpbd_2d::components::ExternalTorque">torque</a></li>
+<li><a href="components/struct.LockedAxes.html" title="struct bevy_xpbd_2d::components::LockedAxes">Locking</a> translational and rotational axes</li>
+<li><a href="constraints/joints/index.html" title="mod bevy_xpbd_2d::constraints::joints">Joints</a></li>
+<li>Built-in <a href="constraints/index.html" title="mod bevy_xpbd_2d::constraints">constraints</a> and support for <a href="constraints/index.html#custom-constraints" title="mod bevy_xpbd_2d::constraints">custom constraints</a></li>
+<li><a href="plugins/spatial_query/index.html" title="mod bevy_xpbd_2d::plugins::spatial_query">Spatial queries</a>
+<ul>
+<li><a href="plugins/spatial_query/index.html#ray-casting" title="mod bevy_xpbd_2d::plugins::spatial_query">Ray casting</a></li>
+<li><a href="plugins/spatial_query/index.html#shape-casting" title="mod bevy_xpbd_2d::plugins::spatial_query">Shape casting</a></li>
+<li><a href="plugins/spatial_query/index.html#point-projection" title="mod bevy_xpbd_2d::plugins::spatial_query">Point projection</a></li>
+<li><a href="plugins/spatial_query/index.html#intersection-tests" title="mod bevy_xpbd_2d::plugins::spatial_query">Intersection tests</a></li>
+</ul>
+</li>
+<li>Automatically deactivating bodies with <a href="components/struct.Sleeping.html" title="struct bevy_xpbd_2d::components::Sleeping">sleeping</a></li>
+<li>Configurable <a href="resources/enum.PhysicsTimestep.html" title="enum bevy_xpbd_2d::resources::PhysicsTimestep">timesteps</a> and <a href="resources/struct.SubstepCount.html" title="struct bevy_xpbd_2d::resources::SubstepCount">substepping</a></li>
+<li><code>f32</code>/<code>f64</code> precision (<code>f32</code> by default)</li>
+</ul>
+<h3 id="getting-started"><a href="#getting-started">Getting started</a></h3>
+<p>This short guide should help you get started with Bevy XPBD.</p>
+<h4 id="add-the-dependency"><a href="#add-the-dependency">Add the dependency</a></h4>
+<p>First, add <code>bevy_xpbd_2d</code> or <code>bevy_xpbd_3d</code> to your dependencies in <code>Cargo.toml</code>:</p>
+<div class="example-wrap"><pre class="language-toml"><code># For 2D applications:
+[dependencies]
+bevy_xpbd_2d = &quot;0.2&quot;
+
+# For 3D applications:
+[dependencies]
+bevy_xpbd_3d = &quot;0.2&quot;
+
+# If you want to use the most up-to-date version, you can follow the main branch:
+[dependencies]
+bevy_xpbd_3d = { git = &quot;https://github.com/Jondolf/bevy_xpbd&quot;, branch = &quot;main&quot; }
+</code></pre></div>
+<p>By default, Bevy XPBD uses <code>f32</code> numbers. If you encounter instability or use a large number
+of <a href="resources/struct.SubstepCount.html" title="struct bevy_xpbd_2d::resources::SubstepCount">substeps</a>, you might want to use <code>f64</code> instead. You can change these kinds
+of features by disabling the default features and manually specifying the feature flags you want:</p>
+<div class="example-wrap"><pre class="language-toml"><code>[dependencies]
+# Add 3D Bevy XPBD with double-precision floating point numbers
+bevy_xpbd_3d = { version = &quot;0.2&quot;, default-features = false, features = [&quot;3d&quot;, &quot;f64&quot;] }
+</code></pre></div><h4 id="feature-flags"><a href="#feature-flags">Feature flags</a></h4>
+<p>Default features: <code>2d</code>/<code>3d</code>, <code>f32</code> and <code>collider-from-mesh</code></p>
+<ul>
+<li><code>2d</code> enables simulation on the <code>x</code> and <code>y</code> axes. Enabled by default for <code>bevy_xpbd_2d</code>. Incompatible with <code>3d</code>.</li>
+<li><code>3d</code> enables simulation on the <code>x</code>, <code>y</code> and <code>z</code> axes. Enabled by default for <code>bevy_xpbd_3d</code>. Incompatible with <code>2d</code>.</li>
+<li><code>f32</code> enables using <code>f32</code> numbers. Incompatible with <code>f64</code>.</li>
+<li><code>f64</code> enables using <code>f64</code> numbers. Recommended when encountering stability problems, especially with
+small timesteps. Incompatible with <code>f32</code>.</li>
+<li><code>debug-plugin</code> enables the <code>PhysicsDebugPlugin</code> used for rendering physics objects and events like <a href="components/struct.ColliderAabb.html" title="struct bevy_xpbd_2d::components::ColliderAabb">AABBs</a>
+and <a href="collision/struct.Contact.html" title="struct bevy_xpbd_2d::collision::Contact">contacts</a>.</li>
+<li><code>collider-from-mesh</code> allows you to create <a href="components/struct.Collider.html" title="struct bevy_xpbd_2d::components::Collider">colliders</a> from Bevy meshes. Enables <code>bevy_render</code>.</li>
+<li><code>simd</code> enables <a href="https://en.wikipedia.org/wiki/Single_instruction,_multiple_data">SIMD</a> optimizations.</li>
+<li><code>enhanced-determinism</code> enables increased determinism. (Note: cross-platform determinism doesn’t work yet, even
+with this feature enabled)</li>
+</ul>
+<h4 id="install-the-plugin"><a href="#install-the-plugin">Install the plugin</a></h4>
+<p>Bevy XPBD is designed to be very modular. It is built from many different <a href="plugins/index.html" title="mod bevy_xpbd_2d::plugins">plugins</a> that
+manage different parts of the engine. These plugins can be easily initialized and configured through
+the <a href="plugins/struct.PhysicsPlugins.html" title="struct bevy_xpbd_2d::plugins::PhysicsPlugins"><code>PhysicsPlugins</code></a> plugin group.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>bevy::prelude::<span class="kw-2">*</span>;
+<span class="kw">use </span>bevy_xpbd_3d::prelude::<span class="kw-2">*</span>;
+
+<span class="kw">fn </span>main() {
+    App::new()
+        .add_plugins((DefaultPlugins, PhysicsPlugins::default()))
+        <span class="comment">// ...your other plugins, systems and resources
+        </span>.run();
+}</code></pre></div>
+<p>Now you can use all of Bevy XPBD’s <a href="components/index.html" title="mod bevy_xpbd_2d::components">components</a> and <a href="resources/index.html" title="mod bevy_xpbd_2d::resources">resources</a> to build whatever you want!</p>
+<p>For example, adding a <a href="components/enum.RigidBody.html" title="enum bevy_xpbd_2d::components::RigidBody">rigid body</a> with a <a href="components/struct.Collider.html" title="struct bevy_xpbd_2d::components::Collider">collider</a> is as simple as spawning an entity
+with the <a href="components/enum.RigidBody.html" title="enum bevy_xpbd_2d::components::RigidBody"><code>RigidBody</code></a> and <a href="components/struct.Collider.html" title="struct bevy_xpbd_2d::components::Collider"><code>Collider</code></a> components:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">fn </span>setup(<span class="kw-2">mut </span>commands: Commands) {
+    commands.spawn((RigidBody::Dynamic, Collider::ball(<span class="number">0.5</span>)));
+}</code></pre></div>
+<p>To learn more about using Bevy XPBD, consider taking a look at the official <a href="#examples">examples</a> and
+how to accomplish some <a href="#common-tasks">common tasks</a>.</p>
+<p>To learn more about the structure of the engine, consider taking a look at the <a href="plugins/index.html" title="mod bevy_xpbd_2d::plugins">plugins</a> and
+<a href="#what-is-xpbd">what XPBD actually is</a>.</p>
+<h4 id="examples"><a href="#examples">Examples</a></h4>
+<p>You can find 2D examples in <a href="https://github.com/Jondolf/bevy_xpbd/tree/main/crates/bevy_xpbd_2d/examples"><code>crates/bevy_xpbd_2d/examples</code></a>
+and 3D examples in <a href="https://github.com/Jondolf/bevy_xpbd/tree/main/crates/bevy_xpbd_3d/examples"><code>crates/bevy_xpbd_3d/examples</code></a>.</p>
+<p>You can run the examples with default features as you normally would.
+For example, running the <code>cubes</code> example looks like this:</p>
+<div class="example-wrap"><pre class="language-bash"><code>cargo run --example cubes
+</code></pre></div>
+<p>Note that the examples support both <code>f32</code> and <code>f64</code> precisions, so the code contains some feature-dependent types like <code>Scalar</code> and <code>Vector</code>.
+In actual usage these are not needed, so you can just use <code>f32</code> or <code>f64</code> types depending on the features you have chosen.</p>
+<p>By default the examples use <code>f32</code>, so if you want to run the <code>f64</code> versions, you need to disable the default features and manually choose
+the dimension and precision:</p>
+<div class="example-wrap"><pre class="language-bash"><code>cargo run --example cubes --no-default-features --features &quot;3d f64&quot;
+</code></pre></div><h4 id="common-tasks"><a href="#common-tasks">Common tasks</a></h4>
+<ul>
+<li><a href="components/enum.RigidBody.html" title="enum bevy_xpbd_2d::components::RigidBody">Create a rigid body</a></li>
+<li><a href="components/enum.RigidBody.html#adding-mass-properties" title="enum bevy_xpbd_2d::components::RigidBody">Define mass properties</a></li>
+<li><a href="components/struct.Collider.html" title="struct bevy_xpbd_2d::components::Collider">Add a collider</a></li>
+<li><a href="components/struct.Collider.html#collision-events" title="struct bevy_xpbd_2d::components::Collider">Listen to collision events</a></li>
+<li><a href="components/struct.CollisionLayers.html#creation" title="struct bevy_xpbd_2d::components::CollisionLayers">Define collision layers</a></li>
+<li><a href="components/struct.Restitution.html" title="struct bevy_xpbd_2d::components::Restitution">Configure restitution</a></li>
+<li><a href="components/struct.Friction.html" title="struct bevy_xpbd_2d::components::Friction">Configure friction</a></li>
+<li><a href="resources/struct.Gravity.html" title="struct bevy_xpbd_2d::resources::Gravity">Configure gravity</a></li>
+<li><a href="components/struct.ExternalForce.html" title="struct bevy_xpbd_2d::components::ExternalForce">Apply external forces</a></li>
+<li><a href="components/struct.ExternalTorque.html" title="struct bevy_xpbd_2d::components::ExternalTorque">Apply external torque</a></li>
+<li><a href="components/struct.LockedAxes.html" title="struct bevy_xpbd_2d::components::LockedAxes">Lock translational and rotational axes</a></li>
+<li><a href="constraints/joints/index.html#using-joints" title="mod bevy_xpbd_2d::constraints::joints">Use joints</a></li>
+<li><a href="plugins/spatial_query/index.html" title="mod bevy_xpbd_2d::plugins::spatial_query">Perform spatial queries</a>
+<ul>
+<li><a href="plugins/spatial_query/index.html#ray-casting" title="mod bevy_xpbd_2d::plugins::spatial_query">Ray casting</a></li>
+<li><a href="plugins/spatial_query/index.html#shape-casting" title="mod bevy_xpbd_2d::plugins::spatial_query">Shape casting</a></li>
+<li><a href="plugins/spatial_query/index.html#point-projection" title="mod bevy_xpbd_2d::plugins::spatial_query">Point projection</a></li>
+<li><a href="plugins/spatial_query/index.html#intersection-tests" title="mod bevy_xpbd_2d::plugins::spatial_query">Intersection tests</a></li>
+</ul>
+</li>
+<li><a href="resources/enum.PhysicsTimestep.html" title="enum bevy_xpbd_2d::resources::PhysicsTimestep">Configure the physics timestep</a></li>
+<li><a href="resources/struct.SubstepCount.html" title="struct bevy_xpbd_2d::resources::SubstepCount">Configure the substep count</a></li>
+<li><a href="plugins/struct.PhysicsPlugins.html#custom-schedule" title="struct bevy_xpbd_2d::plugins::PhysicsPlugins">Configure the schedule for running physics</a></li>
+<li><a href="#can-the-engine-be-used-on-servers">Usage on servers</a></li>
+<li><a href="constraints/index.html#custom-constraints" title="mod bevy_xpbd_2d::constraints">Create custom constraints</a></li>
+<li><a href="plugins/struct.PhysicsPlugins.html#custom-plugins" title="struct bevy_xpbd_2d::plugins::PhysicsPlugins">Replace built-in plugins with custom plugins</a></li>
+</ul>
+<h3 id="frequently-asked-questions"><a href="#frequently-asked-questions">Frequently asked questions</a></h3><h4 id="how-does-bevy-xpbd-compare-to-rapier-and-bevy_rapier"><a href="#how-does-bevy-xpbd-compare-to-rapier-and-bevy_rapier">How does Bevy XPBD compare to Rapier and bevy_rapier?</a></h4>
+<p>Rapier is the biggest and most used physics engine in the Rust ecosystem, and it is currently
+the most mature and feature-rich option.</p>
+<p>bevy_rapier is a great physics integration for Bevy, but it does have several problems:</p>
+<ul>
+<li>It has to maintain a separate physics world and synchronize a ton of data with Bevy each frame</li>
+<li>The source code is difficult to inspect, as the vast majority of it is glue code and wrappers
+for Bevy</li>
+<li>It has poor docs.rs documentation, and the documentation on rapier.rs is often outdated and
+missing features</li>
+<li>It is hard to extend as it’s not very modular or composable in design</li>
+<li>Overall, it doesn’t have a native ECS-like feel outside of its public API</li>
+</ul>
+<p>Bevy XPBD on the other hand is built <em>for</em> Bevy <em>with</em> Bevy, and it uses the ECS for both the internals
+and the public API. This removes the need for a separate physics world, reduces overhead, and makes
+the source code much more approachable and easy to inspect for Bevy users.</p>
+<p>In part thanks to Bevy’s modular architecture and the ECS, Bevy XPBD is also highly composable,
+as it consists of several independent plugins and provides lots of options for configuration and extensions,
+from <a href="plugins/struct.PhysicsPlugins.html#custom-schedule" title="struct bevy_xpbd_2d::plugins::PhysicsPlugins">custom schedules</a> and <a href="plugins/struct.PhysicsPlugins.html#custom-plugins" title="struct bevy_xpbd_2d::plugins::PhysicsPlugins">plugins</a> to
+<a href="constraints/joints/index.html#custom-joints" title="mod bevy_xpbd_2d::constraints::joints">custom joints</a> and <a href="constraints/index.html#custom-constraints" title="mod bevy_xpbd_2d::constraints">constraints</a>.</p>
+<p>In terms of the physics implementation, Rapier uses an impulse/velocity based solver, while Bevy XPBD uses
+<a href="#what-is-xpbd">Extended Position Based Dynamics</a>. On paper, XPBD should be more stable and robust,
+but it hasn’t been widely adopted in mainstream usage yet.</p>
+<p>One of the biggest disadvantages of Bevy XPBD is that it is still very young, so it can have lots of bugs,
+some missing features, and fewer community resources and third party crates. However, it is growing quite
+rapidly, and it is already pretty close to feature-parity with Rapier.</p>
+<p>At the end of the day, both engines are very solid options. If you are looking for a more mature and tested
+physics integration, bevy_rapier is the better choice, but if you prefer an engine with less overhead
+and a more native Bevy integration, consider using Bevy XPBD. Their core APIs are also quite similar,
+so switching between them should be straightforward.</p>
+<h4 id="why-is-nothing-happening"><a href="#why-is-nothing-happening">Why is nothing happening?</a></h4>
+<p>Make sure you have added the <a href="plugins/struct.PhysicsPlugins.html" title="struct bevy_xpbd_2d::plugins::PhysicsPlugins"><code>PhysicsPlugins</code></a> plugin group and you have given your rigid bodies
+a <a href="components/enum.RigidBody.html" title="enum bevy_xpbd_2d::components::RigidBody"><code>RigidBody</code></a> component. See the <a href="#getting-started">getting started</a> section.</p>
+<h4 id="why-is-everything-moving-so-slowly"><a href="#why-is-everything-moving-so-slowly">Why is everything moving so slowly?</a></h4>
+<p>If your application is in 2D, you might be using pixels as length units. This will require you to use
+larger velocities and forces than you would in 3D. Make sure you set <a href="resources/struct.Gravity.html" title="struct bevy_xpbd_2d::resources::Gravity"><code>Gravity</code></a> to some larger value
+as well, because its magnitude is 9.81 by default, which is tiny in pixels.</p>
+<p>Bevy XPBD doesn’t have a “physics scale” yet, but it will most likely be added in the future
+so that it’s possible to define some kind of pixels per meter configuration.</p>
+<h4 id="why-did-my-rigid-body-suddenly-vanish"><a href="#why-did-my-rigid-body-suddenly-vanish">Why did my rigid body suddenly vanish?</a></h4>
+<p>Make sure to <a href="components/enum.RigidBody.html#adding-mass-properties" title="enum bevy_xpbd_2d::components::RigidBody">give your rigid bodies some mass</a>, either by adding a <a href="components/struct.Collider.html" title="struct bevy_xpbd_2d::components::Collider"><code>Collider</code></a>
+or a <a href="components/struct.MassPropertiesBundle.html" title="struct bevy_xpbd_2d::components::MassPropertiesBundle"><code>MassPropertiesBundle</code></a>. If your bodies don’t have any mass, any physical interaction is likely to
+instantly give them infinite velocity.</p>
+<p>Bevy XPBD should automatically print warnings when it detects bodies with an invalid mass or inertia.</p>
+<h4 id="why-is-performance-so-bad"><a href="#why-is-performance-so-bad">Why is performance so bad?</a></h4>
+<p>Make sure you are building your project in release mode using <code>cargo build --release</code>.</p>
+<p>You can further optimize builds by setting the number of codegen units in your <code>Cargo.toml</code> to 1,
+although this will also increase build times.</p>
+<div class="example-wrap"><pre class="language-toml"><code>[profile.release]
+codegen-units = 1
+</code></pre></div>
+<p>Note that Bevy XPBD simply isn’t very optimized yet, and it mostly runs on a single thread for now.
+This will be addressed in future releases.</p>
+<h4 id="can-the-engine-be-used-on-servers"><a href="#can-the-engine-be-used-on-servers">Can the engine be used on servers?</a></h4>
+<p>Yes! Networking often requires running the simulation in a specific schedule, and in Bevy XPBD you can
+<a href="plugins/struct.PhysicsPlugins.html#custom-schedule" title="struct bevy_xpbd_2d::plugins::PhysicsPlugins">set the schedule that runs physics</a> and <a href="resources/enum.PhysicsTimestep.html" title="enum bevy_xpbd_2d::resources::PhysicsTimestep">configure the timestep</a>
+to whatever you want.</p>
+<p>One configuration is to run the client in <code>FixedUpdate</code>, and to use <a href="resources/enum.PhysicsTimestep.html#variant.FixedOnce" title="variant bevy_xpbd_2d::resources::PhysicsTimestep::FixedOnce"><code>PhysicsTimestep::FixedOnce</code></a> on both the
+server and the client to make sure the physics simulation is only advanced by one step each time the schedule runs.</p>
+<p>Note that while Bevy XPBD should be locally deterministic, it can produce slightly different results on different
+machines.</p>
+<h4 id="something-else"><a href="#something-else">Something else?</a></h4>
+<p>Physics engines are very large and Bevy XPBD is very young, so stability issues and bugs are to be expected.</p>
+<p>If you encounter issues, please consider first taking a look at the
+<a href="https://github.com/Jondolf/bevy_xpbd/issues">issues on GitHub</a> and
+<a href="https://github.com/Jondolf/bevy_xpbd/issues/new">open a new issue</a> if there already isn’t one regarding your problem.</p>
+<p>You can also come and say hello on the <a href="https://discord.com/invite/gMUk5Ph">Bevy Discord server</a>.
+There you can find a bevy_xpbd thread on the crate-help channel where you can ask questions.</p>
+<h3 id="what-is-xpbd"><a href="#what-is-xpbd">What is XPBD?</a></h3>
+<p><em>XPBD</em> or <em>Extended Position Based Dynamics</em> is a physics simulation method that extends
+the traditional <em>PBD</em> to be more physically accurate and less dependent on time step size
+and iteration count.</p>
+<p>Unlike force or impulse based physics simulation methods, XPBD mostly operates at the position-level,
+which can produce more stable and reliable results, while allowing straightforward coupling
+of <a href="components/enum.RigidBody.html" title="enum bevy_xpbd_2d::components::RigidBody">rigid bodies</a>, soft bodies and fluids.</p>
+<h4 id="simulation-loop"><a href="#simulation-loop">Simulation loop</a></h4>
+<p>At a high level, XPBD consists of a broad phase followed by a substepping loop that handles position
+<a href="plugins/integrator/index.html" title="mod bevy_xpbd_2d::plugins::integrator">integration</a>, <a href="plugins/solver/index.html" title="mod bevy_xpbd_2d::plugins::solver">constraint solving</a>, velocity updates, and a velocity solver that
+handles dynamic friction and restitution.</p>
+<p>It looks roughly like this:</p>
+
+<div class="example-wrap ignore"><a href="#" class="tooltip" title="This example is not tested">ⓘ</a><pre class="rust rust-example-rendered"><code><span class="kw">while </span>simulating:
+    <span class="comment">// Substep size
+    </span>h = ∆t / substep_count
+
+    <span class="comment">// Broad phase
+    </span>collect_collision_pairs()
+
+    <span class="kw">for </span>substep_count:
+        <span class="comment">// Integrate
+        </span><span class="kw">for </span>n particles and bodies:
+            <span class="comment">// Integrate position
+            </span>x_prev = x
+            v = v + h * f_ext / m
+            x = x + h * v
+
+            <span class="comment">// Integrate rotation
+            </span>q_prev = q
+            ω = ω + h * I^-<span class="number">1 </span>* (τ_ext - (ω x (I * ω)))
+            q = q + h * <span class="number">0.5 </span>* [ω_x, ω_y, ω_z, <span class="number">0</span>] * q
+            q = q / |q|
+
+        <span class="comment">// Solve constraints (1 iteration and many substeps recommended)
+        </span><span class="kw">for </span>iteration_count:
+            solve_constraints(particles and bodies)
+
+        <span class="comment">// Update velocities
+        </span><span class="kw">for </span>n particles and bodies:
+            v = (x - x_prev) / h
+            ∆q = q * q_prev^-<span class="number">1
+            </span>ω = <span class="number">2 </span>* [∆q_x, ∆q_y, ∆q_z] / h
+            ω = ∆q_w &gt;= <span class="number">0 </span><span class="question-mark">? </span>ω : -ω
+
+        <span class="comment">// Solve velocity constraints (dynamic friction and restitution)
+        </span>solve_velocities(particles and bodies)</code></pre></div>
+<p>where <code>h</code> is the <a href="resources/struct.SubDeltaTime.html" title="struct bevy_xpbd_2d::resources::SubDeltaTime">substep size</a>, <code>q</code> is the <a href="components/struct.Rotation.html" title="struct bevy_xpbd_2d::components::Rotation">rotation</a> as a quaternion,
+<code>ω</code> is the <a href="components/struct.AngularVelocity.html" title="struct bevy_xpbd_2d::components::AngularVelocity">angular velocity</a>, <code>I</code> is the <a href="components/struct.Inertia.html" title="struct bevy_xpbd_2d::components::Inertia">angular inertia tensor</a> and <code>τ</code> is the
+<a href="components/struct.ExternalTorque.html" title="struct bevy_xpbd_2d::components::ExternalTorque">external torque</a>.</p>
+<p>In Bevy XPBD, the simulation loop is handled by various plugins. The <a href="plugins/setup/struct.PhysicsSetupPlugin.html" title="struct bevy_xpbd_2d::plugins::setup::PhysicsSetupPlugin"><code>PhysicsSetupPlugin</code></a> sets up
+the Bevy schedules<sup id="fnref1"><a href="#fn1">1</a></sup><sup id="fnref2"><a href="#fn2">2</a></sup> and sets<sup id="fnref3"><a href="#fn3">3</a></sup><sup id="fnref4"><a href="#fn4">4</a></sup><sup id="fnref5"><a href="#fn5">5</a></sup>, the <a href="plugins/broad_phase/struct.BroadPhasePlugin.html" title="struct bevy_xpbd_2d::plugins::broad_phase::BroadPhasePlugin"><code>BroadPhasePlugin</code></a> manages the broad phase, the <a href="plugins/integrator/struct.IntegratorPlugin.html" title="struct bevy_xpbd_2d::plugins::integrator::IntegratorPlugin"><code>IntegratorPlugin</code></a>
+handles XPBD integration, and so on. You can find all of the plugins and their responsibilities <a href="plugins/struct.PhysicsPlugins.html" title="struct bevy_xpbd_2d::plugins::PhysicsPlugins">here</a>.</p>
+<h4 id="see-also"><a href="#see-also">See also</a></h4>
+<ul>
+<li><a href="plugins/integrator/index.html" title="mod bevy_xpbd_2d::plugins::integrator">XPBD integration step</a></li>
+<li><a href="constraints/index.html" title="mod bevy_xpbd_2d::constraints">Constraints and how to create them</a></li>
+<li><a href="plugins/setup/struct.PhysicsSetupPlugin.html#schedules-and-sets" title="struct bevy_xpbd_2d::plugins::setup::PhysicsSetupPlugin">Schedules and sets used for the simulation loop</a></li>
+</ul>
+<h4 id="learning-resources"><a href="#learning-resources">Learning resources</a></h4>
+<p>If you want to learn more about XPBD, I recommend taking a look at some of the papers.
+Especially the first one from 2020 was used heavily for the simulation loop and constraints in Bevy XPBD.</p>
+<ul>
+<li>XPBD: Müller M, Macklin M, Chentanez N, Jeschke S, Kim T. 2020. <em><a href="https://matthias-research.github.io/pages/publications/PBDBodies.pdf">Detailed Rigid Body Simulation with Extended Position Based Dynamics</a></em>.</li>
+<li>XPBD: Macklin M, Müller M, Chentanez N. 2016. <em><a href="http://mmacklin.com/xpbd.pdf">XPBD: Position-Based Simulation of Compliant Constrained Dynamics</a></em>.</li>
+</ul>
+<p>The papers are quite academic, so you might instead prefer some videos and articles.
+The first one by Ten Minute Physics (Matthias Müller, one of the XPBD researchers) is great for understanding
+how XPBD differs from other simulation methods and how the constraints work.</p>
+<ul>
+<li>Video: Ten Minute Physics. 2022. <em><a href="https://youtu.be/jrociOAYqxA">Getting ready to simulate the world with XPBD</a></em>.</li>
+<li>Notes: Nolan Tait. <em><a href="https://taintedcoders.com/bevy/xpbd/">Bevy Physics: XPBD</a></em>.</li>
+<li>Tutorial series: Johan Helsing. <em><a href="https://johanhelsing.studio/posts/bevy-xpbd">Tutorial: Making a physics engine with Bevy</a></em>.
+(inspired this project)</li>
+</ul>
+<h3 id="license"><a href="#license">License</a></h3>
+<p>Bevy XPBD is free and open source. All code in the Bevy XPBD repository is dual-licensed under either:</p>
+<ul>
+<li>MIT License (<a href="https://github.com/Jondolf/bevy_xpbd/blob/main/LICENSE-MIT">LICENSE-MIT</a>
+or <a href="http://opensource.org/licenses/MIT">http://opensource.org/licenses/MIT</a>)</li>
+<li>Apache License, Version 2.0 (<a href="https://github.com/Jondolf/bevy_xpbd/blob/main/LICENSE-APACHE">LICENSE-APACHE</a>
+or <a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a>)</li>
+</ul>
+<p>at your option.</p>
+<div class="footnotes"><hr><ol><li id="fn1"><p><a href="struct.PhysicsSchedule.html" title="struct bevy_xpbd_2d::PhysicsSchedule"><code>PhysicsSchedule</code></a>&nbsp;<a href="#fnref1">↩</a></p></li><li id="fn2"><p><a href="struct.SubstepSchedule.html" title="struct bevy_xpbd_2d::SubstepSchedule"><code>SubstepSchedule</code></a>&nbsp;<a href="#fnref2">↩</a></p></li><li id="fn3"><p><a href="enum.PhysicsSet.html" title="enum bevy_xpbd_2d::PhysicsSet"><code>PhysicsSet</code></a>&nbsp;<a href="#fnref3">↩</a></p></li><li id="fn4"><p><a href="enum.PhysicsStepSet.html" title="enum bevy_xpbd_2d::PhysicsStepSet"><code>PhysicsStepSet</code></a>&nbsp;<a href="#fnref4">↩</a></p></li><li id="fn5"><p><a href="enum.SubstepSet.html" title="enum bevy_xpbd_2d::SubstepSet"><code>SubstepSet</code></a>&nbsp;<a href="#fnref5">↩</a></p></li></ol></div></div></details><h2 id="reexports" class="small-section-header"><a href="#reexports">Re-exports</a></h2><ul class="item-table"><li><div class="item-name"><code>pub extern crate <a class="mod" href="../parry2d_f64/index.html" title="mod parry2d_f64">parry2d_f64</a> as parry;</code></div></li><li><div class="item-name" id="reexport.pause"><code>pub use prelude::setup::<a class="fn" href="plugins/setup/fn.pause.html" title="fn bevy_xpbd_2d::plugins::setup::pause">pause</a>;</code></div></li><li><div class="item-name" id="reexport.resume"><code>pub use prelude::setup::<a class="fn" href="plugins/setup/fn.resume.html" title="fn bevy_xpbd_2d::plugins::setup::resume">resume</a>;</code></div></li></ul><h2 id="modules" class="small-section-header"><a href="#modules">Modules</a></h2><ul class="item-table"><li><div class="item-name"><a class="mod" href="collision/index.html" title="mod bevy_xpbd_2d::collision">collision</a></div><div class="desc docblock-short">Collision events, contact data and helpers.</div></li><li><div class="item-name"><a class="mod" href="components/index.html" title="mod bevy_xpbd_2d::components">components</a></div><div class="desc docblock-short">Components used for rigid bodies, colliders and mass properties.</div></li><li><div class="item-name"><a class="mod" href="constraints/index.html" title="mod bevy_xpbd_2d::constraints">constraints</a></div><div class="desc docblock-short">Contains constraints used by the <a href="plugins/solver/index.html" title="mod bevy_xpbd_2d::plugins::solver">solver</a>.</div></li><li><div class="item-name"><a class="mod" href="math/index.html" title="mod bevy_xpbd_2d::math">math</a></div><div class="desc docblock-short">Math types and traits used in the crate. Most of the math types are feature-dependent, so they will
+be different for <code>2d</code>/<code>3d</code> and <code>f32</code>/<code>f64</code>.</div></li><li><div class="item-name"><a class="mod" href="plugins/index.html" title="mod bevy_xpbd_2d::plugins">plugins</a></div><div class="desc docblock-short">The building blocks of Bevy XPBD.</div></li><li><div class="item-name"><a class="mod" href="prelude/index.html" title="mod bevy_xpbd_2d::prelude">prelude</a></div><div class="desc docblock-short">Re-exports common components, bundles, resources, plugins and types.</div></li><li><div class="item-name"><a class="mod" href="resources/index.html" title="mod bevy_xpbd_2d::resources">resources</a></div><div class="desc docblock-short">Resources used in the simulation.</div></li></ul><h2 id="structs" class="small-section-header"><a href="#structs">Structs</a></h2><ul class="item-table"><li><div class="item-name"><a class="struct" href="struct.PhysicsSchedule.html" title="struct bevy_xpbd_2d::PhysicsSchedule">PhysicsSchedule</a></div><div class="desc docblock-short">Responsible for advancing the physics simulation. This is run in <a href="enum.PhysicsSet.html#variant.StepSimulation" title="variant bevy_xpbd_2d::PhysicsSet::StepSimulation"><code>PhysicsSet::StepSimulation</code></a>.</div></li><li><div class="item-name"><a class="struct" href="struct.SubstepSchedule.html" title="struct bevy_xpbd_2d::SubstepSchedule">SubstepSchedule</a></div><div class="desc docblock-short">The substepping schedule that runs in <a href="enum.PhysicsStepSet.html#variant.Substeps" title="variant bevy_xpbd_2d::PhysicsStepSet::Substeps"><code>PhysicsStepSet::Substeps</code></a>.
+The number of substeps per physics step is configured through the <a href="resources/struct.SubstepCount.html" title="struct bevy_xpbd_2d::resources::SubstepCount"><code>SubstepCount</code></a> resource.</div></li></ul><h2 id="enums" class="small-section-header"><a href="#enums">Enums</a></h2><ul class="item-table"><li><div class="item-name"><a class="enum" href="enum.PhysicsSet.html" title="enum bevy_xpbd_2d::PhysicsSet">PhysicsSet</a></div><div class="desc docblock-short">High-level system sets for the main phases of the physics engine.
+You can use these to schedule your own systems before or after physics is run without
+having to worry about implementation details.</div></li><li><div class="item-name"><a class="enum" href="enum.PhysicsStepSet.html" title="enum bevy_xpbd_2d::PhysicsStepSet">PhysicsStepSet</a></div><div class="desc docblock-short">System sets for the main steps in the physics simulation loop. These are typically run in the <a href="struct.PhysicsSchedule.html" title="struct bevy_xpbd_2d::PhysicsSchedule"><code>PhysicsSchedule</code></a>.</div></li><li><div class="item-name"><a class="enum" href="enum.SubstepSet.html" title="enum bevy_xpbd_2d::SubstepSet">SubstepSet</a></div><div class="desc docblock-short">System sets for the the steps in the inner substepping loop. These are typically run in the <a href="struct.SubstepSchedule.html" title="struct bevy_xpbd_2d::SubstepSchedule"><code>SubstepSchedule</code></a>.</div></li></ul></section></div></main></body></html>

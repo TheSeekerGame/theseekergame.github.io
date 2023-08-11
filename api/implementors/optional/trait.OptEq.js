@@ -1,0 +1,4 @@
+(function() {var implementors = {
+"optional":[],
+"spade":[["impl&lt;Type: <a class=\"trait\" href=\"https://doc.rust-lang.org/1.71.1/core/default/trait.Default.html\" title=\"trait core::default::Default\">Default</a>, InnerOuter: InnerOuterMarker&gt; <a class=\"trait\" href=\"optional/trait.OptEq.html\" title=\"trait optional::OptEq\">OptEq</a> for <a class=\"struct\" href=\"spade/internals/struct.FixedHandleImpl.html\" title=\"struct spade::internals::FixedHandleImpl\">FixedHandleImpl</a>&lt;Type, InnerOuter&gt;"]]
+};if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
