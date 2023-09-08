@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"macro":["grid"],"struct":["Grid"]};
+window.SIDEBAR_ITEMS = {"macro":["grid"],"struct":["Grid","GridColIter","GridRowIter"]};
