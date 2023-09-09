@@ -92,6 +92,21 @@
 <a href="#92" id="92">92</a>
 <a href="#93" id="93">93</a>
 <a href="#94" id="94">94</a>
+<a href="#95" id="95">95</a>
+<a href="#96" id="96">96</a>
+<a href="#97" id="97">97</a>
+<a href="#98" id="98">98</a>
+<a href="#99" id="99">99</a>
+<a href="#100" id="100">100</a>
+<a href="#101" id="101">101</a>
+<a href="#102" id="102">102</a>
+<a href="#103" id="103">103</a>
+<a href="#104" id="104">104</a>
+<a href="#105" id="105">105</a>
+<a href="#106" id="106">106</a>
+<a href="#107" id="107">107</a>
+<a href="#108" id="108">108</a>
+<a href="#109" id="109">109</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! Everything to do with the in-game camera(s)
 
 </span><span class="kw">use </span><span class="kw">crate</span>::prelude::<span class="kw-2">*</span>;
@@ -101,7 +116,11 @@
 <span class="kw">impl </span>Plugin <span class="kw">for </span>CameraPlugin {
     <span class="kw">fn </span>build(<span class="kw-2">&amp;</span><span class="self">self</span>, app: <span class="kw-2">&amp;mut </span>App) {
         app.register_clicommand_args(<span class="string">&quot;camera_at&quot;</span>, cli_camera_at);
-        app.register_clicommand_args(<span class="string">&quot;camera_limits&quot;</span>, cli_camera_limits);
+        app.register_clicommand_noargs(
+            <span class="string">&quot;camera_limits&quot;</span>,
+            cli_camera_limits_noargs,
+        );
+        app.register_clicommand_args(<span class="string">&quot;camera_limits&quot;</span>, cli_camera_limits_args);
         app.add_systems(
             OnEnter(AppState::InGame),
             setup_main_camera,
@@ -165,7 +184,18 @@
     }
 }
 
-<span class="kw">fn </span>cli_camera_limits(
+<span class="kw">fn </span>cli_camera_limits_noargs(q_cam: Query&lt;<span class="kw-2">&amp;</span>GameViewLimits, With&lt;MainCamera&gt;&gt;) {
+    <span class="kw">if let </span><span class="prelude-val">Ok</span>(limits) = q_cam.get_single() {
+        <span class="macro">info!</span>(
+            <span class="string">&quot;Game Camera limits: {} {} {} {}&quot;</span>,
+            limits.<span class="number">0</span>.min.x, limits.<span class="number">0</span>.min.y, limits.<span class="number">0</span>.max.x, limits.<span class="number">0</span>.max.y
+        );
+    } <span class="kw">else </span>{
+        <span class="macro">error!</span>(<span class="string">&quot;Game Camera not found!&quot;</span>);
+    }
+}
+
+<span class="kw">fn </span>cli_camera_limits_args(
     In(args): In&lt;Vec&lt;String&gt;&gt;,
     <span class="kw-2">mut </span>q_cam: Query&lt;<span class="kw-2">&amp;mut </span>GameViewLimits, With&lt;MainCamera&gt;&gt;,
 ) {
