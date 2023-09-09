@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["console_text_input","toggle_console"],"struct":["UiConsole","UiConsolePlugin","UiConsolePrompt"]};
+window.SIDEBAR_ITEMS = {"fn":["console_text_input","toggle_console"],"struct":["ConsoleCommandHistory","UiConsole","UiConsolePlugin","UiConsolePrompt","UiConsolePromptHistoryEntry"]};
