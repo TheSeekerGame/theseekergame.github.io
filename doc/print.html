@@ -892,7 +892,223 @@ asset_key = &quot;script.asset.key&quot;
 <p>Runs the given script asset. Will create a new Bevy entity for it.</p>
 </details>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="animations-how-to"><a class="header" href="#animations-how-to">Animations How-To</a></h1>
+<p>Animation Assets are how we create sprite-based animations.</p>
+<p>Each such file is an animation that can be played by the game, and describes how
+it should be played.</p>
+<p>Animations are actually based on <a href="tech/./script.html">scripts</a>. They support everything
+that scripts can do + additional features tailored for animation use cases.</p>
+<p><a href="tech/./anim-ref.html">See here for a reference on the syntax/format.</a></p>
+<h2 id="art-assets"><a class="header" href="#art-assets">Art Assets</a></h2>
+<p>An animation file requires a &quot;texture atlas&quot;. That is the file (typically PNG
+format) which provides the actual image data / frames to be displayed.</p>
+<p>Please don't confuse the two. They are separate things, two separate files:</p>
+<ul>
+<li>The Texture Atlas, containing the image data.
+All the frames that can be displayed by an animation, in a grid layout.
+One such file can be used by multiple Animations.</li>
+<li>The Animation Asset (what this page is about): the script that tells the game how to actually play the animation.</li>
+</ul>
+<p>You should create an animation asset for every piece/clip of animation that
+we want to be able to play in the game.</p>
+<p>The texture atlases can be reused or split as convenient. Usually there will
+be one atlas per animation, but sometimes it might make sense to have one atlas
+shared between multiple animations:</p>
+<ul>
+<li>If different animations need to display some of the same frames.</li>
+<li>If you have multiple variants of an animation, like <code>Run</code> and <code>RunWithDamage</code> (which adds a blinking effect),
+or left/right flipped variants.</li>
+</ul>
+<h2 id="testing"><a class="header" href="#testing">Testing</a></h2>
+<p>To see how an animation looks in-game, you can test it using the <a href="tech/./cli.html">dev
+console</a>. Use the <a href="tech/./cli-ref.html#spawn_anim"><code>spawn_anim</code></a> command:</p>
+<pre><code>spawn_anim anim.asset.key
+</code></pre>
+<p>Or optionally with X/Y coordinates where to display it:</p>
+<pre><code>spawn_anim anim.asset.key 100 200
+</code></pre>
+<h2 id="playing-animations-from-rust-code"><a class="header" href="#playing-animations-from-rust-code">Playing animations from Rust code</a></h2>
+<p>// TODO</p>
+<p>I still need to figure out exactly how the Rust code for switching between
+different animations (say, as the player performs different actions on different
+inputs) is going to work. Coming soon.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="animation-format-reference"><a class="header" href="#animation-format-reference">Animation Format Reference</a></h1>
+<p>This page describes the syntax / file format for <a href="tech/./anim.html">Animation Assets</a>.</p>
+<p>The animation format is based on the <a href="tech/./script-ref.html">script format</a>, with some
+differences and extensions (additional functionality). Everything supported in
+scripts is also supported in animations.</p>
+<h2 id="how-animation-playback-works"><a class="header" href="#how-animation-playback-works">How Animation Playback Works</a></h2>
+<p>Animations will automatically advance their frames at a fixed rate. All you have
+to do is configure the start frame index, the max frame index, and the speed.</p>
+<p>For animations that just play through, once, from start to finish, this is enough.</p>
+<p>If you need any more advanced control (such as to make animations that loop or
+skip frames), you can add <code>[[script]]</code> sections, using animation-specific
+<a href="tech/anim-ref.html#available-actions">actions</a>.</p>
+<h2 id="texture-atlas"><a class="header" href="#texture-atlas">Texture Atlas</a></h2>
+<p>At the top of the file, before any other sections, you must specify the asset key
+of the texture atlas to be used for the animation:</p>
+<pre><code class="language-toml">atlas_asset_key = &quot;anim.myanimation.sprite&quot;
+</code></pre>
+<h2 id="settings-1"><a class="header" href="#settings-1">Settings</a></h2>
+<p>The <code>[settings]</code> section is <em>required</em> in animation files.</p>
+<p>The common parameters that are optional in <a href="tech/./script-ref.html#settings">scripts</a>
+are also optional here, but there are additional animation-specific settings
+that are required in every animation file.</p>
+<p>Example:</p>
+<pre><code class="language-toml">[settings]
+ticks_per_frame = 8
+frame_min = 0
+frame_max = 7
+frame_start = 0
+</code></pre>
+<p>The above example will create an animation that starts from frame index 0,
+advances to the next frame automatically every 8 ticks, and ends after frame 7
+is displayed.</p>
+<p>This is perfectly sufficient for a basic animation that does not require any
+additional behaviors (such as looping or scripts).</p>
+<p>You can have an animation without any <code>[[script]]</code> sections.</p>
+<p>The following properties must be specified:</p>
+<details>
+  <summary>
+  <code>ticks_per_frame</code>
+  </summary>
+<p>Configures the rate/speed of animation playback. This is how many ticks each frame
+will be displayed for, before automatically transitioning to the next frame.</p>
+</details>
+<details>
+  <summary>
+  <code>frame_min</code>
+  </summary>
+<p>The lowest permitted frame index. Frames below this should never be displayed.
+Should the frame index ever be a value below this, the animation will stop
+automatically.</p>
+</details>
+<details>
+  <summary>
+  <code>frame_max</code>
+  </summary>
+<p>The highest permitted frame index. Frames above this should never be displayed.
+Should the frame index ever be a value above this, the animation will stop
+automatically.</p>
+</details>
+<details>
+  <summary>
+  <code>frame_start</code>
+  </summary>
+<p>The initial frame that will be displayed at tick 0 when the animation starts
+playing.</p>
+</details>
+<h2 id="actions-1"><a class="header" href="#actions-1">Actions</a></h2>
+<p>Just like a <a href="tech/./script-ref.html#actions">script file</a>, animations can contain any
+number of <em>actions</em> to be performed. The syntax is the same.</p>
+<p>All run conditions and actions available in scripts are also available in
+animations, but animations also offer extra animation-specific features.</p>
+<p>Example:</p>
+<pre><code class="language-toml">[[script]]
+run_at_tick = 24
+action = &quot;SetFrameNext&quot;
+frame_index = 20
+
+[[script]]
+run_at_frame = 7
+action = &quot;SetSpriteFlip&quot;
+flip_x = true
+</code></pre>
+<h2 id="available-run-conditions-1"><a class="header" href="#available-run-conditions-1">Available Run Conditions</a></h2>
+<p>The following animation-specific run conditions are available, in addition to
+everything supported by <a href="tech/./script-ref.html#available-run-conditions">scripts</a>:</p>
+<details>
+  <summary>
+  <code>run_at_frame</code>
+  </summary>
+<p>Example:</p>
+<pre><code class="language-toml">[[script]]
+run_at_frame = 8
+action = &quot;...&quot;
+</code></pre>
+<p>Run the action whenever the given frame index is displayed.</p>
+<p>Any time the animation switches to that frame (regardless of whether it was done
+automatically, using a script, or from Rust code), the action will be performed.</p>
+</details>
+<h2 id="available-actions-1"><a class="header" href="#available-actions-1">Available Actions</a></h2>
+<p>The following animation-specific actions are available, in addition to
+everything supported by <a href="tech/./script-ref.html#available-actions">scripts</a>:</p>
+<details>
+  <summary>
+  <code>SetFrameNext</code>
+  </summary>
+<p>Example:</p>
+<pre><code class="language-toml">[[script]]
+action = &quot;SetFrameNext&quot;
+frame_index = 100
+</code></pre>
+<p>Change the next automatic frame. Whatever frame is currently displayed will
+complete its <code>ticks_per_frame</code> duration, and then the animation will jump to the
+provided <code>frame_index</code>, instead of advancing by one.</p>
+<p>Subsequent playback will continue from this new index (will not jump back).</p>
+<p>This is useful to implement loops (by going back to a lower frame index) and
+skips (if you need to jump over a range of frames).</p>
+</details>
+<details>
+  <summary>
+  <code>SetFrameNow</code>
+  </summary>
+<p>Example:</p>
+<pre><code class="language-toml">[[script]]
+action = &quot;SetFrameNow&quot;
+frame_index = 100
+</code></pre>
+<p>Immediately display the provided <code>frame_index</code>.</p>
+<p>Does not affect the next automatic frame. The animation playback is otherwise unaffected.</p>
+<p>Useful for special effects where you have a special frame you want to &quot;flash&quot;
+in-between regular animation frames.</p>
+</details>
+<details>
+  <summary>
+  <code>SetSpriteColor</code>
+  </summary>
+<p>Example:</p>
+<pre><code class="language-toml">[[script]]
+action = &quot;SetSpriteColor&quot;
+color = &quot;#ff00ff&quot;
+</code></pre>
+<p>Changes the colorization of the sprite. The RGBA values of the pixels will be
+multiplied by the provided value.</p>
+<p>The <code>color</code> field uses HTML/CSS-like syntax: hexadecimal RGB, with optional A.</p>
+<p>Examples:</p>
+<ul>
+<li><code>&quot;#ff0000&quot;</code>: Red</li>
+<li><code>&quot;#40404080&quot;</code>: Semi-transparent dark grey</li>
+</ul>
+</details>
+<details>
+  <summary>
+  <code>SetSpriteFlip</code>
+  </summary>
+<p>Example:</p>
+<pre><code class="language-toml">[[script]]
+action = &quot;SetSpriteFlip&quot;
+flip_x = true
+flip_y = true
+</code></pre>
+<p>Changes whether the sprite image should be displayed flipped/mirrored, along
+either axis, or both axes.</p>
+<p>Each of the <code>flip_x</code> and <code>flip_y</code> fields are optional. If omitted, the old
+value will be kept.</p>
+<p>Useful for making left/right facing animations from the same texture atlas.</p>
+</details>
+<details>
+  <summary>
+  <code>SetTicksPerFrame</code>
+  </summary>
+<p>Example:</p>
+<pre><code class="language-toml">[[script]]
+action = &quot;SetTicksPerFrame&quot;
+ticks_per_frame = 4
+</code></pre>
+<p>Changes the rate of animation playback.</p>
+<p>Useful if you want to use a different rate (from what you specified globally in
+the <a href="tech/anim-ref.html#settings">settings</a>) for some portion of the animation.</p>
+</details>
 
                     </main>
 
