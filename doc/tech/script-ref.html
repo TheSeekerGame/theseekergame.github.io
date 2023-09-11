@@ -167,6 +167,187 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="script-format-reference"><a class="header" href="#script-format-reference">Script Format Reference</a></h1>
+<p>This page describes the syntax / file format for <a href="./script.html">Script Assets</a>.</p>
+<h2 id="settings"><a class="header" href="#settings">Settings</a></h2>
+<p>A script file can have an optional <code>[settings]</code> section, where you can put
+parameters that govern how the script is to be run by the game.</p>
+<p>Everything here is optional.</p>
+<p>Example:</p>
+<pre><code class="language-toml">[settings]
+time_base = &quot;Relative&quot;
+tick_quant = &quot;8+4&quot;
+</code></pre>
+<p>The following properties are available:</p>
+<details>
+  <summary>
+  <code>time_base</code>
+  </summary>
+<p>Configures the &quot;time zero&quot; point. From when does the script begin counting time?</p>
+<ul>
+<li><code>Relative</code>: from the moment it is spawned (default)</li>
+<li><code>Level</code>: from the moment the current level was loaded</li>
+<li><code>Startup</code>: from app startup</li>
+</ul>
+<p>This allows you to use scripts for &quot;global&quot; behavior, which should be tied to
+the level or the entire app runtime. Could be useful for background events.</p>
+<p>The script will &quot;catch up&quot; on any missed time after it is spawned. For example,
+if you spawn a script with <code>time_base = &quot;Level&quot;</code> long after the level has been
+loaded, any non-periodic actions in the script that should have happened in the
+time before the script was spawned will be performed at the first tick when the
+script runs.</p>
+</details>
+<details>
+  <summary>
+  <code>tick_quant</code>
+  </summary>
+<p>Ensure the script time is quantized to a specific number of ticks. This is
+useful when specific scripts must run aligned to specific time intervals.</p>
+<p>For example, <code>&quot;8+4&quot;</code> means that the script is only allowed to start on a tick
+number that is a multiple of 8, offset/delayed by 4 ticks.</p>
+</details>
+<h2 id="actions"><a class="header" href="#actions">Actions</a></h2>
+<p>A script file can contain any number of <em>actions</em> to be performed. This is the
+meat of the script.</p>
+<p>Every action is declared using a <code>[[script]]</code> section. Each such section
+specifies one &quot;action&quot; with its associated parameters. You can have any number
+of them in a script file.</p>
+<p>Example:</p>
+<pre><code class="language-toml">[[script]]
+run_at_tick = 0
+action = &quot;RunCli&quot;
+cli = [ &quot;dothing blah blah&quot; ]
+</code></pre>
+<p>Every <code>[[script]]</code> section <em>must</em> contain:</p>
+<ul>
+<li>a <em>run condition</em> to determine <em>when</em> to perform the action</li>
+<li>an <code>action</code> field to specify the kind of action to perform</li>
+<li>any additional parameters as required by the action, depending on the action kind</li>
+</ul>
+<h2 id="available-run-conditions"><a class="header" href="#available-run-conditions">Available Run Conditions</a></h2>
+<p>The run condition is a mandatory part of every <code>[[script]]</code> section. It
+determines when to run the action.</p>
+<p>Multiple run conditions are currently not supported/allowed. There must be
+exactly one.</p>
+<p>The available run conditions are:</p>
+<details>
+  <summary>
+  <code>run_at_tick</code>
+  </summary>
+<p>Example:</p>
+<pre><code class="language-toml">[[script]]
+run_at_tick = 96
+action = &quot;...&quot;
+</code></pre>
+<p>Run the action once, on the given tick number.</p>
+<p>Tick numbers count from the start of the script. May be affected by script settings.</p>
+</details>
+<details>
+  <summary>
+  <code>run_every_n_ticks</code>
+  </summary>
+<p>Example:</p>
+<pre><code class="language-toml">[[script]]
+run_every_n_ticks = &quot;16&quot;
+action = &quot;...&quot;
+
+[[script]]
+run_every_n_ticks = &quot;12+8&quot;
+action = &quot;...&quot;
+</code></pre>
+<p>Run the action periodically, quantized to the given TickQuant value.</p>
+<p>In the example above:</p>
+<ul>
+<li>the first action will run on ticks 0, 16, 32, 48, 64, 80, ...</li>
+<li>the second action will run on ticks 8, 20, 32, 44, 56, 68 ...</li>
+</ul>
+<p>Does not catch up on missed time (if the <code>time_base</code> setting is not <code>Relative</code>).</p>
+</details>
+<details>
+  <summary>
+  <code>run_at_millis</code>
+  </summary>
+<p>Example:</p>
+<pre><code class="language-toml">[[script]]
+run_at_millis = 250
+action = &quot;...&quot;
+</code></pre>
+<p>Run the action once, after the given number of milliseconds have elapsed.</p>
+<p>Time is counted from the start of the script. Affected by the <code>time_base</code> setting.</p>
+</details>
+<details>
+  <summary>
+  <code>run_at_time</code>
+  </summary>
+<p>Example:</p>
+<pre><code class="language-toml">[[script]]
+run_at_time = &quot;1:13:17.315&quot;
+action = &quot;...&quot;
+</code></pre>
+<p>Run the action once, after the given amount of time has elapsed.</p>
+<p>Time is counted from the start of the script. Affected by the <code>time_base</code> setting.</p>
+<p>The syntax for the time allows you to specify: hours, minutes, seconds, fraction
+of the second. Everything except for the seconds is optional. Minutes/seconds
+over 60 are accepted. Leading zeros are optional.</p>
+<p>Examples:</p>
+<ul>
+<li><code>&quot;10&quot;</code>: 10 seconds</li>
+<li><code>&quot;5:00&quot;</code>: 5 minutes</li>
+<li><code>1:00:05</code>: 1 hour, 5 seconds</li>
+<li><code>1:7:5.25</code>: 1 hour, 7 minutes, 5.25 seconds</li>
+<li><code>5:80</code>: 5 minutes + 80 seconds (effectively the same as <code>&quot;6:20&quot;</code>)</li>
+</ul>
+</details>
+<h2 id="available-actions"><a class="header" href="#available-actions">Available Actions</a></h2>
+<p>The action kind is a mandatory part of every <code>[[script]]</code> section. There must be
+exactly one <code>action</code> field per section. If you want to perform more than one
+action, create multiple sections (possibly with the same run condition).</p>
+<p>Most actions accept/require additional parameters. Simply add those to the
+<code>[[script]]</code> section, depending on the kind of action.</p>
+<p>The available actions are:</p>
+<details>
+  <summary>
+  <code>DespawnEntity</code>
+  </summary>
+<p>Example:</p>
+<pre><code class="language-toml">[[script]]
+action = &quot;DespawnEntity&quot;
+
+[[script]]
+action = &quot;DespawnEntity&quot;
+label = &quot;mythingies&quot;
+</code></pre>
+<p>If the <code>label</code> field is not present, despawns the current entity (the one
+hosting the script). This will cause the script to be terminated.</p>
+<p>If the <code>label</code> field is present, will use the <a href="https://theseekergame.github.io/api/theseeker_engine/script/label/struct.EntityLabels.html"><code>EntityLabels</code></a> resource to find
+all entities with the given label string and despawn them.</p>
+</details>
+<details>
+  <summary>
+  <code>RunCli</code>
+  </summary>
+<p>Example:</p>
+<pre><code class="language-toml">[[script]]
+action = &quot;RunCli&quot;
+cli = [
+  &quot;hello&quot;,
+]
+</code></pre>
+<p>Runs one or more <a href="./cli-ref.html">CLI commands</a>, just like you can do manually
+from the <a href="./cli.html">dev console</a>.</p>
+<p>Requires the <code>cli</code> field, which is a list of CLI strings to evaluate.</p>
+<p>All of them will run on the same tick / script update, in order.</p>
+</details>
+<details>
+  <summary>
+  <code>SpawnScript</code>
+  </summary>
+<p>Example:</p>
+<pre><code class="language-toml">[[script]]
+action = &quot;SpawnScript&quot;
+asset_key = &quot;script.asset.key&quot;
+</code></pre>
+<p>Runs the given script asset. Will create a new Bevy entity for it.</p>
+</details>
 
                     </main>
 
