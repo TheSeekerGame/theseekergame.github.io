@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["CommonScriptPlugin","CommonScriptTracker","ExtendedScriptTracker"]};
+window.SIDEBAR_ITEMS = {"struct":["CommonScriptPlugin","CommonScriptTracker","ExtendedScriptTracker","ScriptBundle"]};
