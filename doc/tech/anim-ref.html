@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html lang="en" class="sidebar-visible no-js light">
+<html lang="en" class="light" dir="ltr">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
@@ -10,7 +10,7 @@
         
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="theme-color" content="#ffffff" />
+        <meta name="theme-color" content="#ffffff">
 
         <link rel="icon" href="../favicon.svg">
         <link rel="shortcut icon" href="../favicon.png">
@@ -31,7 +31,7 @@
         <!-- Custom theme stylesheets -->
 
     </head>
-    <body>
+    <body class="sidebar-visible no-js">
     <div id="body-container">
         <!-- Provide site root to javascript -->
         <script>
@@ -61,24 +61,29 @@
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
             var html = document.querySelector('html');
-            html.classList.remove('no-js')
             html.classList.remove('light')
             html.classList.add(theme);
-            html.classList.add('js');
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
         </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
 
         <!-- Hide / unhide sidebar before it is displayed -->
         <script>
-            var html = document.querySelector('html');
+            var body = document.querySelector('body');
             var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
             } else {
                 sidebar = 'hidden';
             }
-            html.classList.remove('sidebar-visible');
-            html.classList.add("sidebar-" + sidebar);
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
@@ -116,9 +121,9 @@
                                 <div id="menu-bar-hover-placeholder"></div>
                 <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
-                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
-                        </button>
+                        </label>
                         <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
                             <i class="fa fa-paint-brush"></i>
                         </button>
@@ -305,14 +310,26 @@ in-between regular animation frames.</p>
 <pre><code class="language-toml">[[script]]
 action = &quot;SetSpriteColor&quot;
 color = &quot;#ff00ff&quot;
+
+[[script]]
+action = &quot;SetSpriteColor&quot;
+color = [0.75, 0.5, 120.0]
 </code></pre>
 <p>Changes the colorization of the sprite. The RGBA values of the pixels will be
 multiplied by the provided value.</p>
-<p>The <code>color</code> field uses HTML/CSS-like syntax: hexadecimal RGB, with optional A.</p>
-<p>Examples:</p>
+<p>The <code>color</code> field can be specified as either:</p>
 <ul>
-<li><code>&quot;#ff0000&quot;</code>: Red</li>
-<li><code>&quot;#40404080&quot;</code>: Semi-transparent dark grey</li>
+<li><code>[L, C, H]</code> for LCH color</li>
+<li><code>[L, C, H, A]</code> for LCH color + Alpha</li>
+<li><code>#RRGGBB</code> for RGB color</li>
+<li><code>#RRGGBBAA</code> for RGB + Alpha</li>
+</ul>
+<p>RGB color is specified in hexadecimal notation, like for Web/CSS.</p>
+<p>LCH color is specified as:</p>
+<ul>
+<li>Lightness has range 0.0 to 1.5</li>
+<li>Chroma has range 0.0 to 1.5</li>
+<li>Hue has range 0.0 to 360.0 (degrees)</li>
 </ul>
 </details>
 <details>
@@ -343,6 +360,126 @@ ticks_per_frame = 4
 <p>Changes the rate of animation playback.</p>
 <p>Useful if you want to use a different rate (from what you specified globally in
 the <a href="#settings">settings</a>) for some portion of the animation.</p>
+</details>
+<details>
+  <summary>
+  <code>TransformMove</code>
+  </summary>
+<p>Example:</p>
+<pre><code class="language-toml">[[script]]
+action = &quot;TransformMove&quot;
+x = &quot;2.0&quot;
+y = &quot;1.0&quot;
+z = &quot;0.0&quot;
+</code></pre>
+<p>Relative move. Cause the sprite entity's Transform to be translated by the given values.</p>
+<p>Each of the <code>x</code>, <code>y</code>, <code>z</code> fields are optional. Omit those you want to leave untouched.</p>
+<p>The values must be in quotes and can be specified as either:</p>
+<ul>
+<li>decimal syntax, like: <code>&quot;1.25&quot;</code></li>
+<li>fraction syntax, like: <code>&quot;5/4&quot;</code></li>
+</ul>
+</details>
+<details>
+  <summary>
+  <code>TransformTeleport</code>
+  </summary>
+<p>Example:</p>
+<pre><code class="language-toml">[[script]]
+action = &quot;TransformTeleport&quot;
+x = &quot;2.0&quot;
+y = &quot;1.0&quot;
+z = &quot;5.0&quot;
+</code></pre>
+<p>Teleport the entity to the given position. Set the sprite entity's Transform's translation to the given values.</p>
+<p>The <code>z</code> field is optional. <code>x</code> and <code>y</code> are required.</p>
+<p>The values must be in quotes and can be specified as either:</p>
+<ul>
+<li>decimal syntax, like: <code>&quot;1.25&quot;</code></li>
+<li>fraction syntax, like: <code>&quot;5/4&quot;</code></li>
+</ul>
+</details>
+<details>
+  <summary>
+  <code>TransformSetScale</code>
+  </summary>
+<p>Example:</p>
+<pre><code class="language-toml">[[script]]
+action = &quot;TransformSetScale&quot;
+x = &quot;2.0&quot;
+y = &quot;1.0&quot;
+</code></pre>
+<p>Set the scale that the sprite should be displayed as.</p>
+<p>Both <code>x</code> and <code>y</code> are required.</p>
+<p>The values must be in quotes and can be specified as either:</p>
+<ul>
+<li>decimal syntax, like: <code>&quot;1.25&quot;</code></li>
+<li>fraction syntax, like: <code>&quot;5/4&quot;</code></li>
+</ul>
+</details>
+<details>
+  <summary>
+  <code>TransformRotateTurns</code>
+  </summary>
+<p>Example:</p>
+<pre><code class="language-toml">[[script]]
+action = &quot;TransformRotateTurns&quot;
+turns = &quot;-1/4&quot;
+</code></pre>
+<p>Rotate the sprite by N turns. 1 turn = 360 degrees.</p>
+<p>The values must be in quotes and can be specified as either:</p>
+<ul>
+<li>decimal syntax, like: <code>&quot;1.25&quot;</code></li>
+<li>fraction syntax, like: <code>&quot;5/4&quot;</code></li>
+</ul>
+</details>
+<details>
+  <summary>
+  <code>TransformRotateDegrees</code>
+  </summary>
+<p>Example:</p>
+<pre><code class="language-toml">[[script]]
+action = &quot;TransformRotateDegrees&quot;
+degrees = &quot;-15.0&quot;
+</code></pre>
+<p>Rotate the sprite by N degrees.</p>
+<p>The values must be in quotes and can be specified as either:</p>
+<ul>
+<li>decimal syntax, like: <code>&quot;1.25&quot;</code></li>
+<li>fraction syntax, like: <code>&quot;5/4&quot;</code></li>
+</ul>
+</details>
+<details>
+  <summary>
+  <code>TransformSetRotationTurns</code>
+  </summary>
+<p>Example:</p>
+<pre><code class="language-toml">[[script]]
+action = &quot;TransformSetRotationTurns&quot;
+turns = &quot;-1/4&quot;
+</code></pre>
+<p>Set the sprite's rotation to a specific value (in turns). 1 turn = 360 degrees.</p>
+<p>The values must be in quotes and can be specified as either:</p>
+<ul>
+<li>decimal syntax, like: <code>&quot;1.25&quot;</code></li>
+<li>fraction syntax, like: <code>&quot;5/4&quot;</code></li>
+</ul>
+</details>
+<details>
+  <summary>
+  <code>TransformSetRotationDegrees</code>
+  </summary>
+<p>Example:</p>
+<pre><code class="language-toml">[[script]]
+action = &quot;TransformSetRotationDegrees&quot;
+degrees = &quot;-15.0&quot;
+</code></pre>
+<p>Set the sprite's rotation to a specific value (in degrees).</p>
+<p>The values must be in quotes and can be specified as either:</p>
+<ul>
+<li>decimal syntax, like: <code>&quot;1.25&quot;</code></li>
+<li>fraction syntax, like: <code>&quot;5/4&quot;</code></li>
+</ul>
 </details>
 
                     </main>
