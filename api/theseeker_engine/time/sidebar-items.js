@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["GameTickSet","ParseTimeSpecError"],"fn":["at_tick_multiples","run_gametickupdate_schedule","update_gametime"],"struct":["GameTickMidFlush","GameTickUpdate","GameTime","GameTimePlugin","TickQuant","TimeSpec"]};
+window.SIDEBAR_ITEMS = {"enum":["GameTickSet"],"fn":["at_tick_multiples","run_gametickupdate_schedule","update_gametime"],"struct":["GameTickMidFlush","GameTickUpdate","GameTime","GameTimePlugin"]};

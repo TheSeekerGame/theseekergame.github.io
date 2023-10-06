@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["ScriptSet","ScriptUpdateResult"],"mod":["common","label"],"struct":["LevelLoadTime","ScriptPlugin","ScriptRuntime","ScriptRuntimeBuilder"],"trait":["ScriptAction","ScriptAppExt","ScriptAsset","ScriptRunIf","ScriptTracker"],"type":["ActionId"]};
+window.SIDEBAR_ITEMS = {"enum":["ScriptSet","ScriptUpdateResult"],"mod":["common","label"],"struct":["LevelLoadTime","ScriptPlugin","ScriptRuntime","ScriptRuntimeBuilder"],"trait":["ScriptAction","ScriptActionParams","ScriptAppExt","ScriptAsset","ScriptRunIf","ScriptTracker"],"type":["ActionId"]};
