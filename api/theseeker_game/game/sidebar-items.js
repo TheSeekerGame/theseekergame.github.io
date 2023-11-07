@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["wall"],"struct":["GameplayPlugin"]};
+window.SIDEBAR_ITEMS = {"mod":["player","wall"],"struct":["GameplayPlugin"]};

@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"enum":["OptionBool"],"fn":["none","some","wrap"],"struct":["IterBool","Optioned","OptionedIter"],"trait":["Noned","OptEq","OptOrd"]};

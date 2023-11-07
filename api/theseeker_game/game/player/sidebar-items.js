@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["player_control","setup_player"],"struct":["PlayerBlueprint","PlayerBlueprintBundle","PlayerGent","PlayerGentBundle","PlayerGfx","PlayerGfxBundle","PlayerPlugin"]};

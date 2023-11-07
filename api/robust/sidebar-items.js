@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["incircle","orient2d"],"struct":["Coord"]};
+window.SIDEBAR_ITEMS = {"fn":["incircle","insphere","orient2d","orient3d"],"struct":["Coord","Coord3D"]};

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spade-2.2.0/src/delaunay_core/dcel_operations.rs`."><title>dcel_operations.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="spade" data-themes="" data-resource-suffix="" data-rustdoc-version="1.73.0 (cc66ad468 2023-10-03)" data-channel="1.73.0" data-search-js="search-6dfdfced5eff6596.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-1596385f77d47ef2.css" data-theme-dark-css="dark-0a43001d3fc2282c.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-0795b7d26be81095.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-1596385f77d47ef2.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-0a43001d3fc2282c.css"><link rel="stylesheet" href="../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../spade/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spade-2.2.1/src/delaunay_core/dcel_operations.rs`."><title>dcel_operations.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="spade" data-themes="" data-resource-suffix="" data-rustdoc-version="1.73.0 (cc66ad468 2023-10-03)" data-channel="1.73.0" data-search-js="search-6dfdfced5eff6596.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-1596385f77d47ef2.css" data-theme-dark-css="dark-0a43001d3fc2282c.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-0795b7d26be81095.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-1596385f77d47ef2.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-0a43001d3fc2282c.css"><link rel="stylesheet" href="../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../spade/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1613,7 +1613,6 @@
 <a href="#1613" id="1613">1613</a>
 <a href="#1614" id="1614">1614</a>
 <a href="#1615" id="1615">1615</a>
-<a href="#1616" id="1616">1616</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::RemovalResult;
 
 <span class="kw">use </span><span class="kw">super</span>::dcel::{Dcel, EdgeEntry, FaceEntry, HalfEdgeEntry, VertexEntry};
@@ -1665,8 +1664,8 @@
 
         dcel.half_edge_mut(edge).face = OUTER_FACE_HANDLE;
 
-        dcel.faces[OUTER_FACE_HANDLE.index()].adjacent_edge = optional::some(edge);
-        dcel.vertices[from.index()].out_edge = optional::some(edge);
+        dcel.faces[OUTER_FACE_HANDLE.index()].adjacent_edge = <span class="prelude-val">Some</span>(edge);
+        dcel.vertices[from.index()].out_edge = <span class="prelude-val">Some</span>(edge);
     }
 
     IsolateVertexResult {
@@ -1760,7 +1759,7 @@
         <span class="kw">let </span>new_edge = EdgeEntry::new(new_norm, new_twin);
 
         <span class="kw">let </span>new_face = FaceEntry {
-            adjacent_edge: optional::some(new_edge_handle),
+            adjacent_edge: <span class="prelude-val">Some</span>(new_edge_handle),
             data: F::default(),
         };
 
@@ -1773,7 +1772,7 @@
         dcel.half_edge_mut(inner_edge).next = outer_edge;
         dcel.half_edge_mut(inner_edge).face = new_face_handle;
 
-        dcel.vertices[outer_edge_from.index()].out_edge = optional::some(outer_edge);
+        dcel.vertices[outer_edge_from.index()].out_edge = <span class="prelude-val">Some</span>(outer_edge);
 
         dcel.edges.push(new_edge);
         new_edges.push(new_edge_handle.as_undirected());
@@ -1790,7 +1789,7 @@
     <span class="comment">// Create a new face for the last triangle
     </span><span class="kw">let </span>new_face_handle = FixedFaceHandle::new(dcel.faces.len());
     <span class="kw">let </span>new_face = FaceEntry {
-        adjacent_edge: optional::some(inner_edge),
+        adjacent_edge: <span class="prelude-val">Some</span>(inner_edge),
         data: F::default(),
     };
     dcel.half_edge_mut(inner_edge).face = new_face_handle;
@@ -1810,13 +1809,13 @@
 
     <span class="comment">// Update out_edge entries for the triangle&#39;s vertices
     </span><span class="kw">let </span>prev_origin = dcel.half_edge_mut(inner_edge_prev).origin;
-    dcel.vertices[prev_origin.index()].out_edge = optional::some(inner_edge_prev);
+    dcel.vertices[prev_origin.index()].out_edge = <span class="prelude-val">Some</span>(inner_edge_prev);
 
     <span class="kw">let </span>next_origin = dcel.half_edge_mut(inner_edge_next).origin;
-    dcel.vertices[next_origin.index()].out_edge = optional::some(inner_edge_next);
+    dcel.vertices[next_origin.index()].out_edge = <span class="prelude-val">Some</span>(inner_edge_next);
 
     <span class="comment">// fan_origin is the third vertex of the triangle
-    </span>dcel.vertices[fan_origin.index()].out_edge = optional::some(inner_edge);
+    </span>dcel.vertices[fan_origin.index()].out_edge = <span class="prelude-val">Some</span>(inner_edge);
 
     IsolateVertexResult {
         new_edges,
@@ -1897,11 +1896,11 @@
     dcel.half_edge_mut(edge).face = new_face_handle;
     dcel.half_edge_mut(edge_entry.next).face = new_face_handle;
 
-    dcel.faces[OUTER_FACE_HANDLE.index()].adjacent_edge = optional::some(new_outer_handle);
+    dcel.faces[OUTER_FACE_HANDLE.index()].adjacent_edge = <span class="prelude-val">Some</span>(new_outer_handle);
 
     dcel.edges.push(new_edge_entry);
     dcel.faces.push(FaceEntry {
-        adjacent_edge: optional::some(new_inner_handle),
+        adjacent_edge: <span class="prelude-val">Some</span>(new_inner_handle),
         data: F::default(),
     });
 
@@ -1984,13 +1983,13 @@
     });
 
     dcel.faces.push(FaceEntry {
-        adjacent_edge: optional::some(edge),
+        adjacent_edge: <span class="prelude-val">Some</span>(edge),
         data: F::default(),
     });
 
     dcel.vertices.push(VertexEntry {
         data: new_vertex,
-        out_edge: optional::some(new_prev_handle.normalized()),
+        out_edge: <span class="prelude-val">Some</span>(new_prev_handle.normalized()),
     });
 
     <span class="kw-2">*</span>dcel.half_edge_mut(edge) = HalfEdgeEntry {
@@ -2000,8 +1999,7 @@
         ..edge_entry
     };
 
-    dcel.faces[edge_entry.face.index()].adjacent_edge =
-        optional::some(new_prev_handle.not_normalized());
+    dcel.faces[edge_entry.face.index()].adjacent_edge = <span class="prelude-val">Some</span>(new_prev_handle.not_normalized());
 
     dcel.half_edge_mut(edge_entry.next).prev = new_next_handle.not_normalized();
     dcel.half_edge_mut(edge_entry.prev).next = new_prev_handle.not_normalized();
@@ -2065,7 +2063,7 @@
 
     dcel.vertices.push(VertexEntry {
         data: new_vertex,
-        out_edge: optional::some(new_edge),
+        out_edge: <span class="prelude-val">Some</span>(new_edge),
     });
 
     new_vertex_handle
@@ -2112,7 +2110,7 @@
 
     dcel.half_edge_mut(rev).origin = new_vertex_handle;
 
-    dcel.vertices[to.index()].out_edge = optional::some(new_edge_rev);
+    dcel.vertices[to.index()].out_edge = <span class="prelude-val">Some</span>(new_edge_rev);
 
     <span class="kw">let </span>(new_edge_next, new_rev_prev) = <span class="kw">if </span>is_isolated {
         (new_edge_rev, new_edge)
@@ -2139,7 +2137,7 @@
 
     dcel.vertices.push(VertexEntry {
         data: new_vertex,
-        out_edge: optional::some(new_edge),
+        out_edge: <span class="prelude-val">Some</span>(new_edge),
     });
 
     new_vertex_handle
@@ -2245,13 +2243,13 @@
     };
 
     <span class="kw">let </span>new_face = FaceEntry {
-        adjacent_edge: optional::some(e2),
+        adjacent_edge: <span class="prelude-val">Some</span>(e2),
         data: Default::default(),
     };
 
     <span class="kw">let </span>new_vertex_entry = VertexEntry {
         data: new_vertex_data,
-        out_edge: optional::some(e2),
+        out_edge: <span class="prelude-val">Some</span>(e2),
     };
 
     dcel.edges.push(EdgeEntry::new(edge1, twin1));
@@ -2270,8 +2268,8 @@
     dcel.half_edge_mut(edge_next).face = nf;
     dcel.half_edge_mut(edge_twin).origin = nv;
 
-    dcel.vertices[to.index()].out_edge = optional::some(e2.rev());
-    dcel.faces[f1.index()].adjacent_edge = optional::some(edge_handle);
+    dcel.vertices[to.index()].out_edge = <span class="prelude-val">Some</span>(e2.rev());
+    dcel.faces[f1.index()].adjacent_edge = <span class="prelude-val">Some</span>(edge_handle);
 
     nv
 }
@@ -2408,17 +2406,17 @@
     };
 
     <span class="kw">let </span>new_vertex_entry = VertexEntry {
-        out_edge: optional::some(t0),
+        out_edge: <span class="prelude-val">Some</span>(t0),
         data: new_vertex,
     };
 
     <span class="kw">let </span>face2 = FaceEntry {
-        adjacent_edge: optional::some(e2),
+        adjacent_edge: <span class="prelude-val">Some</span>(e2),
         data: F::default(),
     };
 
     <span class="kw">let </span>face3 = FaceEntry {
-        adjacent_edge: optional::some(e3),
+        adjacent_edge: <span class="prelude-val">Some</span>(e3),
         data: F::default(),
     };
 
@@ -2440,10 +2438,10 @@
     dcel.half_edge_mut(ep).prev = t3;
 
     dcel.vertices.push(new_vertex_entry);
-    dcel.vertices[v3.index()].out_edge = optional::some(e2);
+    dcel.vertices[v3.index()].out_edge = <span class="prelude-val">Some</span>(e2);
 
-    dcel.faces[f0.index()].adjacent_edge = optional::some(e0);
-    dcel.faces[f1.index()].adjacent_edge = optional::some(e1);
+    dcel.faces[f0.index()].adjacent_edge = <span class="prelude-val">Some</span>(e0);
+    dcel.faces[f1.index()].adjacent_edge = <span class="prelude-val">Some</span>(e1);
     dcel.faces.push(face2);
     dcel.faces.push(face3);
 
@@ -2457,7 +2455,7 @@
     <span class="macro">assert!</span>(dcel.vertices.is_empty());
     dcel.vertices.push(VertexEntry {
         data: vertex,
-        out_edge: optional::none(),
+        out_edge: <span class="prelude-val">None</span>,
     });
     FixedVertexHandle::new(<span class="number">0</span>)
 }
@@ -2492,10 +2490,10 @@
 
     dcel.vertices.push(VertexEntry {
         data: vertex,
-        out_edge: optional::some(not_normalized),
+        out_edge: <span class="prelude-val">Some</span>(not_normalized),
     });
-    dcel.vertices[<span class="number">0</span>].out_edge = optional::some(normalized);
-    dcel.faces[OUTER_FACE_HANDLE.index()].adjacent_edge = optional::some(normalized);
+    dcel.vertices[<span class="number">0</span>].out_edge = <span class="prelude-val">Some</span>(normalized);
+    dcel.faces[OUTER_FACE_HANDLE.index()].adjacent_edge = <span class="prelude-val">Some</span>(normalized);
     second_vertex
 }
 
@@ -2555,12 +2553,12 @@
     <span class="kw">let </span>f2 = FixedFaceHandle::new(dcel.faces.len() + <span class="number">1</span>);
 
     <span class="kw">let </span>face1 = FaceEntry {
-        adjacent_edge: optional::some(e1),
+        adjacent_edge: <span class="prelude-val">Some</span>(e1),
         data: F::default(),
     };
 
     <span class="kw">let </span>face2 = FaceEntry {
-        adjacent_edge: optional::some(e2),
+        adjacent_edge: <span class="prelude-val">Some</span>(e2),
         data: F::default(),
     };
 
@@ -2568,7 +2566,7 @@
     dcel.faces.push(face2);
 
     <span class="kw">let </span>vertex = VertexEntry {
-        out_edge: optional::some(e4),
+        out_edge: <span class="prelude-val">Some</span>(e4),
         data: vertex,
     };
     dcel.vertices.push(vertex);
@@ -2637,7 +2635,7 @@
     </span>F: Default,
 {
     <span class="kw">let </span>outer_face = FaceEntry {
-        adjacent_edge: optional::none(),
+        adjacent_edge: <span class="prelude-val">None</span>,
         data: F::default(),
     };
 
@@ -2682,11 +2680,11 @@
     dcel.half_edge_mut(ep).prev = t;
     dcel.half_edge_mut(ep).face = t_face;
 
-    dcel.vertices[e_origin.index()].out_edge = optional::some(tn);
-    dcel.vertices[t_origin.index()].out_edge = optional::some(en);
+    dcel.vertices[e_origin.index()].out_edge = <span class="prelude-val">Some</span>(tn);
+    dcel.vertices[t_origin.index()].out_edge = <span class="prelude-val">Some</span>(en);
 
-    dcel.faces[e_face.index()].adjacent_edge = optional::some(e);
-    dcel.faces[t_face.index()].adjacent_edge = optional::some(t);
+    dcel.faces[e_face.index()].adjacent_edge = <span class="prelude-val">Some</span>(e);
+    dcel.faces[t_face.index()].adjacent_edge = <span class="prelude-val">Some</span>(t);
 }
 
 <span class="doccomment">/// Vertex removal has two stages: First, the vertex is disconnected from its surroundings (isolated).
@@ -2751,8 +2749,8 @@
 
     <span class="kw">let </span>edge_origin = dcel.half_edge(edge_handle).origin;
     <span class="kw">let </span>edge_face = dcel.half_edge(edge_handle).face;
-    dcel.vertices[edge_origin.index()].out_edge = optional::some(edge_handle);
-    dcel.faces[edge_face.index()].adjacent_edge = optional::some(edge_handle);
+    dcel.vertices[edge_origin.index()].out_edge = <span class="prelude-val">Some</span>(edge_handle);
+    dcel.faces[edge_face.index()].adjacent_edge = <span class="prelude-val">Some</span>(edge_handle);
 }
 
 <span class="doccomment">/// Removes a vertex from the DCEL by swapping in another.
@@ -2849,8 +2847,8 @@
     };
 
     <span class="kw">let </span>result = dcel.vertices.swap_remove(vertex_to_remove.index()).data;
-    dcel.faces[OUTER_FACE_HANDLE.index()].adjacent_edge = optional::none();
-    dcel.vertices[<span class="number">0</span>].out_edge = optional::none();
+    dcel.faces[OUTER_FACE_HANDLE.index()].adjacent_edge = <span class="prelude-val">None</span>;
+    dcel.vertices[<span class="number">0</span>].out_edge = <span class="prelude-val">None</span>;
     dcel.edges.clear();
     RemovalResult {
         removed_vertex: result,
@@ -2876,8 +2874,8 @@
 
             dcel.half_edge_mut(o_next).prev = o_next.rev();
             dcel.half_edge_mut(o_next.rev()).next = o_next;
-            dcel.vertices[vertex_to_update.index()].out_edge = optional::some(o_next);
-            dcel.faces[OUTER_FACE_HANDLE.index()].adjacent_edge = optional::some(o_next);
+            dcel.vertices[vertex_to_update.index()].out_edge = <span class="prelude-val">Some</span>(o_next);
+            dcel.faces[OUTER_FACE_HANDLE.index()].adjacent_edge = <span class="prelude-val">Some</span>(o_next);
 
             swap_remove_undirected_edge(dcel, out_edge1.as_undirected());
 
@@ -2906,10 +2904,10 @@
                 dcel.half_edge_mut(t1.rev()).prev = t2_prev;
             }
 
-            dcel.vertices[e2_to.index()].out_edge = optional::some(t1.rev());
+            dcel.vertices[e2_to.index()].out_edge = <span class="prelude-val">Some</span>(t1.rev());
             dcel.half_edge_mut(t1.rev()).origin = e2_to;
 
-            dcel.faces[OUTER_FACE_HANDLE.index()].adjacent_edge = optional::some(t1);
+            dcel.faces[OUTER_FACE_HANDLE.index()].adjacent_edge = <span class="prelude-val">Some</span>(t1);
 
             <span class="kw">let </span>result = swap_remove_vertex(dcel, vertex_to_remove);
             swap_remove_undirected_edge(dcel, e2.as_undirected());
@@ -2988,27 +2986,27 @@
         );
 
         <span class="kw">let </span>face0 = FaceEntry {
-            adjacent_edge: optional::some(e0),
+            adjacent_edge: <span class="prelude-val">Some</span>(e0),
             data: (),
         };
 
         <span class="kw">let </span>face1 = FaceEntry {
-            adjacent_edge: optional::some(e1),
+            adjacent_edge: <span class="prelude-val">Some</span>(e1),
             data: (),
         };
 
         <span class="kw">let </span>vertex0 = VertexEntry {
-            out_edge: optional::some(e0),
+            out_edge: <span class="prelude-val">Some</span>(e0),
             data: <span class="number">0</span>,
         };
 
         <span class="kw">let </span>vertex1 = VertexEntry {
-            out_edge: optional::some(e2),
+            out_edge: <span class="prelude-val">Some</span>(e2),
             data: <span class="number">1</span>,
         };
 
         <span class="kw">let </span>vertex2 = VertexEntry {
-            out_edge: optional::some(e4),
+            out_edge: <span class="prelude-val">Some</span>(e4),
             data: <span class="number">2</span>,
         };
 

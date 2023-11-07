@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/taffy-0.3.13/src/compute/flexbox.rs`."><title>flexbox.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="taffy" data-themes="" data-resource-suffix="" data-rustdoc-version="1.73.0 (cc66ad468 2023-10-03)" data-channel="1.73.0" data-search-js="search-6dfdfced5eff6596.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-1596385f77d47ef2.css" data-theme-dark-css="dark-0a43001d3fc2282c.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-0795b7d26be81095.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-1596385f77d47ef2.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-0a43001d3fc2282c.css"><link rel="stylesheet" href="../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../taffy/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/taffy-0.3.18/src/compute/flexbox.rs`."><title>flexbox.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="taffy" data-themes="" data-resource-suffix="" data-rustdoc-version="1.73.0 (cc66ad468 2023-10-03)" data-channel="1.73.0" data-search-js="search-6dfdfced5eff6596.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-1596385f77d47ef2.css" data-theme-dark-css="dark-0a43001d3fc2282c.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-0795b7d26be81095.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-1596385f77d47ef2.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-0a43001d3fc2282c.css"><link rel="stylesheet" href="../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../taffy/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -2131,8 +2131,6 @@
 <a href="#2131" id="2131">2131</a>
 <a href="#2132" id="2132">2132</a>
 <a href="#2133" id="2133">2133</a>
-<a href="#2134" id="2134">2134</a>
-<a href="#2135" id="2135">2135</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! Computes the [flexbox](https://css-tricks.com/snippets/css/a-guide-to-flexbox/) layout algorithm on [`Taffy`](crate::Taffy) according to the [spec](https://www.w3.org/TR/css-flexbox-1/)
 </span><span class="kw">use </span>core::f32;
 
@@ -2167,9 +2165,9 @@
         known_dimensions: Size&lt;<span class="prelude-ty">Option</span>&lt;f32&gt;&gt;,
         parent_size: Size&lt;<span class="prelude-ty">Option</span>&lt;f32&gt;&gt;,
         available_space: Size&lt;AvailableSpace&gt;,
-        _sizing_mode: SizingMode,
+        sizing_mode: SizingMode,
     ) -&gt; SizeAndBaselines {
-        compute(tree, node, known_dimensions, parent_size, available_space, RunMode::PeformLayout)
+        compute(tree, node, known_dimensions, parent_size, available_space, RunMode::PeformLayout, sizing_mode)
     }
 
     <span class="kw">fn </span>measure_size(
@@ -2178,9 +2176,9 @@
         known_dimensions: Size&lt;<span class="prelude-ty">Option</span>&lt;f32&gt;&gt;,
         parent_size: Size&lt;<span class="prelude-ty">Option</span>&lt;f32&gt;&gt;,
         available_space: Size&lt;AvailableSpace&gt;,
-        _sizing_mode: SizingMode,
+        sizing_mode: SizingMode,
     ) -&gt; Size&lt;f32&gt; {
-        compute(tree, node, known_dimensions, parent_size, available_space, RunMode::ComputeSize).size
+        compute(tree, node, known_dimensions, parent_size, available_space, RunMode::ComputeSize, sizing_mode).size
     }
 }
 
@@ -2188,6 +2186,9 @@
 </span><span class="kw">struct </span>FlexItem {
     <span class="doccomment">/// The identifier for the associated [`Node`](crate::node::Node)
     </span>node: Node,
+
+    <span class="doccomment">/// The order of the node relative to it&#39;s siblings
+    </span>order: u32,
 
     <span class="doccomment">/// The base size of this item
     </span>size: Size&lt;<span class="prelude-ty">Option</span>&lt;f32&gt;&gt;,
@@ -2316,6 +2317,7 @@
     parent_size: Size&lt;<span class="prelude-ty">Option</span>&lt;f32&gt;&gt;,
     available_space: Size&lt;AvailableSpace&gt;,
     run_mode: RunMode,
+    sizing_mode: SizingMode,
 ) -&gt; SizeAndBaselines {
     <span class="kw">let </span>style = tree.style(node);
 
@@ -2323,8 +2325,11 @@
     </span><span class="kw">let </span>aspect_ratio = style.aspect_ratio;
     <span class="kw">let </span>min_size = style.min_size.maybe_resolve(parent_size).maybe_apply_aspect_ratio(aspect_ratio);
     <span class="kw">let </span>max_size = style.max_size.maybe_resolve(parent_size).maybe_apply_aspect_ratio(aspect_ratio);
-    <span class="kw">let </span>clamped_style_size =
-        style.size.maybe_resolve(parent_size).maybe_apply_aspect_ratio(aspect_ratio).maybe_clamp(min_size, max_size);
+    <span class="kw">let </span>clamped_style_size = <span class="kw">if </span>sizing_mode == SizingMode::InherentSize {
+        style.size.maybe_resolve(parent_size).maybe_apply_aspect_ratio(aspect_ratio).maybe_clamp(min_size, max_size)
+    } <span class="kw">else </span>{
+        Size::NONE
+    };
 
     <span class="comment">// If both min and max in a given axis are set and max &lt;= min then this determines the size in that axis
     </span><span class="kw">let </span>min_max_definite_size = min_size.zip_map(max_size, |min, max| <span class="kw">match </span>(min, max) {
@@ -2510,7 +2515,7 @@
     <span class="comment">// Do a final layout pass and gather the resulting layouts
     </span><span class="attr">#[cfg(feature = <span class="string">&quot;debug&quot;</span>)]
     </span>NODE_LOGGER.log(<span class="string">&quot;final_layout_pass&quot;</span>);
-    final_layout_pass(tree, node, <span class="kw-2">&amp;mut </span>flex_lines, <span class="kw-2">&amp;</span>constants);
+    final_layout_pass(tree, <span class="kw-2">&amp;mut </span>flex_lines, <span class="kw-2">&amp;</span>constants);
 
     <span class="comment">// Before returning we perform absolute layout on all absolutely positioned children
     </span><span class="attr">#[cfg(feature = <span class="string">&quot;debug&quot;</span>)]
@@ -2614,13 +2619,15 @@
 </span><span class="attr">#[inline]
 </span><span class="kw">fn </span>generate_anonymous_flex_items(tree: <span class="kw-2">&amp;</span><span class="kw">impl </span>LayoutTree, node: Node, constants: <span class="kw-2">&amp;</span>AlgoConstants) -&gt; Vec&lt;FlexItem&gt; {
     tree.children(node)
-        .map(|child| (child, tree.style(<span class="kw-2">*</span>child)))
-        .filter(|(<span class="kw">_</span>, style)| style.position != Position::Absolute)
-        .filter(|(<span class="kw">_</span>, style)| style.display != Display::None)
-        .map(|(child, child_style)| {
+        .enumerate()
+        .map(|(index, child)| (index, child, tree.style(<span class="kw-2">*</span>child)))
+        .filter(|(<span class="kw">_</span>, <span class="kw">_</span>, style)| style.position != Position::Absolute)
+        .filter(|(<span class="kw">_</span>, <span class="kw">_</span>, style)| style.display != Display::None)
+        .map(|(index, child, child_style)| {
             <span class="kw">let </span>aspect_ratio = child_style.aspect_ratio;
             FlexItem {
                 node: <span class="kw-2">*</span>child,
+                order: index <span class="kw">as </span>u32,
                 size: child_style.size.maybe_resolve(constants.node_inner_size).maybe_apply_aspect_ratio(aspect_ratio),
                 min_size: child_style
                     .min_size
@@ -2737,12 +2744,26 @@
 
         <span class="comment">// Parent size for child sizing
         </span><span class="kw">let </span>cross_axis_parent_size = constants.node_inner_size.cross(dir);
+        <span class="kw">let </span>child_parent_size = Size::NONE.with_cross(dir, cross_axis_parent_size);
 
         <span class="comment">// Available space for child sizing
         </span><span class="kw">let </span>cross_axis_margin_sum = constants.margin.cross_axis_sum(dir);
         <span class="kw">let </span>child_min_cross = child.min_size.cross(dir).maybe_add(cross_axis_margin_sum);
         <span class="kw">let </span>child_max_cross = child.max_size.cross(dir).maybe_add(cross_axis_margin_sum);
-        <span class="kw">let </span>cross_axis_available_space = cross_axis_parent_size.maybe_clamp(child_min_cross, child_max_cross).into();
+        <span class="kw">let </span>cross_axis_available_space: AvailableSpace =
+            cross_axis_parent_size.maybe_clamp(child_min_cross, child_max_cross).into();
+
+        <span class="comment">// Known dimension for child sizing
+        </span><span class="kw">let </span>child_known_dimensions = {
+            <span class="kw">let </span><span class="kw-2">mut </span>ckd = child.size.with_main(dir, <span class="prelude-val">None</span>);
+            <span class="kw">if </span>child.align_self == AlignSelf::Stretch &amp;&amp; ckd.cross(dir).is_none() {
+                ckd.set_cross(
+                    dir,
+                    cross_axis_available_space.into_option().maybe_sub(child.margin.cross_axis_sum(dir)),
+                );
+            }
+            ckd
+        };
 
         child.flex_basis = <span class="lifetime">&#39;flex_basis</span>: {
             <span class="comment">// A. If the item has a definite used flex basis, that’s the flex base size.
@@ -2785,23 +2806,7 @@
             //    is auto and not definite, in this calculation use fit-content as the
             //    flex item’s cross size. The flex base size is the item’s resulting main size.
 
-            </span><span class="kw">let </span>child_parent_size = Size::NONE.with_cross(dir, cross_axis_parent_size);
-            <span class="kw">let </span>child_available_space = available_space.with_cross(dir, cross_axis_available_space);
-
-            <span class="kw">let </span>child_known_dimensions = {
-                <span class="kw">let </span><span class="kw-2">mut </span>ckd = child.size;
-                <span class="kw">if </span>child.align_self == AlignSelf::Stretch &amp;&amp; ckd.cross(dir).is_none() {
-                    ckd.set_cross(
-                        dir,
-                        child_available_space
-                            .cross(dir)
-                            .into_option()
-                            .maybe_clamp(child_min_cross, child_max_cross)
-                            .maybe_sub(child.margin.cross_axis_sum(dir)),
-                    );
-                }
-                ckd
-            };
+            </span><span class="kw">let </span>child_available_space = available_space.with_cross(dir, cross_axis_available_space);
 
             <span class="kw">break </span><span class="lifetime">&#39;flex_basis </span>GenericAlgorithm::measure_size(
                 tree,
@@ -2847,13 +2852,12 @@
         //
         // See https://drafts.csswg.org/css-sizing-3/#min-percentage-contribution
         </span><span class="kw">let </span>min_content_size = {
-            <span class="kw">let </span>child_parent_size = Size::NONE.with_cross(dir, cross_axis_parent_size);
             <span class="kw">let </span>child_available_space = Size::MIN_CONTENT.with_cross(dir, cross_axis_available_space);
 
             GenericAlgorithm::measure_size(
                 tree,
                 child.node,
-                Size::NONE,
+                child_known_dimensions,
                 child_parent_size,
                 child_available_space,
                 SizingMode::ContentSize,
@@ -3862,7 +3866,6 @@
 </span><span class="attr">#[allow(clippy::too_many_arguments)]
 </span><span class="kw">fn </span>calculate_flex_item(
     tree: <span class="kw-2">&amp;mut </span><span class="kw">impl </span>LayoutTree,
-    node: Node,
     item: <span class="kw-2">&amp;mut </span>FlexItem,
     total_offset_main: <span class="kw-2">&amp;mut </span>f32,
     total_offset_cross: f32,
@@ -3902,10 +3905,8 @@
         item.baseline = baseline_offset_main + inner_baseline;
     }
 
-    <span class="kw">let </span>order = tree.children(node).position(|n| <span class="kw-2">*</span>n == item.node).unwrap() <span class="kw">as </span>u32;
-
     <span class="kw-2">*</span>tree.layout_mut(item.node) = Layout {
-        order,
+        order: item.order,
         size: preliminary_size_and_baselines.size,
         location: Point {
             x: <span class="kw">if </span>direction.is_row() { offset_main } <span class="kw">else </span>{ offset_cross },
@@ -3920,7 +3921,6 @@
 </span><span class="attr">#[allow(clippy::too_many_arguments)]
 </span><span class="kw">fn </span>calculate_layout_line(
     tree: <span class="kw-2">&amp;mut </span><span class="kw">impl </span>LayoutTree,
-    node: Node,
     line: <span class="kw-2">&amp;mut </span>FlexLine,
     total_offset_cross: <span class="kw-2">&amp;mut </span>f32,
     container_size: Size&lt;f32&gt;,
@@ -3935,7 +3935,6 @@
         <span class="kw">for </span>item <span class="kw">in </span>line.items.iter_mut().rev() {
             calculate_flex_item(
                 tree,
-                node,
                 item,
                 <span class="kw-2">&amp;mut </span>total_offset_main,
                 <span class="kw-2">*</span>total_offset_cross,
@@ -3949,7 +3948,6 @@
         <span class="kw">for </span>item <span class="kw">in </span>line.items.iter_mut() {
             calculate_flex_item(
                 tree,
-                node,
                 item,
                 <span class="kw-2">&amp;mut </span>total_offset_main,
                 <span class="kw-2">*</span>total_offset_cross,
@@ -3966,14 +3964,13 @@
 
 <span class="doccomment">/// Do a final layout pass and collect the resulting layouts.
 </span><span class="attr">#[inline]
-</span><span class="kw">fn </span>final_layout_pass(tree: <span class="kw-2">&amp;mut </span><span class="kw">impl </span>LayoutTree, node: Node, flex_lines: <span class="kw-2">&amp;mut </span>[FlexLine], constants: <span class="kw-2">&amp;</span>AlgoConstants) {
+</span><span class="kw">fn </span>final_layout_pass(tree: <span class="kw-2">&amp;mut </span><span class="kw">impl </span>LayoutTree, flex_lines: <span class="kw-2">&amp;mut </span>[FlexLine], constants: <span class="kw-2">&amp;</span>AlgoConstants) {
     <span class="kw">let </span><span class="kw-2">mut </span>total_offset_cross = constants.padding_border.cross_start(constants.dir);
 
     <span class="kw">if </span>constants.is_wrap_reverse {
         <span class="kw">for </span>line <span class="kw">in </span>flex_lines.iter_mut().rev() {
             calculate_layout_line(
                 tree,
-                node,
                 line,
                 <span class="kw-2">&amp;mut </span>total_offset_cross,
                 constants.container_size,
@@ -3986,7 +3983,6 @@
         <span class="kw">for </span>line <span class="kw">in </span>flex_lines.iter_mut() {
             calculate_layout_line(
                 tree,
-                node,
                 line,
                 <span class="kw-2">&amp;mut </span>total_offset_cross,
                 constants.container_size,
