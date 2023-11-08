@@ -426,6 +426,15 @@
 <a href="#426" id="426">426</a>
 <a href="#427" id="427">427</a>
 <a href="#428" id="428">428</a>
+<a href="#429" id="429">429</a>
+<a href="#430" id="430">430</a>
+<a href="#431" id="431">431</a>
+<a href="#432" id="432">432</a>
+<a href="#433" id="433">433</a>
+<a href="#434" id="434">434</a>
+<a href="#435" id="435">435</a>
+<a href="#436" id="436">436</a>
+<a href="#437" id="437">437</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>bevy::asset::Asset;
 <span class="kw">use </span>bevy::ecs::system::{StaticSystemParam, SystemParam};
 
@@ -567,7 +576,14 @@
 
 <span class="kw">pub trait </span>ScriptActionParams: Clone + Send + Sync + <span class="lifetime">&#39;static </span>{
     <span class="kw">type </span>Tracker: ScriptTracker;
-    <span class="kw">fn </span>should_run(<span class="kw-2">&amp;</span><span class="self">self</span>, _tracker: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::Tracker) -&gt; <span class="prelude-ty">Result</span>&lt;(), ScriptUpdateResult&gt; {
+    <span class="kw">type </span>ShouldRunParam: SystemParam + <span class="lifetime">&#39;static</span>;
+
+    <span class="kw">fn </span>should_run&lt;<span class="lifetime">&#39;w</span>&gt;(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        _tracker: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::Tracker,
+        _action_id: ActionId,
+        _param: <span class="kw-2">&amp;mut </span>&lt;<span class="self">Self</span>::ShouldRunParam <span class="kw">as </span>SystemParam&gt;::Item&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;_</span>&gt;,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;(), ScriptUpdateResult&gt; {
         <span class="prelude-val">Ok</span>(())
     }
 }
@@ -645,6 +661,7 @@
     <span class="kw-2">mut </span>params: ParamSet&lt;(
         StaticSystemParam&lt;&lt;T::Tracker <span class="kw">as </span>ScriptTracker&gt;::UpdateParam&gt;,
         StaticSystemParam&lt;&lt;T::Action <span class="kw">as </span>ScriptAction&gt;::Param&gt;,
+        StaticSystemParam&lt;&lt;T::ActionParams <span class="kw">as </span>ScriptActionParams&gt;::ShouldRunParam&gt;,
     )&gt;,
     <span class="kw-2">mut </span>action_queue: Local&lt;Vec&lt;ActionId&gt;&gt;,
 ) {
@@ -679,9 +696,10 @@
             // );
             </span><span class="kw">for </span>action_id <span class="kw">in </span>action_queue.drain(..) {
                 <span class="kw">let </span>action = <span class="kw-2">&amp;</span>script_rt.actions[action_id];
-                <span class="kw">let </span>r = <span class="kw">if let </span><span class="prelude-val">Err</span>(r) = action.<span class="number">0</span>.should_run(<span class="kw-2">&amp;mut </span>script_rt.tracker) {
-                    r
-                } <span class="kw">else </span>{
+                <span class="kw">let </span>r = {
+                    <span class="kw">let </span><span class="kw-2">mut </span>shouldrun_param = params.p2().into_inner();
+                    action.<span class="number">0</span>.should_run(<span class="kw-2">&amp;mut </span>script_rt.tracker, action_id, <span class="kw-2">&amp;mut </span>shouldrun_param)
+                }.err().unwrap_or_else(|| {
                     <span class="kw">let </span><span class="kw-2">mut </span>action_param = params.p1().into_inner();
                     script_rt.actions[action_id].<span class="number">1</span>.run(
                         e,
@@ -689,7 +707,7 @@
                         <span class="kw-2">&amp;mut </span>script_rt.tracker,
                         <span class="kw-2">&amp;mut </span>action_param,
                     )
-                };
+                });
                 is_loop |= r.is_loop();
                 is_end |= r.is_end();
             }
