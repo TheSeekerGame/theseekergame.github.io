@@ -243,6 +243,11 @@
 <a href="#243" id="243">243</a>
 <a href="#244" id="244">244</a>
 <a href="#245" id="245">245</a>
+<a href="#246" id="246">246</a>
+<a href="#247" id="247">247</a>
+<a href="#248" id="248">248</a>
+<a href="#249" id="249">249</a>
+<a href="#250" id="250">250</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>bevy::ecs::system::lifetimeless::<span class="kw-2">*</span>;
 <span class="kw">use </span>bevy::ecs::system::SystemParam;
 
@@ -453,7 +458,7 @@
     <span class="kw">type </span>Action = ExtendedScriptAction&lt;SpriteAnimationScriptAction&gt;;
     <span class="kw">type </span>ActionParams = ExtendedScriptParams&lt;SpriteAnimationScriptParams&gt;;
     <span class="kw">type </span>BuildParam = (
-        SQuery&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span><span class="kw-2">mut </span>Handle&lt;TextureAtlas&gt;&gt;,
+        SQuery&lt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span><span class="kw-2">mut </span>Handle&lt;TextureAtlas&gt;, <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span><span class="kw-2">mut </span>TextureAtlasSprite)&gt;,
         SRes&lt;PreloadedAssets&gt;,
     );
     <span class="kw">type </span>RunIf = ExtendedScriptRunIf&lt;SpriteAnimationScriptRunIf&gt;;
@@ -470,13 +475,18 @@
         entity: Entity,
         (q_atlas, preloaded): <span class="kw-2">&amp;mut </span>&lt;<span class="self">Self</span>::BuildParam <span class="kw">as </span>SystemParam&gt;::Item&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;_</span>&gt;,
     ) -&gt; ScriptRuntimeBuilder&lt;<span class="self">Self</span>&gt; {
-        <span class="kw">let </span><span class="kw-2">mut </span>atlas = q_atlas
+        <span class="kw">let </span>(<span class="kw-2">mut </span>atlas, <span class="kw-2">mut </span>sprite) = q_atlas
             .get_mut(entity)
-            .expect(<span class="string">&quot;Animation entity must have Texture Atlas component&quot;</span>);
+            .expect(<span class="string">&quot;Animation entity must have Texture Atlas components&quot;</span>);
         <span class="kw">let </span>new_atlas = preloaded
             .get_single_asset(<span class="kw-2">&amp;</span><span class="self">self</span>.atlas_asset_key)
             .expect(<span class="string">&quot;Invalid texture atlas asset key for animation&quot;</span>);
         <span class="kw-2">*</span>atlas = new_atlas;
+
+        sprite.index = <span class="self">self</span>.settings.extended.frame_start
+            .min(<span class="self">self</span>.settings.extended.frame_max)
+            .max(<span class="self">self</span>.settings.extended.frame_min)
+            <span class="kw">as </span>usize;
 
         <span class="kw">for </span>action <span class="kw">in </span><span class="self">self</span>.script.iter() {
             builder = builder.add_action(
