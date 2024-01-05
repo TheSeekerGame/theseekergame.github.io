@@ -1,3 +1,0 @@
-(function() {var implementors = {
-"inotify":[["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.74.0/std/os/fd/owned/trait.AsFd.html\" title=\"trait std::os::fd::owned::AsFd\">AsFd</a> for <a class=\"struct\" href=\"inotify/struct.Inotify.html\" title=\"struct inotify::Inotify\">Inotify</a>"]]
-};if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
