@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["TemporalAntiAliasBundle","TemporalAntiAliasPlugin","TemporalAntiAliasSettings"]};
+window.SIDEBAR_ITEMS = {"struct":["TemporalAntiAliasBundle","TemporalAntiAliasNode","TemporalAntiAliasPlugin","TemporalAntiAliasSettings"]};

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["AtlasImageBundle","ButtonBundle","ImageBundle","NodeBundle","TextBundle"]};
+window.SIDEBAR_ITEMS = {"struct":["AtlasImageBundle","ButtonBundle","ImageBundle","MaterialNodeBundle","NodeBundle","TextBundle"]};

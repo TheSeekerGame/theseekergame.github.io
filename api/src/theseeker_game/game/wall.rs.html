@@ -187,6 +187,10 @@
 <a href="#187" id="187">187</a>
 <a href="#188" id="188">188</a>
 <a href="#189" id="189">189</a>
+<a href="#190" id="190">190</a>
+<a href="#191" id="191">191</a>
+<a href="#192" id="192">192</a>
+<a href="#193" id="193">193</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::prelude::<span class="kw-2">*</span>;
 
 <span class="kw">pub struct </span>WallPlugin;
@@ -229,8 +233,9 @@
     <span class="kw-2">mut </span>commands: Commands,
     wall_query: Query&lt;(<span class="kw-2">&amp;</span>GridCoords, <span class="kw-2">&amp;</span>Parent), Added&lt;Wall&gt;&gt;,
     parent_query: Query&lt;<span class="kw-2">&amp;</span>Parent, Without&lt;Wall&gt;&gt;,
-    level_query: Query&lt;(Entity, <span class="kw-2">&amp;</span>Handle&lt;LdtkLevel&gt;)&gt;,
-    levels: Res&lt;Assets&lt;LdtkLevel&gt;&gt;,
+    level_query: Query&lt;(Entity, <span class="kw-2">&amp;</span>LevelIid)&gt;,
+    ldtk_projects: Query&lt;<span class="kw-2">&amp;</span>Handle&lt;LdtkProject&gt;&gt;,
+    ldtk_project_assets: Res&lt;Assets&lt;LdtkProject&gt;&gt;,
 ) {
     <span class="doccomment">/// Represents a wide wall that is 1 tile tall
     /// Used to spawn wall collisions
@@ -246,6 +251,10 @@
         right: i32,
         top: i32,
         bottom: i32,
+    }
+
+    <span class="kw">if </span>wall_query.is_empty() {
+        <span class="kw">return</span>;
     }
 
     <span class="comment">// Consider where the walls are
@@ -269,111 +278,110 @@
         }
     });
 
-    <span class="kw">if </span>!wall_query.is_empty() {
-        level_query.for_each(|(level_entity, level_handle)| {
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(level_walls) = level_to_wall_locations.get(<span class="kw-2">&amp;</span>level_entity) {
-                <span class="kw">let </span>level = levels
-                    .get(level_handle)
-                    .expect(<span class="string">&quot;Level should be loaded by this point&quot;</span>);
+    level_query.for_each(|(level_entity, level_iid)| {
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(level_walls) = level_to_wall_locations.get(<span class="kw-2">&amp;</span>level_entity) {
+            <span class="kw">let </span>ldtk_project = ldtk_project_assets
+                .get(ldtk_projects.single())
+                .expect(<span class="string">&quot;Project should be loaded if level has spawned&quot;</span>);
 
-                <span class="kw">let </span>LayerInstance {
-                    c_wid: width,
-                    c_hei: height,
-                    grid_size,
-                    ..
-                } = level
-                    .level
-                    .layer_instances
-                    .clone()
-                    .expect(<span class="string">&quot;Level asset should have layers&quot;</span>)[<span class="number">0</span>];
+            <span class="kw">let </span>level = ldtk_project
+                .as_standalone()
+                .get_loaded_level_by_iid(<span class="kw-2">&amp;</span>level_iid.to_string())
+                .expect(<span class="string">&quot;Spawned level should exist in LDtk project&quot;</span>);
 
-                <span class="comment">// combine wall tiles into flat &quot;plates&quot; in each individual row
-                </span><span class="kw">let </span><span class="kw-2">mut </span>plate_stack: Vec&lt;Vec&lt;Plate&gt;&gt; = Vec::new();
+            <span class="kw">let </span>LayerInstance {
+                c_wid: width,
+                c_hei: height,
+                grid_size,
+                ..
+            } = level.layer_instances()[<span class="number">0</span>];
 
-                <span class="kw">for </span>y <span class="kw">in </span><span class="number">0</span>..height {
-                    <span class="kw">let </span><span class="kw-2">mut </span>row_plates: Vec&lt;Plate&gt; = Vec::new();
-                    <span class="kw">let </span><span class="kw-2">mut </span>plate_start = <span class="prelude-val">None</span>;
+            <span class="comment">// combine wall tiles into flat &quot;plates&quot; in each individual row
+            </span><span class="kw">let </span><span class="kw-2">mut </span>plate_stack: Vec&lt;Vec&lt;Plate&gt;&gt; = Vec::new();
 
-                    <span class="comment">// + 1 to the width so the algorithm &quot;terminates&quot; plates that touch the right edge
-                    </span><span class="kw">for </span>x <span class="kw">in </span><span class="number">0</span>..width + <span class="number">1 </span>{
-                        <span class="kw">match </span>(
-                            plate_start,
-                            level_walls.contains(<span class="kw-2">&amp;</span>GridCoords { x, y }),
-                        ) {
-                            (<span class="prelude-val">Some</span>(s), <span class="bool-val">false</span>) =&gt; {
-                                row_plates.push(Plate {
-                                    left: s,
-                                    right: x - <span class="number">1</span>,
-                                });
-                                plate_start = <span class="prelude-val">None</span>;
-                            },
-                            (<span class="prelude-val">None</span>, <span class="bool-val">true</span>) =&gt; plate_start = <span class="prelude-val">Some</span>(x),
-                            <span class="kw">_ </span>=&gt; (),
-                        }
-                    }
+            <span class="kw">for </span>y <span class="kw">in </span><span class="number">0</span>..height {
+                <span class="kw">let </span><span class="kw-2">mut </span>row_plates: Vec&lt;Plate&gt; = Vec::new();
+                <span class="kw">let </span><span class="kw-2">mut </span>plate_start = <span class="prelude-val">None</span>;
 
-                    plate_stack.push(row_plates);
-                }
-
-                <span class="comment">// combine &quot;plates&quot; into rectangles across multiple rows
-                </span><span class="kw">let </span><span class="kw-2">mut </span>rect_builder: HashMap&lt;Plate, Rect&gt; = HashMap::new();
-                <span class="kw">let </span><span class="kw-2">mut </span>prev_row: Vec&lt;Plate&gt; = Vec::new();
-                <span class="kw">let </span><span class="kw-2">mut </span>wall_rects: Vec&lt;Rect&gt; = Vec::new();
-
-                <span class="comment">// an extra empty row so the algorithm &quot;finishes&quot; the rects that touch the top edge
-                </span>plate_stack.push(Vec::new());
-
-                <span class="kw">for </span>(y, current_row) <span class="kw">in </span>plate_stack.into_iter().enumerate() {
-                    <span class="kw">for </span>prev_plate <span class="kw">in </span><span class="kw-2">&amp;</span>prev_row {
-                        <span class="kw">if </span>!current_row.contains(prev_plate) {
-                            <span class="comment">// remove the finished rect so that the same plate in the future starts a new rect
-                            </span><span class="kw">if let </span><span class="prelude-val">Some</span>(rect) = rect_builder.remove(prev_plate) {
-                                wall_rects.push(rect);
-                            }
-                        }
-                    }
-                    <span class="kw">for </span>plate <span class="kw">in </span><span class="kw-2">&amp;</span>current_row {
-                        rect_builder
-                            .entry(plate.clone())
-                            .and_modify(|e| e.top += <span class="number">1</span>)
-                            .or_insert(Rect {
-                                bottom: y <span class="kw">as </span>i32,
-                                top: y <span class="kw">as </span>i32,
-                                left: plate.left,
-                                right: plate.right,
+                <span class="comment">// + 1 to the width so the algorithm &quot;terminates&quot; plates that touch the right edge
+                </span><span class="kw">for </span>x <span class="kw">in </span><span class="number">0</span>..width + <span class="number">1 </span>{
+                    <span class="kw">match </span>(
+                        plate_start,
+                        level_walls.contains(<span class="kw-2">&amp;</span>GridCoords { x, y }),
+                    ) {
+                        (<span class="prelude-val">Some</span>(s), <span class="bool-val">false</span>) =&gt; {
+                            row_plates.push(Plate {
+                                left: s,
+                                right: x - <span class="number">1</span>,
                             });
+                            plate_start = <span class="prelude-val">None</span>;
+                        },
+                        (<span class="prelude-val">None</span>, <span class="bool-val">true</span>) =&gt; plate_start = <span class="prelude-val">Some</span>(x),
+                        <span class="kw">_ </span>=&gt; (),
                     }
-                    prev_row = current_row;
                 }
 
-                commands.entity(level_entity).with_children(|level| {
-                    <span class="comment">// Spawn colliders for every rectangle..
-                    // Making the collider a child of the level serves two purposes:
-                    // 1. Adjusts the transforms to be relative to the level for free
-                    // 2. the colliders will be despawned automatically when levels unload
-                    </span><span class="kw">for </span>wall_rect <span class="kw">in </span>wall_rects {
-                        level.spawn((
-                            Collider::cuboid(
-                                (wall_rect.right <span class="kw">as </span>f64 - wall_rect.left <span class="kw">as </span>f64 + <span class="number">1.</span>)
-                                    * grid_size <span class="kw">as </span>f64,
-                                (wall_rect.top <span class="kw">as </span>f64 - wall_rect.bottom <span class="kw">as </span>f64 + <span class="number">1.</span>)
-                                    * grid_size <span class="kw">as </span>f64,
-                            ),
-                            RigidBody::Static,
-                            Friction::new(<span class="number">1.0</span>),
-                            Transform::from_xyz(
-                                (wall_rect.left + wall_rect.right + <span class="number">1</span>) <span class="kw">as </span>f32 * grid_size <span class="kw">as </span>f32
-                                    / <span class="number">2.</span>,
-                                (wall_rect.bottom + wall_rect.top + <span class="number">1</span>) <span class="kw">as </span>f32 * grid_size <span class="kw">as </span>f32
-                                    / <span class="number">2.</span>,
-                                <span class="number">10.</span>,
-                            ),
-                            GlobalTransform::default(),
-                        ));
-                    }
-                });
+                plate_stack.push(row_plates);
             }
-        });
-    }
+
+            <span class="comment">// combine &quot;plates&quot; into rectangles across multiple rows
+            </span><span class="kw">let </span><span class="kw-2">mut </span>rect_builder: HashMap&lt;Plate, Rect&gt; = HashMap::new();
+            <span class="kw">let </span><span class="kw-2">mut </span>prev_row: Vec&lt;Plate&gt; = Vec::new();
+            <span class="kw">let </span><span class="kw-2">mut </span>wall_rects: Vec&lt;Rect&gt; = Vec::new();
+
+            <span class="comment">// an extra empty row so the algorithm &quot;finishes&quot; the rects that touch the top edge
+            </span>plate_stack.push(Vec::new());
+
+            <span class="kw">for </span>(y, current_row) <span class="kw">in </span>plate_stack.into_iter().enumerate() {
+                <span class="kw">for </span>prev_plate <span class="kw">in </span><span class="kw-2">&amp;</span>prev_row {
+                    <span class="kw">if </span>!current_row.contains(prev_plate) {
+                        <span class="comment">// remove the finished rect so that the same plate in the future starts a new rect
+                        </span><span class="kw">if let </span><span class="prelude-val">Some</span>(rect) = rect_builder.remove(prev_plate) {
+                            wall_rects.push(rect);
+                        }
+                    }
+                }
+                <span class="kw">for </span>plate <span class="kw">in </span><span class="kw-2">&amp;</span>current_row {
+                    rect_builder
+                        .entry(plate.clone())
+                        .and_modify(|e| e.top += <span class="number">1</span>)
+                        .or_insert(Rect {
+                            bottom: y <span class="kw">as </span>i32,
+                            top: y <span class="kw">as </span>i32,
+                            left: plate.left,
+                            right: plate.right,
+                        });
+                }
+                prev_row = current_row;
+            }
+
+            commands.entity(level_entity).with_children(|level| {
+                <span class="comment">// Spawn colliders for every rectangle..
+                // Making the collider a child of the level serves two purposes:
+                // 1. Adjusts the transforms to be relative to the level for free
+                // 2. the colliders will be despawned automatically when levels unload
+                </span><span class="kw">for </span>wall_rect <span class="kw">in </span>wall_rects {
+                    level.spawn((
+                        Collider::cuboid(
+                            (wall_rect.right <span class="kw">as </span>f64 - wall_rect.left <span class="kw">as </span>f64 + <span class="number">1.</span>)
+                                * grid_size <span class="kw">as </span>f64,
+                            (wall_rect.top <span class="kw">as </span>f64 - wall_rect.bottom <span class="kw">as </span>f64 + <span class="number">1.</span>)
+                                * grid_size <span class="kw">as </span>f64,
+                        ),
+                        RigidBody::Static,
+                        Friction::new(<span class="number">1.0</span>),
+                        Transform::from_xyz(
+                            (wall_rect.left + wall_rect.right + <span class="number">1</span>) <span class="kw">as </span>f32 * grid_size <span class="kw">as </span>f32
+                                / <span class="number">2.</span>,
+                            (wall_rect.bottom + wall_rect.top + <span class="number">1</span>) <span class="kw">as </span>f32 * grid_size <span class="kw">as </span>f32
+                                / <span class="number">2.</span>,
+                            <span class="number">10.</span>,
+                        ),
+                        GlobalTransform::default(),
+                    ));
+                }
+            });
+        }
+    });
 }
 </code></pre></div></section></main></body></html>

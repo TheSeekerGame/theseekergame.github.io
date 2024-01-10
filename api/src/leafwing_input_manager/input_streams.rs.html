@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/leafwing-input-manager-0.10.0/src/input_streams.rs`."><title>input_streams.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="leafwing_input_manager" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/leafwing-input-manager-0.11.2/src/input_streams.rs`."><title>input_streams.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="leafwing_input_manager" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -569,18 +569,96 @@
 <a href="#569" id="569">569</a>
 <a href="#570" id="570">570</a>
 <a href="#571" id="571">571</a>
+<a href="#572" id="572">572</a>
+<a href="#573" id="573">573</a>
+<a href="#574" id="574">574</a>
+<a href="#575" id="575">575</a>
+<a href="#576" id="576">576</a>
+<a href="#577" id="577">577</a>
+<a href="#578" id="578">578</a>
+<a href="#579" id="579">579</a>
+<a href="#580" id="580">580</a>
+<a href="#581" id="581">581</a>
+<a href="#582" id="582">582</a>
+<a href="#583" id="583">583</a>
+<a href="#584" id="584">584</a>
+<a href="#585" id="585">585</a>
+<a href="#586" id="586">586</a>
+<a href="#587" id="587">587</a>
+<a href="#588" id="588">588</a>
+<a href="#589" id="589">589</a>
+<a href="#590" id="590">590</a>
+<a href="#591" id="591">591</a>
+<a href="#592" id="592">592</a>
+<a href="#593" id="593">593</a>
+<a href="#594" id="594">594</a>
+<a href="#595" id="595">595</a>
+<a href="#596" id="596">596</a>
+<a href="#597" id="597">597</a>
+<a href="#598" id="598">598</a>
+<a href="#599" id="599">599</a>
+<a href="#600" id="600">600</a>
+<a href="#601" id="601">601</a>
+<a href="#602" id="602">602</a>
+<a href="#603" id="603">603</a>
+<a href="#604" id="604">604</a>
+<a href="#605" id="605">605</a>
+<a href="#606" id="606">606</a>
+<a href="#607" id="607">607</a>
+<a href="#608" id="608">608</a>
+<a href="#609" id="609">609</a>
+<a href="#610" id="610">610</a>
+<a href="#611" id="611">611</a>
+<a href="#612" id="612">612</a>
+<a href="#613" id="613">613</a>
+<a href="#614" id="614">614</a>
+<a href="#615" id="615">615</a>
+<a href="#616" id="616">616</a>
+<a href="#617" id="617">617</a>
+<a href="#618" id="618">618</a>
+<a href="#619" id="619">619</a>
+<a href="#620" id="620">620</a>
+<a href="#621" id="621">621</a>
+<a href="#622" id="622">622</a>
+<a href="#623" id="623">623</a>
+<a href="#624" id="624">624</a>
+<a href="#625" id="625">625</a>
+<a href="#626" id="626">626</a>
+<a href="#627" id="627">627</a>
+<a href="#628" id="628">628</a>
+<a href="#629" id="629">629</a>
+<a href="#630" id="630">630</a>
+<a href="#631" id="631">631</a>
+<a href="#632" id="632">632</a>
+<a href="#633" id="633">633</a>
+<a href="#634" id="634">634</a>
+<a href="#635" id="635">635</a>
+<a href="#636" id="636">636</a>
+<a href="#637" id="637">637</a>
+<a href="#638" id="638">638</a>
+<a href="#639" id="639">639</a>
+<a href="#640" id="640">640</a>
+<a href="#641" id="641">641</a>
+<a href="#642" id="642">642</a>
+<a href="#643" id="643">643</a>
+<a href="#644" id="644">644</a>
+<a href="#645" id="645">645</a>
+<a href="#646" id="646">646</a>
+<a href="#647" id="647">647</a>
+<a href="#648" id="648">648</a>
+<a href="#649" id="649">649</a>
+<a href="#650" id="650">650</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! Unified input streams for working with [`bevy::input`] data.
 
-</span><span class="kw">use </span>bevy::input::{
+</span><span class="kw">use </span>bevy::ecs::prelude::{Events, ResMut, World};
+<span class="kw">use </span>bevy::ecs::system::SystemState;
+<span class="kw">use </span>bevy::input::{
     gamepad::{Gamepad, GamepadAxis, GamepadButton, GamepadEvent, Gamepads},
     keyboard::{KeyCode, KeyboardInput, ScanCode},
     mouse::{MouseButton, MouseButtonInput, MouseMotion, MouseWheel},
     Axis, Input,
 };
-<span class="kw">use </span>petitset::PetitSet;
-
-<span class="kw">use </span>bevy::ecs::prelude::{Events, ResMut, World};
-<span class="kw">use </span>bevy::ecs::system::SystemState;
+<span class="kw">use </span>bevy::utils::HashSet;
 
 <span class="kw">use </span><span class="kw">crate</span>::axislike::{
     AxisType, DualAxisData, MouseMotionAxisType, MouseWheelAxisType, SingleAxis, VirtualAxis,
@@ -592,7 +670,7 @@
 
 <span class="doccomment">/// A collection of [`Input`] structs, which can be used to update an [`InputMap`](crate::input_map::InputMap).
 ///
-/// These are typically collected via a system from the [`World`](bevy::prelude::World) as resources.
+/// These are typically collected via a system from the [`World`] as resources.
 </span><span class="attr">#[derive(Debug, Clone)]
 </span><span class="kw">pub struct </span>InputStreams&lt;<span class="lifetime">&#39;a</span>&gt; {
     <span class="doccomment">/// A [`GamepadButton`] [`Input`] stream
@@ -610,9 +688,9 @@
     <span class="doccomment">/// A [`MouseButton`] [`Input`] stream
     </span><span class="kw">pub </span>mouse_buttons: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Input&lt;MouseButton&gt;&gt;,
     <span class="doccomment">/// A [`MouseWheel`] event stream
-    </span><span class="kw">pub </span>mouse_wheel: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Events&lt;MouseWheel&gt;&gt;,
+    </span><span class="kw">pub </span>mouse_wheel: <span class="prelude-ty">Option</span>&lt;Vec&lt;MouseWheel&gt;&gt;,
     <span class="doccomment">/// A [`MouseMotion`] event stream
-    </span><span class="kw">pub </span>mouse_motion: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Events&lt;MouseMotion&gt;,
+    </span><span class="kw">pub </span>mouse_motion: Vec&lt;MouseMotion&gt;,
     <span class="doccomment">/// The [`Gamepad`] that this struct will detect inputs from
     </span><span class="kw">pub </span>associated_gamepad: <span class="prelude-ty">Option</span>&lt;Gamepad&gt;,
 }
@@ -628,8 +706,19 @@
         <span class="kw">let </span>keycodes = world.get_resource::&lt;Input&lt;KeyCode&gt;&gt;();
         <span class="kw">let </span>scan_codes = world.get_resource::&lt;Input&lt;ScanCode&gt;&gt;();
         <span class="kw">let </span>mouse_buttons = world.get_resource::&lt;Input&lt;MouseButton&gt;&gt;();
-        <span class="kw">let </span>mouse_wheel = world.get_resource::&lt;Events&lt;MouseWheel&gt;&gt;();
+        <span class="kw">let </span>mouse_wheel = world.resource::&lt;Events&lt;MouseWheel&gt;&gt;();
         <span class="kw">let </span>mouse_motion = world.resource::&lt;Events&lt;MouseMotion&gt;&gt;();
+
+        <span class="kw">let </span>mouse_wheel: Vec&lt;MouseWheel&gt; = mouse_wheel
+            .get_reader()
+            .read(mouse_wheel)
+            .cloned()
+            .collect();
+        <span class="kw">let </span>mouse_motion: Vec&lt;MouseMotion&gt; = mouse_motion
+            .get_reader()
+            .read(mouse_motion)
+            .cloned()
+            .collect();
 
         InputStreams {
             gamepad_buttons,
@@ -639,7 +728,7 @@
             keycodes,
             scan_codes,
             mouse_buttons,
-            mouse_wheel,
+            mouse_wheel: <span class="prelude-val">Some</span>(mouse_wheel),
             mouse_motion,
             associated_gamepad: gamepad,
         }
@@ -648,17 +737,6 @@
 
 <span class="comment">// Input checking
 </span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; InputStreams&lt;<span class="lifetime">&#39;a</span>&gt; {
-    <span class="doccomment">/// Guess which registered [`Gamepad`] should be used.
-    ///
-    /// If an associated gamepad is set, use that.
-    /// Otherwise use the first registered gamepad, if any.
-    </span><span class="kw">pub fn </span>guess_gamepad(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Gamepad&gt; {
-        <span class="kw">match </span><span class="self">self</span>.associated_gamepad {
-            <span class="prelude-val">Some</span>(gamepad) =&gt; <span class="prelude-val">Some</span>(gamepad),
-            <span class="prelude-val">None </span>=&gt; <span class="self">self</span>.gamepads.iter().next(),
-        }
-    }
-
     <span class="doccomment">/// Is the `input` matched by the [`InputStreams`]?
     </span><span class="kw">pub fn </span>input_pressed(<span class="kw-2">&amp;</span><span class="self">self</span>, input: <span class="kw-2">&amp;</span>UserInput) -&gt; bool {
         <span class="kw">match </span>input {
@@ -685,7 +763,7 @@
 
     <span class="doccomment">/// Is at least one of the `inputs` pressed?
     </span><span class="attr">#[must_use]
-    </span><span class="kw">pub fn </span>any_pressed(<span class="kw-2">&amp;</span><span class="self">self</span>, inputs: <span class="kw-2">&amp;</span>PetitSet&lt;UserInput, <span class="number">16</span>&gt;) -&gt; bool {
+    </span><span class="kw">pub fn </span>any_pressed(<span class="kw-2">&amp;</span><span class="self">self</span>, inputs: <span class="kw-2">&amp;</span>HashSet&lt;UserInput&gt;) -&gt; bool {
         <span class="kw">for </span>input <span class="kw">in </span>inputs.iter() {
             <span class="kw">if </span><span class="self">self</span>.input_pressed(input) {
                 <span class="kw">return </span><span class="bool-val">true</span>;
@@ -700,22 +778,37 @@
     </span><span class="kw">pub fn </span>button_pressed(<span class="kw-2">&amp;</span><span class="self">self</span>, button: InputKind) -&gt; bool {
         <span class="kw">match </span>button {
             InputKind::DualAxis(axis) =&gt; {
-                <span class="self">self</span>.button_pressed(InputKind::SingleAxis(axis.x))
-                    || <span class="self">self</span>.button_pressed(InputKind::SingleAxis(axis.y))
+                <span class="kw">let </span>x_value =
+                    <span class="self">self</span>.input_value(<span class="kw-2">&amp;</span>UserInput::Single(InputKind::SingleAxis(axis.x)), <span class="bool-val">false</span>);
+                <span class="kw">let </span>y_value =
+                    <span class="self">self</span>.input_value(<span class="kw-2">&amp;</span>UserInput::Single(InputKind::SingleAxis(axis.y)), <span class="bool-val">false</span>);
+
+                axis.deadzone.input_outside_deadzone(x_value, y_value)
             }
             InputKind::SingleAxis(axis) =&gt; {
-                <span class="kw">let </span>value = <span class="self">self</span>.input_value(<span class="kw-2">&amp;</span>UserInput::Single(button));
+                <span class="kw">let </span>value = <span class="self">self</span>.input_value(<span class="kw-2">&amp;</span>UserInput::Single(button), <span class="bool-val">true</span>);
 
                 value &lt; axis.negative_low || value &gt; axis.positive_low
             }
             InputKind::GamepadButton(gamepad_button) =&gt; {
-                <span class="kw">if let </span><span class="prelude-val">Some</span>(gamepad) = <span class="self">self</span>.guess_gamepad() {
+                <span class="kw">if let </span><span class="prelude-val">Some</span>(gamepad) = <span class="self">self</span>.associated_gamepad {
                     <span class="self">self</span>.gamepad_buttons.pressed(GamepadButton {
                         gamepad,
                         button_type: gamepad_button,
                     })
                 } <span class="kw">else </span>{
-                    <span class="bool-val">false
+                    <span class="kw">for </span>gamepad <span class="kw">in </span><span class="self">self</span>.gamepads.iter() {
+                        <span class="kw">if </span><span class="self">self</span>.gamepad_buttons.pressed(GamepadButton {
+                            gamepad,
+                            button_type: gamepad_button,
+                        }) {
+                            <span class="comment">// Return early if *any* gamepad is pressing this button
+                            </span><span class="kw">return </span><span class="bool-val">true</span>;
+                        }
+                    }
+
+                    <span class="comment">// If we don&#39;t have the required data, fall back to false
+                    </span><span class="bool-val">false
                 </span>}
             }
             InputKind::Keyboard(keycode) =&gt; {
@@ -733,19 +826,16 @@
                 <span class="macro">matches!</span>(<span class="self">self</span>.mouse_buttons, <span class="prelude-val">Some</span>(mouse_buttons) <span class="kw">if </span>mouse_buttons.pressed(mouse_button))
             }
             InputKind::MouseWheel(mouse_wheel_direction) =&gt; {
-                <span class="kw">let </span><span class="prelude-val">Some</span>(mouse_wheel) = <span class="self">self</span>.mouse_wheel <span class="kw">else </span>{
+                <span class="kw">let </span><span class="prelude-val">Some</span>(mouse_wheel) = <span class="kw-2">&amp;</span><span class="self">self</span>.mouse_wheel <span class="kw">else </span>{
                     <span class="kw">return </span><span class="bool-val">false</span>;
                 };
 
                 <span class="kw">let </span><span class="kw-2">mut </span>total_mouse_wheel_movement = <span class="number">0.0</span>;
 
-                <span class="comment">// FIXME: verify that this works and doesn&#39;t double count events
-                </span><span class="kw">let </span><span class="kw-2">mut </span>event_reader = mouse_wheel.get_reader();
-
                 <span class="comment">// PERF: this summing is computed for every individual input
                 // This should probably be computed once, and then cached / read
                 // Fix upstream!
-                </span><span class="kw">for </span>mouse_wheel_event <span class="kw">in </span>event_reader.iter(mouse_wheel) {
+                </span><span class="kw">for </span>mouse_wheel_event <span class="kw">in </span>mouse_wheel {
                     total_mouse_wheel_movement += <span class="kw">match </span>mouse_wheel_direction {
                         MouseWheelDirection::Up | MouseWheelDirection::Down =&gt; mouse_wheel_event.y,
                         MouseWheelDirection::Left | MouseWheelDirection::Right =&gt; {
@@ -767,10 +857,7 @@
             </span>InputKind::MouseMotion(mouse_motion_direction) =&gt; {
                 <span class="kw">let </span><span class="kw-2">mut </span>total_mouse_movement = <span class="number">0.0</span>;
 
-                <span class="comment">// FIXME: verify that this works and doesn&#39;t double count events
-                </span><span class="kw">let </span><span class="kw-2">mut </span>event_reader = <span class="self">self</span>.mouse_motion.get_reader();
-
-                <span class="kw">for </span>mouse_motion_event <span class="kw">in </span>event_reader.iter(<span class="self">self</span>.mouse_motion) {
+                <span class="kw">for </span>mouse_motion_event <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.mouse_motion {
                     total_mouse_movement += <span class="kw">match </span>mouse_motion_direction {
                         MouseMotionDirection::Up | MouseMotionDirection::Down =&gt; {
                             mouse_motion_event.delta.y
@@ -795,7 +882,7 @@
 
     <span class="doccomment">/// Are all of the `buttons` pressed?
     </span><span class="attr">#[must_use]
-    </span><span class="kw">pub fn </span>all_buttons_pressed(<span class="kw-2">&amp;</span><span class="self">self</span>, buttons: <span class="kw-2">&amp;</span>PetitSet&lt;InputKind, <span class="number">8</span>&gt;) -&gt; bool {
+    </span><span class="kw">pub fn </span>all_buttons_pressed(<span class="kw-2">&amp;</span><span class="self">self</span>, buttons: <span class="kw-2">&amp;</span>[InputKind]) -&gt; bool {
         <span class="kw">for </span><span class="kw-2">&amp;</span>button <span class="kw">in </span>buttons.iter() {
             <span class="comment">// If any of the appropriate inputs failed to match, the action is considered pressed
             </span><span class="kw">if </span>!<span class="self">self</span>.button_pressed(button) {
@@ -818,7 +905,7 @@
     ///
     /// If you need to ensure that this value is always in the range `[-1., 1.]`,
     /// be sure to clamp the returned data.
-    </span><span class="kw">pub fn </span>input_value(<span class="kw-2">&amp;</span><span class="self">self</span>, input: <span class="kw-2">&amp;</span>UserInput) -&gt; f32 {
+    </span><span class="kw">pub fn </span>input_value(<span class="kw-2">&amp;</span><span class="self">self</span>, input: <span class="kw-2">&amp;</span>UserInput, include_deadzone: bool) -&gt; f32 {
         <span class="kw">let </span>use_button_value = || -&gt; f32 {
             <span class="kw">if </span><span class="self">self</span>.input_pressed(input) {
                 <span class="number">1.0
@@ -830,12 +917,12 @@
         <span class="comment">// Helper that takes the value returned by an axis and returns 0.0 if it is not within the
         // triggering range.
         </span><span class="kw">let </span>value_in_axis_range = |axis: <span class="kw-2">&amp;</span>SingleAxis, value: f32| -&gt; f32 {
-            <span class="kw">if </span>value &gt;= axis.negative_low &amp;&amp; value &lt;= axis.positive_low {
+            <span class="kw">if </span>value &gt;= axis.negative_low &amp;&amp; value &lt;= axis.positive_low &amp;&amp; include_deadzone {
                 <span class="number">0.0
             </span>} <span class="kw">else if </span>axis.inverted {
-                -value
+                -value * axis.sensitivity
             } <span class="kw">else </span>{
-                value
+                value * axis.sensitivity
             }
         };
 
@@ -843,7 +930,7 @@
             UserInput::Single(InputKind::SingleAxis(single_axis)) =&gt; {
                 <span class="kw">match </span>single_axis.axis_type {
                     AxisType::Gamepad(axis_type) =&gt; {
-                        <span class="kw">if let </span><span class="prelude-val">Some</span>(gamepad) = <span class="self">self</span>.guess_gamepad() {
+                        <span class="kw">if let </span><span class="prelude-val">Some</span>(gamepad) = <span class="self">self</span>.associated_gamepad {
                             <span class="kw">let </span>value = <span class="self">self
                                 </span>.gamepad_axes
                                 .get(GamepadAxis { gamepad, axis_type })
@@ -851,19 +938,30 @@
 
                             value_in_axis_range(single_axis, value)
                         } <span class="kw">else </span>{
-                            <span class="number">0.0
+                            <span class="kw">for </span>gamepad <span class="kw">in </span><span class="self">self</span>.gamepads.iter() {
+                                <span class="kw">let </span>value = <span class="self">self
+                                    </span>.gamepad_axes
+                                    .get(GamepadAxis { gamepad, axis_type })
+                                    .unwrap_or_default();
+
+                                <span class="comment">// Return early if *any* gamepad is pressing this axis
+                                </span><span class="kw">if </span>value != <span class="number">0.0 </span>{
+                                    <span class="kw">return </span>value_in_axis_range(single_axis, value);
+                                }
+                            }
+
+                            <span class="comment">// If we don&#39;t have the required data, fall back to 0.0
+                            </span><span class="number">0.0
                         </span>}
                     }
                     AxisType::MouseWheel(axis_type) =&gt; {
-                        <span class="kw">let </span><span class="prelude-val">Some</span>(mouse_wheel) = <span class="self">self</span>.mouse_wheel <span class="kw">else </span>{
+                        <span class="kw">let </span><span class="prelude-val">Some</span>(mouse_wheel) = <span class="kw-2">&amp;</span><span class="self">self</span>.mouse_wheel <span class="kw">else </span>{
                             <span class="kw">return </span><span class="number">0.0</span>;
                         };
 
                         <span class="kw">let </span><span class="kw-2">mut </span>total_mouse_wheel_movement = <span class="number">0.0</span>;
-                        <span class="comment">// FIXME: verify that this works and doesn&#39;t double count events
-                        </span><span class="kw">let </span><span class="kw-2">mut </span>event_reader = mouse_wheel.get_reader();
 
-                        <span class="kw">for </span>mouse_wheel_event <span class="kw">in </span>event_reader.iter(mouse_wheel) {
+                        <span class="kw">for </span>mouse_wheel_event <span class="kw">in </span>mouse_wheel {
                             total_mouse_wheel_movement += <span class="kw">match </span>axis_type {
                                 MouseWheelAxisType::X =&gt; mouse_wheel_event.x,
                                 MouseWheelAxisType::Y =&gt; mouse_wheel_event.y,
@@ -874,10 +972,8 @@
                     <span class="comment">// CLEANUP: deduplicate code with MouseWheel
                     </span>AxisType::MouseMotion(axis_type) =&gt; {
                         <span class="kw">let </span><span class="kw-2">mut </span>total_mouse_motion_movement = <span class="number">0.0</span>;
-                        <span class="comment">// FIXME: verify that this works and doesn&#39;t double count events
-                        </span><span class="kw">let </span><span class="kw-2">mut </span>event_reader = <span class="self">self</span>.mouse_motion.get_reader();
 
-                        <span class="kw">for </span>mouse_wheel_event <span class="kw">in </span>event_reader.iter(<span class="self">self</span>.mouse_motion) {
+                        <span class="kw">for </span>mouse_wheel_event <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.mouse_motion {
                             total_mouse_motion_movement += <span class="kw">match </span>axis_type {
                                 MouseMotionAxisType::X =&gt; mouse_wheel_event.delta.x,
                                 MouseMotionAxisType::Y =&gt; mouse_wheel_event.delta.y,
@@ -888,8 +984,8 @@
                 }
             }
             UserInput::VirtualAxis(VirtualAxis { negative, positive }) =&gt; {
-                <span class="self">self</span>.input_value(<span class="kw-2">&amp;</span>UserInput::Single(<span class="kw-2">*</span>positive)).abs()
-                    - <span class="self">self</span>.input_value(<span class="kw-2">&amp;</span>UserInput::Single(<span class="kw-2">*</span>negative)).abs()
+                <span class="self">self</span>.input_value(<span class="kw-2">&amp;</span>UserInput::Single(<span class="kw-2">*</span>positive), <span class="bool-val">true</span>).abs()
+                    - <span class="self">self</span>.input_value(<span class="kw-2">&amp;</span>UserInput::Single(<span class="kw-2">*</span>negative), <span class="bool-val">true</span>).abs()
             }
             UserInput::Single(InputKind::DualAxis(<span class="kw">_</span>)) =&gt; {
                 <span class="self">self</span>.input_axis_pair(input).unwrap_or_default().length()
@@ -897,9 +993,41 @@
             UserInput::VirtualDPad { .. } =&gt; {
                 <span class="self">self</span>.input_axis_pair(input).unwrap_or_default().length()
             }
+            UserInput::Chord(inputs) =&gt; {
+                <span class="kw">let </span><span class="kw-2">mut </span>value = <span class="number">0.0</span>;
+                <span class="kw">let </span><span class="kw-2">mut </span>has_axis = <span class="bool-val">false</span>;
+
+                <span class="comment">// Prioritize axis over button input values
+                </span><span class="kw">for </span>input <span class="kw">in </span>inputs.iter() {
+                    value += <span class="kw">match </span>input {
+                        InputKind::SingleAxis(axis) =&gt; {
+                            has_axis = <span class="bool-val">true</span>;
+                            <span class="self">self</span>.input_value(<span class="kw-2">&amp;</span>UserInput::Single(InputKind::SingleAxis(<span class="kw-2">*</span>axis)), <span class="bool-val">true</span>)
+                        }
+                        InputKind::MouseWheel(axis) =&gt; {
+                            has_axis = <span class="bool-val">true</span>;
+                            <span class="self">self</span>.input_value(<span class="kw-2">&amp;</span>UserInput::Single(InputKind::MouseWheel(<span class="kw-2">*</span>axis)), <span class="bool-val">true</span>)
+                        }
+                        InputKind::MouseMotion(axis) =&gt; {
+                            has_axis = <span class="bool-val">true</span>;
+                            <span class="self">self</span>.input_value(
+                                <span class="kw-2">&amp;</span>UserInput::Single(InputKind::MouseMotion(<span class="kw-2">*</span>axis)),
+                                <span class="bool-val">true</span>,
+                            )
+                        }
+                        <span class="kw">_ </span>=&gt; <span class="number">0.0</span>,
+                    }
+                }
+
+                <span class="kw">if </span>has_axis {
+                    <span class="kw">return </span>value;
+                }
+
+                use_button_value()
+            }
             <span class="comment">// This is required because upstream bevy::input still waffles about whether triggers are buttons or axes
             </span>UserInput::Single(InputKind::GamepadButton(button_type)) =&gt; {
-                <span class="kw">if let </span><span class="prelude-val">Some</span>(gamepad) = <span class="self">self</span>.guess_gamepad() {
+                <span class="kw">if let </span><span class="prelude-val">Some</span>(gamepad) = <span class="self">self</span>.associated_gamepad {
                     <span class="comment">// Get the value from the registered gamepad
                     </span><span class="self">self</span>.gamepad_button_axes
                         .get(GamepadButton {
@@ -908,7 +1036,23 @@
                         })
                         .unwrap_or_else(use_button_value)
                 } <span class="kw">else </span>{
-                    <span class="number">0.0
+                    <span class="kw">for </span>gamepad <span class="kw">in </span><span class="self">self</span>.gamepads.iter() {
+                        <span class="kw">let </span>value = <span class="self">self
+                            </span>.gamepad_button_axes
+                            .get(GamepadButton {
+                                gamepad,
+                                button_type: <span class="kw-2">*</span>button_type,
+                            })
+                            .unwrap_or_else(use_button_value);
+
+                        <span class="comment">// Return early if *any* gamepad is pressing this button
+                        </span><span class="kw">if </span>value != <span class="number">0.0 </span>{
+                            <span class="kw">return </span>value;
+                        }
+                    }
+
+                    <span class="comment">// If we don&#39;t have the required data, fall back to 0.0
+                    </span><span class="number">0.0
                 </span>}
             }
             <span class="kw">_ </span>=&gt; use_button_value(),
@@ -919,7 +1063,7 @@
     ///
     /// If `input` is a chord, returns result of the first dual axis in the chord.
 
-    /// If `input` is not a [`DualAxis`](crate::axislike::DualAxis) or [`VirtualDPad`], returns [`None`].
+    /// If `input` is not a [`DualAxis`] or [`VirtualDPad`], returns [`None`].
     ///
     /// # Warning
     ///
@@ -946,10 +1090,10 @@
                 left,
                 right,
             }) =&gt; {
-                <span class="kw">let </span>x = <span class="self">self</span>.input_value(<span class="kw-2">&amp;</span>UserInput::Single(<span class="kw-2">*</span>right)).abs()
-                    - <span class="self">self</span>.input_value(<span class="kw-2">&amp;</span>UserInput::Single(<span class="kw-2">*</span>left)).abs();
-                <span class="kw">let </span>y = <span class="self">self</span>.input_value(<span class="kw-2">&amp;</span>UserInput::Single(<span class="kw-2">*</span>up)).abs()
-                    - <span class="self">self</span>.input_value(<span class="kw-2">&amp;</span>UserInput::Single(<span class="kw-2">*</span>down)).abs();
+                <span class="kw">let </span>x = <span class="self">self</span>.input_value(<span class="kw-2">&amp;</span>UserInput::Single(<span class="kw-2">*</span>right), <span class="bool-val">true</span>).abs()
+                    - <span class="self">self</span>.input_value(<span class="kw-2">&amp;</span>UserInput::Single(<span class="kw-2">*</span>left), <span class="bool-val">true</span>).abs();
+                <span class="kw">let </span>y = <span class="self">self</span>.input_value(<span class="kw-2">&amp;</span>UserInput::Single(<span class="kw-2">*</span>up), <span class="bool-val">true</span>).abs()
+                    - <span class="self">self</span>.input_value(<span class="kw-2">&amp;</span>UserInput::Single(<span class="kw-2">*</span>down), <span class="bool-val">true</span>).abs();
                 <span class="prelude-val">Some</span>(DualAxisData::new(x, y))
             }
             <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
@@ -957,14 +1101,16 @@
     }
 
     <span class="kw">fn </span>extract_dual_axis_data(<span class="kw-2">&amp;</span><span class="self">self</span>, dual_axis: <span class="kw-2">&amp;</span>DualAxis) -&gt; DualAxisData {
-        <span class="kw">let </span>x = <span class="self">self</span>.input_value(<span class="kw-2">&amp;</span>UserInput::Single(InputKind::SingleAxis(dual_axis.x)));
-        <span class="kw">let </span>y = <span class="self">self</span>.input_value(<span class="kw-2">&amp;</span>UserInput::Single(InputKind::SingleAxis(dual_axis.y)));
+        <span class="kw">let </span>x = <span class="self">self</span>.input_value(
+            <span class="kw-2">&amp;</span>UserInput::Single(InputKind::SingleAxis(dual_axis.x)),
+            <span class="bool-val">false</span>,
+        );
+        <span class="kw">let </span>y = <span class="self">self</span>.input_value(
+            <span class="kw-2">&amp;</span>UserInput::Single(InputKind::SingleAxis(dual_axis.y)),
+            <span class="bool-val">false</span>,
+        );
 
-        <span class="kw">if </span>x &gt; dual_axis.x.positive_low
-            || x &lt; dual_axis.x.negative_low
-            || y &gt; dual_axis.y.positive_low
-            || y &lt; dual_axis.y.negative_low
-        {
+        <span class="kw">if </span>dual_axis.deadzone.input_outside_deadzone(x, y) {
             DualAxisData::new(x, y)
         } <span class="kw">else </span>{
             DualAxisData::new(<span class="number">0.0</span>, <span class="number">0.0</span>)
@@ -974,7 +1120,7 @@
 
 <span class="doccomment">/// A mutable collection of [`Input`] structs, which can be used for mocking user inputs.
 ///
-/// These are typically collected via a system from the [`World`](bevy::prelude::World) as resources.
+/// These are typically collected via a system from the [`World`] as resources.
 </span><span class="comment">// WARNING: If you update the fields of this type, you must also remember to update `InputMocking::reset_inputs`.
 </span><span class="attr">#[derive(Debug)]
 </span><span class="kw">pub struct </span>MutableInputStreams&lt;<span class="lifetime">&#39;a</span>&gt; {
@@ -1001,9 +1147,9 @@
     <span class="doccomment">/// Events used for mocking [`MouseButton`] inputs
     </span><span class="kw">pub </span>mouse_button_events: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Events&lt;MouseButtonInput&gt;,
     <span class="doccomment">/// A [`MouseWheel`] event stream
-    </span><span class="kw">pub </span>mouse_wheel: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Events&lt;MouseWheel&gt;,
+    </span><span class="kw">pub </span>mouse_wheel: Vec&lt;MouseWheel&gt;,
     <span class="doccomment">/// A [`MouseMotion`] event stream
-    </span><span class="kw">pub </span>mouse_motion: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Events&lt;MouseMotion&gt;,
+    </span><span class="kw">pub </span>mouse_motion: Vec&lt;MouseMotion&gt;,
 
     <span class="doccomment">/// The [`Gamepad`] that this struct will detect inputs from
     </span><span class="kw">pub </span>associated_gamepad: <span class="prelude-ty">Option</span>&lt;Gamepad&gt;,
@@ -1042,6 +1188,18 @@
             mouse_motion,
         ) = input_system_state.get_mut(world);
 
+        <span class="kw">let </span>mouse_wheel: Vec&lt;MouseWheel&gt; = mouse_wheel
+            .get_reader()
+            .read(<span class="kw-2">&amp;</span>mouse_wheel)
+            .cloned()
+            .collect();
+
+        <span class="kw">let </span>mouse_motion: Vec&lt;MouseMotion&gt; = mouse_motion
+            .get_reader()
+            .read(<span class="kw-2">&amp;</span>mouse_motion)
+            .cloned()
+            .collect();
+
         MutableInputStreams {
             gamepad_buttons: gamepad_buttons.into_inner(),
             gamepad_button_axes: gamepad_button_axes.into_inner(),
@@ -1053,8 +1211,8 @@
             keyboard_events: keyboard_events.into_inner(),
             mouse_buttons: mouse_buttons.into_inner(),
             mouse_button_events: mouse_button_events.into_inner(),
-            mouse_wheel: mouse_wheel.into_inner(),
-            mouse_motion: mouse_motion.into_inner(),
+            mouse_wheel,
+            mouse_motion,
             associated_gamepad: gamepad,
         }
     }
@@ -1098,8 +1256,8 @@
             keycodes: <span class="prelude-val">Some</span>(mutable_streams.keycodes),
             scan_codes: <span class="prelude-val">Some</span>(mutable_streams.scan_codes),
             mouse_buttons: <span class="prelude-val">Some</span>(mutable_streams.mouse_buttons),
-            mouse_wheel: <span class="prelude-val">Some</span>(mutable_streams.mouse_wheel),
-            mouse_motion: mutable_streams.mouse_motion,
+            mouse_wheel: <span class="prelude-val">Some</span>(mutable_streams.mouse_wheel.clone()),
+            mouse_motion: mutable_streams.mouse_motion.clone(),
             associated_gamepad: mutable_streams.associated_gamepad,
         }
     }

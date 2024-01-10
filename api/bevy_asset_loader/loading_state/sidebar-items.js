@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["LoadingState","LoadingStateSchedules"],"trait":["LoadingStateAppExt"]};
+window.SIDEBAR_ITEMS = {"mod":["config"],"struct":["LoadingState","LoadingStateSchedules","LoadingStateSet"],"trait":["LoadingStateAppExt"]};

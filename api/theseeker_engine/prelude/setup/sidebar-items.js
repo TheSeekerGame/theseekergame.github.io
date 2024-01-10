@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["pause","resume"],"struct":["PhysicsLoop","PhysicsSetupPlugin"]};
+window.SIDEBAR_ITEMS = {"enum":["TimestepMode"],"struct":["Physics","PhysicsSetupPlugin","Substeps"],"trait":["PhysicsTime"]};

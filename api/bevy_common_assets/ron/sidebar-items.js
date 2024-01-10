@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["RonAssetPlugin"]};
+window.SIDEBAR_ITEMS = {"enum":["RonLoaderError"],"struct":["RonAssetPlugin"]};

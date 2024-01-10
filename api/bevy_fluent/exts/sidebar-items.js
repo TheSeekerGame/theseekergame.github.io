@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["bevy","fluent","path"]};
+window.SIDEBAR_ITEMS = {"mod":["fluent"]};

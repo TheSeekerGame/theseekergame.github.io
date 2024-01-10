@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_xpbd_2d-0.2.0/src/plugins/solver.rs`."><title>solver.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_xpbd_2d" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_xpbd_2d-0.3.2/src/plugins/solver.rs`."><title>solver.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_xpbd_2d" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -529,17 +529,102 @@
 <a href="#529" id="529">529</a>
 <a href="#530" id="530">530</a>
 <a href="#531" id="531">531</a>
+<a href="#532" id="532">532</a>
+<a href="#533" id="533">533</a>
+<a href="#534" id="534">534</a>
+<a href="#535" id="535">535</a>
+<a href="#536" id="536">536</a>
+<a href="#537" id="537">537</a>
+<a href="#538" id="538">538</a>
+<a href="#539" id="539">539</a>
+<a href="#540" id="540">540</a>
+<a href="#541" id="541">541</a>
+<a href="#542" id="542">542</a>
+<a href="#543" id="543">543</a>
+<a href="#544" id="544">544</a>
+<a href="#545" id="545">545</a>
+<a href="#546" id="546">546</a>
+<a href="#547" id="547">547</a>
+<a href="#548" id="548">548</a>
+<a href="#549" id="549">549</a>
+<a href="#550" id="550">550</a>
+<a href="#551" id="551">551</a>
+<a href="#552" id="552">552</a>
+<a href="#553" id="553">553</a>
+<a href="#554" id="554">554</a>
+<a href="#555" id="555">555</a>
+<a href="#556" id="556">556</a>
+<a href="#557" id="557">557</a>
+<a href="#558" id="558">558</a>
+<a href="#559" id="559">559</a>
+<a href="#560" id="560">560</a>
+<a href="#561" id="561">561</a>
+<a href="#562" id="562">562</a>
+<a href="#563" id="563">563</a>
+<a href="#564" id="564">564</a>
+<a href="#565" id="565">565</a>
+<a href="#566" id="566">566</a>
+<a href="#567" id="567">567</a>
+<a href="#568" id="568">568</a>
+<a href="#569" id="569">569</a>
+<a href="#570" id="570">570</a>
+<a href="#571" id="571">571</a>
+<a href="#572" id="572">572</a>
+<a href="#573" id="573">573</a>
+<a href="#574" id="574">574</a>
+<a href="#575" id="575">575</a>
+<a href="#576" id="576">576</a>
+<a href="#577" id="577">577</a>
+<a href="#578" id="578">578</a>
+<a href="#579" id="579">579</a>
+<a href="#580" id="580">580</a>
+<a href="#581" id="581">581</a>
+<a href="#582" id="582">582</a>
+<a href="#583" id="583">583</a>
+<a href="#584" id="584">584</a>
+<a href="#585" id="585">585</a>
+<a href="#586" id="586">586</a>
+<a href="#587" id="587">587</a>
+<a href="#588" id="588">588</a>
+<a href="#589" id="589">589</a>
+<a href="#590" id="590">590</a>
+<a href="#591" id="591">591</a>
+<a href="#592" id="592">592</a>
+<a href="#593" id="593">593</a>
+<a href="#594" id="594">594</a>
+<a href="#595" id="595">595</a>
+<a href="#596" id="596">596</a>
+<a href="#597" id="597">597</a>
+<a href="#598" id="598">598</a>
+<a href="#599" id="599">599</a>
+<a href="#600" id="600">600</a>
+<a href="#601" id="601">601</a>
+<a href="#602" id="602">602</a>
+<a href="#603" id="603">603</a>
+<a href="#604" id="604">604</a>
+<a href="#605" id="605">605</a>
+<a href="#606" id="606">606</a>
+<a href="#607" id="607">607</a>
+<a href="#608" id="608">608</a>
+<a href="#609" id="609">609</a>
+<a href="#610" id="610">610</a>
+<a href="#611" id="611">611</a>
+<a href="#612" id="612">612</a>
+<a href="#613" id="613">613</a>
+<a href="#614" id="614">614</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! Solves positional and angular [constraints], updates velocities and solves velocity constraints
 //! (dynamic [friction](Friction), [restitution](Restitution) and [joint damping](joints#damping)).
 //!
 //! See [`SolverPlugin`].
 
 </span><span class="kw">use crate</span>::{
-    collision::<span class="kw-2">*</span>,
     prelude::<span class="kw-2">*</span>,
-    utils::{get_dynamic_friction, get_restitution},
+    utils::{compute_dynamic_friction, compute_restitution},
 };
-<span class="kw">use </span>bevy::prelude::<span class="kw-2">*</span>;
+<span class="kw">use </span>bevy::{
+    ecs::query::{Has, WorldQuery},
+    prelude::<span class="kw-2">*</span>,
+};
 <span class="kw">use </span>constraints::penetration::PenetrationConstraint;
 
 <span class="doccomment">/// Solves positional and angular [constraints], updates velocities and solves velocity constraints
@@ -565,10 +650,7 @@
 
 <span class="kw">impl </span>Plugin <span class="kw">for </span>SolverPlugin {
     <span class="kw">fn </span>build(<span class="kw-2">&amp;</span><span class="self">self</span>, app: <span class="kw-2">&amp;mut </span>App) {
-        app.init_resource::&lt;PenetrationConstraints&gt;()
-            .add_event::&lt;Collision&gt;()
-            .add_event::&lt;CollisionStarted&gt;()
-            .add_event::&lt;CollisionEnded&gt;();
+        app.init_resource::&lt;PenetrationConstraints&gt;();
 
         <span class="kw">let </span>substeps = app
             .get_schedule_mut(SubstepSchedule)
@@ -581,6 +663,7 @@
                 solve_constraint::&lt;RevoluteJoint, <span class="number">2</span>&gt;,
                 solve_constraint::&lt;SphericalJoint, <span class="number">2</span>&gt;,
                 solve_constraint::&lt;PrismaticJoint, <span class="number">2</span>&gt;,
+                solve_constraint::&lt;DistanceJoint, <span class="number">2</span>&gt;,
             )
                 .chain()
                 .in_set(SubstepSet::SolveConstraints),
@@ -595,16 +678,30 @@
                 joint_damping::&lt;RevoluteJoint&gt;,
                 joint_damping::&lt;SphericalJoint&gt;,
                 joint_damping::&lt;PrismaticJoint&gt;,
+                joint_damping::&lt;DistanceJoint&gt;,
             )
                 .chain()
                 .in_set(SubstepSet::SolveVelocities),
         );
+
+        substeps.add_systems(apply_translation.in_set(SubstepSet::ApplyTranslation));
     }
 }
 
 <span class="doccomment">/// Stores penetration constraints for colliding entity pairs.
 </span><span class="attr">#[derive(Resource, Debug, Default)]
 </span><span class="kw">pub struct </span>PenetrationConstraints(<span class="kw">pub </span>Vec&lt;PenetrationConstraint&gt;);
+
+<span class="doccomment">/// A [`WorldQuery`] to make code handling colliders in collisions cleaner.
+</span><span class="attr">#[derive(WorldQuery)]
+</span><span class="kw">struct </span>ColliderQuery&lt;<span class="lifetime">&#39;w</span>&gt; {
+    entity: Entity,
+    parent: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>ColliderParent&gt;,
+    transform: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>ColliderTransform&gt;,
+    is_sensor: Has&lt;Sensor&gt;,
+    friction: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>Friction&gt;,
+    restitution: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>Restitution&gt;,
+}
 
 <span class="doccomment">/// Iterates through broad phase collision pairs, checks which ones are actually colliding, and uses [`PenetrationConstraint`]s to resolve the collisions.
 </span><span class="attr">#[allow(clippy::too_many_arguments)]
@@ -613,108 +710,133 @@
     <span class="kw-2">mut </span>commands: Commands,
     <span class="kw-2">mut </span>bodies: Query&lt;(
         RigidBodyQuery,
-        <span class="kw-2">&amp;</span>Collider,
+        <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Name&gt;,
         <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Sensor&gt;,
-        <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>CollisionLayers&gt;,
-        <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;mut </span>CollidingEntities&gt;,
         <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Sleeping&gt;,
     )&gt;,
-    broad_collision_pairs: Res&lt;BroadCollisionPairs&gt;,
+    colliders: Query&lt;ColliderQuery&gt;,
     <span class="kw-2">mut </span>penetration_constraints: ResMut&lt;PenetrationConstraints&gt;,
-    <span class="kw-2">mut </span>collision_ev_writer: EventWriter&lt;Collision&gt;,
-    <span class="kw-2">mut </span>collision_started_ev_writer: EventWriter&lt;CollisionStarted&gt;,
-    <span class="kw-2">mut </span>collision_ended_ev_writer: EventWriter&lt;CollisionEnded&gt;,
-    sub_dt: Res&lt;SubDeltaTime&gt;,
+    <span class="kw-2">mut </span>collisions: ResMut&lt;Collisions&gt;,
+    time: Res&lt;Time&gt;,
 ) {
-    <span class="kw">let </span><span class="kw-2">mut </span>collision_events = Vec::with_capacity(broad_collision_pairs.<span class="number">0</span>.len());
-    <span class="kw">let </span><span class="kw-2">mut </span>started_collisions = Vec::new();
-    <span class="kw">let </span><span class="kw-2">mut </span>ended_collisions = Vec::new();
+    <span class="kw">let </span>delta_secs = time.delta_seconds_adjusted();
 
     penetration_constraints.<span class="number">0</span>.clear();
 
-    <span class="kw">for </span>(ent1, ent2) <span class="kw">in </span>broad_collision_pairs.<span class="number">0</span>.iter() {
-        <span class="kw">if let </span><span class="prelude-val">Ok</span>([bundle1, bundle2]) = bodies.get_many_mut([<span class="kw-2">*</span>ent1, <span class="kw-2">*</span>ent2]) {
-            <span class="kw">let </span>(<span class="kw-2">mut </span>body1, collider1, sensor1, layers1, colliding_entities1, sleeping1) = bundle1;
-            <span class="kw">let </span>(<span class="kw-2">mut </span>body2, collider2, sensor2, layers2, colliding_entities2, sleeping2) = bundle2;
+    <span class="kw">for </span>((collider_entity1, collider_entity2), contacts) <span class="kw">in </span>collisions
+        .get_internal_mut()
+        .iter_mut()
+        .filter(|(<span class="kw">_</span>, contacts)| contacts.during_current_substep)
+    {
+        <span class="comment">// Don&#39;t collide with self
+        </span><span class="kw">if </span>collider_entity1 == collider_entity2 {
+            <span class="kw">continue</span>;
+        }
 
-            <span class="kw">let </span>layers1 = layers1.map_or(CollisionLayers::default(), |l| <span class="kw-2">*</span>l);
-            <span class="kw">let </span>layers2 = layers2.map_or(CollisionLayers::default(), |l| <span class="kw-2">*</span>l);
+        <span class="comment">// Get colliders
+        </span><span class="kw">let </span><span class="prelude-val">Ok</span>([collider1, collider2]) = colliders.get_many([<span class="kw-2">*</span>collider_entity1, <span class="kw-2">*</span>collider_entity2])
+        <span class="kw">else </span>{
+            <span class="kw">continue</span>;
+        };
 
-            <span class="comment">// Skip collision if collision layers are incompatible
-            </span><span class="kw">if </span>!layers1.interacts_with(layers2) {
-                <span class="kw">continue</span>;
-            }
+        <span class="kw">let </span>collider_parent1 = collider1.parent.map_or(<span class="kw-2">*</span>collider_entity1, |p| p.get());
+        <span class="kw">let </span>collider_parent2 = collider2.parent.map_or(<span class="kw-2">*</span>collider_entity2, |p| p.get());
+
+        <span class="comment">// Reset penetration state for this substep.
+        // This is set to true if any of the contacts is penetrating.
+        </span>contacts.during_current_substep = <span class="bool-val">false</span>;
+
+        <span class="kw">if let </span><span class="prelude-val">Ok</span>([bundle1, bundle2]) = bodies.get_many_mut([collider_parent1, collider_parent2]) {
+            <span class="kw">let </span>(<span class="kw-2">mut </span>body1, name1, sensor1, sleeping1) = bundle1;
+            <span class="kw">let </span>(<span class="kw-2">mut </span>body2, name2, sensor2, sleeping2) = bundle2;
 
             <span class="kw">let </span>inactive1 = body1.rb.is_static() || sleeping1.is_some();
             <span class="kw">let </span>inactive2 = body2.rb.is_static() || sleeping2.is_some();
 
-            <span class="comment">// No collision if one of the bodies is static and the other one is sleeping.
-            </span><span class="kw">if </span>inactive1 &amp;&amp; inactive2 {
+            <span class="kw">let </span>body1_is_sensor = contacts.entity1 == body1.entity &amp;&amp; sensor1.is_some();
+            <span class="kw">let </span>body2_is_sensor = contacts.entity2 == body2.entity &amp;&amp; sensor2.is_some();
+
+            <span class="comment">// No collision response if both bodies are static or sleeping
+            // or if either of the colliders is a sensor collider.
+            </span><span class="kw">if </span>(inactive1 &amp;&amp; inactive2)
+                || body1_is_sensor
+                || body2_is_sensor
+                || collider1.is_sensor
+                || collider2.is_sensor
+            {
                 <span class="kw">continue</span>;
             }
 
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(contact) = compute_contact(
-                <span class="kw-2">*</span>ent1,
-                <span class="kw-2">*</span>ent2,
-                body1.position.<span class="number">0</span>,
-                body2.position.<span class="number">0</span>,
-                <span class="kw-2">&amp;</span>body1.rotation,
-                <span class="kw-2">&amp;</span>body2.rotation,
-                collider1,
-                collider2,
-            ) {
-                collision_events.push(Collision(contact));
+            <span class="comment">// When an active body collides with a sleeping body, wake up the sleeping body.
+            </span><span class="kw">if </span>sleeping1.is_some() {
+                commands.entity(body1.entity).remove::&lt;Sleeping&gt;();
+            } <span class="kw">else if </span>sleeping2.is_some() {
+                commands.entity(body2.entity).remove::&lt;Sleeping&gt;();
+            }
 
-                <span class="kw">let </span><span class="kw-2">mut </span>collision_started_1 = <span class="bool-val">false</span>;
-                <span class="kw">let </span><span class="kw-2">mut </span>collision_started_2 = <span class="bool-val">false</span>;
+            <span class="comment">// Get combined friction and restitution coefficients of the colliders
+            // or the bodies they are attached to.
+            </span><span class="kw">let </span>friction = collider1
+                .friction
+                .unwrap_or(body1.friction)
+                .combine(<span class="kw-2">*</span>collider2.friction.unwrap_or(body2.friction));
+            <span class="kw">let </span>restitution_coefficient = collider1
+                .restitution
+                .unwrap_or(body1.restitution)
+                .combine(<span class="kw-2">*</span>collider2.restitution.unwrap_or(body2.restitution))
+                .coefficient;
 
-                <span class="comment">// Add entity to set of colliding entities
-                </span><span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">mut </span>entities) = colliding_entities1 {
-                    collision_started_1 = entities.insert(<span class="kw-2">*</span>ent2);
-                }
-                <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">mut </span>entities) = colliding_entities2 {
-                    collision_started_2 = entities.insert(<span class="kw-2">*</span>ent1);
-                }
+            <span class="comment">// Create and solve penetration constraints for each contact.
+            </span><span class="kw">for </span>contact_manifold <span class="kw">in </span>contacts.manifolds.iter() {
+                <span class="kw">for </span>contact <span class="kw">in </span>contact_manifold.contacts.iter() {
+                    <span class="comment">// Add collider transforms to local contact points
+                    </span><span class="kw">let </span>contact = ContactData {
+                        point1: collider1.transform.map_or(contact.point1, |t| {
+                            t.rotation.rotate(contact.point1) + t.translation
+                        }),
+                        point2: collider2.transform.map_or(contact.point2, |t| {
+                            t.rotation.rotate(contact.point2) + t.translation
+                        }),
+                        ..<span class="kw-2">*</span>contact
+                    };
 
-                <span class="kw">if </span>collision_started_1 || collision_started_2 {
-                    started_collisions.push(CollisionStarted(<span class="kw-2">*</span>ent1, <span class="kw-2">*</span>ent2));
-                }
-
-                <span class="comment">// When an active body collides with a sleeping body, wake up the sleeping body
-                </span><span class="kw">if </span>sleeping1.is_some() {
-                    commands.entity(<span class="kw-2">*</span>ent1).remove::&lt;Sleeping&gt;();
-                } <span class="kw">else if </span>sleeping2.is_some() {
-                    commands.entity(<span class="kw-2">*</span>ent2).remove::&lt;Sleeping&gt;();
-                }
-
-                <span class="comment">// Create and solve constraint if both colliders are solid
-                </span><span class="kw">if </span>sensor1.is_none() &amp;&amp; sensor2.is_none() {
-                    <span class="kw">let </span><span class="kw-2">mut </span>constraint = PenetrationConstraint::new(<span class="kw-2">&amp;</span>body1, <span class="kw-2">&amp;</span>body2, contact);
-                    constraint.solve([<span class="kw-2">&amp;mut </span>body1, <span class="kw-2">&amp;mut </span>body2], sub_dt.<span class="number">0</span>);
+                    <span class="kw">let </span><span class="kw-2">mut </span>constraint = PenetrationConstraint {
+                        dynamic_friction_coefficient: friction.dynamic_coefficient,
+                        static_friction_coefficient: friction.static_coefficient,
+                        restitution_coefficient,
+                        ..PenetrationConstraint::new(<span class="kw-2">&amp;</span>body1, <span class="kw-2">&amp;</span>body2, contact)
+                    };
+                    constraint.solve([<span class="kw-2">&amp;mut </span>body1, <span class="kw-2">&amp;mut </span>body2], delta_secs);
                     penetration_constraints.<span class="number">0</span>.push(constraint);
-                }
-            } <span class="kw">else </span>{
-                <span class="kw">let </span><span class="kw-2">mut </span>collision_ended_1 = <span class="bool-val">false</span>;
-                <span class="kw">let </span><span class="kw-2">mut </span>collision_ended_2 = <span class="bool-val">false</span>;
 
-                <span class="comment">// Remove entity from set of colliding entities
-                </span><span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">mut </span>entities) = colliding_entities1 {
-                    collision_ended_1 = entities.remove(ent2);
+                    <span class="comment">// Set collision as penetrating for this frame and substep.
+                    // This is used for detecting when the collision has started or ended.
+                    </span><span class="kw">if </span>contact.penetration &gt; Scalar::EPSILON {
+                        contacts.during_current_frame = <span class="bool-val">true</span>;
+                        contacts.during_current_substep = <span class="bool-val">true</span>;
+                    }
                 }
-                <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">mut </span>entities) = colliding_entities2 {
-                    collision_ended_2 = entities.remove(ent1);
-                }
+            }
 
-                <span class="kw">if </span>collision_ended_1 || collision_ended_2 {
-                    ended_collisions.push(CollisionEnded(<span class="kw-2">*</span>ent1, <span class="kw-2">*</span>ent2));
-                }
+            <span class="kw">if </span>contacts.during_current_substep &amp;&amp; body1.rb.is_added() || body2.rb.is_added() {
+                <span class="comment">// if the RigidBody entity has a name, use that for debug.
+                </span><span class="kw">let </span>debug_id1 = <span class="kw">match </span>name1 {
+                    <span class="prelude-val">Some</span>(n) =&gt; <span class="macro">format!</span>(<span class="string">&quot;{:?} ({n})&quot;</span>, body1.entity),
+                    <span class="prelude-val">None </span>=&gt; <span class="macro">format!</span>(<span class="string">&quot;{:?}&quot;</span>, body1.entity),
+                };
+                <span class="kw">let </span>debug_id2 = <span class="kw">match </span>name2 {
+                    <span class="prelude-val">Some</span>(n) =&gt; <span class="macro">format!</span>(<span class="string">&quot;{:?} ({n})&quot;</span>, body2.entity),
+                    <span class="prelude-val">None </span>=&gt; <span class="macro">format!</span>(<span class="string">&quot;{:?}&quot;</span>, body2.entity),
+                };
+                <span class="macro">warn!</span>(
+                    <span class="string">&quot;{} and {} are overlapping at spawn, which can result in explosive behavior.&quot;</span>,
+                    debug_id1, debug_id2,
+                );
+                <span class="macro">debug!</span>(<span class="string">&quot;{} is at {}&quot;</span>, debug_id1, body1.position.<span class="number">0</span>);
+                <span class="macro">debug!</span>(<span class="string">&quot;{} is at {}&quot;</span>, debug_id2, body2.position.<span class="number">0</span>);
             }
         }
     }
-
-    collision_ev_writer.send_batch(collision_events);
-    collision_started_ev_writer.send_batch(started_collisions);
-    collision_ended_ev_writer.send_batch(ended_collisions);
 }
 
 <span class="doccomment">/// Iterates through the constraints of a given type and solves them. Sleeping bodies are woken up when
@@ -745,67 +867,70 @@
     <span class="kw-2">mut </span>commands: Commands,
     <span class="kw-2">mut </span>bodies: Query&lt;(RigidBodyQuery, <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Sleeping&gt;)&gt;,
     <span class="kw-2">mut </span>constraints: Query&lt;<span class="kw-2">&amp;mut </span>C, Without&lt;RigidBody&gt;&gt;,
-    num_pos_iters: Res&lt;IterationCount&gt;,
-    sub_dt: Res&lt;SubDeltaTime&gt;,
+    time: Res&lt;Time&gt;,
 ) {
+    <span class="kw">let </span>delta_secs = time.delta_seconds_adjusted();
+
     <span class="comment">// Clear Lagrange multipliers
     </span>constraints
         .iter_mut()
         .for_each(|<span class="kw-2">mut </span>c| c.clear_lagrange_multipliers());
 
-    <span class="kw">for </span>_j <span class="kw">in </span><span class="number">0</span>..num_pos_iters.<span class="number">0 </span>{
-        <span class="kw">for </span><span class="kw-2">mut </span>constraint <span class="kw">in </span><span class="kw-2">&amp;mut </span>constraints {
-            <span class="comment">// Get components for entities
-            </span><span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="kw-2">mut </span>bodies) = bodies.get_many_mut(constraint.entities()) {
-                <span class="kw">let </span>none_dynamic = bodies.iter().all(|(body, <span class="kw">_</span>)| !body.rb.is_dynamic());
-                <span class="kw">let </span>all_inactive = bodies
-                    .iter()
-                    .all(|(body, sleeping)| body.rb.is_static() || sleeping.is_some());
+    <span class="kw">for </span><span class="kw-2">mut </span>constraint <span class="kw">in </span><span class="kw-2">&amp;mut </span>constraints {
+        <span class="comment">// Get components for entities
+        </span><span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="kw-2">mut </span>bodies) = bodies.get_many_mut(constraint.entities()) {
+            <span class="kw">let </span>none_dynamic = bodies.iter().all(|(body, <span class="kw">_</span>)| !body.rb.is_dynamic());
+            <span class="kw">let </span>all_inactive = bodies
+                .iter()
+                .all(|(body, sleeping)| body.rb.is_static() || sleeping.is_some());
 
-                <span class="comment">// No constraint solving if none of the bodies is dynamic,
-                // or if all of the bodies are either static or sleeping
-                </span><span class="kw">if </span>none_dynamic || all_inactive {
-                    <span class="kw">continue</span>;
-                }
+            <span class="comment">// No constraint solving if none of the bodies is dynamic,
+            // or if all of the bodies are either static or sleeping
+            </span><span class="kw">if </span>none_dynamic || all_inactive {
+                <span class="kw">continue</span>;
+            }
 
-                <span class="comment">// At least one of the participating bodies is active, so wake up any sleeping bodies
-                </span><span class="kw">for </span>(body, sleeping) <span class="kw">in </span><span class="kw-2">&amp;</span>bodies {
-                    <span class="kw">if </span>sleeping.is_some() {
-                        commands.entity(body.entity).remove::&lt;Sleeping&gt;();
-                    }
+            <span class="comment">// At least one of the participating bodies is active, so wake up any sleeping bodies
+            </span><span class="kw">for </span>(body, sleeping) <span class="kw">in </span><span class="kw-2">&amp;</span>bodies {
+                <span class="kw">if </span>sleeping.is_some() {
+                    commands.entity(body.entity).remove::&lt;Sleeping&gt;();
                 }
+            }
 
-                <span class="comment">// Get the bodies as an array and solve the constraint
-                </span><span class="kw">if let </span><span class="prelude-val">Ok</span>(bodies) = bodies
-                    .iter_mut()
-                    .map(|(<span class="kw-2">ref mut </span>body, <span class="kw">_</span>)| body)
-                    .collect::&lt;Vec&lt;<span class="kw-2">&amp;mut </span>RigidBodyQueryItem&gt;&gt;()
-                    .try_into()
-                {
-                    constraint.solve(bodies, sub_dt.<span class="number">0</span>);
-                }
+            <span class="comment">// Get the bodies as an array and solve the constraint
+            </span><span class="kw">if let </span><span class="prelude-val">Ok</span>(bodies) = bodies
+                .iter_mut()
+                .map(|(<span class="kw-2">ref mut </span>body, <span class="kw">_</span>)| body)
+                .collect::&lt;Vec&lt;<span class="kw-2">&amp;mut </span>RigidBodyQueryItem&gt;&gt;()
+                .try_into()
+            {
+                constraint.solve(bodies, delta_secs);
             }
         }
     }
 }
 
 <span class="doccomment">/// Updates the linear velocity of all dynamic bodies based on the change in position from the previous step.
+</span><span class="attr">#[allow(clippy::type_complexity)]
 </span><span class="kw">fn </span>update_lin_vel(
     <span class="kw-2">mut </span>bodies: Query&lt;
         (
             <span class="kw-2">&amp;</span>RigidBody,
             <span class="kw-2">&amp;</span>Position,
             <span class="kw-2">&amp;</span>PreviousPosition,
+            <span class="kw-2">&amp;</span>AccumulatedTranslation,
             <span class="kw-2">&amp;mut </span>LinearVelocity,
             <span class="kw-2">&amp;mut </span>PreSolveLinearVelocity,
         ),
         Without&lt;Sleeping&gt;,
     &gt;,
-    sub_dt: Res&lt;SubDeltaTime&gt;,
+    time: Res&lt;Time&gt;,
 ) {
-    <span class="kw">for </span>(rb, pos, prev_pos, <span class="kw-2">mut </span>lin_vel, <span class="kw-2">mut </span>pre_solve_lin_vel) <span class="kw">in </span><span class="kw-2">&amp;mut </span>bodies {
+    <span class="kw">let </span>delta_secs = time.delta_seconds_adjusted();
+
+    <span class="kw">for </span>(rb, pos, prev_pos, translation, <span class="kw-2">mut </span>lin_vel, <span class="kw-2">mut </span>pre_solve_lin_vel) <span class="kw">in </span><span class="kw-2">&amp;mut </span>bodies {
         <span class="comment">// Static bodies have no velocity
-        </span><span class="kw">if </span>rb.is_static() {
+        </span><span class="kw">if </span>rb.is_static() &amp;&amp; lin_vel.<span class="number">0 </span>!= Vector::ZERO {
             lin_vel.<span class="number">0 </span>= Vector::ZERO;
         }
 
@@ -813,7 +938,11 @@
 
         <span class="kw">if </span>rb.is_dynamic() {
             <span class="comment">// v = (x - x_prev) / h
-            </span>lin_vel.<span class="number">0 </span>= (pos.<span class="number">0 </span>- prev_pos.<span class="number">0</span>) / sub_dt.<span class="number">0</span>;
+            </span><span class="kw">let </span>new_lin_vel = (pos.<span class="number">0 </span>- prev_pos.<span class="number">0 </span>+ translation.<span class="number">0</span>) / delta_secs;
+            <span class="comment">// avoid triggering bevy&#39;s change detection unnecessarily
+            </span><span class="kw">if </span>new_lin_vel != lin_vel.<span class="number">0 </span>&amp;&amp; new_lin_vel.is_finite() {
+                lin_vel.<span class="number">0 </span>= new_lin_vel;
+            }
         }
     }
 }
@@ -831,18 +960,24 @@
         ),
         Without&lt;Sleeping&gt;,
     &gt;,
-    sub_dt: Res&lt;SubDeltaTime&gt;,
+    time: Res&lt;Time&gt;,
 ) {
+    <span class="kw">let </span>delta_secs = time.delta_seconds_adjusted();
+
     <span class="kw">for </span>(rb, rot, prev_rot, <span class="kw-2">mut </span>ang_vel, <span class="kw-2">mut </span>pre_solve_ang_vel) <span class="kw">in </span><span class="kw-2">&amp;mut </span>bodies {
         <span class="comment">// Static bodies have no velocity
-        </span><span class="kw">if </span>rb.is_static() {
+        </span><span class="kw">if </span>rb.is_static() &amp;&amp; ang_vel.<span class="number">0 </span>!= <span class="number">0.0 </span>{
             ang_vel.<span class="number">0 </span>= <span class="number">0.0</span>;
         }
 
         pre_solve_ang_vel.<span class="number">0 </span>= ang_vel.<span class="number">0</span>;
 
         <span class="kw">if </span>rb.is_dynamic() {
-            ang_vel.<span class="number">0 </span>= (rot.mul(prev_rot.inverse())).as_radians() / sub_dt.<span class="number">0</span>;
+            <span class="kw">let </span>new_ang_vel = (rot.mul(prev_rot.inverse())).as_radians() / delta_secs;
+            <span class="comment">// avoid triggering bevy&#39;s change detection unnecessarily
+            </span><span class="kw">if </span>new_ang_vel != ang_vel.<span class="number">0 </span>&amp;&amp; new_ang_vel.is_finite() {
+                ang_vel.<span class="number">0 </span>= new_ang_vel;
+            }
         }
     }
 }
@@ -860,11 +995,13 @@
         ),
         Without&lt;Sleeping&gt;,
     &gt;,
-    sub_dt: Res&lt;SubDeltaTime&gt;,
+    time: Res&lt;Time&gt;,
 ) {
+    <span class="kw">let </span>delta_secs = time.delta_seconds_adjusted();
+
     <span class="kw">for </span>(rb, rot, prev_rot, <span class="kw-2">mut </span>ang_vel, <span class="kw-2">mut </span>pre_solve_ang_vel) <span class="kw">in </span><span class="kw-2">&amp;mut </span>bodies {
         <span class="comment">// Static bodies have no velocity
-        </span><span class="kw">if </span>rb.is_static() {
+        </span><span class="kw">if </span>rb.is_static() &amp;&amp; ang_vel.<span class="number">0 </span>!= Vector::ZERO {
             ang_vel.<span class="number">0 </span>= Vector::ZERO;
         }
 
@@ -872,10 +1009,13 @@
 
         <span class="kw">if </span>rb.is_dynamic() {
             <span class="kw">let </span>delta_rot = rot.mul_quat(prev_rot.inverse().<span class="number">0</span>);
-            ang_vel.<span class="number">0 </span>= <span class="number">2.0 </span>* delta_rot.xyz() / sub_dt.<span class="number">0</span>;
-
+            <span class="kw">let </span><span class="kw-2">mut </span>new_ang_vel = <span class="number">2.0 </span>* delta_rot.xyz() / delta_secs;
             <span class="kw">if </span>delta_rot.w &lt; <span class="number">0.0 </span>{
-                ang_vel.<span class="number">0 </span>= -ang_vel.<span class="number">0</span>;
+                new_ang_vel = -new_ang_vel;
+            }
+            <span class="comment">// avoid triggering bevy&#39;s change detection unnecessarily
+            </span><span class="kw">if </span>new_ang_vel != ang_vel.<span class="number">0 </span>&amp;&amp; new_ang_vel.is_finite() {
+                ang_vel.<span class="number">0 </span>= new_ang_vel;
             }
         }
     }
@@ -887,131 +1027,137 @@
     <span class="kw-2">mut </span>bodies: Query&lt;RigidBodyQuery, Without&lt;Sleeping&gt;&gt;,
     penetration_constraints: Res&lt;PenetrationConstraints&gt;,
     gravity: Res&lt;Gravity&gt;,
-    sub_dt: Res&lt;SubDeltaTime&gt;,
+    time: Res&lt;Time&gt;,
 ) {
-    <span class="kw">for </span>constraint <span class="kw">in </span>penetration_constraints.<span class="number">0</span>.iter() {
-        <span class="kw">let </span>Contact {
-            entity1,
-            entity2,
-            normal,
-            ..
-        } = constraint.contact;
+    <span class="kw">let </span>delta_secs = time.delta_seconds_adjusted();
 
-        <span class="kw">if let </span><span class="prelude-val">Ok</span>([<span class="kw-2">mut </span>body1, <span class="kw-2">mut </span>body2]) = bodies.get_many_mut([entity1, entity2]) {
+    <span class="kw">for </span>constraint <span class="kw">in </span>penetration_constraints.<span class="number">0</span>.iter() {
+        <span class="kw">if let </span><span class="prelude-val">Ok</span>([<span class="kw-2">mut </span>body1, <span class="kw-2">mut </span>body2]) = bodies.get_many_mut(constraint.entities()) {
             <span class="kw">if </span>!body1.rb.is_dynamic() &amp;&amp; !body2.rb.is_dynamic() {
                 <span class="kw">continue</span>;
             }
+
+            <span class="comment">// Skip constraint if it didn&#39;t apply a correction
+            </span><span class="kw">if </span>constraint.normal_lagrange == <span class="number">0.0 </span>{
+                <span class="kw">continue</span>;
+            }
+
+            <span class="kw">let </span>normal = constraint.contact.global_normal1(<span class="kw-2">&amp;</span>body1.rotation);
+            <span class="kw">let </span>r1 = body1.rotation.rotate(constraint.r1);
+            <span class="kw">let </span>r2 = body2.rotation.rotate(constraint.r2);
 
             <span class="comment">// Compute pre-solve relative normal velocities at the contact point (used for restitution)
             </span><span class="kw">let </span>pre_solve_contact_vel1 = compute_contact_vel(
                 body1.pre_solve_linear_velocity.<span class="number">0</span>,
                 body1.pre_solve_angular_velocity.<span class="number">0</span>,
-                constraint.world_r1,
+                r1,
             );
             <span class="kw">let </span>pre_solve_contact_vel2 = compute_contact_vel(
                 body2.pre_solve_linear_velocity.<span class="number">0</span>,
                 body2.pre_solve_angular_velocity.<span class="number">0</span>,
-                constraint.world_r2,
+                r2,
             );
             <span class="kw">let </span>pre_solve_relative_vel = pre_solve_contact_vel1 - pre_solve_contact_vel2;
-            <span class="kw">let </span>pre_solve_normal_vel = normal.dot(pre_solve_relative_vel);
+            <span class="kw">let </span>pre_solve_normal_speed = normal.dot(pre_solve_relative_vel);
 
             <span class="comment">// Compute relative normal and tangential velocities at the contact point (equation 29)
-            </span><span class="kw">let </span>contact_vel1 = compute_contact_vel(
-                body1.linear_velocity.<span class="number">0</span>,
-                body1.angular_velocity.<span class="number">0</span>,
-                constraint.world_r1,
-            );
-            <span class="kw">let </span>contact_vel2 = compute_contact_vel(
-                body2.linear_velocity.<span class="number">0</span>,
-                body2.angular_velocity.<span class="number">0</span>,
-                constraint.world_r2,
-            );
+            </span><span class="kw">let </span>contact_vel1 =
+                compute_contact_vel(body1.linear_velocity.<span class="number">0</span>, body1.angular_velocity.<span class="number">0</span>, r1);
+            <span class="kw">let </span>contact_vel2 =
+                compute_contact_vel(body2.linear_velocity.<span class="number">0</span>, body2.angular_velocity.<span class="number">0</span>, r2);
             <span class="kw">let </span>relative_vel = contact_vel1 - contact_vel2;
-            <span class="kw">let </span>normal_vel = normal.dot(relative_vel);
-            <span class="kw">let </span>tangent_vel = relative_vel - normal * normal_vel;
+
+            <span class="kw">let </span>normal_speed = normal.dot(relative_vel);
+            <span class="kw">let </span>tangent_vel = relative_vel - normal * normal_speed;
+            <span class="kw">let </span>tangent_speed = tangent_vel.length();
 
             <span class="kw">let </span>inv_mass1 = body1.effective_inv_mass();
             <span class="kw">let </span>inv_mass2 = body2.effective_inv_mass();
             <span class="kw">let </span>inv_inertia1 = body1.effective_world_inv_inertia();
             <span class="kw">let </span>inv_inertia2 = body2.effective_world_inv_inertia();
 
-            <span class="comment">// Compute dynamic friction
-            </span><span class="kw">let </span>friction_impulse = get_dynamic_friction(
-                tangent_vel,
-                body1.friction.combine(<span class="kw-2">*</span>body2.friction).dynamic_coefficient,
-                constraint.normal_lagrange,
-                sub_dt.<span class="number">0</span>,
-            );
+            <span class="kw">let </span><span class="kw-2">mut </span>p = Vector::ZERO;
 
             <span class="comment">// Compute restitution
-            </span><span class="kw">let </span>restitution_impulse = get_restitution(
-                normal,
-                normal_vel,
-                pre_solve_normal_vel,
-                body1.restitution.combine(<span class="kw-2">*</span>body2.restitution).coefficient,
+            </span><span class="kw">let </span>restitution_speed = compute_restitution(
+                normal_speed,
+                pre_solve_normal_speed,
+                constraint.restitution_coefficient,
                 gravity.<span class="number">0</span>,
-                sub_dt.<span class="number">0</span>,
+                delta_secs,
             );
-
-            <span class="kw">let </span>delta_v = friction_impulse + restitution_impulse;
-            <span class="kw">let </span>delta_v_length = delta_v.length();
-
-            <span class="kw">if </span>delta_v_length &lt;= Scalar::EPSILON {
-                <span class="kw">continue</span>;
+            <span class="kw">if </span>restitution_speed.abs() &gt; Scalar::EPSILON {
+                <span class="kw">let </span>w1 = constraint.compute_generalized_inverse_mass(<span class="kw-2">&amp;</span>body1, r1, normal);
+                <span class="kw">let </span>w2 = constraint.compute_generalized_inverse_mass(<span class="kw-2">&amp;</span>body2, r2, normal);
+                p += restitution_speed / (w1 + w2) * normal;
             }
 
-            <span class="kw">let </span>delta_v_dir = delta_v / delta_v_length;
-
-            <span class="comment">// Compute generalized inverse masses
-            </span><span class="kw">let </span>w1 = constraint.compute_generalized_inverse_mass(
-                <span class="kw-2">&amp;</span>body1,
-                constraint.world_r1,
-                delta_v_dir,
-            );
-            <span class="kw">let </span>w2 = constraint.compute_generalized_inverse_mass(
-                <span class="kw-2">&amp;</span>body2,
-                constraint.world_r2,
-                delta_v_dir,
-            );
-
-            <span class="comment">// Compute velocity impulse and apply velocity updates (equation 33)
-            </span><span class="kw">let </span>p = delta_v / (w1 + w2);
-            <span class="kw">if </span>body1.rb.is_dynamic() {
-                body1.linear_velocity.<span class="number">0 </span>+= p * inv_mass1;
-                body1.angular_velocity.<span class="number">0 </span>+=
-                    compute_delta_ang_vel(inv_inertia1, constraint.world_r1, p);
+            <span class="comment">// Compute dynamic friction
+            </span><span class="kw">if </span>tangent_speed &gt; Scalar::EPSILON {
+                <span class="kw">let </span>tangent_dir = tangent_vel / tangent_speed;
+                <span class="kw">let </span>w1 = constraint.compute_generalized_inverse_mass(<span class="kw-2">&amp;</span>body1, r1, tangent_dir);
+                <span class="kw">let </span>w2 = constraint.compute_generalized_inverse_mass(<span class="kw-2">&amp;</span>body2, r2, tangent_dir);
+                <span class="kw">let </span>friction_impulse = compute_dynamic_friction(
+                    tangent_speed,
+                    w1 + w2,
+                    constraint.dynamic_friction_coefficient,
+                    constraint.normal_lagrange,
+                    delta_secs,
+                );
+                p += friction_impulse * tangent_dir;
             }
-            <span class="kw">if </span>body2.rb.is_dynamic() {
-                body2.linear_velocity.<span class="number">0 </span>-= p * inv_mass2;
-                body2.angular_velocity.<span class="number">0 </span>-=
-                    compute_delta_ang_vel(inv_inertia2, constraint.world_r2, p);
+
+            <span class="kw">if </span>body1.rb.is_dynamic() &amp;&amp; body1.dominance() &lt;= body2.dominance() {
+                <span class="kw">let </span>delta_lin_vel = p * inv_mass1;
+                <span class="kw">let </span>delta_ang_vel = compute_delta_ang_vel(inv_inertia1, r1, p);
+
+                <span class="kw">if </span>delta_lin_vel != Vector::ZERO {
+                    body1.linear_velocity.<span class="number">0 </span>+= delta_lin_vel;
+                }
+                <span class="kw">if </span>delta_ang_vel != AngularVelocity::ZERO.<span class="number">0 </span>{
+                    body1.angular_velocity.<span class="number">0 </span>+= delta_ang_vel;
+                }
+            }
+            <span class="kw">if </span>body2.rb.is_dynamic() &amp;&amp; body2.dominance() &lt;= body1.dominance() {
+                <span class="kw">let </span>delta_lin_vel = p * inv_mass2;
+                <span class="kw">let </span>delta_ang_vel = compute_delta_ang_vel(inv_inertia2, r2, p);
+
+                <span class="kw">if </span>delta_lin_vel != Vector::ZERO {
+                    body2.linear_velocity.<span class="number">0 </span>-= delta_lin_vel;
+                }
+                <span class="kw">if </span>delta_ang_vel != AngularVelocity::ZERO.<span class="number">0 </span>{
+                    body2.angular_velocity.<span class="number">0 </span>-= delta_ang_vel;
+                }
             }
         }
     }
 }
 
 <span class="doccomment">/// Applies velocity corrections caused by joint damping.
-</span><span class="kw">fn </span>joint_damping&lt;T: Joint&gt;(
+</span><span class="attr">#[allow(clippy::type_complexity)]
+</span><span class="kw">pub fn </span>joint_damping&lt;T: Joint&gt;(
     <span class="kw-2">mut </span>bodies: Query&lt;
         (
             <span class="kw-2">&amp;</span>RigidBody,
             <span class="kw-2">&amp;mut </span>LinearVelocity,
             <span class="kw-2">&amp;mut </span>AngularVelocity,
             <span class="kw-2">&amp;</span>InverseMass,
+            <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Dominance&gt;,
         ),
         Without&lt;Sleeping&gt;,
     &gt;,
     joints: Query&lt;<span class="kw-2">&amp;</span>T, Without&lt;RigidBody&gt;&gt;,
-    sub_dt: Res&lt;SubDeltaTime&gt;,
+    time: Res&lt;Time&gt;,
 ) {
+    <span class="kw">let </span>delta_secs = time.delta_seconds_adjusted();
+
     <span class="kw">for </span>joint <span class="kw">in </span><span class="kw-2">&amp;</span>joints {
         <span class="kw">if let </span><span class="prelude-val">Ok</span>(
-            [(rb1, <span class="kw-2">mut </span>lin_vel1, <span class="kw-2">mut </span>ang_vel1, inv_mass1), (rb2, <span class="kw-2">mut </span>lin_vel2, <span class="kw-2">mut </span>ang_vel2, inv_mass2)],
+            [(rb1, <span class="kw-2">mut </span>lin_vel1, <span class="kw-2">mut </span>ang_vel1, inv_mass1, dominance1), (rb2, <span class="kw-2">mut </span>lin_vel2, <span class="kw-2">mut </span>ang_vel2, inv_mass2, dominance2)],
         ) = bodies.get_many_mut(joint.entities())
         {
             <span class="kw">let </span>delta_omega =
-                (ang_vel2.<span class="number">0 </span>- ang_vel1.<span class="number">0</span>) * (joint.damping_angular() * sub_dt.<span class="number">0</span>).min(<span class="number">1.0</span>);
+                (ang_vel2.<span class="number">0 </span>- ang_vel1.<span class="number">0</span>) * (joint.damping_angular() * delta_secs).min(<span class="number">1.0</span>);
 
             <span class="kw">if </span>rb1.is_dynamic() {
                 ang_vel1.<span class="number">0 </span>+= delta_omega;
@@ -1020,7 +1166,8 @@
                 ang_vel2.<span class="number">0 </span>-= delta_omega;
             }
 
-            <span class="kw">let </span>delta_v = (lin_vel2.<span class="number">0 </span>- lin_vel1.<span class="number">0</span>) * (joint.damping_linear() * sub_dt.<span class="number">0</span>).min(<span class="number">1.0</span>);
+            <span class="kw">let </span>delta_v =
+                (lin_vel2.<span class="number">0 </span>- lin_vel1.<span class="number">0</span>) * (joint.damping_linear() * delta_secs).min(<span class="number">1.0</span>);
 
             <span class="kw">let </span>w1 = <span class="kw">if </span>rb1.is_dynamic() { inv_mass1.<span class="number">0 </span>} <span class="kw">else </span>{ <span class="number">0.0 </span>};
             <span class="kw">let </span>w2 = <span class="kw">if </span>rb2.is_dynamic() { inv_mass2.<span class="number">0 </span>} <span class="kw">else </span>{ <span class="number">0.0 </span>};
@@ -1031,13 +1178,32 @@
 
             <span class="kw">let </span>p = delta_v / (w1 + w2);
 
-            <span class="kw">if </span>rb1.is_dynamic() {
+            <span class="kw">let </span>dominance1 = dominance1.map_or(<span class="number">0</span>, |dominance| dominance.<span class="number">0</span>);
+            <span class="kw">let </span>dominance2 = dominance2.map_or(<span class="number">0</span>, |dominance| dominance.<span class="number">0</span>);
+
+            <span class="kw">if </span>rb1.is_dynamic() &amp;&amp; (!rb2.is_dynamic() || dominance1 &lt;= dominance2) {
                 lin_vel1.<span class="number">0 </span>+= p * inv_mass1.<span class="number">0</span>;
             }
-            <span class="kw">if </span>rb2.is_dynamic() {
+            <span class="kw">if </span>rb2.is_dynamic() &amp;&amp; (!rb1.is_dynamic() || dominance2 &lt;= dominance1) {
                 lin_vel2.<span class="number">0 </span>-= p * inv_mass2.<span class="number">0</span>;
             }
         }
+    }
+}
+
+<span class="kw">fn </span>apply_translation(
+    <span class="kw-2">mut </span>bodies: Query&lt;
+        (<span class="kw-2">&amp;</span>RigidBody, <span class="kw-2">&amp;mut </span>Position, <span class="kw-2">&amp;mut </span>AccumulatedTranslation),
+        Changed&lt;AccumulatedTranslation&gt;,
+    &gt;,
+) {
+    <span class="kw">for </span>(rb, <span class="kw-2">mut </span>pos, <span class="kw-2">mut </span>translation) <span class="kw">in </span><span class="kw-2">&amp;mut </span>bodies {
+        <span class="kw">if </span>rb.is_static() {
+            <span class="kw">continue</span>;
+        }
+
+        pos.<span class="number">0 </span>+= translation.<span class="number">0</span>;
+        translation.<span class="number">0 </span>= Vector::ZERO;
     }
 }
 

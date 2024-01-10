@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["AssetsPlugin","LocaleAssets","MainMenuAssets","UiAssets"]};
+window.SIDEBAR_ITEMS = {"struct":["AssetsPlugin","MainMenuAssets","UiAssets"]};

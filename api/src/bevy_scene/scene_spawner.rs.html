@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_scene-0.11.3/src/scene_spawner.rs`."><title>scene_spawner.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bevy_scene" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy-3e956806168b8470/b5b6ea3/crates/bevy_scene/src/scene_spawner.rs`."><title>scene_spawner.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bevy_scene" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -362,11 +362,83 @@
 <a href="#362" id="362">362</a>
 <a href="#363" id="363">363</a>
 <a href="#364" id="364">364</a>
+<a href="#365" id="365">365</a>
+<a href="#366" id="366">366</a>
+<a href="#367" id="367">367</a>
+<a href="#368" id="368">368</a>
+<a href="#369" id="369">369</a>
+<a href="#370" id="370">370</a>
+<a href="#371" id="371">371</a>
+<a href="#372" id="372">372</a>
+<a href="#373" id="373">373</a>
+<a href="#374" id="374">374</a>
+<a href="#375" id="375">375</a>
+<a href="#376" id="376">376</a>
+<a href="#377" id="377">377</a>
+<a href="#378" id="378">378</a>
+<a href="#379" id="379">379</a>
+<a href="#380" id="380">380</a>
+<a href="#381" id="381">381</a>
+<a href="#382" id="382">382</a>
+<a href="#383" id="383">383</a>
+<a href="#384" id="384">384</a>
+<a href="#385" id="385">385</a>
+<a href="#386" id="386">386</a>
+<a href="#387" id="387">387</a>
+<a href="#388" id="388">388</a>
+<a href="#389" id="389">389</a>
+<a href="#390" id="390">390</a>
+<a href="#391" id="391">391</a>
+<a href="#392" id="392">392</a>
+<a href="#393" id="393">393</a>
+<a href="#394" id="394">394</a>
+<a href="#395" id="395">395</a>
+<a href="#396" id="396">396</a>
+<a href="#397" id="397">397</a>
+<a href="#398" id="398">398</a>
+<a href="#399" id="399">399</a>
+<a href="#400" id="400">400</a>
+<a href="#401" id="401">401</a>
+<a href="#402" id="402">402</a>
+<a href="#403" id="403">403</a>
+<a href="#404" id="404">404</a>
+<a href="#405" id="405">405</a>
+<a href="#406" id="406">406</a>
+<a href="#407" id="407">407</a>
+<a href="#408" id="408">408</a>
+<a href="#409" id="409">409</a>
+<a href="#410" id="410">410</a>
+<a href="#411" id="411">411</a>
+<a href="#412" id="412">412</a>
+<a href="#413" id="413">413</a>
+<a href="#414" id="414">414</a>
+<a href="#415" id="415">415</a>
+<a href="#416" id="416">416</a>
+<a href="#417" id="417">417</a>
+<a href="#418" id="418">418</a>
+<a href="#419" id="419">419</a>
+<a href="#420" id="420">420</a>
+<a href="#421" id="421">421</a>
+<a href="#422" id="422">422</a>
+<a href="#423" id="423">423</a>
+<a href="#424" id="424">424</a>
+<a href="#425" id="425">425</a>
+<a href="#426" id="426">426</a>
+<a href="#427" id="427">427</a>
+<a href="#428" id="428">428</a>
+<a href="#429" id="429">429</a>
+<a href="#430" id="430">430</a>
+<a href="#431" id="431">431</a>
+<a href="#432" id="432">432</a>
+<a href="#433" id="433">433</a>
+<a href="#434" id="434">434</a>
+<a href="#435" id="435">435</a>
+<a href="#436" id="436">436</a>
 </pre></div><pre class="rust"><code><span class="kw">use crate</span>::{DynamicScene, Scene};
-<span class="kw">use </span>bevy_asset::{AssetEvent, Assets, Handle};
+<span class="kw">use </span>bevy_asset::{AssetEvent, AssetId, Assets, Handle};
 <span class="kw">use </span>bevy_ecs::{
-    entity::{Entity, EntityMap},
-    event::{Events, ManualEventReader},
+    entity::Entity,
+    event::{Event, Events, ManualEventReader},
     reflect::AppTypeRegistry,
     system::{Command, Resource},
     world::{Mut, World},
@@ -376,14 +448,24 @@
 <span class="kw">use </span>thiserror::Error;
 <span class="kw">use </span>uuid::Uuid;
 
+<span class="doccomment">/// Emitted when [`crate::SceneInstance`] becomes ready to use.
+///
+/// See also [`SceneSpawner::instance_is_ready`].
+</span><span class="attr">#[derive(Event)]
+</span><span class="kw">pub struct </span>SceneInstanceReady {
+    <span class="doccomment">/// Entity to which the scene was spawned as a child.
+    </span><span class="kw">pub </span>parent: Entity,
+}
+
 <span class="doccomment">/// Information about a scene instance.
 </span><span class="attr">#[derive(Debug)]
 </span><span class="kw">pub struct </span>InstanceInfo {
     <span class="doccomment">/// Mapping of entities from the scene world to the instance world.
-    </span><span class="kw">pub </span>entity_map: EntityMap,
+    </span><span class="kw">pub </span>entity_map: HashMap&lt;Entity, Entity&gt;,
 }
 
-<span class="attr">#[derive(Copy, Clone, Debug, Eq, PartialEq, Hash)]
+<span class="doccomment">/// Unique id identifying a scene instance.
+</span><span class="attr">#[derive(Copy, Clone, Debug, Eq, PartialEq, Hash)]
 </span><span class="kw">pub struct </span>InstanceId(Uuid);
 
 <span class="kw">impl </span>InstanceId {
@@ -392,80 +474,145 @@
     }
 }
 
-<span class="attr">#[derive(Default, Resource)]
+<span class="doccomment">/// Handles spawning and despawning scenes in the world, either synchronously or batched through the [`scene_spawner_system`].
+///
+/// Synchronous methods: (Scene operations will take effect immediately)
+/// - [`spawn_dynamic_sync`](Self::spawn_dynamic_sync)
+/// - [`spawn_sync`](Self::spawn_sync)
+/// - [`despawn_sync`](Self::despawn_sync)
+/// - [`despawn_instance_sync`](Self::despawn_instance_sync)
+/// - [`update_spawned_scenes`](Self::update_spawned_scenes)
+/// - [`spawn_queued_scenes`](Self::spawn_queued_scenes)
+/// - [`despawn_queued_scenes`](Self::despawn_queued_scenes)
+/// - [`despawn_queued_instances`](Self::despawn_queued_instances)
+///
+/// Deferred methods: (Scene operations will be processed when the [`scene_spawner_system`] is run)
+/// - [`spawn_dynamic`](Self::spawn_dynamic)
+/// - [`spawn_dynamic_as_child`](Self::spawn_dynamic_as_child)
+/// - [`spawn`](Self::spawn)
+/// - [`spawn_as_child`](Self::spawn_as_child)
+/// - [`despawn`](Self::despawn)
+/// - [`despawn_instance`](Self::despawn_instance)
+</span><span class="attr">#[derive(Default, Resource)]
 </span><span class="kw">pub struct </span>SceneSpawner {
-    spawned_scenes: HashMap&lt;Handle&lt;Scene&gt;, Vec&lt;InstanceId&gt;&gt;,
-    spawned_dynamic_scenes: HashMap&lt;Handle&lt;DynamicScene&gt;, Vec&lt;InstanceId&gt;&gt;,
+    spawned_scenes: HashMap&lt;AssetId&lt;Scene&gt;, Vec&lt;InstanceId&gt;&gt;,
+    spawned_dynamic_scenes: HashMap&lt;AssetId&lt;DynamicScene&gt;, Vec&lt;InstanceId&gt;&gt;,
     spawned_instances: HashMap&lt;InstanceId, InstanceInfo&gt;,
     scene_asset_event_reader: ManualEventReader&lt;AssetEvent&lt;DynamicScene&gt;&gt;,
     dynamic_scenes_to_spawn: Vec&lt;(Handle&lt;DynamicScene&gt;, InstanceId)&gt;,
     scenes_to_spawn: Vec&lt;(Handle&lt;Scene&gt;, InstanceId)&gt;,
-    scenes_to_despawn: Vec&lt;Handle&lt;DynamicScene&gt;&gt;,
+    scenes_to_despawn: Vec&lt;AssetId&lt;DynamicScene&gt;&gt;,
     instances_to_despawn: Vec&lt;InstanceId&gt;,
     scenes_with_parent: Vec&lt;(InstanceId, Entity)&gt;,
 }
 
-<span class="attr">#[derive(Error, Debug)]
+<span class="doccomment">/// Errors that can occur when spawning a scene.
+</span><span class="attr">#[derive(Error, Debug)]
 </span><span class="kw">pub enum </span>SceneSpawnError {
-    <span class="attr">#[error(<span class="string">&quot;scene contains the unregistered component `{type_name}`. consider adding `#[reflect(Component)]` to your type&quot;</span>)]
-    </span>UnregisteredComponent { type_name: String },
-    <span class="attr">#[error(<span class="string">&quot;scene contains the unregistered resource `{type_name}`. consider adding `#[reflect(Resource)]` to your type&quot;</span>)]
-    </span>UnregisteredResource { type_name: String },
-    <span class="attr">#[error(<span class="string">&quot;scene contains the unregistered type `{type_name}`. consider registering the type using `app.register_type::&lt;T&gt;()`&quot;</span>)]
-    </span>UnregisteredType { type_name: String },
-    <span class="attr">#[error(<span class="string">&quot;scene does not exist&quot;</span>)]
-    </span>NonExistentScene { handle: Handle&lt;DynamicScene&gt; },
-    <span class="attr">#[error(<span class="string">&quot;scene does not exist&quot;</span>)]
-    </span>NonExistentRealScene { handle: Handle&lt;Scene&gt; },
+    <span class="doccomment">/// Scene contains an unregistered component type.
+    </span><span class="attr">#[error(<span class="string">&quot;scene contains the unregistered component `{type_path}`. consider adding `#[reflect(Component)]` to your type&quot;</span>)]
+    </span>UnregisteredComponent {
+        <span class="doccomment">/// Type of the unregistered component.
+        </span>type_path: String,
+    },
+    <span class="doccomment">/// Scene contains an unregistered resource type.
+    </span><span class="attr">#[error(<span class="string">&quot;scene contains the unregistered resource `{type_path}`. consider adding `#[reflect(Resource)]` to your type&quot;</span>)]
+    </span>UnregisteredResource {
+        <span class="doccomment">/// Type of the unregistered resource.
+        </span>type_path: String,
+    },
+    <span class="doccomment">/// Scene contains an unregistered type.
+    </span><span class="attr">#[error(
+        <span class="string">&quot;scene contains the unregistered type `{std_type_name}`. \
+        consider reflecting it with `#[derive(Reflect)]` \
+        and registering the type using `app.register_type::&lt;T&gt;()`&quot;
+    </span>)]
+    </span>UnregisteredType {
+        <span class="doccomment">/// The [type name] for the unregistered type.
+        /// [type name]: std::any::type_name
+        </span>std_type_name: String,
+    },
+    <span class="doccomment">/// Scene contains an unregistered type which has a `TypePath`.
+    </span><span class="attr">#[error(
+        <span class="string">&quot;scene contains the reflected type `{type_path}` but it was not found in the type registry. \
+        consider registering the type using `app.register_type::&lt;T&gt;()``&quot;
+    </span>)]
+    </span>UnregisteredButReflectedType {
+        <span class="doccomment">/// The unregistered type.
+        </span>type_path: String,
+    },
+    <span class="doccomment">/// Scene contains a proxy without a represented type.
+    </span><span class="attr">#[error(<span class="string">&quot;scene contains dynamic type `{type_path}` without a represented type. consider changing this using `set_represented_type`.&quot;</span>)]
+    </span>NoRepresentedType {
+        <span class="doccomment">/// The dynamic instance type.
+        </span>type_path: String,
+    },
+    <span class="doccomment">/// Dynamic scene with the given id does not exist.
+    </span><span class="attr">#[error(<span class="string">&quot;scene does not exist&quot;</span>)]
+    </span>NonExistentScene {
+        <span class="doccomment">/// Id of the non-existent dynamic scene.
+        </span>id: AssetId&lt;DynamicScene&gt;,
+    },
+    <span class="doccomment">/// Scene with the given id does not exist.
+    </span><span class="attr">#[error(<span class="string">&quot;scene does not exist&quot;</span>)]
+    </span>NonExistentRealScene {
+        <span class="doccomment">/// Id of the non-existent scene.
+        </span>id: AssetId&lt;Scene&gt;,
+    },
 }
 
 <span class="kw">impl </span>SceneSpawner {
-    <span class="kw">pub fn </span>spawn_dynamic(<span class="kw-2">&amp;mut </span><span class="self">self</span>, scene_handle: Handle&lt;DynamicScene&gt;) -&gt; InstanceId {
+    <span class="doccomment">/// Schedule the spawn of a new instance of the provided dynamic scene.
+    </span><span class="kw">pub fn </span>spawn_dynamic(<span class="kw-2">&amp;mut </span><span class="self">self</span>, id: <span class="kw">impl </span>Into&lt;Handle&lt;DynamicScene&gt;&gt;) -&gt; InstanceId {
         <span class="kw">let </span>instance_id = InstanceId::new();
-        <span class="self">self</span>.dynamic_scenes_to_spawn
-            .push((scene_handle, instance_id));
+        <span class="self">self</span>.dynamic_scenes_to_spawn.push((id.into(), instance_id));
         instance_id
     }
 
-    <span class="kw">pub fn </span>spawn_dynamic_as_child(
+    <span class="doccomment">/// Schedule the spawn of a new instance of the provided dynamic scene as a child of `parent`.
+    </span><span class="kw">pub fn </span>spawn_dynamic_as_child(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        scene_handle: Handle&lt;DynamicScene&gt;,
+        id: <span class="kw">impl </span>Into&lt;Handle&lt;DynamicScene&gt;&gt;,
         parent: Entity,
     ) -&gt; InstanceId {
         <span class="kw">let </span>instance_id = InstanceId::new();
-        <span class="self">self</span>.dynamic_scenes_to_spawn
-            .push((scene_handle, instance_id));
+        <span class="self">self</span>.dynamic_scenes_to_spawn.push((id.into(), instance_id));
         <span class="self">self</span>.scenes_with_parent.push((instance_id, parent));
         instance_id
     }
 
-    <span class="kw">pub fn </span>spawn(<span class="kw-2">&amp;mut </span><span class="self">self</span>, scene_handle: Handle&lt;Scene&gt;) -&gt; InstanceId {
+    <span class="doccomment">/// Schedule the spawn of a new instance of the provided scene.
+    </span><span class="kw">pub fn </span>spawn(<span class="kw-2">&amp;mut </span><span class="self">self</span>, id: <span class="kw">impl </span>Into&lt;Handle&lt;Scene&gt;&gt;) -&gt; InstanceId {
         <span class="kw">let </span>instance_id = InstanceId::new();
-        <span class="self">self</span>.scenes_to_spawn.push((scene_handle, instance_id));
+        <span class="self">self</span>.scenes_to_spawn.push((id.into(), instance_id));
         instance_id
     }
 
-    <span class="kw">pub fn </span>spawn_as_child(<span class="kw-2">&amp;mut </span><span class="self">self</span>, scene_handle: Handle&lt;Scene&gt;, parent: Entity) -&gt; InstanceId {
+    <span class="doccomment">/// Schedule the spawn of a new instance of the provided scene as a child of `parent`.
+    </span><span class="kw">pub fn </span>spawn_as_child(<span class="kw-2">&amp;mut </span><span class="self">self</span>, id: <span class="kw">impl </span>Into&lt;Handle&lt;Scene&gt;&gt;, parent: Entity) -&gt; InstanceId {
         <span class="kw">let </span>instance_id = InstanceId::new();
-        <span class="self">self</span>.scenes_to_spawn.push((scene_handle, instance_id));
+        <span class="self">self</span>.scenes_to_spawn.push((id.into(), instance_id));
         <span class="self">self</span>.scenes_with_parent.push((instance_id, parent));
         instance_id
     }
 
-    <span class="kw">pub fn </span>despawn(<span class="kw-2">&amp;mut </span><span class="self">self</span>, scene_handle: Handle&lt;DynamicScene&gt;) {
-        <span class="self">self</span>.scenes_to_despawn.push(scene_handle);
+    <span class="doccomment">/// Schedule the despawn of all instances of the provided dynamic scene.
+    </span><span class="kw">pub fn </span>despawn(<span class="kw-2">&amp;mut </span><span class="self">self</span>, id: <span class="kw">impl </span>Into&lt;AssetId&lt;DynamicScene&gt;&gt;) {
+        <span class="self">self</span>.scenes_to_despawn.push(id.into());
     }
 
-    <span class="kw">pub fn </span>despawn_instance(<span class="kw-2">&amp;mut </span><span class="self">self</span>, instance_id: InstanceId) {
+    <span class="doccomment">/// Schedule the despawn of a scene instance, removing all its entities from the world.
+    </span><span class="kw">pub fn </span>despawn_instance(<span class="kw-2">&amp;mut </span><span class="self">self</span>, instance_id: InstanceId) {
         <span class="self">self</span>.instances_to_despawn.push(instance_id);
     }
 
-    <span class="kw">pub fn </span>despawn_sync(
+    <span class="doccomment">/// Immediately despawns all instances of a dynamic scene.
+    </span><span class="kw">pub fn </span>despawn_sync(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         world: <span class="kw-2">&amp;mut </span>World,
-        scene_handle: Handle&lt;DynamicScene&gt;,
+        id: <span class="kw">impl </span>Into&lt;AssetId&lt;DynamicScene&gt;&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(), SceneSpawnError&gt; {
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(instance_ids) = <span class="self">self</span>.spawned_dynamic_scenes.remove(<span class="kw-2">&amp;</span>scene_handle) {
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(instance_ids) = <span class="self">self</span>.spawned_dynamic_scenes.remove(<span class="kw-2">&amp;</span>id.into()) {
             <span class="kw">for </span>instance_id <span class="kw">in </span>instance_ids {
                 <span class="self">self</span>.despawn_instance_sync(world, <span class="kw-2">&amp;</span>instance_id);
             }
@@ -473,97 +620,88 @@
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="kw">pub fn </span>despawn_instance_sync(<span class="kw-2">&amp;mut </span><span class="self">self</span>, world: <span class="kw-2">&amp;mut </span>World, instance_id: <span class="kw-2">&amp;</span>InstanceId) {
+    <span class="doccomment">/// Immediately despawns a scene instance, removing all its entities from the world.
+    </span><span class="kw">pub fn </span>despawn_instance_sync(<span class="kw-2">&amp;mut </span><span class="self">self</span>, world: <span class="kw-2">&amp;mut </span>World, instance_id: <span class="kw-2">&amp;</span>InstanceId) {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(instance) = <span class="self">self</span>.spawned_instances.remove(instance_id) {
-            <span class="kw">for </span>entity <span class="kw">in </span>instance.entity_map.values() {
+            <span class="kw">for </span><span class="kw-2">&amp;</span>entity <span class="kw">in </span>instance.entity_map.values() {
                 <span class="kw">let _ </span>= world.despawn(entity);
             }
         }
     }
 
-    <span class="kw">pub fn </span>spawn_dynamic_sync(
+    <span class="doccomment">/// Immediately spawns a new instance of the provided dynamic scene.
+    </span><span class="kw">pub fn </span>spawn_dynamic_sync(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         world: <span class="kw-2">&amp;mut </span>World,
-        scene_handle: <span class="kw-2">&amp;</span>Handle&lt;DynamicScene&gt;,
+        id: <span class="kw">impl </span>Into&lt;AssetId&lt;DynamicScene&gt;&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(), SceneSpawnError&gt; {
-        <span class="kw">let </span><span class="kw-2">mut </span>entity_map = EntityMap::default();
-        <span class="self">Self</span>::spawn_dynamic_internal(world, scene_handle, <span class="kw-2">&amp;mut </span>entity_map)<span class="question-mark">?</span>;
+        <span class="kw">let </span><span class="kw-2">mut </span>entity_map = HashMap::default();
+        <span class="kw">let </span>id = id.into();
+        <span class="self">Self</span>::spawn_dynamic_internal(world, id, <span class="kw-2">&amp;mut </span>entity_map)<span class="question-mark">?</span>;
         <span class="kw">let </span>instance_id = InstanceId::new();
         <span class="self">self</span>.spawned_instances
             .insert(instance_id, InstanceInfo { entity_map });
-        <span class="kw">let </span>spawned = <span class="self">self
-            </span>.spawned_dynamic_scenes
-            .entry(scene_handle.clone())
-            .or_insert_with(Vec::new);
+        <span class="kw">let </span>spawned = <span class="self">self</span>.spawned_dynamic_scenes.entry(id).or_default();
         spawned.push(instance_id);
         <span class="prelude-val">Ok</span>(())
     }
 
     <span class="kw">fn </span>spawn_dynamic_internal(
         world: <span class="kw-2">&amp;mut </span>World,
-        scene_handle: <span class="kw-2">&amp;</span>Handle&lt;DynamicScene&gt;,
-        entity_map: <span class="kw-2">&amp;mut </span>EntityMap,
+        id: AssetId&lt;DynamicScene&gt;,
+        entity_map: <span class="kw-2">&amp;mut </span>HashMap&lt;Entity, Entity&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(), SceneSpawnError&gt; {
         world.resource_scope(|world, scenes: Mut&lt;Assets&lt;DynamicScene&gt;&gt;| {
-            <span class="kw">let </span>scene =
-                scenes
-                    .get(scene_handle)
-                    .ok_or_else(|| SceneSpawnError::NonExistentScene {
-                        handle: scene_handle.clone_weak(),
-                    })<span class="question-mark">?</span>;
+            <span class="kw">let </span>scene = scenes
+                .get(id)
+                .ok_or(SceneSpawnError::NonExistentScene { id })<span class="question-mark">?</span>;
             scene.write_to_world(world, entity_map)
         })
     }
 
-    <span class="kw">pub fn </span>spawn_sync(
+    <span class="doccomment">/// Immediately spawns a new instance of the provided scene.
+    </span><span class="kw">pub fn </span>spawn_sync(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         world: <span class="kw-2">&amp;mut </span>World,
-        scene_handle: Handle&lt;Scene&gt;,
+        id: AssetId&lt;Scene&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;InstanceId, SceneSpawnError&gt; {
-        <span class="self">self</span>.spawn_sync_internal(world, scene_handle, InstanceId::new())
+        <span class="self">self</span>.spawn_sync_internal(world, id, InstanceId::new())
     }
 
     <span class="kw">fn </span>spawn_sync_internal(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         world: <span class="kw-2">&amp;mut </span>World,
-        scene_handle: Handle&lt;Scene&gt;,
+        id: AssetId&lt;Scene&gt;,
         instance_id: InstanceId,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;InstanceId, SceneSpawnError&gt; {
         world.resource_scope(|world, scenes: Mut&lt;Assets&lt;Scene&gt;&gt;| {
-            <span class="kw">let </span>scene =
-                scenes
-                    .get(<span class="kw-2">&amp;</span>scene_handle)
-                    .ok_or_else(|| SceneSpawnError::NonExistentRealScene {
-                        handle: scene_handle.clone(),
-                    })<span class="question-mark">?</span>;
+            <span class="kw">let </span>scene = scenes
+                .get(id)
+                .ok_or(SceneSpawnError::NonExistentRealScene { id })<span class="question-mark">?</span>;
 
             <span class="kw">let </span>instance_info =
                 scene.write_to_world_with(world, <span class="kw-2">&amp;</span>world.resource::&lt;AppTypeRegistry&gt;().clone())<span class="question-mark">?</span>;
 
             <span class="self">self</span>.spawned_instances.insert(instance_id, instance_info);
-            <span class="kw">let </span>spawned = <span class="self">self
-                </span>.spawned_scenes
-                .entry(scene_handle)
-                .or_insert_with(Vec::new);
+            <span class="kw">let </span>spawned = <span class="self">self</span>.spawned_scenes.entry(id).or_default();
             spawned.push(instance_id);
             <span class="prelude-val">Ok</span>(instance_id)
         })
     }
 
-    <span class="kw">pub fn </span>update_spawned_scenes(
+    <span class="doccomment">/// Iterate through all instances of the provided scenes and update those immediately.
+    ///
+    /// Useful for updating already spawned scene instances after their corresponding scene has been modified.
+    </span><span class="kw">pub fn </span>update_spawned_scenes(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         world: <span class="kw-2">&amp;mut </span>World,
-        scene_handles: <span class="kw-2">&amp;</span>[Handle&lt;DynamicScene&gt;],
+        scene_ids: <span class="kw-2">&amp;</span>[AssetId&lt;DynamicScene&gt;],
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(), SceneSpawnError&gt; {
-        <span class="kw">for </span>scene_handle <span class="kw">in </span>scene_handles {
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(spawned_instances) = <span class="self">self</span>.spawned_dynamic_scenes.get(scene_handle) {
+        <span class="kw">for </span>id <span class="kw">in </span>scene_ids {
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(spawned_instances) = <span class="self">self</span>.spawned_dynamic_scenes.get(id) {
                 <span class="kw">for </span>instance_id <span class="kw">in </span>spawned_instances {
                     <span class="kw">if let </span><span class="prelude-val">Some</span>(instance_info) = <span class="self">self</span>.spawned_instances.get_mut(instance_id) {
-                        <span class="self">Self</span>::spawn_dynamic_internal(
-                            world,
-                            scene_handle,
-                            <span class="kw-2">&amp;mut </span>instance_info.entity_map,
-                        )<span class="question-mark">?</span>;
+                        <span class="self">Self</span>::spawn_dynamic_internal(world, <span class="kw-2">*</span>id, <span class="kw-2">&amp;mut </span>instance_info.entity_map)<span class="question-mark">?</span>;
                     }
                 }
             }
@@ -571,7 +709,8 @@
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="kw">pub fn </span>despawn_queued_scenes(<span class="kw-2">&amp;mut </span><span class="self">self</span>, world: <span class="kw-2">&amp;mut </span>World) -&gt; <span class="prelude-ty">Result</span>&lt;(), SceneSpawnError&gt; {
+    <span class="doccomment">/// Immediately despawns all scenes scheduled for despawn by despawning their instances.
+    </span><span class="kw">pub fn </span>despawn_queued_scenes(<span class="kw-2">&amp;mut </span><span class="self">self</span>, world: <span class="kw-2">&amp;mut </span>World) -&gt; <span class="prelude-ty">Result</span>&lt;(), SceneSpawnError&gt; {
         <span class="kw">let </span>scenes_to_despawn = std::mem::take(<span class="kw-2">&amp;mut </span><span class="self">self</span>.scenes_to_despawn);
 
         <span class="kw">for </span>scene_handle <span class="kw">in </span>scenes_to_despawn {
@@ -580,7 +719,8 @@
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="kw">pub fn </span>despawn_queued_instances(<span class="kw-2">&amp;mut </span><span class="self">self</span>, world: <span class="kw-2">&amp;mut </span>World) {
+    <span class="doccomment">/// Immediately despawns all scene instances scheduled for despawn.
+    </span><span class="kw">pub fn </span>despawn_queued_instances(<span class="kw-2">&amp;mut </span><span class="self">self</span>, world: <span class="kw-2">&amp;mut </span>World) {
         <span class="kw">let </span>instances_to_despawn = std::mem::take(<span class="kw-2">&amp;mut </span><span class="self">self</span>.instances_to_despawn);
 
         <span class="kw">for </span>instance_id <span class="kw">in </span>instances_to_despawn {
@@ -588,25 +728,25 @@
         }
     }
 
-    <span class="kw">pub fn </span>spawn_queued_scenes(<span class="kw-2">&amp;mut </span><span class="self">self</span>, world: <span class="kw-2">&amp;mut </span>World) -&gt; <span class="prelude-ty">Result</span>&lt;(), SceneSpawnError&gt; {
+    <span class="doccomment">/// Immediately spawns all scenes scheduled for spawn.
+    </span><span class="kw">pub fn </span>spawn_queued_scenes(<span class="kw-2">&amp;mut </span><span class="self">self</span>, world: <span class="kw-2">&amp;mut </span>World) -&gt; <span class="prelude-ty">Result</span>&lt;(), SceneSpawnError&gt; {
         <span class="kw">let </span>scenes_to_spawn = std::mem::take(<span class="kw-2">&amp;mut </span><span class="self">self</span>.dynamic_scenes_to_spawn);
 
-        <span class="kw">for </span>(scene_handle, instance_id) <span class="kw">in </span>scenes_to_spawn {
-            <span class="kw">let </span><span class="kw-2">mut </span>entity_map = EntityMap::default();
+        <span class="kw">for </span>(handle, instance_id) <span class="kw">in </span>scenes_to_spawn {
+            <span class="kw">let </span><span class="kw-2">mut </span>entity_map = HashMap::default();
 
-            <span class="kw">match </span><span class="self">Self</span>::spawn_dynamic_internal(world, <span class="kw-2">&amp;</span>scene_handle, <span class="kw-2">&amp;mut </span>entity_map) {
+            <span class="kw">match </span><span class="self">Self</span>::spawn_dynamic_internal(world, handle.id(), <span class="kw-2">&amp;mut </span>entity_map) {
                 <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; {
                     <span class="self">self</span>.spawned_instances
                         .insert(instance_id, InstanceInfo { entity_map });
                     <span class="kw">let </span>spawned = <span class="self">self
                         </span>.spawned_dynamic_scenes
-                        .entry(scene_handle.clone())
+                        .entry(handle.id())
                         .or_insert_with(Vec::new);
                     spawned.push(instance_id);
                 }
                 <span class="prelude-val">Err</span>(SceneSpawnError::NonExistentScene { .. }) =&gt; {
-                    <span class="self">self</span>.dynamic_scenes_to_spawn
-                        .push((scene_handle, instance_id));
+                    <span class="self">self</span>.dynamic_scenes_to_spawn.push((handle, instance_id));
                 }
                 <span class="prelude-val">Err</span>(err) =&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(err),
             }
@@ -615,10 +755,10 @@
         <span class="kw">let </span>scenes_to_spawn = std::mem::take(<span class="kw-2">&amp;mut </span><span class="self">self</span>.scenes_to_spawn);
 
         <span class="kw">for </span>(scene_handle, instance_id) <span class="kw">in </span>scenes_to_spawn {
-            <span class="kw">match </span><span class="self">self</span>.spawn_sync_internal(world, scene_handle, instance_id) {
+            <span class="kw">match </span><span class="self">self</span>.spawn_sync_internal(world, scene_handle.id(), instance_id) {
                 <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; {}
-                <span class="prelude-val">Err</span>(SceneSpawnError::NonExistentRealScene { handle }) =&gt; {
-                    <span class="self">self</span>.scenes_to_spawn.push((handle, instance_id));
+                <span class="prelude-val">Err</span>(SceneSpawnError::NonExistentRealScene { .. }) =&gt; {
+                    <span class="self">self</span>.scenes_to_spawn.push((scene_handle, instance_id));
                 }
                 <span class="prelude-val">Err</span>(err) =&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(err),
             }
@@ -632,7 +772,7 @@
 
         <span class="kw">for </span>(instance_id, parent) <span class="kw">in </span>scenes_with_parent {
             <span class="kw">if let </span><span class="prelude-val">Some</span>(instance) = <span class="self">self</span>.spawned_instances.get(<span class="kw-2">&amp;</span>instance_id) {
-                <span class="kw">for </span>entity <span class="kw">in </span>instance.entity_map.values() {
+                <span class="kw">for </span><span class="kw-2">&amp;</span>entity <span class="kw">in </span>instance.entity_map.values() {
                     <span class="comment">// Add the `Parent` component to the scene root, and update the `Children` component of
                     // the scene parent
                     </span><span class="kw">if </span>!world
@@ -649,6 +789,8 @@
                             child: entity,
                         }
                         .apply(world);
+
+                        world.send_event(SceneInstanceReady { parent });
                     }
                 }
             } <span class="kw">else </span>{
@@ -675,10 +817,12 @@
             .map(|instance| instance.entity_map.values())
             .into_iter()
             .flatten()
+            .copied()
     }
 }
 
-<span class="kw">pub fn </span>scene_spawner_system(world: <span class="kw-2">&amp;mut </span>World) {
+<span class="doccomment">/// System that handles scheduled scene instance spawning and despawning through a [`SceneSpawner`].
+</span><span class="kw">pub fn </span>scene_spawner_system(world: <span class="kw-2">&amp;mut </span>World) {
     world.resource_scope(|world, <span class="kw-2">mut </span>scene_spawner: Mut&lt;SceneSpawner&gt;| {
         <span class="comment">// remove any loading instances where parent is deleted
         </span><span class="kw">let </span><span class="kw-2">mut </span>dead_instances = HashSet::default();
@@ -706,11 +850,11 @@
         <span class="kw">let </span>scene_spawner = <span class="kw-2">&amp;mut *</span>scene_spawner;
         <span class="kw">for </span>event <span class="kw">in </span>scene_spawner
             .scene_asset_event_reader
-            .iter(scene_asset_events)
+            .read(scene_asset_events)
         {
-            <span class="kw">if let </span>AssetEvent::Modified { handle } = event {
-                <span class="kw">if </span>scene_spawner.spawned_dynamic_scenes.contains_key(handle) {
-                    updated_spawned_scenes.push(handle.clone_weak());
+            <span class="kw">if let </span>AssetEvent::Modified { id } = event {
+                <span class="kw">if </span>scene_spawner.spawned_dynamic_scenes.contains_key(id) {
+                    updated_spawned_scenes.push(<span class="kw-2">*</span>id);
                 }
             }
         }

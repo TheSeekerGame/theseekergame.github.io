@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_winit-0.11.3/src/winit_windows.rs`."><title>winit_windows.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bevy_winit" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy-3e956806168b8470/b5b6ea3/crates/bevy_winit/src/winit_windows.rs`."><title>winit_windows.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bevy_winit" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -380,12 +380,11 @@
 <a href="#380" id="380">380</a>
 <a href="#381" id="381">381</a>
 </pre></div><pre class="rust"><code><span class="attr">#![warn(missing_docs)]
-</span><span class="kw">use </span>std::sync::atomic::Ordering;
 
-<span class="kw">use </span>accesskit_winit::Adapter;
+</span><span class="kw">use </span>accesskit_winit::Adapter;
 <span class="kw">use </span>bevy_a11y::{
-    accesskit::{NodeBuilder, NodeClassSet, Role, Tree, TreeUpdate},
-    AccessKitEntityExt, AccessibilityRequested,
+    accesskit::{NodeBuilder, NodeClassSet, NodeId, Role, Tree, TreeUpdate},
+    AccessibilityRequested,
 };
 <span class="kw">use </span>bevy_ecs::entity::Entity;
 
@@ -399,10 +398,11 @@
 
 <span class="kw">use crate</span>::{
     accessibility::{AccessKitAdapters, WinitActionHandler, WinitActionHandlers},
-    converters::{convert_window_level, convert_window_theme},
+    converters::{convert_enabled_buttons, convert_window_level, convert_window_theme},
 };
 
-<span class="doccomment">/// A resource which maps window entities to [`winit`] library windows.
+<span class="doccomment">/// A resource mapping window entities to their `winit`-backend [`Window`](winit::window::Window)
+/// states.
 </span><span class="attr">#[derive(Debug, Default)]
 </span><span class="kw">pub struct </span>WinitWindows {
     <span class="doccomment">/// Stores [`winit`] windows by window identifier.
@@ -411,10 +411,9 @@
     </span><span class="kw">pub </span>entity_to_winit: HashMap&lt;Entity, winit::window::WindowId&gt;,
     <span class="doccomment">/// Maps `winit` window identifiers to entities.
     </span><span class="kw">pub </span>winit_to_entity: HashMap&lt;winit::window::WindowId, Entity&gt;,
-
-    <span class="comment">// Some winit functions, such as `set_window_icon` can only be used from the main thread. If
-    // they are used in another thread, the app will hang. This marker ensures `WinitWindows` is
-    // only ever accessed with bevy&#39;s non-send functions and in NonSend systems.
+    <span class="comment">// Many `winit` window functions (e.g. `set_window_icon`) can only be called on the main thread.
+    // If they&#39;re called on other threads, the program might hang. This marker indicates that this
+    // type is not thread-safe and will be `!Send` and `!Sync`.
     </span>_not_send_sync: core::marker::PhantomData&lt;<span class="kw-2">*const </span>()&gt;,
 }
 
@@ -427,7 +426,7 @@
         window: <span class="kw-2">&amp;</span>Window,
         adapters: <span class="kw-2">&amp;mut </span>AccessKitAdapters,
         handlers: <span class="kw-2">&amp;mut </span>WinitActionHandlers,
-        accessibility_requested: <span class="kw-2">&amp;mut </span>AccessibilityRequested,
+        accessibility_requested: <span class="kw-2">&amp;</span>AccessibilityRequested,
     ) -&gt; <span class="kw-2">&amp;</span>winit::window::Window {
         <span class="kw">let </span><span class="kw-2">mut </span>winit_window_builder = winit::window::WindowBuilder::new();
 
@@ -475,8 +474,10 @@
             .with_window_level(convert_window_level(window.window_level))
             .with_theme(window.window_theme.map(convert_window_theme))
             .with_resizable(window.resizable)
+            .with_enabled_buttons(convert_enabled_buttons(window.enabled_buttons))
             .with_decorations(window.decorations)
-            .with_transparent(window.transparent);
+            .with_transparent(window.transparent)
+            .with_visible(window.visible);
 
         <span class="kw">let </span>constraints = window.resize_constraints.check_constraints();
         <span class="kw">let </span>min_inner_size = LogicalSize {
@@ -530,34 +531,33 @@
         root_builder.set_name(name.into_boxed_str());
         <span class="kw">let </span>root = root_builder.build(<span class="kw-2">&amp;mut </span>NodeClassSet::lock_global());
 
-        <span class="kw">let </span>accesskit_window_id = entity.to_node_id();
+        <span class="kw">let </span>accesskit_window_id = NodeId(entity.to_bits());
         <span class="kw">let </span>handler = WinitActionHandler::default();
-        <span class="kw">let </span>accessibility_requested = (<span class="kw-2">*</span>accessibility_requested).clone();
+        <span class="kw">let </span>accessibility_requested = accessibility_requested.clone();
         <span class="kw">let </span>adapter = Adapter::with_action_handler(
             <span class="kw-2">&amp;</span>winit_window,
             <span class="kw">move </span>|| {
-                accessibility_requested.store(<span class="bool-val">true</span>, Ordering::SeqCst);
+                accessibility_requested.set(<span class="bool-val">true</span>);
                 TreeUpdate {
                     nodes: <span class="macro">vec!</span>[(accesskit_window_id, root)],
                     tree: <span class="prelude-val">Some</span>(Tree::new(accesskit_window_id)),
-                    focus: <span class="prelude-val">None</span>,
+                    focus: accesskit_window_id,
                 }
             },
             Box::new(handler.clone()),
         );
         adapters.insert(entity, adapter);
         handlers.insert(entity, handler);
-        winit_window.set_visible(<span class="bool-val">true</span>);
 
-        <span class="comment">// Do not set the grab mode on window creation if it&#39;s none, this can fail on mobile
+        <span class="comment">// Do not set the grab mode on window creation if it&#39;s none. It can fail on mobile.
         </span><span class="kw">if </span>window.cursor.grab_mode != CursorGrabMode::None {
             attempt_grab(<span class="kw-2">&amp;</span>winit_window, window.cursor.grab_mode);
         }
 
         winit_window.set_cursor_visible(window.cursor.visible);
 
-        <span class="comment">// Do not set the cursor hittest on window creation if it&#39;s false, as it will always fail on some
-        // platforms and log an unfixable warning.
+        <span class="comment">// Do not set the cursor hittest on window creation if it&#39;s false, as it will always fail on
+        // some platforms and log an unfixable warning.
         </span><span class="kw">if </span>!window.cursor.hit_test {
             <span class="kw">if let </span><span class="prelude-val">Err</span>(err) = winit_window.set_cursor_hittest(window.cursor.hit_test) {
                 <span class="macro">warn!</span>(
@@ -611,7 +611,7 @@
     /// This should mostly just be called when the window is closing.
     </span><span class="kw">pub fn </span>remove_window(<span class="kw-2">&amp;mut </span><span class="self">self</span>, entity: Entity) -&gt; <span class="prelude-ty">Option</span>&lt;winit::window::Window&gt; {
         <span class="kw">let </span>winit_id = <span class="self">self</span>.entity_to_winit.remove(<span class="kw-2">&amp;</span>entity)<span class="question-mark">?</span>;
-        <span class="comment">// Don&#39;t remove from winit_to_window_id, to track that we used to know about this winit window
+        <span class="comment">// Don&#39;t remove from `winit_to_window_id` so we know the window used to exist.
         </span><span class="self">self</span>.windows.remove(<span class="kw-2">&amp;</span>winit_id)
     }
 }
@@ -726,8 +726,8 @@
             <span class="kw">if let </span><span class="prelude-val">Some</span>(monitor) = maybe_monitor {
                 <span class="kw">let </span>screen_size = monitor.size();
 
-                <span class="comment">// We use the monitors scale factor here since WindowResolution.scale_factor
-                // is not yet populated when windows are created at plugin setup
+                <span class="comment">// We use the monitors scale factor here since `WindowResolution.scale_factor` is
+                // not yet populated when windows are created during plugin setup.
                 </span><span class="kw">let </span>scale_factor = monitor.scale_factor();
 
                 <span class="comment">// Logical to physical window size

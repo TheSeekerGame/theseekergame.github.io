@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["SyncPlugin"]};
+window.SIDEBAR_ITEMS = {"struct":["PreviousGlobalTransform","SyncConfig","SyncPlugin"]};

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_ui-0.11.3/src/focus.rs`."><title>focus.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bevy_ui" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy-3e956806168b8470/b5b6ea3/crates/bevy_ui/src/focus.rs`."><title>focus.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bevy_ui" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -292,16 +292,7 @@
 <a href="#292" id="292">292</a>
 <a href="#293" id="293">293</a>
 <a href="#294" id="294">294</a>
-<a href="#295" id="295">295</a>
-<a href="#296" id="296">296</a>
-<a href="#297" id="297">297</a>
-<a href="#298" id="298">298</a>
-<a href="#299" id="299">299</a>
-<a href="#300" id="300">300</a>
-<a href="#301" id="301">301</a>
-<a href="#302" id="302">302</a>
 </pre></div><pre class="rust"><code><span class="kw">use crate</span>::{camera_config::UiCameraConfig, CalculatedClip, Node, UiScale, UiStack};
-<span class="kw">use </span>bevy_derive::{Deref, DerefMut};
 <span class="kw">use </span>bevy_ecs::{
     change_detection::DetectChangesMut,
     entity::Entity,
@@ -311,9 +302,9 @@
     system::{Local, Query, Res},
 };
 <span class="kw">use </span>bevy_input::{mouse::MouseButton, touch::Touches, Input};
-<span class="kw">use </span>bevy_math::Vec2;
+<span class="kw">use </span>bevy_math::{Rect, Vec2};
 <span class="kw">use </span>bevy_reflect::{Reflect, ReflectDeserialize, ReflectSerialize};
-<span class="kw">use </span>bevy_render::{camera::NormalizedRenderTarget, prelude::Camera, view::ComputedVisibility};
+<span class="kw">use </span>bevy_render::{camera::NormalizedRenderTarget, prelude::Camera, view::ViewVisibility};
 <span class="kw">use </span>bevy_transform::components::GlobalTransform;
 
 <span class="kw">use </span>bevy_window::{PrimaryWindow, Window};
@@ -326,9 +317,9 @@
 ///
 /// Updated in [`ui_focus_system`].
 ///
-/// If a UI node has both [`Interaction`] and [`ComputedVisibility`] components,
+/// If a UI node has both [`Interaction`] and [`ViewVisibility`] components,
 /// [`Interaction`] will always be [`Interaction::None`]
-/// when [`ComputedVisibility::is_visible()`] is false.
+/// when [`ViewVisibility::get()`] is false.
 /// This ensures that hidden UI nodes are not interactable,
 /// and do not end up stuck in an active state if hidden at the wrong time.
 ///
@@ -359,25 +350,16 @@
 
 <span class="doccomment">/// A component storing the position of the mouse relative to the node, (0., 0.) being the top-left corner and (1., 1.) being the bottom-right
 /// If the mouse is not over the node, the value will go beyond the range of (0., 0.) to (1., 1.)
-/// A None value means that the cursor position is unknown.
+
 ///
 /// It can be used alongside interaction to get the position of the press.
-</span><span class="attr">#[derive(
-    Component,
-    Deref,
-    DerefMut,
-    Copy,
-    Clone,
-    Default,
-    PartialEq,
-    Debug,
-    Reflect,
-    Serialize,
-    Deserialize,
-)]
+</span><span class="attr">#[derive(Component, Copy, Clone, Default, PartialEq, Debug, Reflect, Serialize, Deserialize)]
 #[reflect(Component, Serialize, Deserialize, PartialEq)]
 </span><span class="kw">pub struct </span>RelativeCursorPosition {
-    <span class="doccomment">/// Cursor position relative to size and position of the Node.
+    <span class="doccomment">/// Visible area of the Node relative to the size of the entire Node.
+    </span><span class="kw">pub </span>normalized_visible_node_rect: Rect,
+    <span class="doccomment">/// Cursor position relative to the size and position of the Node.
+    /// A None value indicates that the cursor position is unknown.
     </span><span class="kw">pub </span>normalized: <span class="prelude-ty">Option</span>&lt;Vec2&gt;,
 }
 
@@ -385,7 +367,7 @@
     <span class="doccomment">/// A helper function to check if the mouse is over the node
     </span><span class="kw">pub fn </span>mouse_over(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
         <span class="self">self</span>.normalized
-            .map(|position| (<span class="number">0.0</span>..<span class="number">1.</span>).contains(<span class="kw-2">&amp;</span>position.x) &amp;&amp; (<span class="number">0.0</span>..<span class="number">1.</span>).contains(<span class="kw-2">&amp;</span>position.y))
+            .map(|position| <span class="self">self</span>.normalized_visible_node_rect.contains(position))
             .unwrap_or(<span class="bool-val">false</span>)
     }
 }
@@ -427,12 +409,12 @@
     relative_cursor_position: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span><span class="kw-2">mut </span>RelativeCursorPosition&gt;,
     focus_policy: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>FocusPolicy&gt;,
     calculated_clip: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>CalculatedClip&gt;,
-    computed_visibility: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>ComputedVisibility&gt;,
+    view_visibility: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>ViewVisibility&gt;,
 }
 
 <span class="doccomment">/// The system that sets Interaction for all UI elements based on the mouse cursor activity
 ///
-/// Entities with a hidden [`ComputedVisibility`] are always treated as released.
+/// Entities with a hidden [`ViewVisibility`] are always treated as released.
 </span><span class="attr">#[allow(clippy::too_many_arguments)]
 </span><span class="kw">pub fn </span>ui_focus_system(
     <span class="kw-2">mut </span>state: Local&lt;State&gt;,
@@ -457,7 +439,7 @@
     <span class="kw">let </span>mouse_released =
         mouse_button_input.just_released(MouseButton::Left) || touches_input.any_just_released();
     <span class="kw">if </span>mouse_released {
-        <span class="kw">for </span>node <span class="kw">in </span>node_query.iter_mut() {
+        <span class="kw">for </span>node <span class="kw">in </span><span class="kw-2">&amp;mut </span>node_query {
             <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">mut </span>interaction) = node.interaction {
                 <span class="kw">if </span><span class="kw-2">*</span>interaction == Interaction::Pressed {
                     <span class="kw-2">*</span>interaction = Interaction::None;
@@ -493,7 +475,7 @@
         .or_else(|| touches_input.first_pressed_position())
         <span class="comment">// The cursor position returned by `Window` only takes into account the window scale factor and not `UiScale`.
         // To convert the cursor position to logical UI viewport coordinates we have to divide it by `UiScale`.
-        </span>.map(|cursor_position| cursor_position / ui_scale.scale <span class="kw">as </span>f32);
+        </span>.map(|cursor_position| cursor_position / ui_scale.<span class="number">0 </span><span class="kw">as </span>f32);
 
     <span class="comment">// prepare an iterator that contains all the nodes that have the cursor in their rect,
     // from the top node to the bottom one. this will also reset the interaction to `None`
@@ -506,8 +488,8 @@
         .filter_map(|entity| {
             <span class="kw">if let </span><span class="prelude-val">Ok</span>(node) = node_query.get_mut(<span class="kw-2">*</span>entity) {
                 <span class="comment">// Nodes that are not rendered should not be interactable
-                </span><span class="kw">if let </span><span class="prelude-val">Some</span>(computed_visibility) = node.computed_visibility {
-                    <span class="kw">if </span>!computed_visibility.is_visible() {
+                </span><span class="kw">if let </span><span class="prelude-val">Some</span>(view_visibility) = node.view_visibility {
+                    <span class="kw">if </span>!view_visibility.get() {
                         <span class="comment">// Reset their interaction to None to avoid strange stuck state
                         </span><span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">mut </span>interaction) = node.interaction {
                             <span class="comment">// We cannot simply set the interaction to None, as that will trigger change detection repeatedly
@@ -518,22 +500,24 @@
                     }
                 }
 
-                <span class="kw">let </span>position = node.global_transform.translation();
-                <span class="kw">let </span>ui_position = position.truncate();
-                <span class="kw">let </span>extents = node.node.size() / <span class="number">2.0</span>;
-                <span class="kw">let </span><span class="kw-2">mut </span>min = ui_position - extents;
-                <span class="kw">if let </span><span class="prelude-val">Some</span>(clip) = node.calculated_clip {
-                    min = Vec2::max(min, clip.clip.min);
-                }
+                <span class="kw">let </span>node_rect = node.node.logical_rect(node.global_transform);
+
+                <span class="comment">// Intersect with the calculated clip rect to find the bounds of the visible region of the node
+                </span><span class="kw">let </span>visible_rect = node
+                    .calculated_clip
+                    .map(|clip| node_rect.intersect(clip.clip))
+                    .unwrap_or(node_rect);
 
                 <span class="comment">// The mouse position relative to the node
                 // (0., 0.) is the top-left corner, (1., 1.) is the bottom-right corner
+                // Coordinates are relative to the entire node, not just the visible region.
                 </span><span class="kw">let </span>relative_cursor_position = cursor_position
-                    .map(|cursor_position| (cursor_position - min) / node.node.size());
+                    .map(|cursor_position| (cursor_position - node_rect.min) / node_rect.size());
 
-                <span class="comment">// If the current cursor position is within the bounds of the node, consider it for
+                <span class="comment">// If the current cursor position is within the bounds of the node&#39;s visible area, consider it for
                 // clicking
                 </span><span class="kw">let </span>relative_cursor_position_component = RelativeCursorPosition {
+                    normalized_visible_node_rect: visible_rect.normalize(node_rect),
                     normalized: relative_cursor_position,
                 };
 

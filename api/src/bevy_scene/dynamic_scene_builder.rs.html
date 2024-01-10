@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_scene-0.11.3/src/dynamic_scene_builder.rs`."><title>dynamic_scene_builder.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bevy_scene" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy-3e956806168b8470/b5b6ea3/crates/bevy_scene/src/dynamic_scene_builder.rs`."><title>dynamic_scene_builder.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bevy_scene" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -643,6 +643,17 @@
 <a href="#643" id="643">643</a>
 <a href="#644" id="644">644</a>
 <a href="#645" id="645">645</a>
+<a href="#646" id="646">646</a>
+<a href="#647" id="647">647</a>
+<a href="#648" id="648">648</a>
+<a href="#649" id="649">649</a>
+<a href="#650" id="650">650</a>
+<a href="#651" id="651">651</a>
+<a href="#652" id="652">652</a>
+<a href="#653" id="653">653</a>
+<a href="#654" id="654">654</a>
+<a href="#655" id="655">655</a>
+<a href="#656" id="656">656</a>
 </pre></div><pre class="rust"><code><span class="kw">use crate</span>::{DynamicEntity, DynamicScene, SceneFilter};
 <span class="kw">use </span>bevy_ecs::component::{Component, ComponentId};
 <span class="kw">use </span>bevy_ecs::system::Resource;
@@ -695,9 +706,7 @@
 /// # let mut world = World::default();
 /// # world.init_resource::&lt;AppTypeRegistry&gt;();
 /// # let entity = world.spawn(ComponentA).id();
-/// let mut builder = DynamicSceneBuilder::from_world(&amp;world);
-/// builder.extract_entity(entity);
-/// let dynamic_scene = builder.build();
+/// let dynamic_scene = DynamicSceneBuilder::from_world(&amp;world).extract_entity(entity).build();
 /// ```
 </span><span class="kw">pub struct </span>DynamicSceneBuilder&lt;<span class="lifetime">&#39;w</span>&gt; {
     extracted_resources: BTreeMap&lt;ComponentId, Box&lt;<span class="kw">dyn </span>Reflect&gt;&gt;,
@@ -720,13 +729,15 @@
     }
 
     <span class="doccomment">/// Specify a custom component [`SceneFilter`] to be used with this builder.
-    </span><span class="kw">pub fn </span>with_filter(<span class="kw-2">&amp;mut </span><span class="self">self</span>, filter: SceneFilter) -&gt; <span class="kw-2">&amp;mut </span><span class="self">Self </span>{
+    </span><span class="attr">#[must_use]
+    </span><span class="kw">pub fn </span>with_filter(<span class="kw-2">mut </span><span class="self">self</span>, filter: SceneFilter) -&gt; <span class="self">Self </span>{
         <span class="self">self</span>.component_filter = filter;
         <span class="self">self
     </span>}
 
     <span class="doccomment">/// Specify a custom resource [`SceneFilter`] to be used with this builder.
-    </span><span class="kw">pub fn </span>with_resource_filter(<span class="kw-2">&amp;mut </span><span class="self">self</span>, filter: SceneFilter) -&gt; <span class="kw-2">&amp;mut </span><span class="self">Self </span>{
+    </span><span class="attr">#[must_use]
+    </span><span class="kw">pub fn </span>with_resource_filter(<span class="kw-2">mut </span><span class="self">self</span>, filter: SceneFilter) -&gt; <span class="self">Self </span>{
         <span class="self">self</span>.resource_filter = filter;
         <span class="self">self
     </span>}
@@ -737,8 +748,9 @@
     ///
     /// This is the inverse of [`deny`](Self::deny).
     /// If `T` has already been denied, then it will be removed from the denylist.
-    </span><span class="kw">pub fn </span>allow&lt;T: Component&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span><span class="self">Self </span>{
-        <span class="self">self</span>.component_filter.allow::&lt;T&gt;();
+    </span><span class="attr">#[must_use]
+    </span><span class="kw">pub fn </span>allow&lt;T: Component&gt;(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
+        <span class="self">self</span>.component_filter = <span class="self">self</span>.component_filter.allow::&lt;T&gt;();
         <span class="self">self
     </span>}
 
@@ -748,8 +760,9 @@
     ///
     /// This is the inverse of [`allow`](Self::allow).
     /// If `T` has already been allowed, then it will be removed from the allowlist.
-    </span><span class="kw">pub fn </span>deny&lt;T: Component&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span><span class="self">Self </span>{
-        <span class="self">self</span>.component_filter.deny::&lt;T&gt;();
+    </span><span class="attr">#[must_use]
+    </span><span class="kw">pub fn </span>deny&lt;T: Component&gt;(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
+        <span class="self">self</span>.component_filter = <span class="self">self</span>.component_filter.deny::&lt;T&gt;();
         <span class="self">self
     </span>}
 
@@ -758,7 +771,8 @@
     /// This is useful for resetting the filter so that types may be selectively [denied].
     ///
     /// [denied]: Self::deny
-    </span><span class="kw">pub fn </span>allow_all(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span><span class="self">Self </span>{
+    </span><span class="attr">#[must_use]
+    </span><span class="kw">pub fn </span>allow_all(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
         <span class="self">self</span>.component_filter = SceneFilter::allow_all();
         <span class="self">self
     </span>}
@@ -768,7 +782,8 @@
     /// This is useful for resetting the filter so that types may be selectively [allowed].
     ///
     /// [allowed]: Self::allow
-    </span><span class="kw">pub fn </span>deny_all(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span><span class="self">Self </span>{
+    </span><span class="attr">#[must_use]
+    </span><span class="kw">pub fn </span>deny_all(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
         <span class="self">self</span>.component_filter = SceneFilter::deny_all();
         <span class="self">self
     </span>}
@@ -779,8 +794,9 @@
     ///
     /// This is the inverse of [`deny_resource`](Self::deny_resource).
     /// If `T` has already been denied, then it will be removed from the denylist.
-    </span><span class="kw">pub fn </span>allow_resource&lt;T: Resource&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span><span class="self">Self </span>{
-        <span class="self">self</span>.resource_filter.allow::&lt;T&gt;();
+    </span><span class="attr">#[must_use]
+    </span><span class="kw">pub fn </span>allow_resource&lt;T: Resource&gt;(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
+        <span class="self">self</span>.resource_filter = <span class="self">self</span>.resource_filter.allow::&lt;T&gt;();
         <span class="self">self
     </span>}
 
@@ -790,8 +806,9 @@
     ///
     /// This is the inverse of [`allow_resource`](Self::allow_resource).
     /// If `T` has already been allowed, then it will be removed from the allowlist.
-    </span><span class="kw">pub fn </span>deny_resource&lt;T: Resource&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span><span class="self">Self </span>{
-        <span class="self">self</span>.resource_filter.deny::&lt;T&gt;();
+    </span><span class="attr">#[must_use]
+    </span><span class="kw">pub fn </span>deny_resource&lt;T: Resource&gt;(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
+        <span class="self">self</span>.resource_filter = <span class="self">self</span>.resource_filter.deny::&lt;T&gt;();
         <span class="self">self
     </span>}
 
@@ -800,7 +817,8 @@
     /// This is useful for resetting the filter so that types may be selectively [denied].
     ///
     /// [denied]: Self::deny_resource
-    </span><span class="kw">pub fn </span>allow_all_resources(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span><span class="self">Self </span>{
+    </span><span class="attr">#[must_use]
+    </span><span class="kw">pub fn </span>allow_all_resources(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
         <span class="self">self</span>.resource_filter = SceneFilter::allow_all();
         <span class="self">self
     </span>}
@@ -810,7 +828,8 @@
     /// This is useful for resetting the filter so that types may be selectively [allowed].
     ///
     /// [allowed]: Self::allow_resource
-    </span><span class="kw">pub fn </span>deny_all_resources(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span><span class="self">Self </span>{
+    </span><span class="attr">#[must_use]
+    </span><span class="kw">pub fn </span>deny_all_resources(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
         <span class="self">self</span>.resource_filter = SceneFilter::deny_all();
         <span class="self">self
     </span>}
@@ -819,6 +838,7 @@
     ///
     /// To make sure the dynamic scene doesn&#39;t contain entities without any components, call
     /// [`Self::remove_empty_entities`] before building the scene.
+    </span><span class="attr">#[must_use]
     </span><span class="kw">pub fn </span>build(<span class="self">self</span>) -&gt; DynamicScene {
         DynamicScene {
             resources: <span class="self">self</span>.extracted_resources.into_values().collect(),
@@ -829,14 +849,16 @@
     <span class="doccomment">/// Extract one entity from the builder&#39;s [`World`].
     ///
     /// Re-extracting an entity that was already extracted will have no effect.
-    </span><span class="kw">pub fn </span>extract_entity(<span class="kw-2">&amp;mut </span><span class="self">self</span>, entity: Entity) -&gt; <span class="kw-2">&amp;mut </span><span class="self">Self </span>{
+    </span><span class="attr">#[must_use]
+    </span><span class="kw">pub fn </span>extract_entity(<span class="self">self</span>, entity: Entity) -&gt; <span class="self">Self </span>{
         <span class="self">self</span>.extract_entities(std::iter::once(entity))
     }
 
     <span class="doccomment">/// Despawns all entities with no components.
     ///
     /// These were likely created because none of their components were present in the provided type registry upon extraction.
-    </span><span class="kw">pub fn </span>remove_empty_entities(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span><span class="self">Self </span>{
+    </span><span class="attr">#[must_use]
+    </span><span class="kw">pub fn </span>remove_empty_entities(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
         <span class="self">self</span>.extracted_scene
             .retain(|<span class="kw">_</span>, entity| !entity.components.is_empty());
 
@@ -867,16 +889,17 @@
     /// # let _entity = world.spawn(MyComponent).id();
     /// let mut query = world.query_filtered::&lt;Entity, With&lt;MyComponent&gt;&gt;();
     ///
-    /// let mut builder = DynamicSceneBuilder::from_world(&amp;world);
-    /// builder.extract_entities(query.iter(&amp;world));
-    /// let scene = builder.build();
+    /// let scene = DynamicSceneBuilder::from_world(&amp;world)
+    ///     .extract_entities(query.iter(&amp;world))
+    ///     .build();
     /// ```
     ///
     /// Note that components extracted from queried entities must still pass through the filter if one is set.
     ///
     /// [`allow`]: Self::allow
     /// [`deny`]: Self::deny
-    </span><span class="kw">pub fn </span>extract_entities(<span class="kw-2">&amp;mut </span><span class="self">self</span>, entities: <span class="kw">impl </span>Iterator&lt;Item = Entity&gt;) -&gt; <span class="kw-2">&amp;mut </span><span class="self">Self </span>{
+    </span><span class="attr">#[must_use]
+    </span><span class="kw">pub fn </span>extract_entities(<span class="kw-2">mut </span><span class="self">self</span>, entities: <span class="kw">impl </span>Iterator&lt;Item = Entity&gt;) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span>type_registry = <span class="self">self</span>.original_world.resource::&lt;AppTypeRegistry&gt;().read();
 
         <span class="kw">for </span>entity <span class="kw">in </span>entities {
@@ -940,14 +963,14 @@
     /// # world.init_resource::&lt;AppTypeRegistry&gt;();
     /// world.insert_resource(MyResource);
     ///
-    /// let mut builder = DynamicSceneBuilder::from_world(&amp;world);
-    /// builder.extract_resources();
+    /// let mut builder = DynamicSceneBuilder::from_world(&amp;world).extract_resources();
     /// let scene = builder.build();
     /// ```
     ///
     /// [`allow_resource`]: Self::allow_resource
     /// [`deny_resource`]: Self::deny_resource
-    </span><span class="kw">pub fn </span>extract_resources(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span><span class="self">Self </span>{
+    </span><span class="attr">#[must_use]
+    </span><span class="kw">pub fn </span>extract_resources(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span>type_registry = <span class="self">self</span>.original_world.resource::&lt;AppTypeRegistry&gt;().read();
 
         <span class="kw">for </span>(component_id, <span class="kw">_</span>) <span class="kw">in </span><span class="self">self</span>.original_world.storages().resources.iter() {
@@ -1019,9 +1042,9 @@
 
         <span class="kw">let </span>entity = world.spawn((ComponentA, ComponentB)).id();
 
-        <span class="kw">let </span><span class="kw-2">mut </span>builder = DynamicSceneBuilder::from_world(<span class="kw-2">&amp;</span>world);
-        builder.extract_entity(entity);
-        <span class="kw">let </span>scene = builder.build();
+        <span class="kw">let </span>scene = DynamicSceneBuilder::from_world(<span class="kw-2">&amp;</span>world)
+            .extract_entity(entity)
+            .build();
 
         <span class="macro">assert_eq!</span>(scene.entities.len(), <span class="number">1</span>);
         <span class="macro">assert_eq!</span>(scene.entities[<span class="number">0</span>].entity, entity);
@@ -1039,10 +1062,10 @@
 
         <span class="kw">let </span>entity = world.spawn((ComponentA, ComponentB)).id();
 
-        <span class="kw">let </span><span class="kw-2">mut </span>builder = DynamicSceneBuilder::from_world(<span class="kw-2">&amp;</span>world);
-        builder.extract_entity(entity);
-        builder.extract_entity(entity);
-        <span class="kw">let </span>scene = builder.build();
+        <span class="kw">let </span>scene = DynamicSceneBuilder::from_world(<span class="kw-2">&amp;</span>world)
+            .extract_entity(entity)
+            .extract_entity(entity)
+            .build();
 
         <span class="macro">assert_eq!</span>(scene.entities.len(), <span class="number">1</span>);
         <span class="macro">assert_eq!</span>(scene.entities[<span class="number">0</span>].entity, entity);
@@ -1064,9 +1087,9 @@
 
         <span class="kw">let </span>entity = world.spawn((ComponentA, ComponentB)).id();
 
-        <span class="kw">let </span><span class="kw-2">mut </span>builder = DynamicSceneBuilder::from_world(<span class="kw-2">&amp;</span>world);
-        builder.extract_entity(entity);
-        <span class="kw">let </span>scene = builder.build();
+        <span class="kw">let </span>scene = DynamicSceneBuilder::from_world(<span class="kw-2">&amp;</span>world)
+            .extract_entity(entity)
+            .build();
 
         <span class="macro">assert_eq!</span>(scene.entities.len(), <span class="number">1</span>);
         <span class="macro">assert_eq!</span>(scene.entities[<span class="number">0</span>].entity, entity);
@@ -1086,12 +1109,11 @@
         <span class="kw">let </span>entity_c = world.spawn_empty().id();
         <span class="kw">let </span>entity_d = world.spawn_empty().id();
 
-        <span class="kw">let </span><span class="kw-2">mut </span>builder = DynamicSceneBuilder::from_world(<span class="kw-2">&amp;</span>world);
-
         <span class="comment">// Insert entities out of order
-        </span>builder.extract_entity(entity_b);
-        builder.extract_entities([entity_d, entity_a].into_iter());
-        builder.extract_entity(entity_c);
+        </span><span class="kw">let </span>builder = DynamicSceneBuilder::from_world(<span class="kw-2">&amp;</span>world)
+            .extract_entity(entity_b)
+            .extract_entities([entity_d, entity_a].into_iter())
+            .extract_entity(entity_c);
 
         <span class="kw">let </span><span class="kw-2">mut </span>entities = builder.build().entities.into_iter();
 
@@ -1119,9 +1141,9 @@
         <span class="kw">let </span>_entity_b = world.spawn(ComponentB).id();
 
         <span class="kw">let </span><span class="kw-2">mut </span>query = world.query_filtered::&lt;Entity, With&lt;ComponentA&gt;&gt;();
-        <span class="kw">let </span><span class="kw-2">mut </span>builder = DynamicSceneBuilder::from_world(<span class="kw-2">&amp;</span>world);
-        builder.extract_entities(query.iter(<span class="kw-2">&amp;</span>world));
-        <span class="kw">let </span>scene = builder.build();
+        <span class="kw">let </span>scene = DynamicSceneBuilder::from_world(<span class="kw-2">&amp;</span>world)
+            .extract_entities(query.iter(<span class="kw-2">&amp;</span>world))
+            .build();
 
         <span class="macro">assert_eq!</span>(scene.entities.len(), <span class="number">2</span>);
         <span class="kw">let </span><span class="kw-2">mut </span>scene_entities = <span class="macro">vec!</span>[scene.entities[<span class="number">0</span>].entity, scene.entities[<span class="number">1</span>].entity];
@@ -1140,10 +1162,10 @@
         <span class="kw">let </span>entity_a = world.spawn(ComponentA).id();
         <span class="kw">let </span>entity_b = world.spawn(ComponentB).id();
 
-        <span class="kw">let </span><span class="kw-2">mut </span>builder = DynamicSceneBuilder::from_world(<span class="kw-2">&amp;</span>world);
-        builder.extract_entities([entity_a, entity_b].into_iter());
-        builder.remove_empty_entities();
-        <span class="kw">let </span>scene = builder.build();
+        <span class="kw">let </span>scene = DynamicSceneBuilder::from_world(<span class="kw-2">&amp;</span>world)
+            .extract_entities([entity_a, entity_b].into_iter())
+            .remove_empty_entities()
+            .build();
 
         <span class="macro">assert_eq!</span>(scene.entities.len(), <span class="number">1</span>);
         <span class="macro">assert_eq!</span>(scene.entities[<span class="number">0</span>].entity, entity_a);
@@ -1159,9 +1181,9 @@
 
         world.insert_resource(ResourceA);
 
-        <span class="kw">let </span><span class="kw-2">mut </span>builder = DynamicSceneBuilder::from_world(<span class="kw-2">&amp;</span>world);
-        builder.extract_resources();
-        <span class="kw">let </span>scene = builder.build();
+        <span class="kw">let </span>scene = DynamicSceneBuilder::from_world(<span class="kw-2">&amp;</span>world)
+            .extract_resources()
+            .build();
 
         <span class="macro">assert_eq!</span>(scene.resources.len(), <span class="number">1</span>);
         <span class="macro">assert!</span>(scene.resources[<span class="number">0</span>].represents::&lt;ResourceA&gt;());
@@ -1177,10 +1199,10 @@
 
         world.insert_resource(ResourceA);
 
-        <span class="kw">let </span><span class="kw-2">mut </span>builder = DynamicSceneBuilder::from_world(<span class="kw-2">&amp;</span>world);
-        builder.extract_resources();
-        builder.extract_resources();
-        <span class="kw">let </span>scene = builder.build();
+        <span class="kw">let </span>scene = DynamicSceneBuilder::from_world(<span class="kw-2">&amp;</span>world)
+            .extract_resources()
+            .extract_resources()
+            .build();
 
         <span class="macro">assert_eq!</span>(scene.resources.len(), <span class="number">1</span>);
         <span class="macro">assert!</span>(scene.resources[<span class="number">0</span>].represents::&lt;ResourceA&gt;());
@@ -1202,11 +1224,10 @@
         <span class="kw">let </span>entity_a = world.spawn(ComponentA).id();
         <span class="kw">let </span>entity_b = world.spawn(ComponentB).id();
 
-        <span class="kw">let </span><span class="kw-2">mut </span>builder = DynamicSceneBuilder::from_world(<span class="kw-2">&amp;</span>world);
-        builder
+        <span class="kw">let </span>scene = DynamicSceneBuilder::from_world(<span class="kw-2">&amp;</span>world)
             .allow::&lt;ComponentA&gt;()
-            .extract_entities([entity_a_b, entity_a, entity_b].into_iter());
-        <span class="kw">let </span>scene = builder.build();
+            .extract_entities([entity_a_b, entity_a, entity_b].into_iter())
+            .build();
 
         <span class="macro">assert_eq!</span>(scene.entities.len(), <span class="number">3</span>);
         <span class="macro">assert!</span>(scene.entities[<span class="number">0</span>].components[<span class="number">0</span>].represents::&lt;ComponentA&gt;());
@@ -1230,11 +1251,10 @@
         <span class="kw">let </span>entity_a = world.spawn(ComponentA).id();
         <span class="kw">let </span>entity_b = world.spawn(ComponentB).id();
 
-        <span class="kw">let </span><span class="kw-2">mut </span>builder = DynamicSceneBuilder::from_world(<span class="kw-2">&amp;</span>world);
-        builder
+        <span class="kw">let </span>scene = DynamicSceneBuilder::from_world(<span class="kw-2">&amp;</span>world)
             .deny::&lt;ComponentA&gt;()
-            .extract_entities([entity_a_b, entity_a, entity_b].into_iter());
-        <span class="kw">let </span>scene = builder.build();
+            .extract_entities([entity_a_b, entity_a, entity_b].into_iter())
+            .build();
 
         <span class="macro">assert_eq!</span>(scene.entities.len(), <span class="number">3</span>);
         <span class="macro">assert!</span>(scene.entities[<span class="number">0</span>].components[<span class="number">0</span>].represents::&lt;ComponentB&gt;());
@@ -1257,9 +1277,10 @@
         world.insert_resource(ResourceA);
         world.insert_resource(ResourceB);
 
-        <span class="kw">let </span><span class="kw-2">mut </span>builder = DynamicSceneBuilder::from_world(<span class="kw-2">&amp;</span>world);
-        builder.allow_resource::&lt;ResourceA&gt;().extract_resources();
-        <span class="kw">let </span>scene = builder.build();
+        <span class="kw">let </span>scene = DynamicSceneBuilder::from_world(<span class="kw-2">&amp;</span>world)
+            .allow_resource::&lt;ResourceA&gt;()
+            .extract_resources()
+            .build();
 
         <span class="macro">assert_eq!</span>(scene.resources.len(), <span class="number">1</span>);
         <span class="macro">assert!</span>(scene.resources[<span class="number">0</span>].represents::&lt;ResourceA&gt;());
@@ -1280,9 +1301,10 @@
         world.insert_resource(ResourceA);
         world.insert_resource(ResourceB);
 
-        <span class="kw">let </span><span class="kw-2">mut </span>builder = DynamicSceneBuilder::from_world(<span class="kw-2">&amp;</span>world);
-        builder.deny_resource::&lt;ResourceA&gt;().extract_resources();
-        <span class="kw">let </span>scene = builder.build();
+        <span class="kw">let </span>scene = DynamicSceneBuilder::from_world(<span class="kw-2">&amp;</span>world)
+            .deny_resource::&lt;ResourceA&gt;()
+            .extract_resources()
+            .build();
 
         <span class="macro">assert_eq!</span>(scene.resources.len(), <span class="number">1</span>);
         <span class="macro">assert!</span>(scene.resources[<span class="number">0</span>].represents::&lt;ResourceB&gt;());

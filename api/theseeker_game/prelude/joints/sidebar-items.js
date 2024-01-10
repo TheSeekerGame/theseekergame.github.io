@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["AngleLimit","DistanceLimit","FixedJoint","PrismaticJoint","RevoluteJoint","SphericalJoint"],"trait":["Joint"]};
+window.SIDEBAR_ITEMS = {"struct":["AngleLimit","DistanceJoint","DistanceLimit","FixedJoint","PrismaticJoint","RevoluteJoint","SphericalJoint"],"trait":["Joint"]};

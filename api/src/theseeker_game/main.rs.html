@@ -92,10 +92,6 @@
 <a href="#92" id="92">92</a>
 <a href="#93" id="93">93</a>
 <a href="#94" id="94">94</a>
-<a href="#95" id="95">95</a>
-<a href="#96" id="96">96</a>
-<a href="#97" id="97">97</a>
-<a href="#98" id="98">98</a>
 </pre></div><pre class="rust"><code><span class="doccomment">/// Custom prelude, for stuff we&#39;d like to access all over the codebase
 /// Use in every file. :)
 </span><span class="kw">mod </span>prelude {
@@ -137,11 +133,6 @@
     });
     <span class="kw">let </span>bevy_plugins = bevy_plugins.set(ImagePlugin::default_nearest());
     <span class="attr">#[cfg(feature = <span class="string">&quot;dev&quot;</span>)]
-    </span><span class="kw">let </span>bevy_plugins = bevy_plugins.set(bevy::asset::AssetPlugin {
-        watch_for_changes: bevy::asset::ChangeWatcher::with_delay(Duration::from_millis(<span class="number">250</span>)),
-        ..default()
-    });
-    <span class="attr">#[cfg(feature = <span class="string">&quot;dev&quot;</span>)]
     </span><span class="kw">let </span>bevy_plugins = bevy_plugins.set(bevy::log::LogPlugin {
         filter: <span class="string">&quot;info,wgpu_core=warn,wgpu_hal=warn,iyes_progress=trace,theseeker_game=trace,theseeker_engine=trace&quot;</span>.into(),
         level: bevy::log::Level::TRACE,
@@ -160,8 +151,9 @@
     <span class="comment">// and custom &quot;engine&quot;
     </span>app.add_plugins(theseeker_engine::EnginePlugins);
 
-    app.insert_resource(PhysicsTimestep::FixedOnce(<span class="number">1.0 </span>/ <span class="number">96.0</span>));
+    app.insert_resource(Time::new_with(Physics::fixed_hz(<span class="number">96.0</span>)));
     app.insert_resource(Gravity::default());
+    app.insert_resource(SubstepCount(<span class="number">1</span>));
 
     <span class="comment">// external plugins
     </span>app.add_plugins((

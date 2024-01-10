@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy_asset_loader-61e45c7c12c9b28c/d048c88/bevy_asset_loader/src/loading_state.rs`."><title>loading_state.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bevy_asset_loader" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_asset_loader-0.19.1/src/loading_state.rs`."><title>loading_state.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bevy_asset_loader" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -768,15 +768,68 @@
 <a href="#768" id="768">768</a>
 <a href="#769" id="769">769</a>
 <a href="#770" id="770">770</a>
+<a href="#771" id="771">771</a>
+<a href="#772" id="772">772</a>
+<a href="#773" id="773">773</a>
+<a href="#774" id="774">774</a>
+<a href="#775" id="775">775</a>
+<a href="#776" id="776">776</a>
+<a href="#777" id="777">777</a>
+<a href="#778" id="778">778</a>
+<a href="#779" id="779">779</a>
+<a href="#780" id="780">780</a>
+<a href="#781" id="781">781</a>
+<a href="#782" id="782">782</a>
+<a href="#783" id="783">783</a>
+<a href="#784" id="784">784</a>
+<a href="#785" id="785">785</a>
+<a href="#786" id="786">786</a>
+<a href="#787" id="787">787</a>
+<a href="#788" id="788">788</a>
+<a href="#789" id="789">789</a>
+<a href="#790" id="790">790</a>
+<a href="#791" id="791">791</a>
+<a href="#792" id="792">792</a>
+<a href="#793" id="793">793</a>
+<a href="#794" id="794">794</a>
+<a href="#795" id="795">795</a>
+<a href="#796" id="796">796</a>
+<a href="#797" id="797">797</a>
+<a href="#798" id="798">798</a>
+<a href="#799" id="799">799</a>
+<a href="#800" id="800">800</a>
+<a href="#801" id="801">801</a>
+<a href="#802" id="802">802</a>
+<a href="#803" id="803">803</a>
+<a href="#804" id="804">804</a>
+<a href="#805" id="805">805</a>
+<a href="#806" id="806">806</a>
+<a href="#807" id="807">807</a>
+<a href="#808" id="808">808</a>
+<a href="#809" id="809">809</a>
+<a href="#810" id="810">810</a>
+<a href="#811" id="811">811</a>
+<a href="#812" id="812">812</a>
+<a href="#813" id="813">813</a>
+<a href="#814" id="814">814</a>
+<a href="#815" id="815">815</a>
+<a href="#816" id="816">816</a>
+<a href="#817" id="817">817</a>
+<a href="#818" id="818">818</a>
+<a href="#819" id="819">819</a>
+<a href="#820" id="820">820</a>
 </pre></div><pre class="rust"><code><span class="kw">mod </span>dynamic_asset_systems;
 <span class="kw">mod </span>systems;
 
+<span class="doccomment">/// Configuration of loading states
+</span><span class="kw">pub mod </span>config;
+
 <span class="kw">use </span>bevy::app::{App, Plugin};
-<span class="kw">use </span>bevy::asset::{Asset, HandleUntyped};
+<span class="kw">use </span>bevy::asset::{Asset, UntypedHandle};
 <span class="kw">use </span>bevy::ecs::{
     schedule::{
-        common_conditions::in_state, BoxedScheduleLabel, IntoSystemConfigs, IntoSystemSetConfig,
-        NextState, OnEnter, ScheduleLabel, State, States, SystemSet,
+        common_conditions::in_state, InternedScheduleLabel, IntoSystemConfigs,
+        IntoSystemSetConfigs, NextState, OnEnter, ScheduleLabel, State, States, SystemSet,
     },
     system::Resource,
     world::FromWorld,
@@ -784,20 +837,19 @@
 <span class="kw">use </span>bevy::prelude::{StateTransition, Update};
 <span class="kw">use </span>bevy::utils::{default, HashMap, HashSet};
 <span class="kw">use </span>std::any::TypeId;
-<span class="kw">use </span>std::array::IntoIter;
 <span class="kw">use </span>std::marker::PhantomData;
 
 <span class="kw">use </span><span class="kw">crate</span>::asset_collection::AssetCollection;
 <span class="kw">use </span><span class="kw">crate</span>::dynamic_asset::{DynamicAssetCollection, DynamicAssetCollections};
 
-<span class="kw">use </span>systems::{
-    check_loading_collection, finish_loading_state, init_resource, initialize_loading_state,
-    reset_loading_state, resume_to_finalize, start_loading_collection,
-};
-
+<span class="kw">use </span>config::{ConfigureLoadingState, LoadingStateConfig};
 <span class="kw">use </span>dynamic_asset_systems::{
     check_dynamic_asset_collections, load_dynamic_asset_collections,
     resume_to_loading_asset_collections,
+};
+<span class="kw">use </span>systems::{
+    check_loading_collection, finish_loading_state, init_resource, initialize_loading_state,
+    reset_loading_state, resume_to_finalize, start_loading_collection,
 };
 
 <span class="attr">#[cfg(feature = <span class="string">&quot;standard_dynamic_assets&quot;</span>)]
@@ -826,9 +878,9 @@
 /// #       .init_resource::&lt;iyes_progress::ProgressCounter&gt;()
 ///         .add_loading_state(LoadingState::new(GameState::Loading)
 ///             .continue_to_state(GameState::Menu)
+///             .load_collection::&lt;AudioAssets&gt;()
+///             .load_collection::&lt;ImageAssets&gt;()
 ///         )
-///         .add_collection_to_loading_state::&lt;_, AudioAssets&gt;(GameState::Loading)
-///         .add_collection_to_loading_state::&lt;_, ImageAssets&gt;(GameState::Loading)
 ///         .add_systems(OnEnter(GameState::Menu), play_audio)
 /// #       .set_runner(|mut app| app.update())
 ///         .run();
@@ -862,7 +914,7 @@
 ///     pub tree: Handle&lt;Image&gt;,
 /// }
 /// ```
-</span><span class="kw">pub struct </span>LoadingState&lt;State&gt; {
+</span><span class="kw">pub struct </span>LoadingState&lt;State: States&gt; {
     next_state: <span class="prelude-ty">Option</span>&lt;State&gt;,
     failure_state: <span class="prelude-ty">Option</span>&lt;State&gt;,
     loading_state: State,
@@ -870,6 +922,7 @@
 
     <span class="attr">#[cfg(feature = <span class="string">&quot;standard_dynamic_assets&quot;</span>)]
     </span>standard_dynamic_asset_collection_file_endings: Vec&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str&gt;,
+    config: LoadingStateConfig&lt;State&gt;,
 }
 
 <span class="kw">impl</span>&lt;S&gt; LoadingState&lt;S&gt;
@@ -892,9 +945,9 @@
     ///         .add_loading_state(
     ///           LoadingState::new(GameState::Loading)
     ///             .continue_to_state(GameState::Menu)
+    ///             .load_collection::&lt;AudioAssets&gt;()
+    ///             .load_collection::&lt;ImageAssets&gt;()
     ///         )
-    ///         .add_collection_to_loading_state::&lt;_, AudioAssets&gt;(GameState::Loading)
-    ///         .add_collection_to_loading_state::&lt;_, ImageAssets&gt;(GameState::Loading)
     /// #       .set_runner(|mut app| app.update())
     /// #       .run();
     /// # }
@@ -922,14 +975,15 @@
         <span class="self">Self </span>{
             next_state: <span class="prelude-val">None</span>,
             failure_state: <span class="prelude-val">None</span>,
-            loading_state: load,
+            loading_state: load.clone(),
             dynamic_assets: HashMap::default(),
             <span class="attr">#[cfg(feature = <span class="string">&quot;standard_dynamic_assets&quot;</span>)]
             </span>standard_dynamic_asset_collection_file_endings: <span class="macro">vec!</span>[<span class="string">&quot;assets.ron&quot;</span>],
+            config: LoadingStateConfig::new(load),
         }
     }
 
-    <span class="doccomment">/// The [`LoadingState`] will set this Bevy [`State`](State) after all asset collections
+    <span class="doccomment">/// The [`LoadingState`] will set this Bevy [`State`] after all asset collections
     /// are loaded and inserted as resources.
     /// ```edition2021
     /// # use bevy_asset_loader::prelude::*;
@@ -943,9 +997,9 @@
     ///         .add_loading_state(
     ///           LoadingState::new(GameState::Loading)
     ///             .continue_to_state(GameState::Menu)
+    ///             .load_collection::&lt;AudioAssets&gt;()
+    ///             .load_collection::&lt;ImageAssets&gt;()
     ///         )
-    ///         .add_collection_to_loading_state::&lt;_, AudioAssets&gt;(GameState::Loading)
-    ///         .add_collection_to_loading_state::&lt;_, ImageAssets&gt;(GameState::Loading)
     /// #       .set_runner(|mut app| app.update())
     /// #       .run();
     /// # }
@@ -975,7 +1029,7 @@
         <span class="self">self
     </span>}
 
-    <span class="doccomment">/// The [`LoadingState`] will set this Bevy [`State`](State) if an asset fails to load.
+    <span class="doccomment">/// The [`LoadingState`] will set this Bevy [`State`] if an asset fails to load.
     /// ```edition2021
     /// # use bevy_asset_loader::prelude::*;
     /// # use bevy::prelude::*;
@@ -989,8 +1043,8 @@
     ///           LoadingState::new(GameState::Loading)
     ///             .continue_to_state(GameState::Menu)
     ///             .on_failure_continue_to_state(GameState::Error)
+    ///             .load_collection::&lt;MyAssets&gt;()
     ///         )
-    ///         .add_collection_to_loading_state::&lt;_, MyAssets&gt;(GameState::Loading)
     /// #       .set_runner(|mut app| app.update())
     /// #       .run();
     /// # }
@@ -1061,9 +1115,9 @@
     ///         .add_loading_state(
     ///           LoadingState::new(GameState::Loading)
     ///             .continue_to_state(GameState::Menu)
+    ///             .load_collection::&lt;AudioAssets&gt;()
+    ///             .load_collection::&lt;ImageAssets&gt;()
     ///         )
-    ///         .add_collection_to_loading_state::&lt;_, AudioAssets&gt;(GameState::Loading)
-    ///         .add_collection_to_loading_state::&lt;_, ImageAssets&gt;(GameState::Loading)
     /// #       .set_runner(|mut app| app.update())
     /// #       .run();
     /// # }
@@ -1156,38 +1210,40 @@
                 OnEnter(<span class="self">self</span>.loading_state.clone()),
                 reset_loading_state::&lt;S&gt;,
             )
-            .configure_set(Update, LoadingStateSet(<span class="self">self</span>.loading_state.clone()));
+            .configure_sets(Update, LoadingStateSet(<span class="self">self</span>.loading_state.clone()));
             <span class="kw">let </span><span class="kw-2">mut </span>loading_state_schedule = app.get_schedule_mut(loading_state_schedule).unwrap();
             loading_state_schedule
-                .configure_set(
+                .configure_sets(
                     InternalLoadingStateSet::Initialize
                         .run_if(in_state(InternalLoadingState::&lt;S&gt;::Initialize)),
                 )
-                .configure_set(
+                .configure_sets(
                     InternalLoadingStateSet::CheckDynamicAssetCollections.run_if(in_state(
                         InternalLoadingState::&lt;S&gt;::LoadingDynamicAssetCollections,
                     )),
                 )
-                .configure_set(
+                .configure_sets(
                     InternalLoadingStateSet::ResumeDynamicAssetCollections
                         .after(InternalLoadingStateSet::CheckDynamicAssetCollections)
                         .run_if(in_state(
                             InternalLoadingState::&lt;S&gt;::LoadingDynamicAssetCollections,
                         )),
                 )
-                .configure_set(
+                .configure_sets(
                     InternalLoadingStateSet::CheckAssets
                         .run_if(in_state(InternalLoadingState::&lt;S&gt;::LoadingAssets)),
                 )
-                .configure_set(
+                .configure_sets(
                     InternalLoadingStateSet::Finalize
                         .run_if(in_state(InternalLoadingState::&lt;S&gt;::Finalize)),
                 );
 
             <span class="attr">#[cfg(feature = <span class="string">&quot;standard_dynamic_assets&quot;</span>)]
-            </span>app.register_dynamic_asset_collection::&lt;<span class="kw">_</span>, StandardDynamicAssetCollection&gt;(
-                <span class="self">self</span>.loading_state.clone(),
-            );
+            </span>{
+                <span class="self">self</span>.config = <span class="self">self
+                    </span>.config
+                    .register_dynamic_asset_collection::&lt;StandardDynamicAssetCollection&gt;();
+            }
 
             <span class="attr">#[cfg(feature = <span class="string">&quot;progress_tracking&quot;</span>)]
             </span>app.add_systems(
@@ -1211,12 +1267,40 @@
         <span class="kw">for </span>(key, asset) <span class="kw">in </span><span class="self">self</span>.dynamic_assets {
             dynamic_assets.register_asset(key, asset);
         }
+        <span class="self">self</span>.config.build(app);
     }
 }
 
-<span class="doccomment">///  Systems in this set check the loading state of assets and will change the [`InternalLoadingState`] accordingly.
+<span class="kw">impl</span>&lt;S: States&gt; ConfigureLoadingState <span class="kw">for </span>LoadingState&lt;S&gt; {
+    <span class="kw">fn </span>load_collection&lt;A: AssetCollection&gt;(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
+        <span class="self">self</span>.config = <span class="self">self</span>.config.load_collection::&lt;A&gt;();
+
+        <span class="self">self
+    </span>}
+
+    <span class="kw">fn </span>init_resource&lt;R: Resource + FromWorld&gt;(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
+        <span class="self">self</span>.config = <span class="self">self</span>.config.init_resource::&lt;R&gt;();
+
+        <span class="self">self
+    </span>}
+
+    <span class="kw">fn </span>register_dynamic_asset_collection&lt;C: DynamicAssetCollection + Asset&gt;(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
+        <span class="self">self</span>.config = <span class="self">self</span>.config.register_dynamic_asset_collection::&lt;C&gt;();
+
+        <span class="self">self
+    </span>}
+
+    <span class="kw">fn </span>with_dynamic_assets_file&lt;C: DynamicAssetCollection + Asset&gt;(<span class="kw-2">mut </span><span class="self">self</span>, file: <span class="kw-2">&amp;</span>str) -&gt; <span class="self">Self </span>{
+        <span class="self">self</span>.config
+            .with_dynamic_assets_type_id(file, TypeId::of::&lt;C&gt;());
+
+        <span class="self">self
+    </span>}
+}
+
+<span class="doccomment">///  Systems in this set check the loading state of assets.
 </span><span class="attr">#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, SystemSet)]
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>LoadingStateSet&lt;S: States&gt;(S);
+</span><span class="kw">pub struct </span>LoadingStateSet&lt;S: States&gt;(<span class="kw">pub </span>S);
 
 <span class="attr">#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, SystemSet)]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">enum </span>InternalLoadingStateSet {
@@ -1232,7 +1316,7 @@
 <span class="attr">#[derive(ScheduleLabel, Clone, Debug, PartialEq, Eq, Hash)]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>LoadingStateSchedule&lt;S: States&gt;(<span class="kw">pub </span>S);
 
-<span class="attr">#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
+<span class="attr">#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default, States)]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">enum </span>InternalLoadingState&lt;S: States&gt; {
     <span class="doccomment">/// Starting point. Here it will be decided whether or not dynamic asset collections need to be loaded.
     </span><span class="attr">#[default]
@@ -1247,26 +1331,11 @@
     </span>Done(PhantomData&lt;S&gt;),
 }
 
-<span class="kw">impl</span>&lt;S: States&gt; States <span class="kw">for </span>InternalLoadingState&lt;S&gt; {
-    <span class="kw">type </span>Iter = IntoIter&lt;<span class="self">Self</span>, <span class="number">5</span>&gt;;
-
-    <span class="kw">fn </span>variants() -&gt; <span class="self">Self</span>::Iter {
-        [
-            <span class="self">Self</span>::Initialize,
-            <span class="self">Self</span>::LoadingDynamicAssetCollections,
-            <span class="self">Self</span>::LoadingAssets,
-            <span class="self">Self</span>::Finalize,
-            <span class="self">Self</span>::Done(PhantomData::default()),
-        ]
-        .into_iter()
-    }
-}
-
 <span class="doccomment">/// This resource is used for handles from asset collections and loading dynamic asset collection files.
 /// The generic will be the [`AssetCollection`] type for the first and the [`DynamicAssetCollection`] for the second.
 </span><span class="attr">#[derive(Resource)]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>LoadingAssetHandles&lt;T&gt; {
-    handles: Vec&lt;HandleUntyped&gt;,
+    handles: Vec&lt;UntypedHandle&gt;,
     marker: PhantomData&lt;T&gt;,
 }
 
@@ -1316,7 +1385,7 @@
 </span><span class="attr">#[derive(Resource)]
 </span><span class="kw">pub struct </span>LoadingStateSchedules&lt;State: States&gt; {
     <span class="doccomment">/// Map to store a schedule per loading state
-    </span><span class="kw">pub </span>schedules: HashMap&lt;State, BoxedScheduleLabel&gt;,
+    </span><span class="kw">pub </span>schedules: HashMap&lt;State, InternedScheduleLabel&gt;,
 }
 
 <span class="kw">impl</span>&lt;State: States&gt; Default <span class="kw">for </span>LoadingStateSchedules&lt;State&gt; {
@@ -1331,6 +1400,12 @@
 </span><span class="kw">pub trait </span>LoadingStateAppExt {
     <span class="doccomment">/// Add a loading state to your app
     </span><span class="kw">fn </span>add_loading_state&lt;S: States&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, loading_state: LoadingState&lt;S&gt;) -&gt; <span class="kw-2">&amp;mut </span><span class="self">Self</span>;
+
+    <span class="doccomment">/// Configure an existing loading state with, for example, additional asset collections.
+    </span><span class="kw">fn </span>configure_loading_state&lt;S: States&gt;(
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+        configuration: LoadingStateConfig&lt;S&gt;,
+    ) -&gt; <span class="kw-2">&amp;mut </span><span class="self">Self</span>;
 
     <span class="doccomment">/// Add an [`AssetCollection`] to the [`LoadingState`]
     ///
@@ -1347,9 +1422,9 @@
     ///         .add_loading_state(
     ///           LoadingState::new(GameState::Loading)
     ///             .continue_to_state(GameState::Menu)
+    ///             .load_collection::&lt;AudioAssets&gt;()
+    ///             .load_collection::&lt;ImageAssets&gt;()
     ///         )
-    ///         .add_collection_to_loading_state::&lt;_, AudioAssets&gt;(GameState::Loading)
-    ///         .add_collection_to_loading_state::&lt;_, ImageAssets&gt;(GameState::Loading)
     /// #       .set_runner(|mut app| app.update())
     /// #       .run();
     /// # }
@@ -1372,6 +1447,10 @@
     /// #     pub tree: Handle&lt;Image&gt;,
     /// # }
     /// ```
+    </span><span class="attr">#[deprecated(
+        since = <span class="string">&quot;0.19.0&quot;</span>,
+        note = <span class="string">&quot;Use `LoadingStateConfig::load_collection` or `LoadingState::load_collection` instead.&quot;
+    </span>)]
     </span><span class="kw">fn </span>add_collection_to_loading_state&lt;S: States, A: AssetCollection&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         loading_state: S,
@@ -1381,6 +1460,10 @@
     ///
     /// You do not need to call this for [`StandardDynamicAssetCollection`], only if you want to use
     /// your own dynamic asset collection types.
+    </span><span class="attr">#[deprecated(
+        since = <span class="string">&quot;0.19.0&quot;</span>,
+        note = <span class="string">&quot;Use `LoadingStateConfig::register_dynamic_asset_collection` or `LoadingState::register_dynamic_asset_collection` instead.&quot;
+    </span>)]
     </span><span class="kw">fn </span>register_dynamic_asset_collection&lt;S: States, C: DynamicAssetCollection + Asset&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         loading_state: S,
@@ -1394,6 +1477,10 @@
     ///
     /// You need to register a loader for your asset type yourself.
     /// If you want to see some code, take a look at the `custom_dynamic_assets` example.
+    </span><span class="attr">#[deprecated(
+        since = <span class="string">&quot;0.19.0&quot;</span>,
+        note = <span class="string">&quot;Use `LoadingState::with_dynamic_assets_file` or `LoadingStateConfig::with_dynamic_assets_file` instead.&quot;
+    </span>)]
     </span><span class="kw">fn </span>add_dynamic_collection_to_loading_state&lt;S: States, C: DynamicAssetCollection + Asset&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         loading_state: S,
@@ -1413,9 +1500,9 @@
     ///         .add_loading_state(
     ///           LoadingState::new(GameState::Loading)
     ///             .continue_to_state(GameState::Menu)
+    ///             .load_collection::&lt;TextureForAtlas&gt;()
+    ///             .init_resource::&lt;TextureAtlasFromWorld&gt;()
     ///         )
-    ///         .add_collection_to_loading_state::&lt;_, TextureForAtlas&gt;(GameState::Loading)
-    ///         .init_resource_after_loading_state::&lt;_, TextureAtlasFromWorld&gt;(GameState::Loading)
     /// #       .set_runner(|mut app| app.update())
     /// #       .run();
     /// # }
@@ -1445,6 +1532,10 @@
     /// #     pub array: Handle&lt;Image&gt;,
     /// # }
     /// ```
+    </span><span class="attr">#[deprecated(
+        since = <span class="string">&quot;0.19.0&quot;</span>,
+        note = <span class="string">&quot;Use `LoadingState::init_resource` or `LoadingStateConfig::init_resource` instead.&quot;
+    </span>)]
     </span><span class="kw">fn </span>init_resource_after_loading_state&lt;S: States, A: Resource + FromWorld&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         loading_state: S,
@@ -1454,6 +1545,15 @@
 <span class="kw">impl </span>LoadingStateAppExt <span class="kw">for </span>App {
     <span class="kw">fn </span>add_loading_state&lt;S: States&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, loading_state: LoadingState&lt;S&gt;) -&gt; <span class="kw-2">&amp;mut </span><span class="self">Self </span>{
         loading_state.build(<span class="self">self</span>);
+
+        <span class="self">self
+    </span>}
+
+    <span class="kw">fn </span>configure_loading_state&lt;S: States&gt;(
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+        configuration: LoadingStateConfig&lt;S&gt;,
+    ) -&gt; <span class="kw-2">&amp;mut </span><span class="self">Self </span>{
+        configuration.build(<span class="self">self</span>);
 
         <span class="self">self
     </span>}
@@ -1525,7 +1625,7 @@
 {
     <span class="kw">fn </span>new() -&gt; <span class="self">Self </span>{
         InternalAssetLoaderPlugin {
-            _state_marker: PhantomData::default(),
+            _state_marker: PhantomData,
         }
     }
 }

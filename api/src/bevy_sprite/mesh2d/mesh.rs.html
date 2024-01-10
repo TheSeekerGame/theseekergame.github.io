@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_sprite-0.11.3/src/mesh2d/mesh.rs`."><title>mesh.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_sprite" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy-3e956806168b8470/b5b6ea3/crates/bevy_sprite/src/mesh2d/mesh.rs`."><title>mesh.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_sprite" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -618,18 +618,140 @@
 <a href="#618" id="618">618</a>
 <a href="#619" id="619">619</a>
 <a href="#620" id="620">620</a>
+<a href="#621" id="621">621</a>
+<a href="#622" id="622">622</a>
+<a href="#623" id="623">623</a>
+<a href="#624" id="624">624</a>
+<a href="#625" id="625">625</a>
+<a href="#626" id="626">626</a>
+<a href="#627" id="627">627</a>
+<a href="#628" id="628">628</a>
+<a href="#629" id="629">629</a>
+<a href="#630" id="630">630</a>
+<a href="#631" id="631">631</a>
+<a href="#632" id="632">632</a>
+<a href="#633" id="633">633</a>
+<a href="#634" id="634">634</a>
+<a href="#635" id="635">635</a>
+<a href="#636" id="636">636</a>
+<a href="#637" id="637">637</a>
+<a href="#638" id="638">638</a>
+<a href="#639" id="639">639</a>
+<a href="#640" id="640">640</a>
+<a href="#641" id="641">641</a>
+<a href="#642" id="642">642</a>
+<a href="#643" id="643">643</a>
+<a href="#644" id="644">644</a>
+<a href="#645" id="645">645</a>
+<a href="#646" id="646">646</a>
+<a href="#647" id="647">647</a>
+<a href="#648" id="648">648</a>
+<a href="#649" id="649">649</a>
+<a href="#650" id="650">650</a>
+<a href="#651" id="651">651</a>
+<a href="#652" id="652">652</a>
+<a href="#653" id="653">653</a>
+<a href="#654" id="654">654</a>
+<a href="#655" id="655">655</a>
+<a href="#656" id="656">656</a>
+<a href="#657" id="657">657</a>
+<a href="#658" id="658">658</a>
+<a href="#659" id="659">659</a>
+<a href="#660" id="660">660</a>
+<a href="#661" id="661">661</a>
+<a href="#662" id="662">662</a>
+<a href="#663" id="663">663</a>
+<a href="#664" id="664">664</a>
+<a href="#665" id="665">665</a>
+<a href="#666" id="666">666</a>
+<a href="#667" id="667">667</a>
+<a href="#668" id="668">668</a>
+<a href="#669" id="669">669</a>
+<a href="#670" id="670">670</a>
+<a href="#671" id="671">671</a>
+<a href="#672" id="672">672</a>
+<a href="#673" id="673">673</a>
+<a href="#674" id="674">674</a>
+<a href="#675" id="675">675</a>
+<a href="#676" id="676">676</a>
+<a href="#677" id="677">677</a>
+<a href="#678" id="678">678</a>
+<a href="#679" id="679">679</a>
+<a href="#680" id="680">680</a>
+<a href="#681" id="681">681</a>
+<a href="#682" id="682">682</a>
+<a href="#683" id="683">683</a>
+<a href="#684" id="684">684</a>
+<a href="#685" id="685">685</a>
+<a href="#686" id="686">686</a>
+<a href="#687" id="687">687</a>
+<a href="#688" id="688">688</a>
+<a href="#689" id="689">689</a>
+<a href="#690" id="690">690</a>
+<a href="#691" id="691">691</a>
+<a href="#692" id="692">692</a>
+<a href="#693" id="693">693</a>
+<a href="#694" id="694">694</a>
+<a href="#695" id="695">695</a>
+<a href="#696" id="696">696</a>
+<a href="#697" id="697">697</a>
+<a href="#698" id="698">698</a>
+<a href="#699" id="699">699</a>
+<a href="#700" id="700">700</a>
+<a href="#701" id="701">701</a>
+<a href="#702" id="702">702</a>
+<a href="#703" id="703">703</a>
+<a href="#704" id="704">704</a>
+<a href="#705" id="705">705</a>
+<a href="#706" id="706">706</a>
+<a href="#707" id="707">707</a>
+<a href="#708" id="708">708</a>
+<a href="#709" id="709">709</a>
+<a href="#710" id="710">710</a>
+<a href="#711" id="711">711</a>
+<a href="#712" id="712">712</a>
+<a href="#713" id="713">713</a>
+<a href="#714" id="714">714</a>
+<a href="#715" id="715">715</a>
+<a href="#716" id="716">716</a>
+<a href="#717" id="717">717</a>
+<a href="#718" id="718">718</a>
+<a href="#719" id="719">719</a>
+<a href="#720" id="720">720</a>
+<a href="#721" id="721">721</a>
+<a href="#722" id="722">722</a>
+<a href="#723" id="723">723</a>
+<a href="#724" id="724">724</a>
+<a href="#725" id="725">725</a>
+<a href="#726" id="726">726</a>
+<a href="#727" id="727">727</a>
+<a href="#728" id="728">728</a>
+<a href="#729" id="729">729</a>
+<a href="#730" id="730">730</a>
+<a href="#731" id="731">731</a>
+<a href="#732" id="732">732</a>
+<a href="#733" id="733">733</a>
+<a href="#734" id="734">734</a>
+<a href="#735" id="735">735</a>
+<a href="#736" id="736">736</a>
+<a href="#737" id="737">737</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>bevy_app::Plugin;
-<span class="kw">use </span>bevy_asset::{load_internal_asset, Handle, HandleUntyped};
+<span class="kw">use </span>bevy_asset::{load_internal_asset, AssetId, Handle};
 
+<span class="kw">use </span>bevy_core_pipeline::core_2d::Transparent2d;
+<span class="kw">use </span>bevy_derive::{Deref, DerefMut};
 <span class="kw">use </span>bevy_ecs::{
     prelude::<span class="kw-2">*</span>,
-    query::ROQueryItem,
+    query::{QueryItem, ROQueryItem},
     system::{lifetimeless::<span class="kw-2">*</span>, SystemParamItem, SystemState},
 };
-<span class="kw">use </span>bevy_math::{Mat4, Vec2};
-<span class="kw">use </span>bevy_reflect::{Reflect, TypeUuid};
+<span class="kw">use </span>bevy_math::{Affine3, Vec4};
+<span class="kw">use </span>bevy_reflect::Reflect;
 <span class="kw">use </span>bevy_render::{
-    extract_component::{ComponentUniforms, DynamicUniformIndex, UniformComponentPlugin},
+    batching::{
+        batch_and_prepare_render_phase, write_batched_instance_buffer, GetBatchData,
+        NoAutomaticBatching,
+    },
     globals::{GlobalsBuffer, GlobalsUniform},
     mesh::{GpuBufferInfo, Mesh, MeshVertexBufferLayout},
     render_asset::RenderAssets,
@@ -640,16 +762,19 @@
         BevyDefault, DefaultImageSampler, GpuImage, Image, ImageSampler, TextureFormatPixelInfo,
     },
     view::{
-        ComputedVisibility, ExtractedView, ViewTarget, ViewUniform, ViewUniformOffset, ViewUniforms,
+        ExtractedView, ViewTarget, ViewUniform, ViewUniformOffset, ViewUniforms, ViewVisibility,
     },
     Extract, ExtractSchedule, Render, RenderApp, RenderSet,
 };
 <span class="kw">use </span>bevy_transform::components::GlobalTransform;
+<span class="kw">use </span>bevy_utils::EntityHashMap;
+
+<span class="kw">use </span><span class="kw">crate</span>::Material2dBindGroupId;
 
 <span class="doccomment">/// Component for rendering with meshes in the 2d pipeline, usually with a [2d material](crate::Material2d) such as [`ColorMaterial`](crate::ColorMaterial).
 ///
 /// It wraps a [`Handle&lt;Mesh&gt;`] to differentiate from the 3d pipelines which use the handles directly as components
-</span><span class="attr">#[derive(Default, Clone, Component, Debug, Reflect)]
+</span><span class="attr">#[derive(Default, Clone, Component, Debug, Reflect, PartialEq, Eq)]
 #[reflect(Component)]
 </span><span class="kw">pub struct </span>Mesh2dHandle(<span class="kw">pub </span>Handle&lt;Mesh&gt;);
 
@@ -662,20 +787,13 @@
 <span class="attr">#[derive(Default)]
 </span><span class="kw">pub struct </span>Mesh2dRenderPlugin;
 
-<span class="kw">pub const </span>MESH2D_VERTEX_OUTPUT: HandleUntyped =
-    HandleUntyped::weak_from_u64(Shader::TYPE_UUID, <span class="number">7646632476603252194</span>);
-<span class="kw">pub const </span>MESH2D_VIEW_TYPES_HANDLE: HandleUntyped =
-    HandleUntyped::weak_from_u64(Shader::TYPE_UUID, <span class="number">12677582416765805110</span>);
-<span class="kw">pub const </span>MESH2D_VIEW_BINDINGS_HANDLE: HandleUntyped =
-    HandleUntyped::weak_from_u64(Shader::TYPE_UUID, <span class="number">6901431444735842434</span>);
-<span class="kw">pub const </span>MESH2D_TYPES_HANDLE: HandleUntyped =
-    HandleUntyped::weak_from_u64(Shader::TYPE_UUID, <span class="number">8994673400261890424</span>);
-<span class="kw">pub const </span>MESH2D_BINDINGS_HANDLE: HandleUntyped =
-    HandleUntyped::weak_from_u64(Shader::TYPE_UUID, <span class="number">8983617858458862856</span>);
-<span class="kw">pub const </span>MESH2D_FUNCTIONS_HANDLE: HandleUntyped =
-    HandleUntyped::weak_from_u64(Shader::TYPE_UUID, <span class="number">4976379308250389413</span>);
-<span class="kw">pub const </span>MESH2D_SHADER_HANDLE: HandleUntyped =
-    HandleUntyped::weak_from_u64(Shader::TYPE_UUID, <span class="number">2971387252468633715</span>);
+<span class="kw">pub const </span>MESH2D_VERTEX_OUTPUT: Handle&lt;Shader&gt; = Handle::weak_from_u128(<span class="number">7646632476603252194</span>);
+<span class="kw">pub const </span>MESH2D_VIEW_TYPES_HANDLE: Handle&lt;Shader&gt; = Handle::weak_from_u128(<span class="number">12677582416765805110</span>);
+<span class="kw">pub const </span>MESH2D_VIEW_BINDINGS_HANDLE: Handle&lt;Shader&gt; = Handle::weak_from_u128(<span class="number">6901431444735842434</span>);
+<span class="kw">pub const </span>MESH2D_TYPES_HANDLE: Handle&lt;Shader&gt; = Handle::weak_from_u128(<span class="number">8994673400261890424</span>);
+<span class="kw">pub const </span>MESH2D_BINDINGS_HANDLE: Handle&lt;Shader&gt; = Handle::weak_from_u128(<span class="number">8983617858458862856</span>);
+<span class="kw">pub const </span>MESH2D_FUNCTIONS_HANDLE: Handle&lt;Shader&gt; = Handle::weak_from_u128(<span class="number">4976379308250389413</span>);
+<span class="kw">pub const </span>MESH2D_SHADER_HANDLE: Handle&lt;Shader&gt; = Handle::weak_from_u128(<span class="number">2971387252468633715</span>);
 
 <span class="kw">impl </span>Plugin <span class="kw">for </span>Mesh2dRenderPlugin {
     <span class="kw">fn </span>build(<span class="kw-2">&amp;</span><span class="self">self</span>, app: <span class="kw-2">&amp;mut </span>bevy_app::App) {
@@ -705,82 +823,156 @@
         );
         <span class="macro">load_internal_asset!</span>(
             app,
-            MESH2D_BINDINGS_HANDLE,
-            <span class="string">&quot;mesh2d_bindings.wgsl&quot;</span>,
-            Shader::from_wgsl
-        );
-        <span class="macro">load_internal_asset!</span>(
-            app,
             MESH2D_FUNCTIONS_HANDLE,
             <span class="string">&quot;mesh2d_functions.wgsl&quot;</span>,
             Shader::from_wgsl
         );
         <span class="macro">load_internal_asset!</span>(app, MESH2D_SHADER_HANDLE, <span class="string">&quot;mesh2d.wgsl&quot;</span>, Shader::from_wgsl);
 
-        app.add_plugins(UniformComponentPlugin::&lt;Mesh2dUniform&gt;::default());
-
         <span class="kw">if let </span><span class="prelude-val">Ok</span>(render_app) = app.get_sub_app_mut(RenderApp) {
             render_app
+                .init_resource::&lt;RenderMesh2dInstances&gt;()
                 .init_resource::&lt;SpecializedMeshPipelines&lt;Mesh2dPipeline&gt;&gt;()
                 .add_systems(ExtractSchedule, extract_mesh2d)
                 .add_systems(
                     Render,
                     (
-                        queue_mesh2d_bind_group.in_set(RenderSet::Queue),
-                        queue_mesh2d_view_bind_groups.in_set(RenderSet::Queue),
+                        batch_and_prepare_render_phase::&lt;Transparent2d, Mesh2dPipeline&gt;
+                            .in_set(RenderSet::PrepareResources),
+                        write_batched_instance_buffer::&lt;Mesh2dPipeline&gt;
+                            .in_set(RenderSet::PrepareResourcesFlush),
+                        prepare_mesh2d_bind_group.in_set(RenderSet::PrepareBindGroups),
+                        prepare_mesh2d_view_bind_groups.in_set(RenderSet::PrepareBindGroups),
                     ),
                 );
         }
     }
 
     <span class="kw">fn </span>finish(<span class="kw-2">&amp;</span><span class="self">self</span>, app: <span class="kw-2">&amp;mut </span>bevy_app::App) {
+        <span class="kw">let </span><span class="kw-2">mut </span>mesh_bindings_shader_defs = Vec::with_capacity(<span class="number">1</span>);
+
         <span class="kw">if let </span><span class="prelude-val">Ok</span>(render_app) = app.get_sub_app_mut(RenderApp) {
-            render_app.init_resource::&lt;Mesh2dPipeline&gt;();
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(per_object_buffer_batch_size) = GpuArrayBuffer::&lt;Mesh2dUniform&gt;::batch_size(
+                render_app.world.resource::&lt;RenderDevice&gt;(),
+            ) {
+                mesh_bindings_shader_defs.push(ShaderDefVal::UInt(
+                    <span class="string">&quot;PER_OBJECT_BUFFER_BATCH_SIZE&quot;</span>.into(),
+                    per_object_buffer_batch_size,
+                ));
+            }
+
+            render_app
+                .insert_resource(GpuArrayBuffer::&lt;Mesh2dUniform&gt;::new(
+                    render_app.world.resource::&lt;RenderDevice&gt;(),
+                ))
+                .init_resource::&lt;Mesh2dPipeline&gt;();
         }
+
+        <span class="comment">// Load the mesh_bindings shader module here as it depends on runtime information about
+        // whether storage buffers are supported, or the maximum uniform buffer binding size.
+        </span><span class="macro">load_internal_asset!</span>(
+            app,
+            MESH2D_BINDINGS_HANDLE,
+            <span class="string">&quot;mesh2d_bindings.wgsl&quot;</span>,
+            Shader::from_wgsl_with_defs,
+            mesh_bindings_shader_defs
+        );
     }
 }
 
-<span class="attr">#[derive(Component, ShaderType, Clone)]
-</span><span class="kw">pub struct </span>Mesh2dUniform {
-    <span class="kw">pub </span>transform: Mat4,
-    <span class="kw">pub </span>inverse_transpose_model: Mat4,
+<span class="attr">#[derive(Component)]
+</span><span class="kw">pub struct </span>Mesh2dTransforms {
+    <span class="kw">pub </span>transform: Affine3,
     <span class="kw">pub </span>flags: u32,
+}
+
+<span class="attr">#[derive(ShaderType, Clone)]
+</span><span class="kw">pub struct </span>Mesh2dUniform {
+    <span class="comment">// Affine 4x3 matrix transposed to 3x4
+    </span><span class="kw">pub </span>transform: [Vec4; <span class="number">3</span>],
+    <span class="comment">// 3x3 matrix packed in mat2x4 and f32 as:
+    //   [0].xyz, [1].x,
+    //   [1].yz, [2].xy
+    //   [2].z
+    </span><span class="kw">pub </span>inverse_transpose_model_a: [Vec4; <span class="number">2</span>],
+    <span class="kw">pub </span>inverse_transpose_model_b: f32,
+    <span class="kw">pub </span>flags: u32,
+}
+
+<span class="kw">impl </span>From&lt;<span class="kw-2">&amp;</span>Mesh2dTransforms&gt; <span class="kw">for </span>Mesh2dUniform {
+    <span class="kw">fn </span>from(mesh_transforms: <span class="kw-2">&amp;</span>Mesh2dTransforms) -&gt; <span class="self">Self </span>{
+        <span class="kw">let </span>(inverse_transpose_model_a, inverse_transpose_model_b) =
+            mesh_transforms.transform.inverse_transpose_3x3();
+        <span class="self">Self </span>{
+            transform: mesh_transforms.transform.to_transpose(),
+            inverse_transpose_model_a,
+            inverse_transpose_model_b,
+            flags: mesh_transforms.flags,
+        }
+    }
 }
 
 <span class="comment">// NOTE: These must match the bit flags in bevy_sprite/src/mesh2d/mesh2d.wgsl!
 </span><span class="macro">bitflags::bitflags! </span>{
     <span class="attr">#[repr(transparent)]
-    </span><span class="kw">struct </span>MeshFlags: u32 {
+    </span><span class="kw">pub struct </span>MeshFlags: u32 {
         <span class="kw">const </span>NONE                       = <span class="number">0</span>;
         <span class="kw">const </span>UNINITIALIZED              = <span class="number">0xFFFF</span>;
     }
 }
 
+<span class="kw">pub struct </span>RenderMesh2dInstance {
+    <span class="kw">pub </span>transforms: Mesh2dTransforms,
+    <span class="kw">pub </span>mesh_asset_id: AssetId&lt;Mesh&gt;,
+    <span class="kw">pub </span>material_bind_group_id: Material2dBindGroupId,
+    <span class="kw">pub </span>automatic_batching: bool,
+}
+
+<span class="attr">#[derive(Default, Resource, Deref, DerefMut)]
+</span><span class="kw">pub struct </span>RenderMesh2dInstances(EntityHashMap&lt;Entity, RenderMesh2dInstance&gt;);
+
+<span class="attr">#[derive(Component)]
+</span><span class="kw">pub struct </span>Mesh2d;
+
 <span class="kw">pub fn </span>extract_mesh2d(
     <span class="kw-2">mut </span>commands: Commands,
     <span class="kw-2">mut </span>previous_len: Local&lt;usize&gt;,
-    query: Extract&lt;Query&lt;(Entity, <span class="kw-2">&amp;</span>ComputedVisibility, <span class="kw-2">&amp;</span>GlobalTransform, <span class="kw-2">&amp;</span>Mesh2dHandle)&gt;&gt;,
+    <span class="kw-2">mut </span>render_mesh_instances: ResMut&lt;RenderMesh2dInstances&gt;,
+    query: Extract&lt;
+        Query&lt;(
+            Entity,
+            <span class="kw-2">&amp;</span>ViewVisibility,
+            <span class="kw-2">&amp;</span>GlobalTransform,
+            <span class="kw-2">&amp;</span>Mesh2dHandle,
+            Has&lt;NoAutomaticBatching&gt;,
+        )&gt;,
+    &gt;,
 ) {
-    <span class="kw">let </span><span class="kw-2">mut </span>values = Vec::with_capacity(<span class="kw-2">*</span>previous_len);
-    <span class="kw">for </span>(entity, computed_visibility, transform, handle) <span class="kw">in </span><span class="kw-2">&amp;</span>query {
-        <span class="kw">if </span>!computed_visibility.is_visible() {
+    render_mesh_instances.clear();
+    <span class="kw">let </span><span class="kw-2">mut </span>entities = Vec::with_capacity(<span class="kw-2">*</span>previous_len);
+
+    <span class="kw">for </span>(entity, view_visibility, transform, handle, no_automatic_batching) <span class="kw">in </span><span class="kw-2">&amp;</span>query {
+        <span class="kw">if </span>!view_visibility.get() {
             <span class="kw">continue</span>;
         }
-        <span class="kw">let </span>transform = transform.compute_matrix();
-        values.push((
+        <span class="comment">// FIXME: Remove this - it is just a workaround to enable rendering to work as
+        // render commands require an entity to exist at the moment.
+        </span>entities.push((entity, Mesh2d));
+        render_mesh_instances.insert(
             entity,
-            (
-                Mesh2dHandle(handle.<span class="number">0</span>.clone_weak()),
-                Mesh2dUniform {
+            RenderMesh2dInstance {
+                transforms: Mesh2dTransforms {
+                    transform: (<span class="kw-2">&amp;</span>transform.affine()).into(),
                     flags: MeshFlags::empty().bits(),
-                    transform,
-                    inverse_transpose_model: transform.inverse().transpose(),
                 },
-            ),
-        ));
+                mesh_asset_id: handle.<span class="number">0</span>.id(),
+                material_bind_group_id: Material2dBindGroupId::default(),
+                automatic_batching: !no_automatic_batching,
+            },
+        );
     }
-    <span class="kw-2">*</span>previous_len = values.len();
-    commands.insert_or_spawn_batch(values);
+    <span class="kw-2">*</span>previous_len = entities.len();
+    commands.insert_or_spawn_batch(entities);
 }
 
 <span class="attr">#[derive(Resource, Clone)]
@@ -789,13 +981,18 @@
     <span class="kw">pub </span>mesh_layout: BindGroupLayout,
     <span class="comment">// This dummy white texture is to be used in place of optional textures
     </span><span class="kw">pub </span>dummy_white_gpu_image: GpuImage,
+    <span class="kw">pub </span>per_object_buffer_batch_size: <span class="prelude-ty">Option</span>&lt;u32&gt;,
 }
 
 <span class="kw">impl </span>FromWorld <span class="kw">for </span>Mesh2dPipeline {
     <span class="kw">fn </span>from_world(world: <span class="kw-2">&amp;mut </span>World) -&gt; <span class="self">Self </span>{
-        <span class="kw">let </span><span class="kw-2">mut </span>system_state: SystemState&lt;(Res&lt;RenderDevice&gt;, Res&lt;DefaultImageSampler&gt;)&gt; =
-            SystemState::new(world);
-        <span class="kw">let </span>(render_device, default_sampler) = system_state.get_mut(world);
+        <span class="kw">let </span><span class="kw-2">mut </span>system_state: SystemState&lt;(
+            Res&lt;RenderDevice&gt;,
+            Res&lt;RenderQueue&gt;,
+            Res&lt;DefaultImageSampler&gt;,
+        )&gt; = SystemState::new(world);
+        <span class="kw">let </span>(render_device, render_queue, default_sampler) = system_state.get_mut(world);
+        <span class="kw">let </span>render_device = render_device.into_inner();
         <span class="kw">let </span>view_layout = render_device.create_bind_group_layout(<span class="kw-2">&amp;</span>BindGroupLayoutDescriptor {
             entries: <span class="kw-2">&amp;</span>[
                 <span class="comment">// View
@@ -824,29 +1021,25 @@
         });
 
         <span class="kw">let </span>mesh_layout = render_device.create_bind_group_layout(<span class="kw-2">&amp;</span>BindGroupLayoutDescriptor {
-            entries: <span class="kw-2">&amp;</span>[BindGroupLayoutEntry {
-                binding: <span class="number">0</span>,
-                visibility: ShaderStages::VERTEX | ShaderStages::FRAGMENT,
-                ty: BindingType::Buffer {
-                    ty: BufferBindingType::Uniform,
-                    has_dynamic_offset: <span class="bool-val">true</span>,
-                    min_binding_size: <span class="prelude-val">Some</span>(Mesh2dUniform::min_size()),
-                },
-                count: <span class="prelude-val">None</span>,
-            }],
+            entries: <span class="kw-2">&amp;</span>[GpuArrayBuffer::&lt;Mesh2dUniform&gt;::binding_layout(
+                <span class="number">0</span>,
+                ShaderStages::VERTEX_FRAGMENT,
+                render_device,
+            )],
             label: <span class="prelude-val">Some</span>(<span class="string">&quot;mesh2d_layout&quot;</span>),
         });
         <span class="comment">// A 1x1x1 &#39;all 1.0&#39; texture to use as a dummy texture to use in place of optional StandardMaterial textures
         </span><span class="kw">let </span>dummy_white_gpu_image = {
             <span class="kw">let </span>image = Image::default();
             <span class="kw">let </span>texture = render_device.create_texture(<span class="kw-2">&amp;</span>image.texture_descriptor);
-            <span class="kw">let </span>sampler = <span class="kw">match </span>image.sampler_descriptor {
+            <span class="kw">let </span>sampler = <span class="kw">match </span>image.sampler {
                 ImageSampler::Default =&gt; (<span class="kw-2">**</span>default_sampler).clone(),
-                ImageSampler::Descriptor(descriptor) =&gt; render_device.create_sampler(<span class="kw-2">&amp;</span>descriptor),
+                ImageSampler::Descriptor(<span class="kw-2">ref </span>descriptor) =&gt; {
+                    render_device.create_sampler(<span class="kw-2">&amp;</span>descriptor.as_wgpu())
+                }
             };
 
             <span class="kw">let </span>format_size = image.texture_descriptor.format.pixel_size();
-            <span class="kw">let </span>render_queue = world.resource_mut::&lt;RenderQueue&gt;();
             render_queue.write_texture(
                 ImageCopyTexture {
                     texture: <span class="kw-2">&amp;</span>texture,
@@ -857,7 +1050,7 @@
                 <span class="kw-2">&amp;</span>image.data,
                 ImageDataLayout {
                     offset: <span class="number">0</span>,
-                    bytes_per_row: <span class="prelude-val">Some</span>(image.texture_descriptor.size.width * format_size <span class="kw">as </span>u32),
+                    bytes_per_row: <span class="prelude-val">Some</span>(image.width() * format_size <span class="kw">as </span>u32),
                     rows_per_image: <span class="prelude-val">None</span>,
                 },
                 image.texture_descriptor.size,
@@ -869,10 +1062,7 @@
                 texture_view,
                 texture_format: image.texture_descriptor.format,
                 sampler,
-                size: Vec2::new(
-                    image.texture_descriptor.size.width <span class="kw">as </span>f32,
-                    image.texture_descriptor.size.height <span class="kw">as </span>f32,
-                ),
+                size: image.size_f32(),
                 mip_level_count: image.texture_descriptor.mip_level_count,
             }
         };
@@ -880,6 +1070,9 @@
             view_layout,
             mesh_layout,
             dummy_white_gpu_image,
+            per_object_buffer_batch_size: GpuArrayBuffer::&lt;Mesh2dUniform&gt;::batch_size(
+                render_device,
+            ),
         }
     }
 }
@@ -899,6 +1092,30 @@
                 <span class="kw-2">&amp;</span><span class="self">self</span>.dummy_white_gpu_image.sampler,
             ))
         }
+    }
+}
+
+<span class="kw">impl </span>GetBatchData <span class="kw">for </span>Mesh2dPipeline {
+    <span class="kw">type </span>Param = SRes&lt;RenderMesh2dInstances&gt;;
+    <span class="kw">type </span>Query = Entity;
+    <span class="kw">type </span>QueryFilter = With&lt;Mesh2d&gt;;
+    <span class="kw">type </span>CompareData = (Material2dBindGroupId, AssetId&lt;Mesh&gt;);
+    <span class="kw">type </span>BufferData = Mesh2dUniform;
+
+    <span class="kw">fn </span>get_batch_data(
+        mesh_instances: <span class="kw-2">&amp;</span>SystemParamItem&lt;<span class="self">Self</span>::Param&gt;,
+        entity: <span class="kw-2">&amp;</span>QueryItem&lt;<span class="self">Self</span>::Query&gt;,
+    ) -&gt; (<span class="self">Self</span>::BufferData, <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::CompareData&gt;) {
+        <span class="kw">let </span>mesh_instance = mesh_instances
+            .get(entity)
+            .expect(<span class="string">&quot;Failed to find render mesh2d instance&quot;</span>);
+        (
+            (<span class="kw-2">&amp;</span>mesh_instance.transforms).into(),
+            mesh_instance.automatic_batching.then_some((
+                mesh_instance.material_bind_group_id,
+                mesh_instance.mesh_asset_id,
+            )),
+        )
     }
 }
 
@@ -1055,16 +1272,23 @@
             <span class="bool-val">true </span>=&gt; ViewTarget::TEXTURE_FORMAT_HDR,
             <span class="bool-val">false </span>=&gt; TextureFormat::bevy_default(),
         };
+        <span class="kw">let </span><span class="kw-2">mut </span>push_constant_ranges = Vec::with_capacity(<span class="number">1</span>);
+        <span class="kw">if </span><span class="macro">cfg!</span>(all(feature = <span class="string">&quot;webgl&quot;</span>, target_arch = <span class="string">&quot;wasm32&quot;</span>)) {
+            push_constant_ranges.push(PushConstantRange {
+                stages: ShaderStages::VERTEX,
+                range: <span class="number">0</span>..<span class="number">4</span>,
+            });
+        }
 
         <span class="prelude-val">Ok</span>(RenderPipelineDescriptor {
             vertex: VertexState {
-                shader: MESH2D_SHADER_HANDLE.typed::&lt;Shader&gt;(),
+                shader: MESH2D_SHADER_HANDLE,
                 entry_point: <span class="string">&quot;vertex&quot;</span>.into(),
                 shader_defs: shader_defs.clone(),
                 buffers: <span class="macro">vec!</span>[vertex_buffer_layout],
             },
             fragment: <span class="prelude-val">Some</span>(FragmentState {
-                shader: MESH2D_SHADER_HANDLE.typed::&lt;Shader&gt;(),
+                shader: MESH2D_SHADER_HANDLE,
                 shader_defs,
                 entry_point: <span class="string">&quot;fragment&quot;</span>.into(),
                 targets: <span class="macro">vec!</span>[<span class="prelude-val">Some</span>(ColorTargetState {
@@ -1074,7 +1298,7 @@
                 })],
             }),
             layout: <span class="macro">vec!</span>[<span class="self">self</span>.view_layout.clone(), <span class="self">self</span>.mesh_layout.clone()],
-            push_constant_ranges: Vec::new(),
+            push_constant_ranges,
             primitive: PrimitiveState {
                 front_face: FrontFace::Ccw,
                 cull_mode: <span class="prelude-val">None</span>,
@@ -1100,22 +1324,19 @@
     <span class="kw">pub </span>value: BindGroup,
 }
 
-<span class="kw">pub fn </span>queue_mesh2d_bind_group(
+<span class="kw">pub fn </span>prepare_mesh2d_bind_group(
     <span class="kw-2">mut </span>commands: Commands,
     mesh2d_pipeline: Res&lt;Mesh2dPipeline&gt;,
     render_device: Res&lt;RenderDevice&gt;,
-    mesh2d_uniforms: Res&lt;ComponentUniforms&lt;Mesh2dUniform&gt;&gt;,
+    mesh2d_uniforms: Res&lt;GpuArrayBuffer&lt;Mesh2dUniform&gt;&gt;,
 ) {
-    <span class="kw">if let </span><span class="prelude-val">Some</span>(binding) = mesh2d_uniforms.uniforms().binding() {
+    <span class="kw">if let </span><span class="prelude-val">Some</span>(binding) = mesh2d_uniforms.binding() {
         commands.insert_resource(Mesh2dBindGroup {
-            value: render_device.create_bind_group(<span class="kw-2">&amp;</span>BindGroupDescriptor {
-                entries: <span class="kw-2">&amp;</span>[BindGroupEntry {
-                    binding: <span class="number">0</span>,
-                    resource: binding,
-                }],
-                label: <span class="prelude-val">Some</span>(<span class="string">&quot;mesh2d_bind_group&quot;</span>),
-                layout: <span class="kw-2">&amp;</span>mesh2d_pipeline.mesh_layout,
-            }),
+            value: render_device.create_bind_group(
+                <span class="string">&quot;mesh2d_bind_group&quot;</span>,
+                <span class="kw-2">&amp;</span>mesh2d_pipeline.mesh_layout,
+                <span class="kw-2">&amp;</span>BindGroupEntries::single(binding),
+            ),
         });
     }
 }
@@ -1125,7 +1346,7 @@
     <span class="kw">pub </span>value: BindGroup,
 }
 
-<span class="kw">pub fn </span>queue_mesh2d_view_bind_groups(
+<span class="kw">pub fn </span>prepare_mesh2d_view_bind_groups(
     <span class="kw-2">mut </span>commands: Commands,
     render_device: Res&lt;RenderDevice&gt;,
     mesh2d_pipeline: Res&lt;Mesh2dPipeline&gt;,
@@ -1138,20 +1359,11 @@
         globals_buffer.buffer.binding(),
     ) {
         <span class="kw">for </span>entity <span class="kw">in </span><span class="kw-2">&amp;</span>views {
-            <span class="kw">let </span>view_bind_group = render_device.create_bind_group(<span class="kw-2">&amp;</span>BindGroupDescriptor {
-                entries: <span class="kw-2">&amp;</span>[
-                    BindGroupEntry {
-                        binding: <span class="number">0</span>,
-                        resource: view_binding.clone(),
-                    },
-                    BindGroupEntry {
-                        binding: <span class="number">1</span>,
-                        resource: globals.clone(),
-                    },
-                ],
-                label: <span class="prelude-val">Some</span>(<span class="string">&quot;mesh2d_view_bind_group&quot;</span>),
-                layout: <span class="kw-2">&amp;</span>mesh2d_pipeline.view_layout,
-            });
+            <span class="kw">let </span>view_bind_group = render_device.create_bind_group(
+                <span class="string">&quot;mesh2d_view_bind_group&quot;</span>,
+                <span class="kw-2">&amp;</span>mesh2d_pipeline.view_layout,
+                <span class="kw-2">&amp;</span>BindGroupEntries::sequential((view_binding.clone(), globals.clone())),
+            );
 
             commands.entity(entity).insert(Mesh2dViewBindGroup {
                 value: view_bind_group,
@@ -1184,20 +1396,26 @@
 <span class="kw">impl</span>&lt;P: PhaseItem, <span class="kw">const </span>I: usize&gt; RenderCommand&lt;P&gt; <span class="kw">for </span>SetMesh2dBindGroup&lt;I&gt; {
     <span class="kw">type </span>Param = SRes&lt;Mesh2dBindGroup&gt;;
     <span class="kw">type </span>ViewWorldQuery = ();
-    <span class="kw">type </span>ItemWorldQuery = Read&lt;DynamicUniformIndex&lt;Mesh2dUniform&gt;&gt;;
+    <span class="kw">type </span>ItemWorldQuery = ();
 
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>render&lt;<span class="lifetime">&#39;w</span>&gt;(
-        _item: <span class="kw-2">&amp;</span>P,
+        item: <span class="kw-2">&amp;</span>P,
         _view: (),
-        mesh2d_index: <span class="kw-2">&amp;</span><span class="lifetime">&#39;_ </span>DynamicUniformIndex&lt;Mesh2dUniform&gt;,
+        _item_query: (),
         mesh2d_bind_group: SystemParamItem&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;_</span>, <span class="self">Self</span>::Param&gt;,
         pass: <span class="kw-2">&amp;mut </span>TrackedRenderPass&lt;<span class="lifetime">&#39;w</span>&gt;,
     ) -&gt; RenderCommandResult {
+        <span class="kw">let </span><span class="kw-2">mut </span>dynamic_offsets: [u32; <span class="number">1</span>] = Default::default();
+        <span class="kw">let </span><span class="kw-2">mut </span>offset_count = <span class="number">0</span>;
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(dynamic_offset) = item.dynamic_offset() {
+            dynamic_offsets[offset_count] = dynamic_offset.get();
+            offset_count += <span class="number">1</span>;
+        }
         pass.set_bind_group(
             I,
             <span class="kw-2">&amp;</span>mesh2d_bind_group.into_inner().value,
-            <span class="kw-2">&amp;</span>[mesh2d_index.index()],
+            <span class="kw-2">&amp;</span>dynamic_offsets[..offset_count],
         );
         RenderCommandResult::Success
     }
@@ -1205,37 +1423,53 @@
 
 <span class="kw">pub struct </span>DrawMesh2d;
 <span class="kw">impl</span>&lt;P: PhaseItem&gt; RenderCommand&lt;P&gt; <span class="kw">for </span>DrawMesh2d {
-    <span class="kw">type </span>Param = SRes&lt;RenderAssets&lt;Mesh&gt;&gt;;
+    <span class="kw">type </span>Param = (SRes&lt;RenderAssets&lt;Mesh&gt;&gt;, SRes&lt;RenderMesh2dInstances&gt;);
     <span class="kw">type </span>ViewWorldQuery = ();
-    <span class="kw">type </span>ItemWorldQuery = Read&lt;Mesh2dHandle&gt;;
+    <span class="kw">type </span>ItemWorldQuery = ();
 
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>render&lt;<span class="lifetime">&#39;w</span>&gt;(
-        _item: <span class="kw-2">&amp;</span>P,
+        item: <span class="kw-2">&amp;</span>P,
         _view: (),
-        mesh_handle: ROQueryItem&lt;<span class="lifetime">&#39;w</span>, <span class="self">Self</span>::ItemWorldQuery&gt;,
-        meshes: SystemParamItem&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;_</span>, <span class="self">Self</span>::Param&gt;,
+        _item_query: (),
+        (meshes, render_mesh2d_instances): SystemParamItem&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;_</span>, <span class="self">Self</span>::Param&gt;,
         pass: <span class="kw-2">&amp;mut </span>TrackedRenderPass&lt;<span class="lifetime">&#39;w</span>&gt;,
     ) -&gt; RenderCommandResult {
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(gpu_mesh) = meshes.into_inner().get(<span class="kw-2">&amp;</span>mesh_handle.<span class="number">0</span>) {
-            pass.set_vertex_buffer(<span class="number">0</span>, gpu_mesh.vertex_buffer.slice(..));
-            <span class="kw">match </span><span class="kw-2">&amp;</span>gpu_mesh.buffer_info {
-                GpuBufferInfo::Indexed {
-                    buffer,
-                    index_format,
-                    count,
-                } =&gt; {
-                    pass.set_index_buffer(buffer.slice(..), <span class="number">0</span>, <span class="kw-2">*</span>index_format);
-                    pass.draw_indexed(<span class="number">0</span>..<span class="kw-2">*</span>count, <span class="number">0</span>, <span class="number">0</span>..<span class="number">1</span>);
-                }
-                GpuBufferInfo::NonIndexed =&gt; {
-                    pass.draw(<span class="number">0</span>..gpu_mesh.vertex_count, <span class="number">0</span>..<span class="number">1</span>);
-                }
+        <span class="kw">let </span>meshes = meshes.into_inner();
+        <span class="kw">let </span>render_mesh2d_instances = render_mesh2d_instances.into_inner();
+
+        <span class="kw">let </span><span class="prelude-val">Some</span>(RenderMesh2dInstance { mesh_asset_id, .. }) =
+            render_mesh2d_instances.get(<span class="kw-2">&amp;</span>item.entity())
+        <span class="kw">else </span>{
+            <span class="kw">return </span>RenderCommandResult::Failure;
+        };
+        <span class="kw">let </span><span class="prelude-val">Some</span>(gpu_mesh) = meshes.get(<span class="kw-2">*</span>mesh_asset_id) <span class="kw">else </span>{
+            <span class="kw">return </span>RenderCommandResult::Failure;
+        };
+
+        pass.set_vertex_buffer(<span class="number">0</span>, gpu_mesh.vertex_buffer.slice(..));
+
+        <span class="kw">let </span>batch_range = item.batch_range();
+        <span class="attr">#[cfg(all(feature = <span class="string">&quot;webgl&quot;</span>, target_arch = <span class="string">&quot;wasm32&quot;</span>))]
+        </span>pass.set_push_constants(
+            ShaderStages::VERTEX,
+            <span class="number">0</span>,
+            <span class="kw-2">&amp;</span>(batch_range.start <span class="kw">as </span>i32).to_le_bytes(),
+        );
+        <span class="kw">match </span><span class="kw-2">&amp;</span>gpu_mesh.buffer_info {
+            GpuBufferInfo::Indexed {
+                buffer,
+                index_format,
+                count,
+            } =&gt; {
+                pass.set_index_buffer(buffer.slice(..), <span class="number">0</span>, <span class="kw-2">*</span>index_format);
+                pass.draw_indexed(<span class="number">0</span>..<span class="kw-2">*</span>count, <span class="number">0</span>, batch_range.clone());
             }
-            RenderCommandResult::Success
-        } <span class="kw">else </span>{
-            RenderCommandResult::Failure
+            GpuBufferInfo::NonIndexed =&gt; {
+                pass.draw(<span class="number">0</span>..gpu_mesh.vertex_count, batch_range.clone());
+            }
         }
+        RenderCommandResult::Success
     }
 }
 </code></pre></div></section></main></body></html>

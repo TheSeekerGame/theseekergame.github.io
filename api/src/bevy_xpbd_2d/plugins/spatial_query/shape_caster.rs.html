@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_xpbd_2d-0.2.0/src/plugins/spatial_query/shape_caster.rs`."><title>shape_caster.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="bevy_xpbd_2d" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_xpbd_2d-0.3.2/src/plugins/spatial_query/shape_caster.rs`."><title>shape_caster.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="bevy_xpbd_2d" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -378,25 +378,72 @@
 <a href="#378" id="378">378</a>
 <a href="#379" id="379">379</a>
 <a href="#380" id="380">380</a>
+<a href="#381" id="381">381</a>
+<a href="#382" id="382">382</a>
+<a href="#383" id="383">383</a>
+<a href="#384" id="384">384</a>
+<a href="#385" id="385">385</a>
+<a href="#386" id="386">386</a>
+<a href="#387" id="387">387</a>
+<a href="#388" id="388">388</a>
+<a href="#389" id="389">389</a>
+<a href="#390" id="390">390</a>
+<a href="#391" id="391">391</a>
+<a href="#392" id="392">392</a>
+<a href="#393" id="393">393</a>
+<a href="#394" id="394">394</a>
+<a href="#395" id="395">395</a>
+<a href="#396" id="396">396</a>
+<a href="#397" id="397">397</a>
+<a href="#398" id="398">398</a>
+<a href="#399" id="399">399</a>
+<a href="#400" id="400">400</a>
+<a href="#401" id="401">401</a>
+<a href="#402" id="402">402</a>
+<a href="#403" id="403">403</a>
+<a href="#404" id="404">404</a>
+<a href="#405" id="405">405</a>
+<a href="#406" id="406">406</a>
+<a href="#407" id="407">407</a>
+<a href="#408" id="408">408</a>
+<a href="#409" id="409">409</a>
+<a href="#410" id="410">410</a>
+<a href="#411" id="411">411</a>
+<a href="#412" id="412">412</a>
+<a href="#413" id="413">413</a>
+<a href="#414" id="414">414</a>
+<a href="#415" id="415">415</a>
+<a href="#416" id="416">416</a>
+<a href="#417" id="417">417</a>
+<a href="#418" id="418">418</a>
+<a href="#419" id="419">419</a>
+<a href="#420" id="420">420</a>
+<a href="#421" id="421">421</a>
+<a href="#422" id="422">422</a>
+<a href="#423" id="423">423</a>
+<a href="#424" id="424">424</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::prelude::<span class="kw-2">*</span>;
-<span class="kw">use </span>bevy::prelude::<span class="kw-2">*</span>;
+<span class="kw">use </span>bevy::{
+    ecs::entity::{EntityMapper, MapEntities},
+    prelude::<span class="kw-2">*</span>,
+};
 <span class="kw">use </span>parry::query::details::TOICompositeShapeShapeBestFirstVisitor;
 
-<span class="doccomment">/// A component used for [shape casting](spatial_query#shape-casting).
+<span class="doccomment">/// A component used for [shapecasting](spatial_query#shapecasting).
 ///
-/// **Shape casting** is a type of [spatial query](spatial_query) where a shape travels along a straight
+/// **Shapecasting** is a type of [spatial query](spatial_query) where a shape travels along a straight
 /// line and computes hits with colliders. This is often used to determine how far an object can move
 /// in a direction before it hits something.
 ///
-/// Each shape cast is defined by a `shape` (a [`Collider`]), its local `shape_rotation`, a local `origin` and
+/// Each shapecast is defined by a `shape` (a [`Collider`]), its local `shape_rotation`, a local `origin` and
 /// a local `direction`. The [`ShapeCaster`] will find each hit and add them to the [`ShapeHits`] component in
 /// the order of the time of impact.
 ///
 /// Computing lots of hits can be expensive, especially against complex geometry, so the maximum number of hits
 /// is one by default. This can be configured through the `max_hits` property.
 ///
-/// The [`ShapeCaster`] is the easiest way to handle simple shape casting. If you want more control and don&#39;t want
-/// to perform shape casts on every frame, consider using the [`SpatialQuery`] system parameter.
+/// The [`ShapeCaster`] is the easiest way to handle simple shapecasting. If you want more control and don&#39;t want
+/// to perform shapecasts on every frame, consider using the [`SpatialQuery`] system parameter.
 ///
 /// ## Example
 ///
@@ -457,24 +504,26 @@
     <span class="doccomment">/// The global rotation of the shape.
     </span><span class="attr">#[cfg(feature = <span class="string">&quot;3d&quot;</span>)]
     </span>global_shape_rotation: Quaternion,
-    <span class="doccomment">/// The local direction of the shape cast relative to the [`Rotation`] of the shape caster entity or its parent.
+    <span class="doccomment">/// The local direction of the shapecast relative to the [`Rotation`] of the shape caster entity or its parent.
     ///
     /// To get the global direction, use the `global_direction` method.
     </span><span class="kw">pub </span>direction: Vector,
-    <span class="doccomment">/// The global direction of the shape cast.
+    <span class="doccomment">/// The global direction of the shapecast.
     </span>global_direction: Vector,
     <span class="doccomment">/// The maximum distance the shape can travel. By default this is infinite, so the shape will travel
     /// until a hit is found.
     </span><span class="kw">pub </span>max_time_of_impact: Scalar,
     <span class="doccomment">/// The maximum number of hits allowed. By default this is one and only the first hit is returned.
     </span><span class="kw">pub </span>max_hits: u32,
-    <span class="doccomment">/// Controls how the shape cast behaves when the shape is already penetrating a [collider](Collider)
+    <span class="doccomment">/// Controls how the shapecast behaves when the shape is already penetrating a [collider](Collider)
     /// at the shape origin.
     ///
     /// If set to true **and** the shape is being cast in a direction where it will eventually stop penetrating,
-    /// the shape cast will not stop immediately, and will instead continue until another hit.\
-    /// If set to false, the shape cast will stop immediately and return the hit. This is the default.
+    /// the shapecast will not stop immediately, and will instead continue until another hit.\
+    /// If set to false, the shapecast will stop immediately and return the hit. This is the default.
     </span><span class="kw">pub </span>ignore_origin_penetration: bool,
+    <span class="doccomment">/// If true, the shape caster ignores hits against its own [`Collider`]. This is the default.
+    </span><span class="kw">pub </span>ignore_self: bool,
     <span class="doccomment">/// Rules that determine which colliders are taken into account in the query.
     </span><span class="kw">pub </span>query_filter: SpatialQueryFilter,
 }
@@ -499,6 +548,7 @@
             max_time_of_impact: Scalar::MAX,
             max_hits: <span class="number">1</span>,
             ignore_origin_penetration: <span class="bool-val">false</span>,
+            ignore_self: <span class="bool-val">true</span>,
             query_filter: SpatialQueryFilter::default(),
         }
     }
@@ -545,14 +595,21 @@
         <span class="self">self
     </span>}
 
-    <span class="doccomment">/// Controls how the shape cast behaves when the shape is already penetrating a [collider](Collider)
+    <span class="doccomment">/// Controls how the shapecast behaves when the shape is already penetrating a [collider](Collider)
     /// at the shape origin.
     ///
     /// If set to true **and** the shape is being cast in a direction where it will eventually stop penetrating,
-    /// the shape cast will not stop immediately, and will instead continue until another hit.\
-    /// If set to false, the shape cast will stop immediately and return the hit. This is the default.
+    /// the shapecast will not stop immediately, and will instead continue until another hit.\
+    /// If set to false, the shapecast will stop immediately and return the hit. This is the default.
     </span><span class="kw">pub fn </span>with_ignore_origin_penetration(<span class="kw-2">mut </span><span class="self">self</span>, ignore: bool) -&gt; <span class="self">Self </span>{
         <span class="self">self</span>.ignore_origin_penetration = ignore;
+        <span class="self">self
+    </span>}
+
+    <span class="doccomment">/// Sets if the shape caster should ignore hits against its own [`Collider`].
+    /// The default is true.
+    </span><span class="kw">pub fn </span>with_ignore_self(<span class="kw-2">mut </span><span class="self">self</span>, ignore: bool) -&gt; <span class="self">Self </span>{
+        <span class="self">self</span>.ignore_self = ignore;
         <span class="self">self
     </span>}
 
@@ -569,7 +626,7 @@
     </span>}
 
     <span class="doccomment">/// Sets the shape caster&#39;s [query filter](SpatialQueryFilter) that controls which colliders
-    /// should be included or excluded by shape casts.
+    /// should be included or excluded by shapecasts.
     </span><span class="kw">pub fn </span>with_query_filter(<span class="kw-2">mut </span><span class="self">self</span>, query_filter: SpatialQueryFilter) -&gt; <span class="self">Self </span>{
         <span class="self">self</span>.query_filter = query_filter;
         <span class="self">self
@@ -629,8 +686,20 @@
         <span class="self">self</span>.global_direction = global_direction;
     }
 
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>cast(<span class="kw-2">&amp;</span><span class="self">self</span>, hits: <span class="kw-2">&amp;mut </span>ShapeHits, query_pipeline: <span class="kw-2">&amp;</span>SpatialQueryPipeline) {
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>cast(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        caster_entity: Entity,
+        hits: <span class="kw-2">&amp;mut </span>ShapeHits,
+        query_pipeline: <span class="kw-2">&amp;</span>SpatialQueryPipeline,
+    ) {
+        <span class="kw">let </span><span class="kw-2">mut </span>query_filter = <span class="self">self</span>.query_filter.clone();
+
+        <span class="kw">if </span><span class="self">self</span>.ignore_self {
+            query_filter.excluded_entities.insert(caster_entity);
+        }
+
         hits.count = <span class="number">0</span>;
+
         <span class="kw">let </span>shape_rotation: Rotation;
         <span class="attr">#[cfg(feature = <span class="string">&quot;2d&quot;</span>)]
         </span>{
@@ -641,10 +710,9 @@
             shape_rotation = Rotation::from(<span class="self">self</span>.global_shape_rotation());
         }
 
-        <span class="kw">let </span>shape_isometry = utils::make_isometry(<span class="self">self</span>.global_origin(), <span class="kw-2">&amp;</span>shape_rotation);
+        <span class="kw">let </span>shape_isometry = utils::make_isometry(<span class="self">self</span>.global_origin(), shape_rotation);
         <span class="kw">let </span>shape_direction = <span class="self">self</span>.global_direction().into();
 
-        <span class="kw">let </span><span class="kw-2">mut </span>query_filter = <span class="self">self</span>.query_filter.clone();
         <span class="kw">while </span>hits.count &lt; <span class="self">self</span>.max_hits {
             <span class="kw">let </span>pipeline_shape = query_pipeline.as_composite_shape(query_filter.clone());
             <span class="kw">let </span><span class="kw-2">mut </span>visitor = TOICompositeShapeShapeBestFirstVisitor::new(
@@ -652,7 +720,7 @@
                 <span class="kw-2">&amp;</span>shape_isometry,
                 <span class="kw-2">&amp;</span>shape_direction,
                 <span class="kw-2">&amp;</span>pipeline_shape,
-                <span class="kw-2">&amp;**</span><span class="self">self</span>.shape.get_shape(),
+                <span class="kw-2">&amp;**</span><span class="self">self</span>.shape.shape_scaled(),
                 <span class="self">self</span>.max_time_of_impact,
                 !<span class="self">self</span>.ignore_origin_penetration,
             );
@@ -670,7 +738,7 @@
                 <span class="kw">if </span>(hits.vector.len() <span class="kw">as </span>u32) &lt; hits.count + <span class="number">1 </span>{
                     hits.vector.push(hit);
                 } <span class="kw">else </span>{
-                    hits.vector[<span class="number">0</span>] = hit;
+                    hits.vector[hits.count <span class="kw">as </span>usize] = hit;
                 }
 
                 hits.count += <span class="number">1</span>;
@@ -685,7 +753,7 @@
 <span class="doccomment">/// Contains the hits of a shape cast by a [`ShapeCaster`]. The hits are in the order of time of impact.
 ///
 /// The maximum number of hits depends on the value of `max_hits` in [`ShapeCaster`]. By default only
-/// one hit is computed, as shape casting for many results can be expensive.
+/// one hit is computed, as shapecasting for many results can be expensive.
 ///
 /// ## Example
 ///
@@ -715,7 +783,7 @@
 }
 
 <span class="kw">impl </span>ShapeHits {
-    <span class="doccomment">/// Returns a slice over the shape cast hits.
+    <span class="doccomment">/// Returns a slice over the shapecast hits.
     </span><span class="kw">pub fn </span>as_slice(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[ShapeHitData] {
         <span class="kw-2">&amp;</span><span class="self">self</span>.vector[<span class="number">0</span>..<span class="self">self</span>.count <span class="kw">as </span>usize]
     }
@@ -731,31 +799,51 @@
         <span class="self">self</span>.count == <span class="number">0
     </span>}
 
+    <span class="doccomment">/// Clears the hits.
+    </span><span class="kw">pub fn </span>clear(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+        <span class="self">self</span>.vector.clear();
+        <span class="self">self</span>.count = <span class="number">0</span>;
+    }
+
     <span class="doccomment">/// Returns an iterator over the hits in the order of time of impact.
     </span><span class="kw">pub fn </span>iter(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; std::slice::Iter&lt;ShapeHitData&gt; {
         <span class="self">self</span>.as_slice().iter()
     }
 }
 
-<span class="doccomment">/// Data related to a hit during a [shape cast](spatial_query#shape-casting).
-</span><span class="attr">#[derive(Component, Clone, Copy, Debug)]
+<span class="kw">impl </span>MapEntities <span class="kw">for </span>ShapeHits {
+    <span class="kw">fn </span>map_entities(<span class="kw-2">&amp;mut </span><span class="self">self</span>, entity_mapper: <span class="kw-2">&amp;mut </span>EntityMapper) {
+        <span class="kw">for </span>hit <span class="kw">in </span><span class="kw-2">&amp;mut </span><span class="self">self</span>.vector {
+            hit.map_entities(entity_mapper);
+        }
+    }
+}
+
+<span class="doccomment">/// Data related to a hit during a [shapecast](spatial_query#shapecasting).
+</span><span class="attr">#[derive(Clone, Copy, Debug, PartialEq)]
 </span><span class="kw">pub struct </span>ShapeHitData {
-    <span class="doccomment">/// The entity of the collider that was hit by the ray.
+    <span class="doccomment">/// The entity of the collider that was hit by the shape.
     </span><span class="kw">pub </span>entity: Entity,
     <span class="doccomment">/// How long the shape travelled before the initial hit,
     /// i.e. the distance between the origin and the point of intersection.
     </span><span class="kw">pub </span>time_of_impact: Scalar,
+    <span class="doccomment">/// The closest point on the collider that was hit by the shapecast, at the time of impact,
+    /// expressed in the local space of the collider shape.
+    </span><span class="kw">pub </span>point1: Vector,
     <span class="doccomment">/// The closest point on the cast shape, at the time of impact,
     /// expressed in the local space of the cast shape.
-    </span><span class="kw">pub </span>point1: Vector,
-    <span class="doccomment">/// The closest point on the collider that was hit by the shape cast, at the time of impact,
-    /// expressed in the local space of the collider shape.
     </span><span class="kw">pub </span>point2: Vector,
+    <span class="doccomment">/// The outward normal on the collider that was hit by the shapecast, at the time of impact,
+    /// expressed in the local space of the collider shape.
+    </span><span class="kw">pub </span>normal1: Vector,
     <span class="doccomment">/// The outward normal on the cast shape, at the time of impact,
     /// expressed in the local space of the cast shape.
-    </span><span class="kw">pub </span>normal1: Vector,
-    <span class="doccomment">/// The outward normal on the collider that was hit by the shape cast, at the time of impact,
-    /// expressed in the local space of the collider shape.
     </span><span class="kw">pub </span>normal2: Vector,
+}
+
+<span class="kw">impl </span>MapEntities <span class="kw">for </span>ShapeHitData {
+    <span class="kw">fn </span>map_entities(<span class="kw-2">&amp;mut </span><span class="self">self</span>, entity_mapper: <span class="kw-2">&amp;mut </span>EntityMapper) {
+        <span class="self">self</span>.entity = entity_mapper.get_or_reserve(<span class="self">self</span>.entity);
+    }
 }
 </code></pre></div></section></main></body></html>

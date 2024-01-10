@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["StandardDynamicAsset"],"struct":["RegisterStandardDynamicAsset","StandardDynamicAssetCollection"]};
+window.SIDEBAR_ITEMS = {"enum":["ImageSamplerType","StandardDynamicAsset"],"struct":["RegisterStandardDynamicAsset","StandardDynamicAssetCollection"]};

@@ -119,11 +119,21 @@
 <a href="#119" id="119">119</a>
 <a href="#120" id="120">120</a>
 <a href="#121" id="121">121</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span>bevy_fluent::prelude::<span class="kw-2">*</span>;
+<a href="#122" id="122">122</a>
+<a href="#123" id="123">123</a>
+<a href="#124" id="124">124</a>
+<a href="#125" id="125">125</a>
+<a href="#126" id="126">126</a>
+<a href="#127" id="127">127</a>
+<a href="#128" id="128">128</a>
+<a href="#129" id="129">129</a>
+<a href="#130" id="130">130</a>
+<a href="#131" id="131">131</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span>bevy::asset::{LoadedFolder, LoadState};
+<span class="kw">use </span>bevy_fluent::prelude::<span class="kw-2">*</span>;
 <span class="kw">use </span>fluent_content::Content;
 <span class="kw">use </span>unic_langid::LanguageIdentifier;
 
-<span class="kw">use </span><span class="kw">crate</span>::assets::LocaleAssets;
 <span class="kw">use </span><span class="kw">crate</span>::prelude::<span class="kw-2">*</span>;
 
 <span class="kw">pub struct </span>LocalePlugin;
@@ -131,9 +141,13 @@
 <span class="kw">impl </span>Plugin <span class="kw">for </span>LocalePlugin {
     <span class="kw">fn </span>build(<span class="kw-2">&amp;</span><span class="self">self</span>, app: <span class="kw-2">&amp;mut </span>App) {
         app.register_clicommand_args(<span class="string">&quot;locale&quot;</span>, cli_locale);
-        app.add_systems(
-            OnExit(AppState::AssetsLoading),
-            (detect_locales, init_l10n).chain(),
+        app.insert_resource(
+            Locale::new(<span class="string">&quot;en-US&quot;</span>.parse().unwrap()).with_default(<span class="string">&quot;en-US&quot;</span>.parse().unwrap()),
+        );
+        app.add_systems(Update,
+            init_l10n
+                .track_progress()
+                .run_if(in_state(AppState::AssetsLoading))
         );
         app.add_systems(
             Update,
@@ -172,37 +186,43 @@
     }
 }
 
-<span class="kw">fn </span>detect_locales(world: <span class="kw-2">&amp;mut </span>World) {
-    <span class="kw">let </span>locales = {
-        <span class="kw">let </span>assets = world.resource::&lt;LocaleAssets&gt;();
-        <span class="kw">let </span>bundles = world.resource::&lt;Assets&lt;BundleAsset&gt;&gt;();
-        assets
-            .bundles
-            .iter()
-            .map(|handle| {
-                <span class="kw">let </span>bundle = bundles.get(handle).unwrap();
-                bundle.locales[<span class="number">0</span>].clone()
-            })
-            .collect()
-    };
-    world.insert_resource(
-        <span class="comment">// FIXME: do actual locale selection
-        </span>Locale::new(<span class="string">&quot;en-US&quot;</span>.parse().unwrap()).with_default(<span class="string">&quot;en-US&quot;</span>.parse().unwrap()),
-    );
-    world.insert_resource(Locales(locales));
-}
+<span class="attr">#[derive(Resource)]
+</span><span class="kw">pub struct </span>LocalesFolder(Handle&lt;LoadedFolder&gt;);
 
-<span class="kw">fn </span>init_l10n(<span class="kw-2">mut </span>commands: Commands, l10n_builder: LocalizationBuilder, assets: Res&lt;LocaleAssets&gt;) {
-    <span class="kw">let </span>l10n = l10n_builder.build(assets.bundles.iter());
-    commands.insert_resource(l10n);
+<span class="kw">fn </span>init_l10n(
+    <span class="kw-2">mut </span>commands: Commands,
+    l10n_builder: LocalizationBuilder,
+    l10n_bundles: Res&lt;Assets&lt;BundleAsset&gt;&gt;,
+    folder: <span class="prelude-ty">Option</span>&lt;Res&lt;LocalesFolder&gt;&gt;,
+    <span class="kw-2">mut </span>done: Local&lt;bool&gt;,
+    ass: Res&lt;AssetServer&gt;,
+) -&gt; Progress {
+    <span class="kw">match </span>(<span class="kw-2">*</span>done, folder) {
+        (<span class="bool-val">false</span>, <span class="prelude-val">None</span>) =&gt; {
+            commands.insert_resource(LocalesFolder(ass.load_folder(<span class="string">&quot;locale&quot;</span>)));
+        }
+        (<span class="bool-val">false</span>, <span class="prelude-val">Some</span>(folder)) =&gt; {
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(LoadState::Loaded) = ass.get_load_state(<span class="kw-2">&amp;</span>folder.<span class="number">0</span>) {
+                <span class="kw">let </span>locales = Locales(l10n_bundles.iter()
+                    .map(|(<span class="kw">_</span>, bundle)| bundle.locales[<span class="number">0</span>].clone())
+                    .collect());
+                <span class="kw">let </span>l10n = l10n_builder.build(<span class="kw-2">&amp;</span>folder.<span class="number">0</span>);
+                commands.insert_resource(locales);
+                commands.insert_resource(l10n);
+                <span class="kw-2">*</span>done = <span class="bool-val">true</span>;
+            }
+        }
+        (<span class="bool-val">true</span>, <span class="kw">_</span>) =&gt; {}
+    }
+    (<span class="kw-2">*</span>done).into()
 }
 
 <span class="kw">fn </span>resolve_l10n(
     locale: Res&lt;Locale&gt;,
     l10n_builder: LocalizationBuilder,
-    assets: Res&lt;LocaleAssets&gt;,
     <span class="kw-2">mut </span>ass_ev: EventReader&lt;AssetEvent&lt;BundleAsset&gt;&gt;,
     <span class="kw-2">mut </span>l10n: ResMut&lt;Localization&gt;,
+    l10n_folder: Res&lt;LocalesFolder&gt;,
     <span class="kw-2">mut </span>query: ParamSet&lt;(
         Query&lt;(<span class="kw-2">&amp;mut </span>Text, <span class="kw-2">&amp;</span>L10nKey), Changed&lt;L10nKey&gt;&gt;,
         Query&lt;(<span class="kw-2">&amp;mut </span>Text, <span class="kw-2">&amp;</span>L10nKey)&gt;,
@@ -216,7 +236,7 @@
     }
 
     <span class="kw">if </span>regenerate {
-        <span class="kw-2">*</span>l10n = l10n_builder.build(assets.bundles.iter());
+        <span class="kw-2">*</span>l10n = l10n_builder.build(<span class="kw-2">&amp;</span>l10n_folder.<span class="number">0</span>);
     }
 
     <span class="comment">// closure for updating UI text
@@ -224,7 +244,7 @@
         <span class="kw">if let </span><span class="prelude-val">Some</span>(string) = l10n.content(<span class="kw-2">&amp;</span>key.<span class="number">0</span>) {
             text.sections[<span class="number">0</span>].value = string;
         } <span class="kw">else </span>{
-            text.sections[<span class="number">0</span>].value = String::new();
+            text.sections[<span class="number">0</span>].value = key.<span class="number">0</span>.clone();
         }
     };
 

@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"enum":["StripError"],"struct":["PrefixError","StripSuffixError","SuffixError"],"trait":["PathExt"]};

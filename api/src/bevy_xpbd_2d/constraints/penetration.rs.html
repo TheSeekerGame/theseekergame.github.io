@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_xpbd_2d-0.2.0/src/constraints/penetration.rs`."><title>penetration.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_xpbd_2d" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_xpbd_2d-0.3.2/src/constraints/penetration.rs`."><title>penetration.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_xpbd_2d" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -175,10 +175,30 @@
 <a href="#175" id="175">175</a>
 <a href="#176" id="176">176</a>
 <a href="#177" id="177">177</a>
+<a href="#178" id="178">178</a>
+<a href="#179" id="179">179</a>
+<a href="#180" id="180">180</a>
+<a href="#181" id="181">181</a>
+<a href="#182" id="182">182</a>
+<a href="#183" id="183">183</a>
+<a href="#184" id="184">184</a>
+<a href="#185" id="185">185</a>
+<a href="#186" id="186">186</a>
+<a href="#187" id="187">187</a>
+<a href="#188" id="188">188</a>
+<a href="#189" id="189">189</a>
+<a href="#190" id="190">190</a>
+<a href="#191" id="191">191</a>
+<a href="#192" id="192">192</a>
+<a href="#193" id="193">193</a>
+<a href="#194" id="194">194</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! Penetration constraint.
 
 </span><span class="kw">use </span><span class="kw">crate</span>::prelude::<span class="kw-2">*</span>;
-<span class="kw">use </span>bevy::prelude::<span class="kw-2">*</span>;
+<span class="kw">use </span>bevy::{
+    ecs::entity::{EntityMapper, MapEntities},
+    prelude::<span class="kw-2">*</span>,
+};
 
 <span class="doccomment">/// A constraint between two bodies that prevents overlap with a given compliance.
 ///
@@ -190,21 +210,23 @@
     <span class="doccomment">/// Second entity in the constraint.
     </span><span class="kw">pub </span>entity2: Entity,
     <span class="doccomment">/// Data associated with the contact.
-    </span><span class="kw">pub </span>contact: Contact,
+    </span><span class="kw">pub </span>contact: ContactData,
     <span class="doccomment">/// Vector from the first entity&#39;s center of mass to the contact point in local coordinates.
-    </span><span class="kw">pub </span>local_r1: Vector,
+    </span><span class="kw">pub </span>r1: Vector,
     <span class="doccomment">/// Vector from the second entity&#39;s center of mass to the contact point in local coordinates.
-    </span><span class="kw">pub </span>local_r2: Vector,
-    <span class="doccomment">/// Vector from the first entity&#39;s center of mass to the contact position in world coordinates.
-    </span><span class="kw">pub </span>world_r1: Vector,
-    <span class="doccomment">/// Vector from the second entity&#39;s center of mass to the contact position in world coordinates.
-    </span><span class="kw">pub </span>world_r2: Vector,
+    </span><span class="kw">pub </span>r2: Vector,
     <span class="doccomment">/// Lagrange multiplier for the normal force.
     </span><span class="kw">pub </span>normal_lagrange: Scalar,
     <span class="doccomment">/// Lagrange multiplier for the tangential force.
     </span><span class="kw">pub </span>tangent_lagrange: Scalar,
     <span class="doccomment">/// The constraint&#39;s compliance, the inverse of stiffness, has the unit meters / Newton.
     </span><span class="kw">pub </span>compliance: Scalar,
+    <span class="doccomment">/// The coefficient of [dynamic friction](Friction) in this contact.
+    </span><span class="kw">pub </span>dynamic_friction_coefficient: Scalar,
+    <span class="doccomment">/// The coefficient of [static friction](Friction) in this contact.
+    </span><span class="kw">pub </span>static_friction_coefficient: Scalar,
+    <span class="doccomment">/// The coefficient of [restitution](Restitution) in this contact.
+    </span><span class="kw">pub </span>restitution_coefficient: Scalar,
     <span class="doccomment">/// Normal force acting along the constraint.
     </span><span class="kw">pub </span>normal_force: Vector,
     <span class="doccomment">/// Static friction force acting along this constraint.
@@ -224,6 +246,16 @@
     <span class="doccomment">/// Solves overlap between two bodies.
     </span><span class="kw">fn </span>solve(<span class="kw-2">&amp;mut </span><span class="self">self</span>, bodies: [<span class="kw-2">&amp;mut </span>RigidBodyQueryItem; <span class="number">2</span>], dt: Scalar) {
         <span class="kw">let </span>[body1, body2] = bodies;
+
+        <span class="kw">let </span>p1 = body1.current_position() + body1.rotation.rotate(<span class="self">self</span>.contact.point1);
+        <span class="kw">let </span>p2 = body2.current_position() + body2.rotation.rotate(<span class="self">self</span>.contact.point2);
+        <span class="self">self</span>.contact.penetration = (p1 - p2).dot(<span class="self">self</span>.contact.global_normal1(<span class="kw-2">&amp;</span>body1.rotation));
+
+        <span class="comment">// If penetration depth is under 0, skip the collision
+        </span><span class="kw">if </span><span class="self">self</span>.contact.penetration &lt;= Scalar::EPSILON {
+            <span class="kw">return</span>;
+        }
+
         <span class="self">self</span>.solve_contact(body1, body2, dt);
         <span class="self">self</span>.solve_friction(body1, body2, dt);
     }
@@ -231,23 +263,26 @@
 
 <span class="kw">impl </span>PenetrationConstraint {
     <span class="doccomment">/// Creates a new [`PenetrationConstraint`] with the given bodies and contact data.
-    </span><span class="kw">pub fn </span>new(body1: <span class="kw-2">&amp;</span>RigidBodyQueryItem, body2: <span class="kw-2">&amp;</span>RigidBodyQueryItem, contact: Contact) -&gt; <span class="self">Self </span>{
-        <span class="kw">let </span>world_r1 = contact.point1 - body1.position.<span class="number">0 </span>+ body1.center_of_mass.<span class="number">0</span>;
-        <span class="kw">let </span>world_r2 = contact.point2 - body2.position.<span class="number">0 </span>+ body2.center_of_mass.<span class="number">0</span>;
-        <span class="kw">let </span>local_r1 = body1.rotation.inverse().rotate(world_r1);
-        <span class="kw">let </span>local_r2 = body2.rotation.inverse().rotate(world_r2);
+    </span><span class="kw">pub fn </span>new(
+        body1: <span class="kw-2">&amp;</span>RigidBodyQueryItem,
+        body2: <span class="kw-2">&amp;</span>RigidBodyQueryItem,
+        contact: ContactData,
+    ) -&gt; <span class="self">Self </span>{
+        <span class="kw">let </span>r1 = contact.point1 - body1.center_of_mass.<span class="number">0</span>;
+        <span class="kw">let </span>r2 = contact.point2 - body2.center_of_mass.<span class="number">0</span>;
 
         <span class="self">Self </span>{
             entity1: body1.entity,
             entity2: body2.entity,
             contact,
-            local_r1,
-            local_r2,
-            world_r1,
-            world_r2,
+            r1,
+            r2,
             normal_lagrange: <span class="number">0.0</span>,
             tangent_lagrange: <span class="number">0.0</span>,
             compliance: <span class="number">0.0</span>,
+            dynamic_friction_coefficient: <span class="number">0.0</span>,
+            static_friction_coefficient: <span class="number">0.0</span>,
+            restitution_coefficient: <span class="number">0.0</span>,
             normal_force: Vector::ZERO,
             static_friction_force: Vector::ZERO,
         }
@@ -261,17 +296,12 @@
         dt: Scalar,
     ) {
         <span class="comment">// Shorter aliases
-        </span><span class="kw">let </span>penetration = <span class="self">self</span>.contact.penetration;
-        <span class="kw">let </span>normal = <span class="self">self</span>.contact.normal;
-        <span class="kw">let </span>compliance = <span class="self">self</span>.compliance;
+        </span><span class="kw">let </span>compliance = <span class="self">self</span>.compliance;
         <span class="kw">let </span>lagrange = <span class="self">self</span>.normal_lagrange;
-        <span class="kw">let </span>r1 = <span class="self">self</span>.world_r1;
-        <span class="kw">let </span>r2 = <span class="self">self</span>.world_r2;
-
-        <span class="comment">// If penetration depth is under 0, skip the collision
-        </span><span class="kw">if </span>penetration &lt;= <span class="number">0.0 </span>{
-            <span class="kw">return</span>;
-        }
+        <span class="kw">let </span>penetration = <span class="self">self</span>.contact.penetration;
+        <span class="kw">let </span>normal = <span class="self">self</span>.contact.global_normal1(<span class="kw-2">&amp;</span>body1.rotation);
+        <span class="kw">let </span>r1 = body1.rotation.rotate(<span class="self">self</span>.r1);
+        <span class="kw">let </span>r2 = body2.rotation.rotate(<span class="self">self</span>.r2);
 
         <span class="comment">// Compute generalized inverse masses
         </span><span class="kw">let </span>w1 = <span class="self">self</span>.compute_generalized_inverse_mass(body1, r1, normal);
@@ -300,21 +330,21 @@
         dt: Scalar,
     ) {
         <span class="comment">// Shorter aliases
-        </span><span class="kw">let </span>penetration = <span class="self">self</span>.contact.penetration;
-        <span class="kw">let </span>normal = <span class="self">self</span>.contact.normal;
-        <span class="kw">let </span>compliance = <span class="self">self</span>.compliance;
+        </span><span class="kw">let </span>compliance = <span class="self">self</span>.compliance;
         <span class="kw">let </span>lagrange = <span class="self">self</span>.tangent_lagrange;
-        <span class="kw">let </span>r1 = <span class="self">self</span>.world_r1;
-        <span class="kw">let </span>r2 = <span class="self">self</span>.world_r2;
-
-        <span class="comment">// Compute contact positions at the current state and before substep integration
-        </span><span class="kw">let </span>p1 = body1.position.<span class="number">0 </span>+ body1.rotation.rotate(<span class="self">self</span>.local_r1);
-        <span class="kw">let </span>p2 = body2.position.<span class="number">0 </span>+ body2.rotation.rotate(<span class="self">self</span>.local_r2);
-        <span class="kw">let </span>prev_p1 = body1.previous_position.<span class="number">0 </span>+ body1.previous_rotation.rotate(<span class="self">self</span>.local_r1);
-        <span class="kw">let </span>prev_p2 = body2.previous_position.<span class="number">0 </span>+ body2.previous_rotation.rotate(<span class="self">self</span>.local_r2);
+        <span class="kw">let </span>penetration = <span class="self">self</span>.contact.penetration;
+        <span class="kw">let </span>normal = <span class="self">self</span>.contact.global_normal1(<span class="kw-2">&amp;</span>body1.rotation);
+        <span class="kw">let </span>r1 = body1.rotation.rotate(<span class="self">self</span>.r1);
+        <span class="kw">let </span>r2 = body2.rotation.rotate(<span class="self">self</span>.r2);
 
         <span class="comment">// Compute relative motion of the contact points and get the tangential component
-        </span><span class="kw">let </span>delta_p = (p1 - prev_p1) - (p2 - prev_p2);
+        </span><span class="kw">let </span>delta_p1 = body1.current_position() - body1.previous_position.<span class="number">0
+            </span>+ body1.rotation.rotate(<span class="self">self</span>.contact.point1)
+            - body1.previous_rotation.rotate(<span class="self">self</span>.contact.point1);
+        <span class="kw">let </span>delta_p2 = body2.current_position() - body2.previous_position.<span class="number">0
+            </span>+ body2.rotation.rotate(<span class="self">self</span>.contact.point2)
+            - body2.previous_rotation.rotate(<span class="self">self</span>.contact.point2);
+        <span class="kw">let </span>delta_p = delta_p1 - delta_p2;
         <span class="kw">let </span>delta_p_tangent = delta_p - delta_p.dot(normal) * normal;
 
         <span class="comment">// Compute magnitude of relative tangential movement and get normalized tangent vector
@@ -332,11 +362,8 @@
         </span><span class="kw">let </span>gradients = [tangent, -tangent];
         <span class="kw">let </span>w = [w1, w2];
 
-        <span class="comment">// Compute combined friction coefficients
-        </span><span class="kw">let </span>static_coefficient = body1.friction.combine(<span class="kw-2">*</span>body2.friction).static_coefficient;
-
         <span class="comment">// Apply static friction if |delta_x_perp| &lt; mu_s * d
-        </span><span class="kw">if </span>sliding_len &lt; static_coefficient * penetration {
+        </span><span class="kw">if </span>sliding_len &lt; <span class="self">self</span>.static_friction_coefficient * penetration {
             <span class="comment">// Compute Lagrange multiplier update for static friction
             </span><span class="kw">let </span>delta_lagrange =
                 <span class="self">self</span>.compute_lagrange_update(lagrange, sliding_len, <span class="kw-2">&amp;</span>gradients, <span class="kw-2">&amp;</span>w, compliance, dt);
@@ -352,4 +379,11 @@
 }
 
 <span class="kw">impl </span>PositionConstraint <span class="kw">for </span>PenetrationConstraint {}
+
+<span class="kw">impl </span>MapEntities <span class="kw">for </span>PenetrationConstraint {
+    <span class="kw">fn </span>map_entities(<span class="kw-2">&amp;mut </span><span class="self">self</span>, entity_mapper: <span class="kw-2">&amp;mut </span>EntityMapper) {
+        <span class="self">self</span>.entity1 = entity_mapper.get_or_reserve(<span class="self">self</span>.entity1);
+        <span class="self">self</span>.entity2 = entity_mapper.get_or_reserve(<span class="self">self</span>.entity2);
+    }
+}
 </code></pre></div></section></main></body></html>
