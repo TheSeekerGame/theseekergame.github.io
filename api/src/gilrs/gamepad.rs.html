@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/gilrs-0.10.4/src/gamepad.rs`."><title>gamepad.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="gilrs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/gilrs-0.10.4/src/gamepad.rs`."><title>gamepad.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="gilrs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1237,7 +1238,7 @@
 
 <span class="kw">pub use </span>gilrs_core::PowerInfo;
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;serde-serialize&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"serde-serialize"</span>)]
 </span><span class="kw">use </span>serde::{Deserialize, Serialize};
 
 <span class="kw">const </span>DEFAULT_DEADZONE: f32 = <span class="number">0.1</span>;
@@ -1265,10 +1266,10 @@
 ///     while let Some(event) = gilrs.next_event() {
 ///         match event {
 ///             Event { id, event: EventType::ButtonPressed(Button::South, _), .. } =&gt; {
-///                 println!(&quot;Player {}: jump!&quot;, id)
+///                 println!("Player {}: jump!", id)
 ///             }
 ///             Event { id, event: EventType::Disconnected, .. } =&gt; {
-///                 println!(&quot;We lost player {}&quot;, id)
+///                 println!("We lost player {}", id)
 ///             }
 ///             _ =&gt; (),
 ///         };
@@ -1279,7 +1280,7 @@
 ///
 /// # Cached gamepad state
 ///
-/// `Gilrs` also menage cached gamepad state. Updating state is done automatically, unless it&#39;s
+/// `Gilrs` also menage cached gamepad state. Updating state is done automatically, unless it's
 ///  disabled by `GilrsBuilder::set_update_state(false)`. However, if you are using custom filters,
 /// you still have to update state manually – to do this call `update()` method.
 ///
@@ -1355,13 +1356,13 @@
 
     <span class="doccomment">/// Returns next pending event. If there is no pending event, `None` is
     /// returned. This function will not block current thread and should be safe
-    /// to call in async context. Doesn&#39;t block the thread it is run in
+    /// to call in async context. Doesn't block the thread it is run in
     </span><span class="kw">pub fn </span>next_event(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Event&gt; {
         <span class="self">self</span>.next_event_inner(<span class="bool-val">false</span>, <span class="prelude-val">None</span>)
     }
 
     <span class="doccomment">/// Same as [Gilrs::next_event], but blocks the thread it is run in. Useful
-    /// for apps that aren&#39;t run inside a loop and just react to the user&#39;s input,
+    /// for apps that aren't run inside a loop and just react to the user's input,
     /// like GUI apps.
     ///
     /// ## Platform support
@@ -1423,7 +1424,7 @@
 
             <span class="kw">match </span>event {
                 <span class="prelude-val">Some</span>(RawEvent { id, event, time }) =&gt; {
-                    <span class="macro">trace!</span>(<span class="string">&quot;Original event: {:?}&quot;</span>, RawEvent { id, event, time });
+                    <span class="macro">trace!</span>(<span class="string">"Original event: {:?}"</span>, RawEvent { id, event, time });
                     <span class="kw">let </span>id = GamepadId(id);
 
                     <span class="kw">let </span>event = <span class="kw">match </span>event {
@@ -1476,7 +1477,7 @@
                             }
                         }
                         RawEventType::AxisValueChanged(val, nec) =&gt; {
-                            <span class="comment">// Let&#39;s trust at least our backend code
+                            <span class="comment">// Let's trust at least our backend code
                             </span><span class="kw">let </span>axis_info = <span class="kw-2">*</span><span class="self">self</span>.gamepad(id).inner.axis_info(nec).unwrap();
                             <span class="kw">let </span>nec = Code(nec);
 
@@ -1538,8 +1539,8 @@
                                 }
                                 Ordering::Greater =&gt; {
                                     <span class="macro">error!</span>(
-                                        <span class="string">&quot;Platform implementation error: got Connected event with \
-                                         id {}, when expected id {}&quot;</span>,
+                                        <span class="string">"Platform implementation error: got Connected event with \
+                                         id {}, when expected id {}"</span>,
                                         id.<span class="number">0</span>,
                                         <span class="self">self</span>.gamepads_data.len()
                                     );
@@ -1564,7 +1565,7 @@
 
     <span class="doccomment">/// Updates internal state according to `event`.
     ///
-    /// Please note, that it&#39;s not necessary to call this function unless you modify events by using
+    /// Please note, that it's not necessary to call this function unless you modify events by using
     /// additional filters and disabled automatic updates when creating `Gilrs`.
     </span><span class="kw">pub fn </span>update(<span class="kw-2">&amp;mut </span><span class="self">self</span>, event: <span class="kw-2">&amp;</span>Event) {
         <span class="kw">use </span><span class="kw">crate</span>::EventType::<span class="kw-2">*</span>;
@@ -1663,7 +1664,7 @@
     }
 
     <span class="doccomment">/// Returns a reference to connected gamepad or `None`.
-    </span><span class="kw">pub fn </span>connected_gamepad(<span class="kw-2">&amp;</span><span class="self">self</span>, id: GamepadId) -&gt; <span class="prelude-ty">Option</span>&lt;Gamepad&lt;<span class="lifetime">&#39;_</span>&gt;&gt; {
+    </span><span class="kw">pub fn </span>connected_gamepad(<span class="kw-2">&amp;</span><span class="self">self</span>, id: GamepadId) -&gt; <span class="prelude-ty">Option</span>&lt;Gamepad&lt;<span class="lifetime">'_</span>&gt;&gt; {
         <span class="comment">// Make sure that it will not panic even with invalid GamepadId, so ConnectedGamepadIterator
         // will always work.
         </span><span class="kw">if let </span><span class="prelude-val">Some</span>(data) = <span class="self">self</span>.gamepads_data.get(id.<span class="number">0</span>) {
@@ -1685,11 +1686,11 @@
     /// # let gilrs = gilrs::Gilrs::new().unwrap();
     /// for (id, gamepad) in gilrs.gamepads() {
     ///     assert!(gamepad.is_connected());
-    ///     println!(&quot;Gamepad with id {} and name {} is connected&quot;,
+    ///     println!("Gamepad with id {} and name {} is connected",
     ///              id, gamepad.name());
     /// }
     /// ```
-    </span><span class="kw">pub fn </span>gamepads(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; ConnectedGamepadsIterator&lt;<span class="lifetime">&#39;_</span>&gt; {
+    </span><span class="kw">pub fn </span>gamepads(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; ConnectedGamepadsIterator&lt;<span class="lifetime">'_</span>&gt; {
         ConnectedGamepadsIterator(<span class="self">self</span>, <span class="number">0</span>)
     }
 
@@ -1702,7 +1703,7 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>.tx
     }
 
-    <span class="doccomment">/// Sets gamepad&#39;s mapping and returns SDL2 representation of them. Returned mappings may not be
+    <span class="doccomment">/// Sets gamepad's mapping and returns SDL2 representation of them. Returned mappings may not be
     /// compatible with SDL2 - if it is important, use
     /// [`set_mapping_strict()`](#method.set_mapping_strict).
     ///
@@ -1729,14 +1730,14 @@
     /// // …
     ///
     /// // or `match gilrs.set_mapping(0, &amp;data, None) {`
-    /// match gilrs.set_mapping(0, &amp;data, &quot;Custom name&quot;) {
-    ///     Ok(sdl) =&gt; println!(&quot;SDL2 mapping: {}&quot;, sdl),
-    ///     Err(e) =&gt; println!(&quot;Failed to set mapping: {}&quot;, e),
+    /// match gilrs.set_mapping(0, &amp;data, "Custom name") {
+    ///     Ok(sdl) =&gt; println!("SDL2 mapping: {}", sdl),
+    ///     Err(e) =&gt; println!("Failed to set mapping: {}", e),
     /// };
     /// ```
     ///
     /// See also `examples/mapping.rs`.
-    </span><span class="kw">pub fn </span>set_mapping&lt;<span class="lifetime">&#39;b</span>, O: Into&lt;<span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;b </span>str&gt;&gt;&gt;(
+    </span><span class="kw">pub fn </span>set_mapping&lt;<span class="lifetime">'b</span>, O: Into&lt;<span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'b </span>str&gt;&gt;&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         gamepad_id: usize,
         mapping: <span class="kw-2">&amp;</span>MappingData,
@@ -1777,7 +1778,7 @@
     ///
     /// Returns `MappingError::NotSdl2Compatible` if `mapping` have an entry for `Button::{C, Z}`
     /// or `Axis::{LeftZ, RightZ}`.
-    </span><span class="kw">pub fn </span>set_mapping_strict&lt;<span class="lifetime">&#39;b</span>, O: Into&lt;<span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;b </span>str&gt;&gt;&gt;(
+    </span><span class="kw">pub fn </span>set_mapping_strict&lt;<span class="lifetime">'b</span>, O: Into&lt;<span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'b </span>str&gt;&gt;&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         gamepad_id: usize,
         mapping: <span class="kw-2">&amp;</span>MappingData,
@@ -1799,7 +1800,7 @@
         </span><span class="kw">let </span>id = <span class="self">self</span>.next_id;
         <span class="self">self</span>.next_id = <span class="kw">match </span><span class="self">self</span>.next_id.checked_add(<span class="number">1</span>) {
             <span class="prelude-val">Some</span>(x) =&gt; x,
-            <span class="prelude-val">None </span>=&gt; <span class="macro">panic!</span>(<span class="string">&quot;Failed to assign ID to new effect&quot;</span>),
+            <span class="prelude-val">None </span>=&gt; <span class="macro">panic!</span>(<span class="string">"Failed to assign ID to new effect"</span>),
         };
         id
     }
@@ -1891,7 +1892,7 @@
             <span class="self">self</span>.mappings.add_env_mappings();
         }
 
-        <span class="macro">debug!</span>(<span class="string">&quot;Loaded {} mappings.&quot;</span>, <span class="self">self</span>.mappings.len());
+        <span class="macro">debug!</span>(<span class="string">"Loaded {} mappings."</span>, <span class="self">self</span>.mappings.len());
 
         <span class="kw">if </span><span class="self">self</span>.axis_to_btn_pressed &lt;= <span class="self">self</span>.axis_to_btn_released
             || <span class="self">self</span>.axis_to_btn_pressed &lt; <span class="number">0.0
@@ -1943,12 +1944,12 @@
 }
 
 <span class="doccomment">/// Iterator over all connected gamepads.
-</span><span class="kw">pub struct </span>ConnectedGamepadsIterator&lt;<span class="lifetime">&#39;a</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Gilrs, usize);
+</span><span class="kw">pub struct </span>ConnectedGamepadsIterator&lt;<span class="lifetime">'a</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">'a </span>Gilrs, usize);
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; Iterator <span class="kw">for </span>ConnectedGamepadsIterator&lt;<span class="lifetime">&#39;a</span>&gt; {
-    <span class="kw">type </span>Item = (GamepadId, Gamepad&lt;<span class="lifetime">&#39;a</span>&gt;);
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; Iterator <span class="kw">for </span>ConnectedGamepadsIterator&lt;<span class="lifetime">'a</span>&gt; {
+    <span class="kw">type </span>Item = (GamepadId, Gamepad&lt;<span class="lifetime">'a</span>&gt;);
 
-    <span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;(GamepadId, Gamepad&lt;<span class="lifetime">&#39;a</span>&gt;)&gt; {
+    <span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;(GamepadId, Gamepad&lt;<span class="lifetime">'a</span>&gt;)&gt; {
         <span class="kw">loop </span>{
             <span class="kw">if </span><span class="self">self</span>.<span class="number">1 </span>== <span class="self">self</span>.<span class="number">0</span>.inner.last_gamepad_hint() {
                 <span class="kw">return </span><span class="prelude-val">None</span>;
@@ -1970,12 +1971,12 @@
 /// Using this struct you can access cached gamepad state, information about gamepad such as name
 /// or UUID and manage force feedback effects.
 </span><span class="attr">#[derive(Debug, Copy, Clone)]
-</span><span class="kw">pub struct </span>Gamepad&lt;<span class="lifetime">&#39;a</span>&gt; {
-    data: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>GamepadData,
-    inner: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>gilrs_core::Gamepad,
+</span><span class="kw">pub struct </span>Gamepad&lt;<span class="lifetime">'a</span>&gt; {
+    data: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>GamepadData,
+    inner: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>gilrs_core::Gamepad,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; Gamepad&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; Gamepad&lt;<span class="lifetime">'a</span>&gt; {
     <span class="doccomment">/// Returns the mapping name if it exists otherwise returns the os provided name.
     </span><span class="kw">pub fn </span>name(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>str {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(map_name) = <span class="self">self</span>.map_name() {
@@ -1996,7 +1997,7 @@
         <span class="self">self</span>.inner.name()
     }
 
-    <span class="doccomment">/// Returns gamepad&#39;s UUID.
+    <span class="doccomment">/// Returns gamepad's UUID.
     ///
     /// It is recommended to process with the [UUID crate](https://crates.io/crates/uuid).
     /// Use `Uuid::from_bytes` method to create a `Uuid` from the returned bytes.
@@ -2017,16 +2018,16 @@
     <span class="doccomment">/// Examines cached gamepad state to check if given button is pressed. Panics if `btn` is
     /// `Unknown`.
     ///
-    /// If you know `Code` of the element that you want to examine, it&#39;s recommended to use methods
+    /// If you know `Code` of the element that you want to examine, it's recommended to use methods
     /// directly on `State`, because this version have to check which `Code` is mapped to element of
     /// gamepad.
     </span><span class="kw">pub fn </span>is_pressed(<span class="kw-2">&amp;</span><span class="self">self</span>, btn: Button) -&gt; bool {
         <span class="self">self</span>.data.is_pressed(btn)
     }
 
-    <span class="doccomment">/// Examines cached gamepad state to check axis&#39;s value. Panics if `axis` is `Unknown`.
+    <span class="doccomment">/// Examines cached gamepad state to check axis's value. Panics if `axis` is `Unknown`.
     ///
-    /// If you know `Code` of the element that you want to examine, it&#39;s recommended to use methods
+    /// If you know `Code` of the element that you want to examine, it's recommended to use methods
     /// directly on `State`, because this version have to check which `Code` is mapped to element of
     /// gamepad.
     </span><span class="kw">pub fn </span>value(<span class="kw-2">&amp;</span><span class="self">self</span>, axis: Axis) -&gt; f32 {
@@ -2035,7 +2036,7 @@
 
     <span class="doccomment">/// Returns button state and when it changed.
     ///
-    /// If you know `Code` of the element that you want to examine, it&#39;s recommended to use methods
+    /// If you know `Code` of the element that you want to examine, it's recommended to use methods
     /// directly on `State`, because this version have to check which `Code` is mapped to element of
     /// gamepad.
     </span><span class="kw">pub fn </span>button_data(<span class="kw-2">&amp;</span><span class="self">self</span>, btn: Button) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>ButtonData&gt; {
@@ -2044,14 +2045,14 @@
 
     <span class="doccomment">/// Returns axis state and when it changed.
     ///
-    /// If you know `Code` of the element that you want to examine, it&#39;s recommended to use methods
+    /// If you know `Code` of the element that you want to examine, it's recommended to use methods
     /// directly on `State`, because this version have to check which `Code` is mapped to element of
     /// gamepad.
     </span><span class="kw">pub fn </span>axis_data(<span class="kw-2">&amp;</span><span class="self">self</span>, axis: Axis) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>AxisData&gt; {
         <span class="self">self</span>.data.axis_data(axis)
     }
 
-    <span class="doccomment">/// Returns device&#39;s power supply state. See [`PowerInfo`](enum.PowerInfo.html) for details.
+    <span class="doccomment">/// Returns device's power supply state. See [`PowerInfo`](enum.PowerInfo.html) for details.
     </span><span class="kw">pub fn </span>power_info(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; PowerInfo {
         <span class="self">self</span>.inner.power_info()
     }
@@ -2066,12 +2067,12 @@
     /// for (_, gamepad) in gilrs.gamepads().filter(
     ///     |gp| gp.1.mapping_source() != MappingSource::None)
     /// {
-    ///     println!(&quot;{} is ready to use!&quot;, gamepad.name());
+    ///     println!("{} is ready to use!", gamepad.name());
     /// }
     /// ```
     </span><span class="kw">pub fn </span>mapping_source(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; MappingSource {
         <span class="kw">if </span><span class="self">self</span>.data.mapping.is_default() {
-            <span class="comment">// TODO: check if it&#39;s Driver or None
+            <span class="comment">// TODO: check if it's Driver or None
             </span>MappingSource::Driver
         } <span class="kw">else </span>{
             MappingSource::SdlMappings
@@ -2165,8 +2166,8 @@
                     <span class="prelude-val">Ok</span>(result) =&gt; result,
                     <span class="prelude-val">Err</span>(e) =&gt; {
                         <span class="macro">warn!</span>(
-                            <span class="string">&quot;Unable to parse SDL mapping for UUID {}\n\t{:?}\n\tDefault mapping \
-                             will be used.&quot;</span>,
+                            <span class="string">"Unable to parse SDL mapping for UUID {}\n\t{:?}\n\tDefault mapping \
+                             will be used."</span>,
                             Uuid::from_bytes(gamepad.uuid()),
                             e
                         );
@@ -2207,7 +2208,7 @@
     <span class="doccomment">/// Examines cached gamepad state to check if given button is pressed. Panics if `btn` is
     /// `Unknown`.
     ///
-    /// If you know `Code` of the element that you want to examine, it&#39;s recommended to use methods
+    /// If you know `Code` of the element that you want to examine, it's recommended to use methods
     /// directly on `State`, because this version have to check which `Code` is mapped to element of
     /// gamepad.
     </span><span class="kw">pub fn </span>is_pressed(<span class="kw-2">&amp;</span><span class="self">self</span>, btn: Button) -&gt; bool {
@@ -2219,9 +2220,9 @@
             .unwrap_or(<span class="bool-val">false</span>)
     }
 
-    <span class="doccomment">/// Examines cached gamepad state to check axis&#39;s value. Panics if `axis` is `Unknown`.
+    <span class="doccomment">/// Examines cached gamepad state to check axis's value. Panics if `axis` is `Unknown`.
     ///
-    /// If you know `Code` of the element that you want to examine, it&#39;s recommended to use methods
+    /// If you know `Code` of the element that you want to examine, it's recommended to use methods
     /// directly on `State`, because this version have to check which `Code` is mapped to element of
     /// gamepad.
     </span><span class="kw">pub fn </span>value(<span class="kw-2">&amp;</span><span class="self">self</span>, axis: Axis) -&gt; f32 {
@@ -2234,7 +2235,7 @@
 
     <span class="doccomment">/// Returns button state and when it changed.
     ///
-    /// If you know `Code` of the element that you want to examine, it&#39;s recommended to use methods
+    /// If you know `Code` of the element that you want to examine, it's recommended to use methods
     /// directly on `State`, because this version have to check which `Code` is mapped to element of
     /// gamepad.
     </span><span class="kw">pub fn </span>button_data(<span class="kw-2">&amp;</span><span class="self">self</span>, btn: Button) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>ButtonData&gt; {
@@ -2244,7 +2245,7 @@
 
     <span class="doccomment">/// Returns axis state and when it changed.
     ///
-    /// If you know `Code` of the element that you want to examine, it&#39;s recommended to use methods
+    /// If you know `Code` of the element that you want to examine, it's recommended to use methods
     /// directly on `State`, because this version have to check which `Code` is mapped to element of
     /// gamepad.
     </span><span class="kw">pub fn </span>axis_data(<span class="kw-2">&amp;</span><span class="self">self</span>, axis: Axis) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>AxisData&gt; {
@@ -2282,10 +2283,10 @@
 
 <span class="doccomment">/// Gamepad ID.
 ///
-/// It&#39;s not possible to create instance of this type directly, but you can obtain one from Gamepad
+/// It's not possible to create instance of this type directly, but you can obtain one from Gamepad
 /// handle or any event. ID is valid for entire lifetime of `Gilrs` context.
 </span><span class="attr">#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
-#[cfg_attr(feature = <span class="string">&quot;serde-serialize&quot;</span>, derive(Serialize, Deserialize))]
+#[cfg_attr(feature = <span class="string">"serde-serialize"</span>, derive(Serialize, Deserialize))]
 </span><span class="kw">pub struct </span>GamepadId(<span class="kw">pub</span>(<span class="kw">crate</span>) usize);
 
 <span class="kw">impl </span>From&lt;GamepadId&gt; <span class="kw">for </span>usize {
@@ -2295,7 +2296,7 @@
 }
 
 <span class="kw">impl </span>Display <span class="kw">for </span>GamepadId {
-    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; fmt::Result {
         <span class="self">self</span>.<span class="number">0</span>.fmt(f)
     }
 }
@@ -2305,7 +2306,7 @@
     <span class="kw">let </span><span class="kw-2">mut </span>val = val <span class="kw">as </span>f32 - info.min <span class="kw">as </span>f32;
 
     <span class="kw">if let </span><span class="prelude-val">Some</span>(i_range) = info.max.checked_sub(info.min) {
-        <span class="comment">// Only consider adjusting range &amp; val if calculating the range doesn&#39;t cause overflow.  If
+        <span class="comment">// Only consider adjusting range &amp; val if calculating the range doesn't cause overflow.  If
         // the range is so large overflow occurs, adjusting values by 1.0 would be insignificant.
         </span><span class="kw">if </span>i_range % <span class="number">2 </span>== <span class="number">1 </span>{
             <span class="comment">// Add one to range and val, so value at center (like 127/255) will be mapped 0.0
@@ -2343,15 +2344,15 @@
     <span class="doccomment">/// Either `pressed ≤ released` or one of values is outside [0.0, 1.0] range.
     </span>InvalidAxisToBtn,
     <span class="doccomment">/// Platform specific error.
-    </span>Other(Box&lt;<span class="kw">dyn </span>error::Error + Send + Sync + <span class="lifetime">&#39;static</span>&gt;),
+    </span>Other(Box&lt;<span class="kw">dyn </span>error::Error + Send + Sync + <span class="lifetime">'static</span>&gt;),
 }
 
 <span class="kw">impl </span>Display <span class="kw">for </span>Error {
-    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; fmt::Result {
         <span class="kw">match </span><span class="self">self </span>{
-            Error::NotImplemented(<span class="kw">_</span>) =&gt; f.write_str(<span class="string">&quot;Gilrs does not support current platform.&quot;</span>),
+            Error::NotImplemented(<span class="kw">_</span>) =&gt; f.write_str(<span class="string">"Gilrs does not support current platform."</span>),
             Error::InvalidAxisToBtn =&gt; f.write_str(
-                <span class="string">&quot;Either `pressed ≤ released` or one of values is outside [0.0, 1.0] range.&quot;</span>,
+                <span class="string">"Either `pressed ≤ released` or one of values is outside [0.0, 1.0] range."</span>,
             ),
             Error::Other(<span class="kw-2">ref </span>e) =&gt; e.fmt(f),
         }
@@ -2359,7 +2360,7 @@
 }
 
 <span class="kw">impl </span>error::Error <span class="kw">for </span>Error {
-    <span class="kw">fn </span>source(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>(<span class="kw">dyn </span>error::Error + <span class="lifetime">&#39;static</span>)&gt; {
+    <span class="kw">fn </span>source(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>(<span class="kw">dyn </span>error::Error + <span class="lifetime">'static</span>)&gt; {
         <span class="kw">match </span><span class="self">self </span>{
             Error::Other(e) =&gt; <span class="prelude-val">Some</span>(e.as_ref()),
             <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
@@ -2370,7 +2371,7 @@
 <span class="kw">const _</span>: () = {
     <span class="kw">const fn </span>assert_send&lt;T: Send&gt;() {}
 
-    <span class="attr">#[cfg(not(target_arch = <span class="string">&quot;wasm32&quot;</span>))]
+    <span class="attr">#[cfg(not(target_arch = <span class="string">"wasm32"</span>))]
     </span>assert_send::&lt;Gilrs&gt;();
 };
 

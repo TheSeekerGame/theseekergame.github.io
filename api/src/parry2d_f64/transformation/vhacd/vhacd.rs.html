@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/parry2d-f64-0.13.5/src/transformation/vhacd/vhacd.rs`."><title>vhacd.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="parry2d_f64" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/parry2d-f64-0.13.6/src/transformation/vhacd/vhacd.rs`."><title>vhacd.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="parry2d_f64" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -644,16 +645,16 @@
 // &gt;
 // &gt; 3. The names of the contributors may not be used to endorse or promote products derived from this software without specific prior written permission.
 // &gt;
-// &gt; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+// &gt; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 </span><span class="kw">use </span><span class="kw">crate</span>::math::{Point, Real, Vector, DIM};
 <span class="kw">use </span><span class="kw">crate</span>::transformation::vhacd::VHACDParameters;
 <span class="kw">use </span><span class="kw">crate</span>::transformation::voxelization::{VoxelSet, VoxelizedVolume};
 <span class="kw">use </span>std::sync::Arc;
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;dim2&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"dim2"</span>)]
 </span><span class="kw">type </span>ConvexHull = Vec&lt;Point&lt;Real&gt;&gt;;
-<span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
 </span><span class="kw">type </span>ConvexHull = (Vec&lt;Point&lt;Real&gt;&gt;, Vec&lt;[u32; <span class="number">3</span>]&gt;);
 
 <span class="attr">#[derive(Copy, Clone, Debug)]
@@ -732,7 +733,7 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>.voxel_parts
     }
 
-    <span class="attr">#[cfg(feature = <span class="string">&quot;dim2&quot;</span>)]
+    <span class="attr">#[cfg(feature = <span class="string">"dim2"</span>)]
     </span><span class="kw">fn </span>compute_preferred_cutting_direction(eigenvalues: <span class="kw-2">&amp;</span>Vector&lt;Real&gt;) -&gt; (Vector&lt;Real&gt;, Real) {
         <span class="kw">let </span>vx = eigenvalues.y * eigenvalues.y;
         <span class="kw">let </span>vy = eigenvalues.x * eigenvalues.x;
@@ -758,7 +759,7 @@
         }
     }
 
-    <span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+    <span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
     </span><span class="kw">fn </span>compute_preferred_cutting_direction(eigenvalues: <span class="kw-2">&amp;</span>Vector&lt;Real&gt;) -&gt; (Vector&lt;Real&gt;, Real) {
         <span class="kw">let </span>vx = (eigenvalues.y - eigenvalues.z) * (eigenvalues.y - eigenvalues.z);
         <span class="kw">let </span>vy = (eigenvalues.x - eigenvalues.z) * (eigenvalues.x - eigenvalues.z);
@@ -886,9 +887,9 @@
                 );
 
                 clip_mesh(
-                    <span class="attr">#[cfg(feature = <span class="string">&quot;dim2&quot;</span>)]
-                    </span><span class="kw-2">&amp;</span>input_voxels_ch,
-                    <span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+                    <span class="attr">#[cfg(feature = <span class="string">"dim2"</span>)]
+                    </span>input_voxels_ch,
+                    <span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
                     </span><span class="kw-2">&amp;</span>input_voxels_ch.<span class="number">0</span>,
                     plane,
                     <span class="kw-2">&amp;mut </span>right_ch_pts,
@@ -1137,7 +1138,7 @@
     ///
     /// This will panic if `keep_voxel_to_primitives_map` was set to `false` when initializing
     /// `self`.
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;dim2&quot;</span>)]
+    </span><span class="attr">#[cfg(feature = <span class="string">"dim2"</span>)]
     </span><span class="kw">pub fn </span>compute_exact_convex_hulls(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         points: <span class="kw-2">&amp;</span>[Point&lt;Real&gt;],
@@ -1154,7 +1155,7 @@
     ///
     /// This will panic if `keep_voxel_to_primitives_map` was set to `false` when initializing
     /// `self`.
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+    </span><span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
     </span><span class="kw">pub fn </span>compute_exact_convex_hulls(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         points: <span class="kw-2">&amp;</span>[Point&lt;Real&gt;],
@@ -1171,7 +1172,7 @@
     ///
     /// Use `compute_exact_convex_hulls` instead if the original polyline/trimesh geometry
     /// needs to be taken into account.
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;dim2&quot;</span>)]
+    </span><span class="attr">#[cfg(feature = <span class="string">"dim2"</span>)]
     </span><span class="kw">pub fn </span>compute_convex_hulls(<span class="kw-2">&amp;</span><span class="self">self</span>, downsampling: u32) -&gt; Vec&lt;Vec&lt;Point&lt;Real&gt;&gt;&gt; {
         <span class="kw">let </span>downsampling = downsampling.max(<span class="number">1</span>);
         <span class="self">self</span>.voxel_parts
@@ -1185,7 +1186,7 @@
     ///
     /// Use `compute_exact_convex_hulls` instead if the original polyline/trimesh geometry
     /// needs to be taken into account.
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+    </span><span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
     </span><span class="kw">pub fn </span>compute_convex_hulls(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         downsampling: u32,
@@ -1222,7 +1223,7 @@
     }
 }
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;dim2&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"dim2"</span>)]
 </span><span class="kw">fn </span>convex_hull(vertices: <span class="kw-2">&amp;</span>[Point&lt;Real&gt;]) -&gt; Vec&lt;Point&lt;Real&gt;&gt; {
     <span class="kw">if </span>vertices.len() &gt; <span class="number">1 </span>{
         <span class="kw">crate</span>::transformation::convex_hull(vertices)
@@ -1231,7 +1232,7 @@
     }
 }
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
 </span><span class="kw">fn </span>convex_hull(vertices: <span class="kw-2">&amp;</span>[Point&lt;Real&gt;]) -&gt; (Vec&lt;Point&lt;Real&gt;&gt;, Vec&lt;[u32; DIM]&gt;) {
     <span class="kw">if </span>vertices.len() &gt; <span class="number">2 </span>{
         <span class="kw">crate</span>::transformation::convex_hull(vertices)
@@ -1240,16 +1241,16 @@
     }
 }
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;dim2&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"dim2"</span>)]
 </span><span class="kw">fn </span>compute_volume(polygon: <span class="kw-2">&amp;</span>[Point&lt;Real&gt;]) -&gt; Real {
     <span class="kw">if </span>!polygon.is_empty() {
-        <span class="kw">crate</span>::mass_properties::details::convex_polygon_area_and_center_of_mass(<span class="kw-2">&amp;</span>polygon).<span class="number">0
+        <span class="kw">crate</span>::mass_properties::details::convex_polygon_area_and_center_of_mass(polygon).<span class="number">0
     </span>} <span class="kw">else </span>{
         <span class="number">0.0
     </span>}
 }
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
 </span><span class="kw">fn </span>compute_volume(mesh: <span class="kw-2">&amp;</span>(Vec&lt;Point&lt;Real&gt;&gt;, Vec&lt;[u32; DIM]&gt;)) -&gt; Real {
     <span class="kw">if </span>!mesh.<span class="number">0</span>.is_empty() {
         <span class="kw">crate</span>::mass_properties::details::trimesh_signed_volume_and_center_of_mass(<span class="kw-2">&amp;</span>mesh.<span class="number">0</span>, <span class="kw-2">&amp;</span>mesh.<span class="number">1</span>)

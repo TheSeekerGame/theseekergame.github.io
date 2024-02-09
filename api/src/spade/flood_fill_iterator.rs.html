@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spade-2.5.1/src/flood_fill_iterator.rs`."><title>flood_fill_iterator.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="spade" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spade-2.6.0/src/flood_fill_iterator.rs`."><title>flood_fill_iterator.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="spade" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1015,15 +1016,15 @@
 ///  - expanding the edge hull formed by that face until all of the shape is covered (or the
 ///    convex hull is reached)
 ///
-/// This type doesn&#39;t implement `Iterator` directly - instead, it does the heavy lifting for
+/// This type doesn't implement `Iterator` directly - instead, it does the heavy lifting for
 /// [VerticesInShapeIterator] and [EdgesInShapeIterator].
 </span><span class="attr">#[derive(Clone, Debug, PartialEq, Eq)]
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>FloodFillIterator&lt;<span class="lifetime">&#39;a</span>, T, M&gt;
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>FloodFillIterator&lt;<span class="lifetime">'a</span>, T, M&gt;
 <span class="kw">where
     </span>T: Triangulation,
     M: DistanceMetric&lt;&lt;T::Vertex <span class="kw">as </span>HasPosition&gt;::Scalar&gt;,
 {
-    t: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>T,
+    t: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>T,
     edge_loop: VecDeque&lt;FixedDirectedEdgeHandle&gt;,
     pending: <span class="prelude-ty">Option</span>&lt;FixedDirectedEdgeHandle&gt;,
     already_visited: HashSet&lt;FixedVertexHandle&gt;,
@@ -1037,23 +1038,23 @@
 ///
 /// The item type is [VertexHandle]
 </span><span class="attr">#[derive(Clone, Debug, PartialEq, Eq)]
-</span><span class="kw">pub struct </span>VerticesInShapeIterator&lt;<span class="lifetime">&#39;a</span>, T, M&gt;
+</span><span class="kw">pub struct </span>VerticesInShapeIterator&lt;<span class="lifetime">'a</span>, T, M&gt;
 <span class="kw">where
     </span>T: Triangulation,
     M: DistanceMetric&lt;&lt;T::Vertex <span class="kw">as </span>HasPosition&gt;::Scalar&gt;,
 {
     initial_elements: SmallVec&lt;[FixedVertexHandle; <span class="number">3</span>]&gt;,
-    inner_iter: FloodFillIterator&lt;<span class="lifetime">&#39;a</span>, T, M&gt;,
+    inner_iter: FloodFillIterator&lt;<span class="lifetime">'a</span>, T, M&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, T, M&gt; VerticesInShapeIterator&lt;<span class="lifetime">&#39;a</span>, T, M&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, T, M&gt; VerticesInShapeIterator&lt;<span class="lifetime">'a</span>, T, M&gt;
 <span class="kw">where
     </span>T: Triangulation,
     M: DistanceMetric&lt;&lt;T::Vertex <span class="kw">as </span>HasPosition&gt;::Scalar&gt;,
 {
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>new(inner_iter: FloodFillIterator&lt;<span class="lifetime">&#39;a</span>, T, M&gt;) -&gt; <span class="self">Self </span>{
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>new(inner_iter: FloodFillIterator&lt;<span class="lifetime">'a</span>, T, M&gt;) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span>initial_elements = <span class="kw">if </span>inner_iter.t.num_vertices() == <span class="number">1 </span>{
-            <span class="comment">// The flood fill iterator requires at least a single edge to work properly. We&#39;ll have
+            <span class="comment">// The flood fill iterator requires at least a single edge to work properly. We'll have
             // to special case triangulations that contain vertices but no edges.
             </span><span class="macro">smallvec!</span>[FixedVertexHandle::new(<span class="number">0</span>)]
         } <span class="kw">else </span>{
@@ -1067,12 +1068,12 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, T, M&gt; Iterator <span class="kw">for </span>VerticesInShapeIterator&lt;<span class="lifetime">&#39;a</span>, T, M&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, T, M&gt; Iterator <span class="kw">for </span>VerticesInShapeIterator&lt;<span class="lifetime">'a</span>, T, M&gt;
 <span class="kw">where
     </span>T: Triangulation,
     M: DistanceMetric&lt;&lt;T::Vertex <span class="kw">as </span>HasPosition&gt;::Scalar&gt;,
 {
-    <span class="kw">type </span>Item = VertexHandle&lt;<span class="lifetime">&#39;a</span>, T::Vertex, T::DirectedEdge, T::UndirectedEdge, T::Face&gt;;
+    <span class="kw">type </span>Item = VertexHandle&lt;<span class="lifetime">'a</span>, T::Vertex, T::DirectedEdge, T::UndirectedEdge, T::Face&gt;;
 
     <span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt; {
         <span class="kw">while let </span><span class="prelude-val">Some</span>(next) = <span class="self">self</span>.initial_elements.pop() {
@@ -1100,20 +1101,20 @@
 ///
 /// The item type is [UndirectedEdgeHandle]
 </span><span class="attr">#[derive(Clone, Debug, PartialEq, Eq)]
-</span><span class="kw">pub struct </span>EdgesInShapeIterator&lt;<span class="lifetime">&#39;a</span>, T, M&gt;
+</span><span class="kw">pub struct </span>EdgesInShapeIterator&lt;<span class="lifetime">'a</span>, T, M&gt;
 <span class="kw">where
     </span>T: Triangulation,
     M: DistanceMetric&lt;&lt;T::Vertex <span class="kw">as </span>HasPosition&gt;::Scalar&gt;,
 {
-    <span class="kw">pub</span>(<span class="kw">crate</span>) inner_iter: FloodFillIterator&lt;<span class="lifetime">&#39;a</span>, T, M&gt;,
+    <span class="kw">pub</span>(<span class="kw">crate</span>) inner_iter: FloodFillIterator&lt;<span class="lifetime">'a</span>, T, M&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, T, M&gt; Iterator <span class="kw">for </span>EdgesInShapeIterator&lt;<span class="lifetime">&#39;a</span>, T, M&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, T, M&gt; Iterator <span class="kw">for </span>EdgesInShapeIterator&lt;<span class="lifetime">'a</span>, T, M&gt;
 <span class="kw">where
     </span>T: Triangulation,
     M: DistanceMetric&lt;&lt;T::Vertex <span class="kw">as </span>HasPosition&gt;::Scalar&gt;,
 {
-    <span class="kw">type </span>Item = UndirectedEdgeHandle&lt;<span class="lifetime">&#39;a</span>, T::Vertex, T::DirectedEdge, T::UndirectedEdge, T::Face&gt;;
+    <span class="kw">type </span>Item = UndirectedEdgeHandle&lt;<span class="lifetime">'a</span>, T::Vertex, T::DirectedEdge, T::UndirectedEdge, T::Face&gt;;
 
     <span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt; {
         <span class="self">self</span>.inner_iter
@@ -1122,13 +1123,13 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, T, M&gt; FloodFillIterator&lt;<span class="lifetime">&#39;a</span>, T, M&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, T, M&gt; FloodFillIterator&lt;<span class="lifetime">'a</span>, T, M&gt;
 <span class="kw">where
     </span>T: Triangulation,
     M: DistanceMetric&lt;&lt;T::Vertex <span class="kw">as </span>HasPosition&gt;::Scalar&gt;,
 {
     <span class="kw">pub fn </span>new(
-        t: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>T,
+        t: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>T,
         metric: M,
         start_point: Point2&lt;&lt;T::Vertex <span class="kw">as </span>HasPosition&gt;::Scalar&gt;,
     ) -&gt; <span class="self">Self </span>{
@@ -1149,7 +1150,7 @@
 
     <span class="attr">#[allow(clippy::type_complexity)]
     </span><span class="kw">fn </span>get_start_edges(
-        t: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>T,
+        t: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>T,
         metric: <span class="kw-2">&amp;</span>M,
         start_point: Point2&lt;&lt;T::Vertex <span class="kw">as </span>HasPosition&gt;::Scalar&gt;,
     ) -&gt; Vec&lt;FixedDirectedEdgeHandle&gt; {
@@ -1213,7 +1214,7 @@
 
                     <span class="kw">if </span>next_distance &gt; min_distance {
                         <span class="comment">// Advancing the convex hull is increasing the distance to the convex
-                        // shape we won&#39;t find an intersection.
+                        // shape we won't find an intersection.
                         </span><span class="kw">break </span><span class="prelude-val">None</span>;
                     }
 
@@ -1231,7 +1232,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, T, M&gt; FloodFillIterator&lt;<span class="lifetime">&#39;a</span>, T, M&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, T, M&gt; FloodFillIterator&lt;<span class="lifetime">'a</span>, T, M&gt;
 <span class="kw">where
     </span>T: Triangulation,
     M: DistanceMetric&lt;&lt;T::Vertex <span class="kw">as </span>HasPosition&gt;::Scalar&gt;,
@@ -1265,7 +1266,7 @@
     ///
     /// This procedure has one caveat: The loop may expand into itself - in the above
     /// depiction, `v_new` may already be part of the loop. This leads to
-    /// issues as the loop will contain a &quot;sub loop&quot; that doesn&#39;t get cleaned up properly.
+    /// issues as the loop will contain a "sub loop" that doesn't get cleaned up properly.
     ///
     /// For this reason, a hash set stores all vertices that have already been visited. If a collision
     /// is found, the iterator will skip the edge (by appending it to the front of the loop)
@@ -1281,8 +1282,8 @@
     </span><span class="kw">fn </span>next(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
     ) -&gt; <span class="prelude-ty">Option</span>&lt;(
-        DirectedEdgeHandle&lt;<span class="lifetime">&#39;a</span>, T::Vertex, T::DirectedEdge, T::UndirectedEdge, T::Face&gt;,
-        <span class="prelude-ty">Option</span>&lt;VertexHandle&lt;<span class="lifetime">&#39;a</span>, T::Vertex, T::DirectedEdge, T::UndirectedEdge, T::Face&gt;&gt;,
+        DirectedEdgeHandle&lt;<span class="lifetime">'a</span>, T::Vertex, T::DirectedEdge, T::UndirectedEdge, T::Face&gt;,
+        <span class="prelude-ty">Option</span>&lt;VertexHandle&lt;<span class="lifetime">'a</span>, T::Vertex, T::DirectedEdge, T::UndirectedEdge, T::Face&gt;&gt;,
     )&gt; {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(pending) = <span class="self">self</span>.pending.take() {
             <span class="kw">let </span>pending = <span class="self">self</span>.t.directed_edge(pending);
@@ -1328,7 +1329,7 @@
 
             <span class="kw">let </span>first = <span class="self">self</span>.edge_loop.front().copied();
             <span class="kw">if </span>first == <span class="prelude-val">Some</span>(next.next().fix()) {
-                <span class="comment">// Another &quot;special case&quot; happens if the first and last edge in the
+                <span class="comment">// Another "special case" happens if the first and last edge in the
                 // loop are direct neighbors.
                 // In this case, expanding the last edge would create a duplicated edge in the
                 // loop. Instead, we may only push one of the two usual successors.

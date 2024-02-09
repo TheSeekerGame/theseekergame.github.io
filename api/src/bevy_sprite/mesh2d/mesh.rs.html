@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy-3e956806168b8470/b5b6ea3/crates/bevy_sprite/src/mesh2d/mesh.rs`."><title>mesh.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_sprite" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy-3e956806168b8470/b5b6ea3/crates/bevy_sprite/src/mesh2d/mesh.rs`."><title>mesh.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_sprite" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -800,34 +801,34 @@
         <span class="macro">load_internal_asset!</span>(
             app,
             MESH2D_VERTEX_OUTPUT,
-            <span class="string">&quot;mesh2d_vertex_output.wgsl&quot;</span>,
+            <span class="string">"mesh2d_vertex_output.wgsl"</span>,
             Shader::from_wgsl
         );
         <span class="macro">load_internal_asset!</span>(
             app,
             MESH2D_VIEW_TYPES_HANDLE,
-            <span class="string">&quot;mesh2d_view_types.wgsl&quot;</span>,
+            <span class="string">"mesh2d_view_types.wgsl"</span>,
             Shader::from_wgsl
         );
         <span class="macro">load_internal_asset!</span>(
             app,
             MESH2D_VIEW_BINDINGS_HANDLE,
-            <span class="string">&quot;mesh2d_view_bindings.wgsl&quot;</span>,
+            <span class="string">"mesh2d_view_bindings.wgsl"</span>,
             Shader::from_wgsl
         );
         <span class="macro">load_internal_asset!</span>(
             app,
             MESH2D_TYPES_HANDLE,
-            <span class="string">&quot;mesh2d_types.wgsl&quot;</span>,
+            <span class="string">"mesh2d_types.wgsl"</span>,
             Shader::from_wgsl
         );
         <span class="macro">load_internal_asset!</span>(
             app,
             MESH2D_FUNCTIONS_HANDLE,
-            <span class="string">&quot;mesh2d_functions.wgsl&quot;</span>,
+            <span class="string">"mesh2d_functions.wgsl"</span>,
             Shader::from_wgsl
         );
-        <span class="macro">load_internal_asset!</span>(app, MESH2D_SHADER_HANDLE, <span class="string">&quot;mesh2d.wgsl&quot;</span>, Shader::from_wgsl);
+        <span class="macro">load_internal_asset!</span>(app, MESH2D_SHADER_HANDLE, <span class="string">"mesh2d.wgsl"</span>, Shader::from_wgsl);
 
         <span class="kw">if let </span><span class="prelude-val">Ok</span>(render_app) = app.get_sub_app_mut(RenderApp) {
             render_app
@@ -856,7 +857,7 @@
                 render_app.world.resource::&lt;RenderDevice&gt;(),
             ) {
                 mesh_bindings_shader_defs.push(ShaderDefVal::UInt(
-                    <span class="string">&quot;PER_OBJECT_BUFFER_BATCH_SIZE&quot;</span>.into(),
+                    <span class="string">"PER_OBJECT_BUFFER_BATCH_SIZE"</span>.into(),
                     per_object_buffer_batch_size,
                 ));
             }
@@ -873,7 +874,7 @@
         </span><span class="macro">load_internal_asset!</span>(
             app,
             MESH2D_BINDINGS_HANDLE,
-            <span class="string">&quot;mesh2d_bindings.wgsl&quot;</span>,
+            <span class="string">"mesh2d_bindings.wgsl"</span>,
             Shader::from_wgsl_with_defs,
             mesh_bindings_shader_defs
         );
@@ -1017,7 +1018,7 @@
                     count: <span class="prelude-val">None</span>,
                 },
             ],
-            label: <span class="prelude-val">Some</span>(<span class="string">&quot;mesh2d_view_layout&quot;</span>),
+            label: <span class="prelude-val">Some</span>(<span class="string">"mesh2d_view_layout"</span>),
         });
 
         <span class="kw">let </span>mesh_layout = render_device.create_bind_group_layout(<span class="kw-2">&amp;</span>BindGroupLayoutDescriptor {
@@ -1026,9 +1027,9 @@
                 ShaderStages::VERTEX_FRAGMENT,
                 render_device,
             )],
-            label: <span class="prelude-val">Some</span>(<span class="string">&quot;mesh2d_layout&quot;</span>),
+            label: <span class="prelude-val">Some</span>(<span class="string">"mesh2d_layout"</span>),
         });
-        <span class="comment">// A 1x1x1 &#39;all 1.0&#39; texture to use as a dummy texture to use in place of optional StandardMaterial textures
+        <span class="comment">// A 1x1x1 'all 1.0' texture to use as a dummy texture to use in place of optional StandardMaterial textures
         </span><span class="kw">let </span>dummy_white_gpu_image = {
             <span class="kw">let </span>image = Image::default();
             <span class="kw">let </span>texture = render_device.create_texture(<span class="kw-2">&amp;</span>image.texture_descriptor);
@@ -1078,11 +1079,11 @@
 }
 
 <span class="kw">impl </span>Mesh2dPipeline {
-    <span class="kw">pub fn </span>get_image_texture&lt;<span class="lifetime">&#39;a</span>&gt;(
-        <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>,
-        gpu_images: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>RenderAssets&lt;Image&gt;,
+    <span class="kw">pub fn </span>get_image_texture&lt;<span class="lifetime">'a</span>&gt;(
+        <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="self">self</span>,
+        gpu_images: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>RenderAssets&lt;Image&gt;,
         handle_option: <span class="kw-2">&amp;</span><span class="prelude-ty">Option</span>&lt;Handle&lt;Image&gt;&gt;,
-    ) -&gt; <span class="prelude-ty">Option</span>&lt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>TextureView, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Sampler)&gt; {
+    ) -&gt; <span class="prelude-ty">Option</span>&lt;(<span class="kw-2">&amp;</span><span class="lifetime">'a </span>TextureView, <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Sampler)&gt; {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(handle) = handle_option {
             <span class="kw">let </span>gpu_image = gpu_images.get(handle)<span class="question-mark">?</span>;
             <span class="prelude-val">Some</span>((<span class="kw-2">&amp;</span>gpu_image.texture_view, <span class="kw-2">&amp;</span>gpu_image.sampler))
@@ -1108,7 +1109,7 @@
     ) -&gt; (<span class="self">Self</span>::BufferData, <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::CompareData&gt;) {
         <span class="kw">let </span>mesh_instance = mesh_instances
             .get(entity)
-            .expect(<span class="string">&quot;Failed to find render mesh2d instance&quot;</span>);
+            .expect(<span class="string">"Failed to find render mesh2d instance"</span>);
         (
             (<span class="kw-2">&amp;</span>mesh_instance.transforms).into(),
             mesh_instance.automatic_batching.then_some((
@@ -1204,65 +1205,65 @@
         <span class="kw">let </span><span class="kw-2">mut </span>vertex_attributes = Vec::new();
 
         <span class="kw">if </span>layout.contains(Mesh::ATTRIBUTE_POSITION) {
-            shader_defs.push(<span class="string">&quot;VERTEX_POSITIONS&quot;</span>.into());
+            shader_defs.push(<span class="string">"VERTEX_POSITIONS"</span>.into());
             vertex_attributes.push(Mesh::ATTRIBUTE_POSITION.at_shader_location(<span class="number">0</span>));
         }
 
         <span class="kw">if </span>layout.contains(Mesh::ATTRIBUTE_NORMAL) {
-            shader_defs.push(<span class="string">&quot;VERTEX_NORMALS&quot;</span>.into());
+            shader_defs.push(<span class="string">"VERTEX_NORMALS"</span>.into());
             vertex_attributes.push(Mesh::ATTRIBUTE_NORMAL.at_shader_location(<span class="number">1</span>));
         }
 
         <span class="kw">if </span>layout.contains(Mesh::ATTRIBUTE_UV_0) {
-            shader_defs.push(<span class="string">&quot;VERTEX_UVS&quot;</span>.into());
+            shader_defs.push(<span class="string">"VERTEX_UVS"</span>.into());
             vertex_attributes.push(Mesh::ATTRIBUTE_UV_0.at_shader_location(<span class="number">2</span>));
         }
 
         <span class="kw">if </span>layout.contains(Mesh::ATTRIBUTE_TANGENT) {
-            shader_defs.push(<span class="string">&quot;VERTEX_TANGENTS&quot;</span>.into());
+            shader_defs.push(<span class="string">"VERTEX_TANGENTS"</span>.into());
             vertex_attributes.push(Mesh::ATTRIBUTE_TANGENT.at_shader_location(<span class="number">3</span>));
         }
 
         <span class="kw">if </span>layout.contains(Mesh::ATTRIBUTE_COLOR) {
-            shader_defs.push(<span class="string">&quot;VERTEX_COLORS&quot;</span>.into());
+            shader_defs.push(<span class="string">"VERTEX_COLORS"</span>.into());
             vertex_attributes.push(Mesh::ATTRIBUTE_COLOR.at_shader_location(<span class="number">4</span>));
         }
 
         <span class="kw">if </span>key.contains(Mesh2dPipelineKey::TONEMAP_IN_SHADER) {
-            shader_defs.push(<span class="string">&quot;TONEMAP_IN_SHADER&quot;</span>.into());
+            shader_defs.push(<span class="string">"TONEMAP_IN_SHADER"</span>.into());
 
             <span class="kw">let </span>method = key.intersection(Mesh2dPipelineKey::TONEMAP_METHOD_RESERVED_BITS);
 
             <span class="kw">match </span>method {
                 Mesh2dPipelineKey::TONEMAP_METHOD_NONE =&gt; {
-                    shader_defs.push(<span class="string">&quot;TONEMAP_METHOD_NONE&quot;</span>.into());
+                    shader_defs.push(<span class="string">"TONEMAP_METHOD_NONE"</span>.into());
                 }
                 Mesh2dPipelineKey::TONEMAP_METHOD_REINHARD =&gt; {
-                    shader_defs.push(<span class="string">&quot;TONEMAP_METHOD_REINHARD&quot;</span>.into());
+                    shader_defs.push(<span class="string">"TONEMAP_METHOD_REINHARD"</span>.into());
                 }
                 Mesh2dPipelineKey::TONEMAP_METHOD_REINHARD_LUMINANCE =&gt; {
-                    shader_defs.push(<span class="string">&quot;TONEMAP_METHOD_REINHARD_LUMINANCE&quot;</span>.into());
+                    shader_defs.push(<span class="string">"TONEMAP_METHOD_REINHARD_LUMINANCE"</span>.into());
                 }
                 Mesh2dPipelineKey::TONEMAP_METHOD_ACES_FITTED =&gt; {
-                    shader_defs.push(<span class="string">&quot;TONEMAP_METHOD_ACES_FITTED&quot;</span>.into());
+                    shader_defs.push(<span class="string">"TONEMAP_METHOD_ACES_FITTED"</span>.into());
                 }
                 Mesh2dPipelineKey::TONEMAP_METHOD_AGX =&gt; {
-                    shader_defs.push(<span class="string">&quot;TONEMAP_METHOD_AGX&quot;</span>.into());
+                    shader_defs.push(<span class="string">"TONEMAP_METHOD_AGX"</span>.into());
                 }
                 Mesh2dPipelineKey::TONEMAP_METHOD_SOMEWHAT_BORING_DISPLAY_TRANSFORM =&gt; {
-                    shader_defs.push(<span class="string">&quot;TONEMAP_METHOD_SOMEWHAT_BORING_DISPLAY_TRANSFORM&quot;</span>.into());
+                    shader_defs.push(<span class="string">"TONEMAP_METHOD_SOMEWHAT_BORING_DISPLAY_TRANSFORM"</span>.into());
                 }
                 Mesh2dPipelineKey::TONEMAP_METHOD_BLENDER_FILMIC =&gt; {
-                    shader_defs.push(<span class="string">&quot;TONEMAP_METHOD_BLENDER_FILMIC&quot;</span>.into());
+                    shader_defs.push(<span class="string">"TONEMAP_METHOD_BLENDER_FILMIC"</span>.into());
                 }
                 Mesh2dPipelineKey::TONEMAP_METHOD_TONY_MC_MAPFACE =&gt; {
-                    shader_defs.push(<span class="string">&quot;TONEMAP_METHOD_TONY_MC_MAPFACE&quot;</span>.into());
+                    shader_defs.push(<span class="string">"TONEMAP_METHOD_TONY_MC_MAPFACE"</span>.into());
                 }
                 <span class="kw">_ </span>=&gt; {}
             }
             <span class="comment">// Debanding is tied to tonemapping in the shader, cannot run without it.
             </span><span class="kw">if </span>key.contains(Mesh2dPipelineKey::DEBAND_DITHER) {
-                shader_defs.push(<span class="string">&quot;DEBAND_DITHER&quot;</span>.into());
+                shader_defs.push(<span class="string">"DEBAND_DITHER"</span>.into());
             }
         }
 
@@ -1273,7 +1274,7 @@
             <span class="bool-val">false </span>=&gt; TextureFormat::bevy_default(),
         };
         <span class="kw">let </span><span class="kw-2">mut </span>push_constant_ranges = Vec::with_capacity(<span class="number">1</span>);
-        <span class="kw">if </span><span class="macro">cfg!</span>(all(feature = <span class="string">&quot;webgl&quot;</span>, target_arch = <span class="string">&quot;wasm32&quot;</span>)) {
+        <span class="kw">if </span><span class="macro">cfg!</span>(all(feature = <span class="string">"webgl"</span>, target_arch = <span class="string">"wasm32"</span>)) {
             push_constant_ranges.push(PushConstantRange {
                 stages: ShaderStages::VERTEX,
                 range: <span class="number">0</span>..<span class="number">4</span>,
@@ -1283,14 +1284,14 @@
         <span class="prelude-val">Ok</span>(RenderPipelineDescriptor {
             vertex: VertexState {
                 shader: MESH2D_SHADER_HANDLE,
-                entry_point: <span class="string">&quot;vertex&quot;</span>.into(),
+                entry_point: <span class="string">"vertex"</span>.into(),
                 shader_defs: shader_defs.clone(),
                 buffers: <span class="macro">vec!</span>[vertex_buffer_layout],
             },
             fragment: <span class="prelude-val">Some</span>(FragmentState {
                 shader: MESH2D_SHADER_HANDLE,
                 shader_defs,
-                entry_point: <span class="string">&quot;fragment&quot;</span>.into(),
+                entry_point: <span class="string">"fragment"</span>.into(),
                 targets: <span class="macro">vec!</span>[<span class="prelude-val">Some</span>(ColorTargetState {
                     format,
                     blend: <span class="prelude-val">Some</span>(BlendState::ALPHA_BLENDING),
@@ -1314,7 +1315,7 @@
                 mask: !<span class="number">0</span>,
                 alpha_to_coverage_enabled: <span class="bool-val">false</span>,
             },
-            label: <span class="prelude-val">Some</span>(<span class="string">&quot;transparent_mesh2d_pipeline&quot;</span>.into()),
+            label: <span class="prelude-val">Some</span>(<span class="string">"transparent_mesh2d_pipeline"</span>.into()),
         })
     }
 }
@@ -1333,7 +1334,7 @@
     <span class="kw">if let </span><span class="prelude-val">Some</span>(binding) = mesh2d_uniforms.binding() {
         commands.insert_resource(Mesh2dBindGroup {
             value: render_device.create_bind_group(
-                <span class="string">&quot;mesh2d_bind_group&quot;</span>,
+                <span class="string">"mesh2d_bind_group"</span>,
                 <span class="kw-2">&amp;</span>mesh2d_pipeline.mesh_layout,
                 <span class="kw-2">&amp;</span>BindGroupEntries::single(binding),
             ),
@@ -1360,7 +1361,7 @@
     ) {
         <span class="kw">for </span>entity <span class="kw">in </span><span class="kw-2">&amp;</span>views {
             <span class="kw">let </span>view_bind_group = render_device.create_bind_group(
-                <span class="string">&quot;mesh2d_view_bind_group&quot;</span>,
+                <span class="string">"mesh2d_view_bind_group"</span>,
                 <span class="kw-2">&amp;</span>mesh2d_pipeline.view_layout,
                 <span class="kw-2">&amp;</span>BindGroupEntries::sequential((view_binding.clone(), globals.clone())),
             );
@@ -1379,12 +1380,12 @@
     <span class="kw">type </span>ItemWorldQuery = ();
 
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>render&lt;<span class="lifetime">&#39;w</span>&gt;(
+    </span><span class="kw">fn </span>render&lt;<span class="lifetime">'w</span>&gt;(
         _item: <span class="kw-2">&amp;</span>P,
-        (view_uniform, mesh2d_view_bind_group): ROQueryItem&lt;<span class="lifetime">&#39;w</span>, <span class="self">Self</span>::ViewWorldQuery&gt;,
+        (view_uniform, mesh2d_view_bind_group): ROQueryItem&lt;<span class="lifetime">'w</span>, <span class="self">Self</span>::ViewWorldQuery&gt;,
         _view: (),
-        _param: SystemParamItem&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;_</span>, <span class="self">Self</span>::Param&gt;,
-        pass: <span class="kw-2">&amp;mut </span>TrackedRenderPass&lt;<span class="lifetime">&#39;w</span>&gt;,
+        _param: SystemParamItem&lt;<span class="lifetime">'w</span>, <span class="lifetime">'_</span>, <span class="self">Self</span>::Param&gt;,
+        pass: <span class="kw-2">&amp;mut </span>TrackedRenderPass&lt;<span class="lifetime">'w</span>&gt;,
     ) -&gt; RenderCommandResult {
         pass.set_bind_group(I, <span class="kw-2">&amp;</span>mesh2d_view_bind_group.value, <span class="kw-2">&amp;</span>[view_uniform.offset]);
 
@@ -1399,12 +1400,12 @@
     <span class="kw">type </span>ItemWorldQuery = ();
 
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>render&lt;<span class="lifetime">&#39;w</span>&gt;(
+    </span><span class="kw">fn </span>render&lt;<span class="lifetime">'w</span>&gt;(
         item: <span class="kw-2">&amp;</span>P,
         _view: (),
         _item_query: (),
-        mesh2d_bind_group: SystemParamItem&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;_</span>, <span class="self">Self</span>::Param&gt;,
-        pass: <span class="kw-2">&amp;mut </span>TrackedRenderPass&lt;<span class="lifetime">&#39;w</span>&gt;,
+        mesh2d_bind_group: SystemParamItem&lt;<span class="lifetime">'w</span>, <span class="lifetime">'_</span>, <span class="self">Self</span>::Param&gt;,
+        pass: <span class="kw-2">&amp;mut </span>TrackedRenderPass&lt;<span class="lifetime">'w</span>&gt;,
     ) -&gt; RenderCommandResult {
         <span class="kw">let </span><span class="kw-2">mut </span>dynamic_offsets: [u32; <span class="number">1</span>] = Default::default();
         <span class="kw">let </span><span class="kw-2">mut </span>offset_count = <span class="number">0</span>;
@@ -1428,12 +1429,12 @@
     <span class="kw">type </span>ItemWorldQuery = ();
 
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>render&lt;<span class="lifetime">&#39;w</span>&gt;(
+    </span><span class="kw">fn </span>render&lt;<span class="lifetime">'w</span>&gt;(
         item: <span class="kw-2">&amp;</span>P,
         _view: (),
         _item_query: (),
-        (meshes, render_mesh2d_instances): SystemParamItem&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;_</span>, <span class="self">Self</span>::Param&gt;,
-        pass: <span class="kw-2">&amp;mut </span>TrackedRenderPass&lt;<span class="lifetime">&#39;w</span>&gt;,
+        (meshes, render_mesh2d_instances): SystemParamItem&lt;<span class="lifetime">'w</span>, <span class="lifetime">'_</span>, <span class="self">Self</span>::Param&gt;,
+        pass: <span class="kw-2">&amp;mut </span>TrackedRenderPass&lt;<span class="lifetime">'w</span>&gt;,
     ) -&gt; RenderCommandResult {
         <span class="kw">let </span>meshes = meshes.into_inner();
         <span class="kw">let </span>render_mesh2d_instances = render_mesh2d_instances.into_inner();
@@ -1450,7 +1451,7 @@
         pass.set_vertex_buffer(<span class="number">0</span>, gpu_mesh.vertex_buffer.slice(..));
 
         <span class="kw">let </span>batch_range = item.batch_range();
-        <span class="attr">#[cfg(all(feature = <span class="string">&quot;webgl&quot;</span>, target_arch = <span class="string">&quot;wasm32&quot;</span>))]
+        <span class="attr">#[cfg(all(feature = <span class="string">"webgl"</span>, target_arch = <span class="string">"wasm32"</span>))]
         </span>pass.set_push_constants(
             ShaderStages::VERTEX,
             <span class="number">0</span>,

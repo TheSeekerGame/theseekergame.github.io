@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy-3e956806168b8470/b5b6ea3/crates/bevy_ecs/src/query/state.rs`."><title>state.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_ecs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy-3e956806168b8470/b5b6ea3/crates/bevy_ecs/src/query/state.rs`."><title>state.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_ecs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1543,7 +1544,7 @@
     storage::{TableId, TableRow},
     world::{unsafe_world_cell::UnsafeWorldCell, World, WorldId},
 };
-<span class="attr">#[cfg(feature = <span class="string">&quot;trace&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"trace"</span>)]
 </span><span class="kw">use </span>bevy_utils::tracing::Span;
 <span class="kw">use </span>fixedbitset::FixedBitSet;
 <span class="kw">use </span>std::{any::TypeId, borrow::Borrow, fmt, mem::MaybeUninit};
@@ -1571,16 +1572,16 @@
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) matched_archetype_ids: Vec&lt;ArchetypeId&gt;,
     <span class="kw">pub</span>(<span class="kw">crate</span>) fetch_state: Q::State,
     <span class="kw">pub</span>(<span class="kw">crate</span>) filter_state: F::State,
-    <span class="attr">#[cfg(feature = <span class="string">&quot;trace&quot;</span>)]
+    <span class="attr">#[cfg(feature = <span class="string">"trace"</span>)]
     </span>par_iter_span: Span,
 }
 
 <span class="kw">impl</span>&lt;Q: WorldQuery, F: ReadOnlyWorldQuery&gt; std::fmt::Debug <span class="kw">for </span>QueryState&lt;Q, F&gt; {
-    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
-        f.debug_struct(<span class="string">&quot;QueryState&quot;</span>)
-            .field(<span class="string">&quot;world_id&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.world_id)
-            .field(<span class="string">&quot;matched_table_count&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.matched_table_ids.len())
-            .field(<span class="string">&quot;matched_archetype_count&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.matched_archetype_ids.len())
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; fmt::Result {
+        f.debug_struct(<span class="string">"QueryState"</span>)
+            .field(<span class="string">"world_id"</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.world_id)
+            .field(<span class="string">"matched_table_count"</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.matched_table_ids.len())
+            .field(<span class="string">"matched_archetype_count"</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.matched_archetype_ids.len())
             .finish_non_exhaustive()
     }
 }
@@ -1602,10 +1603,10 @@
     <span class="doccomment">/// Converts this `QueryState` reference to a `QueryState` that does not return any data
     /// which can be faster.
     ///
-    /// This doesn&#39;t use `NopWorldQuery` as it loses filter functionality, for example
+    /// This doesn't use `NopWorldQuery` as it loses filter functionality, for example
     /// `NopWorldQuery&lt;Changed&lt;T&gt;&gt;` is functionally equivalent to `With&lt;T&gt;`.
     </span><span class="kw">pub fn </span>as_nop(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>QueryState&lt;NopWorldQuery&lt;Q&gt;, F&gt; {
-        <span class="comment">// SAFETY: `NopWorldQuery` doesn&#39;t have any accesses and defers to
+        <span class="comment">// SAFETY: `NopWorldQuery` doesn't have any accesses and defers to
         // `Q` for table/archetype matching
         </span><span class="kw">unsafe </span>{ <span class="self">self</span>.as_transmuted_state::&lt;NopWorldQuery&lt;Q&gt;, F&gt;() }
     }
@@ -1639,13 +1640,13 @@
         Q::update_component_access(<span class="kw-2">&amp;</span>fetch_state, <span class="kw-2">&amp;mut </span>component_access);
 
         <span class="comment">// Use a temporary empty FilteredAccess for filters. This prevents them from conflicting with the
-        // main Query&#39;s `fetch_state` access. Filters are allowed to conflict with the main query fetch
+        // main Query's `fetch_state` access. Filters are allowed to conflict with the main query fetch
         // because they are evaluated *before* a specific reference is constructed.
         </span><span class="kw">let </span><span class="kw-2">mut </span>filter_component_access = FilteredAccess::default();
         F::update_component_access(<span class="kw-2">&amp;</span>filter_state, <span class="kw-2">&amp;mut </span>filter_component_access);
 
         <span class="comment">// Merge the temporary filter access with the main access. This ensures that filter access is
-        // properly considered in a global &quot;cross-query&quot; context (both within systems and across systems).
+        // properly considered in a global "cross-query" context (both within systems and across systems).
         </span>component_access.extend(<span class="kw-2">&amp;</span>filter_component_access);
 
         <span class="kw">let </span><span class="kw-2">mut </span>state = <span class="self">Self </span>{
@@ -1659,9 +1660,9 @@
             matched_tables: Default::default(),
             matched_archetypes: Default::default(),
             archetype_component_access: Default::default(),
-            <span class="attr">#[cfg(feature = <span class="string">&quot;trace&quot;</span>)]
+            <span class="attr">#[cfg(feature = <span class="string">"trace"</span>)]
             </span>par_iter_span: <span class="macro">bevy_utils::tracing::info_span!</span>(
-                <span class="string">&quot;par_for_each&quot;</span>,
+                <span class="string">"par_for_each"</span>,
                 query = std::any::type_name::&lt;Q&gt;(),
                 filter = std::any::type_name::&lt;F&gt;(),
             ),
@@ -1694,7 +1695,7 @@
     ///
     /// # Safety
     ///
-    /// - `world` must have permission to read any components required by this instance&#39;s `F` [`WorldQuery`].
+    /// - `world` must have permission to read any components required by this instance's `F` [`WorldQuery`].
     /// - `world` must match the one used to create this [`QueryState`].
     </span><span class="attr">#[inline]
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>is_empty_unsafe_world_cell(
@@ -1714,7 +1715,7 @@
         }
     }
 
-    <span class="doccomment">/// Updates the state&#39;s internal view of the [`World`]&#39;s archetypes. If this is not called before querying data,
+    <span class="doccomment">/// Updates the state's internal view of the [`World`]'s archetypes. If this is not called before querying data,
     /// the results may not accurately reflect what is in the `world`.
     ///
     /// This is only required if a `manual` method (such as [`Self::get_manual`]) is being called, and it only needs to
@@ -1731,7 +1732,7 @@
         <span class="self">self</span>.update_archetypes_unsafe_world_cell(world.as_unsafe_world_cell_readonly());
     }
 
-    <span class="doccomment">/// Updates the state&#39;s internal view of the `world`&#39;s archetypes. If this is not called before querying data,
+    <span class="doccomment">/// Updates the state's internal view of the `world`'s archetypes. If this is not called before querying data,
     /// the results may not accurately reflect what is in the `world`.
     ///
     /// This is only required if a `manual` method (such as [`Self::get_manual`]) is being called, and it only needs to
@@ -1769,7 +1770,7 @@
         #[track_caller]
         #[cold]
         </span><span class="kw">fn </span>panic_mismatched(this: WorldId, other: WorldId) -&gt; ! {
-            <span class="macro">panic!</span>(<span class="string">&quot;Encountered a mismatched World. This QueryState was created from {this:?}, but a method was called using {other:?}.&quot;</span>);
+            <span class="macro">panic!</span>(<span class="string">"Encountered a mismatched World. This QueryState was created from {this:?}, but a method was called using {other:?}."</span>);
         }
 
         <span class="kw">if </span><span class="self">self</span>.world_id != world_id {
@@ -1812,11 +1813,11 @@
     ///
     /// This can only be called for read-only queries, see [`Self::get_mut`] for write-queries.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>get&lt;<span class="lifetime">&#39;w</span>&gt;(
+    </span><span class="kw">pub fn </span>get&lt;<span class="lifetime">'w</span>&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        world: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>World,
+        world: <span class="kw-2">&amp;</span><span class="lifetime">'w </span>World,
         entity: Entity,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;ROQueryItem&lt;<span class="lifetime">&#39;w</span>, Q&gt;, QueryEntityError&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;ROQueryItem&lt;<span class="lifetime">'w</span>, Q&gt;, QueryEntityError&gt; {
         <span class="self">self</span>.update_archetypes(world);
         <span class="comment">// SAFETY: query is read only
         </span><span class="kw">unsafe </span>{
@@ -1862,11 +1863,11 @@
     /// assert_eq!(query_state.get_many(&amp;world, [wrong_entity]), Err(QueryEntityError::NoSuchEntity(wrong_entity)));
     /// ```
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>get_many&lt;<span class="lifetime">&#39;w</span>, <span class="kw">const </span>N: usize&gt;(
+    </span><span class="kw">pub fn </span>get_many&lt;<span class="lifetime">'w</span>, <span class="kw">const </span>N: usize&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        world: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>World,
+        world: <span class="kw-2">&amp;</span><span class="lifetime">'w </span>World,
         entities: [Entity; N],
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;[ROQueryItem&lt;<span class="lifetime">&#39;w</span>, Q&gt;; N], QueryEntityError&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;[ROQueryItem&lt;<span class="lifetime">'w</span>, Q&gt;; N], QueryEntityError&gt; {
         <span class="self">self</span>.update_archetypes(world);
 
         <span class="comment">// SAFETY:
@@ -1884,11 +1885,11 @@
 
     <span class="doccomment">/// Gets the query result for the given [`World`] and [`Entity`].
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>get_mut&lt;<span class="lifetime">&#39;w</span>&gt;(
+    </span><span class="kw">pub fn </span>get_mut&lt;<span class="lifetime">'w</span>&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        world: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span><span class="kw-2">mut </span>World,
+        world: <span class="kw-2">&amp;</span><span class="lifetime">'w </span><span class="kw-2">mut </span>World,
         entity: Entity,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;Q::Item&lt;<span class="lifetime">&#39;w</span>&gt;, QueryEntityError&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Q::Item&lt;<span class="lifetime">'w</span>&gt;, QueryEntityError&gt; {
         <span class="self">self</span>.update_archetypes(world);
         <span class="kw">let </span>change_tick = world.change_tick();
         <span class="kw">let </span>last_change_tick = world.last_change_tick();
@@ -1942,11 +1943,11 @@
     /// assert_eq!(query_state.get_many_mut(&amp;mut world, [entities[0], entities[0]]).unwrap_err(), QueryEntityError::AliasedMutability(entities[0]));
     /// ```
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>get_many_mut&lt;<span class="lifetime">&#39;w</span>, <span class="kw">const </span>N: usize&gt;(
+    </span><span class="kw">pub fn </span>get_many_mut&lt;<span class="lifetime">'w</span>, <span class="kw">const </span>N: usize&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        world: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span><span class="kw-2">mut </span>World,
+        world: <span class="kw-2">&amp;</span><span class="lifetime">'w </span><span class="kw-2">mut </span>World,
         entities: [Entity; N],
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;[Q::Item&lt;<span class="lifetime">&#39;w</span>&gt;; N], QueryEntityError&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;[Q::Item&lt;<span class="lifetime">'w</span>&gt;; N], QueryEntityError&gt; {
         <span class="self">self</span>.update_archetypes(world);
 
         <span class="kw">let </span>change_tick = world.change_tick();
@@ -1966,7 +1967,7 @@
     <span class="doccomment">/// Gets the query result for the given [`World`] and [`Entity`].
     ///
     /// This method is slightly more efficient than [`QueryState::get`] in some situations, since
-    /// it does not update this instance&#39;s internal cache. This method will return an error if `entity`
+    /// it does not update this instance's internal cache. This method will return an error if `entity`
     /// belongs to an archetype that has not been cached.
     ///
     /// To ensure that the cache is up to date, call [`QueryState::update_archetypes`] before this method.
@@ -1975,11 +1976,11 @@
     ///
     /// This can only be called for read-only queries, see [`Self::get_mut`] for mutable queries.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>get_manual&lt;<span class="lifetime">&#39;w</span>&gt;(
+    </span><span class="kw">pub fn </span>get_manual&lt;<span class="lifetime">'w</span>&gt;(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        world: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>World,
+        world: <span class="kw-2">&amp;</span><span class="lifetime">'w </span>World,
         entity: Entity,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;ROQueryItem&lt;<span class="lifetime">&#39;w</span>, Q&gt;, QueryEntityError&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;ROQueryItem&lt;<span class="lifetime">'w</span>, Q&gt;, QueryEntityError&gt; {
         <span class="self">self</span>.validate_world(world.id());
         <span class="comment">// SAFETY: query is read only and world is validated
         </span><span class="kw">unsafe </span>{
@@ -1999,11 +2000,11 @@
     /// This does not check for mutable query correctness. To be safe, make sure mutable queries
     /// have unique access to the components they query.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub unsafe fn </span>get_unchecked&lt;<span class="lifetime">&#39;w</span>&gt;(
+    </span><span class="kw">pub unsafe fn </span>get_unchecked&lt;<span class="lifetime">'w</span>&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        world: UnsafeWorldCell&lt;<span class="lifetime">&#39;w</span>&gt;,
+        world: UnsafeWorldCell&lt;<span class="lifetime">'w</span>&gt;,
         entity: Entity,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;Q::Item&lt;<span class="lifetime">&#39;w</span>&gt;, QueryEntityError&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Q::Item&lt;<span class="lifetime">'w</span>&gt;, QueryEntityError&gt; {
         <span class="self">self</span>.update_archetypes_unsafe_world_cell(world);
         <span class="self">self</span>.get_unchecked_manual(world, entity, world.last_change_tick(), world.change_tick())
     }
@@ -2018,13 +2019,13 @@
     ///
     /// This must be called on the same `World` that the `Query` was generated from:
     /// use `QueryState::validate_world` to verify this.
-    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>get_unchecked_manual&lt;<span class="lifetime">&#39;w</span>&gt;(
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>get_unchecked_manual&lt;<span class="lifetime">'w</span>&gt;(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        world: UnsafeWorldCell&lt;<span class="lifetime">&#39;w</span>&gt;,
+        world: UnsafeWorldCell&lt;<span class="lifetime">'w</span>&gt;,
         entity: Entity,
         last_run: Tick,
         this_run: Tick,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;Q::Item&lt;<span class="lifetime">&#39;w</span>&gt;, QueryEntityError&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Q::Item&lt;<span class="lifetime">'w</span>&gt;, QueryEntityError&gt; {
         <span class="kw">let </span>location = world
             .entities()
             .get(entity)
@@ -2061,13 +2062,13 @@
     ///
     /// In case of a nonexisting entity or mismatched component, a [`QueryEntityError`] is returned instead.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>get_component&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, <span class="lifetime">&#39;r</span>, T: Component&gt;(
-        <span class="kw-2">&amp;</span><span class="lifetime">&#39;s </span><span class="self">self</span>,
-        world: UnsafeWorldCell&lt;<span class="lifetime">&#39;w</span>&gt;,
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>get_component&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, <span class="lifetime">'r</span>, T: Component&gt;(
+        <span class="kw-2">&amp;</span><span class="lifetime">'s </span><span class="self">self</span>,
+        world: UnsafeWorldCell&lt;<span class="lifetime">'w</span>&gt;,
         entity: Entity,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;r </span>T, QueryComponentError&gt;
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'r </span>T, QueryComponentError&gt;
     <span class="kw">where
-        </span><span class="lifetime">&#39;w</span>: <span class="lifetime">&#39;r</span>,
+        </span><span class="lifetime">'w</span>: <span class="lifetime">'r</span>,
     {
         <span class="kw">let </span>entity_ref = world
             .get_entity(entity)
@@ -2085,7 +2086,7 @@
             .has_read(archetype_component)
         {
             <span class="comment">// SAFETY: `world` must have access to the component `T` for this entity,
-            // since it was registered in `self`&#39;s archetype component access set.
+            // since it was registered in `self`'s archetype component access set.
             </span><span class="kw">unsafe </span>{ entity_ref.get::&lt;T&gt;() }.ok_or(QueryComponentError::MissingComponent)
         } <span class="kw">else </span>{
             <span class="prelude-val">Err</span>(QueryComponentError::MissingReadAccess)
@@ -2098,19 +2099,19 @@
     ///
     /// If given a nonexisting entity or mismatched component, this will panic.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>component&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, <span class="lifetime">&#39;r</span>, T: Component&gt;(
-        <span class="kw-2">&amp;</span><span class="lifetime">&#39;s </span><span class="self">self</span>,
-        world: UnsafeWorldCell&lt;<span class="lifetime">&#39;w</span>&gt;,
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>component&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, <span class="lifetime">'r</span>, T: Component&gt;(
+        <span class="kw-2">&amp;</span><span class="lifetime">'s </span><span class="self">self</span>,
+        world: UnsafeWorldCell&lt;<span class="lifetime">'w</span>&gt;,
         entity: Entity,
-    ) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;r </span>T
+    ) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'r </span>T
     <span class="kw">where
-        </span><span class="lifetime">&#39;w</span>: <span class="lifetime">&#39;r</span>,
+        </span><span class="lifetime">'w</span>: <span class="lifetime">'r</span>,
     {
         <span class="kw">match </span><span class="self">self</span>.get_component(world, entity) {
             <span class="prelude-val">Ok</span>(component) =&gt; component,
             <span class="prelude-val">Err</span>(error) =&gt; {
                 <span class="macro">panic!</span>(
-                    <span class="string">&quot;Cannot get component `{:?}` from {entity:?}: {error}&quot;</span>,
+                    <span class="string">"Cannot get component `{:?}` from {entity:?}: {error}"</span>,
                     TypeId::of::&lt;T&gt;()
                 )
             }
@@ -2123,18 +2124,18 @@
     ///
     /// # Safety
     ///
-    /// This function makes it possible to violate Rust&#39;s aliasing guarantees.
+    /// This function makes it possible to violate Rust's aliasing guarantees.
     /// You must make sure this call does not result in multiple mutable references to the same component.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub unsafe fn </span>get_component_unchecked_mut&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, <span class="lifetime">&#39;r</span>, T: Component&gt;(
-        <span class="kw-2">&amp;</span><span class="lifetime">&#39;s </span><span class="self">self</span>,
-        world: UnsafeWorldCell&lt;<span class="lifetime">&#39;w</span>&gt;,
+    </span><span class="kw">pub unsafe fn </span>get_component_unchecked_mut&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, <span class="lifetime">'r</span>, T: Component&gt;(
+        <span class="kw-2">&amp;</span><span class="lifetime">'s </span><span class="self">self</span>,
+        world: UnsafeWorldCell&lt;<span class="lifetime">'w</span>&gt;,
         entity: Entity,
         last_run: Tick,
         this_run: Tick,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;Mut&lt;<span class="lifetime">&#39;r</span>, T&gt;, QueryComponentError&gt;
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Mut&lt;<span class="lifetime">'r</span>, T&gt;, QueryComponentError&gt;
     <span class="kw">where
-        </span><span class="lifetime">&#39;w</span>: <span class="lifetime">&#39;r</span>,
+        </span><span class="lifetime">'w</span>: <span class="lifetime">'r</span>,
     {
         <span class="kw">let </span>entity_ref = world
             .get_entity(entity)
@@ -2152,7 +2153,7 @@
             .has_write(archetype_component)
         {
             <span class="comment">// SAFETY: It is the responsibility of the caller to ensure it is sound to get a
-            // mutable reference to this entity&#39;s component `T`.
+            // mutable reference to this entity's component `T`.
             </span><span class="kw">let </span>result = <span class="kw">unsafe </span>{ entity_ref.get_mut_using_ticks::&lt;T&gt;(last_run, this_run) };
 
             result.ok_or(QueryComponentError::MissingComponent)
@@ -2170,13 +2171,13 @@
     /// No mutable references may coexist with any of the returned references.
     /// * This must be called on the same `World` that the `Query` was generated from:
     /// use `QueryState::validate_world` to verify this.
-    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>get_many_read_only_manual&lt;<span class="lifetime">&#39;w</span>, <span class="kw">const </span>N: usize&gt;(
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>get_many_read_only_manual&lt;<span class="lifetime">'w</span>, <span class="kw">const </span>N: usize&gt;(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        world: UnsafeWorldCell&lt;<span class="lifetime">&#39;w</span>&gt;,
+        world: UnsafeWorldCell&lt;<span class="lifetime">'w</span>&gt;,
         entities: [Entity; N],
         last_run: Tick,
         this_run: Tick,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;[ROQueryItem&lt;<span class="lifetime">&#39;w</span>, Q&gt;; N], QueryEntityError&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;[ROQueryItem&lt;<span class="lifetime">'w</span>, Q&gt;; N], QueryEntityError&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>values = [(); N].map(|<span class="kw">_</span>| MaybeUninit::uninit());
 
         <span class="kw">for </span>(value, entity) <span class="kw">in </span>std::iter::zip(<span class="kw-2">&amp;mut </span>values, entities) {
@@ -2202,13 +2203,13 @@
     ///
     /// This must be called on the same `World` that the `Query` was generated from:
     /// use `QueryState::validate_world` to verify this.
-    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>get_many_unchecked_manual&lt;<span class="lifetime">&#39;w</span>, <span class="kw">const </span>N: usize&gt;(
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>get_many_unchecked_manual&lt;<span class="lifetime">'w</span>, <span class="kw">const </span>N: usize&gt;(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        world: UnsafeWorldCell&lt;<span class="lifetime">&#39;w</span>&gt;,
+        world: UnsafeWorldCell&lt;<span class="lifetime">'w</span>&gt;,
         entities: [Entity; N],
         last_run: Tick,
         this_run: Tick,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;[Q::Item&lt;<span class="lifetime">&#39;w</span>&gt;; N], QueryEntityError&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;[Q::Item&lt;<span class="lifetime">'w</span>&gt;; N], QueryEntityError&gt; {
         <span class="comment">// Verify that all entities are unique
         </span><span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..N {
             <span class="kw">for </span>j <span class="kw">in </span><span class="number">0</span>..i {
@@ -2233,10 +2234,10 @@
     ///
     /// This can only be called for read-only queries, see [`Self::iter_mut`] for write-queries.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>iter&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>&gt;(
-        <span class="kw-2">&amp;</span><span class="lifetime">&#39;s </span><span class="kw-2">mut </span><span class="self">self</span>,
-        world: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>World,
-    ) -&gt; QueryIter&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, Q::ReadOnly, F::ReadOnly&gt; {
+    </span><span class="kw">pub fn </span>iter&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>&gt;(
+        <span class="kw-2">&amp;</span><span class="lifetime">'s </span><span class="kw-2">mut </span><span class="self">self</span>,
+        world: <span class="kw-2">&amp;</span><span class="lifetime">'w </span>World,
+    ) -&gt; QueryIter&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, Q::ReadOnly, F::ReadOnly&gt; {
         <span class="self">self</span>.update_archetypes(world);
         <span class="comment">// SAFETY: query is read only
         </span><span class="kw">unsafe </span>{
@@ -2250,7 +2251,7 @@
 
     <span class="doccomment">/// Returns an [`Iterator`] over the query results for the given [`World`].
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>iter_mut&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;s </span><span class="kw-2">mut </span><span class="self">self</span>, world: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span><span class="kw-2">mut </span>World) -&gt; QueryIter&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, Q, F&gt; {
+    </span><span class="kw">pub fn </span>iter_mut&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">'s </span><span class="kw-2">mut </span><span class="self">self</span>, world: <span class="kw-2">&amp;</span><span class="lifetime">'w </span><span class="kw-2">mut </span>World) -&gt; QueryIter&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, Q, F&gt; {
         <span class="self">self</span>.update_archetypes(world);
         <span class="kw">let </span>change_tick = world.change_tick();
         <span class="kw">let </span>last_change_tick = world.last_change_tick();
@@ -2260,15 +2261,15 @@
         }
     }
 
-    <span class="doccomment">/// Returns an [`Iterator`] over the query results for the given [`World`] without updating the query&#39;s archetypes.
+    <span class="doccomment">/// Returns an [`Iterator`] over the query results for the given [`World`] without updating the query's archetypes.
     /// Archetypes must be manually updated before by using [`Self::update_archetypes`].
     ///
     /// This can only be called for read-only queries.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>iter_manual&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>&gt;(
-        <span class="kw-2">&amp;</span><span class="lifetime">&#39;s </span><span class="self">self</span>,
-        world: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>World,
-    ) -&gt; QueryIter&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, Q::ReadOnly, F::ReadOnly&gt; {
+    </span><span class="kw">pub fn </span>iter_manual&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>&gt;(
+        <span class="kw-2">&amp;</span><span class="lifetime">'s </span><span class="self">self</span>,
+        world: <span class="kw-2">&amp;</span><span class="lifetime">'w </span>World,
+    ) -&gt; QueryIter&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, Q::ReadOnly, F::ReadOnly&gt; {
         <span class="self">self</span>.validate_world(world.id());
         <span class="comment">// SAFETY: query is read only and world is validated
         </span><span class="kw">unsafe </span>{
@@ -2302,10 +2303,10 @@
     /// This can only be called for read-only queries, see [`Self::iter_combinations_mut`] for
     /// write-queries.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>iter_combinations&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, <span class="kw">const </span>K: usize&gt;(
-        <span class="kw-2">&amp;</span><span class="lifetime">&#39;s </span><span class="kw-2">mut </span><span class="self">self</span>,
-        world: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>World,
-    ) -&gt; QueryCombinationIter&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, Q::ReadOnly, F::ReadOnly, K&gt; {
+    </span><span class="kw">pub fn </span>iter_combinations&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, <span class="kw">const </span>K: usize&gt;(
+        <span class="kw-2">&amp;</span><span class="lifetime">'s </span><span class="kw-2">mut </span><span class="self">self</span>,
+        world: <span class="kw-2">&amp;</span><span class="lifetime">'w </span>World,
+    ) -&gt; QueryCombinationIter&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, Q::ReadOnly, F::ReadOnly, K&gt; {
         <span class="self">self</span>.update_archetypes(world);
         <span class="comment">// SAFETY: query is read only
         </span><span class="kw">unsafe </span>{
@@ -2335,10 +2336,10 @@
     ///
     /// The `iter_combinations_mut` method does not guarantee order of iteration.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>iter_combinations_mut&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, <span class="kw">const </span>K: usize&gt;(
-        <span class="kw-2">&amp;</span><span class="lifetime">&#39;s </span><span class="kw-2">mut </span><span class="self">self</span>,
-        world: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span><span class="kw-2">mut </span>World,
-    ) -&gt; QueryCombinationIter&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, Q, F, K&gt; {
+    </span><span class="kw">pub fn </span>iter_combinations_mut&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, <span class="kw">const </span>K: usize&gt;(
+        <span class="kw-2">&amp;</span><span class="lifetime">'s </span><span class="kw-2">mut </span><span class="self">self</span>,
+        world: <span class="kw-2">&amp;</span><span class="lifetime">'w </span><span class="kw-2">mut </span>World,
+    ) -&gt; QueryCombinationIter&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, Q, F, K&gt; {
         <span class="self">self</span>.update_archetypes(world);
         <span class="kw">let </span>change_tick = world.change_tick();
         <span class="kw">let </span>last_change_tick = world.last_change_tick();
@@ -2355,17 +2356,17 @@
     <span class="doccomment">/// Returns an [`Iterator`] over the read-only query items generated from an [`Entity`] list.
     ///
     /// Items are returned in the order of the list of entities.
-    /// Entities that don&#39;t match the query are skipped.
+    /// Entities that don't match the query are skipped.
     ///
     /// # See also
     ///
     /// - [`iter_many_mut`](Self::iter_many_mut) to get mutable query items.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>iter_many&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, EntityList: IntoIterator&gt;(
-        <span class="kw-2">&amp;</span><span class="lifetime">&#39;s </span><span class="kw-2">mut </span><span class="self">self</span>,
-        world: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>World,
+    </span><span class="kw">pub fn </span>iter_many&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, EntityList: IntoIterator&gt;(
+        <span class="kw-2">&amp;</span><span class="lifetime">'s </span><span class="kw-2">mut </span><span class="self">self</span>,
+        world: <span class="kw-2">&amp;</span><span class="lifetime">'w </span>World,
         entities: EntityList,
-    ) -&gt; QueryManyIter&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, Q::ReadOnly, F::ReadOnly, EntityList::IntoIter&gt;
+    ) -&gt; QueryManyIter&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, Q::ReadOnly, F::ReadOnly, EntityList::IntoIter&gt;
     <span class="kw">where
         </span>EntityList::Item: Borrow&lt;Entity&gt;,
     {
@@ -2384,7 +2385,7 @@
     <span class="doccomment">/// Returns an [`Iterator`] over the read-only query items generated from an [`Entity`] list.
     ///
     /// Items are returned in the order of the list of entities.
-    /// Entities that don&#39;t match the query are skipped.
+    /// Entities that don't match the query are skipped.
     ///
     /// If `world` archetypes changed since [`Self::update_archetypes`] was last called,
     /// this will skip entities contained in new archetypes.
@@ -2396,11 +2397,11 @@
     /// - [`iter_many`](Self::iter_many) to update archetypes.
     /// - [`iter_manual`](Self::iter_manual) to iterate over all query items.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>iter_many_manual&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, EntityList: IntoIterator&gt;(
-        <span class="kw-2">&amp;</span><span class="lifetime">&#39;s </span><span class="self">self</span>,
-        world: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>World,
+    </span><span class="kw">pub fn </span>iter_many_manual&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, EntityList: IntoIterator&gt;(
+        <span class="kw-2">&amp;</span><span class="lifetime">'s </span><span class="self">self</span>,
+        world: <span class="kw-2">&amp;</span><span class="lifetime">'w </span>World,
         entities: EntityList,
-    ) -&gt; QueryManyIter&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, Q::ReadOnly, F::ReadOnly, EntityList::IntoIter&gt;
+    ) -&gt; QueryManyIter&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, Q::ReadOnly, F::ReadOnly, EntityList::IntoIter&gt;
     <span class="kw">where
         </span>EntityList::Item: Borrow&lt;Entity&gt;,
     {
@@ -2419,13 +2420,13 @@
     <span class="doccomment">/// Returns an iterator over the query items generated from an [`Entity`] list.
     ///
     /// Items are returned in the order of the list of entities.
-    /// Entities that don&#39;t match the query are skipped.
+    /// Entities that don't match the query are skipped.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>iter_many_mut&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, EntityList: IntoIterator&gt;(
-        <span class="kw-2">&amp;</span><span class="lifetime">&#39;s </span><span class="kw-2">mut </span><span class="self">self</span>,
-        world: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span><span class="kw-2">mut </span>World,
+    </span><span class="kw">pub fn </span>iter_many_mut&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, EntityList: IntoIterator&gt;(
+        <span class="kw-2">&amp;</span><span class="lifetime">'s </span><span class="kw-2">mut </span><span class="self">self</span>,
+        world: <span class="kw-2">&amp;</span><span class="lifetime">'w </span><span class="kw-2">mut </span>World,
         entities: EntityList,
-    ) -&gt; QueryManyIter&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, Q, F, EntityList::IntoIter&gt;
+    ) -&gt; QueryManyIter&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, Q, F, EntityList::IntoIter&gt;
     <span class="kw">where
         </span>EntityList::Item: Borrow&lt;Entity&gt;,
     {
@@ -2450,10 +2451,10 @@
     /// This does not check for mutable query correctness. To be safe, make sure mutable queries
     /// have unique access to the components they query.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub unsafe fn </span>iter_unchecked&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>&gt;(
-        <span class="kw-2">&amp;</span><span class="lifetime">&#39;s </span><span class="kw-2">mut </span><span class="self">self</span>,
-        world: UnsafeWorldCell&lt;<span class="lifetime">&#39;w</span>&gt;,
-    ) -&gt; QueryIter&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, Q, F&gt; {
+    </span><span class="kw">pub unsafe fn </span>iter_unchecked&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>&gt;(
+        <span class="kw-2">&amp;</span><span class="lifetime">'s </span><span class="kw-2">mut </span><span class="self">self</span>,
+        world: UnsafeWorldCell&lt;<span class="lifetime">'w</span>&gt;,
+    ) -&gt; QueryIter&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, Q, F&gt; {
         <span class="self">self</span>.update_archetypes_unsafe_world_cell(world);
         <span class="self">self</span>.iter_unchecked_manual(world, world.last_change_tick(), world.change_tick())
     }
@@ -2467,10 +2468,10 @@
     /// This does not check for mutable query correctness. To be safe, make sure mutable queries
     /// have unique access to the components they query.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub unsafe fn </span>iter_combinations_unchecked&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, <span class="kw">const </span>K: usize&gt;(
-        <span class="kw-2">&amp;</span><span class="lifetime">&#39;s </span><span class="kw-2">mut </span><span class="self">self</span>,
-        world: UnsafeWorldCell&lt;<span class="lifetime">&#39;w</span>&gt;,
-    ) -&gt; QueryCombinationIter&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, Q, F, K&gt; {
+    </span><span class="kw">pub unsafe fn </span>iter_combinations_unchecked&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, <span class="kw">const </span>K: usize&gt;(
+        <span class="kw-2">&amp;</span><span class="lifetime">'s </span><span class="kw-2">mut </span><span class="self">self</span>,
+        world: UnsafeWorldCell&lt;<span class="lifetime">'w</span>&gt;,
+    ) -&gt; QueryCombinationIter&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, Q, F, K&gt; {
         <span class="self">self</span>.update_archetypes_unsafe_world_cell(world);
         <span class="self">self</span>.iter_combinations_unchecked_manual(
             world,
@@ -2489,16 +2490,16 @@
     /// This does not validate that `world.id()` matches `self.world_id`. Calling this on a `world`
     /// with a mismatched [`WorldId`] is unsound.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>iter_unchecked_manual&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>&gt;(
-        <span class="kw-2">&amp;</span><span class="lifetime">&#39;s </span><span class="self">self</span>,
-        world: UnsafeWorldCell&lt;<span class="lifetime">&#39;w</span>&gt;,
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>iter_unchecked_manual&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>&gt;(
+        <span class="kw-2">&amp;</span><span class="lifetime">'s </span><span class="self">self</span>,
+        world: UnsafeWorldCell&lt;<span class="lifetime">'w</span>&gt;,
         last_run: Tick,
         this_run: Tick,
-    ) -&gt; QueryIter&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, Q, F&gt; {
+    ) -&gt; QueryIter&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, Q, F&gt; {
         QueryIter::new(world, <span class="self">self</span>, last_run, this_run)
     }
 
-    <span class="doccomment">/// Returns an [`Iterator`] for the given [`World`] and list of [`Entity`]&#39;s, where the last change and
+    <span class="doccomment">/// Returns an [`Iterator`] for the given [`World`] and list of [`Entity`]'s, where the last change and
     /// the current change tick are given.
     ///
     /// # Safety
@@ -2509,13 +2510,13 @@
     /// This does not validate that `world.id()` matches `self.world_id`. Calling this on a `world`
     /// with a mismatched [`WorldId`] is unsound.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>iter_many_unchecked_manual&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, EntityList: IntoIterator&gt;(
-        <span class="kw-2">&amp;</span><span class="lifetime">&#39;s </span><span class="self">self</span>,
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>iter_many_unchecked_manual&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, EntityList: IntoIterator&gt;(
+        <span class="kw-2">&amp;</span><span class="lifetime">'s </span><span class="self">self</span>,
         entities: EntityList,
-        world: UnsafeWorldCell&lt;<span class="lifetime">&#39;w</span>&gt;,
+        world: UnsafeWorldCell&lt;<span class="lifetime">'w</span>&gt;,
         last_run: Tick,
         this_run: Tick,
-    ) -&gt; QueryManyIter&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, Q, F, EntityList::IntoIter&gt;
+    ) -&gt; QueryManyIter&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, Q, F, EntityList::IntoIter&gt;
     <span class="kw">where
         </span>EntityList::Item: Borrow&lt;Entity&gt;,
     {
@@ -2533,12 +2534,12 @@
     /// This does not validate that `world.id()` matches `self.world_id`. Calling this on a `world`
     /// with a mismatched [`WorldId`] is unsound.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>iter_combinations_unchecked_manual&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, <span class="kw">const </span>K: usize&gt;(
-        <span class="kw-2">&amp;</span><span class="lifetime">&#39;s </span><span class="self">self</span>,
-        world: UnsafeWorldCell&lt;<span class="lifetime">&#39;w</span>&gt;,
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>iter_combinations_unchecked_manual&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, <span class="kw">const </span>K: usize&gt;(
+        <span class="kw-2">&amp;</span><span class="lifetime">'s </span><span class="self">self</span>,
+        world: UnsafeWorldCell&lt;<span class="lifetime">'w</span>&gt;,
         last_run: Tick,
         this_run: Tick,
-    ) -&gt; QueryCombinationIter&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, Q, F, K&gt; {
+    ) -&gt; QueryCombinationIter&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, Q, F, K&gt; {
         QueryCombinationIter::new(world, <span class="self">self</span>, last_run, this_run)
     }
 
@@ -2547,7 +2548,7 @@
     ///
     /// This can only be called for read-only queries, see [`Self::for_each_mut`] for write-queries.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>for_each&lt;<span class="lifetime">&#39;w</span>, FN: FnMut(ROQueryItem&lt;<span class="lifetime">&#39;w</span>, Q&gt;)&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, world: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>World, func: FN) {
+    </span><span class="kw">pub fn </span>for_each&lt;<span class="lifetime">'w</span>, FN: FnMut(ROQueryItem&lt;<span class="lifetime">'w</span>, Q&gt;)&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, world: <span class="kw-2">&amp;</span><span class="lifetime">'w </span>World, func: FN) {
         <span class="self">self</span>.update_archetypes(world);
         <span class="comment">// SAFETY: query is read only
         </span><span class="kw">unsafe </span>{
@@ -2563,7 +2564,7 @@
     <span class="doccomment">/// Runs `func` on each query result for the given [`World`]. This is faster than the equivalent
     /// `iter_mut()` method, but cannot be chained like a normal [`Iterator`].
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>for_each_mut&lt;<span class="lifetime">&#39;w</span>, FN: FnMut(Q::Item&lt;<span class="lifetime">&#39;w</span>&gt;)&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, world: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span><span class="kw-2">mut </span>World, func: FN) {
+    </span><span class="kw">pub fn </span>for_each_mut&lt;<span class="lifetime">'w</span>, FN: FnMut(Q::Item&lt;<span class="lifetime">'w</span>&gt;)&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, world: <span class="kw-2">&amp;</span><span class="lifetime">'w </span><span class="kw-2">mut </span>World, func: FN) {
         <span class="self">self</span>.update_archetypes(world);
         <span class="kw">let </span>change_tick = world.change_tick();
         <span class="kw">let </span>last_change_tick = world.last_change_tick();
@@ -2586,9 +2587,9 @@
     /// This does not check for mutable query correctness. To be safe, make sure mutable queries
     /// have unique access to the components they query.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub unsafe fn </span>for_each_unchecked&lt;<span class="lifetime">&#39;w</span>, FN: FnMut(Q::Item&lt;<span class="lifetime">&#39;w</span>&gt;)&gt;(
+    </span><span class="kw">pub unsafe fn </span>for_each_unchecked&lt;<span class="lifetime">'w</span>, FN: FnMut(Q::Item&lt;<span class="lifetime">'w</span>&gt;)&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        world: UnsafeWorldCell&lt;<span class="lifetime">&#39;w</span>&gt;,
+        world: UnsafeWorldCell&lt;<span class="lifetime">'w</span>&gt;,
         func: FN,
     ) {
         <span class="self">self</span>.update_archetypes_unsafe_world_cell(world);
@@ -2601,10 +2602,10 @@
     ///
     /// [`par_iter_mut`]: Self::par_iter_mut
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>par_iter&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>&gt;(
-        <span class="kw-2">&amp;</span><span class="lifetime">&#39;s </span><span class="kw-2">mut </span><span class="self">self</span>,
-        world: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>World,
-    ) -&gt; QueryParIter&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, Q::ReadOnly, F::ReadOnly&gt; {
+    </span><span class="kw">pub fn </span>par_iter&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>&gt;(
+        <span class="kw-2">&amp;</span><span class="lifetime">'s </span><span class="kw-2">mut </span><span class="self">self</span>,
+        world: <span class="kw-2">&amp;</span><span class="lifetime">'w </span>World,
+    ) -&gt; QueryParIter&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, Q::ReadOnly, F::ReadOnly&gt; {
         <span class="self">self</span>.update_archetypes(world);
         QueryParIter {
             world: world.as_unsafe_world_cell_readonly(),
@@ -2621,7 +2622,7 @@
     ///
     /// [`par_iter`]: Self::par_iter
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>par_iter_mut&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;s </span><span class="kw-2">mut </span><span class="self">self</span>, world: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span><span class="kw-2">mut </span>World) -&gt; QueryParIter&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, Q, F&gt; {
+    </span><span class="kw">pub fn </span>par_iter_mut&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">'s </span><span class="kw-2">mut </span><span class="self">self</span>, world: <span class="kw-2">&amp;</span><span class="lifetime">'w </span><span class="kw-2">mut </span>World) -&gt; QueryParIter&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, Q, F&gt; {
         <span class="self">self</span>.update_archetypes(world);
         <span class="kw">let </span>this_run = world.change_tick();
         <span class="kw">let </span>last_run = world.last_change_tick();
@@ -2644,9 +2645,9 @@
     /// have unique access to the components they query.
     /// This does not validate that `world.id()` matches `self.world_id`. Calling this on a `world`
     /// with a mismatched [`WorldId`] is unsound.
-    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>for_each_unchecked_manual&lt;<span class="lifetime">&#39;w</span>, FN: FnMut(Q::Item&lt;<span class="lifetime">&#39;w</span>&gt;)&gt;(
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>for_each_unchecked_manual&lt;<span class="lifetime">'w</span>, FN: FnMut(Q::Item&lt;<span class="lifetime">'w</span>&gt;)&gt;(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        world: UnsafeWorldCell&lt;<span class="lifetime">&#39;w</span>&gt;,
+        world: UnsafeWorldCell&lt;<span class="lifetime">'w</span>&gt;,
         <span class="kw-2">mut </span>func: FN,
         last_run: Tick,
         this_run: Tick,
@@ -2717,13 +2718,13 @@
     /// with a mismatched [`WorldId`] is unsound.
     ///
     /// [`ComputeTaskPool`]: bevy_tasks::ComputeTaskPool
-    </span><span class="attr">#[cfg(all(not(target = <span class="string">&quot;wasm32&quot;</span>), feature = <span class="string">&quot;multi-threaded&quot;</span>))]
+    </span><span class="attr">#[cfg(all(not(target = <span class="string">"wasm32"</span>), feature = <span class="string">"multi-threaded"</span>))]
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>par_for_each_unchecked_manual&lt;
-        <span class="lifetime">&#39;w</span>,
-        FN: Fn(Q::Item&lt;<span class="lifetime">&#39;w</span>&gt;) + Send + Sync + Clone,
+        <span class="lifetime">'w</span>,
+        FN: Fn(Q::Item&lt;<span class="lifetime">'w</span>&gt;) + Send + Sync + Clone,
     &gt;(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        world: UnsafeWorldCell&lt;<span class="lifetime">&#39;w</span>&gt;,
+        world: UnsafeWorldCell&lt;<span class="lifetime">'w</span>&gt;,
         batch_size: usize,
         func: FN,
         last_run: Tick,
@@ -2746,7 +2747,7 @@
                         <span class="kw">let </span>func = func.clone();
                         <span class="kw">let </span>len = batch_size.min(table.entity_count() - offset);
                         scope.spawn(<span class="kw">async move </span>{
-                            <span class="attr">#[cfg(feature = <span class="string">&quot;trace&quot;</span>)]
+                            <span class="attr">#[cfg(feature = <span class="string">"trace"</span>)]
                             </span><span class="kw">let </span>_span = <span class="self">self</span>.par_iter_span.enter();
                             <span class="kw">let </span><span class="kw-2">mut </span>fetch =
                                 Q::init_fetch(world, <span class="kw-2">&amp;</span><span class="self">self</span>.fetch_state, last_run, this_run);
@@ -2782,7 +2783,7 @@
                         <span class="kw">let </span>func = func.clone();
                         <span class="kw">let </span>len = batch_size.min(archetype.len() - offset);
                         scope.spawn(<span class="kw">async move </span>{
-                            <span class="attr">#[cfg(feature = <span class="string">&quot;trace&quot;</span>)]
+                            <span class="attr">#[cfg(feature = <span class="string">"trace"</span>)]
                             </span><span class="kw">let </span>_span = <span class="self">self</span>.par_iter_span.enter();
                             <span class="kw">let </span><span class="kw-2">mut </span>fetch =
                                 Q::init_fetch(world, <span class="kw-2">&amp;</span><span class="self">self</span>.fetch_state, last_run, this_run);
@@ -2832,10 +2833,10 @@
     /// [`get_single`](Self::get_single) to return a `Result` instead of panicking.
     </span><span class="attr">#[track_caller]
     #[inline]
-    </span><span class="kw">pub fn </span>single&lt;<span class="lifetime">&#39;w</span>&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, world: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>World) -&gt; ROQueryItem&lt;<span class="lifetime">&#39;w</span>, Q&gt; {
+    </span><span class="kw">pub fn </span>single&lt;<span class="lifetime">'w</span>&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, world: <span class="kw-2">&amp;</span><span class="lifetime">'w </span>World) -&gt; ROQueryItem&lt;<span class="lifetime">'w</span>, Q&gt; {
         <span class="kw">match </span><span class="self">self</span>.get_single(world) {
             <span class="prelude-val">Ok</span>(items) =&gt; items,
-            <span class="prelude-val">Err</span>(error) =&gt; <span class="macro">panic!</span>(<span class="string">&quot;Cannot get single mutable query result: {error}&quot;</span>),
+            <span class="prelude-val">Err</span>(error) =&gt; <span class="macro">panic!</span>(<span class="string">"Cannot get single mutable query result: {error}"</span>),
         }
     }
 
@@ -2848,10 +2849,10 @@
     /// If the number of query results is not exactly one, a [`QuerySingleError`] is returned
     /// instead.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>get_single&lt;<span class="lifetime">&#39;w</span>&gt;(
+    </span><span class="kw">pub fn </span>get_single&lt;<span class="lifetime">'w</span>&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        world: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>World,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;ROQueryItem&lt;<span class="lifetime">&#39;w</span>, Q&gt;, QuerySingleError&gt; {
+        world: <span class="kw-2">&amp;</span><span class="lifetime">'w </span>World,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;ROQueryItem&lt;<span class="lifetime">'w</span>, Q&gt;, QuerySingleError&gt; {
         <span class="self">self</span>.update_archetypes(world);
 
         <span class="comment">// SAFETY: query is read only
@@ -2873,11 +2874,11 @@
     /// [`get_single_mut`](Self::get_single_mut) to return a `Result` instead of panicking.
     </span><span class="attr">#[track_caller]
     #[inline]
-    </span><span class="kw">pub fn </span>single_mut&lt;<span class="lifetime">&#39;w</span>&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, world: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span><span class="kw-2">mut </span>World) -&gt; Q::Item&lt;<span class="lifetime">&#39;w</span>&gt; {
+    </span><span class="kw">pub fn </span>single_mut&lt;<span class="lifetime">'w</span>&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, world: <span class="kw-2">&amp;</span><span class="lifetime">'w </span><span class="kw-2">mut </span>World) -&gt; Q::Item&lt;<span class="lifetime">'w</span>&gt; {
         <span class="comment">// SAFETY: query has unique world access
         </span><span class="kw">match </span><span class="self">self</span>.get_single_mut(world) {
             <span class="prelude-val">Ok</span>(items) =&gt; items,
-            <span class="prelude-val">Err</span>(error) =&gt; <span class="macro">panic!</span>(<span class="string">&quot;Cannot get single query result: {error}&quot;</span>),
+            <span class="prelude-val">Err</span>(error) =&gt; <span class="macro">panic!</span>(<span class="string">"Cannot get single query result: {error}"</span>),
         }
     }
 
@@ -2887,10 +2888,10 @@
     /// If the number of query results is not exactly one, a [`QuerySingleError`] is returned
     /// instead.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>get_single_mut&lt;<span class="lifetime">&#39;w</span>&gt;(
+    </span><span class="kw">pub fn </span>get_single_mut&lt;<span class="lifetime">'w</span>&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        world: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span><span class="kw-2">mut </span>World,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;Q::Item&lt;<span class="lifetime">&#39;w</span>&gt;, QuerySingleError&gt; {
+        world: <span class="kw-2">&amp;</span><span class="lifetime">'w </span><span class="kw-2">mut </span>World,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Q::Item&lt;<span class="lifetime">'w</span>&gt;, QuerySingleError&gt; {
         <span class="self">self</span>.update_archetypes(world);
 
         <span class="kw">let </span>change_tick = world.change_tick();
@@ -2915,10 +2916,10 @@
     /// This does not check for mutable query correctness. To be safe, make sure mutable queries
     /// have unique access to the components they query.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub unsafe fn </span>get_single_unchecked&lt;<span class="lifetime">&#39;w</span>&gt;(
+    </span><span class="kw">pub unsafe fn </span>get_single_unchecked&lt;<span class="lifetime">'w</span>&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        world: UnsafeWorldCell&lt;<span class="lifetime">&#39;w</span>&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;Q::Item&lt;<span class="lifetime">&#39;w</span>&gt;, QuerySingleError&gt; {
+        world: UnsafeWorldCell&lt;<span class="lifetime">'w</span>&gt;,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Q::Item&lt;<span class="lifetime">'w</span>&gt;, QuerySingleError&gt; {
         <span class="self">self</span>.update_archetypes_unsafe_world_cell(world);
         <span class="self">self</span>.get_single_unchecked_manual(world, world.last_change_tick(), world.change_tick())
     }
@@ -2934,12 +2935,12 @@
     /// This does not check for mutable query correctness. To be safe, make sure mutable queries
     /// have unique access to the components they query.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub unsafe fn </span>get_single_unchecked_manual&lt;<span class="lifetime">&#39;w</span>&gt;(
+    </span><span class="kw">pub unsafe fn </span>get_single_unchecked_manual&lt;<span class="lifetime">'w</span>&gt;(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        world: UnsafeWorldCell&lt;<span class="lifetime">&#39;w</span>&gt;,
+        world: UnsafeWorldCell&lt;<span class="lifetime">'w</span>&gt;,
         last_run: Tick,
         this_run: Tick,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;Q::Item&lt;<span class="lifetime">&#39;w</span>&gt;, QuerySingleError&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Q::Item&lt;<span class="lifetime">'w</span>&gt;, QuerySingleError&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>query = <span class="self">self</span>.iter_unchecked_manual(world, last_run, this_run);
         <span class="kw">let </span>first = query.next();
         <span class="kw">let </span>extra = query.next().is_some();
@@ -2966,13 +2967,13 @@
 
         <span class="kw">let </span>query_state = world.query::&lt;Entity&gt;();
 
-        <span class="comment">// These don&#39;t matter for the test
+        <span class="comment">// These don't matter for the test
         </span><span class="kw">let </span>last_change_tick = world.last_change_tick();
         <span class="kw">let </span>change_tick = world.change_tick();
 
-        <span class="comment">// It&#39;s best to test get_many_unchecked_manual directly,
+        <span class="comment">// It's best to test get_many_unchecked_manual directly,
         // as it is shared and unsafe
-        // We don&#39;t care about aliased mutability for the read-only equivalent
+        // We don't care about aliased mutability for the read-only equivalent
 
         // SAFETY: Query does not access world data.
         </span><span class="macro">assert!</span>(<span class="kw">unsafe </span>{

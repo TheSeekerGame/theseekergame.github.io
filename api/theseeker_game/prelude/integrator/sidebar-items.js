@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["IntegratorPlugin"]};
+window.SIDEBAR_ITEMS = {"fn":["clear_forces_and_impulses"],"struct":["IntegratorPlugin"]};

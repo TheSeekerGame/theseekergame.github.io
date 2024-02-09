@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/alsa-0.7.1/src/ctl_int.rs`."><title>ctl_int.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="alsa" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/alsa-0.7.1/src/ctl_int.rs`."><title>ctl_int.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="alsa" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -500,7 +501,7 @@
 <span class="kw">use </span>libc::{c_uint, c_void, size_t, c_long, c_int, pollfd, c_short};
 
 <span class="doccomment">/// We prefer not to allocate for every ElemId, ElemInfo or ElemValue.
-/// But we don&#39;t know if these will increase in the future or on other platforms.
+/// But we don't know if these will increase in the future or on other platforms.
 /// Unfortunately, Rust does not support alloca, so hard-code the sizes for now.
 
 </span><span class="kw">const </span>ELEM_ID_SIZE: usize = <span class="number">64</span>;
@@ -509,15 +510,15 @@
 
 </span><span class="doccomment">/// [snd_ctl_pcm_next_device](https://www.alsa-project.org/alsa-doc/alsa-lib/control_8c.html#accbb0be6e5ca7361ffec0ea304ed1b05) wrapper.
 /// Iterate over devices of a card.
-</span><span class="kw">pub struct </span>DeviceIter&lt;<span class="lifetime">&#39;a</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Ctl, c_int);
+</span><span class="kw">pub struct </span>DeviceIter&lt;<span class="lifetime">'a</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">'a </span>Ctl, c_int);
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; DeviceIter&lt;<span class="lifetime">&#39;a</span>&gt;{
-    <span class="kw">pub fn </span>new(ctl: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Ctl) -&gt; DeviceIter {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; DeviceIter&lt;<span class="lifetime">'a</span>&gt;{
+    <span class="kw">pub fn </span>new(ctl: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Ctl) -&gt; DeviceIter {
         DeviceIter(ctl, -<span class="number">1</span>)
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; Iterator <span class="kw">for </span>DeviceIter&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; Iterator <span class="kw">for </span>DeviceIter&lt;<span class="lifetime">'a</span>&gt; {
     <span class="kw">type </span>Item = c_int;
 
     <span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;c_int&gt; {
@@ -540,7 +541,7 @@
         <span class="self">Self</span>::open(<span class="kw-2">&amp;</span>CString::new(c).unwrap(), nonblock)
     }
 
-    <span class="doccomment">/// Open does not support async mode (it&#39;s not very Rustic anyway)
+    <span class="doccomment">/// Open does not support async mode (it's not very Rustic anyway)
     </span><span class="kw">pub fn </span>open(c: <span class="kw-2">&amp;</span>CStr, nonblock: bool) -&gt; <span class="prelude-ty">Result</span>&lt;Ctl&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>r = ptr::null_mut();
         <span class="kw">let </span>flags = <span class="kw">if </span>nonblock { <span class="number">1 </span>} <span class="kw">else </span>{ <span class="number">0 </span>}; <span class="comment">// FIXME: alsa::SND_CTL_NONBLOCK does not exist in alsa-sys
@@ -548,7 +549,7 @@
     }
 
     <span class="kw">pub fn </span>from_card(c: <span class="kw-2">&amp;</span>Card, nonblock: bool) -&gt; <span class="prelude-ty">Result</span>&lt;Ctl&gt; {
-        <span class="kw">let </span>s = <span class="macro">format!</span>(<span class="string">&quot;hw:{}&quot;</span>, c.get_index());
+        <span class="kw">let </span>s = <span class="macro">format!</span>(<span class="string">"hw:{}"</span>, c.get_index());
         Ctl::open(<span class="kw-2">&amp;</span>CString::new(s).unwrap(), nonblock)
     }
 
@@ -585,8 +586,8 @@
         <span class="macro">acheck!</span>(snd_ctl_elem_write(<span class="self">self</span>.<span class="number">0</span>, elem_value_ptr(val))).map(|<span class="kw">_</span>| ())
     }
 
-    <span class="doccomment">/// Note: According to alsa-lib documentation, you&#39;re also supposed to have functionality for
-    /// returning whether or not you are subscribed. This does not work in practice, so I&#39;m not
+    <span class="doccomment">/// Note: According to alsa-lib documentation, you're also supposed to have functionality for
+    /// returning whether or not you are subscribed. This does not work in practice, so I'm not
     /// including that here.
     </span><span class="kw">pub fn </span>subscribe_events(<span class="kw-2">&amp;</span><span class="self">self</span>, subscribe: bool) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="macro">acheck!</span>(snd_ctl_subscribe_events(<span class="self">self</span>.<span class="number">0</span>, <span class="kw">if </span>subscribe { <span class="number">1 </span>} <span class="kw">else </span>{ <span class="number">0 </span>})).map(|<span class="kw">_</span>| ())
@@ -617,12 +618,12 @@
     }
     <span class="kw">fn </span>fill(<span class="kw-2">&amp;</span><span class="self">self</span>, p: <span class="kw-2">&amp;mut </span>[pollfd]) -&gt; <span class="prelude-ty">Result</span>&lt;usize&gt; {
         <span class="kw">let </span>z = <span class="kw">unsafe </span>{ alsa::snd_ctl_poll_descriptors(<span class="self">self</span>.<span class="number">0</span>, p.as_mut_ptr(), p.len() <span class="kw">as </span>c_uint) };
-        from_code(<span class="string">&quot;snd_ctl_poll_descriptors&quot;</span>, z).map(|<span class="kw">_</span>| z <span class="kw">as </span>usize)
+        from_code(<span class="string">"snd_ctl_poll_descriptors"</span>, z).map(|<span class="kw">_</span>| z <span class="kw">as </span>usize)
     }
     <span class="kw">fn </span>revents(<span class="kw-2">&amp;</span><span class="self">self</span>, p: <span class="kw-2">&amp;</span>[pollfd]) -&gt; <span class="prelude-ty">Result</span>&lt;poll::Flags&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>r = <span class="number">0</span>;
         <span class="kw">let </span>z = <span class="kw">unsafe </span>{ alsa::snd_ctl_poll_descriptors_revents(<span class="self">self</span>.<span class="number">0</span>, p.as_ptr() <span class="kw">as </span><span class="kw-2">*mut </span>pollfd, p.len() <span class="kw">as </span>c_uint, <span class="kw-2">&amp;mut </span>r) };
-        from_code(<span class="string">&quot;snd_ctl_poll_descriptors_revents&quot;</span>, z).map(|<span class="kw">_</span>| poll::Flags::from_bits_truncate(r <span class="kw">as </span>c_short))
+        from_code(<span class="string">"snd_ctl_poll_descriptors_revents"</span>, z).map(|<span class="kw">_</span>| poll::Flags::from_bits_truncate(r <span class="kw">as </span>c_short))
     }
 }
 
@@ -643,17 +644,17 @@
     }
 
     <span class="kw">pub fn </span>get_id(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span>str&gt; {
-        from_const(<span class="string">&quot;snd_ctl_card_info_get_id&quot;</span>, <span class="kw">unsafe </span>{ alsa::snd_ctl_card_info_get_id(<span class="self">self</span>.<span class="number">0</span>) })}
+        from_const(<span class="string">"snd_ctl_card_info_get_id"</span>, <span class="kw">unsafe </span>{ alsa::snd_ctl_card_info_get_id(<span class="self">self</span>.<span class="number">0</span>) })}
     <span class="kw">pub fn </span>get_driver(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span>str&gt; {
-        from_const(<span class="string">&quot;snd_ctl_card_info_get_driver&quot;</span>, <span class="kw">unsafe </span>{ alsa::snd_ctl_card_info_get_driver(<span class="self">self</span>.<span class="number">0</span>) })}
+        from_const(<span class="string">"snd_ctl_card_info_get_driver"</span>, <span class="kw">unsafe </span>{ alsa::snd_ctl_card_info_get_driver(<span class="self">self</span>.<span class="number">0</span>) })}
     <span class="kw">pub fn </span>get_components(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span>str&gt; {
-        from_const(<span class="string">&quot;snd_ctl_card_info_get_components&quot;</span>, <span class="kw">unsafe </span>{ alsa::snd_ctl_card_info_get_components(<span class="self">self</span>.<span class="number">0</span>) })}
+        from_const(<span class="string">"snd_ctl_card_info_get_components"</span>, <span class="kw">unsafe </span>{ alsa::snd_ctl_card_info_get_components(<span class="self">self</span>.<span class="number">0</span>) })}
     <span class="kw">pub fn </span>get_longname(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span>str&gt; {
-        from_const(<span class="string">&quot;snd_ctl_card_info_get_longname&quot;</span>, <span class="kw">unsafe </span>{ alsa::snd_ctl_card_info_get_longname(<span class="self">self</span>.<span class="number">0</span>) })}
+        from_const(<span class="string">"snd_ctl_card_info_get_longname"</span>, <span class="kw">unsafe </span>{ alsa::snd_ctl_card_info_get_longname(<span class="self">self</span>.<span class="number">0</span>) })}
     <span class="kw">pub fn </span>get_name(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span>str&gt; {
-        from_const(<span class="string">&quot;snd_ctl_card_info_get_name&quot;</span>, <span class="kw">unsafe </span>{ alsa::snd_ctl_card_info_get_name(<span class="self">self</span>.<span class="number">0</span>) })}
+        from_const(<span class="string">"snd_ctl_card_info_get_name"</span>, <span class="kw">unsafe </span>{ alsa::snd_ctl_card_info_get_name(<span class="self">self</span>.<span class="number">0</span>) })}
     <span class="kw">pub fn </span>get_mixername(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span>str&gt; {
-        from_const(<span class="string">&quot;snd_ctl_card_info_get_mixername&quot;</span>, <span class="kw">unsafe </span>{ alsa::snd_ctl_card_info_get_mixername(<span class="self">self</span>.<span class="number">0</span>) })}
+        from_const(<span class="string">"snd_ctl_card_info_get_mixername"</span>, <span class="kw">unsafe </span>{ alsa::snd_ctl_card_info_get_mixername(<span class="self">self</span>.<span class="number">0</span>) })}
     <span class="kw">pub fn </span>get_card(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Card { Card::new(<span class="kw">unsafe </span>{ alsa::snd_ctl_card_info_get_card(<span class="self">self</span>.<span class="number">0</span>) })}
 }
 
@@ -708,8 +709,8 @@
         <span class="kw">unsafe </span>{ alsa::snd_ctl_elem_value_set_id(<span class="self">self</span>.ptr, elem_id_ptr(id)) }
     }
 
-    <span class="comment">// Note: The get_bytes hands out a reference to inside the object. Therefore, we can&#39;t treat
-    // the content as &quot;cell&quot;ed, but must take a &quot;&amp;mut self&quot; (to make sure the reference
+    <span class="comment">// Note: The get_bytes hands out a reference to inside the object. Therefore, we can't treat
+    // the content as "cell"ed, but must take a "&amp;mut self" (to make sure the reference
     // from get_bytes has been dropped when calling a set_* function).
 
     </span><span class="kw">pub fn </span>get_boolean(<span class="kw-2">&amp;</span><span class="self">self</span>, idx: u32) -&gt; <span class="prelude-ty">Option</span>&lt;bool&gt; {
@@ -772,7 +773,7 @@
         <span class="kw">if </span><span class="self">self</span>.etype != ElemType::Bytes || val.len() != <span class="self">self</span>.count <span class="kw">as </span>usize { <span class="prelude-val">None </span>}
 
         <span class="comment">// Note: the alsa-lib function definition is broken. First, the pointer is declared as mut even
-        // though it&#39;s const, and second, there is a &quot;value&quot; missing between &quot;elem&quot; and &quot;set_bytes&quot;.
+        // though it's const, and second, there is a "value" missing between "elem" and "set_bytes".
         </span><span class="kw">else </span>{ <span class="kw">unsafe </span>{ alsa::snd_ctl_elem_set_bytes(<span class="self">self</span>.ptr, val.as_ptr() <span class="kw">as </span><span class="kw-2">*mut </span>c_void, val.len() <span class="kw">as </span>size_t) }; <span class="prelude-val">Some</span>(()) }
     }
 
@@ -788,7 +789,7 @@
             ElemType::IEC958 =&gt; <span class="number">1</span>,
             ElemType::Integer64 =&gt; <span class="number">64</span>,
         };
-        <span class="comment">// if count &gt; maxcount { return Err(Error::new(Some(&quot;ElemValue::new - count too large&quot;.into()), 1)) }
+        <span class="comment">// if count &gt; maxcount { return Err(Error::new(Some("ElemValue::new - count too large".into()), 1)) }
         </span><span class="kw">let </span>ev = elem_value_new(t, count)<span class="question-mark">?</span>;
         <span class="kw">unsafe </span>{ alsa::snd_ctl_elem_value_clear(elem_value_ptr(<span class="kw-2">&amp;</span>ev)) };
         <span class="prelude-val">Ok</span>(ev)
@@ -799,16 +800,16 @@
 <span class="kw">impl </span>fmt::Debug <span class="kw">for </span>ElemValue {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter) -&gt; fmt::Result {
         <span class="kw">use </span><span class="self">self</span>::ElemType::<span class="kw-2">*</span>;
-        <span class="macro">write!</span>(f, <span class="string">&quot;ElemValue({:?}&quot;</span>, <span class="self">self</span>.etype)<span class="question-mark">?</span>;
+        <span class="macro">write!</span>(f, <span class="string">"ElemValue({:?}"</span>, <span class="self">self</span>.etype)<span class="question-mark">?</span>;
         <span class="kw">for </span>a <span class="kw">in </span><span class="number">0</span>..<span class="self">self</span>.count { <span class="kw">match </span><span class="self">self</span>.etype {
-            Boolean =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;,{:?}&quot;</span>, <span class="self">self</span>.get_boolean(a).unwrap()),
-            Integer =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;,{:?}&quot;</span>, <span class="self">self</span>.get_integer(a).unwrap()),
-            Integer64 =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;,{:?}&quot;</span>, <span class="self">self</span>.get_integer64(a).unwrap()),
-            Enumerated =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;,{:?}&quot;</span>, <span class="self">self</span>.get_enumerated(a).unwrap()),
-            Bytes =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;,{:?}&quot;</span>, <span class="self">self</span>.get_byte(a).unwrap()),
+            Boolean =&gt; <span class="macro">write!</span>(f, <span class="string">",{:?}"</span>, <span class="self">self</span>.get_boolean(a).unwrap()),
+            Integer =&gt; <span class="macro">write!</span>(f, <span class="string">",{:?}"</span>, <span class="self">self</span>.get_integer(a).unwrap()),
+            Integer64 =&gt; <span class="macro">write!</span>(f, <span class="string">",{:?}"</span>, <span class="self">self</span>.get_integer64(a).unwrap()),
+            Enumerated =&gt; <span class="macro">write!</span>(f, <span class="string">",{:?}"</span>, <span class="self">self</span>.get_enumerated(a).unwrap()),
+            Bytes =&gt; <span class="macro">write!</span>(f, <span class="string">",{:?}"</span>, <span class="self">self</span>.get_byte(a).unwrap()),
             <span class="kw">_ </span>=&gt; <span class="prelude-val">Ok</span>(()),
         }<span class="question-mark">?</span>};
-        <span class="macro">write!</span>(f, <span class="string">&quot;)&quot;</span>)
+        <span class="macro">write!</span>(f, <span class="string">")"</span>)
     }
 }
 
@@ -828,7 +829,7 @@
 
 <span class="kw">impl </span>ElemInfo {
     <span class="kw">pub fn </span>get_type(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; ElemType { ElemType::from_c_int(
-        <span class="kw">unsafe </span>{ alsa::snd_ctl_elem_info_get_type(<span class="self">self</span>.<span class="number">0</span>) } <span class="kw">as </span>c_int, <span class="string">&quot;snd_ctl_elem_info_get_type&quot;</span>).unwrap() }
+        <span class="kw">unsafe </span>{ alsa::snd_ctl_elem_info_get_type(<span class="self">self</span>.<span class="number">0</span>) } <span class="kw">as </span>c_int, <span class="string">"snd_ctl_elem_info_get_type"</span>).unwrap() }
     <span class="kw">pub fn </span>get_count(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u32 { <span class="kw">unsafe </span>{ alsa::snd_ctl_elem_info_get_count(<span class="self">self</span>.<span class="number">0</span>) <span class="kw">as </span>u32 } }
 }
 
@@ -879,13 +880,13 @@ pub fn elem_id_ptr(a: &amp;ElemId) -&gt; *mut alsa::snd_ctl_elem_id_t { a.0 }
 
 </span><span class="kw">impl </span>ElemId {
     <span class="kw">pub fn </span>get_name(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span>str&gt; {
-        from_const(<span class="string">&quot;snd_hctl_elem_id_get_name&quot;</span>, <span class="kw">unsafe </span>{ alsa::snd_ctl_elem_id_get_name(elem_id_ptr(<span class="self">self</span>)) })}
+        from_const(<span class="string">"snd_hctl_elem_id_get_name"</span>, <span class="kw">unsafe </span>{ alsa::snd_ctl_elem_id_get_name(elem_id_ptr(<span class="self">self</span>)) })}
     <span class="kw">pub fn </span>get_device(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u32 { <span class="kw">unsafe </span>{ alsa::snd_ctl_elem_id_get_device(elem_id_ptr(<span class="self">self</span>)) <span class="kw">as </span>u32 }}
     <span class="kw">pub fn </span>get_subdevice(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u32 { <span class="kw">unsafe </span>{ alsa::snd_ctl_elem_id_get_subdevice(elem_id_ptr(<span class="self">self</span>)) <span class="kw">as </span>u32 }}
     <span class="kw">pub fn </span>get_numid(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u32 { <span class="kw">unsafe </span>{ alsa::snd_ctl_elem_id_get_numid(elem_id_ptr(<span class="self">self</span>)) <span class="kw">as </span>u32 }}
     <span class="kw">pub fn </span>get_index(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u32 { <span class="kw">unsafe </span>{ alsa::snd_ctl_elem_id_get_index(elem_id_ptr(<span class="self">self</span>)) <span class="kw">as </span>u32 }}
     <span class="kw">pub fn </span>get_interface(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; ElemIface { ElemIface::from_c_int(
-        <span class="kw">unsafe </span>{ alsa::snd_ctl_elem_id_get_interface(elem_id_ptr(<span class="self">self</span>)) } <span class="kw">as </span>c_int, <span class="string">&quot;snd_ctl_elem_id_get_interface&quot;</span>).unwrap() }
+        <span class="kw">unsafe </span>{ alsa::snd_ctl_elem_id_get_interface(elem_id_ptr(<span class="self">self</span>)) } <span class="kw">as </span>c_int, <span class="string">"snd_ctl_elem_id_get_interface"</span>).unwrap() }
 
     <span class="kw">pub fn </span>set_device(<span class="kw-2">&amp;mut </span><span class="self">self</span>, v: u32) { <span class="kw">unsafe </span>{ alsa::snd_ctl_elem_id_set_device(elem_id_ptr(<span class="self">self</span>), v) }}
     <span class="kw">pub fn </span>set_subdevice(<span class="kw-2">&amp;mut </span><span class="self">self</span>, v: u32) { <span class="kw">unsafe </span>{ alsa::snd_ctl_elem_id_set_subdevice(elem_id_ptr(<span class="self">self</span>), v) }}
@@ -896,7 +897,7 @@ pub fn elem_id_ptr(a: &amp;ElemId) -&gt; *mut alsa::snd_ctl_elem_id_t { a.0 }
 
     <span class="doccomment">/// Creates a new ElemId.
     ///
-    /// To ensure safety (i e make sure we never have an invalid interface enum), we need to supply it to the &quot;new&quot; function.
+    /// To ensure safety (i e make sure we never have an invalid interface enum), we need to supply it to the "new" function.
     </span><span class="kw">pub fn </span>new(iface: ElemIface) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span><span class="kw-2">mut </span>r = elem_id_new().unwrap();
         r.set_interface(iface);
@@ -920,11 +921,11 @@ pub fn elem_id_ptr(a: &amp;ElemId) -&gt; *mut alsa::snd_ctl_elem_id_t { a.0 }
         <span class="kw">let </span>device = <span class="self">self</span>.get_device();
         <span class="kw">let </span>subdevice = <span class="self">self</span>.get_subdevice();
 
-        <span class="macro">write!</span>(f, <span class="string">&quot;ElemId(#{}, {:?}, {:?}&quot;</span>, <span class="self">self</span>.get_numid(), <span class="self">self</span>.get_interface(), <span class="self">self</span>.get_name())<span class="question-mark">?</span>;
-        <span class="kw">if </span>index &gt; <span class="number">0 </span>{ <span class="macro">write!</span>(f, <span class="string">&quot;, index={}&quot;</span>, index)<span class="question-mark">? </span>};
-        <span class="kw">if </span>device &gt; <span class="number">0 </span>|| subdevice &gt; <span class="number">0 </span>{ <span class="macro">write!</span>(f, <span class="string">&quot;, device={}&quot;</span>, device)<span class="question-mark">? </span>};
-        <span class="kw">if </span>subdevice &gt; <span class="number">0 </span>{ <span class="macro">write!</span>(f, <span class="string">&quot;, subdevice={}&quot;</span>, device)<span class="question-mark">? </span>};
-        <span class="macro">write!</span>(f, <span class="string">&quot;)&quot;</span>)
+        <span class="macro">write!</span>(f, <span class="string">"ElemId(#{}, {:?}, {:?}"</span>, <span class="self">self</span>.get_numid(), <span class="self">self</span>.get_interface(), <span class="self">self</span>.get_name())<span class="question-mark">?</span>;
+        <span class="kw">if </span>index &gt; <span class="number">0 </span>{ <span class="macro">write!</span>(f, <span class="string">", index={}"</span>, index)<span class="question-mark">? </span>};
+        <span class="kw">if </span>device &gt; <span class="number">0 </span>|| subdevice &gt; <span class="number">0 </span>{ <span class="macro">write!</span>(f, <span class="string">", device={}"</span>, device)<span class="question-mark">? </span>};
+        <span class="kw">if </span>subdevice &gt; <span class="number">0 </span>{ <span class="macro">write!</span>(f, <span class="string">", subdevice={}"</span>, device)<span class="question-mark">? </span>};
+        <span class="macro">write!</span>(f, <span class="string">")"</span>)
     }
 }
 
@@ -972,6 +973,6 @@ pub fn elem_id_ptr(a: &amp;ElemId) -&gt; *mut alsa::snd_ctl_elem_id_t { a.0 }
 <span class="comment">//    assert!(elemvalue &lt;= ELEM_VALUE_SIZE);
 //    assert!(eleminfo &lt;= ELEM_INFO_SIZE);
 
-    </span><span class="macro">println!</span>(<span class="string">&quot;Elem id: {}, Elem value: {}, Elem info: {}&quot;</span>, elemid, elemvalue, eleminfo);
+    </span><span class="macro">println!</span>(<span class="string">"Elem id: {}, Elem value: {}, Elem info: {}"</span>, elemid, elemvalue, eleminfo);
 }
 </code></pre></div></section></main></body></html>

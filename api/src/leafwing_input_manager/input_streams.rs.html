@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/leafwing-input-manager-0.11.2/src/input_streams.rs`."><title>input_streams.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="leafwing_input_manager" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/leafwing-input-manager-0.11.2/src/input_streams.rs`."><title>input_streams.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="leafwing_input_manager" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -672,21 +673,21 @@
 ///
 /// These are typically collected via a system from the [`World`] as resources.
 </span><span class="attr">#[derive(Debug, Clone)]
-</span><span class="kw">pub struct </span>InputStreams&lt;<span class="lifetime">&#39;a</span>&gt; {
+</span><span class="kw">pub struct </span>InputStreams&lt;<span class="lifetime">'a</span>&gt; {
     <span class="doccomment">/// A [`GamepadButton`] [`Input`] stream
-    </span><span class="kw">pub </span>gamepad_buttons: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Input&lt;GamepadButton&gt;,
+    </span><span class="kw">pub </span>gamepad_buttons: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Input&lt;GamepadButton&gt;,
     <span class="doccomment">/// A [`GamepadButton`] [`Axis`] stream
-    </span><span class="kw">pub </span>gamepad_button_axes: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Axis&lt;GamepadButton&gt;,
+    </span><span class="kw">pub </span>gamepad_button_axes: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Axis&lt;GamepadButton&gt;,
     <span class="doccomment">/// A [`GamepadAxis`] [`Axis`] stream
-    </span><span class="kw">pub </span>gamepad_axes: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Axis&lt;GamepadAxis&gt;,
+    </span><span class="kw">pub </span>gamepad_axes: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Axis&lt;GamepadAxis&gt;,
     <span class="doccomment">/// A list of registered gamepads
-    </span><span class="kw">pub </span>gamepads: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Gamepads,
+    </span><span class="kw">pub </span>gamepads: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Gamepads,
     <span class="doccomment">/// A [`KeyCode`] [`Input`] stream
-    </span><span class="kw">pub </span>keycodes: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Input&lt;KeyCode&gt;&gt;,
+    </span><span class="kw">pub </span>keycodes: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>Input&lt;KeyCode&gt;&gt;,
     <span class="doccomment">/// A [`ScanCode`] [`Input`] stream
-    </span><span class="kw">pub </span>scan_codes: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Input&lt;ScanCode&gt;&gt;,
+    </span><span class="kw">pub </span>scan_codes: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>Input&lt;ScanCode&gt;&gt;,
     <span class="doccomment">/// A [`MouseButton`] [`Input`] stream
-    </span><span class="kw">pub </span>mouse_buttons: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Input&lt;MouseButton&gt;&gt;,
+    </span><span class="kw">pub </span>mouse_buttons: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>Input&lt;MouseButton&gt;&gt;,
     <span class="doccomment">/// A [`MouseWheel`] event stream
     </span><span class="kw">pub </span>mouse_wheel: <span class="prelude-ty">Option</span>&lt;Vec&lt;MouseWheel&gt;&gt;,
     <span class="doccomment">/// A [`MouseMotion`] event stream
@@ -696,9 +697,9 @@
 }
 
 <span class="comment">// Constructors
-</span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; InputStreams&lt;<span class="lifetime">&#39;a</span>&gt; {
+</span><span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; InputStreams&lt;<span class="lifetime">'a</span>&gt; {
     <span class="doccomment">/// Construct an [`InputStreams`] from a [`World`]
-    </span><span class="kw">pub fn </span>from_world(world: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>World, gamepad: <span class="prelude-ty">Option</span>&lt;Gamepad&gt;) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">pub fn </span>from_world(world: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>World, gamepad: <span class="prelude-ty">Option</span>&lt;Gamepad&gt;) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span>gamepad_buttons = world.resource::&lt;Input&lt;GamepadButton&gt;&gt;();
         <span class="kw">let </span>gamepad_button_axes = world.resource::&lt;Axis&lt;GamepadButton&gt;&gt;();
         <span class="kw">let </span>gamepad_axes = world.resource::&lt;Axis&lt;GamepadAxis&gt;&gt;();
@@ -736,7 +737,7 @@
 }
 
 <span class="comment">// Input checking
-</span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; InputStreams&lt;<span class="lifetime">&#39;a</span>&gt; {
+</span><span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; InputStreams&lt;<span class="lifetime">'a</span>&gt; {
     <span class="doccomment">/// Is the `input` matched by the [`InputStreams`]?
     </span><span class="kw">pub fn </span>input_pressed(<span class="kw-2">&amp;</span><span class="self">self</span>, input: <span class="kw-2">&amp;</span>UserInput) -&gt; bool {
         <span class="kw">match </span>input {
@@ -807,7 +808,7 @@
                         }
                     }
 
-                    <span class="comment">// If we don&#39;t have the required data, fall back to false
+                    <span class="comment">// If we don't have the required data, fall back to false
                     </span><span class="bool-val">false
                 </span>}
             }
@@ -893,7 +894,7 @@
         </span><span class="bool-val">true
     </span>}
 
-    <span class="doccomment">/// Get the &quot;value&quot; of the input.
+    <span class="doccomment">/// Get the "value" of the input.
     ///
     /// For binary inputs such as buttons, this will always be either `0.0` or `1.0`. For analog
     /// inputs such as axes, this will be the axis value.
@@ -950,7 +951,7 @@
                                 }
                             }
 
-                            <span class="comment">// If we don&#39;t have the required data, fall back to 0.0
+                            <span class="comment">// If we don't have the required data, fall back to 0.0
                             </span><span class="number">0.0
                         </span>}
                     }
@@ -1051,7 +1052,7 @@
                         }
                     }
 
-                    <span class="comment">// If we don&#39;t have the required data, fall back to 0.0
+                    <span class="comment">// If we don't have the required data, fall back to 0.0
                     </span><span class="number">0.0
                 </span>}
             }
@@ -1123,29 +1124,29 @@
 /// These are typically collected via a system from the [`World`] as resources.
 </span><span class="comment">// WARNING: If you update the fields of this type, you must also remember to update `InputMocking::reset_inputs`.
 </span><span class="attr">#[derive(Debug)]
-</span><span class="kw">pub struct </span>MutableInputStreams&lt;<span class="lifetime">&#39;a</span>&gt; {
+</span><span class="kw">pub struct </span>MutableInputStreams&lt;<span class="lifetime">'a</span>&gt; {
     <span class="doccomment">/// A [`GamepadButton`] [`Input`] stream
-    </span><span class="kw">pub </span>gamepad_buttons: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Input&lt;GamepadButton&gt;,
+    </span><span class="kw">pub </span>gamepad_buttons: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Input&lt;GamepadButton&gt;,
     <span class="doccomment">/// A [`GamepadButton`] [`Axis`] stream
-    </span><span class="kw">pub </span>gamepad_button_axes: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Axis&lt;GamepadButton&gt;,
+    </span><span class="kw">pub </span>gamepad_button_axes: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Axis&lt;GamepadButton&gt;,
     <span class="doccomment">/// A [`GamepadAxis`] [`Axis`] stream
-    </span><span class="kw">pub </span>gamepad_axes: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Axis&lt;GamepadAxis&gt;,
+    </span><span class="kw">pub </span>gamepad_axes: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Axis&lt;GamepadAxis&gt;,
     <span class="doccomment">/// A list of registered [`Gamepads`]
-    </span><span class="kw">pub </span>gamepads: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Gamepads,
+    </span><span class="kw">pub </span>gamepads: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Gamepads,
     <span class="doccomment">/// Events used for mocking gamepad-related inputs
-    </span><span class="kw">pub </span>gamepad_events: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Events&lt;GamepadEvent&gt;,
+    </span><span class="kw">pub </span>gamepad_events: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Events&lt;GamepadEvent&gt;,
 
     <span class="doccomment">/// A [`KeyCode`] [`Input`] stream
-    </span><span class="kw">pub </span>keycodes: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Input&lt;KeyCode&gt;,
+    </span><span class="kw">pub </span>keycodes: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Input&lt;KeyCode&gt;,
     <span class="doccomment">/// A [`ScanCode`] [`Input`] stream
-    </span><span class="kw">pub </span>scan_codes: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Input&lt;ScanCode&gt;,
+    </span><span class="kw">pub </span>scan_codes: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Input&lt;ScanCode&gt;,
     <span class="doccomment">/// Events used for mocking keyboard-related inputs
-    </span><span class="kw">pub </span>keyboard_events: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Events&lt;KeyboardInput&gt;,
+    </span><span class="kw">pub </span>keyboard_events: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Events&lt;KeyboardInput&gt;,
 
     <span class="doccomment">/// A [`MouseButton`] [`Input`] stream
-    </span><span class="kw">pub </span>mouse_buttons: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Input&lt;MouseButton&gt;,
+    </span><span class="kw">pub </span>mouse_buttons: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Input&lt;MouseButton&gt;,
     <span class="doccomment">/// Events used for mocking [`MouseButton`] inputs
-    </span><span class="kw">pub </span>mouse_button_events: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Events&lt;MouseButtonInput&gt;,
+    </span><span class="kw">pub </span>mouse_button_events: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Events&lt;MouseButtonInput&gt;,
     <span class="doccomment">/// A [`MouseWheel`] event stream
     </span><span class="kw">pub </span>mouse_wheel: Vec&lt;MouseWheel&gt;,
     <span class="doccomment">/// A [`MouseMotion`] event stream
@@ -1155,9 +1156,9 @@
     </span><span class="kw">pub </span>associated_gamepad: <span class="prelude-ty">Option</span>&lt;Gamepad&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; MutableInputStreams&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; MutableInputStreams&lt;<span class="lifetime">'a</span>&gt; {
     <span class="doccomment">/// Construct a [`MutableInputStreams`] from the [`World`]
-    </span><span class="kw">pub fn </span>from_world(world: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>World, gamepad: <span class="prelude-ty">Option</span>&lt;Gamepad&gt;) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">pub fn </span>from_world(world: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>World, gamepad: <span class="prelude-ty">Option</span>&lt;Gamepad&gt;) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span><span class="kw-2">mut </span>input_system_state: SystemState&lt;(
             ResMut&lt;Input&lt;GamepadButton&gt;&gt;,
             ResMut&lt;Axis&lt;GamepadButton&gt;&gt;,
@@ -1229,8 +1230,8 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; From&lt;MutableInputStreams&lt;<span class="lifetime">&#39;a</span>&gt;&gt; <span class="kw">for </span>InputStreams&lt;<span class="lifetime">&#39;a</span>&gt; {
-    <span class="kw">fn </span>from(mutable_streams: MutableInputStreams&lt;<span class="lifetime">&#39;a</span>&gt;) -&gt; <span class="self">Self </span>{
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; From&lt;MutableInputStreams&lt;<span class="lifetime">'a</span>&gt;&gt; <span class="kw">for </span>InputStreams&lt;<span class="lifetime">'a</span>&gt; {
+    <span class="kw">fn </span>from(mutable_streams: MutableInputStreams&lt;<span class="lifetime">'a</span>&gt;) -&gt; <span class="self">Self </span>{
         InputStreams {
             gamepad_buttons: mutable_streams.gamepad_buttons,
             gamepad_button_axes: mutable_streams.gamepad_button_axes,
@@ -1246,8 +1247,8 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; From&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>MutableInputStreams&lt;<span class="lifetime">&#39;a</span>&gt;&gt; <span class="kw">for </span>InputStreams&lt;<span class="lifetime">&#39;a</span>&gt; {
-    <span class="kw">fn </span>from(mutable_streams: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>MutableInputStreams&lt;<span class="lifetime">&#39;a</span>&gt;) -&gt; <span class="self">Self </span>{
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; From&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>MutableInputStreams&lt;<span class="lifetime">'a</span>&gt;&gt; <span class="kw">for </span>InputStreams&lt;<span class="lifetime">'a</span>&gt; {
+    <span class="kw">fn </span>from(mutable_streams: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>MutableInputStreams&lt;<span class="lifetime">'a</span>&gt;) -&gt; <span class="self">Self </span>{
         InputStreams {
             gamepad_buttons: mutable_streams.gamepad_buttons,
             gamepad_button_axes: mutable_streams.gamepad_button_axes,

@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/inotify-0.10.2/src/inotify.rs`."><title>inotify.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="inotify" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/inotify-0.10.2/src/inotify.rs`."><title>inotify.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="inotify" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -428,11 +429,11 @@
 };
 
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;stream&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"stream"</span>)]
 </span><span class="kw">use </span><span class="kw">crate</span>::stream::EventStream;
 
 
-<span class="doccomment">/// Idiomatic Rust wrapper around Linux&#39;s inotify API
+<span class="doccomment">/// Idiomatic Rust wrapper around Linux's inotify API
 ///
 /// `Inotify` is a wrapper around an inotify instance. It generally tries to
 /// adhere to the underlying inotify API closely, while making access to it
@@ -471,7 +472,7 @@
     /// use inotify::Inotify;
     ///
     /// let inotify = Inotify::init()
-    ///     .expect(&quot;Failed to initialize an inotify instance&quot;);
+    ///     .expect("Failed to initialize an inotify instance");
     /// ```
     ///
     /// [`Inotify`]: struct.Inotify.html
@@ -489,11 +490,11 @@
             //
             // Passing `IN_CLOEXEC` prevents leaking file descriptors to
             // processes executed by this process and seems to be a best
-            // practice. I don&#39;t grasp this issue completely and failed to find
-            // any authoritative sources on the topic. There&#39;s some discussion in
-            // the open(2) and fcntl(2) man pages, but I didn&#39;t find that
+            // practice. I don't grasp this issue completely and failed to find
+            // any authoritative sources on the topic. There's some discussion in
+            // the open(2) and fcntl(2) man pages, but I didn't find that
             // helpful in understanding the issue of leaked file descriptors.
-            // For what it&#39;s worth, there&#39;s a Rust issue about this:
+            // For what it's worth, there's a Rust issue about this:
             // https://github.com/rust-lang/rust/issues/12148
             </span>ffi::inotify_init1(ffi::IN_CLOEXEC | ffi::IN_NONBLOCK)
         };
@@ -520,7 +521,7 @@
     }
 
     <span class="doccomment">/// Deprecated: use `Inotify.watches().add()` instead
-    </span><span class="attr">#[deprecated = <span class="string">&quot;use `Inotify.watches().add()` instead&quot;</span>]
+    </span><span class="attr">#[deprecated = <span class="string">"use `Inotify.watches().add()` instead"</span>]
     </span><span class="kw">pub fn </span>add_watch&lt;P&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, path: P, mask: WatchMask)
         -&gt; io::Result&lt;WatchDescriptor&gt;
         <span class="kw">where </span>P: AsRef&lt;Path&gt;
@@ -529,7 +530,7 @@
     }
 
     <span class="doccomment">/// Deprecated: use `Inotify.watches().remove()` instead
-    </span><span class="attr">#[deprecated = <span class="string">&quot;use `Inotify.watches().remove()` instead&quot;</span>]
+    </span><span class="attr">#[deprecated = <span class="string">"use `Inotify.watches().remove()` instead"</span>]
     </span><span class="kw">pub fn </span>rm_watch(<span class="kw-2">&amp;mut </span><span class="self">self</span>, wd: WatchDescriptor) -&gt; io::Result&lt;()&gt; {
         <span class="self">self</span>.watches().remove(wd)
     }
@@ -545,8 +546,8 @@
     ///
     /// [`Inotify::read_events`]: struct.Inotify.html#method.read_events
     /// [`read`]: ../libc/fn.read.html
-    </span><span class="kw">pub fn </span>read_events_blocking&lt;<span class="lifetime">&#39;a</span>&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, buffer: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>[u8])
-        -&gt; io::Result&lt;Events&lt;<span class="lifetime">&#39;a</span>&gt;&gt;
+    </span><span class="kw">pub fn </span>read_events_blocking&lt;<span class="lifetime">'a</span>&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, buffer: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>[u8])
+        -&gt; io::Result&lt;Events&lt;<span class="lifetime">'a</span>&gt;&gt;
     {
         <span class="kw">unsafe </span>{
             <span class="kw">let </span>res = fcntl(<span class="kw-2">**</span><span class="self">self</span>.fd, F_GETFL);
@@ -571,7 +572,7 @@
         result
     }
 
-    <span class="doccomment">/// Returns one buffer&#39;s worth of available events
+    <span class="doccomment">/// Returns one buffer's worth of available events
     ///
     /// Reads as many events as possible into `buffer`, and returns an iterator
     /// over them. If no events are available, an iterator is still returned. If
@@ -602,14 +603,14 @@
     /// use std::io::ErrorKind;
     ///
     /// let mut inotify = Inotify::init()
-    ///     .expect(&quot;Failed to initialize an inotify instance&quot;);
+    ///     .expect("Failed to initialize an inotify instance");
     ///
     /// let mut buffer = [0; 1024];
     /// let events = loop {
     ///     match inotify.read_events(&amp;mut buffer) {
     ///         Ok(events) =&gt; break events,
     ///         Err(error) if error.kind() == ErrorKind::WouldBlock =&gt; continue,
-    ///         _ =&gt; panic!(&quot;Error while reading events&quot;),
+    ///         _ =&gt; panic!("Error while reading events"),
     ///     }
     /// };
     ///
@@ -622,8 +623,8 @@
     /// [`read`]: ../libc/fn.read.html
     /// [`ErrorKind::UnexpectedEof`]: https://doc.rust-lang.org/std/io/enum.ErrorKind.html#variant.UnexpectedEof
     /// [`ErrorKind::InvalidInput`]: https://doc.rust-lang.org/std/io/enum.ErrorKind.html#variant.InvalidInput
-    </span><span class="kw">pub fn </span>read_events&lt;<span class="lifetime">&#39;a</span>&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, buffer: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>[u8])
-        -&gt; io::Result&lt;Events&lt;<span class="lifetime">&#39;a</span>&gt;&gt;
+    </span><span class="kw">pub fn </span>read_events&lt;<span class="lifetime">'a</span>&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, buffer: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>[u8])
+        -&gt; io::Result&lt;Events&lt;<span class="lifetime">'a</span>&gt;&gt;
     {
         <span class="kw">let </span>num_bytes = read_into_buffer(<span class="kw-2">**</span><span class="self">self</span>.fd, buffer);
 
@@ -632,7 +633,7 @@
                 <span class="kw">return </span><span class="prelude-val">Err</span>(
                     io::Error::new(
                         io::ErrorKind::UnexpectedEof,
-                        <span class="string">&quot;`read` return `0`, signaling end-of-file&quot;
+                        <span class="string">"`read` return `0`, signaling end-of-file"
                     </span>)
                 );
             }
@@ -641,22 +642,22 @@
                 <span class="kw">return </span><span class="prelude-val">Err</span>(error);
             },
             <span class="kw">_ if </span>num_bytes &lt; <span class="number">0 </span>=&gt; {
-                <span class="macro">panic!</span>(<span class="string">&quot;{} {} {} {} {} {}&quot;</span>,
-                    <span class="string">&quot;Unexpected return value from `read`. Received a negative&quot;</span>,
-                    <span class="string">&quot;value that was not `-1`. According to the `read` man page&quot;</span>,
-                    <span class="string">&quot;this shouldn&#39;t happen, as either `-1` is returned on&quot;</span>,
-                    <span class="string">&quot;error, `0` on end-of-file, or a positive value for the&quot;</span>,
-                    <span class="string">&quot;number of bytes read. Returned value:&quot;</span>,
+                <span class="macro">panic!</span>(<span class="string">"{} {} {} {} {} {}"</span>,
+                    <span class="string">"Unexpected return value from `read`. Received a negative"</span>,
+                    <span class="string">"value that was not `-1`. According to the `read` man page"</span>,
+                    <span class="string">"this shouldn't happen, as either `-1` is returned on"</span>,
+                    <span class="string">"error, `0` on end-of-file, or a positive value for the"</span>,
+                    <span class="string">"number of bytes read. Returned value:"</span>,
                     num_bytes,
                 );
             }
             <span class="kw">_ </span>=&gt; {
-                <span class="comment">// The value returned by `read` should be `isize`. Let&#39;s quickly
+                <span class="comment">// The value returned by `read` should be `isize`. Let's quickly
                 // verify this with the following assignment, so we can be sure
                 // our cast below is valid.
                 </span><span class="kw">let </span>num_bytes: isize = num_bytes;
 
-                <span class="comment">// The type returned by `read` is `isize`, and we&#39;ve ruled out
+                <span class="comment">// The type returned by `read` is `isize`, and we've ruled out
                 // all negative values with the match arms above. This means we
                 // can safely cast to `usize`.
                 </span><span class="macro">debug_assert!</span>(num_bytes &gt; <span class="number">0</span>);
@@ -670,8 +671,8 @@
     <span class="doccomment">/// Deprecated: use `into_event_stream()` instead, which enforces a single `Stream` and predictable reads.
     /// Using this method to create multiple `EventStream` instances from one `Inotify` is unsupported,
     /// as they will contend over one event source and each produce unpredictable stream contents.
-    </span><span class="attr">#[deprecated = <span class="string">&quot;use `into_event_stream()` instead, which enforces a single Stream and predictable reads&quot;</span>]
-    #[cfg(feature = <span class="string">&quot;stream&quot;</span>)]
+    </span><span class="attr">#[deprecated = <span class="string">"use `into_event_stream()` instead, which enforces a single Stream and predictable reads"</span>]
+    #[cfg(feature = <span class="string">"stream"</span>)]
     </span><span class="kw">pub fn </span>event_stream&lt;T&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, buffer: T)
         -&gt; io::Result&lt;EventStream&lt;T&gt;&gt;
     <span class="kw">where
@@ -686,7 +687,7 @@
     /// infinite source of events.
     ///
     /// An internal buffer which can hold the largest possible event is used.
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;stream&quot;</span>)]
+    </span><span class="attr">#[cfg(feature = <span class="string">"stream"</span>)]
     </span><span class="kw">pub fn </span>into_event_stream&lt;T&gt;(<span class="self">self</span>, buffer: T)
         -&gt; io::Result&lt;EventStream&lt;T&gt;&gt;
     <span class="kw">where
@@ -698,7 +699,7 @@
     <span class="doccomment">/// Creates an `Inotify` instance using the file descriptor which was originally
     /// initialized in `Inotify::init`. This is intended to be used to transform an
     /// `EventStream` back into an `Inotify`. Do not attempt to clone `Inotify` with this.
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;stream&quot;</span>)]
+    </span><span class="attr">#[cfg(feature = <span class="string">"stream"</span>)]
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>from_file_descriptor(fd: Arc&lt;FdGuard&gt;) -&gt; <span class="self">Self
     </span>{
         Inotify {
@@ -709,7 +710,7 @@
     <span class="doccomment">/// Closes the inotify instance
     ///
     /// Closes the file descriptor referring to the inotify instance. The user
-    /// usually doesn&#39;t have to call this function, as the underlying inotify
+    /// usually doesn't have to call this function, as the underlying inotify
     /// instance is closed automatically, when [`Inotify`] is dropped.
     ///
     /// # Errors
@@ -723,10 +724,10 @@
     /// use inotify::Inotify;
     ///
     /// let mut inotify = Inotify::init()
-    ///     .expect(&quot;Failed to initialize an inotify instance&quot;);
+    ///     .expect("Failed to initialize an inotify instance");
     ///
     /// inotify.close()
-    ///     .expect(&quot;Failed to close inotify instance&quot;);
+    ///     .expect("Failed to close inotify instance");
     /// ```
     ///
     /// [`Inotify`]: struct.Inotify.html
@@ -770,7 +771,7 @@
 
 <span class="kw">impl </span>AsFd <span class="kw">for </span>Inotify {
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>as_fd(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt; {
+    </span><span class="kw">fn </span>as_fd(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; BorrowedFd&lt;<span class="lifetime">'_</span>&gt; {
         <span class="self">self</span>.fd.as_fd()
     }
 }

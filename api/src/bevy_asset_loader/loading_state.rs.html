@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_asset_loader-0.19.1/src/loading_state.rs`."><title>loading_state.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bevy_asset_loader" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_asset_loader-0.19.1/src/loading_state.rs`."><title>loading_state.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bevy_asset_loader" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -852,13 +853,13 @@
     reset_loading_state, resume_to_finalize, start_loading_collection,
 };
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;standard_dynamic_assets&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"standard_dynamic_assets"</span>)]
 </span><span class="kw">use </span>bevy_common_assets::ron::RonAssetPlugin;
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;standard_dynamic_assets&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"standard_dynamic_assets"</span>)]
 </span><span class="kw">use </span><span class="kw">crate</span>::standard_dynamic_asset::{StandardDynamicAsset, StandardDynamicAssetCollection};
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;progress_tracking&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"progress_tracking"</span>)]
 </span><span class="kw">use </span>iyes_progress::TrackedProgressSet;
 
 <span class="kw">use </span><span class="kw">crate</span>::dynamic_asset::{DynamicAsset, DynamicAssets};
@@ -902,15 +903,15 @@
 ///
 /// #[derive(AssetCollection, Resource)]
 /// pub struct AudioAssets {
-///     #[asset(path = &quot;audio/background.ogg&quot;)]
+///     #[asset(path = "audio/background.ogg")]
 ///     pub background: Handle&lt;AudioSource&gt;,
 /// }
 ///
 /// #[derive(AssetCollection, Resource)]
 /// pub struct ImageAssets {
-///     #[asset(path = &quot;images/player.png&quot;)]
+///     #[asset(path = "images/player.png")]
 ///     pub player: Handle&lt;Image&gt;,
-///     #[asset(path = &quot;images/tree.png&quot;)]
+///     #[asset(path = "images/tree.png")]
 ///     pub tree: Handle&lt;Image&gt;,
 /// }
 /// ```
@@ -920,8 +921,8 @@
     loading_state: State,
     dynamic_assets: HashMap&lt;String, Box&lt;<span class="kw">dyn </span>DynamicAsset&gt;&gt;,
 
-    <span class="attr">#[cfg(feature = <span class="string">&quot;standard_dynamic_assets&quot;</span>)]
-    </span>standard_dynamic_asset_collection_file_endings: Vec&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str&gt;,
+    <span class="attr">#[cfg(feature = <span class="string">"standard_dynamic_assets"</span>)]
+    </span>standard_dynamic_asset_collection_file_endings: Vec&lt;<span class="kw-2">&amp;</span><span class="lifetime">'static </span>str&gt;,
     config: LoadingStateConfig&lt;State&gt;,
 }
 
@@ -959,14 +960,14 @@
     /// # }
     /// # #[derive(AssetCollection, Resource)]
     /// # pub struct AudioAssets {
-    /// #     #[asset(path = &quot;audio/background.ogg&quot;)]
+    /// #     #[asset(path = "audio/background.ogg")]
     /// #     pub background: Handle&lt;AudioSource&gt;,
     /// # }
     /// # #[derive(AssetCollection, Resource)]
     /// # pub struct ImageAssets {
-    /// #     #[asset(path = &quot;images/player.png&quot;)]
+    /// #     #[asset(path = "images/player.png")]
     /// #     pub player: Handle&lt;Image&gt;,
-    /// #     #[asset(path = &quot;images/tree.png&quot;)]
+    /// #     #[asset(path = "images/tree.png")]
     /// #     pub tree: Handle&lt;Image&gt;,
     /// # }
     /// ```
@@ -977,8 +978,8 @@
             failure_state: <span class="prelude-val">None</span>,
             loading_state: load.clone(),
             dynamic_assets: HashMap::default(),
-            <span class="attr">#[cfg(feature = <span class="string">&quot;standard_dynamic_assets&quot;</span>)]
-            </span>standard_dynamic_asset_collection_file_endings: <span class="macro">vec!</span>[<span class="string">&quot;assets.ron&quot;</span>],
+            <span class="attr">#[cfg(feature = <span class="string">"standard_dynamic_assets"</span>)]
+            </span>standard_dynamic_asset_collection_file_endings: <span class="macro">vec!</span>[<span class="string">"assets.ron"</span>],
             config: LoadingStateConfig::new(load),
         }
     }
@@ -1011,14 +1012,14 @@
     /// # }
     /// # #[derive(AssetCollection, Resource)]
     /// # pub struct AudioAssets {
-    /// #     #[asset(path = &quot;audio/background.ogg&quot;)]
+    /// #     #[asset(path = "audio/background.ogg")]
     /// #     pub background: Handle&lt;AudioSource&gt;,
     /// # }
     /// # #[derive(AssetCollection, Resource)]
     /// # pub struct ImageAssets {
-    /// #     #[asset(path = &quot;images/player.png&quot;)]
+    /// #     #[asset(path = "images/player.png")]
     /// #     pub player: Handle&lt;Image&gt;,
-    /// #     #[asset(path = &quot;images/tree.png&quot;)]
+    /// #     #[asset(path = "images/tree.png")]
     /// #     pub tree: Handle&lt;Image&gt;,
     /// # }
     /// ```
@@ -1057,7 +1058,7 @@
     /// # }
     /// # #[derive(AssetCollection, Resource)]
     /// # pub struct MyAssets {
-    /// #     #[asset(path = &quot;audio/background.ogg&quot;)]
+    /// #     #[asset(path = "audio/background.ogg")]
     /// #     pub background: Handle&lt;AudioSource&gt;,
     /// # }
     /// ```
@@ -1070,8 +1071,8 @@
 
     <span class="doccomment">/// Insert a map of asset keys with corresponding standard dynamic assets
     </span><span class="attr">#[must_use]
-    #[cfg(feature = <span class="string">&quot;standard_dynamic_assets&quot;</span>)]
-    #[cfg_attr(docsrs, doc(cfg(feature = <span class="string">&quot;standard_dynamic_assets&quot;</span>)))]
+    #[cfg(feature = <span class="string">"standard_dynamic_assets"</span>)]
+    #[cfg_attr(docsrs, doc(cfg(feature = <span class="string">"standard_dynamic_assets"</span>)))]
     </span><span class="kw">pub fn </span>add_standard_dynamic_assets(
         <span class="kw-2">mut </span><span class="self">self</span>,
         <span class="kw-2">mut </span>dynamic_assets: HashMap&lt;String, StandardDynamicAsset&gt;,
@@ -1087,11 +1088,11 @@
     ///
     /// The default file ending is `.assets`
     </span><span class="attr">#[must_use]
-    #[cfg_attr(docsrs, doc(cfg(feature = <span class="string">&quot;standard_dynamic_assets&quot;</span>)))]
-    #[cfg(feature = <span class="string">&quot;standard_dynamic_assets&quot;</span>)]
+    #[cfg_attr(docsrs, doc(cfg(feature = <span class="string">"standard_dynamic_assets"</span>)))]
+    #[cfg(feature = <span class="string">"standard_dynamic_assets"</span>)]
     </span><span class="kw">pub fn </span>set_standard_dynamic_asset_collection_file_endings(
         <span class="kw-2">mut </span><span class="self">self</span>,
-        endings: Vec&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str&gt;,
+        endings: Vec&lt;<span class="kw-2">&amp;</span><span class="lifetime">'static </span>str&gt;,
     ) -&gt; <span class="self">Self </span>{
         <span class="self">self</span>.standard_dynamic_asset_collection_file_endings = endings;
 
@@ -1129,14 +1130,14 @@
     /// # }
     /// # #[derive(AssetCollection, Resource)]
     /// # pub struct AudioAssets {
-    /// #     #[asset(path = &quot;audio/background.ogg&quot;)]
+    /// #     #[asset(path = "audio/background.ogg")]
     /// #     pub background: Handle&lt;AudioSource&gt;,
     /// # }
     /// # #[derive(AssetCollection, Resource)]
     /// # pub struct ImageAssets {
-    /// #     #[asset(path = &quot;images/player.png&quot;)]
+    /// #     #[asset(path = "images/player.png")]
     /// #     pub player: Handle&lt;Image&gt;,
-    /// #     #[asset(path = &quot;images/tree.png&quot;)]
+    /// #     #[asset(path = "images/tree.png")]
     /// #     pub tree: Handle&lt;Image&gt;,
     /// # }
     /// ```
@@ -1166,7 +1167,7 @@
         app.init_resource::&lt;NextState&lt;InternalLoadingState&lt;S&gt;&gt;&gt;();
 
         app.init_resource::&lt;DynamicAssetCollections&lt;S&gt;&gt;();
-        <span class="attr">#[cfg(feature = <span class="string">&quot;standard_dynamic_assets&quot;</span>)]
+        <span class="attr">#[cfg(feature = <span class="string">"standard_dynamic_assets"</span>)]
         </span><span class="kw">if </span>!app.is_plugin_added::&lt;RonAssetPlugin&lt;StandardDynamicAssetCollection&gt;&gt;() {
             app.add_plugins(RonAssetPlugin::&lt;StandardDynamicAssetCollection&gt;::new(
                 <span class="kw-2">&amp;</span><span class="self">self</span>.standard_dynamic_asset_collection_file_endings,
@@ -1238,14 +1239,14 @@
                         .run_if(in_state(InternalLoadingState::&lt;S&gt;::Finalize)),
                 );
 
-            <span class="attr">#[cfg(feature = <span class="string">&quot;standard_dynamic_assets&quot;</span>)]
+            <span class="attr">#[cfg(feature = <span class="string">"standard_dynamic_assets"</span>)]
             </span>{
                 <span class="self">self</span>.config = <span class="self">self
                     </span>.config
                     .register_dynamic_asset_collection::&lt;StandardDynamicAssetCollection&gt;();
             }
 
-            <span class="attr">#[cfg(feature = <span class="string">&quot;progress_tracking&quot;</span>)]
+            <span class="attr">#[cfg(feature = <span class="string">"progress_tracking"</span>)]
             </span>app.add_systems(
                 Update,
                 run_loading_state::&lt;S&gt;
@@ -1253,7 +1254,7 @@
                     .in_set(LoadingStateSet(<span class="self">self</span>.loading_state.clone()))
                     .run_if(in_state(<span class="self">self</span>.loading_state)),
             );
-            <span class="attr">#[cfg(not(feature = <span class="string">&quot;progress_tracking&quot;</span>))]
+            <span class="attr">#[cfg(not(feature = <span class="string">"progress_tracking"</span>))]
             </span>app.add_systems(
                 Update,
                 run_loading_state::&lt;S&gt;
@@ -1327,7 +1328,7 @@
     </span>LoadingAssets,
     <span class="doccomment">/// All collections are loaded and inserted. Time to e.g. run custom [insert_resource](bevy_asset_loader::AssetLoader::insert_resource).
     </span>Finalize,
-    <span class="doccomment">/// A &#39;parking&#39; state in case no next state is defined
+    <span class="doccomment">/// A 'parking' state in case no next state is defined
     </span>Done(PhantomData&lt;S&gt;),
 }
 
@@ -1436,20 +1437,20 @@
     /// # }
     /// # #[derive(AssetCollection, Resource)]
     /// # pub struct AudioAssets {
-    /// #     #[asset(path = &quot;audio/background.ogg&quot;)]
+    /// #     #[asset(path = "audio/background.ogg")]
     /// #     pub background: Handle&lt;AudioSource&gt;,
     /// # }
     /// # #[derive(AssetCollection, Resource)]
     /// # pub struct ImageAssets {
-    /// #     #[asset(path = &quot;images/player.png&quot;)]
+    /// #     #[asset(path = "images/player.png")]
     /// #     pub player: Handle&lt;Image&gt;,
-    /// #     #[asset(path = &quot;images/tree.png&quot;)]
+    /// #     #[asset(path = "images/tree.png")]
     /// #     pub tree: Handle&lt;Image&gt;,
     /// # }
     /// ```
     </span><span class="attr">#[deprecated(
-        since = <span class="string">&quot;0.19.0&quot;</span>,
-        note = <span class="string">&quot;Use `LoadingStateConfig::load_collection` or `LoadingState::load_collection` instead.&quot;
+        since = <span class="string">"0.19.0"</span>,
+        note = <span class="string">"Use `LoadingStateConfig::load_collection` or `LoadingState::load_collection` instead."
     </span>)]
     </span><span class="kw">fn </span>add_collection_to_loading_state&lt;S: States, A: AssetCollection&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
@@ -1461,8 +1462,8 @@
     /// You do not need to call this for [`StandardDynamicAssetCollection`], only if you want to use
     /// your own dynamic asset collection types.
     </span><span class="attr">#[deprecated(
-        since = <span class="string">&quot;0.19.0&quot;</span>,
-        note = <span class="string">&quot;Use `LoadingStateConfig::register_dynamic_asset_collection` or `LoadingState::register_dynamic_asset_collection` instead.&quot;
+        since = <span class="string">"0.19.0"</span>,
+        note = <span class="string">"Use `LoadingStateConfig::register_dynamic_asset_collection` or `LoadingState::register_dynamic_asset_collection` instead."
     </span>)]
     </span><span class="kw">fn </span>register_dynamic_asset_collection&lt;S: States, C: DynamicAssetCollection + Asset&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
@@ -1478,8 +1479,8 @@
     /// You need to register a loader for your asset type yourself.
     /// If you want to see some code, take a look at the `custom_dynamic_assets` example.
     </span><span class="attr">#[deprecated(
-        since = <span class="string">&quot;0.19.0&quot;</span>,
-        note = <span class="string">&quot;Use `LoadingState::with_dynamic_assets_file` or `LoadingStateConfig::with_dynamic_assets_file` instead.&quot;
+        since = <span class="string">"0.19.0"</span>,
+        note = <span class="string">"Use `LoadingState::with_dynamic_assets_file` or `LoadingStateConfig::with_dynamic_assets_file` instead."
     </span>)]
     </span><span class="kw">fn </span>add_dynamic_collection_to_loading_state&lt;S: States, C: DynamicAssetCollection + Asset&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
@@ -1519,8 +1520,8 @@
     /// # impl FromWorld for TextureAtlasFromWorld {
     /// #     fn from_world(world: &amp;mut World) -&gt; Self {
     /// #         let cell = world.cell();
-    /// #         let assets = cell.get_resource::&lt;TextureForAtlas&gt;().expect(&quot;TextureForAtlas not loaded&quot;);
-    /// #         let mut atlases = cell.get_resource_mut::&lt;Assets&lt;TextureAtlas&gt;&gt;().expect(&quot;TextureAtlases missing&quot;);
+    /// #         let assets = cell.get_resource::&lt;TextureForAtlas&gt;().expect("TextureForAtlas not loaded");
+    /// #         let mut atlases = cell.get_resource_mut::&lt;Assets&lt;TextureAtlas&gt;&gt;().expect("TextureAtlases missing");
     /// #         TextureAtlasFromWorld {
     /// #             atlas: atlases.add(TextureAtlas::from_grid(assets.array.clone(), Vec2::new(250., 250.), 1, 4, None, None))
     /// #         }
@@ -1528,13 +1529,13 @@
     /// # }
     /// # #[derive(AssetCollection, Resource)]
     /// # pub struct TextureForAtlas {
-    /// #     #[asset(path = &quot;images/female_adventurer.ogg&quot;)]
+    /// #     #[asset(path = "images/female_adventurer.ogg")]
     /// #     pub array: Handle&lt;Image&gt;,
     /// # }
     /// ```
     </span><span class="attr">#[deprecated(
-        since = <span class="string">&quot;0.19.0&quot;</span>,
-        note = <span class="string">&quot;Use `LoadingState::init_resource` or `LoadingStateConfig::init_resource` instead.&quot;
+        since = <span class="string">"0.19.0"</span>,
+        note = <span class="string">"Use `LoadingState::init_resource` or `LoadingStateConfig::init_resource` instead."
     </span>)]
     </span><span class="kw">fn </span>init_resource_after_loading_state&lt;S: States, A: Resource + FromWorld&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,

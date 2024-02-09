@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy-3e956806168b8470/b5b6ea3/crates/bevy_scene/src/serde.rs`."><title>serde.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bevy_scene" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy-3e956806168b8470/b5b6ea3/crates/bevy_scene/src/serde.rs`."><title>serde.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bevy_scene" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -997,16 +998,16 @@
 <span class="kw">use </span>std::fmt::Formatter;
 
 <span class="doccomment">/// Name of the serialized scene struct type.
-</span><span class="kw">pub const </span>SCENE_STRUCT: <span class="kw-2">&amp;</span>str = <span class="string">&quot;Scene&quot;</span>;
+</span><span class="kw">pub const </span>SCENE_STRUCT: <span class="kw-2">&amp;</span>str = <span class="string">"Scene"</span>;
 <span class="doccomment">/// Name of the serialized resources field in a scene struct.
-</span><span class="kw">pub const </span>SCENE_RESOURCES: <span class="kw-2">&amp;</span>str = <span class="string">&quot;resources&quot;</span>;
+</span><span class="kw">pub const </span>SCENE_RESOURCES: <span class="kw-2">&amp;</span>str = <span class="string">"resources"</span>;
 <span class="doccomment">/// Name of the serialized entities field in a scene struct.
-</span><span class="kw">pub const </span>SCENE_ENTITIES: <span class="kw-2">&amp;</span>str = <span class="string">&quot;entities&quot;</span>;
+</span><span class="kw">pub const </span>SCENE_ENTITIES: <span class="kw-2">&amp;</span>str = <span class="string">"entities"</span>;
 
 <span class="doccomment">/// Name of the serialized entity struct type.
-</span><span class="kw">pub const </span>ENTITY_STRUCT: <span class="kw-2">&amp;</span>str = <span class="string">&quot;Entity&quot;</span>;
+</span><span class="kw">pub const </span>ENTITY_STRUCT: <span class="kw-2">&amp;</span>str = <span class="string">"Entity"</span>;
 <span class="doccomment">/// Name of the serialized component field in an entity struct.
-</span><span class="kw">pub const </span>ENTITY_FIELD_COMPONENTS: <span class="kw-2">&amp;</span>str = <span class="string">&quot;components&quot;</span>;
+</span><span class="kw">pub const </span>ENTITY_FIELD_COMPONENTS: <span class="kw-2">&amp;</span>str = <span class="string">"components"</span>;
 
 <span class="doccomment">/// Handles serialization of a scene as a struct containing its entities and resources.
 ///
@@ -1042,30 +1043,30 @@
 /// world.spawn(MyComponent {
 ///     foo: [1, 2, 3],
 ///     bar: (1.3, 3.7),
-///     baz: String::from(&quot;test&quot;),
+///     baz: String::from("test"),
 /// });
 ///
 /// // Print out our serialized scene in the RON format.
 /// let registry = world.resource::&lt;AppTypeRegistry&gt;();
 /// let scene = DynamicScene::from_world(&amp;world);
 /// let scene_serializer = SceneSerializer::new(&amp;scene, &amp;registry.0);
-/// println!(&quot;{}&quot;, bevy_scene::serialize_ron(scene_serializer).unwrap());
+/// println!("{}", bevy_scene::serialize_ron(scene_serializer).unwrap());
 /// ```
-</span><span class="kw">pub struct </span>SceneSerializer&lt;<span class="lifetime">&#39;a</span>&gt; {
+</span><span class="kw">pub struct </span>SceneSerializer&lt;<span class="lifetime">'a</span>&gt; {
     <span class="doccomment">/// The scene to serialize.
-    </span><span class="kw">pub </span>scene: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>DynamicScene,
+    </span><span class="kw">pub </span>scene: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>DynamicScene,
     <span class="doccomment">/// Type registry in which the components and resources types used in the scene are registered.
-    </span><span class="kw">pub </span>registry: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>TypeRegistryArc,
+    </span><span class="kw">pub </span>registry: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>TypeRegistryArc,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; SceneSerializer&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; SceneSerializer&lt;<span class="lifetime">'a</span>&gt; {
     <span class="doccomment">/// Creates a scene serializer.
-    </span><span class="kw">pub fn </span>new(scene: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>DynamicScene, registry: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>TypeRegistryArc) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">pub fn </span>new(scene: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>DynamicScene, registry: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>TypeRegistryArc) -&gt; <span class="self">Self </span>{
         SceneSerializer { scene, registry }
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; Serialize <span class="kw">for </span>SceneSerializer&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; Serialize <span class="kw">for </span>SceneSerializer&lt;<span class="lifetime">'a</span>&gt; {
     <span class="kw">fn </span>serialize&lt;S&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, serializer: S) -&gt; <span class="prelude-ty">Result</span>&lt;S::Ok, S::Error&gt;
     <span class="kw">where
         </span>S: serde::Serializer,
@@ -1090,14 +1091,14 @@
 }
 
 <span class="doccomment">/// Handles serialization of multiple entities as a map of entity id to serialized entity.
-</span><span class="kw">pub struct </span>EntitiesSerializer&lt;<span class="lifetime">&#39;a</span>&gt; {
+</span><span class="kw">pub struct </span>EntitiesSerializer&lt;<span class="lifetime">'a</span>&gt; {
     <span class="doccomment">/// The entities to serialize.
-    </span><span class="kw">pub </span>entities: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[DynamicEntity],
+    </span><span class="kw">pub </span>entities: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>[DynamicEntity],
     <span class="doccomment">/// Type registry in which the component types used by the entities are registered.
-    </span><span class="kw">pub </span>registry: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>TypeRegistryArc,
+    </span><span class="kw">pub </span>registry: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>TypeRegistryArc,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; Serialize <span class="kw">for </span>EntitiesSerializer&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; Serialize <span class="kw">for </span>EntitiesSerializer&lt;<span class="lifetime">'a</span>&gt; {
     <span class="kw">fn </span>serialize&lt;S&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, serializer: S) -&gt; <span class="prelude-ty">Result</span>&lt;S::Ok, S::Error&gt;
     <span class="kw">where
         </span>S: Serializer,
@@ -1117,14 +1118,14 @@
 }
 
 <span class="doccomment">/// Handles entity serialization as a map of component type to component value.
-</span><span class="kw">pub struct </span>EntitySerializer&lt;<span class="lifetime">&#39;a</span>&gt; {
+</span><span class="kw">pub struct </span>EntitySerializer&lt;<span class="lifetime">'a</span>&gt; {
     <span class="doccomment">/// The entity to serialize.
-    </span><span class="kw">pub </span>entity: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>DynamicEntity,
+    </span><span class="kw">pub </span>entity: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>DynamicEntity,
     <span class="doccomment">/// Type registry in which the component types used by the entity are registered.
-    </span><span class="kw">pub </span>registry: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>TypeRegistryArc,
+    </span><span class="kw">pub </span>registry: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>TypeRegistryArc,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; Serialize <span class="kw">for </span>EntitySerializer&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; Serialize <span class="kw">for </span>EntitySerializer&lt;<span class="lifetime">'a</span>&gt; {
     <span class="kw">fn </span>serialize&lt;S&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, serializer: S) -&gt; <span class="prelude-ty">Result</span>&lt;S::Ok, S::Error&gt;
     <span class="kw">where
         </span>S: serde::Serializer,
@@ -1146,14 +1147,14 @@
 /// Used to serialize scene resources in [`SceneSerializer`] and entity components in [`EntitySerializer`].
 /// Note that having several entries of the same type in `entries` will lead to an error when using the RON format and
 /// deserializing through [`SceneMapDeserializer`].
-</span><span class="kw">pub struct </span>SceneMapSerializer&lt;<span class="lifetime">&#39;a</span>&gt; {
+</span><span class="kw">pub struct </span>SceneMapSerializer&lt;<span class="lifetime">'a</span>&gt; {
     <span class="doccomment">/// List of boxed values of unique type to serialize.
-    </span><span class="kw">pub </span>entries: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[Box&lt;<span class="kw">dyn </span>Reflect&gt;],
+    </span><span class="kw">pub </span>entries: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>[Box&lt;<span class="kw">dyn </span>Reflect&gt;],
     <span class="doccomment">/// Type registry in which the types used in `entries` are registered.
-    </span><span class="kw">pub </span>registry: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>TypeRegistryArc,
+    </span><span class="kw">pub </span>registry: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>TypeRegistryArc,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; Serialize <span class="kw">for </span>SceneMapSerializer&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; Serialize <span class="kw">for </span>SceneMapSerializer&lt;<span class="lifetime">'a</span>&gt; {
     <span class="kw">fn </span>serialize&lt;S&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, serializer: S) -&gt; <span class="prelude-ty">Result</span>&lt;S::Ok, S::Error&gt;
     <span class="kw">where
         </span>S: serde::Serializer,
@@ -1170,30 +1171,30 @@
 }
 
 <span class="attr">#[derive(Deserialize)]
-#[serde(field_identifier, rename_all = <span class="string">&quot;lowercase&quot;</span>)]
+#[serde(field_identifier, rename_all = <span class="string">"lowercase"</span>)]
 </span><span class="kw">enum </span>SceneField {
     Resources,
     Entities,
 }
 
 <span class="attr">#[derive(Deserialize)]
-#[serde(field_identifier, rename_all = <span class="string">&quot;lowercase&quot;</span>)]
+#[serde(field_identifier, rename_all = <span class="string">"lowercase"</span>)]
 </span><span class="kw">enum </span>EntityField {
     Components,
 }
 
 <span class="doccomment">/// Handles scene deserialization.
-</span><span class="kw">pub struct </span>SceneDeserializer&lt;<span class="lifetime">&#39;a</span>&gt; {
+</span><span class="kw">pub struct </span>SceneDeserializer&lt;<span class="lifetime">'a</span>&gt; {
     <span class="doccomment">/// Type registry in which the components and resources types used in the scene to deserialize are registered.
-    </span><span class="kw">pub </span>type_registry: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>TypeRegistry,
+    </span><span class="kw">pub </span>type_registry: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>TypeRegistry,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span>&gt; DeserializeSeed&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span>SceneDeserializer&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, <span class="lifetime">'de</span>&gt; DeserializeSeed&lt;<span class="lifetime">'de</span>&gt; <span class="kw">for </span>SceneDeserializer&lt;<span class="lifetime">'a</span>&gt; {
     <span class="kw">type </span>Value = DynamicScene;
 
     <span class="kw">fn </span>deserialize&lt;D&gt;(<span class="self">self</span>, deserializer: D) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Value, D::Error&gt;
     <span class="kw">where
-        </span>D: serde::Deserializer&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>D: serde::Deserializer&lt;<span class="lifetime">'de</span>&gt;,
     {
         deserializer.deserialize_struct(
             SCENE_STRUCT,
@@ -1205,20 +1206,20 @@
     }
 }
 
-<span class="kw">struct </span>SceneVisitor&lt;<span class="lifetime">&#39;a</span>&gt; {
-    <span class="kw">pub </span>type_registry: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>TypeRegistry,
+<span class="kw">struct </span>SceneVisitor&lt;<span class="lifetime">'a</span>&gt; {
+    <span class="kw">pub </span>type_registry: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>TypeRegistry,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span>&gt; Visitor&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span>SceneVisitor&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, <span class="lifetime">'de</span>&gt; Visitor&lt;<span class="lifetime">'de</span>&gt; <span class="kw">for </span>SceneVisitor&lt;<span class="lifetime">'a</span>&gt; {
     <span class="kw">type </span>Value = DynamicScene;
 
     <span class="kw">fn </span>expecting(<span class="kw-2">&amp;</span><span class="self">self</span>, formatter: <span class="kw-2">&amp;mut </span>Formatter) -&gt; std::fmt::Result {
-        formatter.write_str(<span class="string">&quot;scene struct&quot;</span>)
+        formatter.write_str(<span class="string">"scene struct"</span>)
     }
 
     <span class="kw">fn </span>visit_map&lt;A&gt;(<span class="self">self</span>, <span class="kw-2">mut </span>map: A) -&gt; std::result::Result&lt;<span class="self">Self</span>::Value, A::Error&gt;
     <span class="kw">where
-        </span>A: MapAccess&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>A: MapAccess&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">let </span><span class="kw-2">mut </span>resources = <span class="prelude-val">None</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>entities = <span class="prelude-val">None</span>;
@@ -1254,7 +1255,7 @@
 
     <span class="kw">fn </span>visit_seq&lt;A&gt;(<span class="self">self</span>, <span class="kw-2">mut </span>seq: A) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Value, A::Error&gt;
     <span class="kw">where
-        </span>A: SeqAccess&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>A: SeqAccess&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">let </span>resources = seq
             .next_element_seed(SceneMapDeserializer {
@@ -1276,17 +1277,17 @@
 }
 
 <span class="doccomment">/// Handles deserialization for a collection of entities.
-</span><span class="kw">pub struct </span>SceneEntitiesDeserializer&lt;<span class="lifetime">&#39;a</span>&gt; {
+</span><span class="kw">pub struct </span>SceneEntitiesDeserializer&lt;<span class="lifetime">'a</span>&gt; {
     <span class="doccomment">/// Type registry in which the component types used by the entities to deserialize are registered.
-    </span><span class="kw">pub </span>type_registry: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>TypeRegistry,
+    </span><span class="kw">pub </span>type_registry: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>TypeRegistry,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span>&gt; DeserializeSeed&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span>SceneEntitiesDeserializer&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, <span class="lifetime">'de</span>&gt; DeserializeSeed&lt;<span class="lifetime">'de</span>&gt; <span class="kw">for </span>SceneEntitiesDeserializer&lt;<span class="lifetime">'a</span>&gt; {
     <span class="kw">type </span>Value = Vec&lt;DynamicEntity&gt;;
 
     <span class="kw">fn </span>deserialize&lt;D&gt;(<span class="self">self</span>, deserializer: D) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Value, D::Error&gt;
     <span class="kw">where
-        </span>D: Deserializer&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>D: Deserializer&lt;<span class="lifetime">'de</span>&gt;,
     {
         deserializer.deserialize_map(SceneEntitiesVisitor {
             type_registry: <span class="self">self</span>.type_registry,
@@ -1294,20 +1295,20 @@
     }
 }
 
-<span class="kw">struct </span>SceneEntitiesVisitor&lt;<span class="lifetime">&#39;a</span>&gt; {
-    <span class="kw">pub </span>type_registry: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>TypeRegistry,
+<span class="kw">struct </span>SceneEntitiesVisitor&lt;<span class="lifetime">'a</span>&gt; {
+    <span class="kw">pub </span>type_registry: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>TypeRegistry,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span>&gt; Visitor&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span>SceneEntitiesVisitor&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, <span class="lifetime">'de</span>&gt; Visitor&lt;<span class="lifetime">'de</span>&gt; <span class="kw">for </span>SceneEntitiesVisitor&lt;<span class="lifetime">'a</span>&gt; {
     <span class="kw">type </span>Value = Vec&lt;DynamicEntity&gt;;
 
     <span class="kw">fn </span>expecting(<span class="kw-2">&amp;</span><span class="self">self</span>, formatter: <span class="kw-2">&amp;mut </span>std::fmt::Formatter) -&gt; std::fmt::Result {
-        formatter.write_str(<span class="string">&quot;map of entities&quot;</span>)
+        formatter.write_str(<span class="string">"map of entities"</span>)
     }
 
     <span class="kw">fn </span>visit_map&lt;A&gt;(<span class="self">self</span>, <span class="kw-2">mut </span>map: A) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Value, A::Error&gt;
     <span class="kw">where
-        </span>A: MapAccess&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>A: MapAccess&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">let </span><span class="kw-2">mut </span>entities = Vec::new();
         <span class="kw">while let </span><span class="prelude-val">Some</span>(entity) = map.next_key::&lt;Entity&gt;()<span class="question-mark">? </span>{
@@ -1323,19 +1324,19 @@
 }
 
 <span class="doccomment">/// Handle deserialization of an entity and its components.
-</span><span class="kw">pub struct </span>SceneEntityDeserializer&lt;<span class="lifetime">&#39;a</span>&gt; {
+</span><span class="kw">pub struct </span>SceneEntityDeserializer&lt;<span class="lifetime">'a</span>&gt; {
     <span class="doccomment">/// Id of the deserialized entity.
     </span><span class="kw">pub </span>entity: Entity,
     <span class="doccomment">/// Type registry in which the component types used by the entity to deserialize are registered.
-    </span><span class="kw">pub </span>type_registry: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>TypeRegistry,
+    </span><span class="kw">pub </span>type_registry: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>TypeRegistry,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span>&gt; DeserializeSeed&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span>SceneEntityDeserializer&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, <span class="lifetime">'de</span>&gt; DeserializeSeed&lt;<span class="lifetime">'de</span>&gt; <span class="kw">for </span>SceneEntityDeserializer&lt;<span class="lifetime">'a</span>&gt; {
     <span class="kw">type </span>Value = DynamicEntity;
 
     <span class="kw">fn </span>deserialize&lt;D&gt;(<span class="self">self</span>, deserializer: D) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Value, D::Error&gt;
     <span class="kw">where
-        </span>D: serde::Deserializer&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>D: serde::Deserializer&lt;<span class="lifetime">'de</span>&gt;,
     {
         deserializer.deserialize_struct(
             ENTITY_STRUCT,
@@ -1348,21 +1349,21 @@
     }
 }
 
-<span class="kw">struct </span>SceneEntityVisitor&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">struct </span>SceneEntityVisitor&lt;<span class="lifetime">'a</span>&gt; {
     <span class="kw">pub </span>entity: Entity,
-    <span class="kw">pub </span>registry: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>TypeRegistry,
+    <span class="kw">pub </span>registry: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>TypeRegistry,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span>&gt; Visitor&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span>SceneEntityVisitor&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, <span class="lifetime">'de</span>&gt; Visitor&lt;<span class="lifetime">'de</span>&gt; <span class="kw">for </span>SceneEntityVisitor&lt;<span class="lifetime">'a</span>&gt; {
     <span class="kw">type </span>Value = DynamicEntity;
 
     <span class="kw">fn </span>expecting(<span class="kw-2">&amp;</span><span class="self">self</span>, formatter: <span class="kw-2">&amp;mut </span>std::fmt::Formatter) -&gt; std::fmt::Result {
-        formatter.write_str(<span class="string">&quot;entities&quot;</span>)
+        formatter.write_str(<span class="string">"entities"</span>)
     }
 
     <span class="kw">fn </span>visit_seq&lt;A&gt;(<span class="self">self</span>, <span class="kw-2">mut </span>seq: A) -&gt; std::result::Result&lt;<span class="self">Self</span>::Value, A::Error&gt;
     <span class="kw">where
-        </span>A: SeqAccess&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>A: SeqAccess&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">let </span>components = seq
             .next_element_seed(SceneMapDeserializer {
@@ -1378,7 +1379,7 @@
 
     <span class="kw">fn </span>visit_map&lt;A&gt;(<span class="self">self</span>, <span class="kw-2">mut </span>map: A) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Value, A::Error&gt;
     <span class="kw">where
-        </span>A: MapAccess&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>A: MapAccess&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">let </span><span class="kw-2">mut </span>components = <span class="prelude-val">None</span>;
         <span class="kw">while let </span><span class="prelude-val">Some</span>(key) = map.next_key()<span class="question-mark">? </span>{
@@ -1406,17 +1407,17 @@
 }
 
 <span class="doccomment">/// Handles deserialization of a sequence of values with unique types.
-</span><span class="kw">pub struct </span>SceneMapDeserializer&lt;<span class="lifetime">&#39;a</span>&gt; {
+</span><span class="kw">pub struct </span>SceneMapDeserializer&lt;<span class="lifetime">'a</span>&gt; {
     <span class="doccomment">/// Type registry in which the types of the values to deserialize are registered.
-    </span><span class="kw">pub </span>registry: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>TypeRegistry,
+    </span><span class="kw">pub </span>registry: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>TypeRegistry,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span>&gt; DeserializeSeed&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span>SceneMapDeserializer&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, <span class="lifetime">'de</span>&gt; DeserializeSeed&lt;<span class="lifetime">'de</span>&gt; <span class="kw">for </span>SceneMapDeserializer&lt;<span class="lifetime">'a</span>&gt; {
     <span class="kw">type </span>Value = Vec&lt;Box&lt;<span class="kw">dyn </span>Reflect&gt;&gt;;
 
     <span class="kw">fn </span>deserialize&lt;D&gt;(<span class="self">self</span>, deserializer: D) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Value, D::Error&gt;
     <span class="kw">where
-        </span>D: serde::Deserializer&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>D: serde::Deserializer&lt;<span class="lifetime">'de</span>&gt;,
     {
         deserializer.deserialize_map(SceneMapVisitor {
             registry: <span class="self">self</span>.registry,
@@ -1424,20 +1425,20 @@
     }
 }
 
-<span class="kw">struct </span>SceneMapVisitor&lt;<span class="lifetime">&#39;a</span>&gt; {
-    <span class="kw">pub </span>registry: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>TypeRegistry,
+<span class="kw">struct </span>SceneMapVisitor&lt;<span class="lifetime">'a</span>&gt; {
+    <span class="kw">pub </span>registry: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>TypeRegistry,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span>&gt; Visitor&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span>SceneMapVisitor&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, <span class="lifetime">'de</span>&gt; Visitor&lt;<span class="lifetime">'de</span>&gt; <span class="kw">for </span>SceneMapVisitor&lt;<span class="lifetime">'a</span>&gt; {
     <span class="kw">type </span>Value = Vec&lt;Box&lt;<span class="kw">dyn </span>Reflect&gt;&gt;;
 
     <span class="kw">fn </span>expecting(<span class="kw-2">&amp;</span><span class="self">self</span>, formatter: <span class="kw-2">&amp;mut </span>std::fmt::Formatter) -&gt; std::fmt::Result {
-        formatter.write_str(<span class="string">&quot;map of reflect types&quot;</span>)
+        formatter.write_str(<span class="string">"map of reflect types"</span>)
     }
 
     <span class="kw">fn </span>visit_map&lt;A&gt;(<span class="self">self</span>, <span class="kw-2">mut </span>map: A) -&gt; std::result::Result&lt;<span class="self">Self</span>::Value, A::Error&gt;
     <span class="kw">where
-        </span>A: MapAccess&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>A: MapAccess&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">let </span><span class="kw-2">mut </span>added = HashSet::new();
         <span class="kw">let </span><span class="kw-2">mut </span>entries = Vec::new();
@@ -1446,7 +1447,7 @@
         </span>{
             <span class="kw">if </span>!added.insert(registration.type_id()) {
                 <span class="kw">return </span><span class="prelude-val">Err</span>(Error::custom(<span class="macro">format_args!</span>(
-                    <span class="string">&quot;duplicate reflect type: `{}`&quot;</span>,
+                    <span class="string">"duplicate reflect type: `{}`"</span>,
                     registration.type_info().type_path(),
                 )));
             }
@@ -1461,7 +1462,7 @@
 
     <span class="kw">fn </span>visit_seq&lt;A&gt;(<span class="self">self</span>, <span class="kw-2">mut </span>seq: A) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Value, A::Error&gt;
     <span class="kw">where
-        </span>A: SeqAccess&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>A: SeqAccess&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">let </span><span class="kw-2">mut </span>dynamic_properties = Vec::new();
         <span class="kw">while let </span><span class="prelude-val">Some</span>(entity) =
@@ -1577,33 +1578,33 @@
             .extract_resources()
             .build();
 
-        <span class="kw">let </span>expected = <span class="string">r#&quot;(
+        <span class="kw">let </span>expected = <span class="string">r#"(
   resources: {
-    &quot;bevy_scene::serde::tests::MyResource&quot;: (
+    "bevy_scene::serde::tests::MyResource": (
       foo: 123,
     ),
   },
   entities: {
     0: (
       components: {
-        &quot;bevy_scene::serde::tests::Foo&quot;: (123),
+        "bevy_scene::serde::tests::Foo": (123),
       },
     ),
     1: (
       components: {
-        &quot;bevy_scene::serde::tests::Foo&quot;: (123),
-        &quot;bevy_scene::serde::tests::Bar&quot;: (345),
+        "bevy_scene::serde::tests::Foo": (123),
+        "bevy_scene::serde::tests::Bar": (345),
       },
     ),
     2: (
       components: {
-        &quot;bevy_scene::serde::tests::Foo&quot;: (123),
-        &quot;bevy_scene::serde::tests::Bar&quot;: (345),
-        &quot;bevy_scene::serde::tests::Baz&quot;: (789),
+        "bevy_scene::serde::tests::Foo": (123),
+        "bevy_scene::serde::tests::Bar": (345),
+        "bevy_scene::serde::tests::Baz": (789),
       },
     ),
   },
-)&quot;#</span>;
+)"#</span>;
         <span class="kw">let </span>output = scene
             .serialize_ron(<span class="kw-2">&amp;</span>world.resource::&lt;AppTypeRegistry&gt;().<span class="number">0</span>)
             .unwrap();
@@ -1614,33 +1615,33 @@
     </span><span class="kw">fn </span>should_deserialize() {
         <span class="kw">let </span>world = create_world();
 
-        <span class="kw">let </span>input = <span class="string">r#&quot;(
+        <span class="kw">let </span>input = <span class="string">r#"(
   resources: {
-    &quot;bevy_scene::serde::tests::MyResource&quot;: (
+    "bevy_scene::serde::tests::MyResource": (
       foo: 123,
     ),
   },
   entities: {
     0: (
       components: {
-        &quot;bevy_scene::serde::tests::Foo&quot;: (123),
+        "bevy_scene::serde::tests::Foo": (123),
       },
     ),
     1: (
       components: {
-        &quot;bevy_scene::serde::tests::Foo&quot;: (123),
-        &quot;bevy_scene::serde::tests::Bar&quot;: (345),
+        "bevy_scene::serde::tests::Foo": (123),
+        "bevy_scene::serde::tests::Bar": (345),
       },
     ),
     2: (
       components: {
-        &quot;bevy_scene::serde::tests::Foo&quot;: (123),
-        &quot;bevy_scene::serde::tests::Bar&quot;: (345),
-        &quot;bevy_scene::serde::tests::Baz&quot;: (789),
+        "bevy_scene::serde::tests::Foo": (123),
+        "bevy_scene::serde::tests::Bar": (345),
+        "bevy_scene::serde::tests::Baz": (789),
       },
     ),
   },
-)&quot;#</span>;
+)"#</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>deserializer = ron::de::Deserializer::from_str(input).unwrap();
         <span class="kw">let </span>scene_deserializer = SceneDeserializer {
             type_registry: <span class="kw-2">&amp;</span>world.resource::&lt;AppTypeRegistry&gt;().read(),
@@ -1650,12 +1651,12 @@
         <span class="macro">assert_eq!</span>(
             <span class="number">1</span>,
             scene.resources.len(),
-            <span class="string">&quot;expected `resources` to contain 1 resource&quot;
+            <span class="string">"expected `resources` to contain 1 resource"
         </span>);
         <span class="macro">assert_eq!</span>(
             <span class="number">3</span>,
             scene.entities.len(),
-            <span class="string">&quot;expected `entities` to contain 3 entities&quot;
+            <span class="string">"expected `entities` to contain 3 entities"
         </span>);
 
         <span class="kw">let </span><span class="kw-2">mut </span>map = HashMap::default();
@@ -1730,7 +1731,7 @@
         world.spawn(MyComponent {
             foo: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>],
             bar: (<span class="number">1.3</span>, <span class="number">3.7</span>),
-            baz: MyEnum::Tuple(<span class="string">&quot;Hello World!&quot;</span>.to_string()),
+            baz: MyEnum::Tuple(<span class="string">"Hello World!"</span>.to_string()),
         });
 
         <span class="kw">let </span>registry = world.resource::&lt;AppTypeRegistry&gt;();
@@ -1768,7 +1769,7 @@
         world.spawn(MyComponent {
             foo: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>],
             bar: (<span class="number">1.3</span>, <span class="number">3.7</span>),
-            baz: MyEnum::Tuple(<span class="string">&quot;Hello World!&quot;</span>.to_string()),
+            baz: MyEnum::Tuple(<span class="string">"Hello World!"</span>.to_string()),
         });
 
         <span class="kw">let </span>registry = world.resource::&lt;AppTypeRegistry&gt;();
@@ -1811,7 +1812,7 @@
         world.spawn(MyComponent {
             foo: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>],
             bar: (<span class="number">1.3</span>, <span class="number">3.7</span>),
-            baz: MyEnum::Tuple(<span class="string">&quot;Hello World!&quot;</span>.to_string()),
+            baz: MyEnum::Tuple(<span class="string">"Hello World!"</span>.to_string()),
         });
 
         <span class="kw">let </span>registry = world.resource::&lt;AppTypeRegistry&gt;();
@@ -1851,7 +1852,7 @@
         <span class="macro">assert_eq!</span>(
             expected.entities.len(),
             received.entities.len(),
-            <span class="string">&quot;entity count did not match&quot;</span>,
+            <span class="string">"entity count did not match"</span>,
         );
 
         <span class="kw">for </span>expected <span class="kw">in </span><span class="kw-2">&amp;</span>expected.entities {
@@ -1859,9 +1860,9 @@
                 .entities
                 .iter()
                 .find(|dynamic_entity| dynamic_entity.entity == expected.entity)
-                .unwrap_or_else(|| <span class="macro">panic!</span>(<span class="string">&quot;missing entity (expected: `{:?}`)&quot;</span>, expected.entity));
+                .unwrap_or_else(|| <span class="macro">panic!</span>(<span class="string">"missing entity (expected: `{:?}`)"</span>, expected.entity));
 
-            <span class="macro">assert_eq!</span>(expected.entity, received.entity, <span class="string">&quot;entities did not match&quot;</span>);
+            <span class="macro">assert_eq!</span>(expected.entity, received.entity, <span class="string">"entities did not match"</span>);
 
             <span class="kw">for </span>expected <span class="kw">in </span><span class="kw-2">&amp;</span>expected.components {
                 <span class="kw">let </span>received = received
@@ -1873,7 +1874,7 @@
                     })
                     .unwrap_or_else(|| {
                         <span class="macro">panic!</span>(
-                            <span class="string">&quot;missing component (expected: `{}`)&quot;</span>,
+                            <span class="string">"missing component (expected: `{}`)"</span>,
                             expected.get_represented_type_info().unwrap().type_path()
                         )
                     });
@@ -1882,7 +1883,7 @@
                     expected
                         .reflect_partial_eq(received.as_ref())
                         .unwrap_or_default(),
-                    <span class="string">&quot;components did not match: (expected: `{expected:?}`, received: `{received:?}`)&quot;</span>,
+                    <span class="string">"components did not match: (expected: `{expected:?}`, received: `{received:?}`)"</span>,
                 );
             }
         }
@@ -1893,7 +1894,7 @@
         <span class="kw">use super</span>::<span class="kw-2">*</span>;
 
         <span class="attr">#[test]
-        #[should_panic(expected = <span class="string">&quot;entity count did not match&quot;</span>)]
+        #[should_panic(expected = <span class="string">"entity count did not match"</span>)]
         </span><span class="kw">fn </span>should_panic_when_entity_count_not_eq() {
             <span class="kw">let </span><span class="kw-2">mut </span>world = create_world();
             <span class="kw">let </span>scene_a = DynamicScene::from_world(<span class="kw-2">&amp;</span>world);
@@ -1910,7 +1911,7 @@
         }
 
         <span class="attr">#[test]
-        #[should_panic(expected = <span class="string">&quot;components did not match&quot;</span>)]
+        #[should_panic(expected = <span class="string">"components did not match"</span>)]
         </span><span class="kw">fn </span>should_panic_when_components_not_eq() {
             <span class="kw">let </span><span class="kw-2">mut </span>world = create_world();
 
@@ -1936,7 +1937,7 @@
         }
 
         <span class="attr">#[test]
-        #[should_panic(expected = <span class="string">&quot;missing component&quot;</span>)]
+        #[should_panic(expected = <span class="string">"missing component"</span>)]
         </span><span class="kw">fn </span>should_panic_when_missing_component() {
             <span class="kw">let </span><span class="kw-2">mut </span>world = create_world();
 

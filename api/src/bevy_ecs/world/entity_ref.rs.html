@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy-3e956806168b8470/b5b6ea3/crates/bevy_ecs/src/world/entity_ref.rs`."><title>entity_ref.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_ecs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy-3e956806168b8470/b5b6ea3/crates/bevy_ecs/src/world/entity_ref.rs`."><title>entity_ref.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_ecs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1721,21 +1722,21 @@
 /// # bevy_ecs::system::assert_is_system(disjoint_system);
 /// ```
 </span><span class="attr">#[derive(Copy, Clone)]
-</span><span class="kw">pub struct </span>EntityRef&lt;<span class="lifetime">&#39;w</span>&gt;(UnsafeEntityCell&lt;<span class="lifetime">&#39;w</span>&gt;);
+</span><span class="kw">pub struct </span>EntityRef&lt;<span class="lifetime">'w</span>&gt;(UnsafeEntityCell&lt;<span class="lifetime">'w</span>&gt;);
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;w</span>&gt; EntityRef&lt;<span class="lifetime">&#39;w</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'w</span>&gt; EntityRef&lt;<span class="lifetime">'w</span>&gt; {
     <span class="doccomment">/// # Safety
     /// - `cell` must have permission to read every component of the entity.
-    /// - No mutable accesses to any of the entity&#39;s components may exist
+    /// - No mutable accesses to any of the entity's components may exist
     ///   at the same time as the returned [`EntityRef`].
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>new(cell: UnsafeEntityCell&lt;<span class="lifetime">&#39;w</span>&gt;) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>new(cell: UnsafeEntityCell&lt;<span class="lifetime">'w</span>&gt;) -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>(cell)
     }
 
     <span class="doccomment">/// Returns the [ID](Entity) of the current entity.
     </span><span class="attr">#[inline]
-    #[must_use = <span class="string">&quot;Omit the .id() call if you do not need to store the `Entity` identifier.&quot;</span>]
+    #[must_use = <span class="string">"Omit the .id() call if you do not need to store the `Entity` identifier."</span>]
     </span><span class="kw">pub fn </span>id(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Entity {
         <span class="self">self</span>.<span class="number">0</span>.id()
     }
@@ -1770,7 +1771,7 @@
     /// ## Notes
     ///
     /// - If you know the concrete type of the component, you should prefer [`Self::contains`].
-    /// - If you know the component&#39;s [`TypeId`] but not its [`ComponentId`], consider using
+    /// - If you know the component's [`TypeId`] but not its [`ComponentId`], consider using
     /// [`Self::contains_type_id`].
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>contains_id(<span class="kw-2">&amp;</span><span class="self">self</span>, component_id: ComponentId) -&gt; bool {
@@ -1792,7 +1793,7 @@
     <span class="doccomment">/// Gets access to the component of type `T` for the current entity.
     /// Returns `None` if the entity does not have a component of type `T`.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>get&lt;T: Component&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>T&gt; {
+    </span><span class="kw">pub fn </span>get&lt;T: Component&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'w </span>T&gt; {
         <span class="comment">// SAFETY: We have read-only access to all components of this entity.
         </span><span class="kw">unsafe </span>{ <span class="self">self</span>.<span class="number">0</span>.get::&lt;T&gt;() }
     }
@@ -1802,7 +1803,7 @@
     ///
     /// Returns `None` if the entity does not have a component of type `T`.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>get_ref&lt;T: Component&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Ref&lt;<span class="lifetime">&#39;w</span>, T&gt;&gt; {
+    </span><span class="kw">pub fn </span>get_ref&lt;T: Component&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Ref&lt;<span class="lifetime">'w</span>, T&gt;&gt; {
         <span class="comment">// SAFETY: We have read-only access to all components of this entity.
         </span><span class="kw">unsafe </span>{ <span class="self">self</span>.<span class="number">0</span>.get_ref::&lt;T&gt;() }
     }
@@ -1834,24 +1835,24 @@
     /// compile time.**
     ///
     /// Unlike [`EntityRef::get`], this returns a raw pointer to the component,
-    /// which is only valid while the `&#39;w` borrow of the lifetime is active.
+    /// which is only valid while the `'w` borrow of the lifetime is active.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>get_by_id(<span class="kw-2">&amp;</span><span class="self">self</span>, component_id: ComponentId) -&gt; <span class="prelude-ty">Option</span>&lt;Ptr&lt;<span class="lifetime">&#39;w</span>&gt;&gt; {
+    </span><span class="kw">pub fn </span>get_by_id(<span class="kw-2">&amp;</span><span class="self">self</span>, component_id: ComponentId) -&gt; <span class="prelude-ty">Option</span>&lt;Ptr&lt;<span class="lifetime">'w</span>&gt;&gt; {
         <span class="comment">// SAFETY: We have read-only access to all components of this entity.
         </span><span class="kw">unsafe </span>{ <span class="self">self</span>.<span class="number">0</span>.get_by_id(component_id) }
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;w</span>&gt; From&lt;EntityWorldMut&lt;<span class="lifetime">&#39;w</span>&gt;&gt; <span class="kw">for </span>EntityRef&lt;<span class="lifetime">&#39;w</span>&gt; {
-    <span class="kw">fn </span>from(entity_mut: EntityWorldMut&lt;<span class="lifetime">&#39;w</span>&gt;) -&gt; EntityRef&lt;<span class="lifetime">&#39;w</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'w</span>&gt; From&lt;EntityWorldMut&lt;<span class="lifetime">'w</span>&gt;&gt; <span class="kw">for </span>EntityRef&lt;<span class="lifetime">'w</span>&gt; {
+    <span class="kw">fn </span>from(entity_mut: EntityWorldMut&lt;<span class="lifetime">'w</span>&gt;) -&gt; EntityRef&lt;<span class="lifetime">'w</span>&gt; {
         <span class="comment">// SAFETY:
         // - `EntityWorldMut` guarantees exclusive access to the entire world.
         </span><span class="kw">unsafe </span>{ EntityRef::new(entity_mut.into_unsafe_entity_cell()) }
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; From&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>EntityWorldMut&lt;<span class="lifetime">&#39;_</span>&gt;&gt; <span class="kw">for </span>EntityRef&lt;<span class="lifetime">&#39;a</span>&gt; {
-    <span class="kw">fn </span>from(value: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>EntityWorldMut&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; <span class="self">Self </span>{
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; From&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>EntityWorldMut&lt;<span class="lifetime">'_</span>&gt;&gt; <span class="kw">for </span>EntityRef&lt;<span class="lifetime">'a</span>&gt; {
+    <span class="kw">fn </span>from(value: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>EntityWorldMut&lt;<span class="lifetime">'_</span>&gt;) -&gt; <span class="self">Self </span>{
         <span class="comment">// SAFETY:
         // - `EntityWorldMut` guarantees exclusive access to the entire world.
         // - `&amp;value` ensures no mutable accesses are active.
@@ -1859,18 +1860,18 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;w</span>&gt; From&lt;EntityMut&lt;<span class="lifetime">&#39;w</span>&gt;&gt; <span class="kw">for </span>EntityRef&lt;<span class="lifetime">&#39;w</span>&gt; {
-    <span class="kw">fn </span>from(value: EntityMut&lt;<span class="lifetime">&#39;w</span>&gt;) -&gt; <span class="self">Self </span>{
+<span class="kw">impl</span>&lt;<span class="lifetime">'w</span>&gt; From&lt;EntityMut&lt;<span class="lifetime">'w</span>&gt;&gt; <span class="kw">for </span>EntityRef&lt;<span class="lifetime">'w</span>&gt; {
+    <span class="kw">fn </span>from(value: EntityMut&lt;<span class="lifetime">'w</span>&gt;) -&gt; <span class="self">Self </span>{
         <span class="comment">// SAFETY:
-        // - `EntityMut` guarantees exclusive access to all of the entity&#39;s components.
+        // - `EntityMut` guarantees exclusive access to all of the entity's components.
         </span><span class="kw">unsafe </span>{ EntityRef::new(value.<span class="number">0</span>) }
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; From&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>EntityMut&lt;<span class="lifetime">&#39;_</span>&gt;&gt; <span class="kw">for </span>EntityRef&lt;<span class="lifetime">&#39;a</span>&gt; {
-    <span class="kw">fn </span>from(value: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>EntityMut&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; <span class="self">Self </span>{
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; From&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>EntityMut&lt;<span class="lifetime">'_</span>&gt;&gt; <span class="kw">for </span>EntityRef&lt;<span class="lifetime">'a</span>&gt; {
+    <span class="kw">fn </span>from(value: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>EntityMut&lt;<span class="lifetime">'_</span>&gt;) -&gt; <span class="self">Self </span>{
         <span class="comment">// SAFETY:
-        // - `EntityMut` guarantees exclusive access to all of the entity&#39;s components.
+        // - `EntityMut` guarantees exclusive access to all of the entity's components.
         // - `&amp;value` ensures there are no mutable accesses.
         </span><span class="kw">unsafe </span>{ EntityRef::new(value.<span class="number">0</span>) }
     }
@@ -1897,32 +1898,32 @@
 /// }
 /// # bevy_ecs::system::assert_is_system(disjoint_system);
 /// ```
-</span><span class="kw">pub struct </span>EntityMut&lt;<span class="lifetime">&#39;w</span>&gt;(UnsafeEntityCell&lt;<span class="lifetime">&#39;w</span>&gt;);
+</span><span class="kw">pub struct </span>EntityMut&lt;<span class="lifetime">'w</span>&gt;(UnsafeEntityCell&lt;<span class="lifetime">'w</span>&gt;);
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;w</span>&gt; EntityMut&lt;<span class="lifetime">&#39;w</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'w</span>&gt; EntityMut&lt;<span class="lifetime">'w</span>&gt; {
     <span class="doccomment">/// # Safety
     /// - `cell` must have permission to mutate every component of the entity.
-    /// - No accesses to any of the entity&#39;s components may exist
+    /// - No accesses to any of the entity's components may exist
     ///   at the same time as the returned [`EntityMut`].
-    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>new(cell: UnsafeEntityCell&lt;<span class="lifetime">&#39;w</span>&gt;) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>new(cell: UnsafeEntityCell&lt;<span class="lifetime">'w</span>&gt;) -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>(cell)
     }
 
     <span class="doccomment">/// Returns a new instance with a shorter lifetime.
     /// This is useful if you have `&amp;mut EntityMut`, but you need `EntityMut`.
-    </span><span class="kw">pub fn </span>reborrow(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; EntityMut&lt;<span class="lifetime">&#39;_</span>&gt; {
+    </span><span class="kw">pub fn </span>reborrow(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; EntityMut&lt;<span class="lifetime">'_</span>&gt; {
         <span class="comment">// SAFETY: We have exclusive access to the entire entity and its components.
         </span><span class="kw">unsafe </span>{ <span class="self">Self</span>::new(<span class="self">self</span>.<span class="number">0</span>) }
     }
 
-    <span class="doccomment">/// Gets read-only access to all of the entity&#39;s components.
-    </span><span class="kw">pub fn </span>as_readonly(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; EntityRef&lt;<span class="lifetime">&#39;_</span>&gt; {
+    <span class="doccomment">/// Gets read-only access to all of the entity's components.
+    </span><span class="kw">pub fn </span>as_readonly(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; EntityRef&lt;<span class="lifetime">'_</span>&gt; {
         EntityRef::from(<span class="self">self</span>)
     }
 
     <span class="doccomment">/// Returns the [ID](Entity) of the current entity.
     </span><span class="attr">#[inline]
-    #[must_use = <span class="string">&quot;Omit the .id() call if you do not need to store the `Entity` identifier.&quot;</span>]
+    #[must_use = <span class="string">"Omit the .id() call if you do not need to store the `Entity` identifier."</span>]
     </span><span class="kw">pub fn </span>id(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Entity {
         <span class="self">self</span>.<span class="number">0</span>.id()
     }
@@ -1957,7 +1958,7 @@
     /// ## Notes
     ///
     /// - If you know the concrete type of the component, you should prefer [`Self::contains`].
-    /// - If you know the component&#39;s [`TypeId`] but not its [`ComponentId`], consider using
+    /// - If you know the component's [`TypeId`] but not its [`ComponentId`], consider using
     /// [`Self::contains_type_id`].
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>contains_id(<span class="kw-2">&amp;</span><span class="self">self</span>, component_id: ComponentId) -&gt; bool {
@@ -1979,7 +1980,7 @@
     <span class="doccomment">/// Gets access to the component of type `T` for the current entity.
     /// Returns `None` if the entity does not have a component of type `T`.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>get&lt;T: Component&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;_ </span>T&gt; {
+    </span><span class="kw">pub fn </span>get&lt;T: Component&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'_ </span>T&gt; {
         <span class="self">self</span>.as_readonly().get()
     }
 
@@ -1988,14 +1989,14 @@
     ///
     /// Returns `None` if the entity does not have a component of type `T`.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>get_ref&lt;T: Component&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Ref&lt;<span class="lifetime">&#39;_</span>, T&gt;&gt; {
+    </span><span class="kw">pub fn </span>get_ref&lt;T: Component&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Ref&lt;<span class="lifetime">'_</span>, T&gt;&gt; {
         <span class="self">self</span>.as_readonly().get_ref()
     }
 
     <span class="doccomment">/// Gets mutable access to the component of type `T` for the current entity.
     /// Returns `None` if the entity does not have a component of type `T`.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>get_mut&lt;T: Component&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Mut&lt;<span class="lifetime">&#39;_</span>, T&gt;&gt; {
+    </span><span class="kw">pub fn </span>get_mut&lt;T: Component&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Mut&lt;<span class="lifetime">'_</span>, T&gt;&gt; {
         <span class="comment">// SAFETY: &amp;mut self implies exclusive access for duration of returned value
         </span><span class="kw">unsafe </span>{ <span class="self">self</span>.<span class="number">0</span>.get_mut() }
     }
@@ -2027,7 +2028,7 @@
     /// Unlike [`EntityMut::get`], this returns a raw pointer to the component,
     /// which is only valid while the [`EntityMut`] is alive.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>get_by_id(<span class="kw-2">&amp;</span><span class="self">self</span>, component_id: ComponentId) -&gt; <span class="prelude-ty">Option</span>&lt;Ptr&lt;<span class="lifetime">&#39;_</span>&gt;&gt; {
+    </span><span class="kw">pub fn </span>get_by_id(<span class="kw-2">&amp;</span><span class="self">self</span>, component_id: ComponentId) -&gt; <span class="prelude-ty">Option</span>&lt;Ptr&lt;<span class="lifetime">'_</span>&gt;&gt; {
         <span class="self">self</span>.as_readonly().get_by_id(component_id)
     }
 
@@ -2040,23 +2041,23 @@
     /// Unlike [`EntityMut::get_mut`], this returns a raw pointer to the component,
     /// which is only valid while the [`EntityMut`] is alive.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>get_mut_by_id(<span class="kw-2">&amp;mut </span><span class="self">self</span>, component_id: ComponentId) -&gt; <span class="prelude-ty">Option</span>&lt;MutUntyped&lt;<span class="lifetime">&#39;_</span>&gt;&gt; {
+    </span><span class="kw">pub fn </span>get_mut_by_id(<span class="kw-2">&amp;mut </span><span class="self">self</span>, component_id: ComponentId) -&gt; <span class="prelude-ty">Option</span>&lt;MutUntyped&lt;<span class="lifetime">'_</span>&gt;&gt; {
         <span class="comment">// SAFETY:
-        // - `&amp;mut self` ensures that no references exist to this entity&#39;s components.
+        // - `&amp;mut self` ensures that no references exist to this entity's components.
         // - `as_unsafe_world_cell` gives mutable permission for all components on this entity
         </span><span class="kw">unsafe </span>{ <span class="self">self</span>.<span class="number">0</span>.get_mut_by_id(component_id) }
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;w</span>&gt; From&lt;EntityWorldMut&lt;<span class="lifetime">&#39;w</span>&gt;&gt; <span class="kw">for </span>EntityMut&lt;<span class="lifetime">&#39;w</span>&gt; {
-    <span class="kw">fn </span>from(value: EntityWorldMut&lt;<span class="lifetime">&#39;w</span>&gt;) -&gt; <span class="self">Self </span>{
+<span class="kw">impl</span>&lt;<span class="lifetime">'w</span>&gt; From&lt;EntityWorldMut&lt;<span class="lifetime">'w</span>&gt;&gt; <span class="kw">for </span>EntityMut&lt;<span class="lifetime">'w</span>&gt; {
+    <span class="kw">fn </span>from(value: EntityWorldMut&lt;<span class="lifetime">'w</span>&gt;) -&gt; <span class="self">Self </span>{
         <span class="comment">// SAFETY: `EntityWorldMut` guarantees exclusive access to the entire world.
         </span><span class="kw">unsafe </span>{ EntityMut::new(value.into_unsafe_entity_cell()) }
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; From&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>EntityWorldMut&lt;<span class="lifetime">&#39;_</span>&gt;&gt; <span class="kw">for </span>EntityMut&lt;<span class="lifetime">&#39;a</span>&gt; {
-    <span class="kw">fn </span>from(value: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>EntityWorldMut&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; <span class="self">Self </span>{
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; From&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>EntityWorldMut&lt;<span class="lifetime">'_</span>&gt;&gt; <span class="kw">for </span>EntityMut&lt;<span class="lifetime">'a</span>&gt; {
+    <span class="kw">fn </span>from(value: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>EntityWorldMut&lt;<span class="lifetime">'_</span>&gt;) -&gt; <span class="self">Self </span>{
         <span class="comment">// SAFETY: `EntityWorldMut` guarantees exclusive access to the entire world.
         </span><span class="kw">unsafe </span>{ EntityMut::new(value.as_unsafe_entity_cell()) }
     }
@@ -2072,28 +2073,28 @@
 /// See also [`EntityMut`], which allows disjoint mutable access to multiple
 /// entities at once.  Unlike `EntityMut`, this type allows adding and
 /// removing components, and despawning the entity.
-</span><span class="kw">pub struct </span>EntityWorldMut&lt;<span class="lifetime">&#39;w</span>&gt; {
-    world: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span><span class="kw-2">mut </span>World,
+</span><span class="kw">pub struct </span>EntityWorldMut&lt;<span class="lifetime">'w</span>&gt; {
+    world: <span class="kw-2">&amp;</span><span class="lifetime">'w </span><span class="kw-2">mut </span>World,
     entity: Entity,
     location: EntityLocation,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;w</span>&gt; EntityWorldMut&lt;<span class="lifetime">&#39;w</span>&gt; {
-    <span class="kw">fn </span>as_unsafe_entity_cell_readonly(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; UnsafeEntityCell&lt;<span class="lifetime">&#39;_</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'w</span>&gt; EntityWorldMut&lt;<span class="lifetime">'w</span>&gt; {
+    <span class="kw">fn </span>as_unsafe_entity_cell_readonly(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; UnsafeEntityCell&lt;<span class="lifetime">'_</span>&gt; {
         UnsafeEntityCell::new(
             <span class="self">self</span>.world.as_unsafe_world_cell_readonly(),
             <span class="self">self</span>.entity,
             <span class="self">self</span>.location,
         )
     }
-    <span class="kw">fn </span>as_unsafe_entity_cell(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; UnsafeEntityCell&lt;<span class="lifetime">&#39;_</span>&gt; {
+    <span class="kw">fn </span>as_unsafe_entity_cell(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; UnsafeEntityCell&lt;<span class="lifetime">'_</span>&gt; {
         UnsafeEntityCell::new(
             <span class="self">self</span>.world.as_unsafe_world_cell(),
             <span class="self">self</span>.entity,
             <span class="self">self</span>.location,
         )
     }
-    <span class="kw">fn </span>into_unsafe_entity_cell(<span class="self">self</span>) -&gt; UnsafeEntityCell&lt;<span class="lifetime">&#39;w</span>&gt; {
+    <span class="kw">fn </span>into_unsafe_entity_cell(<span class="self">self</span>) -&gt; UnsafeEntityCell&lt;<span class="lifetime">'w</span>&gt; {
         UnsafeEntityCell::new(
             <span class="self">self</span>.world.as_unsafe_world_cell(),
             <span class="self">self</span>.entity,
@@ -2104,12 +2105,12 @@
     <span class="doccomment">/// # Safety
     ///
     ///  - `entity` must be valid for `world`: the generation should match that of the entity at the same index.
-    ///  - `location` must be sourced from `world`&#39;s `Entities` and must exactly match the location for `entity`
+    ///  - `location` must be sourced from `world`'s `Entities` and must exactly match the location for `entity`
     ///
     ///  The above is trivially satisfied if `location` was sourced from `world.entities().get(entity)`.
     </span><span class="attr">#[inline]
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>new(
-        world: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span><span class="kw-2">mut </span>World,
+        world: <span class="kw-2">&amp;</span><span class="lifetime">'w </span><span class="kw-2">mut </span>World,
         entity: Entity,
         location: EntityLocation,
     ) -&gt; <span class="self">Self </span>{
@@ -2125,7 +2126,7 @@
 
     <span class="doccomment">/// Returns the [ID](Entity) of the current entity.
     </span><span class="attr">#[inline]
-    #[must_use = <span class="string">&quot;Omit the .id() call if you do not need to store the `Entity` identifier.&quot;</span>]
+    #[must_use = <span class="string">"Omit the .id() call if you do not need to store the `Entity` identifier."</span>]
     </span><span class="kw">pub fn </span>id(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Entity {
         <span class="self">self</span>.entity
     }
@@ -2160,7 +2161,7 @@
     /// ## Notes
     ///
     /// - If you know the concrete type of the component, you should prefer [`Self::contains`].
-    /// - If you know the component&#39;s [`TypeId`] but not its [`ComponentId`], consider using
+    /// - If you know the component's [`TypeId`] but not its [`ComponentId`], consider using
     /// [`Self::contains_type_id`].
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>contains_id(<span class="kw-2">&amp;</span><span class="self">self</span>, component_id: ComponentId) -&gt; bool {
@@ -2184,7 +2185,7 @@
     <span class="doccomment">/// Gets access to the component of type `T` for the current entity.
     /// Returns `None` if the entity does not have a component of type `T`.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>get&lt;T: Component&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;_ </span>T&gt; {
+    </span><span class="kw">pub fn </span>get&lt;T: Component&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'_ </span>T&gt; {
         EntityRef::from(<span class="self">self</span>).get()
     }
 
@@ -2193,14 +2194,14 @@
     ///
     /// Returns `None` if the entity does not have a component of type `T`.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>get_ref&lt;T: Component&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Ref&lt;<span class="lifetime">&#39;_</span>, T&gt;&gt; {
+    </span><span class="kw">pub fn </span>get_ref&lt;T: Component&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Ref&lt;<span class="lifetime">'_</span>, T&gt;&gt; {
         EntityRef::from(<span class="self">self</span>).get_ref()
     }
 
     <span class="doccomment">/// Gets mutable access to the component of type `T` for the current entity.
     /// Returns `None` if the entity does not have a component of type `T`.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>get_mut&lt;T: Component&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Mut&lt;<span class="lifetime">&#39;_</span>, T&gt;&gt; {
+    </span><span class="kw">pub fn </span>get_mut&lt;T: Component&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Mut&lt;<span class="lifetime">'_</span>, T&gt;&gt; {
         <span class="comment">// SAFETY: &amp;mut self implies exclusive access for duration of returned value
         </span><span class="kw">unsafe </span>{ <span class="self">self</span>.as_unsafe_entity_cell().get_mut() }
     }
@@ -2232,7 +2233,7 @@
     /// Unlike [`EntityWorldMut::get`], this returns a raw pointer to the component,
     /// which is only valid while the [`EntityWorldMut`] is alive.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>get_by_id(<span class="kw-2">&amp;</span><span class="self">self</span>, component_id: ComponentId) -&gt; <span class="prelude-ty">Option</span>&lt;Ptr&lt;<span class="lifetime">&#39;_</span>&gt;&gt; {
+    </span><span class="kw">pub fn </span>get_by_id(<span class="kw-2">&amp;</span><span class="self">self</span>, component_id: ComponentId) -&gt; <span class="prelude-ty">Option</span>&lt;Ptr&lt;<span class="lifetime">'_</span>&gt;&gt; {
         EntityRef::from(<span class="self">self</span>).get_by_id(component_id)
     }
 
@@ -2245,9 +2246,9 @@
     /// Unlike [`EntityWorldMut::get_mut`], this returns a raw pointer to the component,
     /// which is only valid while the [`EntityWorldMut`] is alive.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>get_mut_by_id(<span class="kw-2">&amp;mut </span><span class="self">self</span>, component_id: ComponentId) -&gt; <span class="prelude-ty">Option</span>&lt;MutUntyped&lt;<span class="lifetime">&#39;_</span>&gt;&gt; {
+    </span><span class="kw">pub fn </span>get_mut_by_id(<span class="kw-2">&amp;mut </span><span class="self">self</span>, component_id: ComponentId) -&gt; <span class="prelude-ty">Option</span>&lt;MutUntyped&lt;<span class="lifetime">'_</span>&gt;&gt; {
         <span class="comment">// SAFETY:
-        // - `&amp;mut self` ensures that no references exist to this entity&#39;s components.
+        // - `&amp;mut self` ensures that no references exist to this entity's components.
         // - `as_unsafe_world_cell` gives mutable permission for all components on this entity
         </span><span class="kw">unsafe </span>{ <span class="self">self</span>.as_unsafe_entity_cell().get_mut_by_id(component_id) }
     }
@@ -2290,7 +2291,7 @@
     </span><span class="kw">pub unsafe fn </span>insert_by_id(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         component_id: ComponentId,
-        component: OwningPtr&lt;<span class="lifetime">&#39;_</span>&gt;,
+        component: OwningPtr&lt;<span class="lifetime">'_</span>&gt;,
     ) -&gt; <span class="kw-2">&amp;mut </span><span class="self">Self </span>{
         <span class="kw">let </span>change_tick = <span class="self">self</span>.world.change_tick();
 
@@ -2330,7 +2331,7 @@
     /// # Safety
     /// - Each [`ComponentId`] must be from the same world as [`EntityWorldMut`]
     /// - Each [`OwningPtr`] must be a valid reference to the type represented by [`ComponentId`]
-    </span><span class="kw">pub unsafe fn </span>insert_by_ids&lt;<span class="lifetime">&#39;a</span>, I: Iterator&lt;Item = OwningPtr&lt;<span class="lifetime">&#39;a</span>&gt;&gt;&gt;(
+    </span><span class="kw">pub unsafe fn </span>insert_by_ids&lt;<span class="lifetime">'a</span>, I: Iterator&lt;Item = OwningPtr&lt;<span class="lifetime">'a</span>&gt;&gt;&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         component_ids: <span class="kw-2">&amp;</span>[ComponentId],
         iter_components: I,
@@ -2453,7 +2454,7 @@
     ) {
         <span class="kw">let </span>old_archetype = <span class="kw-2">&amp;mut </span>archetypes[old_archetype_id];
         <span class="kw">let </span>remove_result = old_archetype.swap_remove(old_location.archetype_row);
-        <span class="comment">// if an entity was moved into this entity&#39;s archetype row, update its archetype row
+        <span class="comment">// if an entity was moved into this entity's archetype row, update its archetype row
         </span><span class="kw">if let </span><span class="prelude-val">Some</span>(swapped_entity) = remove_result.swapped_entity {
             <span class="kw">let </span>swapped_location = entities.get(swapped_entity).unwrap();
 
@@ -2485,10 +2486,10 @@
                 old_table.move_to_and_forget_missing_unchecked(old_table_row, new_table)
             };
 
-            <span class="comment">// SAFETY: move_result.new_row is a valid position in new_archetype&#39;s table
+            <span class="comment">// SAFETY: move_result.new_row is a valid position in new_archetype's table
             </span><span class="kw">let </span>new_location = new_archetype.allocate(entity, move_result.new_row);
 
-            <span class="comment">// if an entity was moved into this entity&#39;s table row, update its table row
+            <span class="comment">// if an entity was moved into this entity's table row, update its table row
             </span><span class="kw">if let </span><span class="prelude-val">Some</span>(swapped_entity) = move_result.swapped_entity {
                 <span class="kw">let </span>swapped_location = entities.get(swapped_entity).unwrap();
 
@@ -2536,7 +2537,7 @@
                 bundle_info,
                 <span class="bool-val">true</span>,
             )
-            .expect(<span class="string">&quot;intersections should always return a result&quot;</span>)
+            .expect(<span class="string">"intersections should always return a result"</span>)
         };
 
         <span class="kw">if </span>new_archetype_id == old_location.archetype_id {
@@ -2580,13 +2581,13 @@
 
     <span class="doccomment">/// Despawns the current entity.
     </span><span class="kw">pub fn </span>despawn(<span class="self">self</span>) {
-        <span class="macro">debug!</span>(<span class="string">&quot;Despawning entity {:?}&quot;</span>, <span class="self">self</span>.entity);
+        <span class="macro">debug!</span>(<span class="string">"Despawning entity {:?}"</span>, <span class="self">self</span>.entity);
         <span class="kw">let </span>world = <span class="self">self</span>.world;
         world.flush();
         <span class="kw">let </span>location = world
             .entities
             .free(<span class="self">self</span>.entity)
-            .expect(<span class="string">&quot;entity should exist at this point.&quot;</span>);
+            .expect(<span class="string">"entity should exist at this point."</span>);
         <span class="kw">let </span>table_row;
         <span class="kw">let </span>moved_entity;
 
@@ -2598,7 +2599,7 @@
             <span class="kw">let </span>remove_result = archetype.swap_remove(location.archetype_row);
             <span class="kw">if let </span><span class="prelude-val">Some</span>(swapped_entity) = remove_result.swapped_entity {
                 <span class="kw">let </span>swapped_location = world.entities.get(swapped_entity).unwrap();
-                <span class="comment">// SAFETY: swapped_entity is valid and the swapped entity&#39;s components are
+                <span class="comment">// SAFETY: swapped_entity is valid and the swapped entity's components are
                 // moved to the new location immediately after.
                 </span><span class="kw">unsafe </span>{
                     world.entities.set(
@@ -2650,12 +2651,12 @@
         <span class="self">self</span>.world
     }
 
-    <span class="doccomment">/// Returns this entity&#39;s world.
+    <span class="doccomment">/// Returns this entity's world.
     ///
     /// See [`EntityWorldMut::world_scope`] or [`EntityWorldMut::into_world_mut`] for a safe alternative.
     ///
     /// # Safety
-    /// Caller must not modify the world in a way that changes the current entity&#39;s location
+    /// Caller must not modify the world in a way that changes the current entity's location
     /// If the caller _does_ do something that could change the location, `self.update_location()`
     /// must be called before using any other methods on this [`EntityWorldMut`].
     </span><span class="attr">#[inline]
@@ -2663,13 +2664,13 @@
         <span class="self">self</span>.world
     }
 
-    <span class="doccomment">/// Returns this entity&#39;s [`World`], consuming itself.
+    <span class="doccomment">/// Returns this entity's [`World`], consuming itself.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>into_world_mut(<span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span><span class="kw-2">mut </span>World {
+    </span><span class="kw">pub fn </span>into_world_mut(<span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'w </span><span class="kw-2">mut </span>World {
         <span class="self">self</span>.world
     }
 
-    <span class="doccomment">/// Gives mutable access to this entity&#39;s [`World`] in a temporary scope.
+    <span class="doccomment">/// Gives mutable access to this entity's [`World`] in a temporary scope.
     /// This is a safe alternative to using [`EntityWorldMut::world_mut`].
     ///
     /// # Examples
@@ -2694,11 +2695,11 @@
     /// # assert_eq!(new_r.0, 1);
     /// ```
     </span><span class="kw">pub fn </span>world_scope&lt;U&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span>World) -&gt; U) -&gt; U {
-        <span class="kw">struct </span>Guard&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;a</span>&gt; {
-            entity_mut: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>EntityWorldMut&lt;<span class="lifetime">&#39;w</span>&gt;,
+        <span class="kw">struct </span>Guard&lt;<span class="lifetime">'w</span>, <span class="lifetime">'a</span>&gt; {
+            entity_mut: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>EntityWorldMut&lt;<span class="lifetime">'w</span>&gt;,
         }
 
-        <span class="kw">impl </span>Drop <span class="kw">for </span>Guard&lt;<span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>&gt; {
+        <span class="kw">impl </span>Drop <span class="kw">for </span>Guard&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt; {
             <span class="attr">#[inline]
             </span><span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
                 <span class="self">self</span>.entity_mut.update_location();
@@ -2730,24 +2731,24 @@
 /// [`BundleInfo`] used to construct [`BundleInserter`]
 /// - [`Entity`] must correspond to [`EntityLocation`]
 </span><span class="kw">unsafe fn </span>insert_dynamic_bundle&lt;
-    <span class="lifetime">&#39;a</span>,
-    I: Iterator&lt;Item = OwningPtr&lt;<span class="lifetime">&#39;a</span>&gt;&gt;,
+    <span class="lifetime">'a</span>,
+    I: Iterator&lt;Item = OwningPtr&lt;<span class="lifetime">'a</span>&gt;&gt;,
     S: Iterator&lt;Item = StorageType&gt;,
 &gt;(
-    <span class="kw-2">mut </span>bundle_inserter: BundleInserter&lt;<span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>&gt;,
+    <span class="kw-2">mut </span>bundle_inserter: BundleInserter&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;,
     entity: Entity,
     location: EntityLocation,
     components: I,
     storage_types: S,
 ) -&gt; EntityLocation {
-    <span class="kw">struct </span>DynamicInsertBundle&lt;<span class="lifetime">&#39;a</span>, I: Iterator&lt;Item = (StorageType, OwningPtr&lt;<span class="lifetime">&#39;a</span>&gt;)&gt;&gt; {
+    <span class="kw">struct </span>DynamicInsertBundle&lt;<span class="lifetime">'a</span>, I: Iterator&lt;Item = (StorageType, OwningPtr&lt;<span class="lifetime">'a</span>&gt;)&gt;&gt; {
         components: I,
     }
 
-    <span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, I: Iterator&lt;Item = (StorageType, OwningPtr&lt;<span class="lifetime">&#39;a</span>&gt;)&gt;&gt; DynamicBundle
-        <span class="kw">for </span>DynamicInsertBundle&lt;<span class="lifetime">&#39;a</span>, I&gt;
+    <span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, I: Iterator&lt;Item = (StorageType, OwningPtr&lt;<span class="lifetime">'a</span>&gt;)&gt;&gt; DynamicBundle
+        <span class="kw">for </span>DynamicInsertBundle&lt;<span class="lifetime">'a</span>, I&gt;
     {
-        <span class="kw">fn </span>get_components(<span class="self">self</span>, func: <span class="kw-2">&amp;mut </span><span class="kw">impl </span>FnMut(StorageType, OwningPtr&lt;<span class="lifetime">&#39;_</span>&gt;)) {
+        <span class="kw">fn </span>get_components(<span class="self">self</span>, func: <span class="kw-2">&amp;mut </span><span class="kw">impl </span>FnMut(StorageType, OwningPtr&lt;<span class="lifetime">'_</span>&gt;)) {
             <span class="self">self</span>.components.for_each(|(t, ptr)| func(t, ptr));
         }
     }
@@ -2807,7 +2808,7 @@
                         StorageType::SparseSet =&gt; removed_sparse_set_components.push(component_id),
                     }
                 } <span class="kw">else if </span>!intersection {
-                    <span class="comment">// a component in the bundle was not present in the entity&#39;s archetype, so this
+                    <span class="comment">// a component in the bundle was not present in the entity's archetype, so this
                     // removal is invalid cache the result in the archetype
                     // graph
                     </span>current_archetype
@@ -2817,7 +2818,7 @@
                 }
             }
 
-            <span class="comment">// sort removed components so we can do an efficient &quot;sorted remove&quot;. archetype
+            <span class="comment">// sort removed components so we can do an efficient "sorted remove". archetype
             // components are already sorted
             </span>removed_table_components.sort();
             removed_sparse_set_components.sort();
@@ -2887,14 +2888,14 @@
 /// - `components` must come from the same world as `self`
 /// - The relevant table row **must be removed** by the caller once all components are taken, without dropping the value
 </span><span class="attr">#[inline]
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>take_component&lt;<span class="lifetime">&#39;a</span>&gt;(
-    storages: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Storages,
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>take_component&lt;<span class="lifetime">'a</span>&gt;(
+    storages: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Storages,
     components: <span class="kw-2">&amp;</span>Components,
     removed_components: <span class="kw-2">&amp;mut </span>RemovedComponentEvents,
     component_id: ComponentId,
     entity: Entity,
     location: EntityLocation,
-) -&gt; OwningPtr&lt;<span class="lifetime">&#39;a</span>&gt; {
+) -&gt; OwningPtr&lt;<span class="lifetime">'a</span>&gt; {
     <span class="comment">// SAFETY: caller promises component_id to be valid
     </span><span class="kw">let </span>component_info = components.get_info_unchecked(component_id);
     removed_components.send(component_id, entity);
@@ -2951,7 +2952,7 @@
     </span><span class="kw">struct </span>TestComponent(u32);
 
     <span class="attr">#[derive(Component, Clone, Copy, Debug, PartialEq)]
-    #[component(storage = <span class="string">&quot;SparseSet&quot;</span>)]
+    #[component(storage = <span class="string">"SparseSet"</span>)]
     </span><span class="kw">struct </span>TestComponent2(u32);
 
     <span class="attr">#[test]
@@ -3028,12 +3029,12 @@
         <span class="kw">let </span>id = entity.id();
         <span class="kw">let </span>res = std::panic::catch_unwind(AssertUnwindSafe(|| {
             entity.world_scope(|w| {
-                <span class="comment">// Change the entity&#39;s `EntityLocation`, which invalidates the original `EntityWorldMut`.
+                <span class="comment">// Change the entity's `EntityLocation`, which invalidates the original `EntityWorldMut`.
                 // This will get updated at the end of the scope.
                 </span>w.entity_mut(id).insert(TestComponent(<span class="number">0</span>));
 
                 <span class="comment">// Ensure that the entity location still gets updated even in case of a panic.
-                </span><span class="macro">panic!</span>(<span class="string">&quot;this should get caught by the outer scope&quot;</span>)
+                </span><span class="macro">panic!</span>(<span class="string">"this should get caught by the outer scope"</span>)
             });
         }));
         <span class="macro">assert!</span>(res.is_err());
@@ -3049,7 +3050,7 @@
         </span><span class="kw">struct </span>Dense(u8);
 
         <span class="attr">#[derive(Component)]
-        #[component(storage = <span class="string">&quot;SparseSet&quot;</span>)]
+        #[component(storage = <span class="string">"SparseSet"</span>)]
         </span><span class="kw">struct </span>Sparse;
 
         <span class="kw">let </span><span class="kw-2">mut </span>world = World::new();
@@ -3067,7 +3068,7 @@
         </span><span class="kw">struct </span>Dense(u8);
 
         <span class="attr">#[derive(Component)]
-        #[component(storage = <span class="string">&quot;SparseSet&quot;</span>)]
+        #[component(storage = <span class="string">"SparseSet"</span>)]
         </span><span class="kw">struct </span>Sparse;
 
         <span class="kw">let </span><span class="kw-2">mut </span>world = World::new();
@@ -3085,7 +3086,7 @@
         </span><span class="kw">struct </span>Dense(u8);
 
         <span class="attr">#[derive(Component)]
-        #[component(storage = <span class="string">&quot;SparseSet&quot;</span>)]
+        #[component(storage = <span class="string">"SparseSet"</span>)]
         </span><span class="kw">struct </span>Sparse;
 
         <span class="kw">let </span><span class="kw-2">mut </span>world = World::new();
@@ -3106,7 +3107,7 @@
         </span><span class="kw">struct </span>Dense2;
 
         <span class="attr">#[derive(Component)]
-        #[component(storage = <span class="string">&quot;SparseSet&quot;</span>)]
+        #[component(storage = <span class="string">"SparseSet"</span>)]
         </span><span class="kw">struct </span>Sparse;
 
         <span class="kw">let </span><span class="kw-2">mut </span>world = World::new();
@@ -3132,7 +3133,7 @@
         </span><span class="kw">struct </span>Dense2;
 
         <span class="attr">#[derive(Component)]
-        #[component(storage = <span class="string">&quot;SparseSet&quot;</span>)]
+        #[component(storage = <span class="string">"SparseSet"</span>)]
         </span><span class="kw">struct </span>Sparse;
 
         <span class="kw">let </span><span class="kw-2">mut </span>world = World::new();
@@ -3156,7 +3157,7 @@
         </span><span class="kw">struct </span>Dense(u8);
 
         <span class="attr">#[derive(Component)]
-        #[component(storage = <span class="string">&quot;SparseSet&quot;</span>)]
+        #[component(storage = <span class="string">"SparseSet"</span>)]
         </span><span class="kw">struct </span>Sparse;
 
         <span class="kw">let </span><span class="kw-2">mut </span>world = World::new();
@@ -3180,7 +3181,7 @@
         </span><span class="kw">struct </span>Dense(u8);
 
         <span class="attr">#[derive(Component)]
-        #[component(storage = <span class="string">&quot;SparseSet&quot;</span>)]
+        #[component(storage = <span class="string">"SparseSet"</span>)]
         </span><span class="kw">struct </span>Sparse;
 
         <span class="kw">let </span><span class="kw-2">mut </span>world = World::new();

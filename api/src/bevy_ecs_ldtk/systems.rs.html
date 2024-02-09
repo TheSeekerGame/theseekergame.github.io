@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy_ecs_ldtk-fcddd4c4d2917306/68af1c1/src/systems.rs`."><title>systems.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bevy_ecs_ldtk" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy_ecs_ldtk-fcddd4c4d2917306/68af1c1/src/systems.rs`."><title>systems.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bevy_ecs_ldtk" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -424,7 +425,7 @@
 <a href="#424" id="424">424</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! System functions used by the plugin for processing ldtk files.
 
-</span><span class="attr">#[cfg(feature = <span class="string">&quot;render&quot;</span>)]
+</span><span class="attr">#[cfg(feature = <span class="string">"render"</span>)]
 </span><span class="kw">use </span><span class="kw">crate</span>::resources::SetClearColor;
 <span class="kw">use crate</span>::{
     app::{LdtkEntityMap, LdtkIntCellMap},
@@ -436,7 +437,7 @@
     utils::<span class="kw-2">*</span>,
 };
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;external_levels&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"external_levels"</span>)]
 </span><span class="kw">use </span><span class="kw">crate</span>::assets::LdtkExternalLevel;
 
 <span class="kw">use </span>bevy::{ecs::system::SystemState, prelude::<span class="kw-2">*</span>};
@@ -448,9 +449,9 @@
     <span class="kw-2">mut </span>commands: Commands,
     <span class="kw-2">mut </span>ldtk_project_events: EventReader&lt;AssetEvent&lt;LdtkProject&gt;&gt;,
     ldtk_world_query: Query&lt;(Entity, <span class="kw-2">&amp;</span>Handle&lt;LdtkProject&gt;)&gt;,
-    <span class="attr">#[cfg(feature = <span class="string">&quot;render&quot;</span>)] </span>ldtk_settings: Res&lt;LdtkSettings&gt;,
-    <span class="attr">#[cfg(feature = <span class="string">&quot;render&quot;</span>)] </span><span class="kw-2">mut </span>clear_color: ResMut&lt;ClearColor&gt;,
-    <span class="attr">#[cfg(feature = <span class="string">&quot;render&quot;</span>)] </span>ldtk_project_assets: Res&lt;Assets&lt;LdtkProject&gt;&gt;,
+    <span class="attr">#[cfg(feature = <span class="string">"render"</span>)] </span>ldtk_settings: Res&lt;LdtkSettings&gt;,
+    <span class="attr">#[cfg(feature = <span class="string">"render"</span>)] </span><span class="kw-2">mut </span>clear_color: ResMut&lt;ClearColor&gt;,
+    <span class="attr">#[cfg(feature = <span class="string">"render"</span>)] </span>ldtk_project_assets: Res&lt;Assets&lt;LdtkProject&gt;&gt;,
 ) {
     <span class="kw">let </span><span class="kw-2">mut </span>ldtk_handles_to_respawn = HashSet::new();
     <span class="kw">let </span><span class="kw-2">mut </span>ldtk_handles_for_clear_color = HashSet::new();
@@ -458,16 +459,16 @@
     <span class="kw">for </span>event <span class="kw">in </span>ldtk_project_events.read() {
         <span class="kw">match </span>event {
             AssetEvent::LoadedWithDependencies { id } =&gt; {
-                <span class="macro">debug!</span>(<span class="string">&quot;LDtk asset creation detected.&quot;</span>);
+                <span class="macro">debug!</span>(<span class="string">"LDtk asset creation detected."</span>);
                 ldtk_handles_for_clear_color.insert(id);
             }
             AssetEvent::Modified { id } =&gt; {
-                <span class="macro">info!</span>(<span class="string">&quot;LDtk asset modification detected.&quot;</span>);
+                <span class="macro">info!</span>(<span class="string">"LDtk asset modification detected."</span>);
                 ldtk_handles_to_respawn.insert(id);
                 ldtk_handles_for_clear_color.insert(id);
             }
             AssetEvent::Removed { id } =&gt; {
-                <span class="macro">info!</span>(<span class="string">&quot;LDtk asset removal detected.&quot;</span>);
+                <span class="macro">info!</span>(<span class="string">"LDtk asset removal detected."</span>);
                 <span class="comment">// if mesh was modified and removed in the same update, ignore the modification
                 // events are ordered so future modification events are ok
                 </span>ldtk_handles_to_respawn.retain(|changed_id| <span class="kw-2">*</span>changed_id != id);
@@ -476,7 +477,7 @@
         }
     }
 
-    <span class="attr">#[cfg(feature = <span class="string">&quot;render&quot;</span>)]
+    <span class="attr">#[cfg(feature = <span class="string">"render"</span>)]
     </span><span class="kw">if </span>ldtk_settings.set_clear_color == SetClearColor::FromEditorBackground {
         <span class="kw">for </span>handle <span class="kw">in </span>ldtk_handles_for_clear_color.iter() {
             <span class="kw">if let </span><span class="prelude-val">Some</span>(project) = <span class="kw-2">&amp;</span>ldtk_project_assets.get(<span class="kw-2">**</span>handle) {
@@ -498,7 +499,7 @@
     ldtk_settings: Res&lt;LdtkSettings&gt;,
     ldtk_project_assets: Res&lt;Assets&lt;LdtkProject&gt;&gt;,
     <span class="kw-2">mut </span>level_set_query: Query&lt;(<span class="kw-2">&amp;</span>Handle&lt;LdtkProject&gt;, <span class="kw-2">&amp;mut </span>LevelSet)&gt;,
-    <span class="attr">#[cfg(feature = <span class="string">&quot;render&quot;</span>)] </span><span class="kw-2">mut </span>clear_color: ResMut&lt;ClearColor&gt;,
+    <span class="attr">#[cfg(feature = <span class="string">"render"</span>)] </span><span class="kw-2">mut </span>clear_color: ResMut&lt;ClearColor&gt;,
 ) {
     <span class="kw">if let </span><span class="prelude-val">Some</span>(level_selection) = level_selection {
         <span class="kw">for </span>(ldtk_handle, <span class="kw-2">mut </span>level_set) <span class="kw">in </span>level_set_query.iter_mut() {
@@ -528,7 +529,7 @@
                     <span class="kw">if </span><span class="kw-2">*</span>level_set != new_level_set {
                         <span class="kw-2">*</span>level_set = new_level_set;
 
-                        <span class="attr">#[cfg(feature = <span class="string">&quot;render&quot;</span>)]
+                        <span class="attr">#[cfg(feature = <span class="string">"render"</span>)]
                         </span><span class="kw">if </span>ldtk_settings.set_clear_color == SetClearColor::FromLevelBackground {
                             clear_color.<span class="number">0 </span>= level.bg_color;
                         }
@@ -570,7 +571,7 @@
 
             <span class="kw">let </span>level_set_as_ref = level_set.iids.iter().collect::&lt;HashSet&lt;<span class="kw">_</span>&gt;&gt;();
 
-            <span class="comment">// Spawn levels that should be spawned but aren&#39;t
+            <span class="comment">// Spawn levels that should be spawned but aren't
             </span><span class="kw">let </span>spawned_levels = level_set_as_ref
                 .difference(<span class="kw-2">&amp;</span>previous_iids)
                 .filter_map(|<span class="kw-2">&amp;</span>iid| project.get_raw_level_by_iid(iid.get()))
@@ -582,20 +583,20 @@
 
             commands.entity(world_entity).push_children(<span class="kw-2">&amp;</span>spawned_levels);
 
-            <span class="comment">// Despawn levels that shouldn&#39;t be spawned but are
+            <span class="comment">// Despawn levels that shouldn't be spawned but are
             </span><span class="kw">for </span><span class="kw-2">&amp;</span>iid <span class="kw">in </span>previous_iids.difference(<span class="kw-2">&amp;</span>level_set_as_ref) {
                 <span class="kw">let </span>map_entity = previous_level_maps.get(iid).expect(
-                <span class="string">&quot;The set of previous_iids and the keys in previous_level_maps should be the same.&quot;</span>,
+                <span class="string">"The set of previous_iids and the keys in previous_level_maps should be the same."</span>,
             );
                 commands.entity(<span class="kw-2">*</span>map_entity).despawn_recursive();
                 level_events.send(LevelEvent::Despawned(iid.clone()));
             }
 
             <span class="comment">// If the world was empty before but has now been populated, and this world was
-            // supposed to respawn, then this run of the system must have completed the &quot;spawning&quot;
+            // supposed to respawn, then this run of the system must have completed the "spawning"
             // portion of said respawn.
             // In that case, the respawn component needs to be removed so that the cleanup system
-            // doesn&#39;t start the process over again.
+            // doesn't start the process over again.
             </span><span class="kw">if </span>previous_iids.is_empty() &amp;&amp; !spawned_levels.is_empty() &amp;&amp; respawn.is_some() {
                 commands.entity(world_entity).remove::&lt;Respawn&gt;();
             }
@@ -634,7 +635,7 @@
     images: ResMut&lt;Assets&lt;Image&gt;&gt;,
     <span class="kw-2">mut </span>texture_atlases: ResMut&lt;Assets&lt;TextureAtlas&gt;&gt;,
     ldtk_project_assets: Res&lt;Assets&lt;LdtkProject&gt;&gt;,
-    <span class="attr">#[cfg(feature = <span class="string">&quot;external_levels&quot;</span>)] </span>level_assets: Res&lt;Assets&lt;LdtkExternalLevel&gt;&gt;,
+    <span class="attr">#[cfg(feature = <span class="string">"external_levels"</span>)] </span>level_assets: Res&lt;Assets&lt;LdtkExternalLevel&gt;&gt;,
     ldtk_entity_map: NonSend&lt;LdtkEntityMap&gt;,
     ldtk_int_cell_map: NonSend&lt;LdtkIntCellMap&gt;,
     ldtk_query: Query&lt;<span class="kw-2">&amp;</span>Handle&lt;LdtkProject&gt;&gt;,
@@ -687,7 +688,7 @@
                     <span class="kw">let </span>worldly_set = worldly_query.iter().cloned().collect();
 
                     <span class="kw">let </span>maybe_level_data = <span class="kw">match </span>ldtk_project.data() {
-                        <span class="attr">#[cfg(feature = <span class="string">&quot;internal_levels&quot;</span>)]
+                        <span class="attr">#[cfg(feature = <span class="string">"internal_levels"</span>)]
                         </span>LdtkProjectData::Standalone(project) =&gt; project
                             .level_map()
                             .get(level_iid.get())
@@ -697,7 +698,7 @@
 
                                 <span class="prelude-val">Some</span>((level_metadata, loaded_level))
                             }),
-                        <span class="attr">#[cfg(feature = <span class="string">&quot;external_levels&quot;</span>)]
+                        <span class="attr">#[cfg(feature = <span class="string">"external_levels"</span>)]
                         </span>LdtkProjectData::Parent(project) =&gt; project
                             .level_map()
                             .get(level_iid.get())
@@ -744,7 +745,7 @@
     }
 }
 
-<span class="doccomment">/// Performs the &quot;despawning&quot; portion of the respawn process for `Respawn` entities.
+<span class="doccomment">/// Performs the "despawning" portion of the respawn process for `Respawn` entities.
 ///
 /// This is currently an exclusive system for scheduling purposes.
 /// If we need to revert it to its non-exclusive form, copy it from commit

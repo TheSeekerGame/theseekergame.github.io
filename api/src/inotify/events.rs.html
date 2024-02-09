@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/inotify-0.10.2/src/events.rs`."><title>events.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="inotify" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/inotify-0.10.2/src/events.rs`."><title>events.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="inotify" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -463,15 +464,15 @@
 /// [`Inotify::read_events_blocking`]: struct.Inotify.html#method.read_events_blocking
 /// [`Inotify::read_events`]: struct.Inotify.html#method.read_events
 </span><span class="attr">#[derive(Debug)]
-</span><span class="kw">pub struct </span>Events&lt;<span class="lifetime">&#39;a</span>&gt; {
+</span><span class="kw">pub struct </span>Events&lt;<span class="lifetime">'a</span>&gt; {
     fd       : Weak&lt;FdGuard&gt;,
-    buffer   : <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u8],
+    buffer   : <span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8],
     num_bytes: usize,
     pos      : usize,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; Events&lt;<span class="lifetime">&#39;a</span>&gt; {
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>new(fd: Weak&lt;FdGuard&gt;, buffer: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u8], num_bytes: usize)
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; Events&lt;<span class="lifetime">'a</span>&gt; {
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>new(fd: Weak&lt;FdGuard&gt;, buffer: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8], num_bytes: usize)
         -&gt; <span class="self">Self
     </span>{
         Events {
@@ -483,8 +484,8 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; Iterator <span class="kw">for </span>Events&lt;<span class="lifetime">&#39;a</span>&gt; {
-    <span class="kw">type </span>Item = Event&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>OsStr&gt;;
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; Iterator <span class="kw">for </span>Events&lt;<span class="lifetime">'a</span>&gt; {
+    <span class="kw">type </span>Item = Event&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>OsStr&gt;;
 
     <span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt; {
         <span class="kw">if </span><span class="self">self</span>.pos &lt; <span class="self">self</span>.num_bytes {
@@ -546,12 +547,12 @@
     </span><span class="kw">pub </span>name: <span class="prelude-ty">Option</span>&lt;S&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; Event&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>OsStr&gt; {
-    <span class="kw">fn </span>new(fd: Weak&lt;FdGuard&gt;, event: <span class="kw-2">&amp;</span>ffi::inotify_event, name: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>OsStr)
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; Event&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>OsStr&gt; {
+    <span class="kw">fn </span>new(fd: Weak&lt;FdGuard&gt;, event: <span class="kw-2">&amp;</span>ffi::inotify_event, name: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>OsStr)
         -&gt; <span class="self">Self
     </span>{
         <span class="kw">let </span>mask = EventMask::from_bits(event.mask)
-            .expect(<span class="string">&quot;Failed to convert event mask. This indicates a bug.&quot;</span>);
+            .expect(<span class="string">"Failed to convert event mask. This indicates a bug."</span>);
 
         <span class="kw">let </span>wd = <span class="kw">crate</span>::WatchDescriptor {
             id: event.wd,
@@ -585,14 +586,14 @@
     /// Panics if the buffer does not contain a full event, including its name.
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>from_buffer(
         fd    : Weak&lt;FdGuard&gt;,
-        buffer: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u8],
+        buffer: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8],
     )
         -&gt; (usize, <span class="self">Self</span>)
     {
         <span class="kw">let </span>event_size = mem::size_of::&lt;ffi::inotify_event&gt;();
 
         <span class="comment">// Make sure that the buffer is big enough to contain an event, without
-        // the name. Otherwise we can&#39;t safely convert it to an `inotify_event`.
+        // the name. Otherwise we can't safely convert it to an `inotify_event`.
         </span><span class="macro">assert!</span>(buffer.len() &gt;= event_size);
 
         <span class="kw">let </span>ffi_event_ptr = buffer.as_ptr() <span class="kw">as </span><span class="kw-2">*const </span>ffi::inotify_event;
@@ -606,26 +607,26 @@
         // the unaligned pointer (undefined behavior).
         </span><span class="kw">let </span>ffi_event = <span class="kw">unsafe </span>{ ffi_event_ptr.read_unaligned() };
 
-        <span class="comment">// The name&#39;s length is given by `event.len`. There should always be
-        // enough bytes left in the buffer to fit the name. Let&#39;s make sure that
+        <span class="comment">// The name's length is given by `event.len`. There should always be
+        // enough bytes left in the buffer to fit the name. Let's make sure that
         // is the case.
         </span><span class="kw">let </span>bytes_left_in_buffer = buffer.len() - event_size;
         <span class="macro">assert!</span>(bytes_left_in_buffer &gt;= ffi_event.len <span class="kw">as </span>usize);
 
-        <span class="comment">// Directly after the event struct should be a name, if there&#39;s one
-        // associated with the event. Let&#39;s make a new slice that starts with
-        // that name. If there&#39;s no name, this slice might have a length of `0`.
+        <span class="comment">// Directly after the event struct should be a name, if there's one
+        // associated with the event. Let's make a new slice that starts with
+        // that name. If there's no name, this slice might have a length of `0`.
         </span><span class="kw">let </span>bytes_consumed = event_size + ffi_event.len <span class="kw">as </span>usize;
         <span class="kw">let </span>name = <span class="kw-2">&amp;</span>buffer[event_size..bytes_consumed];
 
-        <span class="comment">// Remove trailing &#39;\0&#39; bytes
+        <span class="comment">// Remove trailing '\0' bytes
         //
         // The events in the buffer are aligned, and `name` is filled up
-        // with &#39;\0&#39; up to the alignment boundary. Here we remove those
+        // with '\0' up to the alignment boundary. Here we remove those
         // additional bytes.
         //
         // The `unwrap` here is safe, because `splitn` always returns at
-        // least one result, even if the original slice contains no &#39;\0&#39;.
+        // least one result, even if the original slice contains no '\0'.
         </span><span class="kw">let </span>name = name
             .splitn(<span class="number">2</span>, |b| b == <span class="kw-2">&amp;</span><span class="number">0u8</span>)
             .next()
@@ -641,14 +642,14 @@
     }
 
     <span class="doccomment">/// Returns an owned copy of the event.
-    </span><span class="attr">#[deprecated = <span class="string">&quot;use `to_owned()` instead; methods named `into_owned()` usually take self by value&quot;</span>]
+    </span><span class="attr">#[deprecated = <span class="string">"use `to_owned()` instead; methods named `into_owned()` usually take self by value"</span>]
     #[allow(clippy::wrong_self_convention)]
     </span><span class="kw">pub fn </span>into_owned(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; EventOwned {
         <span class="self">self</span>.to_owned()
     }
 
     <span class="doccomment">/// Returns an owned copy of the event.
-    </span><span class="attr">#[must_use = <span class="string">&quot;cloning is often expensive and is not expected to have side effects&quot;</span>]
+    </span><span class="attr">#[must_use = <span class="string">"cloning is often expensive and is not expected to have side effects"</span>]
     </span><span class="kw">pub fn </span>to_owned(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; EventOwned {
         Event {
             wd: <span class="self">self</span>.wd.clone(),
@@ -668,7 +669,7 @@
     <span class="doccomment">/// Indicates the type of an event
     ///
     /// This struct can be retrieved from an [`Event`] via its `mask` field.
-    /// You can determine the [`Event`]&#39;s type by comparing the `EventMask` to
+    /// You can determine the [`Event`]'s type by comparing the `EventMask` to
     /// its associated constants.
     ///
     /// Please refer to the documentation of [`Event`] for a usage example.
@@ -866,7 +867,7 @@
             )
         };
         (<span class="kw-2">&amp;mut </span>buffer[..]).write(event)
-            .expect(<span class="string">&quot;Failed to write into buffer&quot;</span>);
+            .expect(<span class="string">"Failed to write into buffer"</span>);
 
         <span class="comment">// After that event, simulate an event that starts with a non-zero byte.
         </span>buffer[mem::size_of_val(<span class="kw-2">&amp;</span>event)] = <span class="number">1</span>;

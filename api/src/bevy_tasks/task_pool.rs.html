@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy-3e956806168b8470/b5b6ea3/crates/bevy_tasks/src/task_pool.rs`."><title>task_pool.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bevy_tasks" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy-3e956806168b8470/b5b6ea3/crates/bevy_tasks/src/task_pool.rs`."><title>task_pool.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bevy_tasks" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -957,7 +958,7 @@
     Task,
 };
 
-<span class="kw">struct </span>CallOnDrop(<span class="prelude-ty">Option</span>&lt;Arc&lt;<span class="kw">dyn </span>Fn() + Send + Sync + <span class="lifetime">&#39;static</span>&gt;&gt;);
+<span class="kw">struct </span>CallOnDrop(<span class="prelude-ty">Option</span>&lt;Arc&lt;<span class="kw">dyn </span>Fn() + Send + Sync + <span class="lifetime">'static</span>&gt;&gt;);
 
 <span class="kw">impl </span>Drop <span class="kw">for </span>CallOnDrop {
     <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
@@ -971,17 +972,17 @@
 </span><span class="attr">#[derive(Default)]
 #[must_use]
 </span><span class="kw">pub struct </span>TaskPoolBuilder {
-    <span class="doccomment">/// If set, we&#39;ll set up the thread pool to use at most `num_threads` threads.
+    <span class="doccomment">/// If set, we'll set up the thread pool to use at most `num_threads` threads.
     /// Otherwise use the logical core count of the system
     </span>num_threads: <span class="prelude-ty">Option</span>&lt;usize&gt;,
-    <span class="doccomment">/// If set, we&#39;ll use the given stack size rather than the system default
+    <span class="doccomment">/// If set, we'll use the given stack size rather than the system default
     </span>stack_size: <span class="prelude-ty">Option</span>&lt;usize&gt;,
     <span class="doccomment">/// Allows customizing the name of the threads - helpful for debugging. If set, threads will
-    /// be named &lt;thread_name&gt; (&lt;thread_index&gt;), i.e. &quot;MyThreadPool (2)&quot;
+    /// be named &lt;thread_name&gt; (&lt;thread_index&gt;), i.e. "MyThreadPool (2)"
     </span>thread_name: <span class="prelude-ty">Option</span>&lt;String&gt;,
 
-    on_thread_spawn: <span class="prelude-ty">Option</span>&lt;Arc&lt;<span class="kw">dyn </span>Fn() + Send + Sync + <span class="lifetime">&#39;static</span>&gt;&gt;,
-    on_thread_destroy: <span class="prelude-ty">Option</span>&lt;Arc&lt;<span class="kw">dyn </span>Fn() + Send + Sync + <span class="lifetime">&#39;static</span>&gt;&gt;,
+    on_thread_spawn: <span class="prelude-ty">Option</span>&lt;Arc&lt;<span class="kw">dyn </span>Fn() + Send + Sync + <span class="lifetime">'static</span>&gt;&gt;,
+    on_thread_destroy: <span class="prelude-ty">Option</span>&lt;Arc&lt;<span class="kw">dyn </span>Fn() + Send + Sync + <span class="lifetime">'static</span>&gt;&gt;,
 }
 
 <span class="kw">impl </span>TaskPoolBuilder {
@@ -1014,7 +1015,7 @@
     ///
     /// This is called on the thread itself and has access to all thread-local storage.
     /// This will block running async tasks on the thread until the callback completes.
-    </span><span class="kw">pub fn </span>on_thread_spawn(<span class="kw-2">mut </span><span class="self">self</span>, f: <span class="kw">impl </span>Fn() + Send + Sync + <span class="lifetime">&#39;static</span>) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">pub fn </span>on_thread_spawn(<span class="kw-2">mut </span><span class="self">self</span>, f: <span class="kw">impl </span>Fn() + Send + Sync + <span class="lifetime">'static</span>) -&gt; <span class="self">Self </span>{
         <span class="self">self</span>.on_thread_spawn = <span class="prelude-val">Some</span>(Arc::new(f));
         <span class="self">self
     </span>}
@@ -1023,7 +1024,7 @@
     ///
     /// This is called on the thread itself and has access to all thread-local storage.
     /// This will block thread termination until the callback completes.
-    </span><span class="kw">pub fn </span>on_thread_destroy(<span class="kw-2">mut </span><span class="self">self</span>, f: <span class="kw">impl </span>Fn() + Send + Sync + <span class="lifetime">&#39;static</span>) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">pub fn </span>on_thread_destroy(<span class="kw-2">mut </span><span class="self">self</span>, f: <span class="kw">impl </span>Fn() + Send + Sync + <span class="lifetime">'static</span>) -&gt; <span class="self">Self </span>{
         <span class="self">self</span>.on_thread_destroy = <span class="prelude-val">Some</span>(Arc::new(f));
         <span class="self">self
     </span>}
@@ -1051,7 +1052,7 @@
     /// This has to be separate from TaskPoolInner because we have to create an `Arc&lt;Executor&gt;` to
     /// pass into the worker threads, and we must create the worker threads before we can create
     /// the `Vec&lt;Task&lt;T&gt;&gt;` contained within `TaskPoolInner`
-    </span>executor: Arc&lt;async_executor::Executor&lt;<span class="lifetime">&#39;static</span>&gt;&gt;,
+    </span>executor: Arc&lt;async_executor::Executor&lt;<span class="lifetime">'static</span>&gt;&gt;,
 
     <span class="doccomment">/// Inner state of the pool
     </span>threads: Vec&lt;JoinHandle&lt;()&gt;&gt;,
@@ -1060,12 +1061,12 @@
 
 <span class="kw">impl </span>TaskPool {
     <span class="macro">thread_local! </span>{
-        <span class="kw">static </span>LOCAL_EXECUTOR: async_executor::LocalExecutor&lt;<span class="lifetime">&#39;static</span>&gt; = async_executor::LocalExecutor::new();
-        <span class="kw">static </span>THREAD_EXECUTOR: Arc&lt;ThreadExecutor&lt;<span class="lifetime">&#39;static</span>&gt;&gt; = Arc::new(ThreadExecutor::new());
+        <span class="kw">static </span>LOCAL_EXECUTOR: async_executor::LocalExecutor&lt;<span class="lifetime">'static</span>&gt; = async_executor::LocalExecutor::new();
+        <span class="kw">static </span>THREAD_EXECUTOR: Arc&lt;ThreadExecutor&lt;<span class="lifetime">'static</span>&gt;&gt; = Arc::new(ThreadExecutor::new());
     }
 
     <span class="doccomment">/// Each thread should only create one `ThreadExecutor`, otherwise, there are good chances they will deadlock
-    </span><span class="kw">pub fn </span>get_thread_executor() -&gt; Arc&lt;ThreadExecutor&lt;<span class="lifetime">&#39;static</span>&gt;&gt; {
+    </span><span class="kw">pub fn </span>get_thread_executor() -&gt; Arc&lt;ThreadExecutor&lt;<span class="lifetime">'static</span>&gt;&gt; {
         <span class="self">Self</span>::THREAD_EXECUTOR.with(|executor| executor.clone())
     }
 
@@ -1089,9 +1090,9 @@
                 <span class="kw">let </span>shutdown_rx = shutdown_rx.clone();
 
                 <span class="kw">let </span>thread_name = <span class="kw">if let </span><span class="prelude-val">Some</span>(thread_name) = builder.thread_name.as_deref() {
-                    <span class="macro">format!</span>(<span class="string">&quot;{thread_name} ({i})&quot;</span>)
+                    <span class="macro">format!</span>(<span class="string">"{thread_name} ({i})"</span>)
                 } <span class="kw">else </span>{
-                    <span class="macro">format!</span>(<span class="string">&quot;TaskPool ({i})&quot;</span>)
+                    <span class="macro">format!</span>(<span class="string">"TaskPool ({i})"</span>)
                 };
                 <span class="kw">let </span><span class="kw-2">mut </span>thread_builder = thread::Builder::new().name(thread_name);
 
@@ -1127,7 +1128,7 @@
                             }
                         });
                     })
-                    .expect(<span class="string">&quot;Failed to spawn thread.&quot;</span>)
+                    .expect(<span class="string">"Failed to spawn thread."</span>)
             })
             .collect();
 
@@ -1143,7 +1144,7 @@
         <span class="self">self</span>.threads.len()
     }
 
-    <span class="doccomment">/// Allows spawning non-`&#39;static` futures on the thread pool. The function takes a callback,
+    <span class="doccomment">/// Allows spawning non-`'static` futures on the thread pool. The function takes a callback,
     /// passing a scope object into it. The scope object provided to the callback can be used
     /// to spawn tasks. This function will await the completion of all tasks before returning.
     ///
@@ -1171,7 +1172,7 @@
     /// });
     ///
     /// // The ordering of results is non-deterministic if you spawn from within tasks as above.
-    /// // If you&#39;re doing this, you&#39;ll have to write your code to not depend on the ordering.
+    /// // If you're doing this, you'll have to write your code to not depend on the ordering.
     /// assert!(results.contains(&amp;0));
     /// assert!(results.contains(&amp;1));
     ///
@@ -1188,13 +1189,13 @@
     ///
     /// # Lifetimes
     ///
-    /// The [`Scope`] object takes two lifetimes: `&#39;scope` and `&#39;env`.
+    /// The [`Scope`] object takes two lifetimes: `'scope` and `'env`.
     ///
-    /// The `&#39;scope` lifetime represents the lifetime of the scope. That is the time during
+    /// The `'scope` lifetime represents the lifetime of the scope. That is the time during
     /// which the provided closure and tasks that are spawned into the scope are run.
     ///
-    /// The `&#39;env` lifetime represents the lifetime of whatever is borrowed by the scope.
-    /// Thus this lifetime must outlive `&#39;scope`.
+    /// The `'env` lifetime represents the lifetime of whatever is borrowed by the scope.
+    /// Thus this lifetime must outlive `'scope`.
     ///
     /// ```compile_fail
     /// use bevy_tasks::TaskPool;
@@ -1224,10 +1225,10 @@
     ///         });
     ///     });
     /// }
-    </span><span class="kw">pub fn </span>scope&lt;<span class="lifetime">&#39;env</span>, F, T&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, f: F) -&gt; Vec&lt;T&gt;
+    </span><span class="kw">pub fn </span>scope&lt;<span class="lifetime">'env</span>, F, T&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, f: F) -&gt; Vec&lt;T&gt;
     <span class="kw">where
-        </span>F: <span class="kw">for</span>&lt;<span class="lifetime">&#39;scope</span>&gt; FnOnce(<span class="kw-2">&amp;</span><span class="lifetime">&#39;scope </span>Scope&lt;<span class="lifetime">&#39;scope</span>, <span class="lifetime">&#39;env</span>, T&gt;),
-        T: Send + <span class="lifetime">&#39;static</span>,
+        </span>F: <span class="kw">for</span>&lt;<span class="lifetime">'scope</span>&gt; FnOnce(<span class="kw-2">&amp;</span><span class="lifetime">'scope </span>Scope&lt;<span class="lifetime">'scope</span>, <span class="lifetime">'env</span>, T&gt;),
+        T: Send + <span class="lifetime">'static</span>,
     {
         <span class="self">Self</span>::THREAD_EXECUTOR.with(|scope_executor| {
             <span class="self">self</span>.scope_with_executor_inner(<span class="bool-val">true</span>, scope_executor, scope_executor, f)
@@ -1243,15 +1244,15 @@
     /// global executor can run tasks unrelated to the scope and delay when the scope returns.
     ///
     /// See [`Self::scope`] for more details in general about how scopes work.
-    </span><span class="kw">pub fn </span>scope_with_executor&lt;<span class="lifetime">&#39;env</span>, F, T&gt;(
+    </span><span class="kw">pub fn </span>scope_with_executor&lt;<span class="lifetime">'env</span>, F, T&gt;(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         tick_task_pool_executor: bool,
         external_executor: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>ThreadExecutor&gt;,
         f: F,
     ) -&gt; Vec&lt;T&gt;
     <span class="kw">where
-        </span>F: <span class="kw">for</span>&lt;<span class="lifetime">&#39;scope</span>&gt; FnOnce(<span class="kw-2">&amp;</span><span class="lifetime">&#39;scope </span>Scope&lt;<span class="lifetime">&#39;scope</span>, <span class="lifetime">&#39;env</span>, T&gt;),
-        T: Send + <span class="lifetime">&#39;static</span>,
+        </span>F: <span class="kw">for</span>&lt;<span class="lifetime">'scope</span>&gt; FnOnce(<span class="kw-2">&amp;</span><span class="lifetime">'scope </span>Scope&lt;<span class="lifetime">'scope</span>, <span class="lifetime">'env</span>, T&gt;),
+        T: Send + <span class="lifetime">'static</span>,
     {
         <span class="self">Self</span>::THREAD_EXECUTOR.with(|scope_executor| {
             <span class="comment">// If a `external_executor` is passed use that. Otherwise get the executor stored
@@ -1274,7 +1275,7 @@
         })
     }
 
-    <span class="kw">fn </span>scope_with_executor_inner&lt;<span class="lifetime">&#39;env</span>, F, T&gt;(
+    <span class="kw">fn </span>scope_with_executor_inner&lt;<span class="lifetime">'env</span>, F, T&gt;(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         tick_task_pool_executor: bool,
         external_executor: <span class="kw-2">&amp;</span>ThreadExecutor,
@@ -1282,24 +1283,24 @@
         f: F,
     ) -&gt; Vec&lt;T&gt;
     <span class="kw">where
-        </span>F: <span class="kw">for</span>&lt;<span class="lifetime">&#39;scope</span>&gt; FnOnce(<span class="kw-2">&amp;</span><span class="lifetime">&#39;scope </span>Scope&lt;<span class="lifetime">&#39;scope</span>, <span class="lifetime">&#39;env</span>, T&gt;),
-        T: Send + <span class="lifetime">&#39;static</span>,
+        </span>F: <span class="kw">for</span>&lt;<span class="lifetime">'scope</span>&gt; FnOnce(<span class="kw-2">&amp;</span><span class="lifetime">'scope </span>Scope&lt;<span class="lifetime">'scope</span>, <span class="lifetime">'env</span>, T&gt;),
+        T: Send + <span class="lifetime">'static</span>,
     {
-        <span class="comment">// SAFETY: This safety comment applies to all references transmuted to &#39;env.
+        <span class="comment">// SAFETY: This safety comment applies to all references transmuted to 'env.
         // Any futures spawned with these references need to return before this function completes.
         // This is guaranteed because we drive all the futures spawned onto the Scope
         // to completion in this function. However, rust has no way of knowing this so we
-        // transmute the lifetimes to &#39;env here to appease the compiler as it is unable to validate safety.
+        // transmute the lifetimes to 'env here to appease the compiler as it is unable to validate safety.
         // Any usages of the references passed into `Scope` must be accessed through
         // the transmuted reference for the rest of this function.
         </span><span class="kw">let </span>executor: <span class="kw-2">&amp;</span>async_executor::Executor = <span class="kw-2">&amp;</span><span class="self">self</span>.executor;
-        <span class="kw">let </span>executor: <span class="kw-2">&amp;</span><span class="lifetime">&#39;env </span>async_executor::Executor = <span class="kw">unsafe </span>{ mem::transmute(executor) };
-        <span class="kw">let </span>external_executor: <span class="kw-2">&amp;</span><span class="lifetime">&#39;env </span>ThreadExecutor&lt;<span class="lifetime">&#39;env</span>&gt; =
+        <span class="kw">let </span>executor: <span class="kw-2">&amp;</span><span class="lifetime">'env </span>async_executor::Executor = <span class="kw">unsafe </span>{ mem::transmute(executor) };
+        <span class="kw">let </span>external_executor: <span class="kw-2">&amp;</span><span class="lifetime">'env </span>ThreadExecutor&lt;<span class="lifetime">'env</span>&gt; =
             <span class="kw">unsafe </span>{ mem::transmute(external_executor) };
-        <span class="kw">let </span>scope_executor: <span class="kw-2">&amp;</span><span class="lifetime">&#39;env </span>ThreadExecutor&lt;<span class="lifetime">&#39;env</span>&gt; = <span class="kw">unsafe </span>{ mem::transmute(scope_executor) };
+        <span class="kw">let </span>scope_executor: <span class="kw-2">&amp;</span><span class="lifetime">'env </span>ThreadExecutor&lt;<span class="lifetime">'env</span>&gt; = <span class="kw">unsafe </span>{ mem::transmute(scope_executor) };
         <span class="kw">let </span>spawned: ConcurrentQueue&lt;FallibleTask&lt;T&gt;&gt; = ConcurrentQueue::unbounded();
         <span class="comment">// shadow the variable so that the owned value cannot be used for the rest of the function
-        </span><span class="kw">let </span>spawned: <span class="kw-2">&amp;</span><span class="lifetime">&#39;env </span>ConcurrentQueue&lt;
+        </span><span class="kw">let </span>spawned: <span class="kw-2">&amp;</span><span class="lifetime">'env </span>ConcurrentQueue&lt;
             FallibleTask&lt;<span class="prelude-ty">Result</span>&lt;T, Box&lt;(<span class="kw">dyn </span>std::any::Any + Send)&gt;&gt;&gt;,
         &gt; = <span class="kw">unsafe </span>{ mem::transmute(<span class="kw-2">&amp;</span>spawned) };
 
@@ -1313,7 +1314,7 @@
         };
 
         <span class="comment">// shadow the variable so that the owned value cannot be used for the rest of the function
-        </span><span class="kw">let </span>scope: <span class="kw-2">&amp;</span><span class="lifetime">&#39;env </span>Scope&lt;<span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;env</span>, T&gt; = <span class="kw">unsafe </span>{ mem::transmute(<span class="kw-2">&amp;</span>scope) };
+        </span><span class="kw">let </span>scope: <span class="kw-2">&amp;</span><span class="lifetime">'env </span>Scope&lt;<span class="lifetime">'_</span>, <span class="lifetime">'env</span>, T&gt; = <span class="kw">unsafe </span>{ mem::transmute(<span class="kw-2">&amp;</span>scope) };
 
         f(scope);
 
@@ -1330,7 +1331,7 @@
                                 <span class="prelude-val">Err</span>(payload) =&gt; std::panic::resume_unwind(payload),
                             }
                         } <span class="kw">else </span>{
-                            <span class="macro">panic!</span>(<span class="string">&quot;Failed to catch panic!&quot;</span>);
+                            <span class="macro">panic!</span>(<span class="string">"Failed to catch panic!"</span>);
                         }
                     }
                     results
@@ -1373,10 +1374,10 @@
     }
 
     <span class="attr">#[inline]
-    </span><span class="kw">async fn </span>execute_global_external_scope&lt;<span class="lifetime">&#39;scope</span>, <span class="lifetime">&#39;ticker</span>, T&gt;(
-        executor: <span class="kw-2">&amp;</span><span class="lifetime">&#39;scope </span>async_executor::Executor&lt;<span class="lifetime">&#39;scope</span>&gt;,
-        external_ticker: ThreadExecutorTicker&lt;<span class="lifetime">&#39;scope</span>, <span class="lifetime">&#39;ticker</span>&gt;,
-        scope_ticker: ThreadExecutorTicker&lt;<span class="lifetime">&#39;scope</span>, <span class="lifetime">&#39;ticker</span>&gt;,
+    </span><span class="kw">async fn </span>execute_global_external_scope&lt;<span class="lifetime">'scope</span>, <span class="lifetime">'ticker</span>, T&gt;(
+        executor: <span class="kw-2">&amp;</span><span class="lifetime">'scope </span>async_executor::Executor&lt;<span class="lifetime">'scope</span>&gt;,
+        external_ticker: ThreadExecutorTicker&lt;<span class="lifetime">'scope</span>, <span class="lifetime">'ticker</span>&gt;,
+        scope_ticker: ThreadExecutorTicker&lt;<span class="lifetime">'scope</span>, <span class="lifetime">'ticker</span>&gt;,
         get_results: <span class="kw">impl </span>Future&lt;Output = Vec&lt;T&gt;&gt;,
     ) -&gt; Vec&lt;T&gt; {
         <span class="comment">// we restart the executors if a task errors. if a scoped
@@ -1388,7 +1389,7 @@
                         external_ticker.tick().or(scope_ticker.tick()).<span class="kw">await</span>;
                     }
                 };
-                <span class="comment">// we don&#39;t care if it errors. If a scoped task errors it will propagate
+                <span class="comment">// we don't care if it errors. If a scoped task errors it will propagate
                 // to get_results
                 </span><span class="kw">let </span>_result = AssertUnwindSafe(executor.run(tick_forever))
                     .catch_unwind()
@@ -1400,9 +1401,9 @@
     </span>}
 
     <span class="attr">#[inline]
-    </span><span class="kw">async fn </span>execute_external_scope&lt;<span class="lifetime">&#39;scope</span>, <span class="lifetime">&#39;ticker</span>, T&gt;(
-        external_ticker: ThreadExecutorTicker&lt;<span class="lifetime">&#39;scope</span>, <span class="lifetime">&#39;ticker</span>&gt;,
-        scope_ticker: ThreadExecutorTicker&lt;<span class="lifetime">&#39;scope</span>, <span class="lifetime">&#39;ticker</span>&gt;,
+    </span><span class="kw">async fn </span>execute_external_scope&lt;<span class="lifetime">'scope</span>, <span class="lifetime">'ticker</span>, T&gt;(
+        external_ticker: ThreadExecutorTicker&lt;<span class="lifetime">'scope</span>, <span class="lifetime">'ticker</span>&gt;,
+        scope_ticker: ThreadExecutorTicker&lt;<span class="lifetime">'scope</span>, <span class="lifetime">'ticker</span>&gt;,
         get_results: <span class="kw">impl </span>Future&lt;Output = Vec&lt;T&gt;&gt;,
     ) -&gt; Vec&lt;T&gt; {
         <span class="kw">let </span>execute_forever = <span class="kw">async </span>{
@@ -1419,9 +1420,9 @@
     </span>}
 
     <span class="attr">#[inline]
-    </span><span class="kw">async fn </span>execute_global_scope&lt;<span class="lifetime">&#39;scope</span>, <span class="lifetime">&#39;ticker</span>, T&gt;(
-        executor: <span class="kw-2">&amp;</span><span class="lifetime">&#39;scope </span>async_executor::Executor&lt;<span class="lifetime">&#39;scope</span>&gt;,
-        scope_ticker: ThreadExecutorTicker&lt;<span class="lifetime">&#39;scope</span>, <span class="lifetime">&#39;ticker</span>&gt;,
+    </span><span class="kw">async fn </span>execute_global_scope&lt;<span class="lifetime">'scope</span>, <span class="lifetime">'ticker</span>, T&gt;(
+        executor: <span class="kw-2">&amp;</span><span class="lifetime">'scope </span>async_executor::Executor&lt;<span class="lifetime">'scope</span>&gt;,
+        scope_ticker: ThreadExecutorTicker&lt;<span class="lifetime">'scope</span>, <span class="lifetime">'ticker</span>&gt;,
         get_results: <span class="kw">impl </span>Future&lt;Output = Vec&lt;T&gt;&gt;,
     ) -&gt; Vec&lt;T&gt; {
         <span class="kw">let </span>execute_forever = <span class="kw">async </span>{
@@ -1441,8 +1442,8 @@
     </span>}
 
     <span class="attr">#[inline]
-    </span><span class="kw">async fn </span>execute_scope&lt;<span class="lifetime">&#39;scope</span>, <span class="lifetime">&#39;ticker</span>, T&gt;(
-        scope_ticker: ThreadExecutorTicker&lt;<span class="lifetime">&#39;scope</span>, <span class="lifetime">&#39;ticker</span>&gt;,
+    </span><span class="kw">async fn </span>execute_scope&lt;<span class="lifetime">'scope</span>, <span class="lifetime">'ticker</span>, T&gt;(
+        scope_ticker: ThreadExecutorTicker&lt;<span class="lifetime">'scope</span>, <span class="lifetime">'ticker</span>&gt;,
         get_results: <span class="kw">impl </span>Future&lt;Output = Vec&lt;T&gt;&gt;,
     ) -&gt; Vec&lt;T&gt; {
         <span class="kw">let </span>execute_forever = <span class="kw">async </span>{
@@ -1460,15 +1461,15 @@
 
     <span class="doccomment">/// Spawns a static future onto the thread pool. The returned [`Task`] is a
     /// future that can be polled for the result. It can also be canceled and
-    /// &quot;detached&quot;, allowing the task to continue running even if dropped. In
+    /// "detached", allowing the task to continue running even if dropped. In
     /// any case, the pool will execute the task even without polling by the
     /// end-user.
     ///
     /// If the provided future is non-`Send`, [`TaskPool::spawn_local`] should
     /// be used instead.
-    </span><span class="kw">pub fn </span>spawn&lt;T&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, future: <span class="kw">impl </span>Future&lt;Output = T&gt; + Send + <span class="lifetime">&#39;static</span>) -&gt; Task&lt;T&gt;
+    </span><span class="kw">pub fn </span>spawn&lt;T&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, future: <span class="kw">impl </span>Future&lt;Output = T&gt; + Send + <span class="lifetime">'static</span>) -&gt; Task&lt;T&gt;
     <span class="kw">where
-        </span>T: Send + <span class="lifetime">&#39;static</span>,
+        </span>T: Send + <span class="lifetime">'static</span>,
     {
         Task::new(<span class="self">self</span>.executor.spawn(future))
     }
@@ -1478,15 +1479,15 @@
     /// spawned on.
     ///
     /// The returned [`Task`] is a future that can be polled for the
-    /// result. It can also be canceled and &quot;detached&quot;, allowing the task to
+    /// result. It can also be canceled and "detached", allowing the task to
     /// continue running even if dropped. In any case, the pool will execute the
     /// task even without polling by the end-user.
     ///
     /// Users should generally prefer to use [`TaskPool::spawn`] instead,
     /// unless the provided future is not `Send`.
-    </span><span class="kw">pub fn </span>spawn_local&lt;T&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, future: <span class="kw">impl </span>Future&lt;Output = T&gt; + <span class="lifetime">&#39;static</span>) -&gt; Task&lt;T&gt;
+    </span><span class="kw">pub fn </span>spawn_local&lt;T&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, future: <span class="kw">impl </span>Future&lt;Output = T&gt; + <span class="lifetime">'static</span>) -&gt; Task&lt;T&gt;
     <span class="kw">where
-        </span>T: <span class="lifetime">&#39;static</span>,
+        </span>T: <span class="lifetime">'static</span>,
     {
         Task::new(TaskPool::LOCAL_EXECUTOR.with(|executor| executor.spawn(future)))
     }
@@ -1524,36 +1525,36 @@
         <span class="kw">for </span>join_handle <span class="kw">in </span><span class="self">self</span>.threads.drain(..) {
             <span class="kw">let </span>res = join_handle.join();
             <span class="kw">if </span>!panicking {
-                res.expect(<span class="string">&quot;Task thread panicked while executing.&quot;</span>);
+                res.expect(<span class="string">"Task thread panicked while executing."</span>);
             }
         }
     }
 }
 
-<span class="doccomment">/// A [`TaskPool`] scope for running one or more non-`&#39;static` futures.
+<span class="doccomment">/// A [`TaskPool`] scope for running one or more non-`'static` futures.
 ///
 /// For more information, see [`TaskPool::scope`].
 </span><span class="attr">#[derive(Debug)]
-</span><span class="kw">pub struct </span>Scope&lt;<span class="lifetime">&#39;scope</span>, <span class="lifetime">&#39;env</span>: <span class="lifetime">&#39;scope</span>, T&gt; {
-    executor: <span class="kw-2">&amp;</span><span class="lifetime">&#39;scope </span>async_executor::Executor&lt;<span class="lifetime">&#39;scope</span>&gt;,
-    external_executor: <span class="kw-2">&amp;</span><span class="lifetime">&#39;scope </span>ThreadExecutor&lt;<span class="lifetime">&#39;scope</span>&gt;,
-    scope_executor: <span class="kw-2">&amp;</span><span class="lifetime">&#39;scope </span>ThreadExecutor&lt;<span class="lifetime">&#39;scope</span>&gt;,
-    spawned: <span class="kw-2">&amp;</span><span class="lifetime">&#39;scope </span>ConcurrentQueue&lt;FallibleTask&lt;<span class="prelude-ty">Result</span>&lt;T, Box&lt;(<span class="kw">dyn </span>std::any::Any + Send)&gt;&gt;&gt;&gt;,
-    <span class="comment">// make `Scope` invariant over &#39;scope and &#39;env
-    </span>scope: PhantomData&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;scope </span><span class="kw-2">mut &amp;</span><span class="lifetime">&#39;scope </span>()&gt;,
-    env: PhantomData&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;env </span><span class="kw-2">mut &amp;</span><span class="lifetime">&#39;env </span>()&gt;,
+</span><span class="kw">pub struct </span>Scope&lt;<span class="lifetime">'scope</span>, <span class="lifetime">'env</span>: <span class="lifetime">'scope</span>, T&gt; {
+    executor: <span class="kw-2">&amp;</span><span class="lifetime">'scope </span>async_executor::Executor&lt;<span class="lifetime">'scope</span>&gt;,
+    external_executor: <span class="kw-2">&amp;</span><span class="lifetime">'scope </span>ThreadExecutor&lt;<span class="lifetime">'scope</span>&gt;,
+    scope_executor: <span class="kw-2">&amp;</span><span class="lifetime">'scope </span>ThreadExecutor&lt;<span class="lifetime">'scope</span>&gt;,
+    spawned: <span class="kw-2">&amp;</span><span class="lifetime">'scope </span>ConcurrentQueue&lt;FallibleTask&lt;<span class="prelude-ty">Result</span>&lt;T, Box&lt;(<span class="kw">dyn </span>std::any::Any + Send)&gt;&gt;&gt;&gt;,
+    <span class="comment">// make `Scope` invariant over 'scope and 'env
+    </span>scope: PhantomData&lt;<span class="kw-2">&amp;</span><span class="lifetime">'scope </span><span class="kw-2">mut &amp;</span><span class="lifetime">'scope </span>()&gt;,
+    env: PhantomData&lt;<span class="kw-2">&amp;</span><span class="lifetime">'env </span><span class="kw-2">mut &amp;</span><span class="lifetime">'env </span>()&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;scope</span>, <span class="lifetime">&#39;env</span>, T: Send + <span class="lifetime">&#39;scope</span>&gt; Scope&lt;<span class="lifetime">&#39;scope</span>, <span class="lifetime">&#39;env</span>, T&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'scope</span>, <span class="lifetime">'env</span>, T: Send + <span class="lifetime">'scope</span>&gt; Scope&lt;<span class="lifetime">'scope</span>, <span class="lifetime">'env</span>, T&gt; {
     <span class="doccomment">/// Spawns a scoped future onto the thread pool. The scope *must* outlive
     /// the provided future. The results of the future will be returned as a part of
-    /// [`TaskPool::scope`]&#39;s return value.
+    /// [`TaskPool::scope`]'s return value.
     ///
     /// For futures that should run on the thread `scope` is called on [`Scope::spawn_on_scope`] should be used
     /// instead.
     ///
     /// For more information, see [`TaskPool::scope`].
-    </span><span class="kw">pub fn </span>spawn&lt;Fut: Future&lt;Output = T&gt; + <span class="lifetime">&#39;scope </span>+ Send&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, f: Fut) {
+    </span><span class="kw">pub fn </span>spawn&lt;Fut: Future&lt;Output = T&gt; + <span class="lifetime">'scope </span>+ Send&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, f: Fut) {
         <span class="kw">let </span>task = <span class="self">self
             </span>.executor
             .spawn(AssertUnwindSafe(f).catch_unwind())
@@ -1565,11 +1566,11 @@
 
     <span class="doccomment">/// Spawns a scoped future onto the thread the scope is run on. The scope *must* outlive
     /// the provided future. The results of the future will be returned as a part of
-    /// [`TaskPool::scope`]&#39;s return value.  Users should generally prefer to use
-    /// [`Scope::spawn`] instead, unless the provided future needs to run on the scope&#39;s thread.
+    /// [`TaskPool::scope`]'s return value.  Users should generally prefer to use
+    /// [`Scope::spawn`] instead, unless the provided future needs to run on the scope's thread.
     ///
     /// For more information, see [`TaskPool::scope`].
-    </span><span class="kw">pub fn </span>spawn_on_scope&lt;Fut: Future&lt;Output = T&gt; + <span class="lifetime">&#39;scope </span>+ Send&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, f: Fut) {
+    </span><span class="kw">pub fn </span>spawn_on_scope&lt;Fut: Future&lt;Output = T&gt; + <span class="lifetime">'scope </span>+ Send&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, f: Fut) {
         <span class="kw">let </span>task = <span class="self">self
             </span>.scope_executor
             .spawn(AssertUnwindSafe(f).catch_unwind())
@@ -1582,11 +1583,11 @@
     <span class="doccomment">/// Spawns a scoped future onto the thread of the external thread executor.
     /// This is typically the main thread. The scope *must* outlive
     /// the provided future. The results of the future will be returned as a part of
-    /// [`TaskPool::scope`]&#39;s return value.  Users should generally prefer to use
+    /// [`TaskPool::scope`]'s return value.  Users should generally prefer to use
     /// [`Scope::spawn`] instead, unless the provided future needs to run on the external thread.
     ///
     /// For more information, see [`TaskPool::scope`].
-    </span><span class="kw">pub fn </span>spawn_on_external&lt;Fut: Future&lt;Output = T&gt; + <span class="lifetime">&#39;scope </span>+ Send&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, f: Fut) {
+    </span><span class="kw">pub fn </span>spawn_on_external&lt;Fut: Future&lt;Output = T&gt; + <span class="lifetime">'scope </span>+ Send&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, f: Fut) {
         <span class="kw">let </span>task = <span class="self">self
             </span>.external_executor
             .spawn(AssertUnwindSafe(f).catch_unwind())
@@ -1597,9 +1598,9 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;scope</span>, <span class="lifetime">&#39;env</span>, T&gt; Drop <span class="kw">for </span>Scope&lt;<span class="lifetime">&#39;scope</span>, <span class="lifetime">&#39;env</span>, T&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'scope</span>, <span class="lifetime">'env</span>, T&gt; Drop <span class="kw">for </span>Scope&lt;<span class="lifetime">'scope</span>, <span class="lifetime">'env</span>, T&gt;
 <span class="kw">where
-    </span>T: <span class="lifetime">&#39;scope</span>,
+    </span>T: <span class="lifetime">'scope</span>,
 {
     <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
         block_on(<span class="kw">async </span>{
@@ -1633,7 +1634,7 @@
                 <span class="kw">let </span>count_clone = count.clone();
                 scope.spawn(<span class="kw">async move </span>{
                     <span class="kw">if </span><span class="kw-2">*</span>foo != <span class="number">42 </span>{
-                        <span class="macro">panic!</span>(<span class="string">&quot;not 42!?!?&quot;</span>)
+                        <span class="macro">panic!</span>(<span class="string">"not 42!?!?"</span>)
                     } <span class="kw">else </span>{
                         count_clone.fetch_add(<span class="number">1</span>, Ordering::Relaxed);
                         <span class="kw-2">*</span>foo
@@ -1717,7 +1718,7 @@
                     <span class="kw">let </span>count_clone = non_local_count.clone();
                     scope.spawn(<span class="kw">async move </span>{
                         <span class="kw">if </span><span class="kw-2">*</span>foo != <span class="number">42 </span>{
-                            <span class="macro">panic!</span>(<span class="string">&quot;not 42!?!?&quot;</span>)
+                            <span class="macro">panic!</span>(<span class="string">"not 42!?!?"</span>)
                         } <span class="kw">else </span>{
                             count_clone.fetch_add(<span class="number">1</span>, Ordering::Relaxed);
                             <span class="kw-2">*</span>foo
@@ -1727,7 +1728,7 @@
                     <span class="kw">let </span>count_clone = local_count.clone();
                     scope.spawn_on_scope(<span class="kw">async move </span>{
                         <span class="kw">if </span><span class="kw-2">*</span>foo != <span class="number">42 </span>{
-                            <span class="macro">panic!</span>(<span class="string">&quot;not 42!?!?&quot;</span>)
+                            <span class="macro">panic!</span>(<span class="string">"not 42!?!?"</span>)
                         } <span class="kw">else </span>{
                             count_clone.fetch_add(<span class="number">1</span>, Ordering::Relaxed);
                             <span class="kw-2">*</span>foo
@@ -1800,7 +1801,7 @@
                         <span class="kw">let </span>count_clone_clone = count_clone.clone();
                         scope.spawn(<span class="kw">async move </span>{
                             <span class="kw">if </span><span class="kw-2">*</span>foo != <span class="number">42 </span>{
-                                <span class="macro">panic!</span>(<span class="string">&quot;not 42!?!?&quot;</span>)
+                                <span class="macro">panic!</span>(<span class="string">"not 42!?!?"</span>)
                             } <span class="kw">else </span>{
                                 count_clone_clone.fetch_add(<span class="number">1</span>, Ordering::Relaxed);
                                 <span class="kw-2">*</span>foo
@@ -1840,7 +1841,7 @@
                     scope.spawn(<span class="kw">async move </span>{
                         inner_count_clone.fetch_add(<span class="number">1</span>, Ordering::Release);
 
-                        <span class="comment">// spawning on the scope from another thread runs the futures on the scope&#39;s thread
+                        <span class="comment">// spawning on the scope from another thread runs the futures on the scope's thread
                         </span>scope.spawn_on_scope(<span class="kw">async move </span>{
                             inner_count_clone.fetch_add(<span class="number">1</span>, Ordering::Release);
                             <span class="kw">if </span>std::thread::current().id() != spawner {

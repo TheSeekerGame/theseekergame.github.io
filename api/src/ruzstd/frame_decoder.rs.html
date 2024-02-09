@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ruzstd-0.4.0/src/frame_decoder.rs`."><title>frame_decoder.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="ruzstd" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ruzstd-0.4.0/src/frame_decoder.rs`."><title>frame_decoder.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="ruzstd" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -541,7 +542,7 @@
 <span class="kw">use </span>core::hash::Hasher;
 
 <span class="doccomment">/// This implements a decoder for zstd frames. This decoder is able to decode frames only partially and gives control
-/// over how many bytes/blocks will be decoded at a time (so you don&#39;t have to decode a 10GB file into memory all at once).
+/// over how many bytes/blocks will be decoded at a time (so you don't have to decode a 10GB file into memory all at once).
 /// It reads bytes as needed from a provided source and can be read from to collect partial results.
 ///
 /// If you want to just read the whole frame with an io::Read without having to deal with manually calling decode_blocks
@@ -551,11 +552,11 @@
 /// ```
 /// use ruzstd::frame_decoder::BlockDecodingStrategy;
 ///
-/// # #[cfg(feature = &quot;std&quot;)]
+/// # #[cfg(feature = "std")]
 /// use std::io::{Read, Write};
 ///
-/// // no_std environments can use the crate&#39;s own Read traits
-/// # #[cfg(not(feature = &quot;std&quot;))]
+/// // no_std environments can use the crate's own Read traits
+/// # #[cfg(not(feature = "std"))]
 /// use ruzstd::io::{Read, Write};
 ///
 /// fn decode_this(mut file: impl Read) {
@@ -587,7 +588,7 @@
 /// }
 ///
 /// fn do_something(data: &amp;[u8]) {
-/// # #[cfg(feature = &quot;std&quot;)]
+/// # #[cfg(feature = "std")]
 ///     std::io::stdout().write_all(data).unwrap();
 /// }
 /// ```
@@ -619,25 +620,25 @@
     </span>ReadFrameHeaderError(<span class="attr">#[from] </span>frame::ReadFrameHeaderError),
     <span class="attr">#[error(transparent)]
     </span>FrameHeaderError(<span class="attr">#[from] </span>frame::FrameHeaderError),
-    <span class="attr">#[error(<span class="string">&quot;Specified window_size is too big; Requested: {requested}, Max: {MAX_WINDOW_SIZE}&quot;</span>)]
+    <span class="attr">#[error(<span class="string">"Specified window_size is too big; Requested: {requested}, Max: {MAX_WINDOW_SIZE}"</span>)]
     </span>WindowSizeTooBig { requested: u64 },
     <span class="attr">#[error(transparent)]
     </span>DictionaryDecodeError(<span class="attr">#[from] </span>dictionary::DictionaryDecodeError),
-    <span class="attr">#[error(<span class="string">&quot;Failed to parse/decode block body: {0}&quot;</span>)]
+    <span class="attr">#[error(<span class="string">"Failed to parse/decode block body: {0}"</span>)]
     </span>FailedToReadBlockHeader(<span class="attr">#[from] </span>decoding::block_decoder::BlockHeaderReadError),
-    <span class="attr">#[error(<span class="string">&quot;Failed to parse block header: {0}&quot;</span>)]
+    <span class="attr">#[error(<span class="string">"Failed to parse block header: {0}"</span>)]
     </span>FailedToReadBlockBody(decoding::block_decoder::DecodeBlockContentError),
-    <span class="attr">#[error(<span class="string">&quot;Failed to read checksum: {0}&quot;</span>)]
+    <span class="attr">#[error(<span class="string">"Failed to read checksum: {0}"</span>)]
     </span>FailedToReadChecksum(<span class="attr">#[source] </span>Error),
-    <span class="attr">#[error(<span class="string">&quot;Decoder must initialized or reset before using it&quot;</span>)]
+    <span class="attr">#[error(<span class="string">"Decoder must initialized or reset before using it"</span>)]
     </span>NotYetInitialized,
-    <span class="attr">#[error(<span class="string">&quot;Decoder encountered error while initializing: {0}&quot;</span>)]
+    <span class="attr">#[error(<span class="string">"Decoder encountered error while initializing: {0}"</span>)]
     </span>FailedToInitialize(frame::FrameHeaderError),
-    <span class="attr">#[error(<span class="string">&quot;Decoder encountered error while draining the decodebuffer: {0}&quot;</span>)]
+    <span class="attr">#[error(<span class="string">"Decoder encountered error while draining the decodebuffer: {0}"</span>)]
     </span>FailedToDrainDecodebuffer(<span class="attr">#[source] </span>Error),
-    <span class="attr">#[error(<span class="string">&quot;Target must have at least as many bytes as the contentsize of the frame reports&quot;</span>)]
+    <span class="attr">#[error(<span class="string">"Target must have at least as many bytes as the contentsize of the frame reports"</span>)]
     </span>TargetTooSmall,
-    <span class="attr">#[error(<span class="string">&quot;Frame header specified dictionary id 0x{dict_id:X} that wasnt provided by add_dict() or reset_with_dict()&quot;</span>)]
+    <span class="attr">#[error(<span class="string">"Frame header specified dictionary id 0x{dict_id:X} that wasnt provided by add_dict() or reset_with_dict()"</span>)]
     </span>DictNotProvided { dict_id: u32 },
 }
 
@@ -822,8 +823,8 @@
 
     <span class="doccomment">/// Decodes blocks from a reader. It requires that the framedecoder has been initialized first.
     /// The Strategy influences how many blocks will be decoded before the function returns
-    /// This is important if you want to manage memory consumption carefully. If you don&#39;t care
-    /// about that you can just choose the strategy &quot;All&quot; and have all blocks of the frame decoded into the buffer
+    /// This is important if you want to manage memory consumption carefully. If you don't care
+    /// about that you can just choose the strategy "All" and have all blocks of the frame decoded into the buffer
     </span><span class="kw">pub fn </span>decode_blocks(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         <span class="kw-2">mut </span>source: <span class="kw">impl </span>Read,
@@ -837,9 +838,9 @@
         <span class="kw">let </span>buffer_size_before = state.decoder_scratch.buffer.len();
         <span class="kw">let </span>block_counter_before = state.block_counter;
         <span class="kw">loop </span>{
-            <span class="macro">vprintln!</span>(<span class="string">&quot;################&quot;</span>);
-            <span class="macro">vprintln!</span>(<span class="string">&quot;Next Block: {}&quot;</span>, state.block_counter);
-            <span class="macro">vprintln!</span>(<span class="string">&quot;################&quot;</span>);
+            <span class="macro">vprintln!</span>(<span class="string">"################"</span>);
+            <span class="macro">vprintln!</span>(<span class="string">"Next Block: {}"</span>, state.block_counter);
+            <span class="macro">vprintln!</span>(<span class="string">"################"</span>);
             <span class="kw">let </span>(block_header, block_header_size) = block_dec
                 .read_block_header(<span class="kw-2">&amp;mut </span>source)
                 .map_err(err::FailedToReadBlockHeader)<span class="question-mark">?</span>;
@@ -847,7 +848,7 @@
 
             <span class="macro">vprintln!</span>();
             <span class="macro">vprintln!</span>(
-                <span class="string">&quot;Found {} block with size: {}, which will be of size: {}&quot;</span>,
+                <span class="string">"Found {} block with size: {}, which will be of size: {}"</span>,
                 block_header.block_type,
                 block_header.content_size,
                 block_header.decompressed_size
@@ -860,7 +861,7 @@
 
             state.block_counter += <span class="number">1</span>;
 
-            <span class="macro">vprintln!</span>(<span class="string">&quot;Output: {}&quot;</span>, state.decoder_scratch.buffer.len());
+            <span class="macro">vprintln!</span>(<span class="string">"Output: {}"</span>, state.decoder_scratch.buffer.len());
 
             <span class="kw">if </span>block_header.last_block {
                 state.frame_finished = <span class="bool-val">true</span>;
@@ -972,11 +973,11 @@
                 <span class="self">self</span>.init(<span class="kw-2">&amp;mut </span>mt_source)<span class="question-mark">?</span>;
             }
 
-            <span class="comment">//pseudo block to scope &quot;state&quot; so we can borrow self again after the block
+            <span class="comment">//pseudo block to scope "state" so we can borrow self again after the block
             </span>{
                 <span class="kw">let </span><span class="kw-2">mut </span>state = <span class="kw">match </span><span class="kw-2">&amp;mut </span><span class="self">self</span>.state {
                     <span class="prelude-val">Some</span>(s) =&gt; s,
-                    <span class="prelude-val">None </span>=&gt; <span class="macro">panic!</span>(<span class="string">&quot;Bug in library&quot;</span>),
+                    <span class="prelude-val">None </span>=&gt; <span class="macro">panic!</span>(<span class="string">"Bug in library"</span>),
                 };
                 <span class="kw">let </span><span class="kw-2">mut </span>block_dec = decoding::block_decoder::new();
 
@@ -986,7 +987,7 @@
                 {
                     <span class="comment">//this block is needed if the checksum were the only 4 bytes that were not included in the last decode_from_to call for a frame
                     </span><span class="kw">if </span>mt_source.len() &gt;= <span class="number">4 </span>{
-                        <span class="kw">let </span>chksum = mt_source[..<span class="number">4</span>].try_into().expect(<span class="string">&quot;optimized away&quot;</span>);
+                        <span class="kw">let </span>chksum = mt_source[..<span class="number">4</span>].try_into().expect(<span class="string">"optimized away"</span>);
                         state.bytes_read_counter += <span class="number">4</span>;
                         <span class="kw">let </span>chksum = u32::from_le_bytes(chksum);
                         state.check_sum = <span class="prelude-val">Some</span>(chksum);
@@ -1025,7 +1026,7 @@
                         <span class="kw">if </span>state.frame.header.descriptor.content_checksum_flag() {
                             <span class="comment">//if there are enough bytes handle this here. Else the block at the start of this function will handle it at the next call
                             </span><span class="kw">if </span>mt_source.len() &gt;= <span class="number">4 </span>{
-                                <span class="kw">let </span>chksum = mt_source[..<span class="number">4</span>].try_into().expect(<span class="string">&quot;optimized away&quot;</span>);
+                                <span class="kw">let </span>chksum = mt_source[..<span class="number">4</span>].try_into().expect(<span class="string">"optimized away"</span>);
                                 state.bytes_read_counter += <span class="number">4</span>;
                                 <span class="kw">let </span>chksum = u32::from_le_bytes(chksum);
                                 state.check_sum = <span class="prelude-val">Some</span>(chksum);
@@ -1040,7 +1041,7 @@
         <span class="kw">let </span>result_len = <span class="self">self</span>.read(target).map_err(err::FailedToDrainDecodebuffer)<span class="question-mark">?</span>;
         <span class="kw">let </span>bytes_read_at_end = <span class="kw">match </span><span class="kw-2">&amp;mut </span><span class="self">self</span>.state {
             <span class="prelude-val">Some</span>(s) =&gt; s.bytes_read_counter,
-            <span class="prelude-val">None </span>=&gt; <span class="macro">panic!</span>(<span class="string">&quot;Bug in library&quot;</span>),
+            <span class="prelude-val">None </span>=&gt; <span class="macro">panic!</span>(<span class="string">"Bug in library"</span>),
         };
         <span class="kw">let </span>read_len = bytes_read_at_end - bytes_read_at_start;
         <span class="prelude-val">Ok</span>((read_len <span class="kw">as </span>usize, result_len))

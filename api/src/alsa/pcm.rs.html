@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/alsa-0.7.1/src/pcm.rs`."><title>pcm.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="alsa" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/alsa-0.7.1/src/pcm.rs`."><title>pcm.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="alsa" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1260,14 +1261,14 @@
 </pre></div><pre class="rust"><code><span class="doccomment">//! Audio playback and capture
 //!
 //! # Example
-//! Playback a sine wave through the &quot;default&quot; device.
+//! Playback a sine wave through the "default" device.
 //!
 //! ```
 //! use alsa::{Direction, ValueOr};
 //! use alsa::pcm::{PCM, HwParams, Format, Access, State};
 //!
 //! // Open default playback device
-//! let pcm = PCM::new(&quot;default&quot;, Direction::Playback, false).unwrap();
+//! let pcm = PCM::new("default", Direction::Playback, false).unwrap();
 //!
 //! // Set hardware parameters: 44100 Hz / Mono / 16 bit
 //! let hwp = HwParams::any(&amp;pcm).unwrap();
@@ -1278,7 +1279,7 @@
 //! pcm.hw_params(&amp;hwp).unwrap();
 //! let io = pcm.io_i16().unwrap();
 //!
-//! // Make sure we don&#39;t start the stream too early
+//! // Make sure we don't start the stream too early
 //! let hwp = pcm.hw_params_current().unwrap();
 //! let swp = pcm.sw_params_current().unwrap();
 //! swp.set_start_threshold(hwp.get_buffer_size().unwrap()).unwrap();
@@ -1341,24 +1342,24 @@
 
     <span class="kw">pub fn </span>get_id(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span>str&gt; {
         <span class="kw">let </span>c = <span class="kw">unsafe </span>{ alsa::snd_pcm_info_get_id(<span class="self">self</span>.<span class="number">0</span>) };
-        from_const(<span class="string">&quot;snd_pcm_info_get_id&quot;</span>, c)
+        from_const(<span class="string">"snd_pcm_info_get_id"</span>, c)
     }
 
     <span class="kw">pub fn </span>get_name(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span>str&gt; {
         <span class="kw">let </span>c = <span class="kw">unsafe </span>{ alsa::snd_pcm_info_get_name(<span class="self">self</span>.<span class="number">0</span>) };
-        from_const(<span class="string">&quot;snd_pcm_info_get_name&quot;</span>, c)
+        from_const(<span class="string">"snd_pcm_info_get_name"</span>, c)
     }
 
     <span class="kw">pub fn </span>get_subdevice_name(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span>str&gt; {
         <span class="kw">let </span>c = <span class="kw">unsafe </span>{ alsa::snd_pcm_info_get_subdevice_name(<span class="self">self</span>.<span class="number">0</span>) };
-        from_const(<span class="string">&quot;snd_pcm_info_get_subdevice_name&quot;</span>, c)
+        from_const(<span class="string">"snd_pcm_info_get_subdevice_name"</span>, c)
     }
 
     <span class="kw">pub fn </span>get_stream(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Direction {
         <span class="kw">match unsafe </span>{ alsa::snd_pcm_info_get_stream(<span class="self">self</span>.<span class="number">0</span>) } {
             alsa::SND_PCM_STREAM_CAPTURE =&gt; Direction::Capture,
             alsa::SND_PCM_STREAM_PLAYBACK =&gt; Direction::Playback,
-            n @ <span class="kw">_ </span>=&gt; <span class="macro">panic!</span>(<span class="string">&quot;snd_pcm_info_get_stream invalid direction &#39;{}&#39;&quot;</span>, n),
+            n @ <span class="kw">_ </span>=&gt; <span class="macro">panic!</span>(<span class="string">"snd_pcm_info_get_stream invalid direction '{}'"</span>, n),
         }
     }
 
@@ -1398,7 +1399,7 @@
 
 <span class="kw">impl </span>PCM {
     <span class="kw">fn </span>check_has_io(<span class="kw-2">&amp;</span><span class="self">self</span>) {
-        <span class="kw">if </span><span class="self">self</span>.<span class="number">1</span>.get() { <span class="macro">panic!</span>(<span class="string">&quot;No hw_params call or additional IO objects allowed&quot;</span>) }
+        <span class="kw">if </span><span class="self">self</span>.<span class="number">1</span>.get() { <span class="macro">panic!</span>(<span class="string">"No hw_params call or additional IO objects allowed"</span>) }
     }
 
     <span class="doccomment">/// Wrapper around open that takes a &amp;str instead of a &amp;CStr
@@ -1406,7 +1407,7 @@
         <span class="self">Self</span>::open(<span class="kw-2">&amp;</span>CString::new(name).unwrap(), dir, nonblock)
     }
 
-    <span class="comment">// Does not offer async mode (it&#39;s not very Rustic anyway)
+    <span class="comment">// Does not offer async mode (it's not very Rustic anyway)
     </span><span class="kw">pub fn </span>open(name: <span class="kw-2">&amp;</span>CStr, dir: Direction, nonblock: bool) -&gt; <span class="prelude-ty">Result</span>&lt;PCM&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>r = ptr::null_mut();
         <span class="kw">let </span>stream = <span class="kw">match </span>dir {
@@ -1441,15 +1442,15 @@
 
     <span class="kw">pub fn </span>state(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; State {
         <span class="kw">let </span>rawstate = <span class="self">self</span>.state_raw();
-        <span class="kw">if let </span><span class="prelude-val">Ok</span>(state) = State::from_c_int(rawstate, <span class="string">&quot;snd_pcm_state&quot;</span>) {
+        <span class="kw">if let </span><span class="prelude-val">Ok</span>(state) = State::from_c_int(rawstate, <span class="string">"snd_pcm_state"</span>) {
             state
         }
         <span class="kw">else </span>{
-            <span class="macro">panic!</span>(<span class="string">&quot;snd_pcm_state returned an invalid value of {}&quot;</span>, rawstate);
+            <span class="macro">panic!</span>(<span class="string">"snd_pcm_state returned an invalid value of {}"</span>, rawstate);
         }
     }
 
-    <span class="doccomment">/// Only used internally, and for debugging the alsa library. Please use the &quot;state&quot; function instead.
+    <span class="doccomment">/// Only used internally, and for debugging the alsa library. Please use the "state" function instead.
     </span><span class="kw">pub fn </span>state_raw(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; c_int { <span class="kw">unsafe </span>{ alsa::snd_pcm_state(<span class="self">self</span>.<span class="number">0</span>) <span class="kw">as </span>c_int } }
 
     <span class="kw">pub fn </span>bytes_to_frames(<span class="kw-2">&amp;</span><span class="self">self</span>, i: isize) -&gt; Frames { <span class="kw">unsafe </span>{ alsa::snd_pcm_bytes_to_frames(<span class="self">self</span>.<span class="number">0</span>, i <span class="kw">as </span>ssize_t) }}
@@ -1475,8 +1476,8 @@
         <span class="kw">let </span>ff = <span class="self">self</span>.hw_params_current().and_then(|h| h.get_format())<span class="question-mark">?</span>;
         <span class="kw">if </span>ff == f { <span class="prelude-val">Ok</span>(()) }
         <span class="kw">else </span>{
-            <span class="comment">// let s = format!(&quot;Invalid sample format ({:?}, expected {:?})&quot;, ff, f);
-            </span><span class="prelude-val">Err</span>(Error::unsupported(<span class="string">&quot;io_xx&quot;</span>))
+            <span class="comment">// let s = format!("Invalid sample format ({:?}, expected {:?})", ff, f);
+            </span><span class="prelude-val">Err</span>(Error::unsupported(<span class="string">"io_xx"</span>))
         }
     }
 
@@ -1493,7 +1494,7 @@
         <span class="self">self</span>.verify_format(S::FORMAT).map(|<span class="kw">_</span>| IO::new(<span class="self">self</span>))
     }
 
-    <span class="attr">#[deprecated(note = <span class="string">&quot;renamed to io_bytes&quot;</span>)]
+    <span class="attr">#[deprecated(note = <span class="string">"renamed to io_bytes"</span>)]
     </span><span class="kw">pub fn </span>io(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; IO&lt;u8&gt; { IO::new(<span class="self">self</span>) }
     <span class="kw">pub fn </span>io_bytes(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; IO&lt;u8&gt; { IO::new(<span class="self">self</span>) }
 
@@ -1567,7 +1568,7 @@
 
     <span class="kw">pub fn </span>get_chmap(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;Chmap&gt; {
         <span class="kw">let </span>p = <span class="kw">unsafe </span>{ alsa::snd_pcm_get_chmap(<span class="self">self</span>.<span class="number">0</span>) };
-        <span class="kw">if </span>p.is_null() { <span class="prelude-val">Err</span>(Error::unsupported(<span class="string">&quot;snd_pcm_get_chmap&quot;</span>)) }
+        <span class="kw">if </span>p.is_null() { <span class="prelude-val">Err</span>(Error::unsupported(<span class="string">"snd_pcm_get_chmap"</span>)) }
         <span class="kw">else </span>{ <span class="prelude-val">Ok</span>(chmap::chmap_new(p)) }
     }
 
@@ -1591,12 +1592,12 @@
     }
     <span class="kw">fn </span>fill(<span class="kw-2">&amp;</span><span class="self">self</span>, p: <span class="kw-2">&amp;mut </span>[pollfd]) -&gt; <span class="prelude-ty">Result</span>&lt;usize&gt; {
         <span class="kw">let </span>z = <span class="kw">unsafe </span>{ alsa::snd_pcm_poll_descriptors(<span class="self">self</span>.<span class="number">0</span>, p.as_mut_ptr(), p.len() <span class="kw">as </span>c_uint) };
-        from_code(<span class="string">&quot;snd_pcm_poll_descriptors&quot;</span>, z).map(|<span class="kw">_</span>| z <span class="kw">as </span>usize)
+        from_code(<span class="string">"snd_pcm_poll_descriptors"</span>, z).map(|<span class="kw">_</span>| z <span class="kw">as </span>usize)
     }
     <span class="kw">fn </span>revents(<span class="kw-2">&amp;</span><span class="self">self</span>, p: <span class="kw-2">&amp;</span>[pollfd]) -&gt; <span class="prelude-ty">Result</span>&lt;poll::Flags&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>r = <span class="number">0</span>;
         <span class="kw">let </span>z = <span class="kw">unsafe </span>{ alsa::snd_pcm_poll_descriptors_revents(<span class="self">self</span>.<span class="number">0</span>, p.as_ptr() <span class="kw">as </span><span class="kw-2">*mut </span>pollfd, p.len() <span class="kw">as </span>c_uint, <span class="kw-2">&amp;mut </span>r) };
-        from_code(<span class="string">&quot;snd_pcm_poll_descriptors_revents&quot;</span>, z).map(|<span class="kw">_</span>| poll::Flags::from_bits_truncate(r <span class="kw">as </span>c_short))
+        from_code(<span class="string">"snd_pcm_poll_descriptors_revents"</span>, z).map(|<span class="kw">_</span>| poll::Flags::from_bits_truncate(r <span class="kw">as </span>c_short))
     }
 }
 
@@ -1604,15 +1605,15 @@
 /// Also implements `std::io::Read` and `std::io::Write`.
 ///
 /// Note: Only one IO object is allowed in scope at a time (for mmap safety).
-</span><span class="kw">pub struct </span>IO&lt;<span class="lifetime">&#39;a</span>, S: Copy&gt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>PCM, PhantomData&lt;S&gt;);
+</span><span class="kw">pub struct </span>IO&lt;<span class="lifetime">'a</span>, S: Copy&gt;(<span class="kw-2">&amp;</span><span class="lifetime">'a </span>PCM, PhantomData&lt;S&gt;);
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, S: Copy&gt; Drop <span class="kw">for </span>IO&lt;<span class="lifetime">&#39;a</span>, S&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, S: Copy&gt; Drop <span class="kw">for </span>IO&lt;<span class="lifetime">'a</span>, S&gt; {
     <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) { (<span class="self">self</span>.<span class="number">0</span>).<span class="number">1</span>.set(<span class="bool-val">false</span>) }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, S: Copy&gt; IO&lt;<span class="lifetime">&#39;a</span>, S&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, S: Copy&gt; IO&lt;<span class="lifetime">'a</span>, S&gt; {
 
-    <span class="kw">fn </span>new(a: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>PCM) -&gt; IO&lt;<span class="lifetime">&#39;a</span>, S&gt; {
+    <span class="kw">fn </span>new(a: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>PCM) -&gt; IO&lt;<span class="lifetime">'a</span>, S&gt; {
         a.check_has_io();
         a.<span class="number">1</span>.set(<span class="bool-val">true</span>);
         IO(a, PhantomData)
@@ -1642,7 +1643,7 @@
 
     <span class="doccomment">/// Wrapper around snd_pcm_mmap_begin and snd_pcm_mmap_commit.
     ///
-    /// You can read/write into the sound card&#39;s buffer during the call to the closure.
+    /// You can read/write into the sound card's buffer during the call to the closure.
     /// According to alsa-lib docs, you should call avail_update before calling this function.
     ///
     /// All calculations are in *frames*, i e, the closure should return number of frames processed.
@@ -1659,8 +1660,8 @@
         <span class="kw">let </span>(first, step) = <span class="kw">unsafe </span>{ ((<span class="kw-2">*</span>areas).first, (<span class="kw-2">*</span>areas).step) };
         <span class="kw">if </span>first != <span class="number">0 </span>|| step <span class="kw">as </span>isize != <span class="self">self</span>.<span class="number">0</span>.frames_to_bytes(<span class="number">1</span>) * <span class="number">8 </span>{
             <span class="kw">unsafe </span>{ alsa::snd_pcm_mmap_commit((<span class="self">self</span>.<span class="number">0</span>).<span class="number">0</span>, offs, <span class="number">0</span>) };
-            <span class="comment">// let s = format!(&quot;Can only mmap a single interleaved buffer (first = {:?}, step = {:?})&quot;, first, step);
-            </span><span class="kw">return </span><span class="prelude-val">Err</span>(Error::unsupported(<span class="string">&quot;snd_pcm_mmap_begin&quot;</span>));
+            <span class="comment">// let s = format!("Can only mmap a single interleaved buffer (first = {:?}, step = {:?})", first, step);
+            </span><span class="kw">return </span><span class="prelude-val">Err</span>(Error::unsupported(<span class="string">"snd_pcm_mmap_begin"</span>));
         }
 
         <span class="kw">let </span>buf = <span class="kw">unsafe </span>{
@@ -1673,7 +1674,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, S: Copy&gt; io::Read <span class="kw">for </span>IO&lt;<span class="lifetime">&#39;a</span>, S&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, S: Copy&gt; io::Read <span class="kw">for </span>IO&lt;<span class="lifetime">'a</span>, S&gt; {
     <span class="kw">fn </span>read(<span class="kw-2">&amp;mut </span><span class="self">self</span>, buf: <span class="kw-2">&amp;mut </span>[u8]) -&gt; io::Result&lt;usize&gt; {
         <span class="kw">let </span>size = <span class="self">self</span>.<span class="number">0</span>.bytes_to_frames(buf.len() <span class="kw">as </span>isize) <span class="kw">as </span>alsa::snd_pcm_uframes_t; <span class="comment">// TODO: Do we need to check for overflow here?
         </span><span class="kw">let </span>r = <span class="kw">unsafe </span>{ alsa::snd_pcm_readi((<span class="self">self</span>.<span class="number">0</span>).<span class="number">0</span>, buf.as_mut_ptr() <span class="kw">as </span><span class="kw-2">*mut </span>c_void, size) };
@@ -1682,7 +1683,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, S: Copy&gt; io::Write <span class="kw">for </span>IO&lt;<span class="lifetime">&#39;a</span>, S&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, S: Copy&gt; io::Write <span class="kw">for </span>IO&lt;<span class="lifetime">'a</span>, S&gt; {
     <span class="kw">fn </span>write(<span class="kw-2">&amp;mut </span><span class="self">self</span>, buf: <span class="kw-2">&amp;</span>[u8]) -&gt; io::Result&lt;usize&gt; {
         <span class="kw">let </span>size = <span class="self">self</span>.<span class="number">0</span>.bytes_to_frames(buf.len() <span class="kw">as </span>isize) <span class="kw">as </span>alsa::snd_pcm_uframes_t; <span class="comment">// TODO: Do we need to check for overflow here?
         </span><span class="kw">let </span>r = <span class="kw">unsafe </span>{ alsa::snd_pcm_writei((<span class="self">self</span>.<span class="number">0</span>).<span class="number">0</span>, buf.as_ptr() <span class="kw">as </span><span class="kw-2">*const </span>c_void, size) };
@@ -1764,57 +1765,57 @@
 );
 
 <span class="kw">impl </span>fmt::Display <span class="kw">for </span>Format {
-    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; fmt::Result {
         <span class="kw">use </span>Format::<span class="kw-2">*</span>;
         <span class="kw">match </span><span class="kw-2">*</span><span class="self">self </span>{
-            S8 =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;S8&quot;</span>),
-            U8 =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;U8&quot;</span>),
-            S16LE =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;S16_LE&quot;</span>),
-            S16BE =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;S16_BE&quot;</span>),
-            U16LE =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;U16_LE&quot;</span>),
-            U16BE =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;U16_BE&quot;</span>),
-            S24LE =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;S24_LE&quot;</span>),
-            S24BE =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;S24_BE&quot;</span>),
-            U24LE =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;U24_LE&quot;</span>),
-            U24BE =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;U24_BE&quot;</span>),
-            S32LE =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;S32_LE&quot;</span>),
-            S32BE =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;S32_BE&quot;</span>),
-            U32LE =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;U32_LE&quot;</span>),
-            U32BE =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;U32_BE&quot;</span>),
-            FloatLE =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;FLOAT_LE&quot;</span>),
-            FloatBE =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;FLOAT_BE&quot;</span>),
-            Float64LE =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;FLOAT64_LE&quot;</span>),
-            Float64BE =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;FLOAT64_BE&quot;</span>),
-            IEC958SubframeLE =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;IEC958_SUBFRAME_LE&quot;</span>),
-            IEC958SubframeBE =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;IEC958_SUBFRAME_BE&quot;</span>),
-            MuLaw =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;MU_LAW&quot;</span>),
-            ALaw =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;A_LAW&quot;</span>),
-            ImaAdPCM =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;IMA_ADPCM&quot;</span>),
-            MPEG =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;MPEG&quot;</span>),
-            GSM =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;GSM&quot;</span>),
-            Special =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;SPECIAL&quot;</span>),
-            S243LE =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;S24_3LE&quot;</span>),
-            S243BE =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;S24_3BE&quot;</span>),
-            U243LE =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;U24_3LE&quot;</span>),
-            U243BE =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;U24_3BE&quot;</span>),
-            S203LE =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;S20_3LE&quot;</span>),
-            S203BE =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;S20_3BE&quot;</span>),
-            U203LE =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;U20_3LE&quot;</span>),
-            U203BE =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;U20_3BE&quot;</span>),
-            S183LE =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;S18_3LE&quot;</span>),
-            S183BE =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;S18_3BE&quot;</span>),
-            U183LE =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;U18_3LE&quot;</span>),
-            U183BE =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;U18_3BE&quot;</span>),
-            G72324 =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;G723_24&quot;</span>),
-            G723241B =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;G723_24_1B&quot;</span>),
-            G72340 =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;G723_40&quot;</span>),
-            G723401B =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;G723_40_1B&quot;</span>),
-            DSDU8 =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;DSD_U8&quot;</span>),
-            DSDU16LE =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;DSD_U16_LE&quot;</span>),
-            DSDU32LE =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;DSD_U32_LE&quot;</span>),
-            DSDU16BE =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;DSD_U16_BE&quot;</span>),
-            DSDU32BE =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;DSD_U32_BE&quot;</span>),
-            <span class="kw">_ </span>=&gt; <span class="macro">write!</span>(f, <span class="string">&quot;UNKNOWN&quot;</span>),
+            S8 =&gt; <span class="macro">write!</span>(f, <span class="string">"S8"</span>),
+            U8 =&gt; <span class="macro">write!</span>(f, <span class="string">"U8"</span>),
+            S16LE =&gt; <span class="macro">write!</span>(f, <span class="string">"S16_LE"</span>),
+            S16BE =&gt; <span class="macro">write!</span>(f, <span class="string">"S16_BE"</span>),
+            U16LE =&gt; <span class="macro">write!</span>(f, <span class="string">"U16_LE"</span>),
+            U16BE =&gt; <span class="macro">write!</span>(f, <span class="string">"U16_BE"</span>),
+            S24LE =&gt; <span class="macro">write!</span>(f, <span class="string">"S24_LE"</span>),
+            S24BE =&gt; <span class="macro">write!</span>(f, <span class="string">"S24_BE"</span>),
+            U24LE =&gt; <span class="macro">write!</span>(f, <span class="string">"U24_LE"</span>),
+            U24BE =&gt; <span class="macro">write!</span>(f, <span class="string">"U24_BE"</span>),
+            S32LE =&gt; <span class="macro">write!</span>(f, <span class="string">"S32_LE"</span>),
+            S32BE =&gt; <span class="macro">write!</span>(f, <span class="string">"S32_BE"</span>),
+            U32LE =&gt; <span class="macro">write!</span>(f, <span class="string">"U32_LE"</span>),
+            U32BE =&gt; <span class="macro">write!</span>(f, <span class="string">"U32_BE"</span>),
+            FloatLE =&gt; <span class="macro">write!</span>(f, <span class="string">"FLOAT_LE"</span>),
+            FloatBE =&gt; <span class="macro">write!</span>(f, <span class="string">"FLOAT_BE"</span>),
+            Float64LE =&gt; <span class="macro">write!</span>(f, <span class="string">"FLOAT64_LE"</span>),
+            Float64BE =&gt; <span class="macro">write!</span>(f, <span class="string">"FLOAT64_BE"</span>),
+            IEC958SubframeLE =&gt; <span class="macro">write!</span>(f, <span class="string">"IEC958_SUBFRAME_LE"</span>),
+            IEC958SubframeBE =&gt; <span class="macro">write!</span>(f, <span class="string">"IEC958_SUBFRAME_BE"</span>),
+            MuLaw =&gt; <span class="macro">write!</span>(f, <span class="string">"MU_LAW"</span>),
+            ALaw =&gt; <span class="macro">write!</span>(f, <span class="string">"A_LAW"</span>),
+            ImaAdPCM =&gt; <span class="macro">write!</span>(f, <span class="string">"IMA_ADPCM"</span>),
+            MPEG =&gt; <span class="macro">write!</span>(f, <span class="string">"MPEG"</span>),
+            GSM =&gt; <span class="macro">write!</span>(f, <span class="string">"GSM"</span>),
+            Special =&gt; <span class="macro">write!</span>(f, <span class="string">"SPECIAL"</span>),
+            S243LE =&gt; <span class="macro">write!</span>(f, <span class="string">"S24_3LE"</span>),
+            S243BE =&gt; <span class="macro">write!</span>(f, <span class="string">"S24_3BE"</span>),
+            U243LE =&gt; <span class="macro">write!</span>(f, <span class="string">"U24_3LE"</span>),
+            U243BE =&gt; <span class="macro">write!</span>(f, <span class="string">"U24_3BE"</span>),
+            S203LE =&gt; <span class="macro">write!</span>(f, <span class="string">"S20_3LE"</span>),
+            S203BE =&gt; <span class="macro">write!</span>(f, <span class="string">"S20_3BE"</span>),
+            U203LE =&gt; <span class="macro">write!</span>(f, <span class="string">"U20_3LE"</span>),
+            U203BE =&gt; <span class="macro">write!</span>(f, <span class="string">"U20_3BE"</span>),
+            S183LE =&gt; <span class="macro">write!</span>(f, <span class="string">"S18_3LE"</span>),
+            S183BE =&gt; <span class="macro">write!</span>(f, <span class="string">"S18_3BE"</span>),
+            U183LE =&gt; <span class="macro">write!</span>(f, <span class="string">"U18_3LE"</span>),
+            U183BE =&gt; <span class="macro">write!</span>(f, <span class="string">"U18_3BE"</span>),
+            G72324 =&gt; <span class="macro">write!</span>(f, <span class="string">"G723_24"</span>),
+            G723241B =&gt; <span class="macro">write!</span>(f, <span class="string">"G723_24_1B"</span>),
+            G72340 =&gt; <span class="macro">write!</span>(f, <span class="string">"G723_40"</span>),
+            G723401B =&gt; <span class="macro">write!</span>(f, <span class="string">"G723_40_1B"</span>),
+            DSDU8 =&gt; <span class="macro">write!</span>(f, <span class="string">"DSD_U8"</span>),
+            DSDU16LE =&gt; <span class="macro">write!</span>(f, <span class="string">"DSD_U16_LE"</span>),
+            DSDU32LE =&gt; <span class="macro">write!</span>(f, <span class="string">"DSD_U32_LE"</span>),
+            DSDU16BE =&gt; <span class="macro">write!</span>(f, <span class="string">"DSD_U16_BE"</span>),
+            DSDU32BE =&gt; <span class="macro">write!</span>(f, <span class="string">"DSD_U32_BE"</span>),
+            <span class="kw">_ </span>=&gt; <span class="macro">write!</span>(f, <span class="string">"UNKNOWN"</span>),
         }
     }
 }
@@ -1825,53 +1826,53 @@
     <span class="kw">fn </span>from_str(s: <span class="kw-2">&amp;</span>str) -&gt; std::result::Result&lt;<span class="self">Self</span>, <span class="self">Self</span>::Err&gt; {
         <span class="kw">use </span>Format::<span class="kw-2">*</span>;
         <span class="prelude-val">Ok</span>(<span class="kw">match </span>s.to_ascii_uppercase().as_str() {
-            <span class="string">&quot;S8&quot; </span>=&gt; S8,
-            <span class="string">&quot;U8&quot; </span>=&gt; U8,
-            <span class="string">&quot;S16_LE&quot; </span>=&gt; S16LE,
-            <span class="string">&quot;S16_BE&quot; </span>=&gt; S16BE,
-            <span class="string">&quot;U16_LE&quot; </span>=&gt; U16LE,
-            <span class="string">&quot;U16_BE&quot; </span>=&gt; U16BE,
-            <span class="string">&quot;S24_LE&quot; </span>=&gt; S24LE,
-            <span class="string">&quot;S24_BE&quot; </span>=&gt; S24BE,
-            <span class="string">&quot;U24_LE&quot; </span>=&gt; U24LE,
-            <span class="string">&quot;U24_BE&quot; </span>=&gt; U24BE,
-            <span class="string">&quot;S32_LE&quot; </span>=&gt; S32LE,
-            <span class="string">&quot;S32_BE&quot; </span>=&gt; S32BE,
-            <span class="string">&quot;U32_LE&quot; </span>=&gt; U32LE,
-            <span class="string">&quot;U32_BE&quot; </span>=&gt; U32BE,
-            <span class="string">&quot;FLOAT_LE&quot; </span>=&gt; FloatLE,
-            <span class="string">&quot;FLOAT_BE&quot; </span>=&gt; FloatBE,
-            <span class="string">&quot;FLOAT64_LE&quot; </span>=&gt; Float64LE,
-            <span class="string">&quot;FLOAT64_BE&quot; </span>=&gt; Float64BE,
-            <span class="string">&quot;IEC958_SUBFRAME_LE&quot; </span>=&gt; IEC958SubframeLE,
-            <span class="string">&quot;IEC958_SUBFRAME_BE&quot; </span>=&gt; IEC958SubframeBE,
-            <span class="string">&quot;MU_LAW&quot; </span>=&gt; MuLaw,
-            <span class="string">&quot;A_LAW&quot; </span>=&gt; ALaw,
-            <span class="string">&quot;IMA_ADPCM&quot; </span>=&gt; ImaAdPCM,
-            <span class="string">&quot;MPEG&quot; </span>=&gt; MPEG,
-            <span class="string">&quot;GSM&quot; </span>=&gt; GSM,
-            <span class="string">&quot;SPECIAL&quot; </span>=&gt; Special,
-            <span class="string">&quot;S24_3LE&quot; </span>=&gt; S243LE,
-            <span class="string">&quot;S24_3BE&quot; </span>=&gt; S243BE,
-            <span class="string">&quot;U24_3LE&quot; </span>=&gt; U243LE,
-            <span class="string">&quot;U24_3BE&quot; </span>=&gt; U243BE,
-            <span class="string">&quot;S20_3LE&quot; </span>=&gt; S203LE,
-            <span class="string">&quot;S20_3BE&quot; </span>=&gt; S203BE,
-            <span class="string">&quot;U20_3LE&quot; </span>=&gt; U203LE,
-            <span class="string">&quot;U20_3BE&quot; </span>=&gt; U203BE,
-            <span class="string">&quot;S18_3LE&quot; </span>=&gt; S183LE,
-            <span class="string">&quot;S18_3BE&quot; </span>=&gt; S183BE,
-            <span class="string">&quot;U18_3LE&quot; </span>=&gt; U183LE,
-            <span class="string">&quot;U18_3BE&quot; </span>=&gt; U183BE,
-            <span class="string">&quot;G723_24&quot; </span>=&gt; G72324,
-            <span class="string">&quot;G723_24_1B&quot; </span>=&gt; G723241B,
-            <span class="string">&quot;G723_40&quot; </span>=&gt; G72340,
-            <span class="string">&quot;G723_40_1B&quot; </span>=&gt; G723401B,
-            <span class="string">&quot;DSD_U8&quot; </span>=&gt; DSDU8,
-            <span class="string">&quot;DSD_U16_LE&quot; </span>=&gt; DSDU16LE,
-            <span class="string">&quot;DSD_U32_LE&quot; </span>=&gt; DSDU32LE,
-            <span class="string">&quot;DSD_U16_BE&quot; </span>=&gt; DSDU16BE,
-            <span class="string">&quot;DSD_U32_BE&quot; </span>=&gt; DSDU32BE,
+            <span class="string">"S8" </span>=&gt; S8,
+            <span class="string">"U8" </span>=&gt; U8,
+            <span class="string">"S16_LE" </span>=&gt; S16LE,
+            <span class="string">"S16_BE" </span>=&gt; S16BE,
+            <span class="string">"U16_LE" </span>=&gt; U16LE,
+            <span class="string">"U16_BE" </span>=&gt; U16BE,
+            <span class="string">"S24_LE" </span>=&gt; S24LE,
+            <span class="string">"S24_BE" </span>=&gt; S24BE,
+            <span class="string">"U24_LE" </span>=&gt; U24LE,
+            <span class="string">"U24_BE" </span>=&gt; U24BE,
+            <span class="string">"S32_LE" </span>=&gt; S32LE,
+            <span class="string">"S32_BE" </span>=&gt; S32BE,
+            <span class="string">"U32_LE" </span>=&gt; U32LE,
+            <span class="string">"U32_BE" </span>=&gt; U32BE,
+            <span class="string">"FLOAT_LE" </span>=&gt; FloatLE,
+            <span class="string">"FLOAT_BE" </span>=&gt; FloatBE,
+            <span class="string">"FLOAT64_LE" </span>=&gt; Float64LE,
+            <span class="string">"FLOAT64_BE" </span>=&gt; Float64BE,
+            <span class="string">"IEC958_SUBFRAME_LE" </span>=&gt; IEC958SubframeLE,
+            <span class="string">"IEC958_SUBFRAME_BE" </span>=&gt; IEC958SubframeBE,
+            <span class="string">"MU_LAW" </span>=&gt; MuLaw,
+            <span class="string">"A_LAW" </span>=&gt; ALaw,
+            <span class="string">"IMA_ADPCM" </span>=&gt; ImaAdPCM,
+            <span class="string">"MPEG" </span>=&gt; MPEG,
+            <span class="string">"GSM" </span>=&gt; GSM,
+            <span class="string">"SPECIAL" </span>=&gt; Special,
+            <span class="string">"S24_3LE" </span>=&gt; S243LE,
+            <span class="string">"S24_3BE" </span>=&gt; S243BE,
+            <span class="string">"U24_3LE" </span>=&gt; U243LE,
+            <span class="string">"U24_3BE" </span>=&gt; U243BE,
+            <span class="string">"S20_3LE" </span>=&gt; S203LE,
+            <span class="string">"S20_3BE" </span>=&gt; S203BE,
+            <span class="string">"U20_3LE" </span>=&gt; U203LE,
+            <span class="string">"U20_3BE" </span>=&gt; U203BE,
+            <span class="string">"S18_3LE" </span>=&gt; S183LE,
+            <span class="string">"S18_3BE" </span>=&gt; S183BE,
+            <span class="string">"U18_3LE" </span>=&gt; U183LE,
+            <span class="string">"U18_3BE" </span>=&gt; U183BE,
+            <span class="string">"G723_24" </span>=&gt; G72324,
+            <span class="string">"G723_24_1B" </span>=&gt; G723241B,
+            <span class="string">"G723_40" </span>=&gt; G72340,
+            <span class="string">"G723_40_1B" </span>=&gt; G723401B,
+            <span class="string">"DSD_U8" </span>=&gt; DSDU8,
+            <span class="string">"DSD_U16_LE" </span>=&gt; DSDU16LE,
+            <span class="string">"DSD_U32_LE" </span>=&gt; DSDU32LE,
+            <span class="string">"DSD_U16_BE" </span>=&gt; DSDU16BE,
+            <span class="string">"DSD_U32_BE" </span>=&gt; DSDU32BE,
             <span class="kw">_ </span>=&gt; Unknown,
         })
     }
@@ -1885,38 +1886,38 @@
     <span class="kw">pub const fn </span>float() -&gt; Format { &lt;f32 <span class="kw">as </span>IoFormat&gt;::FORMAT }
     <span class="kw">pub const fn </span>float64() -&gt; Format { &lt;f64 <span class="kw">as </span>IoFormat&gt;::FORMAT }
 
-    <span class="attr">#[cfg(target_endian = <span class="string">&quot;little&quot;</span>)] </span><span class="kw">pub const fn </span>s24() -&gt; Format { Format::S24LE }
-    <span class="attr">#[cfg(target_endian = <span class="string">&quot;big&quot;</span>)] </span><span class="kw">pub const fn </span>s24() -&gt; Format { Format::S24BE }
+    <span class="attr">#[cfg(target_endian = <span class="string">"little"</span>)] </span><span class="kw">pub const fn </span>s24() -&gt; Format { Format::S24LE }
+    <span class="attr">#[cfg(target_endian = <span class="string">"big"</span>)] </span><span class="kw">pub const fn </span>s24() -&gt; Format { Format::S24BE }
 
-    <span class="attr">#[cfg(target_endian = <span class="string">&quot;little&quot;</span>)] </span><span class="kw">pub const fn </span>s24_3() -&gt; Format { Format::S243LE }
-    <span class="attr">#[cfg(target_endian = <span class="string">&quot;big&quot;</span>)] </span><span class="kw">pub const fn </span>s24_3() -&gt; Format { Format::S243BE }
+    <span class="attr">#[cfg(target_endian = <span class="string">"little"</span>)] </span><span class="kw">pub const fn </span>s24_3() -&gt; Format { Format::S243LE }
+    <span class="attr">#[cfg(target_endian = <span class="string">"big"</span>)] </span><span class="kw">pub const fn </span>s24_3() -&gt; Format { Format::S243BE }
 
-    <span class="attr">#[cfg(target_endian = <span class="string">&quot;little&quot;</span>)] </span><span class="kw">pub const fn </span>u24() -&gt; Format { Format::U24LE }
-    <span class="attr">#[cfg(target_endian = <span class="string">&quot;big&quot;</span>)] </span><span class="kw">pub const fn </span>u24() -&gt; Format { Format::U24BE }
+    <span class="attr">#[cfg(target_endian = <span class="string">"little"</span>)] </span><span class="kw">pub const fn </span>u24() -&gt; Format { Format::U24LE }
+    <span class="attr">#[cfg(target_endian = <span class="string">"big"</span>)] </span><span class="kw">pub const fn </span>u24() -&gt; Format { Format::U24BE }
 
-    <span class="attr">#[cfg(target_endian = <span class="string">&quot;little&quot;</span>)] </span><span class="kw">pub const fn </span>u24_3() -&gt; Format { Format::U243LE }
-    <span class="attr">#[cfg(target_endian = <span class="string">&quot;big&quot;</span>)] </span><span class="kw">pub const fn </span>u24_3() -&gt; Format { Format::U243BE }
+    <span class="attr">#[cfg(target_endian = <span class="string">"little"</span>)] </span><span class="kw">pub const fn </span>u24_3() -&gt; Format { Format::U243LE }
+    <span class="attr">#[cfg(target_endian = <span class="string">"big"</span>)] </span><span class="kw">pub const fn </span>u24_3() -&gt; Format { Format::U243BE }
 
-    <span class="attr">#[cfg(target_endian = <span class="string">&quot;little&quot;</span>)] </span><span class="kw">pub const fn </span>s20_3() -&gt; Format { Format::S203LE }
-    <span class="attr">#[cfg(target_endian = <span class="string">&quot;big&quot;</span>)] </span><span class="kw">pub const fn </span>s20_3() -&gt; Format { Format::S203BE }
+    <span class="attr">#[cfg(target_endian = <span class="string">"little"</span>)] </span><span class="kw">pub const fn </span>s20_3() -&gt; Format { Format::S203LE }
+    <span class="attr">#[cfg(target_endian = <span class="string">"big"</span>)] </span><span class="kw">pub const fn </span>s20_3() -&gt; Format { Format::S203BE }
 
-    <span class="attr">#[cfg(target_endian = <span class="string">&quot;little&quot;</span>)] </span><span class="kw">pub const fn </span>u20_3() -&gt; Format { Format::U203LE }
-    <span class="attr">#[cfg(target_endian = <span class="string">&quot;big&quot;</span>)] </span><span class="kw">pub const fn </span>u20_3() -&gt; Format { Format::U203BE }
+    <span class="attr">#[cfg(target_endian = <span class="string">"little"</span>)] </span><span class="kw">pub const fn </span>u20_3() -&gt; Format { Format::U203LE }
+    <span class="attr">#[cfg(target_endian = <span class="string">"big"</span>)] </span><span class="kw">pub const fn </span>u20_3() -&gt; Format { Format::U203BE }
 
-    <span class="attr">#[cfg(target_endian = <span class="string">&quot;little&quot;</span>)] </span><span class="kw">pub const fn </span>s18_3() -&gt; Format { Format::S183LE }
-    <span class="attr">#[cfg(target_endian = <span class="string">&quot;big&quot;</span>)] </span><span class="kw">pub const fn </span>s18_3() -&gt; Format { Format::S183BE }
+    <span class="attr">#[cfg(target_endian = <span class="string">"little"</span>)] </span><span class="kw">pub const fn </span>s18_3() -&gt; Format { Format::S183LE }
+    <span class="attr">#[cfg(target_endian = <span class="string">"big"</span>)] </span><span class="kw">pub const fn </span>s18_3() -&gt; Format { Format::S183BE }
 
-    <span class="attr">#[cfg(target_endian = <span class="string">&quot;little&quot;</span>)] </span><span class="kw">pub const fn </span>u18_3() -&gt; Format { Format::U183LE }
-    <span class="attr">#[cfg(target_endian = <span class="string">&quot;big&quot;</span>)] </span><span class="kw">pub const fn </span>u18_3() -&gt; Format { Format::U183BE }
+    <span class="attr">#[cfg(target_endian = <span class="string">"little"</span>)] </span><span class="kw">pub const fn </span>u18_3() -&gt; Format { Format::U183LE }
+    <span class="attr">#[cfg(target_endian = <span class="string">"big"</span>)] </span><span class="kw">pub const fn </span>u18_3() -&gt; Format { Format::U183BE }
 
-    <span class="attr">#[cfg(target_endian = <span class="string">&quot;little&quot;</span>)] </span><span class="kw">pub const fn </span>dsd_u16() -&gt; Format { Format::DSDU16LE }
-    <span class="attr">#[cfg(target_endian = <span class="string">&quot;big&quot;</span>)] </span><span class="kw">pub const fn </span>dsd_u16() -&gt; Format { Format::DSDU16BE }
+    <span class="attr">#[cfg(target_endian = <span class="string">"little"</span>)] </span><span class="kw">pub const fn </span>dsd_u16() -&gt; Format { Format::DSDU16LE }
+    <span class="attr">#[cfg(target_endian = <span class="string">"big"</span>)] </span><span class="kw">pub const fn </span>dsd_u16() -&gt; Format { Format::DSDU16BE }
 
-    <span class="attr">#[cfg(target_endian = <span class="string">&quot;little&quot;</span>)] </span><span class="kw">pub const fn </span>dsd_u32() -&gt; Format { Format::DSDU32LE }
-    <span class="attr">#[cfg(target_endian = <span class="string">&quot;big&quot;</span>)] </span><span class="kw">pub const fn </span>dsd_u32() -&gt; Format { Format::DSDU32BE }
+    <span class="attr">#[cfg(target_endian = <span class="string">"little"</span>)] </span><span class="kw">pub const fn </span>dsd_u32() -&gt; Format { Format::DSDU32LE }
+    <span class="attr">#[cfg(target_endian = <span class="string">"big"</span>)] </span><span class="kw">pub const fn </span>dsd_u32() -&gt; Format { Format::DSDU32BE }
 
-    <span class="attr">#[cfg(target_endian = <span class="string">&quot;little&quot;</span>)] </span><span class="kw">pub const fn </span>iec958_subframe() -&gt; Format { Format::IEC958SubframeLE }
-    <span class="attr">#[cfg(target_endian = <span class="string">&quot;big&quot;</span>)] </span><span class="kw">pub const fn </span>iec958_subframe() -&gt; Format { Format::IEC958SubframeBE }
+    <span class="attr">#[cfg(target_endian = <span class="string">"little"</span>)] </span><span class="kw">pub const fn </span>iec958_subframe() -&gt; Format { Format::IEC958SubframeLE }
+    <span class="attr">#[cfg(target_endian = <span class="string">"big"</span>)] </span><span class="kw">pub const fn </span>iec958_subframe() -&gt; Format { Format::IEC958SubframeBE }
 
     <span class="kw">pub fn </span>physical_width(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;i32&gt; {
         <span class="macro">acheck!</span>(snd_pcm_format_physical_width(<span class="self">self</span>.to_c_int()))
@@ -1944,39 +1945,39 @@
 <span class="kw">impl </span>IoFormat <span class="kw">for </span>u8 { <span class="kw">const </span>FORMAT: Format = Format::U8; }
 
 <span class="kw">impl </span>IoFormat <span class="kw">for </span>i16 {
-    <span class="attr">#[cfg(target_endian = <span class="string">&quot;little&quot;</span>)]
+    <span class="attr">#[cfg(target_endian = <span class="string">"little"</span>)]
     </span><span class="kw">const </span>FORMAT: Format = Format::S16LE;
-    <span class="attr">#[cfg(target_endian = <span class="string">&quot;big&quot;</span>)]
+    <span class="attr">#[cfg(target_endian = <span class="string">"big"</span>)]
     </span><span class="kw">const </span>FORMAT: Format = Format::S16BE;
 }
 <span class="kw">impl </span>IoFormat <span class="kw">for </span>u16 {
-    <span class="attr">#[cfg(target_endian = <span class="string">&quot;little&quot;</span>)]
+    <span class="attr">#[cfg(target_endian = <span class="string">"little"</span>)]
     </span><span class="kw">const </span>FORMAT: Format = Format::U16LE;
-    <span class="attr">#[cfg(target_endian = <span class="string">&quot;big&quot;</span>)]
+    <span class="attr">#[cfg(target_endian = <span class="string">"big"</span>)]
     </span><span class="kw">const </span>FORMAT: Format = Format::U16BE;
 }
 <span class="kw">impl </span>IoFormat <span class="kw">for </span>i32 {
-    <span class="attr">#[cfg(target_endian = <span class="string">&quot;little&quot;</span>)]
+    <span class="attr">#[cfg(target_endian = <span class="string">"little"</span>)]
     </span><span class="kw">const </span>FORMAT: Format = Format::S32LE;
-    <span class="attr">#[cfg(target_endian = <span class="string">&quot;big&quot;</span>)]
+    <span class="attr">#[cfg(target_endian = <span class="string">"big"</span>)]
     </span><span class="kw">const </span>FORMAT: Format = Format::S32BE;
 }
 <span class="kw">impl </span>IoFormat <span class="kw">for </span>u32 {
-    <span class="attr">#[cfg(target_endian = <span class="string">&quot;little&quot;</span>)]
+    <span class="attr">#[cfg(target_endian = <span class="string">"little"</span>)]
     </span><span class="kw">const </span>FORMAT: Format = Format::U32LE;
-    <span class="attr">#[cfg(target_endian = <span class="string">&quot;big&quot;</span>)]
+    <span class="attr">#[cfg(target_endian = <span class="string">"big"</span>)]
     </span><span class="kw">const </span>FORMAT: Format = Format::U32BE;
 }
 <span class="kw">impl </span>IoFormat <span class="kw">for </span>f32 {
-    <span class="attr">#[cfg(target_endian = <span class="string">&quot;little&quot;</span>)]
+    <span class="attr">#[cfg(target_endian = <span class="string">"little"</span>)]
     </span><span class="kw">const </span>FORMAT: Format = Format::FloatLE;
-    <span class="attr">#[cfg(target_endian = <span class="string">&quot;big&quot;</span>)]
+    <span class="attr">#[cfg(target_endian = <span class="string">"big"</span>)]
     </span><span class="kw">const </span>FORMAT: Format = Format::FloatBE;
 }
 <span class="kw">impl </span>IoFormat <span class="kw">for </span>f64 {
-    <span class="attr">#[cfg(target_endian = <span class="string">&quot;little&quot;</span>)]
+    <span class="attr">#[cfg(target_endian = <span class="string">"little"</span>)]
     </span><span class="kw">const </span>FORMAT: Format = Format::Float64LE;
-    <span class="attr">#[cfg(target_endian = <span class="string">&quot;big&quot;</span>)]
+    <span class="attr">#[cfg(target_endian = <span class="string">"big"</span>)]
     </span><span class="kw">const </span>FORMAT: Format = Format::Float64BE;
 }
 
@@ -2002,19 +2003,19 @@
 );
 
 <span class="doccomment">/// [snd_pcm_hw_params_t](http://www.alsa-project.org/alsa-doc/alsa-lib/group___p_c_m___h_w___params.html) wrapper
-</span><span class="kw">pub struct </span>HwParams&lt;<span class="lifetime">&#39;a</span>&gt;(<span class="kw-2">*mut </span>alsa::snd_pcm_hw_params_t, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>PCM);
+</span><span class="kw">pub struct </span>HwParams&lt;<span class="lifetime">'a</span>&gt;(<span class="kw-2">*mut </span>alsa::snd_pcm_hw_params_t, <span class="kw-2">&amp;</span><span class="lifetime">'a </span>PCM);
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; Drop <span class="kw">for </span>HwParams&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; Drop <span class="kw">for </span>HwParams&lt;<span class="lifetime">'a</span>&gt; {
     <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) { <span class="kw">unsafe </span>{ alsa::snd_pcm_hw_params_free(<span class="self">self</span>.<span class="number">0</span>) }; }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; HwParams&lt;<span class="lifetime">&#39;a</span>&gt; {
-    <span class="kw">fn </span>new(a: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>PCM) -&gt; <span class="prelude-ty">Result</span>&lt;HwParams&lt;<span class="lifetime">&#39;a</span>&gt;&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; HwParams&lt;<span class="lifetime">'a</span>&gt; {
+    <span class="kw">fn </span>new(a: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>PCM) -&gt; <span class="prelude-ty">Result</span>&lt;HwParams&lt;<span class="lifetime">'a</span>&gt;&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>p = ptr::null_mut();
         <span class="macro">acheck!</span>(snd_pcm_hw_params_malloc(<span class="kw-2">&amp;mut </span>p)).map(|<span class="kw">_</span>| HwParams(p, a))
     }
 
-    <span class="kw">pub fn </span>any(a: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>PCM) -&gt; <span class="prelude-ty">Result</span>&lt;HwParams&lt;<span class="lifetime">&#39;a</span>&gt;&gt; { HwParams::new(a).and_then(|p|
+    <span class="kw">pub fn </span>any(a: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>PCM) -&gt; <span class="prelude-ty">Result</span>&lt;HwParams&lt;<span class="lifetime">'a</span>&gt;&gt; { HwParams::new(a).and_then(|p|
         <span class="macro">acheck!</span>(snd_pcm_hw_params_any(a.<span class="number">0</span>, p.<span class="number">0</span>)).map(|<span class="kw">_</span>| p)
     )}
 
@@ -2073,8 +2074,8 @@
     <span class="kw">pub fn </span>get_rate_max(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;u32&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>v = <span class="number">0</span>;
         <span class="comment">// Note on the null ptr: if this ptr is not null, then the value behind it is replaced with
-        // -1 if the suprenum is not in the set (i.e. it&#39;s an open range), 0 otherwise. This could
-        // be returned along with the value, but it&#39;s safe to pass a null ptr in, in which case the
+        // -1 if the suprenum is not in the set (i.e. it's an open range), 0 otherwise. This could
+        // be returned along with the value, but it's safe to pass a null ptr in, in which case the
         // pointer is not dereferenced.
         </span><span class="macro">acheck!</span>(snd_pcm_hw_params_get_rate_max(<span class="self">self</span>.<span class="number">0</span>, <span class="kw-2">&amp;mut </span>v, ptr::null_mut())).map(|<span class="kw">_</span>| v <span class="kw">as </span>u32)
     }
@@ -2097,7 +2098,7 @@
     <span class="kw">pub fn </span>get_format(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;Format&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>v = <span class="number">0</span>;
         <span class="macro">acheck!</span>(snd_pcm_hw_params_get_format(<span class="self">self</span>.<span class="number">0</span>, <span class="kw-2">&amp;mut </span>v))
-            .and_then(|<span class="kw">_</span>| Format::from_c_int(v, <span class="string">&quot;snd_pcm_hw_params_get_format&quot;</span>))
+            .and_then(|<span class="kw">_</span>| Format::from_c_int(v, <span class="string">"snd_pcm_hw_params_get_format"</span>))
     }
 
     <span class="kw">pub fn </span>test_format(<span class="kw-2">&amp;</span><span class="self">self</span>, v: Format) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
@@ -2111,7 +2112,7 @@
     <span class="kw">pub fn </span>get_access(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;Access&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>v = <span class="number">0</span>;
         <span class="macro">acheck!</span>(snd_pcm_hw_params_get_access(<span class="self">self</span>.<span class="number">0</span>, <span class="kw-2">&amp;mut </span>v))
-            .and_then(|<span class="kw">_</span>| Access::from_c_int(v <span class="kw">as </span>c_int, <span class="string">&quot;snd_pcm_hw_params_get_access&quot;</span>))
+            .and_then(|<span class="kw">_</span>| Access::from_c_int(v <span class="kw">as </span>c_int, <span class="string">"snd_pcm_hw_params_get_access"</span>))
     }
 
     <span class="kw">pub fn </span>set_period_size_near(<span class="kw-2">&amp;</span><span class="self">self</span>, v: Frames, dir: ValueOr) -&gt; <span class="prelude-ty">Result</span>&lt;Frames&gt; {
@@ -2235,43 +2236,43 @@
         <span class="macro">acheck!</span>(snd_pcm_hw_params_dump(<span class="self">self</span>.<span class="number">0</span>, <span class="kw">super</span>::io::output_handle(o))).map(|<span class="kw">_</span>| ())
     }
 
-    <span class="kw">pub fn </span>copy_from(<span class="kw-2">&amp;mut </span><span class="self">self</span>, other: <span class="kw-2">&amp;</span>HwParams&lt;<span class="lifetime">&#39;a</span>&gt;) {
+    <span class="kw">pub fn </span>copy_from(<span class="kw-2">&amp;mut </span><span class="self">self</span>, other: <span class="kw-2">&amp;</span>HwParams&lt;<span class="lifetime">'a</span>&gt;) {
         <span class="self">self</span>.<span class="number">1 </span>= other.<span class="number">1</span>;
         <span class="kw">unsafe </span>{ alsa::snd_pcm_hw_params_copy(<span class="self">self</span>.<span class="number">0</span>, other.<span class="number">0</span>) };
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; Clone <span class="kw">for </span>HwParams&lt;<span class="lifetime">&#39;a</span>&gt; {
-    <span class="kw">fn </span>clone(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; HwParams&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; Clone <span class="kw">for </span>HwParams&lt;<span class="lifetime">'a</span>&gt; {
+    <span class="kw">fn </span>clone(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; HwParams&lt;<span class="lifetime">'a</span>&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>r = HwParams::new(<span class="self">self</span>.<span class="number">1</span>).unwrap();
         r.copy_from(<span class="self">self</span>);
         r
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; fmt::Debug <span class="kw">for </span>HwParams&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; fmt::Debug <span class="kw">for </span>HwParams&lt;<span class="lifetime">'a</span>&gt; {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter) -&gt; fmt::Result {
-        f.debug_struct(<span class="string">&quot;HwParams&quot;</span>)
-            .field(<span class="string">&quot;channels&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.get_channels())
-            .field(<span class="string">&quot;rate&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{:?} Hz&quot;</span>, <span class="self">self</span>.get_rate()))
-            .field(<span class="string">&quot;format&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.get_format())
-            .field(<span class="string">&quot;access&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.get_access())
-            .field(<span class="string">&quot;period_size&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{:?} frames&quot;</span>, <span class="self">self</span>.get_period_size()))
-            .field(<span class="string">&quot;buffer_size&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{:?} frames&quot;</span>, <span class="self">self</span>.get_buffer_size()))
+        f.debug_struct(<span class="string">"HwParams"</span>)
+            .field(<span class="string">"channels"</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.get_channels())
+            .field(<span class="string">"rate"</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"{:?} Hz"</span>, <span class="self">self</span>.get_rate()))
+            .field(<span class="string">"format"</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.get_format())
+            .field(<span class="string">"access"</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.get_access())
+            .field(<span class="string">"period_size"</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"{:?} frames"</span>, <span class="self">self</span>.get_period_size()))
+            .field(<span class="string">"buffer_size"</span>, <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"{:?} frames"</span>, <span class="self">self</span>.get_buffer_size()))
             .finish()
     }
 }
 
 <span class="doccomment">/// [snd_pcm_sw_params_t](http://www.alsa-project.org/alsa-doc/alsa-lib/group___p_c_m___s_w___params.html) wrapper
-</span><span class="kw">pub struct </span>SwParams&lt;<span class="lifetime">&#39;a</span>&gt;(<span class="kw-2">*mut </span>alsa::snd_pcm_sw_params_t, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>PCM);
+</span><span class="kw">pub struct </span>SwParams&lt;<span class="lifetime">'a</span>&gt;(<span class="kw-2">*mut </span>alsa::snd_pcm_sw_params_t, <span class="kw-2">&amp;</span><span class="lifetime">'a </span>PCM);
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; Drop <span class="kw">for </span>SwParams&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; Drop <span class="kw">for </span>SwParams&lt;<span class="lifetime">'a</span>&gt; {
     <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) { <span class="kw">unsafe </span>{ alsa::snd_pcm_sw_params_free(<span class="self">self</span>.<span class="number">0</span>) }; }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; SwParams&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; SwParams&lt;<span class="lifetime">'a</span>&gt; {
 
-    <span class="kw">fn </span>new(a: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>PCM) -&gt; <span class="prelude-ty">Result</span>&lt;SwParams&lt;<span class="lifetime">&#39;a</span>&gt;&gt; {
+    <span class="kw">fn </span>new(a: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>PCM) -&gt; <span class="prelude-ty">Result</span>&lt;SwParams&lt;<span class="lifetime">'a</span>&gt;&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>p = ptr::null_mut();
         <span class="macro">acheck!</span>(snd_pcm_sw_params_malloc(<span class="kw-2">&amp;mut </span>p)).map(|<span class="kw">_</span>| SwParams(p, a))
     }
@@ -2325,7 +2326,7 @@
     <span class="kw">pub fn </span>get_tstamp_type(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;TstampType&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>v = <span class="number">0</span>;
         <span class="macro">acheck!</span>(snd_pcm_sw_params_get_tstamp_type(<span class="self">self</span>.<span class="number">0</span>, <span class="kw-2">&amp;mut </span>v))<span class="question-mark">?</span>;
-        TstampType::from_c_int(v <span class="kw">as </span>c_int, <span class="string">&quot;snd_pcm_sw_params_get_tstamp_type&quot;</span>)
+        TstampType::from_c_int(v <span class="kw">as </span>c_int, <span class="string">"snd_pcm_sw_params_get_tstamp_type"</span>)
     }
 
     <span class="kw">pub fn </span>dump(<span class="kw-2">&amp;</span><span class="self">self</span>, o: <span class="kw-2">&amp;mut </span>Output) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
@@ -2333,10 +2334,10 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; fmt::Debug <span class="kw">for </span>SwParams&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; fmt::Debug <span class="kw">for </span>SwParams&lt;<span class="lifetime">'a</span>&gt; {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter) -&gt; fmt::Result {
         <span class="macro">write!</span>(f,
-           <span class="string">&quot;SwParams(avail_min: {:?} frames, start_threshold: {:?} frames, stop_threshold: {:?} frames)&quot;</span>,
+           <span class="string">"SwParams(avail_min: {:?} frames, start_threshold: {:?} frames, stop_threshold: {:?} frames)"</span>,
            <span class="self">self</span>.get_avail_min(), <span class="self">self</span>.get_start_threshold(), <span class="self">self</span>.get_stop_threshold())
     }
 }
@@ -2373,7 +2374,7 @@
     }
 
     <span class="kw">pub fn </span>get_state(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; State { State::from_c_int(
-        <span class="kw">unsafe </span>{ alsa::snd_pcm_status_get_state(<span class="self">self</span>.ptr()) } <span class="kw">as </span>c_int, <span class="string">&quot;snd_pcm_status_get_state&quot;</span>).unwrap() }
+        <span class="kw">unsafe </span>{ alsa::snd_pcm_status_get_state(<span class="self">self</span>.ptr()) } <span class="kw">as </span>c_int, <span class="string">"snd_pcm_status_get_state"</span>).unwrap() }
 
     <span class="kw">pub fn </span>get_avail(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Frames { <span class="kw">unsafe </span>{ alsa::snd_pcm_status_get_avail(<span class="self">self</span>.ptr()) <span class="kw">as </span>Frames }}
     <span class="kw">pub fn </span>get_delay(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Frames { <span class="kw">unsafe </span>{ alsa::snd_pcm_status_get_delay(<span class="self">self</span>.ptr()) }}
@@ -2429,21 +2430,21 @@
 <span class="attr">#[test]
 </span><span class="kw">fn </span>info_from_default() {
     <span class="kw">use </span>std::ffi::CString;
-    <span class="kw">let </span>pcm = PCM::open(<span class="kw-2">&amp;*</span>CString::new(<span class="string">&quot;default&quot;</span>).unwrap(), Direction::Capture, <span class="bool-val">false</span>).unwrap();
+    <span class="kw">let </span>pcm = PCM::open(<span class="kw-2">&amp;*</span>CString::new(<span class="string">"default"</span>).unwrap(), Direction::Capture, <span class="bool-val">false</span>).unwrap();
     <span class="kw">let </span>info = pcm.info().unwrap();
-    <span class="macro">println!</span>(<span class="string">&quot;PCM Info:&quot;</span>);
-    <span class="macro">println!</span>(<span class="string">&quot;\tCard: {}&quot;</span>, info.get_card());
-    <span class="macro">println!</span>(<span class="string">&quot;\tDevice: {}&quot;</span>, info.get_device());
-    <span class="macro">println!</span>(<span class="string">&quot;\tSubdevice: {}&quot;</span>, info.get_subdevice());
-    <span class="macro">println!</span>(<span class="string">&quot;\tId: {}&quot;</span>, info.get_id().unwrap());
-    <span class="macro">println!</span>(<span class="string">&quot;\tName: {}&quot;</span>, info.get_name().unwrap());
-    <span class="macro">println!</span>(<span class="string">&quot;\tSubdevice Name: {}&quot;</span>, info.get_subdevice_name().unwrap());
+    <span class="macro">println!</span>(<span class="string">"PCM Info:"</span>);
+    <span class="macro">println!</span>(<span class="string">"\tCard: {}"</span>, info.get_card());
+    <span class="macro">println!</span>(<span class="string">"\tDevice: {}"</span>, info.get_device());
+    <span class="macro">println!</span>(<span class="string">"\tSubdevice: {}"</span>, info.get_subdevice());
+    <span class="macro">println!</span>(<span class="string">"\tId: {}"</span>, info.get_id().unwrap());
+    <span class="macro">println!</span>(<span class="string">"\tName: {}"</span>, info.get_name().unwrap());
+    <span class="macro">println!</span>(<span class="string">"\tSubdevice Name: {}"</span>, info.get_subdevice_name().unwrap());
 }
 
 <span class="attr">#[test]
 </span><span class="kw">fn </span>drop() {
     <span class="kw">use </span>std::ffi::CString;
-    <span class="kw">let </span>pcm = PCM::open(<span class="kw-2">&amp;*</span>CString::new(<span class="string">&quot;default&quot;</span>).unwrap(), Direction::Capture, <span class="bool-val">false</span>).unwrap();
+    <span class="kw">let </span>pcm = PCM::open(<span class="kw-2">&amp;*</span>CString::new(<span class="string">"default"</span>).unwrap(), Direction::Capture, <span class="bool-val">false</span>).unwrap();
     <span class="comment">// Verify that this does not cause a naming conflict (issue #14)
     </span><span class="kw">let _ </span>= pcm.drop();
 }
@@ -2451,7 +2452,7 @@
 <span class="attr">#[test]
 </span><span class="kw">fn </span>record_from_default() {
     <span class="kw">use </span>std::ffi::CString;
-    <span class="kw">let </span>pcm = PCM::open(<span class="kw-2">&amp;*</span>CString::new(<span class="string">&quot;default&quot;</span>).unwrap(), Direction::Capture, <span class="bool-val">false</span>).unwrap();
+    <span class="kw">let </span>pcm = PCM::open(<span class="kw-2">&amp;*</span>CString::new(<span class="string">"default"</span>).unwrap(), Direction::Capture, <span class="bool-val">false</span>).unwrap();
     <span class="kw">let </span>hwp = HwParams::any(<span class="kw-2">&amp;</span>pcm).unwrap();
     hwp.set_channels(<span class="number">2</span>).unwrap();
     hwp.set_rate(<span class="number">44100</span>, ValueOr::Nearest).unwrap();
@@ -2466,7 +2467,7 @@
 <span class="attr">#[test]
 </span><span class="kw">fn </span>playback_to_default() {
     <span class="kw">use </span>std::ffi::CString;
-    <span class="kw">let </span>pcm = PCM::open(<span class="kw-2">&amp;*</span>CString::new(<span class="string">&quot;default&quot;</span>).unwrap(), Direction::Playback, <span class="bool-val">false</span>).unwrap();
+    <span class="kw">let </span>pcm = PCM::open(<span class="kw-2">&amp;*</span>CString::new(<span class="string">"default"</span>).unwrap(), Direction::Playback, <span class="bool-val">false</span>).unwrap();
     <span class="kw">let </span>hwp = HwParams::any(<span class="kw-2">&amp;</span>pcm).unwrap();
     hwp.set_channels(<span class="number">1</span>).unwrap();
     hwp.set_rate(<span class="number">44100</span>, ValueOr::Nearest).unwrap();
@@ -2479,10 +2480,10 @@
     swp.set_start_threshold(hwp.get_buffer_size().unwrap()).unwrap();
     pcm.sw_params(<span class="kw-2">&amp;</span>swp).unwrap();
 
-    <span class="macro">println!</span>(<span class="string">&quot;PCM status: {:?}, {:?}&quot;</span>, pcm.state(), pcm.hw_params_current().unwrap());
+    <span class="macro">println!</span>(<span class="string">"PCM status: {:?}, {:?}"</span>, pcm.state(), pcm.hw_params_current().unwrap());
     <span class="kw">let </span><span class="kw-2">mut </span>outp = Output::buffer_open().unwrap();
     pcm.dump(<span class="kw-2">&amp;mut </span>outp).unwrap();
-    <span class="macro">println!</span>(<span class="string">&quot;== PCM dump ==\n{}&quot;</span>, outp);
+    <span class="macro">println!</span>(<span class="string">"== PCM dump ==\n{}"</span>, outp);
 
     <span class="kw">let </span><span class="kw-2">mut </span>buf = [<span class="number">0i16</span>; <span class="number">1024</span>];
     <span class="kw">for </span>(i, a) <span class="kw">in </span>buf.iter_mut().enumerate() {
@@ -2490,14 +2491,14 @@
     }
     <span class="kw">let </span>io = pcm.io_i16().unwrap();
     <span class="kw">for _ in </span><span class="number">0</span>..<span class="number">2</span><span class="kw-2">*</span><span class="number">44100</span>/<span class="number">1024 </span>{ <span class="comment">// 2 seconds of playback
-        </span><span class="macro">println!</span>(<span class="string">&quot;PCM state: {:?}&quot;</span>, pcm.state());
+        </span><span class="macro">println!</span>(<span class="string">"PCM state: {:?}"</span>, pcm.state());
         <span class="macro">assert_eq!</span>(io.writei(<span class="kw-2">&amp;</span>buf[..]).unwrap(), <span class="number">1024</span>);
     }
     <span class="kw">if </span>pcm.state() != State::Running { pcm.start().unwrap() };
 
     <span class="kw">let </span><span class="kw-2">mut </span>outp2 = Output::buffer_open().unwrap();
     pcm.status().unwrap().dump(<span class="kw-2">&amp;mut </span>outp2).unwrap();
-    <span class="macro">println!</span>(<span class="string">&quot;== PCM status dump ==\n{}&quot;</span>, outp2);
+    <span class="macro">println!</span>(<span class="string">"== PCM status dump ==\n{}"</span>, outp2);
 
     pcm.drain().unwrap();
 }
@@ -2505,7 +2506,7 @@
 <span class="attr">#[test]
 </span><span class="kw">fn </span>print_sizeof() {
     <span class="kw">let </span>s = <span class="kw">unsafe </span>{ alsa::snd_pcm_status_sizeof() } <span class="kw">as </span>usize;
-    <span class="macro">println!</span>(<span class="string">&quot;Status size: {}&quot;</span>, s);
+    <span class="macro">println!</span>(<span class="string">"Status size: {}"</span>, s);
 
     <span class="macro">assert!</span>(s &lt;= STATUS_SIZE);
 }

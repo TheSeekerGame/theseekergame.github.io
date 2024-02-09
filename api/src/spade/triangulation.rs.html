@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spade-2.5.1/src/triangulation.rs`."><title>triangulation.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="spade" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spade-2.6.0/src/triangulation.rs`."><title>triangulation.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="spade" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -718,6 +719,22 @@
 <a href="#718" id="718">718</a>
 <a href="#719" id="719">719</a>
 <a href="#720" id="720">720</a>
+<a href="#721" id="721">721</a>
+<a href="#722" id="722">722</a>
+<a href="#723" id="723">723</a>
+<a href="#724" id="724">724</a>
+<a href="#725" id="725">725</a>
+<a href="#726" id="726">726</a>
+<a href="#727" id="727">727</a>
+<a href="#728" id="728">728</a>
+<a href="#729" id="729">729</a>
+<a href="#730" id="730">730</a>
+<a href="#731" id="731">731</a>
+<a href="#732" id="732">732</a>
+<a href="#733" id="733">733</a>
+<a href="#734" id="734">734</a>
+<a href="#735" id="735">735</a>
+<a href="#736" id="736">736</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>num_traits::Float;
 
 <span class="kw">use </span><span class="kw">crate</span>::delaunay_core::iterators::HullIterator;
@@ -737,17 +754,17 @@
 
 <span class="doccomment">/// Describes a position in a triangulation.
 ///
-/// The position is set in relation to the triangulation&#39;s vertices, edges and faces.
+/// The position is set in relation to the triangulation's vertices, edges and faces.
 /// This type is usually the result of calling [Triangulation::locate]
 </span><span class="attr">#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Debug, Hash)]
 </span><span class="kw">pub enum </span>PositionInTriangulation {
     <span class="doccomment">/// A position lies exactly on an existing vertex. The verticis handle is given.
     </span>OnVertex(FixedVertexHandle),
 
-    <span class="doccomment">/// A position lies exactly on an edge. The edge&#39;s handle is given.
+    <span class="doccomment">/// A position lies exactly on an edge. The edge's handle is given.
     </span>OnEdge(FixedDirectedEdgeHandle),
 
-    <span class="doccomment">/// A position lies in the interior of a face. The face&#39;s handle is given.
+    <span class="doccomment">/// A position lies in the interior of a face. The face's handle is given.
     </span>OnFace(FixedFaceHandle&lt;InnerTag&gt;),
 
     <span class="doccomment">/// A position lies outside the convex hull. The given edge handle refers to an edge
@@ -767,13 +784,13 @@
 /// [ConstrainedDelaunayTriangulations](crate::ConstrainedDelaunayTriangulation) as well as
 /// regular [DelaunayTriangulations](crate::DelaunayTriangulation).
 </span><span class="kw">pub trait </span>Triangulation: Default {
-    <span class="doccomment">/// The triangulation&#39;s vertex type.
+    <span class="doccomment">/// The triangulation's vertex type.
     </span><span class="kw">type </span>Vertex: HasPosition;
-    <span class="doccomment">/// The triangulation&#39;s edge type. Any new edge is created by using the `Default` trait.
+    <span class="doccomment">/// The triangulation's edge type. Any new edge is created by using the `Default` trait.
     </span><span class="kw">type </span>DirectedEdge: Default;
-    <span class="doccomment">/// The triangulation&#39;s undirected edge type. Any new edge is created by using the `Default` trait.
+    <span class="doccomment">/// The triangulation's undirected edge type. Any new edge is created by using the `Default` trait.
     </span><span class="kw">type </span>UndirectedEdge: Default;
-    <span class="doccomment">/// The triangulation&#39;s face type. Any new face is created by using the `Default` trait.
+    <span class="doccomment">/// The triangulation's face type. Any new face is created by using the `Default` trait.
     </span><span class="kw">type </span>Face: Default;
 
     <span class="doccomment">/// The hint generator used by the triangulation. See [HintGenerator] for more information.
@@ -800,6 +817,22 @@
 
     <span class="attr">#[doc(hidden)]
     </span><span class="kw">fn </span>hint_generator_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span><span class="self">Self</span>::HintGenerator;
+
+    <span class="attr">#[doc(hidden)]
+    </span><span class="kw">fn </span>from_parts(
+        dcel: Dcel&lt;<span class="self">Self</span>::Vertex, <span class="self">Self</span>::DirectedEdge, <span class="self">Self</span>::UndirectedEdge, <span class="self">Self</span>::Face&gt;,
+        hint_generator: <span class="self">Self</span>::HintGenerator,
+        num_constraints: usize,
+    ) -&gt; <span class="self">Self</span>;
+
+    <span class="attr">#[doc(hidden)]
+    #[allow(clippy::type_complexity)]
+    </span><span class="kw">fn </span>into_parts(
+        <span class="self">self</span>,
+    ) -&gt; (
+        Dcel&lt;<span class="self">Self</span>::Vertex, <span class="self">Self</span>::DirectedEdge, <span class="self">Self</span>::UndirectedEdge, <span class="self">Self</span>::Face&gt;,
+        <span class="self">Self</span>::HintGenerator,
+    );
 
     <span class="doccomment">/// Creates a new triangulation.
     ///
@@ -870,7 +903,7 @@
     ///
     /// This graph shows the difference between incremental and bulk loading for a different number of random points - bulk loading becomes
     /// more efficient very quickly.
-    </span><span class="attr">#[doc = <span class="macro">include_str!</span>(<span class="string">&quot;../images/bulk_load_vs_incremental_graph.svg&quot;</span>)]
+    </span><span class="attr">#[doc = <span class="macro">include_str!</span>(<span class="string">"../images/bulk_load_vs_incremental_graph.svg"</span>)]
     </span><span class="kw">fn </span>bulk_load(elements: Vec&lt;<span class="self">Self</span>::Vertex&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, InsertionError&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>result: <span class="self">Self </span>= <span class="kw">crate</span>::delaunay_core::bulk_load(elements)<span class="question-mark">?</span>;
         <span class="kw">let </span>hint_generator = <span class="self">Self</span>::HintGenerator::initialize_from_triangulation(<span class="kw-2">&amp;</span>result);
@@ -1271,7 +1304,7 @@
     ///
     /// The edges are returned in clockwise order as seen from any point in the triangulation.
     ///
-    </span><span class="attr">#[doc = <span class="macro">include_str!</span>(<span class="string">&quot;../images/convex_hull_scenario.svg&quot;</span>)]
+    </span><span class="attr">#[doc = <span class="macro">include_str!</span>(<span class="string">"../images/convex_hull_scenario.svg"</span>)]
     </span><span class="doccomment">///
     /// *A triangulation with its convex hull being highlighted. `e0` .. `e5` denote the returned
     /// edges in clockwise order.*
@@ -1318,13 +1351,13 @@
     /// The rectangle is specified by its lower and upper corners. Yields an empty iterator
     /// if `lower.x &gt; upper.x` or `lower.y &gt; upper.y`.
     ///
-    </span><span class="attr">#[doc = <span class="macro">include_str!</span>(<span class="string">&quot;../images/shape_iterator_rectangle_edges.svg&quot;</span>)]
+    </span><span class="attr">#[doc = <span class="macro">include_str!</span>(<span class="string">"../images/shape_iterator_rectangle_edges.svg"</span>)]
     </span><span class="doccomment">///
     /// *Example: Shows all edges (red) that are returned when iterating over a rectangle (teal)*
     ///
     /// # Memory consumption
     ///
-    /// Memory usage is, on average, in O(|convex_hull(E)|) where &quot;E&quot; refers to all edges that
+    /// Memory usage is, on average, in O(|convex_hull(E)|) where "E" refers to all edges that
     /// have been returned so far.
     </span><span class="kw">fn </span>get_edges_in_rectangle(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
@@ -1345,7 +1378,7 @@
     ///
     /// `radius_2` refers to the **squared radius** of the circle.
     ///
-    </span><span class="attr">#[doc = <span class="macro">include_str!</span>(<span class="string">&quot;../images/shape_iterator_circle_edges.svg&quot;</span>)]
+    </span><span class="attr">#[doc = <span class="macro">include_str!</span>(<span class="string">"../images/shape_iterator_circle_edges.svg"</span>)]
     </span><span class="doccomment">///
     /// *Example: Shows all edges (red) that are returned when iterating over a circle (teal)*
     ///
@@ -1355,7 +1388,7 @@
     ///
     /// # Memory consumption
     ///
-    /// Memory usage is, on average, in O(|convex_hull(E)|) where &quot;E&quot; refers to all edges that
+    /// Memory usage is, on average, in O(|convex_hull(E)|) where "E" refers to all edges that
     /// have been returned so far.
     </span><span class="kw">fn </span>get_edges_in_circle(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
@@ -1370,12 +1403,12 @@
 
     <span class="doccomment">/// Returns all vertices in a rectangle.
     ///
-    /// Any vertex on the rectangle&#39;s boundary or corners is also returned.
+    /// Any vertex on the rectangle's boundary or corners is also returned.
     ///
     /// The rectangle is specified by its lower and upper corners. Yields an empty iterator
     /// if `lower.x &gt; upper.x || lower.y &gt; upper.y`.
     ///
-    </span><span class="attr">#[doc = <span class="macro">include_str!</span>(<span class="string">&quot;../images/shape_iterator_rectangle_vertices.svg&quot;</span>)]
+    </span><span class="attr">#[doc = <span class="macro">include_str!</span>(<span class="string">"../images/shape_iterator_rectangle_vertices.svg"</span>)]
     </span><span class="doccomment">///
     /// *Example: Shows all vertices (red) that are returned when iterating over a rectangle (teal)*
     ///
@@ -1396,11 +1429,11 @@
 
     <span class="doccomment">/// Returns all vertices in a circle.
     ///
-    /// Any vertex on the circle&#39;s boundary is also returned.
+    /// Any vertex on the circle's boundary is also returned.
     ///
     /// `radius_2` refers to the **squared radius** of the circle.
     ///
-    </span><span class="attr">#[doc = <span class="macro">include_str!</span>(<span class="string">&quot;../images/shape_iterator_circle_vertices.svg&quot;</span>)]
+    </span><span class="attr">#[doc = <span class="macro">include_str!</span>(<span class="string">"../images/shape_iterator_circle_vertices.svg"</span>)]
     </span><span class="doccomment">///
     /// *Example: Shows all vertices (red) that are returned when iterating over a circle (teal)*
     ///

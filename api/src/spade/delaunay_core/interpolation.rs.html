@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spade-2.5.1/src/delaunay_core/interpolation.rs`."><title>interpolation.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="spade" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spade-2.6.0/src/delaunay_core/interpolation.rs`."><title>interpolation.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="spade" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -973,12 +974,12 @@
 ///     // Good: Re-use interpolation object!
 ///     let nn = t.natural_neighbor();
 ///     for p in &amp;query_points {
-///         println!(&quot;Value at {:?}: {:?}&quot;, p, nn.interpolate(|v| v.data().height, *p));
+///         println!("Value at {:?}: {:?}", p, nn.interpolate(|v| v.data().height, *p));
 ///     }
 ///
-///     // Bad (slower): Don&#39;t re-use internal buffers
+///     // Bad (slower): Don't re-use internal buffers
 ///     for p in &amp;query_points {
-///         println!(&quot;Value at {:?}: {:?}&quot;, p, t.natural_neighbor().interpolate(|v| v.data().height, *p));
+///         println!("Value at {:?}: {:?}", p, t.natural_neighbor().interpolate(|v| v.data().height, *p));
 ///     }
 ///     Ok(())
 /// }
@@ -986,39 +987,39 @@
 ///
 /// # Visual comparison of interpolation algorithms
 ///
-/// *Note: All of these images are generated by the &quot;interpolation&quot; example*
+/// *Note: All of these images are generated by the "interpolation" example*
 ///
 /// Nearest neighbor interpolation exhibits discontinuities along the voronoi edges:
 ///
-</span><span class="attr">#[doc = <span class="macro">include_str!</span>(<span class="string">&quot;../../images/interpolation_nearest_neighbor.img&quot;</span>)]
+</span><span class="attr">#[doc = <span class="macro">include_str!</span>(<span class="string">"../../images/interpolation_nearest_neighbor.img"</span>)]
 </span><span class="doccomment">///
 /// Barycentric interpolation, by contrast, is continuous everywhere but has no derivative on the edges of the
 /// Delaunay triangulation. These show up as sharp corners in the color gradients on the drawn edges:
 ///
-</span><span class="attr">#[doc = <span class="macro">include_str!</span>(<span class="string">&quot;../../images/interpolation_barycentric.img&quot;</span>)]
+</span><span class="attr">#[doc = <span class="macro">include_str!</span>(<span class="string">"../../images/interpolation_barycentric.img"</span>)]
 </span><span class="doccomment">///
 /// By contrast, natural neighbor interpolation is smooth on the edges - the previously sharp angles are now rounded
-/// off. However, the vertices themselves are still not continuous and will form sharp &quot;peaks&quot; in the resulting
+/// off. However, the vertices themselves are still not continuous and will form sharp "peaks" in the resulting
 /// surface.
 ///
-</span><span class="attr">#[doc = <span class="macro">include_str!</span>(<span class="string">&quot;../../images/interpolation_nn_c0.img&quot;</span>)]
+</span><span class="attr">#[doc = <span class="macro">include_str!</span>(<span class="string">"../../images/interpolation_nn_c0.img"</span>)]
 </span><span class="doccomment">///
 /// With a gradient, the sharp peaks are gone - the surface will smoothly approximate a linear function as defined
 /// by the gradient in the vicinity of each vertex. In the image below, a gradient of `(0.0, 0.0)` is used which
-/// leads to a small &quot;disc&quot; around each vertex with values close to the vertex value.
+/// leads to a small "disc" around each vertex with values close to the vertex value.
 ///
-</span><span class="attr">#[doc = <span class="macro">include_str!</span>(<span class="string">&quot;../../images/interpolation_nn_c1.img&quot;</span>)]
+</span><span class="attr">#[doc = <span class="macro">include_str!</span>(<span class="string">"../../images/interpolation_nn_c1.img"</span>)]
 </span><span class="doccomment">///
-</span><span class="attr">#[doc(alias = <span class="string">&quot;Interpolation&quot;</span>)]
-</span><span class="kw">pub struct </span>NaturalNeighbor&lt;<span class="lifetime">&#39;a</span>, T&gt;
+</span><span class="attr">#[doc(alias = <span class="string">"Interpolation"</span>)]
+</span><span class="kw">pub struct </span>NaturalNeighbor&lt;<span class="lifetime">'a</span>, T&gt;
 <span class="kw">where
     </span>T: Triangulation,
     T::Vertex: HasPosition,
 {
-    triangulation: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>T,
-    <span class="comment">// Various buffers that are used for identifying natural neighbors and their weights. It&#39;s significantly faster
+    triangulation: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>T,
+    <span class="comment">// Various buffers that are used for identifying natural neighbors and their weights. It's significantly faster
     // to clear and re-use these buffers instead of allocating them anew.
-    // We also don&#39;t run the risk of mutably borrowing them twice (causing a RefCell panic) as the RefCells never leak
+    // We also don't run the risk of mutably borrowing them twice (causing a RefCell panic) as the RefCells never leak
     // any of the interpolation methods.
     // Not implementing `Sync` is also fine as the workaround - creating a new `NaturalNeighbor` instance per thread -
     // is very simple.
@@ -1033,21 +1034,21 @@
 /// Created by calling [crate::FloatTriangulation::barycentric].
 ///
 /// Refer to the documentation of [NaturalNeighbor] for an overview of different interpolation methods.
-</span><span class="attr">#[doc(alias = <span class="string">&quot;Interpolation&quot;</span>)]
-</span><span class="kw">pub struct </span>Barycentric&lt;<span class="lifetime">&#39;a</span>, T&gt;
+</span><span class="attr">#[doc(alias = <span class="string">"Interpolation"</span>)]
+</span><span class="kw">pub struct </span>Barycentric&lt;<span class="lifetime">'a</span>, T&gt;
 <span class="kw">where
     </span>T: Triangulation,
 {
-    triangulation: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>T,
+    triangulation: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>T,
     weight_buffer: RefCell&lt;Vec&lt;(FixedVertexHandle, &lt;T::Vertex <span class="kw">as </span>HasPosition&gt;::Scalar)&gt;&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, T&gt; Barycentric&lt;<span class="lifetime">&#39;a</span>, T&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, T&gt; Barycentric&lt;<span class="lifetime">'a</span>, T&gt;
 <span class="kw">where
     </span>T: Triangulation,
     &lt;T::Vertex <span class="kw">as </span>HasPosition&gt;::Scalar: Float,
 {
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>new(triangulation: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>T) -&gt; <span class="self">Self </span>{
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>new(triangulation: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>T) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             triangulation,
             weight_buffer: Default::default(),
@@ -1060,7 +1061,7 @@
     /// unneeded allocations. `result` will be cleared initially.
     ///
     /// The number of returned elements depends on the query positions location:
-    ///  - `result` will be **empty** if the query position lies outside of the triangulation&#39;s convex hull
+    ///  - `result` will be **empty** if the query position lies outside of the triangulation's convex hull
     ///  - `result` will contain **a single element** (with weight 1.0) if the query position lies exactly on a vertex
     ///  - `result` will contain **two vertices** if the query point lies exactly on any edge of the triangulation.
     ///  - `result` will contain **exactly three** elements if the query point lies on an inner face of the
@@ -1093,7 +1094,7 @@
 
     <span class="doccomment">/// Performs barycentric interpolation on this triangulation at a given position.
     ///
-    /// Returns `None` for any value outside the triangulation&#39;s convex hull.
+    /// Returns `None` for any value outside the triangulation's convex hull.
     /// The value to interpolate is given by the `i` parameter.
     ///
     /// Refer to [NaturalNeighbor] for a comparison with other interpolation methods.
@@ -1121,7 +1122,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, V, DE, UE, F, L&gt; NaturalNeighbor&lt;<span class="lifetime">&#39;a</span>, DelaunayTriangulation&lt;V, DE, UE, F, L&gt;&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, V, DE, UE, F, L&gt; NaturalNeighbor&lt;<span class="lifetime">'a</span>, DelaunayTriangulation&lt;V, DE, UE, F, L&gt;&gt;
 <span class="kw">where
     </span>V: HasPosition,
     DE: Default,
@@ -1130,7 +1131,7 @@
     L: HintGenerator&lt;&lt;V <span class="kw">as </span>HasPosition&gt;::Scalar&gt;,
     &lt;V <span class="kw">as </span>HasPosition&gt;::Scalar: Float,
 {
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>new(triangulation: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>DelaunayTriangulation&lt;V, DE, UE, F, L&gt;) -&gt; <span class="self">Self </span>{
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>new(triangulation: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>DelaunayTriangulation&lt;V, DE, UE, F, L&gt;) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             triangulation,
             inspect_edges_buffer: Default::default(),
@@ -1147,7 +1148,7 @@
     /// `result` will be cleared initially.
     ///
     /// The number of returned natural neighbors depends on the given query position:
-    /// - `result` will be **empty** if the query position lies outside of the triangulation&#39;s convex hull
+    /// - `result` will be **empty** if the query position lies outside of the triangulation's convex hull
     /// - `result` will contain **exactly one** vertex if the query position is equal to that vertex position.
     /// - `result` will contain **exactly two** entries if the query position lies exactly *on* an edge of the
     ///    convex hull.
@@ -1157,7 +1158,7 @@
     /// *Example: The natural neighbors (red vertices) of the query point (blue dot) with their weights.
     /// The elements will be returned in clockwise order as indicated by the indices drawn within the red circles.*
     ///
-    </span><span class="attr">#[doc = <span class="macro">include_str!</span>(<span class="string">&quot;../../images/natural_neighbor_scenario.svg&quot;</span>)]
+    </span><span class="attr">#[doc = <span class="macro">include_str!</span>(<span class="string">"../../images/natural_neighbor_scenario.svg"</span>)]
     </span><span class="kw">pub fn </span>get_weights(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         position: Point2&lt;&lt;V <span class="kw">as </span>HasPosition&gt;::Scalar&gt;,
@@ -1213,7 +1214,7 @@
     /// or adheres to it strongly (values larger than ~2.0) in the vicinity of any vertex. When in doubt, using
     /// a value of 1.0 should result in a good interpolation and is also the fastest.
     ///
-    /// Returns `None` for any point outside of the triangulation&#39;s convex hull.
+    /// Returns `None` for any point outside of the triangulation's convex hull.
     ///
     /// Refer to [NaturalNeighbor] for more information and a visual example.
     ///
@@ -1252,7 +1253,7 @@
     /// # References
     ///
     /// This method uses the C1 extension proposed by Sibson in
-    /// &quot;A brief description of natural neighbor interpolation, R. Sibson, 1981&quot;
+    /// "A brief description of natural neighbor interpolation, R. Sibson, 1981"
     </span><span class="kw">pub fn </span>interpolate_gradient&lt;I, G&gt;(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         i: I,
@@ -1272,7 +1273,7 @@
 
         <span class="comment">// Variable names should make more sense after looking into the paper!
         // Roughly speaking, this approach works by blending a smooth c1 approximation into the
-        // regular natural neighbor interpolation (&quot;c0 contribution&quot;).
+        // regular natural neighbor interpolation ("c0 contribution").
         // The c0 / c1 contributions are stored in sum_c0 / sum_c1 and are weighted by alpha and beta
         // respectively.
         </span><span class="kw">let </span><span class="kw-2">mut </span>sum_c0 = zero();
@@ -1329,14 +1330,14 @@
     /// created if the query point (red dot) would be inserted.
     /// Each point of the insertion cell lies on a circumcenter of a triangle formed by `position` and two
     /// adjacent natural neighbors (red dots with their index shown inside).
-    </span><span class="attr">#[doc = <span class="macro">include_str!</span>(<span class="string">&quot;../../images/natural_neighbor_insertion_cell.svg&quot;</span>)]
+    </span><span class="attr">#[doc = <span class="macro">include_str!</span>(<span class="string">"../../images/natural_neighbor_insertion_cell.svg"</span>)]
     </span><span class="doccomment">///
     /// ## Inner loop
     ///
     /// This .svg illustrates the inner loop of the algorithm (see code below). The goal is to calculate
     /// the weight of natural neighbor with index 4 which is proportional to the area of the orange polygon.
     /// `last_edge`, `stop_edge`, `first`, `c0`, `c1` `c2` and `last` refer to variable names (see code below).
-    </span><span class="attr">#[doc = <span class="macro">include_str!</span>(<span class="string">&quot;../../images/natural_neighbor_polygon.svg&quot;</span>)]
+    </span><span class="attr">#[doc = <span class="macro">include_str!</span>(<span class="string">"../../images/natural_neighbor_polygon.svg"</span>)]
     </span><span class="kw">fn </span>get_natural_neighbor_weights(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         position: Point2&lt;&lt;V <span class="kw">as </span>HasPosition&gt;::Scalar&gt;,
@@ -1369,8 +1370,8 @@
             <span class="kw">return</span>;
         }
 
-        <span class="comment">// Get insertion cell vertices. The &quot;insertion cell&quot; refers to the voronoi cell that would be
-        // created if &quot;position&quot; would be inserted.
+        <span class="comment">// Get insertion cell vertices. The "insertion cell" refers to the voronoi cell that would be
+        // created if "position" would be inserted.
         // These insertion cells happen to lie on the circumcenter of `position` and any two adjacent
         // natural neighbors (e.g. [position, nn[2].position(), nn[3].position()]).
         //
@@ -1499,7 +1500,7 @@
 
 <span class="doccomment">/// Identifies natural neighbors.
 ///
-/// To do so, this function &quot;simulates&quot; the insertion of a vertex (located at `position) and keeps track of which
+/// To do so, this function "simulates" the insertion of a vertex (located at `position) and keeps track of which
 /// edges would need to be flipped. A vertex is a natural neighbor if it happens to be part of an edge that would
 /// require to be flipped.
 ///
@@ -1546,9 +1547,9 @@
     }
 }
 
-<span class="kw">fn </span>two_point_interpolation&lt;<span class="lifetime">&#39;a</span>, T&gt;(
-    v0: VertexHandle&lt;<span class="lifetime">&#39;a</span>, T::Vertex, T::DirectedEdge, T::UndirectedEdge, T::Face&gt;,
-    v1: VertexHandle&lt;<span class="lifetime">&#39;a</span>, T::Vertex, T::DirectedEdge, T::UndirectedEdge, T::Face&gt;,
+<span class="kw">fn </span>two_point_interpolation&lt;<span class="lifetime">'a</span>, T&gt;(
+    v0: VertexHandle&lt;<span class="lifetime">'a</span>, T::Vertex, T::DirectedEdge, T::UndirectedEdge, T::Face&gt;,
+    v1: VertexHandle&lt;<span class="lifetime">'a</span>, T::Vertex, T::DirectedEdge, T::UndirectedEdge, T::Face&gt;,
     position: Point2&lt;&lt;T::Vertex <span class="kw">as </span>HasPosition&gt;::Scalar&gt;,
 ) -&gt; [&lt;T::Vertex <span class="kw">as </span>HasPosition&gt;::Scalar; <span class="number">2</span>]
 <span class="kw">where

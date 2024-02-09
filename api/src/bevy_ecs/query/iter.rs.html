@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy-3e956806168b8470/b5b6ea3/crates/bevy_ecs/src/query/iter.rs`."><title>iter.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_ecs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy-3e956806168b8470/b5b6ea3/crates/bevy_ecs/src/query/iter.rs`."><title>iter.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_ecs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -660,20 +661,20 @@
 ///
 /// This struct is created by the [`Query::iter`](crate::system::Query::iter) and
 /// [`Query::iter_mut`](crate::system::Query::iter_mut) methods.
-</span><span class="kw">pub struct </span>QueryIter&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, Q: WorldQuery, F: ReadOnlyWorldQuery&gt; {
-    tables: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>Tables,
-    archetypes: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>Archetypes,
-    query_state: <span class="kw-2">&amp;</span><span class="lifetime">&#39;s </span>QueryState&lt;Q, F&gt;,
-    cursor: QueryIterationCursor&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, Q, F&gt;,
+</span><span class="kw">pub struct </span>QueryIter&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, Q: WorldQuery, F: ReadOnlyWorldQuery&gt; {
+    tables: <span class="kw-2">&amp;</span><span class="lifetime">'w </span>Tables,
+    archetypes: <span class="kw-2">&amp;</span><span class="lifetime">'w </span>Archetypes,
+    query_state: <span class="kw-2">&amp;</span><span class="lifetime">'s </span>QueryState&lt;Q, F&gt;,
+    cursor: QueryIterationCursor&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, Q, F&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, Q: WorldQuery, F: ReadOnlyWorldQuery&gt; QueryIter&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, Q, F&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, Q: WorldQuery, F: ReadOnlyWorldQuery&gt; QueryIter&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, Q, F&gt; {
     <span class="doccomment">/// # Safety
     /// - `world` must have permission to access any of the components registered in `query_state`.
     /// - `world` must be the same one used to initialize `query_state`.
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>new(
-        world: UnsafeWorldCell&lt;<span class="lifetime">&#39;w</span>&gt;,
-        query_state: <span class="kw-2">&amp;</span><span class="lifetime">&#39;s </span>QueryState&lt;Q, F&gt;,
+        world: UnsafeWorldCell&lt;<span class="lifetime">'w</span>&gt;,
+        query_state: <span class="kw-2">&amp;</span><span class="lifetime">'s </span>QueryState&lt;Q, F&gt;,
         last_run: Tick,
         this_run: Tick,
     ) -&gt; <span class="self">Self </span>{
@@ -687,8 +688,8 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, Q: WorldQuery, F: ReadOnlyWorldQuery&gt; Iterator <span class="kw">for </span>QueryIter&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, Q, F&gt; {
-    <span class="kw">type </span>Item = Q::Item&lt;<span class="lifetime">&#39;w</span>&gt;;
+<span class="kw">impl</span>&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, Q: WorldQuery, F: ReadOnlyWorldQuery&gt; Iterator <span class="kw">for </span>QueryIter&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, Q, F&gt; {
+    <span class="kw">type </span>Item = Q::Item&lt;<span class="lifetime">'w</span>&gt;;
 
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt; {
@@ -710,28 +711,28 @@
 }
 
 <span class="comment">// This is correct as [`QueryIter`] always returns `None` once exhausted.
-</span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, Q: WorldQuery, F: ReadOnlyWorldQuery&gt; FusedIterator <span class="kw">for </span>QueryIter&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, Q, F&gt; {}
+</span><span class="kw">impl</span>&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, Q: WorldQuery, F: ReadOnlyWorldQuery&gt; FusedIterator <span class="kw">for </span>QueryIter&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, Q, F&gt; {}
 
 <span class="doccomment">/// An [`Iterator`] over the query items generated from an iterator of [`Entity`]s.
 ///
 /// Items are returned in the order of the provided iterator.
-/// Entities that don&#39;t match the query are skipped.
+/// Entities that don't match the query are skipped.
 ///
 /// This struct is created by the [`Query::iter_many`](crate::system::Query::iter_many) and [`Query::iter_many_mut`](crate::system::Query::iter_many_mut) methods.
-</span><span class="kw">pub struct </span>QueryManyIter&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, Q: WorldQuery, F: ReadOnlyWorldQuery, I: Iterator&gt;
+</span><span class="kw">pub struct </span>QueryManyIter&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, Q: WorldQuery, F: ReadOnlyWorldQuery, I: Iterator&gt;
 <span class="kw">where
     </span>I::Item: Borrow&lt;Entity&gt;,
 {
     entity_iter: I,
-    entities: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>Entities,
-    tables: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>Tables,
-    archetypes: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>Archetypes,
-    fetch: Q::Fetch&lt;<span class="lifetime">&#39;w</span>&gt;,
-    filter: F::Fetch&lt;<span class="lifetime">&#39;w</span>&gt;,
-    query_state: <span class="kw-2">&amp;</span><span class="lifetime">&#39;s </span>QueryState&lt;Q, F&gt;,
+    entities: <span class="kw-2">&amp;</span><span class="lifetime">'w </span>Entities,
+    tables: <span class="kw-2">&amp;</span><span class="lifetime">'w </span>Tables,
+    archetypes: <span class="kw-2">&amp;</span><span class="lifetime">'w </span>Archetypes,
+    fetch: Q::Fetch&lt;<span class="lifetime">'w</span>&gt;,
+    filter: F::Fetch&lt;<span class="lifetime">'w</span>&gt;,
+    query_state: <span class="kw-2">&amp;</span><span class="lifetime">'s </span>QueryState&lt;Q, F&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, Q: WorldQuery, F: ReadOnlyWorldQuery, I: Iterator&gt; QueryManyIter&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, Q, F, I&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, Q: WorldQuery, F: ReadOnlyWorldQuery, I: Iterator&gt; QueryManyIter&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, Q, F, I&gt;
 <span class="kw">where
     </span>I::Item: Borrow&lt;Entity&gt;,
 {
@@ -739,12 +740,12 @@
     /// - `world` must have permission to access any of the components registered in `query_state`.
     /// - `world` must be the same one used to initialize `query_state`.
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>new&lt;EntityList: IntoIterator&lt;IntoIter = I&gt;&gt;(
-        world: UnsafeWorldCell&lt;<span class="lifetime">&#39;w</span>&gt;,
-        query_state: <span class="kw-2">&amp;</span><span class="lifetime">&#39;s </span>QueryState&lt;Q, F&gt;,
+        world: UnsafeWorldCell&lt;<span class="lifetime">'w</span>&gt;,
+        query_state: <span class="kw-2">&amp;</span><span class="lifetime">'s </span>QueryState&lt;Q, F&gt;,
         entity_list: EntityList,
         last_run: Tick,
         this_run: Tick,
-    ) -&gt; QueryManyIter&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, Q, F, I&gt; {
+    ) -&gt; QueryManyIter&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, Q, F, I&gt; {
         <span class="kw">let </span>fetch = Q::init_fetch(world, <span class="kw-2">&amp;</span>query_state.fetch_state, last_run, this_run);
         <span class="kw">let </span>filter = F::init_fetch(world, <span class="kw-2">&amp;</span>query_state.filter_state, last_run, this_run);
         QueryManyIter {
@@ -767,7 +768,7 @@
     ///
     /// It is always safe for shared access.
     </span><span class="attr">#[inline(always)]
-    </span><span class="kw">unsafe fn </span>fetch_next_aliased_unchecked(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Q::Item&lt;<span class="lifetime">&#39;w</span>&gt;&gt; {
+    </span><span class="kw">unsafe fn </span>fetch_next_aliased_unchecked(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Q::Item&lt;<span class="lifetime">'w</span>&gt;&gt; {
         <span class="kw">for </span>entity <span class="kw">in </span><span class="self">self</span>.entity_iter.by_ref() {
             <span class="kw">let </span>entity = <span class="kw-2">*</span>entity.borrow();
             <span class="kw">let </span>location = <span class="kw">match </span><span class="self">self</span>.entities.get(entity) {
@@ -820,7 +821,7 @@
 
     <span class="doccomment">/// Get next result from the query
     </span><span class="attr">#[inline(always)]
-    </span><span class="kw">pub fn </span>fetch_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Q::Item&lt;<span class="lifetime">&#39;_</span>&gt;&gt; {
+    </span><span class="kw">pub fn </span>fetch_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Q::Item&lt;<span class="lifetime">'_</span>&gt;&gt; {
         <span class="comment">// SAFETY: we are limiting the returned reference to self,
         // making sure this method cannot be called multiple times without getting rid
         // of any previously returned unique references first, thus preventing aliasing.
@@ -828,12 +829,12 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, Q: ReadOnlyWorldQuery, F: ReadOnlyWorldQuery, I: Iterator&gt; Iterator
-    <span class="kw">for </span>QueryManyIter&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, Q, F, I&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, Q: ReadOnlyWorldQuery, F: ReadOnlyWorldQuery, I: Iterator&gt; Iterator
+    <span class="kw">for </span>QueryManyIter&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, Q, F, I&gt;
 <span class="kw">where
     </span>I::Item: Borrow&lt;Entity&gt;,
 {
-    <span class="kw">type </span>Item = Q::Item&lt;<span class="lifetime">&#39;w</span>&gt;;
+    <span class="kw">type </span>Item = Q::Item&lt;<span class="lifetime">'w</span>&gt;;
 
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt; {
@@ -848,8 +849,8 @@
 }
 
 <span class="comment">// This is correct as [`QueryManyIter`] always returns `None` once exhausted.
-</span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, Q: ReadOnlyWorldQuery, F: ReadOnlyWorldQuery, I: Iterator&gt; FusedIterator
-    <span class="kw">for </span>QueryManyIter&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, Q, F, I&gt;
+</span><span class="kw">impl</span>&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, Q: ReadOnlyWorldQuery, F: ReadOnlyWorldQuery, I: Iterator&gt; FusedIterator
+    <span class="kw">for </span>QueryManyIter&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, Q, F, I&gt;
 <span class="kw">where
     </span>I::Item: Borrow&lt;Entity&gt;,
 {
@@ -918,32 +919,32 @@
 /// [`Query`]: crate::system::Query
 /// [`Query::iter_combinations`]: crate::system::Query::iter_combinations
 /// [`Query::iter_combinations_mut`]: crate::system::Query::iter_combinations_mut
-</span><span class="kw">pub struct </span>QueryCombinationIter&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, Q: WorldQuery, F: ReadOnlyWorldQuery, <span class="kw">const </span>K: usize&gt; {
-    tables: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>Tables,
-    archetypes: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>Archetypes,
-    query_state: <span class="kw-2">&amp;</span><span class="lifetime">&#39;s </span>QueryState&lt;Q, F&gt;,
-    cursors: [QueryIterationCursor&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, Q, F&gt;; K],
+</span><span class="kw">pub struct </span>QueryCombinationIter&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, Q: WorldQuery, F: ReadOnlyWorldQuery, <span class="kw">const </span>K: usize&gt; {
+    tables: <span class="kw-2">&amp;</span><span class="lifetime">'w </span>Tables,
+    archetypes: <span class="kw-2">&amp;</span><span class="lifetime">'w </span>Archetypes,
+    query_state: <span class="kw-2">&amp;</span><span class="lifetime">'s </span>QueryState&lt;Q, F&gt;,
+    cursors: [QueryIterationCursor&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, Q, F&gt;; K],
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, Q: WorldQuery, F: ReadOnlyWorldQuery, <span class="kw">const </span>K: usize&gt;
-    QueryCombinationIter&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, Q, F, K&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, Q: WorldQuery, F: ReadOnlyWorldQuery, <span class="kw">const </span>K: usize&gt;
+    QueryCombinationIter&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, Q, F, K&gt;
 {
     <span class="doccomment">/// # Safety
     /// - `world` must have permission to access any of the components registered in `query_state`.
     /// - `world` must be the same one used to initialize `query_state`.
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>new(
-        world: UnsafeWorldCell&lt;<span class="lifetime">&#39;w</span>&gt;,
-        query_state: <span class="kw-2">&amp;</span><span class="lifetime">&#39;s </span>QueryState&lt;Q, F&gt;,
+        world: UnsafeWorldCell&lt;<span class="lifetime">'w</span>&gt;,
+        query_state: <span class="kw-2">&amp;</span><span class="lifetime">'s </span>QueryState&lt;Q, F&gt;,
         last_run: Tick,
         this_run: Tick,
     ) -&gt; <span class="self">Self </span>{
         <span class="comment">// Initialize array with cursors.
         // There is no FromIterator on arrays, so instead initialize it manually with MaybeUninit
 
-        </span><span class="kw">let </span><span class="kw-2">mut </span>array: MaybeUninit&lt;[QueryIterationCursor&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, Q, F&gt;; K]&gt; = MaybeUninit::uninit();
+        </span><span class="kw">let </span><span class="kw-2">mut </span>array: MaybeUninit&lt;[QueryIterationCursor&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, Q, F&gt;; K]&gt; = MaybeUninit::uninit();
         <span class="kw">let </span>ptr = array
             .as_mut_ptr()
-            .cast::&lt;QueryIterationCursor&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, Q, F&gt;&gt;();
+            .cast::&lt;QueryIterationCursor&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, Q, F&gt;&gt;();
         <span class="kw">if </span>K != <span class="number">0 </span>{
             ptr.write(QueryIterationCursor::init(
                 world,
@@ -976,7 +977,7 @@
     /// references to the same component, leading to unique reference aliasing.
     ///.
     /// It is always safe for shared access.
-    </span><span class="kw">unsafe fn </span>fetch_next_aliased_unchecked(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;[Q::Item&lt;<span class="lifetime">&#39;w</span>&gt;; K]&gt; {
+    </span><span class="kw">unsafe fn </span>fetch_next_aliased_unchecked(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;[Q::Item&lt;<span class="lifetime">'w</span>&gt;; K]&gt; {
         <span class="kw">if </span>K == <span class="number">0 </span>{
             <span class="kw">return </span><span class="prelude-val">None</span>;
         }
@@ -988,14 +989,14 @@
         // returns `K-i` or more elements.
         // Make cursor in index `j` for all `j` in `[i, K)` a copy of `c` advanced `j-i+1` times.
         // If no such `c` exists, return `None`
-        </span><span class="lifetime">&#39;outer</span>: <span class="kw">for </span>i <span class="kw">in </span>(<span class="number">0</span>..K).rev() {
+        </span><span class="lifetime">'outer</span>: <span class="kw">for </span>i <span class="kw">in </span>(<span class="number">0</span>..K).rev() {
             <span class="kw">match </span><span class="self">self</span>.cursors[i].next(<span class="self">self</span>.tables, <span class="self">self</span>.archetypes, <span class="self">self</span>.query_state) {
                 <span class="prelude-val">Some</span>(<span class="kw">_</span>) =&gt; {
                     <span class="kw">for </span>j <span class="kw">in </span>(i + <span class="number">1</span>)..K {
                         <span class="self">self</span>.cursors[j] = <span class="self">self</span>.cursors[j - <span class="number">1</span>].clone();
                         <span class="kw">match </span><span class="self">self</span>.cursors[j].next(<span class="self">self</span>.tables, <span class="self">self</span>.archetypes, <span class="self">self</span>.query_state) {
                             <span class="prelude-val">Some</span>(<span class="kw">_</span>) =&gt; {}
-                            <span class="prelude-val">None </span><span class="kw">if </span>i &gt; <span class="number">0 </span>=&gt; <span class="kw">continue </span><span class="lifetime">&#39;outer</span>,
+                            <span class="prelude-val">None </span><span class="kw">if </span>i &gt; <span class="number">0 </span>=&gt; <span class="kw">continue </span><span class="lifetime">'outer</span>,
                             <span class="prelude-val">None </span>=&gt; <span class="kw">return </span><span class="prelude-val">None</span>,
                         }
                     }
@@ -1006,9 +1007,9 @@
             }
         }
 
-        <span class="kw">let </span><span class="kw-2">mut </span>values = MaybeUninit::&lt;[Q::Item&lt;<span class="lifetime">&#39;w</span>&gt;; K]&gt;::uninit();
+        <span class="kw">let </span><span class="kw-2">mut </span>values = MaybeUninit::&lt;[Q::Item&lt;<span class="lifetime">'w</span>&gt;; K]&gt;::uninit();
 
-        <span class="kw">let </span>ptr = values.as_mut_ptr().cast::&lt;Q::Item&lt;<span class="lifetime">&#39;w</span>&gt;&gt;();
+        <span class="kw">let </span>ptr = values.as_mut_ptr().cast::&lt;Q::Item&lt;<span class="lifetime">'w</span>&gt;&gt;();
         <span class="kw">for </span>(offset, cursor) <span class="kw">in </span><span class="self">self</span>.cursors.iter_mut().enumerate() {
             ptr.add(offset).write(cursor.peek_last().unwrap());
         }
@@ -1018,7 +1019,7 @@
 
     <span class="doccomment">/// Get next combination of queried components
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>fetch_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;[Q::Item&lt;<span class="lifetime">&#39;_</span>&gt;; K]&gt; {
+    </span><span class="kw">pub fn </span>fetch_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;[Q::Item&lt;<span class="lifetime">'_</span>&gt;; K]&gt; {
         <span class="comment">// SAFETY: we are limiting the returned reference to self,
         // making sure this method cannot be called multiple times without getting rid
         // of any previously returned unique references first, thus preventing aliasing.
@@ -1032,10 +1033,10 @@
 <span class="comment">// Iterator type is intentionally implemented only for read-only access.
 // Doing so for mutable references would be unsound, because calling `next`
 // multiple times would allow multiple owned references to the same data to exist.
-</span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, Q: ReadOnlyWorldQuery, F: ReadOnlyWorldQuery, <span class="kw">const </span>K: usize&gt; Iterator
-    <span class="kw">for </span>QueryCombinationIter&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, Q, F, K&gt;
+</span><span class="kw">impl</span>&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, Q: ReadOnlyWorldQuery, F: ReadOnlyWorldQuery, <span class="kw">const </span>K: usize&gt; Iterator
+    <span class="kw">for </span>QueryCombinationIter&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, Q, F, K&gt;
 {
-    <span class="kw">type </span>Item = [Q::Item&lt;<span class="lifetime">&#39;w</span>&gt;; K];
+    <span class="kw">type </span>Item = [Q::Item&lt;<span class="lifetime">'w</span>&gt;; K];
 
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt; {
@@ -1075,7 +1076,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, Q: WorldQuery, F: ReadOnlyWorldQuery&gt; ExactSizeIterator <span class="kw">for </span>QueryIter&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, Q, F&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, Q: WorldQuery, F: ReadOnlyWorldQuery&gt; ExactSizeIterator <span class="kw">for </span>QueryIter&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, Q, F&gt;
 <span class="kw">where
     </span>F: ArchetypeFilter,
 {
@@ -1085,25 +1086,25 @@
 }
 
 <span class="comment">// This is correct as [`QueryCombinationIter`] always returns `None` once exhausted.
-</span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, Q: ReadOnlyWorldQuery, F: ReadOnlyWorldQuery, <span class="kw">const </span>K: usize&gt; FusedIterator
-    <span class="kw">for </span>QueryCombinationIter&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, Q, F, K&gt;
+</span><span class="kw">impl</span>&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, Q: ReadOnlyWorldQuery, F: ReadOnlyWorldQuery, <span class="kw">const </span>K: usize&gt; FusedIterator
+    <span class="kw">for </span>QueryCombinationIter&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, Q, F, K&gt;
 {
 }
 
-<span class="kw">struct </span>QueryIterationCursor&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, Q: WorldQuery, F: ReadOnlyWorldQuery&gt; {
-    table_id_iter: std::slice::Iter&lt;<span class="lifetime">&#39;s</span>, TableId&gt;,
-    archetype_id_iter: std::slice::Iter&lt;<span class="lifetime">&#39;s</span>, ArchetypeId&gt;,
-    table_entities: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>[Entity],
-    archetype_entities: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>[ArchetypeEntity],
-    fetch: Q::Fetch&lt;<span class="lifetime">&#39;w</span>&gt;,
-    filter: F::Fetch&lt;<span class="lifetime">&#39;w</span>&gt;,
-    <span class="comment">// length of the table table or length of the archetype, depending on whether both `Q`&#39;s and `F`&#39;s fetches are dense
+<span class="kw">struct </span>QueryIterationCursor&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, Q: WorldQuery, F: ReadOnlyWorldQuery&gt; {
+    table_id_iter: std::slice::Iter&lt;<span class="lifetime">'s</span>, TableId&gt;,
+    archetype_id_iter: std::slice::Iter&lt;<span class="lifetime">'s</span>, ArchetypeId&gt;,
+    table_entities: <span class="kw-2">&amp;</span><span class="lifetime">'w </span>[Entity],
+    archetype_entities: <span class="kw-2">&amp;</span><span class="lifetime">'w </span>[ArchetypeEntity],
+    fetch: Q::Fetch&lt;<span class="lifetime">'w</span>&gt;,
+    filter: F::Fetch&lt;<span class="lifetime">'w</span>&gt;,
+    <span class="comment">// length of the table table or length of the archetype, depending on whether both `Q`'s and `F`'s fetches are dense
     </span>current_len: usize,
-    <span class="comment">// either table row or archetype index, depending on whether both `Q`&#39;s and `F`&#39;s fetches are dense
+    <span class="comment">// either table row or archetype index, depending on whether both `Q`'s and `F`'s fetches are dense
     </span>current_row: usize,
 }
 
-<span class="kw">impl</span>&lt;Q: WorldQuery, F: ReadOnlyWorldQuery&gt; Clone <span class="kw">for </span>QueryIterationCursor&lt;<span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>, Q, F&gt; {
+<span class="kw">impl</span>&lt;Q: WorldQuery, F: ReadOnlyWorldQuery&gt; Clone <span class="kw">for </span>QueryIterationCursor&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>, Q, F&gt; {
     <span class="kw">fn </span>clone(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             table_id_iter: <span class="self">self</span>.table_id_iter.clone(),
@@ -1118,12 +1119,12 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, Q: WorldQuery, F: ReadOnlyWorldQuery&gt; QueryIterationCursor&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, Q, F&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, Q: WorldQuery, F: ReadOnlyWorldQuery&gt; QueryIterationCursor&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, Q, F&gt; {
     <span class="kw">const </span>IS_DENSE: bool = Q::IS_DENSE &amp;&amp; F::IS_DENSE;
 
     <span class="kw">unsafe fn </span>init_empty(
-        world: UnsafeWorldCell&lt;<span class="lifetime">&#39;w</span>&gt;,
-        query_state: <span class="kw-2">&amp;</span><span class="lifetime">&#39;s </span>QueryState&lt;Q, F&gt;,
+        world: UnsafeWorldCell&lt;<span class="lifetime">'w</span>&gt;,
+        query_state: <span class="kw-2">&amp;</span><span class="lifetime">'s </span>QueryState&lt;Q, F&gt;,
         last_run: Tick,
         this_run: Tick,
     ) -&gt; <span class="self">Self </span>{
@@ -1138,8 +1139,8 @@
     /// - `world` must have permission to access any of the components registered in `query_state`.
     /// - `world` must be the same one used to initialize `query_state`.
     </span><span class="kw">unsafe fn </span>init(
-        world: UnsafeWorldCell&lt;<span class="lifetime">&#39;w</span>&gt;,
-        query_state: <span class="kw-2">&amp;</span><span class="lifetime">&#39;s </span>QueryState&lt;Q, F&gt;,
+        world: UnsafeWorldCell&lt;<span class="lifetime">'w</span>&gt;,
+        query_state: <span class="kw-2">&amp;</span><span class="lifetime">'s </span>QueryState&lt;Q, F&gt;,
         last_run: Tick,
         this_run: Tick,
     ) -&gt; <span class="self">Self </span>{
@@ -1159,7 +1160,7 @@
 
     <span class="doccomment">/// retrieve item returned from most recent `next` call again.
     </span><span class="attr">#[inline]
-    </span><span class="kw">unsafe fn </span>peek_last(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Q::Item&lt;<span class="lifetime">&#39;w</span>&gt;&gt; {
+    </span><span class="kw">unsafe fn </span>peek_last(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Q::Item&lt;<span class="lifetime">'w</span>&gt;&gt; {
         <span class="kw">if </span><span class="self">self</span>.current_row &gt; <span class="number">0 </span>{
             <span class="kw">let </span>index = <span class="self">self</span>.current_row - <span class="number">1</span>;
             <span class="kw">if </span><span class="self">Self</span>::IS_DENSE {
@@ -1182,7 +1183,7 @@
     ///
     /// Note that if `Q::IS_ARCHETYPAL &amp;&amp; F::IS_ARCHETYPAL`, the return value
     /// will be **the exact count of remaining values**.
-    </span><span class="kw">fn </span>max_remaining(<span class="kw-2">&amp;</span><span class="self">self</span>, tables: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>Tables, archetypes: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>Archetypes) -&gt; usize {
+    </span><span class="kw">fn </span>max_remaining(<span class="kw-2">&amp;</span><span class="self">self</span>, tables: <span class="kw-2">&amp;</span><span class="lifetime">'w </span>Tables, archetypes: <span class="kw-2">&amp;</span><span class="lifetime">'w </span>Archetypes) -&gt; usize {
         <span class="kw">let </span>remaining_matched: usize = <span class="kw">if </span><span class="self">Self</span>::IS_DENSE {
             <span class="kw">let </span>ids = <span class="self">self</span>.table_id_iter.clone();
             ids.map(|id| tables[<span class="kw-2">*</span>id].entity_count()).sum()
@@ -1202,10 +1203,10 @@
     </span><span class="attr">#[inline(always)]
     </span><span class="kw">unsafe fn </span>next(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        tables: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>Tables,
-        archetypes: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>Archetypes,
-        query_state: <span class="kw-2">&amp;</span><span class="lifetime">&#39;s </span>QueryState&lt;Q, F&gt;,
-    ) -&gt; <span class="prelude-ty">Option</span>&lt;Q::Item&lt;<span class="lifetime">&#39;w</span>&gt;&gt; {
+        tables: <span class="kw-2">&amp;</span><span class="lifetime">'w </span>Tables,
+        archetypes: <span class="kw-2">&amp;</span><span class="lifetime">'w </span>Archetypes,
+        query_state: <span class="kw-2">&amp;</span><span class="lifetime">'s </span>QueryState&lt;Q, F&gt;,
+    ) -&gt; <span class="prelude-ty">Option</span>&lt;Q::Item&lt;<span class="lifetime">'w</span>&gt;&gt; {
         <span class="kw">if </span><span class="self">Self</span>::IS_DENSE {
             <span class="kw">loop </span>{
                 <span class="comment">// we are on the beginning of the query, or finished processing a table, so skip to the next

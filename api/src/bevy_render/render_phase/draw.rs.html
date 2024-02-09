@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy-3e956806168b8470/b5b6ea3/crates/bevy_render/src/render_phase/draw.rs`."><title>draw.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_render" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy-3e956806168b8470/b5b6ea3/crates/bevy_render/src/render_phase/draw.rs`."><title>draw.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_render" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -333,18 +334,18 @@
 ///
 /// This trait can either be implemented directly or implicitly composed out of multiple modular
 /// [`RenderCommand`]s. For more details and an example see the [`RenderCommand`] documentation.
-</span><span class="kw">pub trait </span>Draw&lt;P: PhaseItem&gt;: Send + Sync + <span class="lifetime">&#39;static </span>{
+</span><span class="kw">pub trait </span>Draw&lt;P: PhaseItem&gt;: Send + Sync + <span class="lifetime">'static </span>{
     <span class="doccomment">/// Prepares the draw function to be used. This is called once and only once before the phase
     /// begins. There may be zero or more [`draw`](Draw::draw) calls following a call to this function.
     /// Implementing this is optional.
     </span><span class="attr">#[allow(unused_variables)]
-    </span><span class="kw">fn </span>prepare(<span class="kw-2">&amp;mut </span><span class="self">self</span>, world: <span class="kw-2">&amp;</span><span class="lifetime">&#39;_ </span>World) {}
+    </span><span class="kw">fn </span>prepare(<span class="kw-2">&amp;mut </span><span class="self">self</span>, world: <span class="kw-2">&amp;</span><span class="lifetime">'_ </span>World) {}
 
     <span class="doccomment">/// Draws a [`PhaseItem`] by issuing zero or more `draw` calls via the [`TrackedRenderPass`].
-    </span><span class="kw">fn </span>draw&lt;<span class="lifetime">&#39;w</span>&gt;(
+    </span><span class="kw">fn </span>draw&lt;<span class="lifetime">'w</span>&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        world: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>World,
-        pass: <span class="kw-2">&amp;mut </span>TrackedRenderPass&lt;<span class="lifetime">&#39;w</span>&gt;,
+        world: <span class="kw-2">&amp;</span><span class="lifetime">'w </span>World,
+        pass: <span class="kw-2">&amp;mut </span>TrackedRenderPass&lt;<span class="lifetime">'w</span>&gt;,
         view: Entity,
         item: <span class="kw-2">&amp;</span>P,
     );
@@ -377,7 +378,7 @@
     }
 
     <span class="doccomment">/// Adds the [`Draw`] function and maps it to the type `T`
-    </span><span class="kw">pub fn </span>add_with&lt;T: <span class="lifetime">&#39;static</span>, D: Draw&lt;P&gt;&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, draw_function: D) -&gt; DrawFunctionId {
+    </span><span class="kw">pub fn </span>add_with&lt;T: <span class="lifetime">'static</span>, D: Draw&lt;P&gt;&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, draw_function: D) -&gt; DrawFunctionId {
         <span class="kw">let </span>id = DrawFunctionId(<span class="self">self</span>.draw_functions.len().try_into().unwrap());
         <span class="self">self</span>.draw_functions.push(Box::new(draw_function));
         <span class="self">self</span>.indices.insert(TypeId::of::&lt;T&gt;(), id);
@@ -390,7 +391,7 @@
     }
 
     <span class="doccomment">/// Retrieves the id of the [`Draw`] function corresponding to their associated type `T`.
-    </span><span class="kw">pub fn </span>get_id&lt;T: <span class="lifetime">&#39;static</span>&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;DrawFunctionId&gt; {
+    </span><span class="kw">pub fn </span>get_id&lt;T: <span class="lifetime">'static</span>&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;DrawFunctionId&gt; {
         <span class="self">self</span>.indices.get(<span class="kw-2">&amp;</span>TypeId::of::&lt;T&gt;()).copied()
     }
 
@@ -399,11 +400,11 @@
     /// Fallible wrapper for [`Self::get_id()`]
     ///
     /// ## Panics
-    /// If the id doesn&#39;t exist, this function will panic.
-    </span><span class="kw">pub fn </span>id&lt;T: <span class="lifetime">&#39;static</span>&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; DrawFunctionId {
+    /// If the id doesn't exist, this function will panic.
+    </span><span class="kw">pub fn </span>id&lt;T: <span class="lifetime">'static</span>&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; DrawFunctionId {
         <span class="self">self</span>.get_id::&lt;T&gt;().unwrap_or_else(|| {
             <span class="macro">panic!</span>(
-                <span class="string">&quot;Draw function {} not found for {}&quot;</span>,
+                <span class="string">"Draw function {} not found for {}"</span>,
                 std::any::type_name::&lt;T&gt;(),
                 std::any::type_name::&lt;P&gt;()
             )
@@ -432,12 +433,12 @@
 
 <span class="kw">impl</span>&lt;P: PhaseItem&gt; DrawFunctions&lt;P&gt; {
     <span class="doccomment">/// Accesses the draw functions in read mode.
-    </span><span class="kw">pub fn </span>read(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; RwLockReadGuard&lt;<span class="lifetime">&#39;_</span>, DrawFunctionsInternal&lt;P&gt;&gt; {
+    </span><span class="kw">pub fn </span>read(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; RwLockReadGuard&lt;<span class="lifetime">'_</span>, DrawFunctionsInternal&lt;P&gt;&gt; {
         <span class="self">self</span>.internal.read().unwrap_or_else(PoisonError::into_inner)
     }
 
     <span class="doccomment">/// Accesses the draw functions in write mode.
-    </span><span class="kw">pub fn </span>write(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; RwLockWriteGuard&lt;<span class="lifetime">&#39;_</span>, DrawFunctionsInternal&lt;P&gt;&gt; {
+    </span><span class="kw">pub fn </span>write(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; RwLockWriteGuard&lt;<span class="lifetime">'_</span>, DrawFunctionsInternal&lt;P&gt;&gt; {
         <span class="self">self</span>.internal
             .write()
             .unwrap_or_else(PoisonError::into_inner)
@@ -486,7 +487,7 @@
     ///
     /// [`SRes`]: bevy_ecs::system::lifetimeless::SRes
     /// [`SRes::into_inner`]: bevy_ecs::system::lifetimeless::SRes::into_inner
-    </span><span class="kw">type </span>Param: SystemParam + <span class="lifetime">&#39;static</span>;
+    </span><span class="kw">type </span>Param: SystemParam + <span class="lifetime">'static</span>;
     <span class="doccomment">/// Specifies the ECS data of the view entity required by [`RenderCommand::render`].
     ///
     /// The view entity refers to the camera, or shadow-casting light, etc. from which the phase
@@ -501,12 +502,12 @@
 
     <span class="doccomment">/// Renders a [`PhaseItem`] by recording commands (e.g. setting pipelines, binding bind groups,
     /// issuing draw calls, etc.) via the [`TrackedRenderPass`].
-    </span><span class="kw">fn </span>render&lt;<span class="lifetime">&#39;w</span>&gt;(
+    </span><span class="kw">fn </span>render&lt;<span class="lifetime">'w</span>&gt;(
         item: <span class="kw-2">&amp;</span>P,
-        view: ROQueryItem&lt;<span class="lifetime">&#39;w</span>, <span class="self">Self</span>::ViewWorldQuery&gt;,
-        entity: ROQueryItem&lt;<span class="lifetime">&#39;w</span>, <span class="self">Self</span>::ItemWorldQuery&gt;,
-        param: SystemParamItem&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;_</span>, <span class="self">Self</span>::Param&gt;,
-        pass: <span class="kw-2">&amp;mut </span>TrackedRenderPass&lt;<span class="lifetime">&#39;w</span>&gt;,
+        view: ROQueryItem&lt;<span class="lifetime">'w</span>, <span class="self">Self</span>::ViewWorldQuery&gt;,
+        entity: ROQueryItem&lt;<span class="lifetime">'w</span>, <span class="self">Self</span>::ItemWorldQuery&gt;,
+        param: SystemParamItem&lt;<span class="lifetime">'w</span>, <span class="lifetime">'_</span>, <span class="self">Self</span>::Param&gt;,
+        pass: <span class="kw-2">&amp;mut </span>TrackedRenderPass&lt;<span class="lifetime">'w</span>&gt;,
     ) -&gt; RenderCommandResult;
 }
 
@@ -524,12 +525,12 @@
             <span class="kw">type </span>ItemWorldQuery = ($(<span class="macro-nonterminal">$name::ItemWorldQuery</span>,)<span class="kw-2">*</span>);
 
             <span class="attr">#[allow(non_snake_case)]
-            </span><span class="kw">fn </span>render&lt;<span class="lifetime">&#39;w</span>&gt;(
+            </span><span class="kw">fn </span>render&lt;<span class="lifetime">'w</span>&gt;(
                 _item: <span class="kw-2">&amp;</span>P,
-                ($(<span class="macro-nonterminal">$view</span>,)<span class="kw-2">*</span>): ROQueryItem&lt;<span class="lifetime">&#39;w</span>, <span class="self">Self</span>::ViewWorldQuery&gt;,
-                ($(<span class="macro-nonterminal">$entity</span>,)<span class="kw-2">*</span>): ROQueryItem&lt;<span class="lifetime">&#39;w</span>, <span class="self">Self</span>::ItemWorldQuery&gt;,
-                ($(<span class="macro-nonterminal">$name</span>,)<span class="kw-2">*</span>): SystemParamItem&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;_</span>, <span class="self">Self</span>::Param&gt;,
-                _pass: <span class="kw-2">&amp;mut </span>TrackedRenderPass&lt;<span class="lifetime">&#39;w</span>&gt;,
+                ($(<span class="macro-nonterminal">$view</span>,)<span class="kw-2">*</span>): ROQueryItem&lt;<span class="lifetime">'w</span>, <span class="self">Self</span>::ViewWorldQuery&gt;,
+                ($(<span class="macro-nonterminal">$entity</span>,)<span class="kw-2">*</span>): ROQueryItem&lt;<span class="lifetime">'w</span>, <span class="self">Self</span>::ItemWorldQuery&gt;,
+                ($(<span class="macro-nonterminal">$name</span>,)<span class="kw-2">*</span>): SystemParamItem&lt;<span class="lifetime">'w</span>, <span class="lifetime">'_</span>, <span class="self">Self</span>::Param&gt;,
+                _pass: <span class="kw-2">&amp;mut </span>TrackedRenderPass&lt;<span class="lifetime">'w</span>&gt;,
             ) -&gt; RenderCommandResult {
                 $(<span class="kw">if let </span>RenderCommandResult::Failure = <span class="macro-nonterminal">$name::render</span>(_item, <span class="macro-nonterminal">$view</span>, <span class="macro-nonterminal">$entity</span>, <span class="macro-nonterminal">$name</span>, _pass) {
                     <span class="kw">return </span>RenderCommandResult::Failure;
@@ -546,7 +547,7 @@
 ///
 /// The [`RenderCommand::Param`], [`RenderCommand::ViewWorldQuery`] and
 /// [`RenderCommand::ItemWorldQuery`] are fetched from the ECS and passed to the command.
-</span><span class="kw">pub struct </span>RenderCommandState&lt;P: PhaseItem + <span class="lifetime">&#39;static</span>, C: RenderCommand&lt;P&gt;&gt; {
+</span><span class="kw">pub struct </span>RenderCommandState&lt;P: PhaseItem + <span class="lifetime">'static</span>, C: RenderCommand&lt;P&gt;&gt; {
     state: SystemState&lt;C::Param&gt;,
     view: QueryState&lt;C::ViewWorldQuery&gt;,
     entity: QueryState&lt;C::ItemWorldQuery&gt;,
@@ -563,23 +564,23 @@
     }
 }
 
-<span class="kw">impl</span>&lt;P: PhaseItem, C: RenderCommand&lt;P&gt; + Send + Sync + <span class="lifetime">&#39;static</span>&gt; Draw&lt;P&gt; <span class="kw">for </span>RenderCommandState&lt;P, C&gt;
+<span class="kw">impl</span>&lt;P: PhaseItem, C: RenderCommand&lt;P&gt; + Send + Sync + <span class="lifetime">'static</span>&gt; Draw&lt;P&gt; <span class="kw">for </span>RenderCommandState&lt;P, C&gt;
 <span class="kw">where
     </span>C::Param: ReadOnlySystemParam,
 {
     <span class="doccomment">/// Prepares the render command to be used. This is called once and only once before the phase
     /// begins. There may be zero or more [`draw`](RenderCommandState::draw) calls following a call to this function.
-    </span><span class="kw">fn </span>prepare(<span class="kw-2">&amp;mut </span><span class="self">self</span>, world: <span class="kw-2">&amp;</span><span class="lifetime">&#39;_ </span>World) {
+    </span><span class="kw">fn </span>prepare(<span class="kw-2">&amp;mut </span><span class="self">self</span>, world: <span class="kw-2">&amp;</span><span class="lifetime">'_ </span>World) {
         <span class="self">self</span>.state.update_archetypes(world);
         <span class="self">self</span>.view.update_archetypes(world);
         <span class="self">self</span>.entity.update_archetypes(world);
     }
 
     <span class="doccomment">/// Fetches the ECS parameters for the wrapped [`RenderCommand`] and then renders it.
-    </span><span class="kw">fn </span>draw&lt;<span class="lifetime">&#39;w</span>&gt;(
+    </span><span class="kw">fn </span>draw&lt;<span class="lifetime">'w</span>&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        world: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>World,
-        pass: <span class="kw-2">&amp;mut </span>TrackedRenderPass&lt;<span class="lifetime">&#39;w</span>&gt;,
+        world: <span class="kw-2">&amp;</span><span class="lifetime">'w </span>World,
+        pass: <span class="kw-2">&amp;mut </span>TrackedRenderPass&lt;<span class="lifetime">'w</span>&gt;,
         view: Entity,
         item: <span class="kw-2">&amp;</span>P,
     ) {
@@ -595,7 +596,7 @@
 /// They are stored inside the [`DrawFunctions`] resource of the app.
 </span><span class="kw">pub trait </span>AddRenderCommand {
     <span class="doccomment">/// Adds the [`RenderCommand`] for the specified [`RenderPhase`](super::RenderPhase) to the app.
-    </span><span class="kw">fn </span>add_render_command&lt;P: PhaseItem, C: RenderCommand&lt;P&gt; + Send + Sync + <span class="lifetime">&#39;static</span>&gt;(
+    </span><span class="kw">fn </span>add_render_command&lt;P: PhaseItem, C: RenderCommand&lt;P&gt; + Send + Sync + <span class="lifetime">'static</span>&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
     ) -&gt; <span class="kw-2">&amp;mut </span><span class="self">Self
     </span><span class="kw">where
@@ -603,7 +604,7 @@
 }
 
 <span class="kw">impl </span>AddRenderCommand <span class="kw">for </span>App {
-    <span class="kw">fn </span>add_render_command&lt;P: PhaseItem, C: RenderCommand&lt;P&gt; + Send + Sync + <span class="lifetime">&#39;static</span>&gt;(
+    <span class="kw">fn </span>add_render_command&lt;P: PhaseItem, C: RenderCommand&lt;P&gt; + Send + Sync + <span class="lifetime">'static</span>&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
     ) -&gt; <span class="kw-2">&amp;mut </span><span class="self">Self
     </span><span class="kw">where
@@ -615,8 +616,8 @@
             .get_resource::&lt;DrawFunctions&lt;P&gt;&gt;()
             .unwrap_or_else(|| {
                 <span class="macro">panic!</span>(
-                    <span class="string">&quot;DrawFunctions&lt;{}&gt; must be added to the world as a resource \
-                     before adding render commands to it&quot;</span>,
+                    <span class="string">"DrawFunctions&lt;{}&gt; must be added to the world as a resource \
+                     before adding render commands to it"</span>,
                     std::any::type_name::&lt;P&gt;(),
                 );
             });

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["PreparePlugin"]};
+window.SIDEBAR_ITEMS = {"enum":["PrepareSet"],"struct":["PrepareConfig","PreparePlugin"]};

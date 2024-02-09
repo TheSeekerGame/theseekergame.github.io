@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_xpbd_2d-0.3.2/src/plugins/integrator.rs`."><title>integrator.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_xpbd_2d" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy_xpbd-da54805458a155a5/46f3189/crates/bevy_xpbd_2d/../../src/plugins/integrator.rs`."><title>integrator.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_xpbd_2d" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -311,14 +312,17 @@
 <a href="#311" id="311">311</a>
 <a href="#312" id="312">312</a>
 <a href="#313" id="313">313</a>
-</pre></div><pre class="rust"><code><span class="doccomment">//! Integrates Newton&#39;s 2nd law of motion, applying forces and moving entities according to their velocities.
+<a href="#314" id="314">314</a>
+<a href="#315" id="315">315</a>
+<a href="#316" id="316">316</a>
+</pre></div><pre class="rust"><code><span class="doccomment">//! Integrates Newton's 2nd law of motion, applying forces and moving entities according to their velocities.
 //!
 //! See [`IntegratorPlugin`].
 
 </span><span class="kw">use </span><span class="kw">crate</span>::prelude::<span class="kw-2">*</span>;
 <span class="kw">use </span>bevy::prelude::<span class="kw-2">*</span>;
 
-<span class="doccomment">/// Integrates Newton&#39;s 2nd law of motion, applying forces and moving entities according to their velocities.
+<span class="doccomment">/// Integrates Newton's 2nd law of motion, applying forces and moving entities according to their velocities.
 ///
 /// This acts as a prediction for the next positions and orientations of the bodies. The [solver] corrects these predicted
 /// positions to follow the rules set by the [constraints].
@@ -331,10 +335,10 @@
 <span class="kw">impl </span>Plugin <span class="kw">for </span>IntegratorPlugin {
     <span class="kw">fn </span>build(<span class="kw-2">&amp;</span><span class="self">self</span>, app: <span class="kw-2">&amp;mut </span>App) {
         app.get_schedule_mut(SubstepSchedule)
-            .expect(<span class="string">&quot;add SubstepSchedule first&quot;</span>)
+            .expect(<span class="string">"add SubstepSchedule first"</span>)
             .add_systems((integrate_pos, integrate_rot).in_set(SubstepSet::Integrate));
         app.get_schedule_mut(PhysicsSchedule)
-            .expect(<span class="string">&quot;add PhysicsSchedule first&quot;</span>)
+            .expect(<span class="string">"add PhysicsSchedule first"</span>)
             .add_systems(
                 apply_impulses
                     .after(PhysicsStepSet::BroadPhase)
@@ -345,17 +349,17 @@
 }
 
 <span class="kw">type </span>PosIntegrationComponents = (
-    <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>RigidBody,
-    <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>Position,
-    <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span><span class="kw-2">mut </span>PreviousPosition,
-    <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span><span class="kw-2">mut </span>AccumulatedTranslation,
-    <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span><span class="kw-2">mut </span>LinearVelocity,
-    <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>LinearDamping&gt;,
-    <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>GravityScale&gt;,
-    <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>ExternalForce,
-    <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>Mass,
-    <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>InverseMass,
-    <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>LockedAxes&gt;,
+    <span class="kw-2">&amp;</span><span class="lifetime">'static </span>RigidBody,
+    <span class="kw-2">&amp;</span><span class="lifetime">'static </span>Position,
+    <span class="kw-2">&amp;</span><span class="lifetime">'static </span><span class="kw-2">mut </span>PreviousPosition,
+    <span class="kw-2">&amp;</span><span class="lifetime">'static </span><span class="kw-2">mut </span>AccumulatedTranslation,
+    <span class="kw-2">&amp;</span><span class="lifetime">'static </span><span class="kw-2">mut </span>LinearVelocity,
+    <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'static </span>LinearDamping&gt;,
+    <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'static </span>GravityScale&gt;,
+    <span class="kw-2">&amp;</span><span class="lifetime">'static </span>ExternalForce,
+    <span class="kw-2">&amp;</span><span class="lifetime">'static </span>Mass,
+    <span class="kw-2">&amp;</span><span class="lifetime">'static </span>InverseMass,
+    <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'static </span>LockedAxes&gt;,
 );
 
 <span class="doccomment">/// Explicitly integrates the positions and linear velocities of bodies taking only external forces
@@ -404,7 +408,7 @@
                 effective_mass * gravity.<span class="number">0 </span>* gravity_scale.map_or(<span class="number">1.0</span>, |scale| scale.<span class="number">0</span>);
             <span class="kw">let </span>external_forces = gravitation_force + external_force.force();
             <span class="kw">let </span>delta_lin_vel = delta_secs * external_forces * effective_inv_mass;
-            <span class="comment">// avoid triggering bevy&#39;s change detection unnecessarily
+            <span class="comment">// avoid triggering bevy's change detection unnecessarily
             </span><span class="kw">if </span>delta_lin_vel != Vector::ZERO {
                 lin_vel.<span class="number">0 </span>+= delta_lin_vel;
             }
@@ -416,21 +420,21 @@
 }
 
 <span class="kw">type </span>RotIntegrationComponents = (
-    <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>RigidBody,
-    <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span><span class="kw-2">mut </span>Rotation,
-    <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span><span class="kw-2">mut </span>PreviousRotation,
-    <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span><span class="kw-2">mut </span>AngularVelocity,
-    <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>AngularDamping&gt;,
-    <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>ExternalForce,
-    <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>ExternalTorque,
-    <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>Inertia,
-    <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>InverseInertia,
-    <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>LockedAxes&gt;,
+    <span class="kw-2">&amp;</span><span class="lifetime">'static </span>RigidBody,
+    <span class="kw-2">&amp;</span><span class="lifetime">'static </span><span class="kw-2">mut </span>Rotation,
+    <span class="kw-2">&amp;</span><span class="lifetime">'static </span><span class="kw-2">mut </span>PreviousRotation,
+    <span class="kw-2">&amp;</span><span class="lifetime">'static </span><span class="kw-2">mut </span>AngularVelocity,
+    <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'static </span>AngularDamping&gt;,
+    <span class="kw-2">&amp;</span><span class="lifetime">'static </span>ExternalForce,
+    <span class="kw-2">&amp;</span><span class="lifetime">'static </span>ExternalTorque,
+    <span class="kw-2">&amp;</span><span class="lifetime">'static </span>Inertia,
+    <span class="kw-2">&amp;</span><span class="lifetime">'static </span>InverseInertia,
+    <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'static </span>LockedAxes&gt;,
 );
 
 <span class="doccomment">/// Explicitly integrates the rotations and angular velocities of bodies taking only external torque into account.
 /// This acts as a prediction for the next rotations of the bodies.
-</span><span class="attr">#[cfg(feature = <span class="string">&quot;2d&quot;</span>)]
+</span><span class="attr">#[cfg(feature = <span class="string">"2d"</span>)]
 </span><span class="kw">fn </span>integrate_rot(<span class="kw-2">mut </span>bodies: Query&lt;RotIntegrationComponents, Without&lt;Sleeping&gt;&gt;, time: Res&lt;Time&gt;) {
     <span class="kw">let </span>delta_secs = time.delta_seconds_adjusted();
 
@@ -459,7 +463,7 @@
         </span><span class="kw">if </span>rb.is_dynamic() {
             <span class="comment">// Apply damping
             </span><span class="kw">if let </span><span class="prelude-val">Some</span>(damping) = ang_damping {
-                <span class="comment">// avoid triggering bevy&#39;s change detection unnecessarily
+                <span class="comment">// avoid triggering bevy's change detection unnecessarily
                 </span><span class="kw">if </span>ang_vel.<span class="number">0 </span>!= <span class="number">0.0 </span>&amp;&amp; damping.<span class="number">0 </span>!= <span class="number">0.0 </span>{
                     ang_vel.<span class="number">0 </span><span class="kw-2">*</span>= <span class="number">1.0 </span>/ (<span class="number">1.0 </span>+ delta_secs * damping.<span class="number">0</span>);
                 }
@@ -471,12 +475,12 @@
             </span><span class="kw">let </span>delta_ang_vel = delta_secs
                 * effective_inv_inertia
                 * (external_torque.torque() + external_force.torque());
-            <span class="comment">// avoid triggering bevy&#39;s change detection unnecessarily
+            <span class="comment">// avoid triggering bevy's change detection unnecessarily
             </span><span class="kw">if </span>delta_ang_vel != <span class="number">0.0 </span>{
                 ang_vel.<span class="number">0 </span>+= delta_ang_vel;
             }
         }
-        <span class="comment">// avoid triggering bevy&#39;s change detection unnecessarily
+        <span class="comment">// avoid triggering bevy's change detection unnecessarily
         </span><span class="kw">let </span>delta = locked_axes.apply_to_angular_velocity(delta_secs * ang_vel.<span class="number">0</span>);
         <span class="kw">if </span>delta != <span class="number">0.0 </span>{
             <span class="kw-2">*</span>rot += Rotation::from_radians(delta);
@@ -486,7 +490,7 @@
 
 <span class="doccomment">/// Explicitly integrates the rotations and angular velocities of bodies taking only external torque into account.
 /// This acts as a prediction for the next rotations of the bodies.
-</span><span class="attr">#[cfg(feature = <span class="string">&quot;3d&quot;</span>)]
+</span><span class="attr">#[cfg(feature = <span class="string">"3d"</span>)]
 </span><span class="kw">fn </span>integrate_rot(<span class="kw-2">mut </span>bodies: Query&lt;RotIntegrationComponents, Without&lt;Sleeping&gt;&gt;, time: Res&lt;Time&gt;) {
     <span class="kw">let </span>delta_secs = time.delta_seconds_adjusted();
 
@@ -515,7 +519,7 @@
         </span><span class="kw">if </span>rb.is_dynamic() {
             <span class="comment">// Apply damping
             </span><span class="kw">if let </span><span class="prelude-val">Some</span>(damping) = ang_damping {
-                <span class="comment">// avoid triggering bevy&#39;s change detection unnecessarily
+                <span class="comment">// avoid triggering bevy's change detection unnecessarily
                 </span><span class="kw">if </span>ang_vel.<span class="number">0 </span>!= Vector::ZERO &amp;&amp; damping.<span class="number">0 </span>!= <span class="number">0.0 </span>{
                     ang_vel.<span class="number">0 </span><span class="kw-2">*</span>= <span class="number">1.0 </span>/ (<span class="number">1.0 </span>+ delta_secs * damping.<span class="number">0</span>);
                 }
@@ -529,7 +533,7 @@
                 * effective_inv_inertia
                 * ((external_torque.torque() + external_force.torque())
                     - ang_vel.<span class="number">0</span>.cross(effective_inertia * ang_vel.<span class="number">0</span>));
-            <span class="comment">// avoid triggering bevy&#39;s change detection unnecessarily
+            <span class="comment">// avoid triggering bevy's change detection unnecessarily
             </span><span class="kw">if </span>delta_ang_vel != Vector::ZERO {
                 ang_vel.<span class="number">0 </span>+= delta_ang_vel;
             }
@@ -539,24 +543,24 @@
         <span class="kw">let </span>effective_dq = locked_axes
             .apply_to_angular_velocity(delta_secs * <span class="number">0.5 </span>* q.xyz())
             .extend(delta_secs * <span class="number">0.5 </span>* q.w);
-        <span class="comment">// avoid triggering bevy&#39;s change detection unnecessarily
+        <span class="comment">// avoid triggering bevy's change detection unnecessarily
         </span><span class="kw">let </span>delta = Quaternion::from_vec4(effective_dq);
-        <span class="kw">if </span>delta != Quaternion::IDENTITY {
+        <span class="kw">if </span>delta != Quaternion::from_xyzw(<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>) {
             rot.<span class="number">0 </span>= (rot.<span class="number">0 </span>+ delta).normalize();
         }
     }
 }
 
 <span class="kw">type </span>ImpulseQueryComponents = (
-    <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>RigidBody,
-    <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span><span class="kw-2">mut </span>ExternalImpulse,
-    <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span><span class="kw-2">mut </span>ExternalAngularImpulse,
-    <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span><span class="kw-2">mut </span>LinearVelocity,
-    <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span><span class="kw-2">mut </span>AngularVelocity,
-    <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>Rotation,
-    <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>InverseMass,
-    <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>InverseInertia,
-    <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>LockedAxes&gt;,
+    <span class="kw-2">&amp;</span><span class="lifetime">'static </span>RigidBody,
+    <span class="kw-2">&amp;</span><span class="lifetime">'static </span><span class="kw-2">mut </span>ExternalImpulse,
+    <span class="kw-2">&amp;</span><span class="lifetime">'static </span><span class="kw-2">mut </span>ExternalAngularImpulse,
+    <span class="kw-2">&amp;</span><span class="lifetime">'static </span><span class="kw-2">mut </span>LinearVelocity,
+    <span class="kw-2">&amp;</span><span class="lifetime">'static </span><span class="kw-2">mut </span>AngularVelocity,
+    <span class="kw-2">&amp;</span><span class="lifetime">'static </span>Rotation,
+    <span class="kw-2">&amp;</span><span class="lifetime">'static </span>InverseMass,
+    <span class="kw-2">&amp;</span><span class="lifetime">'static </span>InverseInertia,
+    <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'static </span>LockedAxes&gt;,
 );
 
 <span class="kw">fn </span>apply_impulses(<span class="kw-2">mut </span>bodies: Query&lt;ImpulseQueryComponents, Without&lt;Sleeping&gt;&gt;) {
@@ -581,7 +585,7 @@
         <span class="kw">let </span>effective_inv_mass = locked_axes.apply_to_vec(Vector::splat(inv_mass.<span class="number">0</span>));
         <span class="kw">let </span>effective_inv_inertia = locked_axes.apply_to_rotation(inv_inertia.rotated(rotation).<span class="number">0</span>);
 
-        <span class="comment">// avoid triggering bevy&#39;s change detection unnecessarily
+        <span class="comment">// avoid triggering bevy's change detection unnecessarily
         </span><span class="kw">let </span>delta_lin_vel = impulse.impulse() * effective_inv_mass;
         <span class="kw">let </span>delta_ang_vel =
             effective_inv_inertia * (ang_impulse.impulse() + impulse.angular_impulse());
@@ -596,10 +600,10 @@
 }
 
 <span class="kw">type </span>ForceComponents = (
-    <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span><span class="kw-2">mut </span>ExternalForce,
-    <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span><span class="kw-2">mut </span>ExternalTorque,
-    <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span><span class="kw-2">mut </span>ExternalImpulse,
-    <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span><span class="kw-2">mut </span>ExternalAngularImpulse,
+    <span class="kw-2">&amp;</span><span class="lifetime">'static </span><span class="kw-2">mut </span>ExternalForce,
+    <span class="kw-2">&amp;</span><span class="lifetime">'static </span><span class="kw-2">mut </span>ExternalTorque,
+    <span class="kw-2">&amp;</span><span class="lifetime">'static </span><span class="kw-2">mut </span>ExternalImpulse,
+    <span class="kw-2">&amp;</span><span class="lifetime">'static </span><span class="kw-2">mut </span>ExternalAngularImpulse,
 );
 <span class="kw">type </span>ForceComponentsChanged = Or&lt;(
     Changed&lt;ExternalForce&gt;,
@@ -608,7 +612,10 @@
     Changed&lt;ExternalAngularImpulse&gt;,
 )&gt;;
 
-<span class="kw">fn </span>clear_forces_and_impulses(<span class="kw-2">mut </span>forces: Query&lt;ForceComponents, ForceComponentsChanged&gt;) {
+<span class="doccomment">/// Responsible for clearing forces and impulses on bodies.
+///
+/// Runs in [`PhysicsSchedule`], after [`PhysicsStepSet::SpatialQuery`].
+</span><span class="kw">pub fn </span>clear_forces_and_impulses(<span class="kw-2">mut </span>forces: Query&lt;ForceComponents, ForceComponentsChanged&gt;) {
     <span class="kw">for </span>(<span class="kw-2">mut </span>force, <span class="kw-2">mut </span>torque, <span class="kw-2">mut </span>impulse, <span class="kw-2">mut </span>angular_ímpulse) <span class="kw">in </span><span class="kw-2">&amp;mut </span>forces {
         <span class="kw">if </span>!force.persistent {
             force.clear();

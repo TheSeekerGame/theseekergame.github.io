@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy-3e956806168b8470/b5b6ea3/crates/bevy_scene/src/scene_spawner.rs`."><title>scene_spawner.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bevy_scene" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy-3e956806168b8470/b5b6ea3/crates/bevy_scene/src/scene_spawner.rs`."><title>scene_spawner.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bevy_scene" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -510,22 +511,22 @@
 </span><span class="attr">#[derive(Error, Debug)]
 </span><span class="kw">pub enum </span>SceneSpawnError {
     <span class="doccomment">/// Scene contains an unregistered component type.
-    </span><span class="attr">#[error(<span class="string">&quot;scene contains the unregistered component `{type_path}`. consider adding `#[reflect(Component)]` to your type&quot;</span>)]
+    </span><span class="attr">#[error(<span class="string">"scene contains the unregistered component `{type_path}`. consider adding `#[reflect(Component)]` to your type"</span>)]
     </span>UnregisteredComponent {
         <span class="doccomment">/// Type of the unregistered component.
         </span>type_path: String,
     },
     <span class="doccomment">/// Scene contains an unregistered resource type.
-    </span><span class="attr">#[error(<span class="string">&quot;scene contains the unregistered resource `{type_path}`. consider adding `#[reflect(Resource)]` to your type&quot;</span>)]
+    </span><span class="attr">#[error(<span class="string">"scene contains the unregistered resource `{type_path}`. consider adding `#[reflect(Resource)]` to your type"</span>)]
     </span>UnregisteredResource {
         <span class="doccomment">/// Type of the unregistered resource.
         </span>type_path: String,
     },
     <span class="doccomment">/// Scene contains an unregistered type.
     </span><span class="attr">#[error(
-        <span class="string">&quot;scene contains the unregistered type `{std_type_name}`. \
+        <span class="string">"scene contains the unregistered type `{std_type_name}`. \
         consider reflecting it with `#[derive(Reflect)]` \
-        and registering the type using `app.register_type::&lt;T&gt;()`&quot;
+        and registering the type using `app.register_type::&lt;T&gt;()`"
     </span>)]
     </span>UnregisteredType {
         <span class="doccomment">/// The [type name] for the unregistered type.
@@ -534,27 +535,27 @@
     },
     <span class="doccomment">/// Scene contains an unregistered type which has a `TypePath`.
     </span><span class="attr">#[error(
-        <span class="string">&quot;scene contains the reflected type `{type_path}` but it was not found in the type registry. \
-        consider registering the type using `app.register_type::&lt;T&gt;()``&quot;
+        <span class="string">"scene contains the reflected type `{type_path}` but it was not found in the type registry. \
+        consider registering the type using `app.register_type::&lt;T&gt;()``"
     </span>)]
     </span>UnregisteredButReflectedType {
         <span class="doccomment">/// The unregistered type.
         </span>type_path: String,
     },
     <span class="doccomment">/// Scene contains a proxy without a represented type.
-    </span><span class="attr">#[error(<span class="string">&quot;scene contains dynamic type `{type_path}` without a represented type. consider changing this using `set_represented_type`.&quot;</span>)]
+    </span><span class="attr">#[error(<span class="string">"scene contains dynamic type `{type_path}` without a represented type. consider changing this using `set_represented_type`."</span>)]
     </span>NoRepresentedType {
         <span class="doccomment">/// The dynamic instance type.
         </span>type_path: String,
     },
     <span class="doccomment">/// Dynamic scene with the given id does not exist.
-    </span><span class="attr">#[error(<span class="string">&quot;scene does not exist&quot;</span>)]
+    </span><span class="attr">#[error(<span class="string">"scene does not exist"</span>)]
     </span>NonExistentScene {
         <span class="doccomment">/// Id of the non-existent dynamic scene.
         </span>id: AssetId&lt;DynamicScene&gt;,
     },
     <span class="doccomment">/// Scene with the given id does not exist.
-    </span><span class="attr">#[error(<span class="string">&quot;scene does not exist&quot;</span>)]
+    </span><span class="attr">#[error(<span class="string">"scene does not exist"</span>)]
     </span>NonExistentRealScene {
         <span class="doccomment">/// Id of the non-existent scene.
         </span>id: AssetId&lt;Scene&gt;,
@@ -780,8 +781,8 @@
                         <span class="comment">// This will filter only the scene root entity, as all other from the
                         // scene have a parent
                         </span>.map(|entity| entity.contains::&lt;Parent&gt;())
-                        <span class="comment">// Default is true so that it won&#39;t run on an entity that wouldn&#39;t exist anymore
-                        // this case shouldn&#39;t happen anyway
+                        <span class="comment">// Default is true so that it won't run on an entity that wouldn't exist anymore
+                        // this case shouldn't happen anyway
                         </span>.unwrap_or(<span class="bool-val">true</span>)
                     {
                         AddChild {
@@ -804,14 +805,14 @@
         <span class="self">self</span>.spawned_instances.contains_key(<span class="kw-2">&amp;</span>instance_id)
     }
 
-    <span class="doccomment">/// Get an iterator over the entities in an instance, once it&#39;s spawned.
+    <span class="doccomment">/// Get an iterator over the entities in an instance, once it's spawned.
     ///
     /// Before the scene is spawned, the iterator will be empty. Use [`Self::instance_is_ready`]
     /// to check if the instance is ready.
     </span><span class="kw">pub fn </span>iter_instance_entities(
-        <span class="kw-2">&amp;</span><span class="lifetime">&#39;_ </span><span class="self">self</span>,
+        <span class="kw-2">&amp;</span><span class="lifetime">'_ </span><span class="self">self</span>,
         instance_id: InstanceId,
-    ) -&gt; <span class="kw">impl </span>Iterator&lt;Item = Entity&gt; + <span class="lifetime">&#39;_ </span>{
+    ) -&gt; <span class="kw">impl </span>Iterator&lt;Item = Entity&gt; + <span class="lifetime">'_ </span>{
         <span class="self">self</span>.spawned_instances
             .get(<span class="kw-2">&amp;</span>instance_id)
             .map(|instance| instance.entity_map.values())
@@ -863,7 +864,7 @@
         scene_spawner.despawn_queued_instances(world);
         scene_spawner
             .spawn_queued_scenes(world)
-            .unwrap_or_else(|err| <span class="macro">panic!</span>(<span class="string">&quot;{}&quot;</span>, err));
+            .unwrap_or_else(|err| <span class="macro">panic!</span>(<span class="string">"{}"</span>, err));
         scene_spawner
             .update_spawned_scenes(world, <span class="kw-2">&amp;</span>updated_spawned_scenes)
             .unwrap();

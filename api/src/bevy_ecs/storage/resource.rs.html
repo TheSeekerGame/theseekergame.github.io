@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy-3e956806168b8470/b5b6ea3/crates/bevy_ecs/src/storage/resource.rs`."><title>resource.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_ecs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy-3e956806168b8470/b5b6ea3/crates/bevy_ecs/src/storage/resource.rs`."><title>resource.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_ecs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -346,7 +347,7 @@
         <span class="kw">if </span><span class="self">self</span>.origin_thread_id != <span class="prelude-val">Some</span>(std::thread::current().id()) {
             <span class="comment">// Panic in tests, as testing for aborting is nearly impossible
             </span><span class="macro">panic!</span>(
-                <span class="string">&quot;Attempted to access or drop non-send resource {} from thread {:?} on a thread {:?}. This is not allowed. Aborting.&quot;</span>,
+                <span class="string">"Attempted to access or drop non-send resource {} from thread {:?} on a thread {:?}. This is not allowed. Aborting."</span>,
                 <span class="self">self</span>.type_name,
                 <span class="self">self</span>.origin_thread_id,
                 std::thread::current().id()
@@ -372,14 +373,14 @@
     /// If `SEND` is false, this will panic if a value is present and is not accessed from the
     /// original thread it was inserted from.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>get_data(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Ptr&lt;<span class="lifetime">&#39;_</span>&gt;&gt; {
+    </span><span class="kw">pub fn </span>get_data(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Ptr&lt;<span class="lifetime">'_</span>&gt;&gt; {
         <span class="self">self</span>.column.get_data(<span class="self">Self</span>::ROW).map(|res| {
             <span class="self">self</span>.validate_access();
             res
         })
     }
 
-    <span class="doccomment">/// Returns a reference to the resource&#39;s change ticks, if it exists.
+    <span class="doccomment">/// Returns a reference to the resource's change ticks, if it exists.
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>get_ticks(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;ComponentTicks&gt; {
         <span class="self">self</span>.column.get_ticks(<span class="self">Self</span>::ROW)
@@ -391,7 +392,7 @@
     /// If `SEND` is false, this will panic if a value is present and is not accessed from the
     /// original thread it was inserted in.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>get_with_ticks(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;(Ptr&lt;<span class="lifetime">&#39;_</span>&gt;, TickCells&lt;<span class="lifetime">&#39;_</span>&gt;)&gt; {
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>get_with_ticks(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;(Ptr&lt;<span class="lifetime">'_</span>&gt;, TickCells&lt;<span class="lifetime">'_</span>&gt;)&gt; {
         <span class="self">self</span>.column.get(<span class="self">Self</span>::ROW).map(|res| {
             <span class="self">self</span>.validate_access();
             res
@@ -403,7 +404,7 @@
     /// # Panics
     /// If `SEND` is false, this will panic if a value is present and is not accessed from the
     /// original thread it was inserted in.
-    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>get_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>, last_run: Tick, this_run: Tick) -&gt; <span class="prelude-ty">Option</span>&lt;MutUntyped&lt;<span class="lifetime">&#39;_</span>&gt;&gt; {
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>get_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>, last_run: Tick, this_run: Tick) -&gt; <span class="prelude-ty">Option</span>&lt;MutUntyped&lt;<span class="lifetime">'_</span>&gt;&gt; {
         <span class="kw">let </span>(ptr, ticks) = <span class="self">self</span>.get_with_ticks()<span class="question-mark">?</span>;
         <span class="prelude-val">Some</span>(MutUntyped {
             <span class="comment">// SAFETY: We have exclusive access to the underlying storage.
@@ -423,7 +424,7 @@
     /// # Safety
     /// - `value` must be valid for the underlying type for the resource.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>insert(<span class="kw-2">&amp;mut </span><span class="self">self</span>, value: OwningPtr&lt;<span class="lifetime">&#39;_</span>&gt;, change_tick: Tick) {
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>insert(<span class="kw-2">&amp;mut </span><span class="self">self</span>, value: OwningPtr&lt;<span class="lifetime">'_</span>&gt;, change_tick: Tick) {
         <span class="kw">if </span><span class="self">self</span>.is_present() {
             <span class="self">self</span>.validate_access();
             <span class="self">self</span>.column.replace(<span class="self">Self</span>::ROW, value, change_tick);
@@ -447,7 +448,7 @@
     </span><span class="attr">#[inline]
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>insert_with_ticks(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        value: OwningPtr&lt;<span class="lifetime">&#39;_</span>&gt;,
+        value: OwningPtr&lt;<span class="lifetime">'_</span>&gt;,
         change_ticks: ComponentTicks,
     ) {
         <span class="kw">if </span><span class="self">self</span>.is_present() {
@@ -472,8 +473,8 @@
     /// If `SEND` is false, this will panic if a value is present and is not removed from the
     /// original thread it was inserted from.
     </span><span class="attr">#[inline]
-    #[must_use = <span class="string">&quot;The returned pointer to the removed component should be used or dropped&quot;</span>]
-    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>remove(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;(OwningPtr&lt;<span class="lifetime">&#39;_</span>&gt;, ComponentTicks)&gt; {
+    #[must_use = <span class="string">"The returned pointer to the removed component should be used or dropped"</span>]
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>remove(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;(OwningPtr&lt;<span class="lifetime">'_</span>&gt;, ComponentTicks)&gt; {
         <span class="kw">if </span>SEND {
             <span class="self">self</span>.column.swap_remove_and_forget(<span class="self">Self</span>::ROW)
         } <span class="kw">else </span>{
@@ -547,11 +548,11 @@
         <span class="self">self</span>.resources.get_mut(component_id)
     }
 
-    <span class="doccomment">/// Fetches or initializes a new resource and returns back it&#39;s underlying column.
+    <span class="doccomment">/// Fetches or initializes a new resource and returns back it's underlying column.
     ///
     /// # Panics
     /// Will panic if `component_id` is not valid for the provided `components`
-    /// If `SEND` is true, this will panic if `component_id`&#39;s `ComponentInfo` is not registered as being `Send` + `Sync`.
+    /// If `SEND` is true, this will panic if `component_id`'s `ComponentInfo` is not registered as being `Send` + `Sync`.
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>initialize_with(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         component_id: ComponentId,
@@ -563,7 +564,7 @@
             <span class="kw">if </span>SEND {
                 <span class="macro">assert!</span>(
                     component_info.is_send_and_sync(),
-                    <span class="string">&quot;Send + Sync resource {} initialized as non_send. It may have been inserted via World::insert_non_send_resource by accident. Try using World::insert_resource instead.&quot;</span>,
+                    <span class="string">"Send + Sync resource {} initialized as non_send. It may have been inserted via World::insert_non_send_resource by accident. Try using World::insert_resource instead."</span>,
                     component_info.name(),
                 );
             }

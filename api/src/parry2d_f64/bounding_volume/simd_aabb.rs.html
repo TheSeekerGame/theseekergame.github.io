@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/parry2d-f64-0.13.5/src/bounding_volume/simd_aabb.rs`."><title>simd_aabb.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="parry2d_f64" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/parry2d-f64-0.13.6/src/bounding_volume/simd_aabb.rs`."><title>simd_aabb.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="parry2d_f64" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -367,11 +368,11 @@
 <span class="doccomment">/// Four Aabb represented as a single SoA Aabb with SIMD components.
 </span><span class="attr">#[derive(Debug, Copy, Clone)]
 #[cfg_attr(
-    feature = <span class="string">&quot;rkyv&quot;</span>,
+    feature = <span class="string">"rkyv"</span>,
     derive(rkyv::Archive, rkyv::Deserialize, rkyv::Serialize),
     archive(check_bytes)
 )]
-#[cfg_attr(feature = <span class="string">&quot;cuda&quot;</span>, derive(cust_core::DeviceCopy))]
+#[cfg_attr(feature = <span class="string">"cuda"</span>, derive(cust_core::DeviceCopy))]
 </span><span class="kw">pub struct </span>SimdAabb {
     <span class="doccomment">/// The min coordinates of the Aabbs.
     </span><span class="kw">pub </span>mins: Point&lt;SimdReal&gt;,
@@ -379,7 +380,7 @@
     </span><span class="kw">pub </span>maxs: Point&lt;SimdReal&gt;,
 }
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;serde-serialize&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"serde-serialize"</span>)]
 </span><span class="kw">impl </span>serde::Serialize <span class="kw">for </span>SimdAabb {
     <span class="kw">fn </span>serialize&lt;S&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, serializer: S) -&gt; <span class="prelude-ty">Result</span>&lt;S::Ok, S::Error&gt;
     <span class="kw">where
@@ -398,41 +399,41 @@
                 .map(|e| <span class="macro">array!</span>[|ii| e.extract(ii); SIMD_WIDTH]),
         );
 
-        <span class="kw">let </span><span class="kw-2">mut </span>simd_aabb = serializer.serialize_struct(<span class="string">&quot;SimdAabb&quot;</span>, <span class="number">2</span>)<span class="question-mark">?</span>;
-        simd_aabb.serialize_field(<span class="string">&quot;mins&quot;</span>, <span class="kw-2">&amp;</span>mins)<span class="question-mark">?</span>;
-        simd_aabb.serialize_field(<span class="string">&quot;maxs&quot;</span>, <span class="kw-2">&amp;</span>maxs)<span class="question-mark">?</span>;
+        <span class="kw">let </span><span class="kw-2">mut </span>simd_aabb = serializer.serialize_struct(<span class="string">"SimdAabb"</span>, <span class="number">2</span>)<span class="question-mark">?</span>;
+        simd_aabb.serialize_field(<span class="string">"mins"</span>, <span class="kw-2">&amp;</span>mins)<span class="question-mark">?</span>;
+        simd_aabb.serialize_field(<span class="string">"maxs"</span>, <span class="kw-2">&amp;</span>maxs)<span class="question-mark">?</span>;
         simd_aabb.end()
     }
 }
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;serde-serialize&quot;</span>)]
-</span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;de</span>&gt; serde::Deserialize&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span>SimdAabb {
+<span class="attr">#[cfg(feature = <span class="string">"serde-serialize"</span>)]
+</span><span class="kw">impl</span>&lt;<span class="lifetime">'de</span>&gt; serde::Deserialize&lt;<span class="lifetime">'de</span>&gt; <span class="kw">for </span>SimdAabb {
     <span class="kw">fn </span>deserialize&lt;D&gt;(deserializer: D) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, D::Error&gt;
     <span class="kw">where
-        </span>D: serde::Deserializer&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>D: serde::Deserializer&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">struct </span>Visitor {}
 
         <span class="attr">#[derive(Deserialize)]
-        #[serde(field_identifier, rename_all = <span class="string">&quot;lowercase&quot;</span>)]
+        #[serde(field_identifier, rename_all = <span class="string">"lowercase"</span>)]
         </span><span class="kw">enum </span>Field {
             Mins,
             Maxs,
         }
 
-        <span class="kw">impl</span>&lt;<span class="lifetime">&#39;de</span>&gt; serde::de::Visitor&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span>Visitor {
+        <span class="kw">impl</span>&lt;<span class="lifetime">'de</span>&gt; serde::de::Visitor&lt;<span class="lifetime">'de</span>&gt; <span class="kw">for </span>Visitor {
             <span class="kw">type </span>Value = SimdAabb;
             <span class="kw">fn </span>expecting(<span class="kw-2">&amp;</span><span class="self">self</span>, formatter: <span class="kw-2">&amp;mut </span>std::fmt::Formatter) -&gt; std::fmt::Result {
                 <span class="macro">write!</span>(
                     formatter,
-                    <span class="string">&quot;two arrays containing at least {} floats&quot;</span>,
+                    <span class="string">"two arrays containing at least {} floats"</span>,
                     SIMD_WIDTH * DIM * <span class="number">2
                 </span>)
             }
 
             <span class="kw">fn </span>visit_map&lt;A&gt;(<span class="self">self</span>, <span class="kw-2">mut </span>map: A) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Value, A::Error&gt;
             <span class="kw">where
-                </span>A: serde::de::MapAccess&lt;<span class="lifetime">&#39;de</span>&gt;,
+                </span>A: serde::de::MapAccess&lt;<span class="lifetime">'de</span>&gt;,
             {
                 <span class="kw">let </span><span class="kw-2">mut </span>mins: <span class="prelude-ty">Option</span>&lt;Point&lt;[Real; SIMD_WIDTH]&gt;&gt; = <span class="prelude-val">None</span>;
                 <span class="kw">let </span><span class="kw-2">mut </span>maxs: <span class="prelude-ty">Option</span>&lt;Point&lt;[Real; SIMD_WIDTH]&gt;&gt; = <span class="prelude-val">None</span>;
@@ -441,21 +442,21 @@
                     <span class="kw">match </span>key {
                         Field::Mins =&gt; {
                             <span class="kw">if </span>mins.is_some() {
-                                <span class="kw">return </span><span class="prelude-val">Err</span>(serde::de::Error::duplicate_field(<span class="string">&quot;mins&quot;</span>));
+                                <span class="kw">return </span><span class="prelude-val">Err</span>(serde::de::Error::duplicate_field(<span class="string">"mins"</span>));
                             }
                             mins = <span class="prelude-val">Some</span>(map.next_value()<span class="question-mark">?</span>);
                         }
                         Field::Maxs =&gt; {
                             <span class="kw">if </span>maxs.is_some() {
-                                <span class="kw">return </span><span class="prelude-val">Err</span>(serde::de::Error::duplicate_field(<span class="string">&quot;maxs&quot;</span>));
+                                <span class="kw">return </span><span class="prelude-val">Err</span>(serde::de::Error::duplicate_field(<span class="string">"maxs"</span>));
                             }
                             maxs = <span class="prelude-val">Some</span>(map.next_value()<span class="question-mark">?</span>);
                         }
                     }
                 }
 
-                <span class="kw">let </span>mins = mins.ok_or_else(|| serde::de::Error::missing_field(<span class="string">&quot;mins&quot;</span>))<span class="question-mark">?</span>;
-                <span class="kw">let </span>maxs = maxs.ok_or_else(|| serde::de::Error::missing_field(<span class="string">&quot;maxs&quot;</span>))<span class="question-mark">?</span>;
+                <span class="kw">let </span>mins = mins.ok_or_else(|| serde::de::Error::missing_field(<span class="string">"mins"</span>))<span class="question-mark">?</span>;
+                <span class="kw">let </span>maxs = maxs.ok_or_else(|| serde::de::Error::missing_field(<span class="string">"maxs"</span>))<span class="question-mark">?</span>;
                 <span class="kw">let </span>mins = mins.map(SimdReal::from);
                 <span class="kw">let </span>maxs = maxs.map(SimdReal::from);
                 <span class="prelude-val">Ok</span>(SimdAabb { mins, maxs })
@@ -463,7 +464,7 @@
 
             <span class="kw">fn </span>visit_seq&lt;A&gt;(<span class="self">self</span>, <span class="kw-2">mut </span>seq: A) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Value, A::Error&gt;
             <span class="kw">where
-                </span>A: serde::de::SeqAccess&lt;<span class="lifetime">&#39;de</span>&gt;,
+                </span>A: serde::de::SeqAccess&lt;<span class="lifetime">'de</span>&gt;,
             {
                 <span class="kw">let </span>mins: Point&lt;[Real; SIMD_WIDTH]&gt; = seq
                     .next_element()<span class="question-mark">?
@@ -477,7 +478,7 @@
             }
         }
 
-        deserializer.deserialize_struct(<span class="string">&quot;SimdAabb&quot;</span>, <span class="kw-2">&amp;</span>[<span class="string">&quot;mins&quot;</span>, <span class="string">&quot;maxs&quot;</span>], Visitor {})
+        deserializer.deserialize_struct(<span class="string">"SimdAabb"</span>, <span class="kw-2">&amp;</span>[<span class="string">"mins"</span>, <span class="string">"maxs"</span>], Visitor {})
     }
 }
 
@@ -524,8 +525,8 @@
     <span class="doccomment">/// Returns a scaled version of this Aabb.
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>scaled(<span class="self">self</span>, scale: <span class="kw-2">&amp;</span>Vector&lt;SimdReal&gt;) -&gt; <span class="self">Self </span>{
-        <span class="kw">let </span>a = <span class="self">self</span>.mins.coords.component_mul(<span class="kw-2">&amp;</span>scale);
-        <span class="kw">let </span>b = <span class="self">self</span>.maxs.coords.component_mul(<span class="kw-2">&amp;</span>scale);
+        <span class="kw">let </span>a = <span class="self">self</span>.mins.coords.component_mul(scale);
+        <span class="kw">let </span>b = <span class="self">self</span>.maxs.coords.component_mul(scale);
         <span class="self">Self </span>{
             mins: a.inf(<span class="kw-2">&amp;</span>b).into(),
             maxs: a.sup(<span class="kw-2">&amp;</span>b).into(),
@@ -542,12 +543,12 @@
     /// by the given scale `factor`.
     </span><span class="kw">pub fn </span>dilate_by_factor(<span class="kw-2">&amp;mut </span><span class="self">self</span>, factor: SimdReal) {
         <span class="comment">// If some of the Aabbs on this SimdAabb are invalid,
-        // don&#39;t, dilate them.
+        // don't, dilate them.
         </span><span class="kw">let </span>is_valid = <span class="self">self</span>.mins.x.simd_le(<span class="self">self</span>.maxs.x);
         <span class="kw">let </span>factor = factor.select(is_valid, SimdReal::zero());
 
         <span class="comment">// NOTE: we multiply each by factor instead of doing
-        // (maxs - mins) * factor. That&#39;s to avoid overflows (and
+        // (maxs - mins) * factor. That's to avoid overflows (and
         // therefore NaNs if this SimdAabb contains some invalid
         // Aabbs initialised with Real::MAX
         </span><span class="kw">let </span>dilation = <span class="self">self</span>.maxs * factor - <span class="self">self</span>.mins * factor;
@@ -617,13 +618,13 @@
 
     <span class="doccomment">/// Check which Aabb represented by `self` contains the given `point`.
     </span><span class="kw">pub fn </span>contains_local_point(<span class="kw-2">&amp;</span><span class="self">self</span>, point: <span class="kw-2">&amp;</span>Point&lt;SimdReal&gt;) -&gt; SimdBool {
-        <span class="attr">#[cfg(feature = <span class="string">&quot;dim2&quot;</span>)]
+        <span class="attr">#[cfg(feature = <span class="string">"dim2"</span>)]
         </span><span class="kw">return </span><span class="self">self</span>.mins.x.simd_le(point.x)
             &amp; <span class="self">self</span>.mins.y.simd_le(point.y)
             &amp; <span class="self">self</span>.maxs.x.simd_ge(point.x)
             &amp; <span class="self">self</span>.maxs.y.simd_ge(point.y);
 
-        <span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+        <span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
         </span><span class="kw">return </span><span class="self">self</span>.mins.x.simd_le(point.x)
             &amp; <span class="self">self</span>.mins.y.simd_le(point.y)
             &amp; <span class="self">self</span>.mins.z.simd_le(point.z)
@@ -634,7 +635,7 @@
 
     <span class="doccomment">/// Lanewise check which Aabb represented by `self` contains the given set of `other` aabbs.
     /// The check is performed lane-wise.
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;dim2&quot;</span>)]
+    </span><span class="attr">#[cfg(feature = <span class="string">"dim2"</span>)]
     </span><span class="kw">pub fn </span>contains(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span>SimdAabb) -&gt; SimdBool {
         <span class="self">self</span>.mins.x.simd_le(other.mins.x)
             &amp; <span class="self">self</span>.mins.y.simd_le(other.mins.y)
@@ -644,7 +645,7 @@
 
     <span class="doccomment">/// Lanewise check which Aabb represented by `self` contains the given set of `other` aabbs.
     /// The check is performed lane-wise.
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+    </span><span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
     </span><span class="kw">pub fn </span>contains(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span>SimdAabb) -&gt; SimdBool {
         <span class="self">self</span>.mins.x.simd_le(other.mins.x)
             &amp; <span class="self">self</span>.mins.y.simd_le(other.mins.y)
@@ -656,7 +657,7 @@
 
     <span class="doccomment">/// Lanewise check which Aabb represented by `self` intersects the given set of `other` aabbs.
     /// The check is performed lane-wise.
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;dim2&quot;</span>)]
+    </span><span class="attr">#[cfg(feature = <span class="string">"dim2"</span>)]
     </span><span class="kw">pub fn </span>intersects(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span>SimdAabb) -&gt; SimdBool {
         <span class="self">self</span>.mins.x.simd_le(other.maxs.x)
             &amp; other.mins.x.simd_le(<span class="self">self</span>.maxs.x)
@@ -666,7 +667,7 @@
 
     <span class="doccomment">/// Check which Aabb represented by `self` contains the given set of `other` aabbs.
     /// The check is performed lane-wise.
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+    </span><span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
     </span><span class="kw">pub fn </span>intersects(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span>SimdAabb) -&gt; SimdBool {
         <span class="self">self</span>.mins.x.simd_le(other.maxs.x)
             &amp; other.mins.x.simd_le(<span class="self">self</span>.maxs.x)

@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy-3e956806168b8470/b5b6ea3/crates/bevy_ecs/src/entity/map_entities.rs`."><title>map_entities.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_ecs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy-3e956806168b8470/b5b6ea3/crates/bevy_ecs/src/entity/map_entities.rs`."><title>map_entities.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_ecs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -188,7 +189,7 @@
 
 <span class="doccomment">/// Operation to map all contained [`Entity`] fields in a type to new values.
 ///
-/// As entity IDs are valid only for the [`World`] they&#39;re sourced from, using [`Entity`]
+/// As entity IDs are valid only for the [`World`] they're sourced from, using [`Entity`]
 /// as references in components copied from another world will be invalid. This trait
 /// allows defining custom mappings for these references via [`HashMap&lt;Entity, Entity&gt;`]
 ///
@@ -230,7 +231,7 @@
 /// References are allocated by returning increasing generations starting from an internally initialized base
 /// [`Entity`]. After it is finished being used by [`MapEntities`] implementations, this entity is despawned and the
 /// requisite number of generations reserved.
-</span><span class="kw">pub struct </span>EntityMapper&lt;<span class="lifetime">&#39;m</span>&gt; {
+</span><span class="kw">pub struct </span>EntityMapper&lt;<span class="lifetime">'m</span>&gt; {
     <span class="doccomment">/// A mapping from one set of entities to another.
     ///
     /// This is typically used to coordinate data transfer between sets of entities, such as between a scene and the world
@@ -239,14 +240,14 @@
     ///
     /// On its own, a [`HashMap&lt;Entity, Entity&gt;`] is not capable of allocating new entity identifiers, which is needed to map references
     /// to entities that lie outside the source entity set. This functionality can be accessed through [`EntityMapper::world_scope()`].
-    </span>map: <span class="kw-2">&amp;</span><span class="lifetime">&#39;m </span><span class="kw-2">mut </span>HashMap&lt;Entity, Entity&gt;,
+    </span>map: <span class="kw-2">&amp;</span><span class="lifetime">'m </span><span class="kw-2">mut </span>HashMap&lt;Entity, Entity&gt;,
     <span class="doccomment">/// A base [`Entity`] used to allocate new references.
     </span>dead_start: Entity,
     <span class="doccomment">/// The number of generations this mapper has allocated thus far.
     </span>generations: u32,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;m</span>&gt; EntityMapper&lt;<span class="lifetime">&#39;m</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'m</span>&gt; EntityMapper&lt;<span class="lifetime">'m</span>&gt; {
     <span class="doccomment">/// Returns the corresponding mapped entity or reserves a new dead entity ID if it is absent.
     </span><span class="kw">pub fn </span>get_or_reserve(<span class="kw-2">&amp;mut </span><span class="self">self</span>, entity: Entity) -&gt; Entity {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>mapped) = <span class="self">self</span>.map.get(<span class="kw-2">&amp;</span>entity) {
@@ -266,17 +267,17 @@
     }
 
     <span class="doccomment">/// Gets a reference to the underlying [`HashMap&lt;Entity, Entity&gt;`].
-    </span><span class="kw">pub fn </span>get_map(<span class="kw-2">&amp;</span><span class="lifetime">&#39;m </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;m </span>HashMap&lt;Entity, Entity&gt; {
+    </span><span class="kw">pub fn </span>get_map(<span class="kw-2">&amp;</span><span class="lifetime">'m </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'m </span>HashMap&lt;Entity, Entity&gt; {
         <span class="self">self</span>.map
     }
 
     <span class="doccomment">/// Gets a mutable reference to the underlying [`HashMap&lt;Entity, Entity&gt;`].
-    </span><span class="kw">pub fn </span>get_map_mut(<span class="kw-2">&amp;</span><span class="lifetime">&#39;m </span><span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;m </span><span class="kw-2">mut </span>HashMap&lt;Entity, Entity&gt; {
+    </span><span class="kw">pub fn </span>get_map_mut(<span class="kw-2">&amp;</span><span class="lifetime">'m </span><span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'m </span><span class="kw-2">mut </span>HashMap&lt;Entity, Entity&gt; {
         <span class="self">self</span>.map
     }
 
     <span class="doccomment">/// Creates a new [`EntityMapper`], spawning a temporary base [`Entity`] in the provided [`World`]
-    </span><span class="kw">fn </span>new(map: <span class="kw-2">&amp;</span><span class="lifetime">&#39;m </span><span class="kw-2">mut </span>HashMap&lt;Entity, Entity&gt;, world: <span class="kw-2">&amp;mut </span>World) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">fn </span>new(map: <span class="kw-2">&amp;</span><span class="lifetime">'m </span><span class="kw-2">mut </span>HashMap&lt;Entity, Entity&gt;, world: <span class="kw-2">&amp;mut </span>World) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             map,
             <span class="comment">// SAFETY: Entities data is kept in a valid state via `EntityMapper::world_scope`
@@ -303,7 +304,7 @@
     /// within the scope of this world. Its return value is then returned from `world_scope` as the generic type
     /// parameter `R`.
     </span><span class="kw">pub fn </span>world_scope&lt;R&gt;(
-        entity_map: <span class="kw-2">&amp;</span><span class="lifetime">&#39;m </span><span class="kw-2">mut </span>HashMap&lt;Entity, Entity&gt;,
+        entity_map: <span class="kw-2">&amp;</span><span class="lifetime">'m </span><span class="kw-2">mut </span>HashMap&lt;Entity, Entity&gt;,
         world: <span class="kw-2">&amp;mut </span>World,
         f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span>World, <span class="kw-2">&amp;mut </span><span class="self">Self</span>) -&gt; R,
     ) -&gt; R {
@@ -338,12 +339,12 @@
         <span class="macro">assert_eq!</span>(
             dead_ref,
             mapper.get_or_reserve(mapped_ent),
-            <span class="string">&quot;should persist the allocated mapping from the previous line&quot;
+            <span class="string">"should persist the allocated mapping from the previous line"
         </span>);
         <span class="macro">assert_eq!</span>(
             mapper.get_or_reserve(Entity::new(SECOND_IDX, <span class="number">0</span>)).index(),
             dead_ref.index(),
-            <span class="string">&quot;should re-use the same index for further dead refs&quot;
+            <span class="string">"should re-use the same index for further dead refs"
         </span>);
 
         mapper.finish(<span class="kw-2">&amp;mut </span>world);

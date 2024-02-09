@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/parry2d-f64-0.13.5/src/shape/trimesh.rs`."><title>trimesh.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="parry2d_f64" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/parry2d-f64-0.13.6/src/shape/trimesh.rs`."><title>trimesh.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="parry2d_f64" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1368,25 +1369,25 @@
 <span class="kw">use </span><span class="kw">crate</span>::shape::{FeatureId, Shape, Triangle, TypedSimdCompositeShape};
 
 <span class="kw">use </span><span class="kw">crate</span>::utils::{Array1, DefaultStorage, HashablePartialEq};
-<span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
 </span><span class="kw">use </span>{<span class="kw">crate</span>::shape::Cuboid, <span class="kw">crate</span>::shape::HeightFieldStorage, <span class="kw">crate</span>::utils::SortedPair};
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;std&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"std"</span>)]
 </span><span class="kw">use </span>{
     <span class="kw">crate</span>::shape::composite_shape::SimdCompositeShape,
     <span class="kw">crate</span>::utils::hashmap::{Entry, HashMap},
     std::collections::HashSet,
 };
 
-<span class="attr">#[cfg(all(feature = <span class="string">&quot;dim2&quot;</span>, feature = <span class="string">&quot;std&quot;</span>))]
+<span class="attr">#[cfg(all(feature = <span class="string">"dim2"</span>, feature = <span class="string">"std"</span>))]
 </span><span class="kw">use </span><span class="kw">crate</span>::transformation::ear_clipping::triangulate_ear_clipping;
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;cuda&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"cuda"</span>)]
 </span><span class="kw">use </span><span class="kw">crate</span>::utils::{CudaStorage, CudaStoragePtr};
-<span class="attr">#[cfg(all(feature = <span class="string">&quot;std&quot;</span>, feature = <span class="string">&quot;cuda&quot;</span>))]
+<span class="attr">#[cfg(all(feature = <span class="string">"std"</span>, feature = <span class="string">"cuda"</span>))]
 </span><span class="kw">use </span>{<span class="kw">crate</span>::utils::CudaArray1, cust::error::CudaResult};
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;rkyv&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"rkyv"</span>)]
 </span><span class="kw">use </span>rkyv::{bytecheck, CheckBytes};
 
 <span class="doccomment">/// Indicated an inconsistency in the topology of a triangle mesh.
@@ -1405,40 +1406,40 @@
     },
 }
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;std&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"std"</span>)]
 </span><span class="kw">impl </span>std::fmt::Display <span class="kw">for </span>TopologyError {
-    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>std::fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; std::fmt::Result {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>std::fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; std::fmt::Result {
         <span class="kw">match </span><span class="self">self </span>{
             <span class="self">Self</span>::BadTriangle(fid) =&gt; {
-                f.pad(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;the triangle {fid} has at least two identical vertices.&quot;</span>))
+                f.pad(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"the triangle {fid} has at least two identical vertices."</span>))
             }
             <span class="self">Self</span>::BadAdjascentTrianglesOrientation {
                 triangle1,
                 triangle2,
                 edge,
-            } =&gt; f.pad(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;the triangles {triangle1} and {triangle2} sharing the edge {:?} have opposite orientations.&quot;</span>, edge)),
+            } =&gt; f.pad(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"the triangles {triangle1} and {triangle2} sharing the edge {:?} have opposite orientations."</span>, edge)),
         }
     }
 }
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;std&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"std"</span>)]
 </span><span class="kw">impl </span>std::error::Error <span class="kw">for </span>TopologyError {}
 
 <span class="doccomment">/// The set of pseudo-normals of a triangle mesh.
 ///
 /// These pseudo-normals are used for the inside-outside test of a
 /// point on the triangle, as described in the paper:
-/// &quot;Signed distance computation using the angle weighted pseudonormal&quot;, Baerentzen, et al.
+/// "Signed distance computation using the angle weighted pseudonormal", Baerentzen, et al.
 /// DOI: 10.1109/TVCG.2005.49
 </span><span class="attr">#[derive(Default)]
-#[cfg_attr(feature = <span class="string">&quot;serde-serialize&quot;</span>, derive(Serialize, Deserialize))]
+#[cfg_attr(feature = <span class="string">"serde-serialize"</span>, derive(Serialize, Deserialize))]
 #[cfg_attr(
-    feature = <span class="string">&quot;rkyv&quot;</span>,
+    feature = <span class="string">"rkyv"</span>,
     derive(rkyv::Archive, rkyv::Deserialize, rkyv::Serialize),
     archive(check_bytes)
 )]
 #[repr(C)] </span><span class="comment">// Needed for Cuda.
-</span><span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+</span><span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
 </span><span class="kw">pub struct </span>TriMeshPseudoNormals&lt;Storage: TriMeshStorage&gt; {
     <span class="doccomment">/// The pseudo-normals of the vertices.
     </span><span class="kw">pub </span>vertices_pseudo_normal: Storage::ArrayVector,
@@ -1446,7 +1447,7 @@
     </span><span class="kw">pub </span>edges_pseudo_normal: Storage::ArrayVectorTriple,
 }
 
-<span class="attr">#[cfg(all(feature = <span class="string">&quot;dim3&quot;</span>, feature = <span class="string">&quot;std&quot;</span>, feature = <span class="string">&quot;cuda&quot;</span>))]
+<span class="attr">#[cfg(all(feature = <span class="string">"dim3"</span>, feature = <span class="string">"std"</span>, feature = <span class="string">"cuda"</span>))]
 </span><span class="kw">impl </span>TriMeshPseudoNormals&lt;CudaStorage&gt; {
     <span class="doccomment">/// Returns the heightfield usable from within a CUDA kernel.
     </span><span class="kw">fn </span>as_device_ptr(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; TriMeshPseudoNormals&lt;CudaStoragePtr&gt; {
@@ -1457,7 +1458,7 @@
     }
 }
 
-<span class="attr">#[cfg(all(feature = <span class="string">&quot;dim3&quot;</span>, feature = <span class="string">&quot;std&quot;</span>, feature = <span class="string">&quot;cuda&quot;</span>))]
+<span class="attr">#[cfg(all(feature = <span class="string">"dim3"</span>, feature = <span class="string">"std"</span>, feature = <span class="string">"cuda"</span>))]
 </span><span class="kw">impl </span>TriMeshPseudoNormals&lt;DefaultStorage&gt; {
     <span class="kw">fn </span>to_cuda(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; CudaResult&lt;TriMeshPseudoNormals&lt;CudaStorage&gt;&gt; {
         <span class="prelude-val">Ok</span>(TriMeshPseudoNormals {
@@ -1469,9 +1470,9 @@
 
 <span class="doccomment">/// The connected-components of a triangle mesh.
 </span><span class="attr">#[derive(Debug)]
-#[cfg_attr(feature = <span class="string">&quot;serde-serialize&quot;</span>, derive(Serialize, Deserialize))]
+#[cfg_attr(feature = <span class="string">"serde-serialize"</span>, derive(Serialize, Deserialize))]
 #[cfg_attr(
-    feature = <span class="string">&quot;rkyv&quot;</span>,
+    feature = <span class="string">"rkyv"</span>,
     derive(rkyv::Archive, rkyv::Deserialize, rkyv::Serialize),
     archive(check_bytes)
 )]
@@ -1494,7 +1495,7 @@
     </span>}
 }
 
-<span class="attr">#[cfg(all(feature = <span class="string">&quot;std&quot;</span>, feature = <span class="string">&quot;cuda&quot;</span>))]
+<span class="attr">#[cfg(all(feature = <span class="string">"std"</span>, feature = <span class="string">"cuda"</span>))]
 </span><span class="kw">impl </span>TriMeshConnectedComponents&lt;CudaStorage&gt; {
     <span class="doccomment">/// Returns the heightfield usable from within a CUDA kernel.
     </span><span class="kw">fn </span>as_device_ptr(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; TriMeshConnectedComponents&lt;CudaStoragePtr&gt; {
@@ -1506,7 +1507,7 @@
     }
 }
 
-<span class="attr">#[cfg(all(feature = <span class="string">&quot;std&quot;</span>, feature = <span class="string">&quot;cuda&quot;</span>))]
+<span class="attr">#[cfg(all(feature = <span class="string">"std"</span>, feature = <span class="string">"cuda"</span>))]
 </span><span class="kw">impl </span>TriMeshConnectedComponents&lt;DefaultStorage&gt; {
     <span class="kw">fn </span>to_cuda(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; CudaResult&lt;TriMeshConnectedComponents&lt;CudaStorage&gt;&gt; {
         <span class="prelude-val">Ok</span>(TriMeshConnectedComponents {
@@ -1519,13 +1520,13 @@
 
 <span class="doccomment">/// A vertex of a triangle-mesh’s half-edge topology.
 </span><span class="attr">#[derive(Clone, Copy, Debug)]
-#[cfg_attr(feature = <span class="string">&quot;serde-serialize&quot;</span>, derive(Serialize, Deserialize))]
+#[cfg_attr(feature = <span class="string">"serde-serialize"</span>, derive(Serialize, Deserialize))]
 #[cfg_attr(
-    feature = <span class="string">&quot;rkyv&quot;</span>,
+    feature = <span class="string">"rkyv"</span>,
     derive(rkyv::Archive, rkyv::Deserialize, rkyv::Serialize, CheckBytes),
-    archive(<span class="kw">as </span>= <span class="string">&quot;Self&quot;</span>)
+    archive(<span class="kw">as </span>= <span class="string">"Self"</span>)
 )]
-#[cfg_attr(feature = <span class="string">&quot;cuda&quot;</span>, derive(cust_core::DeviceCopy))]
+#[cfg_attr(feature = <span class="string">"cuda"</span>, derive(cust_core::DeviceCopy))]
 #[repr(C)] </span><span class="comment">// Needed for Cuda.
 </span><span class="kw">pub struct </span>TopoVertex {
     <span class="doccomment">/// One of the half-edge with this vertex as endpoint.
@@ -1534,13 +1535,13 @@
 
 <span class="doccomment">/// A face of a triangle-mesh’s half-edge topology.
 </span><span class="attr">#[derive(Clone, Copy, Debug)]
-#[cfg_attr(feature = <span class="string">&quot;serde-serialize&quot;</span>, derive(Serialize, Deserialize))]
+#[cfg_attr(feature = <span class="string">"serde-serialize"</span>, derive(Serialize, Deserialize))]
 #[cfg_attr(
-    feature = <span class="string">&quot;rkyv&quot;</span>,
+    feature = <span class="string">"rkyv"</span>,
     derive(rkyv::Archive, rkyv::Deserialize, rkyv::Serialize, CheckBytes),
-    archive(<span class="kw">as </span>= <span class="string">&quot;Self&quot;</span>)
+    archive(<span class="kw">as </span>= <span class="string">"Self"</span>)
 )]
-#[cfg_attr(feature = <span class="string">&quot;cuda&quot;</span>, derive(cust_core::DeviceCopy))]
+#[cfg_attr(feature = <span class="string">"cuda"</span>, derive(cust_core::DeviceCopy))]
 #[repr(C)] </span><span class="comment">// Needed for Cuda.
 </span><span class="kw">pub struct </span>TopoFace {
     <span class="doccomment">/// The half-edge adjacent to this face, with a starting point equal
@@ -1550,13 +1551,13 @@
 
 <span class="doccomment">/// A half-edge of a triangle-mesh’s half-edge topology.
 </span><span class="attr">#[derive(Clone, Copy, Debug)]
-#[cfg_attr(feature = <span class="string">&quot;serde-serialize&quot;</span>, derive(Serialize, Deserialize))]
+#[cfg_attr(feature = <span class="string">"serde-serialize"</span>, derive(Serialize, Deserialize))]
 #[cfg_attr(
-    feature = <span class="string">&quot;rkyv&quot;</span>,
+    feature = <span class="string">"rkyv"</span>,
     derive(rkyv::Archive, rkyv::Deserialize, rkyv::Serialize, CheckBytes),
-    archive(<span class="kw">as </span>= <span class="string">&quot;Self&quot;</span>)
+    archive(<span class="kw">as </span>= <span class="string">"Self"</span>)
 )]
-#[cfg_attr(feature = <span class="string">&quot;cuda&quot;</span>, derive(cust_core::DeviceCopy))]
+#[cfg_attr(feature = <span class="string">"cuda"</span>, derive(cust_core::DeviceCopy))]
 #[repr(C)] </span><span class="comment">// Needed for Cuda.
 </span><span class="kw">pub struct </span>TopoHalfEdge {
     <span class="doccomment">/// The next half-edge.
@@ -1573,9 +1574,9 @@
 
 <span class="doccomment">/// The half-edge topology information of a triangle mesh.
 </span><span class="attr">#[derive(Default)]
-#[cfg_attr(feature = <span class="string">&quot;serde-serialize&quot;</span>, derive(Serialize, Deserialize))]
+#[cfg_attr(feature = <span class="string">"serde-serialize"</span>, derive(Serialize, Deserialize))]
 #[cfg_attr(
-    feature = <span class="string">&quot;rkyv&quot;</span>,
+    feature = <span class="string">"rkyv"</span>,
     derive(rkyv::Archive, rkyv::Deserialize, rkyv::Serialize),
     archive(check_bytes)
 )]
@@ -1589,7 +1590,7 @@
     </span><span class="kw">pub </span>half_edges: Storage::ArrayTopoHalfEdge,
 }
 
-<span class="attr">#[cfg(all(feature = <span class="string">&quot;std&quot;</span>, feature = <span class="string">&quot;cuda&quot;</span>))]
+<span class="attr">#[cfg(all(feature = <span class="string">"std"</span>, feature = <span class="string">"cuda"</span>))]
 </span><span class="kw">impl </span>TriMeshTopology&lt;CudaStorage&gt; {
     <span class="kw">fn </span>as_device_ptr(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; TriMeshTopology&lt;CudaStoragePtr&gt; {
         TriMeshTopology {
@@ -1601,7 +1602,7 @@
 }
 
 <span class="kw">impl</span>&lt;Storage: TriMeshStorage&gt; TriMeshTopology&lt;Storage&gt; {
-    <span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+    <span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>face_half_edges_ids(<span class="kw-2">&amp;</span><span class="self">self</span>, fid: u32) -&gt; [u32; <span class="number">3</span>] {
         <span class="kw">let </span>first_half_edge = <span class="self">self</span>.faces[fid <span class="kw">as </span>usize].half_edge;
 
@@ -1615,7 +1616,7 @@
     }
 }
 
-<span class="attr">#[cfg(all(feature = <span class="string">&quot;std&quot;</span>, feature = <span class="string">&quot;cuda&quot;</span>))]
+<span class="attr">#[cfg(all(feature = <span class="string">"std"</span>, feature = <span class="string">"cuda"</span>))]
 </span><span class="kw">impl </span>TriMeshTopology&lt;DefaultStorage&gt; {
     <span class="kw">fn </span>to_cuda(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; CudaResult&lt;TriMeshTopology&lt;CudaStorage&gt;&gt; {
         <span class="prelude-val">Ok</span>(TriMeshTopology {
@@ -1627,13 +1628,13 @@
 }
 
 <span class="macro">bitflags::bitflags! </span>{
-    <span class="attr">#[cfg_attr(feature = <span class="string">&quot;serde&quot;</span>, derive(Serialize, Deserialize))]
+    <span class="attr">#[cfg_attr(feature = <span class="string">"serde"</span>, derive(Serialize, Deserialize))]
     #[cfg_attr(
-        feature = <span class="string">&quot;rkyv&quot;</span>,
+        feature = <span class="string">"rkyv"</span>,
         derive(rkyv::Archive, rkyv::Deserialize, rkyv::Serialize),
-        archive(<span class="kw">as </span>= <span class="string">&quot;Self&quot;</span>),
+        archive(<span class="kw">as </span>= <span class="string">"Self"</span>),
     )]
-    #[cfg_attr(feature = <span class="string">&quot;cuda&quot;</span>, derive(cust_core::DeviceCopy))]
+    #[cfg_attr(feature = <span class="string">"cuda"</span>, derive(cust_core::DeviceCopy))]
     #[repr(C)] </span><span class="comment">// Needed for Cuda.
     </span><span class="attr">#[derive(Default)]
     </span><span class="doccomment">/// The status of the cell of an heightfield.
@@ -1672,11 +1673,11 @@
     }
 }
 
-<span class="attr">#[cfg_attr(feature = <span class="string">&quot;serde-serialize&quot;</span>, derive(Serialize, Deserialize))]
+<span class="attr">#[cfg_attr(feature = <span class="string">"serde-serialize"</span>, derive(Serialize, Deserialize))]
 #[cfg_attr(
-    feature = <span class="string">&quot;serde-serialize&quot;</span>,
+    feature = <span class="string">"serde-serialize"</span>,
     serde(bound(
-        serialize = <span class="string">&quot;&lt;Storage::QbvhStorage as QbvhStorage&lt;u32&gt;&gt;::Nodes: serde::Serialize, \
+        serialize = <span class="string">"&lt;Storage::QbvhStorage as QbvhStorage&lt;u32&gt;&gt;::Nodes: serde::Serialize, \
                      &lt;Storage::QbvhStorage as QbvhStorage&lt;u32&gt;&gt;::ArrayU32: serde::Serialize, \
                      &lt;Storage::QbvhStorage as QbvhStorage&lt;u32&gt;&gt;::ArrayProxies: serde::Serialize,\
                      Storage::ArrayTopoVertex: serde::Serialize,\
@@ -1687,23 +1688,23 @@
                      Storage::ArrayVector: serde::Serialize,\
                      Storage::ArrayPoint: serde::Serialize,\
                      Storage::ArrayIdx: serde::Serialize,\
-                     Storage::ArrayVectorTriple: serde::Serialize&quot;</span>,
-        deserialize = <span class="string">&quot;&lt;Storage::QbvhStorage as QbvhStorage&lt;u32&gt;&gt;::Nodes: serde::Deserialize&lt;&#39;de&gt;, \
-                     &lt;Storage::QbvhStorage as QbvhStorage&lt;u32&gt;&gt;::ArrayU32: serde::Deserialize&lt;&#39;de&gt;, \
-                     &lt;Storage::QbvhStorage as QbvhStorage&lt;u32&gt;&gt;::ArrayProxies: serde::Deserialize&lt;&#39;de&gt;,\
-                     Storage::ArrayTopoVertex: serde::Deserialize&lt;&#39;de&gt;,\
-                     Storage::ArrayTopoFace: serde::Deserialize&lt;&#39;de&gt;,\
-                     Storage::ArrayTopoHalfEdge: serde::Deserialize&lt;&#39;de&gt;,\
-                     Storage::ArrayU32: serde::Deserialize&lt;&#39;de&gt;,\
-                     Storage::ArrayUsize: serde::Deserialize&lt;&#39;de&gt;,\
-                     Storage::ArrayVector: serde::Deserialize&lt;&#39;de&gt;,\
-                     Storage::ArrayPoint: serde::Deserialize&lt;&#39;de&gt;,\
-                     Storage::ArrayIdx: serde::Deserialize&lt;&#39;de&gt;,\
-                     Storage::ArrayVectorTriple: serde::Deserialize&lt;&#39;de&gt;&quot;</span>,
+                     Storage::ArrayVectorTriple: serde::Serialize"</span>,
+        deserialize = <span class="string">"&lt;Storage::QbvhStorage as QbvhStorage&lt;u32&gt;&gt;::Nodes: serde::Deserialize&lt;'de&gt;, \
+                     &lt;Storage::QbvhStorage as QbvhStorage&lt;u32&gt;&gt;::ArrayU32: serde::Deserialize&lt;'de&gt;, \
+                     &lt;Storage::QbvhStorage as QbvhStorage&lt;u32&gt;&gt;::ArrayProxies: serde::Deserialize&lt;'de&gt;,\
+                     Storage::ArrayTopoVertex: serde::Deserialize&lt;'de&gt;,\
+                     Storage::ArrayTopoFace: serde::Deserialize&lt;'de&gt;,\
+                     Storage::ArrayTopoHalfEdge: serde::Deserialize&lt;'de&gt;,\
+                     Storage::ArrayU32: serde::Deserialize&lt;'de&gt;,\
+                     Storage::ArrayUsize: serde::Deserialize&lt;'de&gt;,\
+                     Storage::ArrayVector: serde::Deserialize&lt;'de&gt;,\
+                     Storage::ArrayPoint: serde::Deserialize&lt;'de&gt;,\
+                     Storage::ArrayIdx: serde::Deserialize&lt;'de&gt;,\
+                     Storage::ArrayVectorTriple: serde::Deserialize&lt;'de&gt;"</span>,
     ))
 )]
 #[cfg_attr(
-    feature = <span class="string">&quot;rkyv&quot;</span>,
+    feature = <span class="string">"rkyv"</span>,
     derive(rkyv::Archive, rkyv::Deserialize, rkyv::Serialize),
     archive(check_bytes)
 )]
@@ -1713,7 +1714,7 @@
     qbvh: GenericQbvh&lt;u32, Storage::QbvhStorage&gt;,
     vertices: Storage::ArrayPoint,
     indices: Storage::ArrayIdx,
-    <span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+    <span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) pseudo_normals: <span class="prelude-ty">Option</span>&lt;TriMeshPseudoNormals&lt;Storage&gt;&gt;,
     topology: <span class="prelude-ty">Option</span>&lt;TriMeshTopology&lt;Storage&gt;&gt;,
     connected_components: <span class="prelude-ty">Option</span>&lt;TriMeshConnectedComponents&lt;Storage&gt;&gt;,
@@ -1722,14 +1723,14 @@
 
 <span class="doccomment">/// A triangle-mesh.
 </span><span class="kw">pub type </span>TriMesh = GenericTriMesh&lt;DefaultStorage&gt;;
-<span class="attr">#[cfg(feature = <span class="string">&quot;cuda&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"cuda"</span>)]
 </span><span class="doccomment">/// A triangle-mesh stored on CUDA memory.
 </span><span class="kw">pub type </span>CudaTriMesh = GenericTriMesh&lt;CudaStorage&gt;;
-<span class="attr">#[cfg(feature = <span class="string">&quot;cuda&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"cuda"</span>)]
 </span><span class="doccomment">/// A triangle-mesh accessible from CUDA kernels.
 </span><span class="kw">pub type </span>CudaTriMeshPtr = GenericTriMesh&lt;CudaStoragePtr&gt;;
 
-<span class="attr">#[cfg(all(feature = <span class="string">&quot;std&quot;</span>, feature = <span class="string">&quot;cuda&quot;</span>))]
+<span class="attr">#[cfg(all(feature = <span class="string">"std"</span>, feature = <span class="string">"cuda"</span>))]
 </span><span class="kw">impl </span>CudaTriMesh {
     <span class="doccomment">/// Returns the heightfield usable from within a CUDA kernel.
     </span><span class="kw">pub fn </span>as_device_ptr(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; CudaTriMeshPtr {
@@ -1737,7 +1738,7 @@
             qbvh: <span class="self">self</span>.qbvh.as_device_ptr(),
             vertices: <span class="self">self</span>.vertices.as_device_ptr(),
             indices: <span class="self">self</span>.indices.as_device_ptr(),
-            <span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+            <span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
             </span>pseudo_normals: <span class="self">self</span>.pseudo_normals.as_ref().map(|pn| pn.as_device_ptr()),
             topology: <span class="self">self</span>.topology.as_ref().map(|topo| topo.as_device_ptr()),
             connected_components: <span class="self">self
@@ -1749,7 +1750,7 @@
     }
 }
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;std&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"std"</span>)]
 </span><span class="kw">impl </span>TriMesh {
     <span class="doccomment">/// Creates a new triangle mesh from a vertex buffer and an index buffer.
     </span><span class="kw">pub fn </span>new(vertices: Vec&lt;Point&lt;Real&gt;&gt;, indices: Vec&lt;[u32; <span class="number">3</span>]&gt;) -&gt; <span class="self">Self </span>{
@@ -1757,13 +1758,13 @@
     }
 
     <span class="doccomment">/// Converts this RAM-based heightfield to an heightfield based on CUDA memory.
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;cuda&quot;</span>)]
+    </span><span class="attr">#[cfg(feature = <span class="string">"cuda"</span>)]
     </span><span class="kw">pub fn </span>to_cuda(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; CudaResult&lt;CudaTriMesh&gt; {
         <span class="prelude-val">Ok</span>(CudaTriMesh {
             qbvh: <span class="self">self</span>.qbvh.to_cuda()<span class="question-mark">?</span>,
             vertices: CudaArray1::new(<span class="kw-2">&amp;</span><span class="self">self</span>.vertices)<span class="question-mark">?</span>,
             indices: CudaArray1::new(<span class="kw-2">&amp;</span><span class="self">self</span>.indices)<span class="question-mark">?</span>,
-            <span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+            <span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
             </span>pseudo_normals: <span class="self">self
                 </span>.pseudo_normals
                 .as_ref()
@@ -1791,14 +1792,14 @@
     ) -&gt; <span class="self">Self </span>{
         <span class="macro">assert!</span>(
             indices.len() &gt; <span class="number">0</span>,
-            <span class="string">&quot;A triangle mesh must contain at least one triangle.&quot;
+            <span class="string">"A triangle mesh must contain at least one triangle."
         </span>);
 
         <span class="kw">let </span><span class="kw-2">mut </span>result = <span class="self">Self </span>{
             qbvh: Qbvh::new(),
             vertices,
             indices,
-            <span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+            <span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
             </span>pseudo_normals: <span class="prelude-val">None</span>,
             topology: <span class="prelude-val">None</span>,
             connected_components: <span class="prelude-val">None</span>,
@@ -1824,7 +1825,7 @@
             <span class="self">self</span>.topology = <span class="prelude-val">None</span>;
         }
 
-        <span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+        <span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
         </span><span class="kw">if </span>!flags.contains(TriMeshFlags::ORIENTED) {
             <span class="self">self</span>.pseudo_normals = <span class="prelude-val">None</span>;
         }
@@ -1857,7 +1858,7 @@
             );
         }
 
-        <span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+        <span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
         </span><span class="kw">if </span>difference.contains(TriMeshFlags::ORIENTED) {
             <span class="self">self</span>.compute_pseudo_normals();
         }
@@ -1878,7 +1879,7 @@
         <span class="self">self</span>.rebuild_qbvh();
 
         <span class="comment">// The pseudo-normals must be rotated too.
-        </span><span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+        </span><span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
         </span><span class="kw">if let </span><span class="prelude-val">Some</span>(pseudo_normals) = <span class="kw-2">&amp;mut </span><span class="self">self</span>.pseudo_normals {
             pseudo_normals
                 .vertices_pseudo_normal
@@ -1898,7 +1899,7 @@
             .iter_mut()
             .for_each(|pt| pt.coords.component_mul_assign(scale));
 
-        <span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+        <span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
         </span><span class="kw">if let </span><span class="prelude-val">Some</span>(pn) = <span class="kw-2">&amp;mut </span><span class="self">self</span>.pseudo_normals {
             pn.vertices_pseudo_normal.iter_mut().for_each(|n| {
                 n.component_mul_assign(scale);
@@ -1919,7 +1920,7 @@
             qbvh: <span class="self">self</span>.qbvh.scaled(scale),
             vertices: <span class="self">self</span>.vertices,
             indices: <span class="self">self</span>.indices,
-            <span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+            <span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
             </span>pseudo_normals: <span class="self">self</span>.pseudo_normals,
             topology: <span class="self">self</span>.topology,
             connected_components: <span class="self">self</span>.connected_components,
@@ -1937,15 +1938,15 @@
                 .map(|idx| [idx[<span class="number">0</span>] + base_id, idx[<span class="number">1</span>] + base_id, idx[<span class="number">2</span>] + base_id]),
         );
 
-        <span class="kw">let </span>vertices = std::mem::replace(<span class="kw-2">&amp;mut </span><span class="self">self</span>.vertices, Vec::new());
-        <span class="kw">let </span>indices = std::mem::replace(<span class="kw-2">&amp;mut </span><span class="self">self</span>.indices, Vec::new());
+        <span class="kw">let </span>vertices = std::mem::take(<span class="kw-2">&amp;mut </span><span class="self">self</span>.vertices);
+        <span class="kw">let </span>indices = std::mem::take(<span class="kw-2">&amp;mut </span><span class="self">self</span>.indices);
         <span class="kw-2">*</span><span class="self">self </span>= TriMesh::with_flags(vertices, indices, <span class="self">self</span>.flags);
     }
 
     <span class="doccomment">/// Create a `TriMesh` from a set of points assumed to describe a counter-clockwise non-convex polygon.
     ///
     /// This operation may fail if the input polygon is invalid, e.g. it is non-simple or has zero surface area.
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;dim2&quot;</span>)]
+    </span><span class="attr">#[cfg(feature = <span class="string">"dim2"</span>)]
     </span><span class="kw">pub fn </span>from_polygon(vertices: Vec&lt;Point&lt;Real&gt;&gt;) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>&gt; {
         triangulate_ear_clipping(<span class="kw-2">&amp;</span>vertices).map(|indices| <span class="self">Self</span>::new(vertices, indices))
     }
@@ -1970,7 +1971,7 @@
             (i <span class="kw">as </span>u32, aabb)
         });
 
-        <span class="comment">// NOTE: we apply no dilation factor because we won&#39;t
+        <span class="comment">// NOTE: we apply no dilation factor because we won't
         // update this tree dynamically.
         </span><span class="self">self</span>.qbvh.clear_and_rebuild(data, <span class="number">0.0</span>);
     }
@@ -1983,7 +1984,7 @@
         //       The pseudo-normals just have to be flipped.
         //       The topology must be recomputed.
 
-        </span><span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+        </span><span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
         </span><span class="kw">if let </span><span class="prelude-val">Some</span>(pseudo_normals) = <span class="kw-2">&amp;mut </span><span class="self">self</span>.pseudo_normals {
             <span class="kw">for </span>n <span class="kw">in </span><span class="kw-2">&amp;mut </span>pseudo_normals.vertices_pseudo_normal {
                 <span class="kw-2">*</span>n = -<span class="kw-2">*</span>n;
@@ -2077,23 +2078,23 @@
         <span class="self">self</span>.indices = new_indices;
 
         <span class="comment">// Vertices and indices changed: the pseudo-normals are no longer valid.
-        </span><span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+        </span><span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
         </span><span class="kw">if </span><span class="self">self</span>.pseudo_normals.is_some() {
             <span class="self">self</span>.compute_pseudo_normals();
         }
 
         <span class="comment">// Vertices and indices changed: the topology no longer valid.
-        </span><span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+        </span><span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
         </span><span class="kw">if </span><span class="self">self</span>.topology.is_some() {
             <span class="kw">let _ </span>= <span class="self">self</span>.compute_topology(<span class="self">self</span>.connected_components.is_some(), <span class="bool-val">false</span>);
         }
     }
 
-    <span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+    <span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
     </span><span class="doccomment">/// Computes the pseudo-normals used for solid point-projection.
     ///
     /// This computes the pseudo-normals needed by the point containment test described in
-    /// &quot;Signed distance computation using the angle weighted pseudonormal&quot;, Baerentzen, et al.
+    /// "Signed distance computation using the angle weighted pseudonormal", Baerentzen, et al.
     /// DOI: 10.1109/TVCG.2005.49
     ///
     /// For the point-containment test to properly detect the inside of the trimesh (i.e. to return
@@ -2339,7 +2340,7 @@
         <span class="kw">let </span>topo = <span class="self">self
             </span>.topology
             .as_ref()
-            .expect(<span class="string">&quot;No topology information found.&quot;</span>);
+            .expect(<span class="string">"No topology information found."</span>);
         <span class="macro">assert_eq!</span>(<span class="self">self</span>.vertices.len(), topo.vertices.len());
         <span class="macro">assert_eq!</span>(<span class="self">self</span>.indices.len(), topo.faces.len());
 
@@ -2363,7 +2364,7 @@
     }
 
     <span class="doccomment">/// An iterator through all the triangles of this mesh.
-    </span><span class="kw">pub fn </span>triangles(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw">impl </span>ExactSizeIterator&lt;Item = Triangle&gt; + <span class="lifetime">&#39;_ </span>{
+    </span><span class="kw">pub fn </span>triangles(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw">impl </span>ExactSizeIterator&lt;Item = Triangle&gt; + <span class="lifetime">'_ </span>{
         <span class="self">self</span>.indices.iter().map(<span class="kw">move </span>|ids| {
             Triangle::new(
                 <span class="self">self</span>.vertices[ids[<span class="number">0</span>] <span class="kw">as </span>usize],
@@ -2440,14 +2441,14 @@
     }
 
     <span class="doccomment">/// The pseudo-normals of this triangle mesh, if they have been computed.
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+    </span><span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
     </span><span class="kw">pub fn </span>pseudo_normals(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>TriMeshPseudoNormals&lt;Storage&gt;&gt; {
         <span class="self">self</span>.pseudo_normals.as_ref()
     }
 }
 
 <span class="comment">/*
-#[cfg(feature = &quot;dim3&quot;)]
+#[cfg(feature = "dim3")]
 impl RayCast for TriMesh {
     fn cast_local_ray_and_get_normal(
         &amp;self,
@@ -2493,8 +2494,8 @@ impl RayCast for TriMesh {
 }
 */
 
-</span><span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
-#[cfg(feature = <span class="string">&quot;std&quot;</span>)]
+</span><span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
+#[cfg(feature = <span class="string">"std"</span>)]
 </span><span class="kw">impl</span>&lt;Storage: HeightFieldStorage&gt; From&lt;<span class="kw">crate</span>::shape::GenericHeightField&lt;Storage&gt;&gt; <span class="kw">for </span>TriMesh {
     <span class="kw">fn </span>from(heightfield: <span class="kw">crate</span>::shape::GenericHeightField&lt;Storage&gt;) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span>(vtx, idx) = heightfield.to_trimesh();
@@ -2502,8 +2503,8 @@ impl RayCast for TriMesh {
     }
 }
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
-#[cfg(feature = <span class="string">&quot;std&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
+#[cfg(feature = <span class="string">"std"</span>)]
 </span><span class="kw">impl </span>From&lt;Cuboid&gt; <span class="kw">for </span>TriMesh {
     <span class="kw">fn </span>from(cuboid: Cuboid) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span>(vtx, idx) = cuboid.to_trimesh();
@@ -2511,7 +2512,7 @@ impl RayCast for TriMesh {
     }
 }
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;std&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"std"</span>)]
 </span><span class="kw">impl </span>SimdCompositeShape <span class="kw">for </span>TriMesh {
     <span class="kw">fn </span>map_part_at(<span class="kw-2">&amp;</span><span class="self">self</span>, i: u32, f: <span class="kw-2">&amp;mut </span><span class="kw">dyn </span>FnMut(<span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Isometry&lt;Real&gt;&gt;, <span class="kw-2">&amp;</span><span class="kw">dyn </span>Shape)) {
         <span class="kw">let </span>tri = <span class="self">self</span>.triangle(i);
@@ -2555,7 +2556,7 @@ impl RayCast for TriMesh {
  *
  *
  ******************************************/
-</span><span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+</span><span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
 </span><span class="kw">impl</span>&lt;Storage&gt; Clone <span class="kw">for </span>TriMeshPseudoNormals&lt;Storage&gt;
 <span class="kw">where
     </span>Storage: TriMeshStorage,
@@ -2570,7 +2571,7 @@ impl RayCast for TriMesh {
     }
 }
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
 </span><span class="kw">impl</span>&lt;Storage&gt; Copy <span class="kw">for </span>TriMeshPseudoNormals&lt;Storage&gt;
 <span class="kw">where
     </span>Storage: TriMeshStorage,
@@ -2579,8 +2580,8 @@ impl RayCast for TriMesh {
 {
 }
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
-#[cfg(feature = <span class="string">&quot;cuda&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
+#[cfg(feature = <span class="string">"cuda"</span>)]
 </span><span class="kw">unsafe impl</span>&lt;Storage&gt; cust_core::DeviceCopy <span class="kw">for </span>TriMeshPseudoNormals&lt;Storage&gt;
 <span class="kw">where
     </span>Storage: TriMeshStorage,
@@ -2612,7 +2613,7 @@ impl RayCast for TriMesh {
 {
 }
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;cuda&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"cuda"</span>)]
 </span><span class="kw">unsafe impl</span>&lt;Storage&gt; cust_core::DeviceCopy <span class="kw">for </span>TriMeshConnectedComponents&lt;Storage&gt;
 <span class="kw">where
     </span>Storage: TriMeshStorage,
@@ -2646,7 +2647,7 @@ impl RayCast for TriMesh {
 {
 }
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;cuda&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"cuda"</span>)]
 </span><span class="kw">unsafe impl</span>&lt;Storage&gt; cust_core::DeviceCopy <span class="kw">for </span>TriMeshTopology&lt;Storage&gt;
 <span class="kw">where
     </span>Storage: TriMeshStorage,
@@ -2677,7 +2678,7 @@ impl RayCast for TriMesh {
             qbvh: <span class="self">self</span>.qbvh.clone(),
             vertices: <span class="self">self</span>.vertices.clone(),
             indices: <span class="self">self</span>.indices.clone(),
-            <span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+            <span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
             </span>pseudo_normals: <span class="self">self</span>.pseudo_normals.clone(),
             topology: <span class="self">self</span>.topology.clone(),
             connected_components: <span class="self">self</span>.connected_components.clone(),
@@ -2704,7 +2705,7 @@ impl RayCast for TriMesh {
 {
 }
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;cuda&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"cuda"</span>)]
 </span><span class="kw">unsafe impl</span>&lt;Storage&gt; cust_core::DeviceCopy <span class="kw">for </span>GenericTriMesh&lt;Storage&gt;
 <span class="kw">where
     </span>Storage: TriMeshStorage,

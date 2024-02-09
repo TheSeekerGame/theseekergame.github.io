@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/naga-0.13.0/src/front/glsl/context.rs`."><title>context.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="naga" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/naga-0.13.0/src/front/glsl/context.rs`."><title>context.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="naga" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1649,7 +1650,7 @@
 
     <span class="doccomment">/// The parameter types given in the source code.
     ///
-    /// The `out` and `inout` qualifiers don&#39;t affect the types that appear
+    /// The `out` and `inout` qualifiers don't affect the types that appear
     /// here. For example, an `inout vec2 a` argument would simply be a
     /// [`Vector`], not a pointer to one.
     ///
@@ -1937,7 +1938,7 @@
     ///
     /// # Panics
     /// - If more than one [`StmtContext`](StmtContext) are active at the same
-    /// time or if the previous call didn&#39;t use it in lowering.
+    /// time or if the previous call didn't use it in lowering.
     </span><span class="attr">#[must_use]
     </span><span class="kw">pub fn </span>stmt_ctx(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; StmtContext {
         <span class="self">self</span>.stmt_ctx.take().unwrap()
@@ -1964,7 +1965,7 @@
     }
 
     <span class="doccomment">/// Similar to [`lower`](Self::lower) but returns an error if the expression
-    /// returns void (ie. doesn&#39;t produce a [`Expression`](Expression)).
+    /// returns void (ie. doesn't produce a [`Expression`](Expression)).
     ///
     /// consumes a [`StmtContext`](StmtContext) returning it to the context so
     /// that it can be used again later.
@@ -1986,9 +1987,9 @@
 
     <span class="doccomment">/// internal implementation of [`lower_expect`](Self::lower_expect)
     ///
-    /// this method is only public because it&#39;s used in
+    /// this method is only public because it's used in
     /// [`function_call`](Frontend::function_call), unless you know what
-    /// you&#39;re doing use [`lower_expect`](Self::lower_expect)
+    /// you're doing use [`lower_expect`](Self::lower_expect)
     </span><span class="kw">pub fn </span>lower_expect_inner(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         stmt: <span class="kw-2">&amp;</span>StmtContext,
@@ -2003,7 +2004,7 @@
             <span class="prelude-val">Some</span>(e) =&gt; e,
             <span class="prelude-val">None </span>=&gt; {
                 <span class="kw">return </span><span class="prelude-val">Err</span>(Error {
-                    kind: ErrorKind::SemanticError(<span class="string">&quot;Expression returns void&quot;</span>.into()),
+                    kind: ErrorKind::SemanticError(<span class="string">"Expression returns void"</span>.into()),
                     meta,
                 })
             }
@@ -2084,15 +2085,15 @@
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(<span class="prelude-ty">Option</span>&lt;Handle&lt;Expression&gt;&gt;, Span)&gt; {
         <span class="kw">let </span>HirExpr { <span class="kw-2">ref </span>kind, meta } = stmt.hir_exprs[expr];
 
-        <span class="macro">log::debug!</span>(<span class="string">&quot;Lowering {:?} (kind {:?}, pos {:?})&quot;</span>, expr, kind, pos);
+        <span class="macro">log::debug!</span>(<span class="string">"Lowering {:?} (kind {:?}, pos {:?})"</span>, expr, kind, pos);
 
         <span class="kw">let </span>handle = <span class="kw">match </span><span class="kw-2">*</span>kind {
             HirExprKind::Access { base, index } =&gt; {
                 <span class="kw">let </span>(index, index_meta) =
                     <span class="self">self</span>.lower_expect_inner(stmt, frontend, index, ExprPos::Rhs, body)<span class="question-mark">?</span>;
                 <span class="kw">let </span>maybe_constant_index = <span class="kw">match </span>pos {
-                    <span class="comment">// Don&#39;t try to generate `AccessIndex` if in a LHS position, since it
-                    // wouldn&#39;t produce a pointer.
+                    <span class="comment">// Don't try to generate `AccessIndex` if in a LHS position, since it
+                    // wouldn't produce a pointer.
                     </span>ExprPos::Lhs =&gt; <span class="prelude-val">None</span>,
                     <span class="kw">_ </span>=&gt; frontend.solve_constant(<span class="self">self</span>, index, index_meta).ok(),
                 };
@@ -2193,7 +2194,7 @@
                             frontend.errors.push(Error {
                                 kind: ErrorKind::SemanticError(
                                     <span class="macro">format!</span>(
-                                        <span class="string">&quot;Cannot apply operation to {left_inner:?} and {right_inner:?}&quot;
+                                        <span class="string">"Cannot apply operation to {left_inner:?} and {right_inner:?}"
                                     </span>)
                                     .into(),
                                 ),
@@ -2203,7 +2204,7 @@
 
                         <span class="kw">match </span>op {
                             BinaryOperator::Divide =&gt; {
-                                <span class="comment">// Naga IR doesn&#39;t support matrix division so we need to
+                                <span class="comment">// Naga IR doesn't support matrix division so we need to
                                 // divide the columns individually and reassemble the matrix
                                 </span><span class="kw">let </span><span class="kw-2">mut </span>components = Vec::with_capacity(left_columns <span class="kw">as </span>usize);
 
@@ -2253,7 +2254,7 @@
                                 )
                             }
                             BinaryOperator::Equal | BinaryOperator::NotEqual =&gt; {
-                                <span class="comment">// Naga IR doesn&#39;t support matrix comparisons so we need to
+                                <span class="comment">// Naga IR doesn't support matrix comparisons so we need to
                                 // compare the columns individually and then fold them together
                                 //
                                 // The folding is done using a logical and for equality and
@@ -2424,7 +2425,7 @@
                             frontend.errors.push(Error {
                                 kind: ErrorKind::SemanticError(
                                     <span class="macro">format!</span>(
-                                        <span class="string">&quot;Cannot apply operation to {left_inner:?} and {right_inner:?}&quot;
+                                        <span class="string">"Cannot apply operation to {left_inner:?} and {right_inner:?}"
                                     </span>)
                                     .into(),
                                 ),
@@ -2436,7 +2437,7 @@
                             BinaryOperator::Divide
                             | BinaryOperator::Add
                             | BinaryOperator::Subtract =&gt; {
-                                <span class="comment">// Naga IR doesn&#39;t support all matrix by scalar operations so
+                                <span class="comment">// Naga IR doesn't support all matrix by scalar operations so
                                 // we need for some to turn the scalar into a vector by
                                 // splatting it and then for each column vector apply the
                                 // operation and finally reconstruct the matrix
@@ -2514,7 +2515,7 @@
                             frontend.errors.push(Error {
                                 kind: ErrorKind::SemanticError(
                                     <span class="macro">format!</span>(
-                                        <span class="string">&quot;Cannot apply operation to {left_inner:?} and {right_inner:?}&quot;
+                                        <span class="string">"Cannot apply operation to {left_inner:?} and {right_inner:?}"
                                     </span>)
                                     .into(),
                                 ),
@@ -2526,7 +2527,7 @@
                             BinaryOperator::Divide
                             | BinaryOperator::Add
                             | BinaryOperator::Subtract =&gt; {
-                                <span class="comment">// Naga IR doesn&#39;t support all matrix by scalar operations so
+                                <span class="comment">// Naga IR doesn't support all matrix by scalar operations so
                                 // we need for some to turn the scalar into a vector by
                                 // splatting it and then for each column vector apply the
                                 // operation and finally reconstruct the matrix
@@ -2605,7 +2606,7 @@
                     <span class="kw">if </span>!var.mutable {
                         frontend.errors.push(Error {
                             kind: ErrorKind::SemanticError(
-                                <span class="string">&quot;Variable cannot be used in LHS position&quot;</span>.into(),
+                                <span class="string">"Variable cannot be used in LHS position"</span>.into(),
                             ),
                             meta,
                         })
@@ -2614,7 +2615,7 @@
                     var.expr
                 }
                 ExprPos::AccessBase { constant_index } =&gt; {
-                    <span class="comment">// If the index isn&#39;t constant all accesses backed by a constant base need
+                    <span class="comment">// If the index isn't constant all accesses backed by a constant base need
                     // to be done through a proxy local variable, since constants have a non
                     // pointer type which is required for dynamic indexing
                     </span><span class="kw">if </span>!constant_index {
@@ -2663,8 +2664,8 @@
             <span class="comment">// `HirExprKind::Conditional` represents the ternary operator in glsl (`:?`)
             //
             // The ternary operator is defined to only evaluate one of the two possible
-            // expressions which means that it&#39;s behavior is that of an `if` statement,
-            // and it&#39;s merely syntatic sugar for it.
+            // expressions which means that it's behavior is that of an `if` statement,
+            // and it's merely syntatic sugar for it.
             </span>HirExprKind::Conditional {
                 condition,
                 accept,
@@ -2731,7 +2732,7 @@
                             // the respective body
                             </span><span class="self">self</span>.emit_end(<span class="kw-2">&amp;mut </span>accept_body);
                         }
-                        <span class="comment">// Technically there&#39;s nothing to flush but later we will need to
+                        <span class="comment">// Technically there's nothing to flush but later we will need to
                         // add some expressions that must not be emitted so instead
                         // of flushing, starting and flushing again, just make sure
                         // everything is flushed.
@@ -2744,7 +2745,7 @@
                         }
                     }
                 } <span class="kw">else </span>{
-                    <span class="comment">// Technically there&#39;s nothing to flush but later we will need to
+                    <span class="comment">// Technically there's nothing to flush but later we will need to
                     // add some expressions that must not be emitted.
                     </span><span class="self">self</span>.emit_end(body)
                 }
@@ -2764,7 +2765,7 @@
                     meta,
                 );
 
-                <span class="comment">// Note: `Expression::LocalVariable` must not be emited so it&#39;s important
+                <span class="comment">// Note: `Expression::LocalVariable` must not be emited so it's important
                 // that at this point the emitter is flushed but not started.
                 </span><span class="kw">let </span>local_expr = <span class="self">self
                     </span>.expressions
@@ -2800,7 +2801,7 @@
                 <span class="comment">// Restart the emitter
                 </span><span class="self">self</span>.emit_start();
 
-                <span class="comment">// Note: `Expression::Load` must be emited before it&#39;s used so make
+                <span class="comment">// Note: `Expression::Load` must be emited before it's used so make
                 // sure the emitter is active here.
                 </span><span class="self">self</span>.expressions.append(
                     Expression::Load {
@@ -2866,7 +2867,7 @@
                     <span class="prelude-val">None </span>=&gt; {
                         frontend.errors.push(Error {
                             kind: ErrorKind::SemanticError(
-                                <span class="string">&quot;Increment/decrement only works on scalar/vector/matrix&quot;</span>.into(),
+                                <span class="string">"Increment/decrement only works on scalar/vector/matrix"</span>.into(),
                             ),
                             meta,
                         });
@@ -2924,11 +2925,11 @@
                     .map(|e| <span class="self">self</span>.lower_expect_inner(stmt, frontend, <span class="kw-2">*</span>e, ExprPos::Rhs, body))
                     .collect::&lt;<span class="prelude-ty">Result</span>&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;&gt;()<span class="question-mark">?</span>;
                 <span class="kw">match </span>name.as_ref() {
-                    <span class="string">&quot;length&quot; </span>=&gt; {
+                    <span class="string">"length" </span>=&gt; {
                         <span class="kw">if </span>!args.is_empty() {
                             frontend.errors.push(Error {
                                 kind: ErrorKind::SemanticError(
-                                    <span class="string">&quot;.length() doesn&#39;t take any arguments&quot;</span>.into(),
+                                    <span class="string">".length() doesn't take any arguments"</span>.into(),
                                 ),
                                 meta,
                             });
@@ -2957,7 +2958,7 @@
                                 )<span class="question-mark">?</span>;
                                 array_length
                             }
-                            <span class="comment">// let the error be handled in type checking if it&#39;s not a dynamic array
+                            <span class="comment">// let the error be handled in type checking if it's not a dynamic array
                             </span><span class="kw">_ </span>=&gt; {
                                 <span class="kw">let </span><span class="kw-2">mut </span>array_length = <span class="self">self</span>.add_expression(
                                     Expression::ArrayLength(lowered_array),
@@ -2972,7 +2973,7 @@
                     <span class="kw">_ </span>=&gt; {
                         <span class="kw">return </span><span class="prelude-val">Err</span>(Error {
                             kind: ErrorKind::SemanticError(
-                                <span class="macro">format!</span>(<span class="string">&quot;unknown method &#39;{name}&#39;&quot;</span>).into(),
+                                <span class="macro">format!</span>(<span class="string">"unknown method '{name}'"</span>).into(),
                             ),
                             meta,
                         });
@@ -2982,7 +2983,7 @@
             <span class="kw">_ </span>=&gt; {
                 <span class="kw">return </span><span class="prelude-val">Err</span>(Error {
                     kind: ErrorKind::SemanticError(
-                        <span class="macro">format!</span>(<span class="string">&quot;{:?} cannot be in the left hand side&quot;</span>, stmt.hir_exprs[expr])
+                        <span class="macro">format!</span>(<span class="string">"{:?} cannot be in the left hand side"</span>, stmt.hir_exprs[expr])
                             .into(),
                     ),
                     meta,
@@ -2991,7 +2992,7 @@
         };
 
         <span class="macro">log::trace!</span>(
-            <span class="string">&quot;Lowered {:?}\n\tKind = {:?}\n\tPos = {:?}\n\tResult = {:?}&quot;</span>,
+            <span class="string">"Lowered {:?}\n\tKind = {:?}\n\tPos = {:?}\n\tResult = {:?}"</span>,
             expr,
             kind,
             pos,
@@ -3165,7 +3166,7 @@
 </span><span class="attr">#[derive(Debug)]
 </span><span class="kw">pub struct </span>StmtContext {
     <span class="doccomment">/// A arena of high level expressions which can be lowered through a
-    /// [`Context`](Context) to naga&#39;s [`Expression`](crate::Expression)s
+    /// [`Context`](Context) to naga's [`Expression`](crate::Expression)s
     </span><span class="kw">pub </span>hir_exprs: Arena&lt;HirExpr&gt;,
 }
 

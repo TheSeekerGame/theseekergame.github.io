@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/parry2d-f64-0.13.5/src/transformation/voxelization/voxel_set.rs`."><title>voxel_set.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="parry2d_f64" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/parry2d-f64-0.13.6/src/transformation/voxelization/voxel_set.rs`."><title>voxel_set.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="parry2d_f64" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -645,7 +646,7 @@
 // &gt;
 // &gt; 3. The names of the contributors may not be used to endorse or promote products derived from this software without specific prior written permission.
 // &gt;
-// &gt; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+// &gt; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 </span><span class="kw">use super</span>::{FillMode, VoxelizedVolume};
 <span class="kw">use </span><span class="kw">crate</span>::bounding_volume::Aabb;
@@ -653,9 +654,9 @@
 <span class="kw">use </span><span class="kw">crate</span>::transformation::vhacd::CutPlane;
 <span class="kw">use </span>std::sync::Arc;
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;dim2&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"dim2"</span>)]
 </span><span class="kw">type </span>ConvexHull = Vec&lt;Point&lt;Real&gt;&gt;;
-<span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
 </span><span class="kw">type </span>ConvexHull = (Vec&lt;Point&lt;Real&gt;&gt;, Vec&lt;[u32; DIM]&gt;);
 
 <span class="doccomment">/// A voxel.
@@ -682,7 +683,7 @@
 
 <span class="doccomment">/// A sparse set of voxels.
 ///
-/// It only contains voxels that are considered as &quot;full&quot; after a voxelization.
+/// It only contains voxels that are considered as "full" after a voxelization.
 </span><span class="kw">pub struct </span>VoxelSet {
     <span class="doccomment">/// The 3D origin of this voxel-set.
     </span><span class="kw">pub </span>origin: Point&lt;Real&gt;,
@@ -711,13 +712,13 @@
     }
 
     <span class="doccomment">/// The volume of a single voxel of this voxel set.
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;dim2&quot;</span>)]
+    </span><span class="attr">#[cfg(feature = <span class="string">"dim2"</span>)]
     </span><span class="kw">pub fn </span>voxel_volume(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Real {
         <span class="self">self</span>.scale * <span class="self">self</span>.scale
     }
 
     <span class="doccomment">/// The volume of a single voxel of this voxel set.
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+    </span><span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
     </span><span class="kw">pub fn </span>voxel_volume(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Real {
         <span class="self">self</span>.scale * <span class="self">self</span>.scale * <span class="self">self</span>.scale
     }
@@ -805,13 +806,13 @@
     <span class="comment">// We have these cfg because we need to
     // use the correct return type. We could just
     // return ConvexHull but that would expose though
-    // the API a type alias that isn&#39;t really worth
+    // the API a type alias that isn't really worth
     // existing.
     </span><span class="doccomment">/// Compute the convex-hull of this voxel set after cutting each voxel
     /// by the primitives (3D triangle or 2D segments) it intersects.
     ///
     /// This will panic if this `VoxelSet` was created with `keep_voxel_to_primitives_map = false`.
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;dim2&quot;</span>)]
+    </span><span class="attr">#[cfg(feature = <span class="string">"dim2"</span>)]
     </span><span class="kw">pub fn </span>compute_exact_convex_hull(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         points: <span class="kw-2">&amp;</span>[Point&lt;Real&gt;],
@@ -824,7 +825,7 @@
     /// by the primitives (3D triangle or 2D segments) it intersects.
     ///
     /// This will panic if this `VoxelSet` was created with `keep_voxel_to_primitives_map = false`.
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+    </span><span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
     </span><span class="kw">pub fn </span>compute_exact_convex_hull(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         points: <span class="kw-2">&amp;</span>[Point&lt;Real&gt;],
@@ -839,9 +840,9 @@
         indices: <span class="kw-2">&amp;</span>[[u32; DIM]],
     ) -&gt; ConvexHull {
         <span class="macro">assert!</span>(!<span class="self">self</span>.intersections.is_empty(),
-                <span class="string">&quot;Cannot compute exact convex hull without voxel-to-primitives-map. Consider passing voxel_to_primitives_map = true to the voxelizer.&quot;</span>);
+                <span class="string">"Cannot compute exact convex hull without voxel-to-primitives-map. Consider passing voxel_to_primitives_map = true to the voxelizer."</span>);
         <span class="kw">let </span><span class="kw-2">mut </span>surface_points = Vec::new();
-        <span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+        <span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
         </span><span class="kw">let </span>(<span class="kw-2">mut </span>polygon, <span class="kw-2">mut </span>workspace) = (Vec::new(), Vec::new());
         <span class="kw">let </span><span class="kw-2">mut </span>pushed_points = <span class="macro">vec!</span>[<span class="bool-val">false</span>; points.len()];
 
@@ -852,7 +853,7 @@
             <span class="kw">for </span>prim_id <span class="kw">in </span>intersections {
                 <span class="kw">let </span>ia = indices[<span class="kw-2">*</span>prim_id <span class="kw">as </span>usize][<span class="number">0</span>] <span class="kw">as </span>usize;
                 <span class="kw">let </span>ib = indices[<span class="kw-2">*</span>prim_id <span class="kw">as </span>usize][<span class="number">1</span>] <span class="kw">as </span>usize;
-                <span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+                <span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
                 </span><span class="kw">let </span>ic = indices[<span class="kw-2">*</span>prim_id <span class="kw">as </span>usize][<span class="number">2</span>] <span class="kw">as </span>usize;
 
                 <span class="comment">// If the primitives have been classified by VHACD, we know that:
@@ -871,13 +872,13 @@
                     <span class="kw">let </span>aabb =
                         Aabb::from_half_extents(aabb_center, Vector::repeat(<span class="self">self</span>.scale / <span class="number">2.0</span>));
 
-                    <span class="attr">#[cfg(feature = <span class="string">&quot;dim2&quot;</span>)]
+                    <span class="attr">#[cfg(feature = <span class="string">"dim2"</span>)]
                     </span><span class="kw">if let </span><span class="prelude-val">Some</span>(seg) = aabb.clip_segment(<span class="kw-2">&amp;</span>points[ia], <span class="kw-2">&amp;</span>points[ib]) {
                         surface_points.push(seg.a);
                         surface_points.push(seg.b);
                     }
 
-                    <span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+                    <span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
                     </span>{
                         polygon.clear();
                         polygon.extend_from_slice(<span class="kw-2">&amp;</span>[points[ia], points[ib], points[ic]]);
@@ -886,7 +887,7 @@
                     }
                 } <span class="kw">else </span>{
                     <span class="comment">// We know this triangle is only contained by
-                    // one voxel set, i.e., `self`. So we don&#39;t
+                    // one voxel set, i.e., `self`. So we don't
                     // need to cut it.
                     //
                     // Because one triangle may intersect multiple voxels contained by
@@ -903,7 +904,7 @@
 
                     push_pt(ia);
                     push_pt(ib);
-                    <span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+                    <span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
                     </span>push_pt(ic);
                 }
             }
@@ -929,9 +930,9 @@
         indices: <span class="kw-2">&amp;</span>[[u32; DIM]],
     ) -&gt; Vec&lt;Point&lt;Real&gt;&gt; {
         <span class="macro">assert!</span>(!<span class="self">self</span>.intersections.is_empty(),
-                <span class="string">&quot;Cannot compute primitive intersections voxel-to-primitives-map. Consider passing voxel_to_primitives_map = true to the voxelizer.&quot;</span>);
+                <span class="string">"Cannot compute primitive intersections voxel-to-primitives-map. Consider passing voxel_to_primitives_map = true to the voxelizer."</span>);
         <span class="kw">let </span><span class="kw-2">mut </span>surface_points = Vec::new();
-        <span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+        <span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
         </span><span class="kw">let </span>(<span class="kw-2">mut </span>polygon, <span class="kw-2">mut </span>workspace) = (Vec::new(), Vec::new());
 
         <span class="comment">// Grab all the points.
@@ -944,16 +945,16 @@
 
                 <span class="kw">let </span>pa = points[indices[<span class="kw-2">*</span>prim_id <span class="kw">as </span>usize][<span class="number">0</span>] <span class="kw">as </span>usize];
                 <span class="kw">let </span>pb = points[indices[<span class="kw-2">*</span>prim_id <span class="kw">as </span>usize][<span class="number">1</span>] <span class="kw">as </span>usize];
-                <span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+                <span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
                 </span><span class="kw">let </span>pc = points[indices[<span class="kw-2">*</span>prim_id <span class="kw">as </span>usize][<span class="number">2</span>] <span class="kw">as </span>usize];
 
-                <span class="attr">#[cfg(feature = <span class="string">&quot;dim2&quot;</span>)]
+                <span class="attr">#[cfg(feature = <span class="string">"dim2"</span>)]
                 </span><span class="kw">if let </span><span class="prelude-val">Some</span>(seg) = aabb.clip_segment(<span class="kw-2">&amp;</span>pa, <span class="kw-2">&amp;</span>pb) {
                     surface_points.push(seg.a);
                     surface_points.push(seg.b);
                 }
 
-                <span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+                <span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
                 </span>{
                     workspace.clear();
                     polygon.clear();
@@ -978,9 +979,9 @@
     ///
     /// # Parameters
     /// * `sampling` - The convex-hull computation will ignore `sampling` voxels at
-    ///   regular intervals. Useful to save some computation times if an exact result isn&#39;t need.
+    ///   regular intervals. Useful to save some computation times if an exact result isn't need.
     ///   Use `0` to make sure no voxel is being ignored.
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;dim2&quot;</span>)]
+    </span><span class="attr">#[cfg(feature = <span class="string">"dim2"</span>)]
     </span><span class="kw">pub fn </span>compute_convex_hull(<span class="kw-2">&amp;</span><span class="self">self</span>, sampling: u32) -&gt; Vec&lt;Point&lt;Real&gt;&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>points = Vec::new();
 
@@ -1002,9 +1003,9 @@
     ///
     /// # Parameters
     /// * `sampling` - The convex-hull computation will ignore `sampling` voxels at
-    ///   regular intervals. Useful to save some computation times if an exact result isn&#39;t need.
+    ///   regular intervals. Useful to save some computation times if an exact result isn't need.
     ///   Use `0` to make sure no voxel is being ignored.
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+    </span><span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
     </span><span class="kw">pub fn </span>compute_convex_hull(<span class="kw-2">&amp;</span><span class="self">self</span>, sampling: u32) -&gt; (Vec&lt;Point&lt;Real&gt;&gt;, Vec&lt;[u32; DIM]&gt;) {
         <span class="kw">let </span><span class="kw-2">mut </span>points = Vec::new();
 
@@ -1026,7 +1027,7 @@
     </span><span class="kw">fn </span>map_voxel_points(<span class="kw-2">&amp;</span><span class="self">self</span>, voxel: <span class="kw-2">&amp;</span>Voxel, <span class="kw-2">mut </span>f: <span class="kw">impl </span>FnMut(Point&lt;Real&gt;)) {
         <span class="kw">let </span>ijk = voxel.coords.coords.map(|e| e <span class="kw">as </span>Real);
 
-        <span class="attr">#[cfg(feature = <span class="string">&quot;dim2&quot;</span>)]
+        <span class="attr">#[cfg(feature = <span class="string">"dim2"</span>)]
         </span><span class="kw">let </span>shifts = [
             Vector::new(-<span class="number">0.5</span>, -<span class="number">0.5</span>),
             Vector::new(<span class="number">0.5</span>, -<span class="number">0.5</span>),
@@ -1034,7 +1035,7 @@
             Vector::new(-<span class="number">0.5</span>, <span class="number">0.5</span>),
         ];
 
-        <span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+        <span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
         </span><span class="kw">let </span>shifts = [
             Vector::new(-<span class="number">0.5</span>, -<span class="number">0.5</span>, -<span class="number">0.5</span>),
             Vector::new(<span class="number">0.5</span>, -<span class="number">0.5</span>, -<span class="number">0.5</span>),
@@ -1185,7 +1186,7 @@
 
     <span class="doccomment">/// Convert `self` into a mesh, including only the voxels on the surface or only the voxel
     /// inside of the volume.
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+    </span><span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
     </span><span class="kw">pub fn </span>to_trimesh(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         base_index: u32,
@@ -1225,7 +1226,7 @@
         <span class="comment">// TODO: find a way to reuse crate::utils::cov?
         // The difficulty being that we need to iterate through the set of
         // points twice. So passing an iterator to crate::utils::cov
-        // isn&#39;t really possible.
+        // isn't really possible.
         </span><span class="kw">let </span><span class="kw-2">mut </span>center = Point::origin();
         <span class="kw">let </span>denom = <span class="number">1.0 </span>/ (num_voxels <span class="kw">as </span>Real);
 
@@ -1243,7 +1244,7 @@
     }
 }
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;dim2&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"dim2"</span>)]
 </span><span class="kw">fn </span>convex_hull(vertices: <span class="kw-2">&amp;</span>[Point&lt;Real&gt;]) -&gt; Vec&lt;Point&lt;Real&gt;&gt; {
     <span class="kw">if </span>vertices.len() &gt; <span class="number">1 </span>{
         <span class="kw">crate</span>::transformation::convex_hull(vertices)
@@ -1252,7 +1253,7 @@
     }
 }
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
 </span><span class="kw">fn </span>convex_hull(vertices: <span class="kw-2">&amp;</span>[Point&lt;Real&gt;]) -&gt; (Vec&lt;Point&lt;Real&gt;&gt;, Vec&lt;[u32; DIM]&gt;) {
     <span class="kw">if </span>vertices.len() &gt; <span class="number">2 </span>{
         <span class="kw">crate</span>::transformation::convex_hull(vertices)

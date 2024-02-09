@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/guillotiere-0.6.2/src/allocator.rs`."><title>allocator.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="guillotiere" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/guillotiere-0.6.2/src/allocator.rs`."><title>allocator.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="guillotiere" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1772,7 +1773,7 @@
     }
 }
 
-<span class="attr">#[cfg_attr(feature = <span class="string">&quot;serde&quot;</span>, derive(Serialize, Deserialize))]
+<span class="attr">#[cfg_attr(feature = <span class="string">"serde"</span>, derive(Serialize, Deserialize))]
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
 </span><span class="kw">struct </span>AllocIndex(u32);
 <span class="kw">impl </span>AllocIndex {
@@ -1793,7 +1794,7 @@
 
 <span class="doccomment">/// ID referring to an allocated rectangle.
 </span><span class="attr">#[repr(C)]
-#[cfg_attr(feature = <span class="string">&quot;serde&quot;</span>, derive(Serialize, Deserialize))]
+#[cfg_attr(feature = <span class="string">"serde"</span>, derive(Serialize, Deserialize))]
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
 </span><span class="kw">pub struct </span>AllocId(<span class="kw">pub</span>(<span class="kw">crate</span>) u32);
 
@@ -1810,7 +1811,7 @@
 <span class="kw">const </span>GEN_MASK: u32 = <span class="number">0xFF000000</span>;
 <span class="kw">const </span>IDX_MASK: u32 = <span class="number">0x00FFFFFF</span>;
 
-<span class="attr">#[cfg_attr(feature = <span class="string">&quot;serde&quot;</span>, derive(Serialize, Deserialize))]
+<span class="attr">#[cfg_attr(feature = <span class="string">"serde"</span>, derive(Serialize, Deserialize))]
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
 </span><span class="kw">enum </span>Orientation {
     Vertical,
@@ -1826,7 +1827,7 @@
     }
 }
 
-<span class="attr">#[cfg_attr(feature = <span class="string">&quot;serde&quot;</span>, derive(Serialize, Deserialize))]
+<span class="attr">#[cfg_attr(feature = <span class="string">"serde"</span>, derive(Serialize, Deserialize))]
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
 </span><span class="kw">pub enum </span>NodeKind {
     Container,
@@ -1835,7 +1836,7 @@
     Unused,
 }
 
-<span class="attr">#[cfg_attr(feature = <span class="string">&quot;serde&quot;</span>, derive(Serialize, Deserialize))]
+<span class="attr">#[cfg_attr(feature = <span class="string">"serde"</span>, derive(Serialize, Deserialize))]
 #[derive(Clone, Debug)]
 </span><span class="kw">struct </span>Node {
     parent: AllocIndex,
@@ -1848,7 +1849,7 @@
 
 <span class="doccomment">/// Options to tweak the behavior of the atlas allocator.
 </span><span class="attr">#[repr(C)]
-#[cfg_attr(feature = <span class="string">&quot;serde&quot;</span>, derive(Serialize, Deserialize))]
+#[cfg_attr(feature = <span class="string">"serde"</span>, derive(Serialize, Deserialize))]
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
 </span><span class="kw">pub struct </span>AllocatorOptions {
     <span class="doccomment">/// Round the rectangle sizes up to a multiple of this value.
@@ -1901,7 +1902,7 @@
 /// This implementation proposes a compromise with fast (constant time) search
 /// for merge candidates at the expense of some (constant time) bookkeeping overhead
 /// when allocating and removing rectangles and imperfect defragmentation (see the
-/// &quot;Limitations&quot; section below.
+/// "Limitations" section below.
 ///
 /// The subdivision scheme uses the worst fit variant of the guillotine algorithm
 /// for its simplicity and CPU efficiency.
@@ -1911,8 +1912,8 @@
 /// We maintain a tree with allocated and free rectangles as leaf nodes and
 /// containers as non-leaf nodes.
 ///
-/// The direct children of a Containers&#39;s form an ordered horizontal or vertical
-/// sequence of rectangles that cover exactly their parent container&#39;s area.
+/// The direct children of a Containers's form an ordered horizontal or vertical
+/// sequence of rectangles that cover exactly their parent container's area.
 ///
 /// For example, a subdivision such as this one:
 ///
@@ -1956,7 +1957,7 @@
 ///  C D E F G           |
 /// ```
 ///
-/// Where container nodes are represented with &quot;#&quot;.
+/// Where container nodes are represented with "#".
 ///
 /// Note that if a horizontal container is the direct child of another
 /// horizontal container, we can merge the two into a single horizontal
@@ -1972,7 +1973,7 @@
 /// one.
 ///
 /// An important thing to note about this tree structure is that we only
-/// use it to visit neighbor and parent nodes. As a result we don&#39;t care
+/// use it to visit neighbor and parent nodes. As a result we don't care
 /// about whether the tree is balanced, although flat sequences of children
 /// tend to offer more opportunity for coalescing than deeply nested structures
 /// Either way, the cost of finding potential merges is the same because
@@ -1981,7 +1982,7 @@
 ///
 /// ### Merging siblings
 ///
-/// As soon as two consecutive sibling nodes are marked as &quot;free&quot;, they are coalesced
+/// As soon as two consecutive sibling nodes are marked as "free", they are coalesced
 /// into a single node.
 ///
 /// In the example below, we just deallocated the rectangle `B`, which is a sibling of
@@ -2002,7 +2003,7 @@
 ///
 /// ### Merging unique children with their parents
 ///
-/// In the previous example `C` was an allocated slot. Let&#39;s now deallocate it:
+/// In the previous example `C` was an allocated slot. Let's now deallocate it:
 ///
 /// ```ascii
 /// +-------+---+         #               +-----------+         #                 #
@@ -2059,17 +2060,17 @@
 ///   A   B   C   D  |                     A   C   B   D  |
 /// ```
 ///
-/// In the former case A can&#39;t be merged with C nor B with D because they are not siblings.
+/// In the former case A can't be merged with C nor B with D because they are not siblings.
 ///
 /// For a lot of workloads it is rather rare for two consecutive sibling containers to be
 /// subdivided exactly the same way. In this situation losing the ability to merge rectangles
-/// that aren&#39;t under the same container is good compromise between the CPU cost of coalescing
+/// that aren't under the same container is good compromise between the CPU cost of coalescing
 /// and the fragmentation of the atlas.
 ///
-/// This algorithm is, however, not the best solution for very &quot;structured&quot; grid-like
+/// This algorithm is, however, not the best solution for very "structured" grid-like
 /// subdivision patterns where the ability to merge across containers would have provided
 /// frequent defragmentation opportunities.
-</span><span class="attr">#[cfg_attr(feature = <span class="string">&quot;serde&quot;</span>, derive(Serialize, Deserialize))]
+</span><span class="attr">#[cfg_attr(feature = <span class="string">"serde"</span>, derive(Serialize, Deserialize))]
 #[derive(Clone)]
 </span><span class="kw">pub struct </span>AtlasAllocator {
     nodes: Vec&lt;Node&gt;,
@@ -2100,7 +2101,7 @@
     </span>root_node: AllocIndex,
 }
 
-<span class="comment">// Some notes about the atlas&#39;s tree data structure:
+<span class="comment">// Some notes about the atlas's tree data structure:
 //
 //      (AllocIndex::NONE)                (AllocIndex::NONE)
 //              ^                                 ^
@@ -2126,9 +2127,9 @@
 //   AllocIndex::NONE that means no link.
 // - Nodes have a link to their parent, but parents do not have a link to any of its children because
 //   we never need to traverse the structure from parent to child.
-// - All nodes with the same parent are &quot;siblings&quot;. An intrusive linked list allows traversing siblings
-//   in order. Consecutive siblings share an edge and can be merged if they are both &quot;free&quot;.
-// - There isn&#39;t necessarily a single root node. The top-most level of the tree can have several siblings
+// - All nodes with the same parent are "siblings". An intrusive linked list allows traversing siblings
+//   in order. Consecutive siblings share an edge and can be merged if they are both "free".
+// - There isn't necessarily a single root node. The top-most level of the tree can have several siblings
 //   and their parent index is equal to AllocIndex::NONE. AtlasAllocator::root_node only needs to refer
 //   to one of these top-level nodes.
 // - After a rectangle has been deallocated, the slot for its node in the vector is not part of the
@@ -2138,7 +2139,7 @@
 //   member of the node. So depending on whether the node kind is Unused or not, the next_sibling
 //   member is used different things.
 // - We reuse nodes aggressively to avoid growing the vector whenever possible. This is important because
-//   the memory footprint of this data structure depends on the capacity of its vectors which don&#39;t
+//   the memory footprint of this data structure depends on the capacity of its vectors which don't
 //   get deallocated during the lifetime of the atlas.
 // - Because nodes are aggressively reused, the same node indices will come up often. To avoid id reuse
 //   bugs, a parallel vector of generation counters is maintained.
@@ -2206,7 +2207,7 @@
         </span><span class="kw">let </span>chosen_id = <span class="self">self</span>.find_suitable_rect(<span class="kw-2">&amp;</span>requested_size);
 
         <span class="kw">if </span>chosen_id.is_none() {
-            <span class="comment">//println!(&quot;failed to allocate {:?}&quot;, requested_size);
+            <span class="comment">//println!("failed to allocate {:?}", requested_size);
             //self.print_free_rects();
 
             // No suitable free rect!
@@ -2231,7 +2232,7 @@
         <span class="kw">let </span>split_id;
         <span class="kw">let </span>leftover_id;
 
-        <span class="comment">//println!(&quot;{:?} -&gt; {:?}&quot;, current_orientation, orientation);
+        <span class="comment">//println!("{:?} -&gt; {:?}", current_orientation, orientation);
         </span><span class="kw">if </span>orientation == current_orientation {
             <span class="kw">if </span>!split_rect.is_empty() {
                 <span class="kw">let </span>next_sibling = chosen_node.next_sibling;
@@ -2363,10 +2364,10 @@
             <span class="self">self</span>.add_free_rect(leftover_id, <span class="kw-2">&amp;</span>leftover_rect.size());
         }
 
-        <span class="comment">//println!(&quot;allocated {:?}     split: {:?} leftover: {:?}&quot;, allocated_rect, split_rect, leftover_rect);
+        <span class="comment">//println!("allocated {:?}     split: {:?} leftover: {:?}", allocated_rect, split_rect, leftover_rect);
         //self.print_free_rects();
 
-        </span><span class="attr">#[cfg(feature = <span class="string">&quot;checks&quot;</span>)]
+        </span><span class="attr">#[cfg(feature = <span class="string">"checks"</span>)]
         </span><span class="self">self</span>.check_tree();
 
         <span class="prelude-val">Some</span>(Allocation {
@@ -2425,7 +2426,7 @@
             }
         }
 
-        <span class="attr">#[cfg(feature = <span class="string">&quot;checks&quot;</span>)]
+        <span class="attr">#[cfg(feature = <span class="string">"checks"</span>)]
         </span><span class="self">self</span>.check_tree();
     }
 
@@ -2646,7 +2647,7 @@
             }
         }
 
-        <span class="attr">#[cfg(feature = <span class="string">&quot;checks&quot;</span>)]
+        <span class="attr">#[cfg(feature = <span class="string">"checks"</span>)]
         </span><span class="self">self</span>.check_tree();
     }
 
@@ -2694,7 +2695,7 @@
             <span class="kw">while </span>freelist_idx &lt; <span class="self">self</span>.free_lists[bucket].len() {
                 <span class="kw">let </span>id = <span class="self">self</span>.free_lists[bucket][freelist_idx];
 
-                <span class="comment">// During tree simplification we don&#39;t remove merged nodes from the free list, so we have
+                <span class="comment">// During tree simplification we don't remove merged nodes from the free list, so we have
                 // to handle it here.
                 // This is a tad awkward, but lets us avoid having to maintain a doubly linked list for
                 // the free list (which would be needed to remove nodes during tree simplification).
@@ -2770,34 +2771,34 @@
 
     <span class="attr">#[allow(dead_code)]
     </span><span class="kw">fn </span>print_free_rects(<span class="kw-2">&amp;</span><span class="self">self</span>) {
-        <span class="macro">println!</span>(<span class="string">&quot;Large:&quot;</span>);
+        <span class="macro">println!</span>(<span class="string">"Large:"</span>);
         <span class="kw">for </span><span class="kw-2">&amp;</span>id <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.free_lists[LARGE_BUCKET] {
             <span class="kw">if </span><span class="self">self</span>.nodes[id.index()].kind == NodeKind::Free {
-                <span class="macro">println!</span>(<span class="string">&quot; - {:?} #{:?}&quot;</span>, <span class="self">self</span>.nodes[id.index()].rect, id);
+                <span class="macro">println!</span>(<span class="string">" - {:?} #{:?}"</span>, <span class="self">self</span>.nodes[id.index()].rect, id);
             }
         }
-        <span class="macro">println!</span>(<span class="string">&quot;Medium:&quot;</span>);
+        <span class="macro">println!</span>(<span class="string">"Medium:"</span>);
         <span class="kw">for </span><span class="kw-2">&amp;</span>id <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.free_lists[MEDIUM_BUCKET] {
             <span class="kw">if </span><span class="self">self</span>.nodes[id.index()].kind == NodeKind::Free {
-                <span class="macro">println!</span>(<span class="string">&quot; - {:?} #{:?}&quot;</span>, <span class="self">self</span>.nodes[id.index()].rect, id);
+                <span class="macro">println!</span>(<span class="string">" - {:?} #{:?}"</span>, <span class="self">self</span>.nodes[id.index()].rect, id);
             }
         }
-        <span class="macro">println!</span>(<span class="string">&quot;Small:&quot;</span>);
+        <span class="macro">println!</span>(<span class="string">"Small:"</span>);
         <span class="kw">for </span><span class="kw-2">&amp;</span>id <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.free_lists[SMALL_BUCKET] {
             <span class="kw">if </span><span class="self">self</span>.nodes[id.index()].kind == NodeKind::Free {
-                <span class="macro">println!</span>(<span class="string">&quot; - {:?} #{:?}&quot;</span>, <span class="self">self</span>.nodes[id.index()].rect, id);
+                <span class="macro">println!</span>(<span class="string">" - {:?} #{:?}"</span>, <span class="self">self</span>.nodes[id.index()].rect, id);
             }
         }
     }
 
-    <span class="attr">#[cfg(feature = <span class="string">&quot;checks&quot;</span>)]
+    <span class="attr">#[cfg(feature = <span class="string">"checks"</span>)]
     </span><span class="kw">fn </span>check_siblings(<span class="kw-2">&amp;</span><span class="self">self</span>, id: AllocIndex, next: AllocIndex, orientation: Orientation) {
         <span class="kw">if </span>next.is_none() {
             <span class="kw">return</span>;
         }
 
         <span class="kw">if </span><span class="self">self</span>.nodes[next.index()].prev_sibling != id {
-            <span class="macro">panic!</span>(<span class="string">&quot;error: #{:?}&#39;s next sibling #{:?} has prev sibling #{:?}&quot;</span>, id, next, <span class="self">self</span>.nodes[next.index()].prev_sibling);
+            <span class="macro">panic!</span>(<span class="string">"error: #{:?}'s next sibling #{:?} has prev sibling #{:?}"</span>, id, next, <span class="self">self</span>.nodes[next.index()].prev_sibling);
         }
         <span class="macro">assert_eq!</span>(<span class="self">self</span>.nodes[next.index()].prev_sibling, id);
 
@@ -2828,7 +2829,7 @@
         }
     }
 
-    <span class="attr">#[cfg(feature = <span class="string">&quot;checks&quot;</span>)]
+    <span class="attr">#[cfg(feature = <span class="string">"checks"</span>)]
     </span><span class="kw">fn </span>check_tree(<span class="kw-2">&amp;</span><span class="self">self</span>) {
         <span class="kw">for </span>node_idx <span class="kw">in </span><span class="number">0</span>..<span class="self">self</span>.nodes.len() {
             <span class="kw">let </span>node = <span class="kw-2">&amp;</span><span class="self">self</span>.nodes[node_idx];
@@ -2847,7 +2848,7 @@
                 <span class="macro">assert!</span>(<span class="self">self</span>.nodes[iter.index()].kind != NodeKind::Unused);
                 <span class="kw">let </span>next = <span class="self">self</span>.nodes[iter.index()].next_sibling;
 
-                <span class="attr">#[cfg(feature = <span class="string">&quot;checks&quot;</span>)]
+                <span class="attr">#[cfg(feature = <span class="string">"checks"</span>)]
                 </span><span class="self">self</span>.check_siblings(iter, next, node.orientation);
 
                 iter = next;
@@ -2855,7 +2856,7 @@
 
             <span class="kw">if </span>node.parent.is_some() {
                 <span class="kw">if </span><span class="self">self</span>.nodes[node.parent.index()].kind != NodeKind::Container {
-                    <span class="macro">panic!</span>(<span class="string">&quot;error: child: {:?} parent: {:?}&quot;</span>, node_idx, node.parent);
+                    <span class="macro">panic!</span>(<span class="string">"error: child: {:?} parent: {:?}"</span>, node_idx, node.parent);
                 }
                 <span class="macro">assert_eq!</span>(
                     <span class="self">self</span>.nodes[node.parent.index()].orientation,
@@ -2869,7 +2870,7 @@
     <span class="kw">fn </span>add_free_rect(<span class="kw-2">&amp;mut </span><span class="self">self</span>, id: AllocIndex, size: <span class="kw-2">&amp;</span>Size) {
         <span class="macro">debug_assert_eq!</span>(<span class="self">self</span>.nodes[id.index()].kind, NodeKind::Free);
         <span class="kw">let </span>bucket = free_list_for_size(<span class="self">self</span>.small_size_threshold, <span class="self">self</span>.large_size_threshold, size);
-        <span class="comment">//println!(&quot;add free rect #{:?} size {} bucket {}&quot;, id, size, bucket);
+        <span class="comment">//println!("add free rect #{:?} size {} bucket {}", id, size, bucket);
         </span><span class="self">self</span>.free_lists[bucket].push(id);
     }
 
@@ -2879,7 +2880,7 @@
         <span class="macro">debug_assert_eq!</span>(<span class="self">self</span>.nodes[next.index()].kind, NodeKind::Free);
         <span class="kw">let </span>r1 = <span class="self">self</span>.nodes[node.index()].rect;
         <span class="kw">let </span>r2 = <span class="self">self</span>.nodes[next.index()].rect;
-        <span class="comment">//println!(&quot;merge {} #{:?} and {} #{:?}       {:?}&quot;, r1, node, r2, next, orientation);
+        <span class="comment">//println!("merge {} #{:?} and {} #{:?}       {:?}", r1, node, r2, next, orientation);
         </span><span class="kw">let </span>merge_size = <span class="self">self</span>.nodes[next.index()].rect.size();
         <span class="kw">match </span>orientation {
             Orientation::Horizontal =&gt; {
@@ -3094,7 +3095,7 @@
 
         <span class="kw">for </span>bucket <span class="kw">in </span><span class="number">0</span>..NUM_BUCKETS {
             <span class="kw">for </span>id <span class="kw">in </span>src.free_lists[bucket].iter() {
-                <span class="comment">// During tree simplification we don&#39;t remove merged nodes from the free list, so we have
+                <span class="comment">// During tree simplification we don't remove merged nodes from the free list, so we have
                 // to handle it here.
                 // This is a tad awkward, but lets us avoid having to maintain a doubly linked list for
                 // the free list (which would be needed to remove nodes during tree simplification).
@@ -3249,7 +3250,7 @@
 
     <span class="macro">writeln!</span>(
         output,
-        <span class="string">&quot;{}&quot;</span>,
+        <span class="string">"{}"</span>,
         BeginSvg {
             w: atlas.size.width <span class="kw">as </span>f32,
             h: atlas.size.height <span class="kw">as </span>f32
@@ -3258,7 +3259,7 @@
 
     dump_into_svg(atlas, <span class="prelude-val">None</span>, output)<span class="question-mark">?</span>;
 
-    <span class="macro">writeln!</span>(output, <span class="string">&quot;{}&quot;</span>, EndSvg)
+    <span class="macro">writeln!</span>(output, <span class="string">"{}"</span>, EndSvg)
 }
 
 <span class="doccomment">/// Dump a visual representation of the atlas in SVG, omitting the beginning and end of the
@@ -3293,7 +3294,7 @@
 
         <span class="macro">writeln!</span>(
             output,
-            <span class="string">r#&quot;    {}&quot;#</span>,
+            <span class="string">r#"    {}"#</span>,
             rectangle(tx + x * sx, ty + y * sy, w * sx, h * sy)
                 .fill(color)
                 .stroke(Stroke::Color(black(), <span class="number">1.0</span>))
@@ -3386,9 +3387,9 @@
         atlas.deallocate(id);
     }
 
-    <span class="macro">println!</span>(<span class="string">&quot;added/removed {} rectangles, {} misses&quot;</span>, n, misses);
+    <span class="macro">println!</span>(<span class="string">"added/removed {} rectangles, {} misses"</span>, n, misses);
     <span class="macro">println!</span>(
-        <span class="string">&quot;nodes.cap: {}, free_list.cap: {}/{}/{}&quot;</span>,
+        <span class="string">"nodes.cap: {}, free_list.cap: {}/{}/{}"</span>,
         atlas.nodes.capacity(),
         atlas.free_lists[LARGE_BUCKET].capacity(),
         atlas.free_lists[MEDIUM_BUCKET].capacity(),

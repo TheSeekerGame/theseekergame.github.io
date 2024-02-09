@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy-3e956806168b8470/b5b6ea3/crates/bevy_ecs/src/query/filter.rs`."><title>filter.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_ecs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy-3e956806168b8470/b5b6ea3/crates/bevy_ecs/src/query/filter.rs`."><title>filter.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_ecs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -657,7 +658,7 @@
 <span class="doccomment">/// Filter that selects entities with a component `T`.
 ///
 /// This can be used in a [`Query`](crate::system::Query) if entities are required to have the
-/// component `T` but you don&#39;t actually care about components value.
+/// component `T` but you don't actually care about components value.
 ///
 /// This is the negation of [`Without`].
 ///
@@ -672,11 +673,11 @@
 /// # #[derive(Component)]
 /// # struct IsBeautiful;
 /// # #[derive(Component)]
-/// # struct Name { name: &amp;&#39;static str };
+/// # struct Name { name: &amp;'static str };
 /// #
 /// fn compliment_entity_system(query: Query&lt;&amp;Name, With&lt;IsBeautiful&gt;&gt;) {
 ///     for name in &amp;query {
-///         println!(&quot;{} is looking lovely today!&quot;, name.name);
+///         println!("{} is looking lovely today!", name.name);
 ///     }
 /// }
 /// # bevy_ecs::system::assert_is_system(compliment_entity_system);
@@ -685,12 +686,12 @@
 
 <span class="comment">// SAFETY: `Self::ReadOnly` is the same as `Self`
 </span><span class="kw">unsafe impl</span>&lt;T: Component&gt; WorldQuery <span class="kw">for </span>With&lt;T&gt; {
-    <span class="kw">type </span>Fetch&lt;<span class="lifetime">&#39;w</span>&gt; = ();
-    <span class="kw">type </span>Item&lt;<span class="lifetime">&#39;w</span>&gt; = ();
+    <span class="kw">type </span>Fetch&lt;<span class="lifetime">'w</span>&gt; = ();
+    <span class="kw">type </span>Item&lt;<span class="lifetime">'w</span>&gt; = ();
     <span class="kw">type </span>ReadOnly = <span class="self">Self</span>;
     <span class="kw">type </span>State = ComponentId;
 
-    <span class="kw">fn </span>shrink&lt;<span class="lifetime">&#39;wlong</span>: <span class="lifetime">&#39;wshort</span>, <span class="lifetime">&#39;wshort</span>&gt;(<span class="kw">_</span>: <span class="self">Self</span>::Item&lt;<span class="lifetime">&#39;wlong</span>&gt;) -&gt; <span class="self">Self</span>::Item&lt;<span class="lifetime">&#39;wshort</span>&gt; {}
+    <span class="kw">fn </span>shrink&lt;<span class="lifetime">'wlong</span>: <span class="lifetime">'wshort</span>, <span class="lifetime">'wshort</span>&gt;(<span class="kw">_</span>: <span class="self">Self</span>::Item&lt;<span class="lifetime">'wlong</span>&gt;) -&gt; <span class="self">Self</span>::Item&lt;<span class="lifetime">'wshort</span>&gt; {}
 
     <span class="attr">#[inline]
     </span><span class="kw">unsafe fn </span>init_fetch(
@@ -723,11 +724,11 @@
     }
 
     <span class="attr">#[inline(always)]
-    </span><span class="kw">unsafe fn </span>fetch&lt;<span class="lifetime">&#39;w</span>&gt;(
-        _fetch: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::Fetch&lt;<span class="lifetime">&#39;w</span>&gt;,
+    </span><span class="kw">unsafe fn </span>fetch&lt;<span class="lifetime">'w</span>&gt;(
+        _fetch: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::Fetch&lt;<span class="lifetime">'w</span>&gt;,
         _entity: Entity,
         _table_row: TableRow,
-    ) -&gt; <span class="self">Self</span>::Item&lt;<span class="lifetime">&#39;w</span>&gt; {
+    ) -&gt; <span class="self">Self</span>::Item&lt;<span class="lifetime">'w</span>&gt; {
     }
 
     <span class="attr">#[inline]
@@ -773,11 +774,11 @@
 /// # #[derive(Component)]
 /// # struct Permit;
 /// # #[derive(Component)]
-/// # struct Name { name: &amp;&#39;static str };
+/// # struct Name { name: &amp;'static str };
 /// #
 /// fn no_permit_system(query: Query&lt;&amp;Name, Without&lt;Permit&gt;&gt;) {
 ///     for name in &amp;query{
-///         println!(&quot;{} has no permit!&quot;, name.name);
+///         println!("{} has no permit!", name.name);
 ///     }
 /// }
 /// # bevy_ecs::system::assert_is_system(no_permit_system);
@@ -786,12 +787,12 @@
 
 <span class="comment">// SAFETY: `Self::ReadOnly` is the same as `Self`
 </span><span class="kw">unsafe impl</span>&lt;T: Component&gt; WorldQuery <span class="kw">for </span>Without&lt;T&gt; {
-    <span class="kw">type </span>Fetch&lt;<span class="lifetime">&#39;w</span>&gt; = ();
-    <span class="kw">type </span>Item&lt;<span class="lifetime">&#39;w</span>&gt; = ();
+    <span class="kw">type </span>Fetch&lt;<span class="lifetime">'w</span>&gt; = ();
+    <span class="kw">type </span>Item&lt;<span class="lifetime">'w</span>&gt; = ();
     <span class="kw">type </span>ReadOnly = <span class="self">Self</span>;
     <span class="kw">type </span>State = ComponentId;
 
-    <span class="kw">fn </span>shrink&lt;<span class="lifetime">&#39;wlong</span>: <span class="lifetime">&#39;wshort</span>, <span class="lifetime">&#39;wshort</span>&gt;(<span class="kw">_</span>: <span class="self">Self</span>::Item&lt;<span class="lifetime">&#39;wlong</span>&gt;) -&gt; <span class="self">Self</span>::Item&lt;<span class="lifetime">&#39;wshort</span>&gt; {}
+    <span class="kw">fn </span>shrink&lt;<span class="lifetime">'wlong</span>: <span class="lifetime">'wshort</span>, <span class="lifetime">'wshort</span>&gt;(<span class="kw">_</span>: <span class="self">Self</span>::Item&lt;<span class="lifetime">'wlong</span>&gt;) -&gt; <span class="self">Self</span>::Item&lt;<span class="lifetime">'wshort</span>&gt; {}
 
     <span class="attr">#[inline]
     </span><span class="kw">unsafe fn </span>init_fetch(
@@ -824,11 +825,11 @@
     }
 
     <span class="attr">#[inline(always)]
-    </span><span class="kw">unsafe fn </span>fetch&lt;<span class="lifetime">&#39;w</span>&gt;(
-        _fetch: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::Fetch&lt;<span class="lifetime">&#39;w</span>&gt;,
+    </span><span class="kw">unsafe fn </span>fetch&lt;<span class="lifetime">'w</span>&gt;(
+        _fetch: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::Fetch&lt;<span class="lifetime">'w</span>&gt;,
         _entity: Entity,
         _table_row: TableRow,
-    ) -&gt; <span class="self">Self</span>::Item&lt;<span class="lifetime">&#39;w</span>&gt; {
+    ) -&gt; <span class="self">Self</span>::Item&lt;<span class="lifetime">'w</span>&gt; {
     }
 
     <span class="attr">#[inline]
@@ -884,7 +885,7 @@
 /// #
 /// fn print_cool_entity_system(query: Query&lt;Entity, Or&lt;(Changed&lt;Color&gt;, Changed&lt;Style&gt;)&gt;&gt;) {
 ///     for entity in &amp;query {
-///         println!(&quot;Entity {:?} got a new style or color&quot;, entity);
+///         println!("Entity {:?} got a new style or color", entity);
 ///     }
 /// }
 /// # bevy_ecs::system::assert_is_system(print_cool_entity_system);
@@ -892,12 +893,12 @@
 </span><span class="kw">pub struct </span>Or&lt;T&gt;(PhantomData&lt;T&gt;);
 
 <span class="attr">#[doc(hidden)]
-</span><span class="kw">pub struct </span>OrFetch&lt;<span class="lifetime">&#39;w</span>, T: WorldQuery&gt; {
-    fetch: T::Fetch&lt;<span class="lifetime">&#39;w</span>&gt;,
+</span><span class="kw">pub struct </span>OrFetch&lt;<span class="lifetime">'w</span>, T: WorldQuery&gt; {
+    fetch: T::Fetch&lt;<span class="lifetime">'w</span>&gt;,
     matches: bool,
 }
 
-<span class="kw">impl</span>&lt;T: WorldQuery&gt; Clone <span class="kw">for </span>OrFetch&lt;<span class="lifetime">&#39;_</span>, T&gt; {
+<span class="kw">impl</span>&lt;T: WorldQuery&gt; Clone <span class="kw">for </span>OrFetch&lt;<span class="lifetime">'_</span>, T&gt; {
     <span class="kw">fn </span>clone(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             fetch: <span class="self">self</span>.fetch.clone(),
@@ -913,12 +914,12 @@
         #[allow(clippy::unused_unit)]
         </span><span class="comment">// SAFETY: defers to soundness of `$filter: WorldQuery` impl
         </span><span class="kw">unsafe impl</span>&lt;$(<span class="macro-nonterminal">$filter</span>: WorldQuery),<span class="kw-2">*</span>&gt; WorldQuery <span class="kw">for </span>Or&lt;($(<span class="macro-nonterminal">$filter</span>,)<span class="kw-2">*</span>)&gt; {
-            <span class="kw">type </span>Fetch&lt;<span class="lifetime">&#39;w</span>&gt; = ($(OrFetch&lt;<span class="lifetime">&#39;w</span>, <span class="macro-nonterminal">$filter</span>&gt;,)<span class="kw-2">*</span>);
-            <span class="kw">type </span>Item&lt;<span class="lifetime">&#39;w</span>&gt; = bool;
+            <span class="kw">type </span>Fetch&lt;<span class="lifetime">'w</span>&gt; = ($(OrFetch&lt;<span class="lifetime">'w</span>, <span class="macro-nonterminal">$filter</span>&gt;,)<span class="kw-2">*</span>);
+            <span class="kw">type </span>Item&lt;<span class="lifetime">'w</span>&gt; = bool;
             <span class="kw">type </span>ReadOnly = Or&lt;($(<span class="macro-nonterminal">$filter::ReadOnly</span>,)<span class="kw-2">*</span>)&gt;;
             <span class="kw">type </span>State = ($(<span class="macro-nonterminal">$filter::State</span>,)<span class="kw-2">*</span>);
 
-            <span class="kw">fn </span>shrink&lt;<span class="lifetime">&#39;wlong</span>: <span class="lifetime">&#39;wshort</span>, <span class="lifetime">&#39;wshort</span>&gt;(item: <span class="self">Self</span>::Item&lt;<span class="lifetime">&#39;wlong</span>&gt;) -&gt; <span class="self">Self</span>::Item&lt;<span class="lifetime">&#39;wshort</span>&gt; {
+            <span class="kw">fn </span>shrink&lt;<span class="lifetime">'wlong</span>: <span class="lifetime">'wshort</span>, <span class="lifetime">'wshort</span>&gt;(item: <span class="self">Self</span>::Item&lt;<span class="lifetime">'wlong</span>&gt;) -&gt; <span class="self">Self</span>::Item&lt;<span class="lifetime">'wshort</span>&gt; {
                 item
             }
 
@@ -927,7 +928,7 @@
             <span class="kw">const </span>IS_ARCHETYPAL: bool = <span class="bool-val">true </span>$(&amp;&amp; <span class="macro-nonterminal">$filter::IS_ARCHETYPAL</span>)<span class="kw-2">*</span>;
 
             <span class="attr">#[inline]
-            </span><span class="kw">unsafe fn </span>init_fetch&lt;<span class="lifetime">&#39;w</span>&gt;(world: UnsafeWorldCell&lt;<span class="lifetime">&#39;w</span>&gt;, state: <span class="kw-2">&amp;</span><span class="self">Self</span>::State, last_run: Tick, this_run: Tick) -&gt; <span class="self">Self</span>::Fetch&lt;<span class="lifetime">&#39;w</span>&gt; {
+            </span><span class="kw">unsafe fn </span>init_fetch&lt;<span class="lifetime">'w</span>&gt;(world: UnsafeWorldCell&lt;<span class="lifetime">'w</span>&gt;, state: <span class="kw-2">&amp;</span><span class="self">Self</span>::State, last_run: Tick, this_run: Tick) -&gt; <span class="self">Self</span>::Fetch&lt;<span class="lifetime">'w</span>&gt; {
                 <span class="kw">let </span>($(<span class="macro-nonterminal">$filter</span>,)<span class="kw-2">*</span>) = state;
                 ($(OrFetch {
                     fetch: <span class="macro-nonterminal">$filter::init_fetch</span>(world, <span class="macro-nonterminal">$filter</span>, last_run, this_run),
@@ -936,7 +937,7 @@
             }
 
             <span class="attr">#[inline]
-            </span><span class="kw">unsafe fn </span>set_table&lt;<span class="lifetime">&#39;w</span>&gt;(fetch: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::Fetch&lt;<span class="lifetime">&#39;w</span>&gt;, state: <span class="kw-2">&amp;</span><span class="self">Self</span>::State, table: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>Table) {
+            </span><span class="kw">unsafe fn </span>set_table&lt;<span class="lifetime">'w</span>&gt;(fetch: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::Fetch&lt;<span class="lifetime">'w</span>&gt;, state: <span class="kw-2">&amp;</span><span class="self">Self</span>::State, table: <span class="kw-2">&amp;</span><span class="lifetime">'w </span>Table) {
                 <span class="kw">let </span>($(<span class="macro-nonterminal">$filter</span>,)<span class="kw-2">*</span>) = fetch;
                 <span class="kw">let </span>($(<span class="macro-nonterminal">$state</span>,)<span class="kw-2">*</span>) = state;
                 $(
@@ -948,11 +949,11 @@
             }
 
             <span class="attr">#[inline]
-            </span><span class="kw">unsafe fn </span>set_archetype&lt;<span class="lifetime">&#39;w</span>&gt;(
-                fetch: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::Fetch&lt;<span class="lifetime">&#39;w</span>&gt;,
+            </span><span class="kw">unsafe fn </span>set_archetype&lt;<span class="lifetime">'w</span>&gt;(
+                fetch: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::Fetch&lt;<span class="lifetime">'w</span>&gt;,
                 state: &amp; <span class="self">Self</span>::State,
-                archetype: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>Archetype,
-                table: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>Table
+                archetype: <span class="kw-2">&amp;</span><span class="lifetime">'w </span>Archetype,
+                table: <span class="kw-2">&amp;</span><span class="lifetime">'w </span>Table
             ) {
                 <span class="kw">let </span>($(<span class="macro-nonterminal">$filter</span>,)<span class="kw-2">*</span>) = fetch;
                 <span class="kw">let </span>($(<span class="macro-nonterminal">$state</span>,)<span class="kw-2">*</span>) = <span class="kw-2">&amp;</span>state;
@@ -965,18 +966,18 @@
             }
 
             <span class="attr">#[inline(always)]
-            </span><span class="kw">unsafe fn </span>fetch&lt;<span class="lifetime">&#39;w</span>&gt;(
-                fetch: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::Fetch&lt;<span class="lifetime">&#39;w</span>&gt;,
+            </span><span class="kw">unsafe fn </span>fetch&lt;<span class="lifetime">'w</span>&gt;(
+                fetch: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::Fetch&lt;<span class="lifetime">'w</span>&gt;,
                 _entity: Entity,
                 _table_row: TableRow
-            ) -&gt; <span class="self">Self</span>::Item&lt;<span class="lifetime">&#39;w</span>&gt; {
+            ) -&gt; <span class="self">Self</span>::Item&lt;<span class="lifetime">'w</span>&gt; {
                 <span class="kw">let </span>($(<span class="macro-nonterminal">$filter</span>,)<span class="kw-2">*</span>) = fetch;
                 <span class="bool-val">false </span>$(|| (<span class="macro-nonterminal">$filter</span>.matches &amp;&amp; <span class="macro-nonterminal">$filter::filter_fetch</span>(<span class="kw-2">&amp;mut </span><span class="macro-nonterminal">$filter</span>.fetch, _entity, _table_row)))*
             }
 
             <span class="attr">#[inline(always)]
             </span><span class="kw">unsafe fn </span>filter_fetch(
-                fetch: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::Fetch&lt;<span class="lifetime">&#39;_</span>&gt;,
+                fetch: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::Fetch&lt;<span class="lifetime">'_</span>&gt;,
                 entity: Entity,
                 table_row: TableRow
             ) -&gt; bool {
@@ -1040,32 +1041,32 @@
         <span class="attr">#[doc(hidden)]
         #[derive(Clone)]
         </span>$(<span class="attr">#[<span class="macro-nonterminal">$fetch_meta</span>]</span>)*
-        <span class="kw">pub struct </span><span class="macro-nonterminal">$fetch_name</span>&lt;<span class="lifetime">&#39;w</span>&gt; {
-            table_ticks: <span class="prelude-ty">Option</span>&lt;ThinSlicePtr&lt;<span class="lifetime">&#39;w</span>, UnsafeCell&lt;Tick&gt;&gt;&gt;,
-            sparse_set: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>ComponentSparseSet&gt;,
+        <span class="kw">pub struct </span><span class="macro-nonterminal">$fetch_name</span>&lt;<span class="lifetime">'w</span>&gt; {
+            table_ticks: <span class="prelude-ty">Option</span>&lt;ThinSlicePtr&lt;<span class="lifetime">'w</span>, UnsafeCell&lt;Tick&gt;&gt;&gt;,
+            sparse_set: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'w </span>ComponentSparseSet&gt;,
             last_run: Tick,
             this_run: Tick,
         }
 
         <span class="comment">// SAFETY: `Self::ReadOnly` is the same as `Self`
         </span><span class="kw">unsafe impl</span>&lt;T: Component&gt; WorldQuery <span class="kw">for </span><span class="macro-nonterminal">$name</span>&lt;T&gt; {
-            <span class="kw">type </span>Fetch&lt;<span class="lifetime">&#39;w</span>&gt; = <span class="macro-nonterminal">$fetch_name</span>&lt;<span class="lifetime">&#39;w</span>&gt;;
-            <span class="kw">type </span>Item&lt;<span class="lifetime">&#39;w</span>&gt; = bool;
+            <span class="kw">type </span>Fetch&lt;<span class="lifetime">'w</span>&gt; = <span class="macro-nonterminal">$fetch_name</span>&lt;<span class="lifetime">'w</span>&gt;;
+            <span class="kw">type </span>Item&lt;<span class="lifetime">'w</span>&gt; = bool;
             <span class="kw">type </span>ReadOnly = <span class="self">Self</span>;
             <span class="kw">type </span>State = ComponentId;
 
-            <span class="kw">fn </span>shrink&lt;<span class="lifetime">&#39;wlong</span>: <span class="lifetime">&#39;wshort</span>, <span class="lifetime">&#39;wshort</span>&gt;(item: <span class="self">Self</span>::Item&lt;<span class="lifetime">&#39;wlong</span>&gt;) -&gt; <span class="self">Self</span>::Item&lt;<span class="lifetime">&#39;wshort</span>&gt; {
+            <span class="kw">fn </span>shrink&lt;<span class="lifetime">'wlong</span>: <span class="lifetime">'wshort</span>, <span class="lifetime">'wshort</span>&gt;(item: <span class="self">Self</span>::Item&lt;<span class="lifetime">'wlong</span>&gt;) -&gt; <span class="self">Self</span>::Item&lt;<span class="lifetime">'wshort</span>&gt; {
                 item
             }
 
             <span class="attr">#[inline]
-            </span><span class="kw">unsafe fn </span>init_fetch&lt;<span class="lifetime">&#39;w</span>&gt;(
-                world: UnsafeWorldCell&lt;<span class="lifetime">&#39;w</span>&gt;,
+            </span><span class="kw">unsafe fn </span>init_fetch&lt;<span class="lifetime">'w</span>&gt;(
+                world: UnsafeWorldCell&lt;<span class="lifetime">'w</span>&gt;,
                 <span class="kw-2">&amp;</span>id: <span class="kw-2">&amp;</span>ComponentId,
                 last_run: Tick,
                 this_run: Tick
-            ) -&gt; <span class="self">Self</span>::Fetch&lt;<span class="lifetime">&#39;w</span>&gt; {
-                <span class="self">Self</span>::Fetch::&lt;<span class="lifetime">&#39;w</span>&gt; {
+            ) -&gt; <span class="self">Self</span>::Fetch&lt;<span class="lifetime">'w</span>&gt; {
+                <span class="self">Self</span>::Fetch::&lt;<span class="lifetime">'w</span>&gt; {
                     table_ticks: <span class="prelude-val">None</span>,
                     sparse_set: (T::Storage::STORAGE_TYPE == StorageType::SparseSet)
                         .then(|| {
@@ -1089,10 +1090,10 @@
             <span class="kw">const </span>IS_ARCHETYPAL:  bool = <span class="bool-val">false</span>;
 
             <span class="attr">#[inline]
-            </span><span class="kw">unsafe fn </span>set_table&lt;<span class="lifetime">&#39;w</span>&gt;(
-                fetch: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::Fetch&lt;<span class="lifetime">&#39;w</span>&gt;,
+            </span><span class="kw">unsafe fn </span>set_table&lt;<span class="lifetime">'w</span>&gt;(
+                fetch: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::Fetch&lt;<span class="lifetime">'w</span>&gt;,
                 <span class="kw-2">&amp;</span>component_id: <span class="kw-2">&amp;</span>ComponentId,
-                table: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>Table
+                table: <span class="kw-2">&amp;</span><span class="lifetime">'w </span>Table
             ) {
                 fetch.table_ticks = <span class="prelude-val">Some</span>(
                     <span class="macro-nonterminal">$get_slice</span>(
@@ -1104,11 +1105,11 @@
             }
 
             <span class="attr">#[inline]
-            </span><span class="kw">unsafe fn </span>set_archetype&lt;<span class="lifetime">&#39;w</span>&gt;(
-                fetch: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::Fetch&lt;<span class="lifetime">&#39;w</span>&gt;,
+            </span><span class="kw">unsafe fn </span>set_archetype&lt;<span class="lifetime">'w</span>&gt;(
+                fetch: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::Fetch&lt;<span class="lifetime">'w</span>&gt;,
                 component_id: <span class="kw-2">&amp;</span>ComponentId,
-                _archetype: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>Archetype,
-                table: <span class="kw-2">&amp;</span><span class="lifetime">&#39;w </span>Table
+                _archetype: <span class="kw-2">&amp;</span><span class="lifetime">'w </span>Archetype,
+                table: <span class="kw-2">&amp;</span><span class="lifetime">'w </span>Table
             ) {
                 <span class="kw">if </span><span class="self">Self</span>::IS_DENSE {
                     <span class="self">Self</span>::set_table(fetch, component_id, table);
@@ -1116,11 +1117,11 @@
             }
 
             <span class="attr">#[inline(always)]
-            </span><span class="kw">unsafe fn </span>fetch&lt;<span class="lifetime">&#39;w</span>&gt;(
-                fetch: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::Fetch&lt;<span class="lifetime">&#39;w</span>&gt;,
+            </span><span class="kw">unsafe fn </span>fetch&lt;<span class="lifetime">'w</span>&gt;(
+                fetch: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::Fetch&lt;<span class="lifetime">'w</span>&gt;,
                 entity: Entity,
                 table_row: TableRow
-            ) -&gt; <span class="self">Self</span>::Item&lt;<span class="lifetime">&#39;w</span>&gt; {
+            ) -&gt; <span class="self">Self</span>::Item&lt;<span class="lifetime">'w</span>&gt; {
                 <span class="kw">match </span>T::Storage::STORAGE_TYPE {
                     StorageType::Table =&gt; {
                         fetch
@@ -1144,7 +1145,7 @@
 
             <span class="attr">#[inline(always)]
             </span><span class="kw">unsafe fn </span>filter_fetch(
-                fetch: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::Fetch&lt;<span class="lifetime">&#39;_</span>&gt;,
+                fetch: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::Fetch&lt;<span class="lifetime">'_</span>&gt;,
                 entity: Entity,
                 table_row: TableRow
             ) -&gt; bool {
@@ -1154,7 +1155,7 @@
             <span class="attr">#[inline]
             </span><span class="kw">fn </span>update_component_access(<span class="kw-2">&amp;</span>id: <span class="kw-2">&amp;</span>ComponentId, access: <span class="kw-2">&amp;mut </span>FilteredAccess&lt;ComponentId&gt;) {
                 <span class="kw">if </span>access.access().has_write(id) {
-                    <span class="macro">panic!</span>(<span class="string">&quot;$state_name&lt;{}&gt; conflicts with a previous access in this query. Shared access cannot coincide with exclusive access.&quot;</span>,
+                    <span class="macro">panic!</span>(<span class="string">"$state_name&lt;{}&gt; conflicts with a previous access in this query. Shared access cannot coincide with exclusive access."</span>,
                         std::any::type_name::&lt;T&gt;());
                 }
                 access.add_read(id);
@@ -1206,7 +1207,7 @@
     ///
     /// fn print_add_name_component(query: Query&lt;&amp;Name, Added&lt;Name&gt;&gt;) {
     ///     for name in &amp;query {
-    ///         println!(&quot;Named entity created: {:?}&quot;, name)
+    ///         println!("Named entity created: {:?}", name)
     ///     }
     /// }
     ///
@@ -1244,7 +1245,7 @@
     ///
     /// fn print_moving_objects_system(query: Query&lt;&amp;Name, Changed&lt;Transform&gt;&gt;) {
     ///     for name in &amp;query {
-    ///         println!(&quot;Entity Moved: {:?}&quot;, name);
+    ///         println!("Entity Moved: {:?}", name);
     ///     }
     /// }
     ///

@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ruzstd-0.4.0/src/decoding/block_decoder.rs`."><title>block_decoder.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="ruzstd" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ruzstd-0.4.0/src/decoding/block_decoder.rs`."><title>block_decoder.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="ruzstd" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -390,19 +391,19 @@
     ReadyToDecodeNextHeader,
     ReadyToDecodeNextBody,
     <span class="attr">#[allow(dead_code)]
-    </span>Failed, <span class="comment">//TODO put &quot;self.internal_state = DecoderState::Failed;&quot; everywhere an unresolvable error occurs
+    </span>Failed, <span class="comment">//TODO put "self.internal_state = DecoderState::Failed;" everywhere an unresolvable error occurs
 </span>}
 
 <span class="attr">#[derive(Debug, thiserror::Error)]
 #[non_exhaustive]
 </span><span class="kw">pub enum </span>BlockHeaderReadError {
-    <span class="attr">#[error(<span class="string">&quot;Error while reading the block header&quot;</span>)]
+    <span class="attr">#[error(<span class="string">"Error while reading the block header"</span>)]
     </span>ReadError(<span class="attr">#[from] </span>io::Error),
-    <span class="attr">#[error(<span class="string">&quot;Reserved block occured. This is considered corruption by the documentation&quot;</span>)]
+    <span class="attr">#[error(<span class="string">"Reserved block occured. This is considered corruption by the documentation"</span>)]
     </span>FoundReservedBlock,
-    <span class="attr">#[error(<span class="string">&quot;Error getting block type: {0}&quot;</span>)]
+    <span class="attr">#[error(<span class="string">"Error getting block type: {0}"</span>)]
     </span>BlockTypeError(<span class="attr">#[from] </span>BlockTypeError),
-    <span class="attr">#[error(<span class="string">&quot;Error getting block content size: {0}&quot;</span>)]
+    <span class="attr">#[error(<span class="string">"Error getting block content size: {0}"</span>)]
     </span>BlockSizeError(<span class="attr">#[from] </span>BlockSizeError),
 }
 
@@ -410,7 +411,7 @@
 #[non_exhaustive]
 </span><span class="kw">pub enum </span>BlockTypeError {
     <span class="attr">#[error(
-        <span class="string">&quot;Invalid Blocktype number. Is: {num} Should be one of: 0, 1, 2, 3 (3 is reserved though&quot;
+        <span class="string">"Invalid Blocktype number. Is: {num} Should be one of: 0, 1, 2, 3 (3 is reserved though"
     </span>)]
     </span>InvalidBlocktypeNumber { num: u8 },
 }
@@ -418,16 +419,16 @@
 <span class="attr">#[derive(Debug, thiserror::Error)]
 #[non_exhaustive]
 </span><span class="kw">pub enum </span>BlockSizeError {
-    <span class="attr">#[error(<span class="string">&quot;Blocksize was bigger than the absolute maximum {ABSOLUTE_MAXIMUM_BLOCK_SIZE} (128kb). Is: {size}&quot;</span>)]
+    <span class="attr">#[error(<span class="string">"Blocksize was bigger than the absolute maximum {ABSOLUTE_MAXIMUM_BLOCK_SIZE} (128kb). Is: {size}"</span>)]
     </span>BlockSizeTooLarge { size: u32 },
 }
 
 <span class="attr">#[derive(Debug, thiserror::Error)]
 #[non_exhaustive]
 </span><span class="kw">pub enum </span>DecompressBlockError {
-    <span class="attr">#[error(<span class="string">&quot;Error while reading the block content: {0}&quot;</span>)]
+    <span class="attr">#[error(<span class="string">"Error while reading the block content: {0}"</span>)]
     </span>BlockContentReadError(<span class="attr">#[from] </span>io::Error),
-    <span class="attr">#[error(<span class="string">&quot;Malformed section header. Says literals would be this long: {expected_len} but there are only {remaining_bytes} bytes left&quot;</span>)]
+    <span class="attr">#[error(<span class="string">"Malformed section header. Says literals would be this long: {expected_len} but there are only {remaining_bytes} bytes left"</span>)]
     </span>MalformedSectionHeader {
         expected_len: usize,
         remaining_bytes: usize,
@@ -447,11 +448,11 @@
 <span class="attr">#[derive(Debug, thiserror::Error)]
 #[non_exhaustive]
 </span><span class="kw">pub enum </span>DecodeBlockContentError {
-    <span class="attr">#[error(<span class="string">&quot;Can&#39;t decode next block if failed along the way. Results will be nonsense&quot;</span>)]
+    <span class="attr">#[error(<span class="string">"Can't decode next block if failed along the way. Results will be nonsense"</span>)]
     </span>DecoderStateIsFailed,
-    <span class="attr">#[error(<span class="string">&quot;Cant decode next block body, while expecting to decode the header of the previous block. Results will be nonsense&quot;</span>)]
+    <span class="attr">#[error(<span class="string">"Cant decode next block body, while expecting to decode the header of the previous block. Results will be nonsense"</span>)]
     </span>ExpectedHeaderOfPreviousBlock,
-    <span class="attr">#[error(<span class="string">&quot;Error while reading bytes for {step}: {source}&quot;</span>)]
+    <span class="attr">#[error(<span class="string">"Error while reading bytes for {step}: {source}"</span>)]
     </span>ReadError {
         step: BlockType,
         <span class="attr">#[source]
@@ -543,7 +544,7 @@
             }
 
             BlockType::Reserved =&gt; {
-                <span class="macro">panic!</span>(<span class="string">&quot;How did you even get this. The decoder should error out if it detects a reserved-type block&quot;</span>);
+                <span class="macro">panic!</span>(<span class="string">"How did you even get this. The decoder should error out if it detects a reserved-type block"</span>);
             }
 
             BlockType::Compressed =&gt; {
@@ -572,7 +573,7 @@
         <span class="kw">let </span>bytes_in_literals_header = section.parse_from_header(raw)<span class="question-mark">?</span>;
         <span class="kw">let </span>raw = <span class="kw-2">&amp;</span>raw[bytes_in_literals_header <span class="kw">as </span>usize..];
         <span class="macro">vprintln!</span>(
-            <span class="string">&quot;Found {} literalssection with regenerated size: {}, and compressed size: {:?}&quot;</span>,
+            <span class="string">"Found {} literalssection with regenerated size: {}, and compressed size: {:?}"</span>,
             section.ls_type,
             section.regenerated_size,
             section.compressed_size
@@ -583,7 +584,7 @@
             <span class="prelude-val">None </span>=&gt; <span class="kw">match </span>section.ls_type {
                 LiteralsSectionType::RLE =&gt; <span class="number">1</span>,
                 LiteralsSectionType::Raw =&gt; section.regenerated_size <span class="kw">as </span>usize,
-                <span class="kw">_ </span>=&gt; <span class="macro">panic!</span>(<span class="string">&quot;Bug in this library&quot;</span>),
+                <span class="kw">_ </span>=&gt; <span class="macro">panic!</span>(<span class="string">"Bug in this library"</span>),
             },
         };
 
@@ -595,7 +596,7 @@
         }
 
         <span class="kw">let </span>raw_literals = <span class="kw-2">&amp;</span>raw[..upper_limit_for_literals];
-        <span class="macro">vprintln!</span>(<span class="string">&quot;Slice for literals: {}&quot;</span>, raw_literals.len());
+        <span class="macro">vprintln!</span>(<span class="string">"Slice for literals: {}"</span>, raw_literals.len());
 
         workspace.literals_buffer.clear(); <span class="comment">//all literals of the previous block must have been used in the sequence execution anyways. just be defensive here
         </span><span class="kw">let </span>bytes_used_in_literals_section = decode_literals(
@@ -606,20 +607,20 @@
         )<span class="question-mark">?</span>;
         <span class="macro">assert!</span>(
             section.regenerated_size == workspace.literals_buffer.len() <span class="kw">as </span>u32,
-            <span class="string">&quot;Wrong number of literals: {}, Should have been: {}&quot;</span>,
+            <span class="string">"Wrong number of literals: {}, Should have been: {}"</span>,
             workspace.literals_buffer.len(),
             section.regenerated_size
         );
         <span class="macro">assert!</span>(bytes_used_in_literals_section == upper_limit_for_literals <span class="kw">as </span>u32);
 
         <span class="kw">let </span>raw = <span class="kw-2">&amp;</span>raw[upper_limit_for_literals..];
-        <span class="macro">vprintln!</span>(<span class="string">&quot;Slice for sequences with headers: {}&quot;</span>, raw.len());
+        <span class="macro">vprintln!</span>(<span class="string">"Slice for sequences with headers: {}"</span>, raw.len());
 
         <span class="kw">let </span><span class="kw-2">mut </span>seq_section = SequencesHeader::new();
         <span class="kw">let </span>bytes_in_sequence_header = seq_section.parse_from_header(raw)<span class="question-mark">?</span>;
         <span class="kw">let </span>raw = <span class="kw-2">&amp;</span>raw[bytes_in_sequence_header <span class="kw">as </span>usize..];
         <span class="macro">vprintln!</span>(
-            <span class="string">&quot;Found sequencessection with sequences: {} and size: {}&quot;</span>,
+            <span class="string">"Found sequencessection with sequences: {} and size: {}"</span>,
             seq_section.num_sequences,
             raw.len()
         );
@@ -631,7 +632,7 @@
                 + raw.len() <span class="kw">as </span>u32
                 == header.content_size
         );
-        <span class="macro">vprintln!</span>(<span class="string">&quot;Slice for sequences: {}&quot;</span>, raw.len());
+        <span class="macro">vprintln!</span>(<span class="string">"Slice for sequences: {}"</span>, raw.len());
 
         <span class="kw">if </span>seq_section.num_sequences != <span class="number">0 </span>{
             decode_sequences(
@@ -640,7 +641,7 @@
                 <span class="kw-2">&amp;mut </span>workspace.fse,
                 <span class="kw-2">&amp;mut </span>workspace.sequences,
             )<span class="question-mark">?</span>;
-            <span class="macro">vprintln!</span>(<span class="string">&quot;Executing sequences&quot;</span>);
+            <span class="macro">vprintln!</span>(<span class="string">"Executing sequences"</span>);
             execute_sequences(workspace)<span class="question-mark">?</span>;
         } <span class="kw">else </span>{
             workspace.buffer.push(<span class="kw-2">&amp;</span>workspace.literals_buffer);
@@ -656,8 +657,8 @@
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(BlockHeader, u8), BlockHeaderReadError&gt; {
         <span class="comment">//match self.internal_state {
         //    DecoderState::ReadyToDecodeNextHeader =&gt; {/* Happy :) */},
-        //    DecoderState::Failed =&gt; return Err(format!(&quot;Cant decode next block if failed along the way. Results will be nonsense&quot;)),
-        //    DecoderState::ReadyToDecodeNextBody =&gt; return Err(format!(&quot;Cant decode next block header, while expecting to decode the body of the previous block. Results will be nonsense&quot;)),
+        //    DecoderState::Failed =&gt; return Err(format!("Cant decode next block if failed along the way. Results will be nonsense")),
+        //    DecoderState::ReadyToDecodeNextBody =&gt; return Err(format!("Cant decode next block header, while expecting to decode the body of the previous block. Results will be nonsense")),
         //}
 
         </span>r.read_exact(<span class="kw-2">&amp;mut </span><span class="self">self</span>.header_buffer[<span class="number">0</span>..<span class="number">3</span>])<span class="question-mark">?</span>;

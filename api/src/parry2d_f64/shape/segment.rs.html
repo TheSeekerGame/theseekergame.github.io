@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/parry2d-f64-0.13.5/src/shape/segment.rs`."><title>segment.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="parry2d_f64" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/parry2d-f64-0.13.6/src/shape/segment.rs`."><title>segment.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="parry2d_f64" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -368,18 +369,18 @@
 <span class="kw">use </span>na::{<span class="self">self</span>, Unit};
 <span class="kw">use </span>std::mem;
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;rkyv&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"rkyv"</span>)]
 </span><span class="kw">use </span>rkyv::{bytecheck, CheckBytes};
 
 <span class="doccomment">/// A segment shape.
-</span><span class="attr">#[cfg_attr(feature = <span class="string">&quot;serde&quot;</span>, derive(Serialize, Deserialize))]
-#[cfg_attr(feature = <span class="string">&quot;bytemuck&quot;</span>, derive(bytemuck::Pod, bytemuck::Zeroable))]
+</span><span class="attr">#[cfg_attr(feature = <span class="string">"serde"</span>, derive(Serialize, Deserialize))]
+#[cfg_attr(feature = <span class="string">"bytemuck"</span>, derive(bytemuck::Pod, bytemuck::Zeroable))]
 #[cfg_attr(
-    feature = <span class="string">&quot;rkyv&quot;</span>,
+    feature = <span class="string">"rkyv"</span>,
     derive(rkyv::Archive, rkyv::Deserialize, rkyv::Serialize, CheckBytes),
-    archive(<span class="kw">as </span>= <span class="string">&quot;Self&quot;</span>)
+    archive(<span class="kw">as </span>= <span class="string">"Self"</span>)
 )]
-#[cfg_attr(feature = <span class="string">&quot;cuda&quot;</span>, derive(cust_core::DeviceCopy))]
+#[cfg_attr(feature = <span class="string">"cuda"</span>, derive(cust_core::DeviceCopy))]
 #[derive(PartialEq, Debug, Copy, Clone)]
 #[repr(C)]
 </span><span class="kw">pub struct </span>Segment {
@@ -461,7 +462,7 @@
     }
 
     <span class="doccomment">/// In 2D, the not-normalized counterclockwise normal of this segment.
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;dim2&quot;</span>)]
+    </span><span class="attr">#[cfg(feature = <span class="string">"dim2"</span>)]
     </span><span class="kw">pub fn </span>scaled_normal(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Vector&lt;Real&gt; {
         <span class="kw">let </span>dir = <span class="self">self</span>.scaled_direction();
         Vector::new(dir.y, -dir.x)
@@ -469,32 +470,32 @@
 
     <span class="doccomment">/// The not-normalized counterclockwise normal of this segment, assuming it lies on the plane
     /// with the normal collinear to the given axis (0 = X, 1 = Y, 2 = Z).
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+    </span><span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
     </span><span class="kw">pub fn </span>scaled_planar_normal(<span class="kw-2">&amp;</span><span class="self">self</span>, plane_axis: u8) -&gt; Vector&lt;Real&gt; {
         <span class="kw">let </span>dir = <span class="self">self</span>.scaled_direction();
         <span class="kw">match </span>plane_axis {
             <span class="number">0 </span>=&gt; Vector::new(<span class="number">0.0</span>, dir.z, -dir.y),
             <span class="number">1 </span>=&gt; Vector::new(-dir.z, <span class="number">0.0</span>, dir.x),
             <span class="number">2 </span>=&gt; Vector::new(dir.y, -dir.x, <span class="number">0.0</span>),
-            <span class="kw">_ </span>=&gt; <span class="macro">panic!</span>(<span class="string">&quot;Invalid axis given: must be 0 (X axis), 1 (Y axis) or 2 (Z axis)&quot;</span>),
+            <span class="kw">_ </span>=&gt; <span class="macro">panic!</span>(<span class="string">"Invalid axis given: must be 0 (X axis), 1 (Y axis) or 2 (Z axis)"</span>),
         }
     }
 
     <span class="doccomment">/// In 2D, the normalized counterclockwise normal of this segment.
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;dim2&quot;</span>)]
+    </span><span class="attr">#[cfg(feature = <span class="string">"dim2"</span>)]
     </span><span class="kw">pub fn </span>normal(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Unit&lt;Vector&lt;Real&gt;&gt;&gt; {
         Unit::try_new(<span class="self">self</span>.scaled_normal(), <span class="kw">crate</span>::math::DEFAULT_EPSILON)
     }
 
     <span class="doccomment">/// Returns `None`. Exists only for API similarity with the 2D parry.
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+    </span><span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
     </span><span class="kw">pub fn </span>normal(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Unit&lt;Vector&lt;Real&gt;&gt;&gt; {
         <span class="prelude-val">None
     </span>}
 
     <span class="doccomment">/// The normalized counterclockwise normal of this segment, assuming it lies on the plane
     /// with the normal collinear to the given axis (0 = X, 1 = Y, 2 = Z).
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+    </span><span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
     </span><span class="kw">pub fn </span>planar_normal(<span class="kw-2">&amp;</span><span class="self">self</span>, plane_axis: u8) -&gt; <span class="prelude-ty">Option</span>&lt;Unit&lt;Vector&lt;Real&gt;&gt;&gt; {
         Unit::try_new(
             <span class="self">self</span>.scaled_planar_normal(plane_axis),
@@ -530,7 +531,7 @@
                         <span class="prelude-val">Some</span>(-direction)
                     }
                 }
-                <span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+                <span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
                 </span>FeatureId::Edge(<span class="kw">_</span>) =&gt; {
                     <span class="kw">let </span>iamin = direction.iamin();
                     <span class="kw">let </span><span class="kw-2">mut </span>normal = Vector::zeros();
@@ -584,17 +585,17 @@ impl ConvexPolyhedron for Segment {
         }
     }
 
-    #[cfg(feature = &quot;dim3&quot;)]
+    #[cfg(feature = "dim3")]
     fn edge(&amp;self, _: FeatureId) -&gt; (Point&lt;Real&gt;, Point&lt;Real&gt;, FeatureId, FeatureId) {
         (self.a, self.b, FeatureId::Vertex(0), FeatureId::Vertex(1))
     }
 
-    #[cfg(feature = &quot;dim3&quot;)]
+    #[cfg(feature = "dim3")]
     fn face(&amp;self, _: FeatureId, _: &amp;mut ConvexPolygonalFeature) {
-        panic!(&quot;A segment does not have any face in dimensions higher than 2.&quot;)
+        panic!("A segment does not have any face in dimensions higher than 2.")
     }
 
-    #[cfg(feature = &quot;dim2&quot;)]
+    #[cfg(feature = "dim2")]
     fn face(&amp;self, id: FeatureId, face: &amp;mut ConvexPolygonalFeature) {
         face.clear();
 
@@ -620,7 +621,7 @@ impl ConvexPolyhedron for Segment {
         }
     }
 
-    #[cfg(feature = &quot;dim2&quot;)]
+    #[cfg(feature = "dim2")]
     fn support_face_toward(
         &amp;self,
         m: &amp;Isometry&lt;Real&gt;,
@@ -637,7 +638,7 @@ impl ConvexPolyhedron for Segment {
         face.transform_by(m)
     }
 
-    #[cfg(feature = &quot;dim3&quot;)]
+    #[cfg(feature = "dim3")]
     fn support_face_toward(
         &amp;self,
         m: &amp;Isometry&lt;Real&gt;,
@@ -673,14 +674,14 @@ impl ConvexPolyhedron for Segment {
                 face.set_feature_id(FeatureId::Vertex(0));
                 face.push(seg.a, FeatureId::Vertex(0));
             } else {
-                #[cfg(feature = &quot;dim3&quot;)]
+                #[cfg(feature = "dim3")]
                 {
                     face.push(seg.a, FeatureId::Vertex(0));
                     face.push(seg.b, FeatureId::Vertex(1));
                     face.push_edge_feature_id(FeatureId::Edge(0));
                     face.set_feature_id(FeatureId::Edge(0));
                 }
-                #[cfg(feature = &quot;dim2&quot;)]
+                #[cfg(feature = "dim2")]
                 {
                     if dir.perp(&amp;seg_dir) &gt;= 0.0 {
                         seg.face(FeatureId::Face(0), face);
@@ -699,7 +700,7 @@ impl ConvexPolyhedron for Segment {
             let dot = seg_dir.dot(local_dir.as_ref());
 
             if dot &lt;= seps {
-                #[cfg(feature = &quot;dim2&quot;)]
+                #[cfg(feature = "dim2")]
                 {
                     if local_dir.perp(seg_dir.as_ref()) &gt;= 0.0 {
                         FeatureId::Face(0)
@@ -707,7 +708,7 @@ impl ConvexPolyhedron for Segment {
                         FeatureId::Face(1)
                     }
                 }
-                #[cfg(feature = &quot;dim3&quot;)]
+                #[cfg(feature = "dim3")]
                 {
                     FeatureId::Edge(0)
                 }

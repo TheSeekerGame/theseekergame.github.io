@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/gilrs-core-0.5.10/src/platform/linux/gamepad.rs`."><title>gamepad.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="gilrs_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/gilrs-core-0.5.10/src/platform/linux/gamepad.rs`."><title>gamepad.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="gilrs_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1404,25 +1405,25 @@
     Inotify,
 }
 
-<span class="kw">const </span>INPUT_DIR_PATH: <span class="kw-2">&amp;</span>str = <span class="string">&quot;/dev/input&quot;</span>;
+<span class="kw">const </span>INPUT_DIR_PATH: <span class="kw-2">&amp;</span>str = <span class="string">"/dev/input"</span>;
 
 <span class="kw">impl </span>Gilrs {
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>new() -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, PlatformError&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>gamepads = Vec::new();
         <span class="kw">let </span>epoll = Epoll::new(EpollCreateFlags::empty())
-            .map_err(|e| errno_to_platform_error(e, <span class="string">&quot;creating epoll fd&quot;</span>))<span class="question-mark">?</span>;
+            .map_err(|e| errno_to_platform_error(e, <span class="string">"creating epoll fd"</span>))<span class="question-mark">?</span>;
 
         <span class="kw">let </span>hotplug_event = eventfd::eventfd(<span class="number">1</span>, EfdFlags::EFD_NONBLOCK)
-            .map_err(|e| errno_to_platform_error(e, <span class="string">&quot;creating eventfd&quot;</span>))<span class="question-mark">?</span>;
+            .map_err(|e| errno_to_platform_error(e, <span class="string">"creating eventfd"</span>))<span class="question-mark">?</span>;
         epoll
             .add(
                 <span class="kw-2">&amp;</span>hotplug_event,
                 EpollEvent::new(EpollFlags::EPOLLIN | EpollFlags::EPOLLET, HOTPLUG_DATA),
             )
-            .map_err(|e| errno_to_platform_error(e, <span class="string">&quot;adding evevntfd do epoll&quot;</span>))<span class="question-mark">?</span>;
+            .map_err(|e| errno_to_platform_error(e, <span class="string">"adding evevntfd do epoll"</span>))<span class="question-mark">?</span>;
 
-        <span class="kw">if </span>Path::new(<span class="string">&quot;/.flatpak-info&quot;</span>).exists() || std::env::var(<span class="string">&quot;GILRS_DISABLE_UDEV&quot;</span>).is_ok() {
-            <span class="macro">log::debug!</span>(<span class="string">&quot;Looks like we&#39;re in an environment without udev. Falling back to inotify&quot;</span>);
+        <span class="kw">if </span>Path::new(<span class="string">"/.flatpak-info"</span>).exists() || std::env::var(<span class="string">"GILRS_DISABLE_UDEV"</span>).is_ok() {
+            <span class="macro">log::debug!</span>(<span class="string">"Looks like we're in an environment without udev. Falling back to inotify"</span>);
             <span class="kw">let </span>(hotplug_tx, hotplug_rx) = mpsc::channel();
             <span class="kw">let </span><span class="kw-2">mut </span>inotify = Inotify::init().map_err(|err| PlatformError::Other(Box::new(err)))<span class="question-mark">?</span>;
             <span class="kw">let </span>input_dir = Path::new(INPUT_DIR_PATH);
@@ -1453,22 +1454,22 @@
                     <span class="kw">let </span>idx = gamepads.len();
                     gamepad
                         .register_fd(<span class="kw-2">&amp;</span>epoll, idx <span class="kw">as </span>u64)
-                        .map_err(|e| errno_to_platform_error(e, <span class="string">&quot;registering gamepad in epoll&quot;</span>))<span class="question-mark">?</span>;
+                        .map_err(|e| errno_to_platform_error(e, <span class="string">"registering gamepad in epoll"</span>))<span class="question-mark">?</span>;
                     gamepads.push(gamepad);
                 }
             }
 
             std::thread::Builder::new()
-                .name(<span class="string">&quot;gilrs&quot;</span>.to_owned())
+                .name(<span class="string">"gilrs"</span>.to_owned())
                 .spawn(<span class="kw">move </span>|| {
                     <span class="kw">let </span><span class="kw-2">mut </span>buffer = [<span class="number">0u8</span>; <span class="number">1024</span>];
-                    <span class="macro">debug!</span>(<span class="string">&quot;Started gilrs inotify thread&quot;</span>);
+                    <span class="macro">debug!</span>(<span class="string">"Started gilrs inotify thread"</span>);
                     <span class="kw">let </span><span class="kw-2">mut </span>event_fd = File::from(hotplug_event);
                     <span class="kw">loop </span>{
                         <span class="kw">let </span>events = <span class="kw">match </span>inotify.read_events_blocking(<span class="kw-2">&amp;mut </span>buffer) {
                             <span class="prelude-val">Ok</span>(events) =&gt; events,
                             <span class="prelude-val">Err</span>(err) =&gt; {
-                                <span class="macro">error!</span>(<span class="string">&quot;Failed to check for changes to joysticks: {err}&quot;</span>);
+                                <span class="macro">error!</span>(<span class="string">"Failed to check for changes to joysticks: {err}"</span>);
                                 <span class="kw">return</span>;
                             }
                         };
@@ -1479,7 +1480,7 @@
                         }
                     }
                 })
-                .expect(<span class="string">&quot;failed to spawn thread&quot;</span>);
+                .expect(<span class="string">"failed to spawn thread"</span>);
             <span class="kw">return </span><span class="prelude-val">Ok</span>(Gilrs {
                 gamepads,
                 epoll,
@@ -1501,8 +1502,8 @@
             }
         };
 
-        <span class="kw">unsafe </span>{ en.add_match_property(cstr_new(<span class="string">b&quot;ID_INPUT_JOYSTICK\0&quot;</span>), cstr_new(<span class="string">b&quot;1\0&quot;</span>)) }
-        <span class="kw">unsafe </span>{ en.add_match_subsystem(cstr_new(<span class="string">b&quot;input\0&quot;</span>)) }
+        <span class="kw">unsafe </span>{ en.add_match_property(cstr_new(<span class="string">b"ID_INPUT_JOYSTICK\0"</span>), cstr_new(<span class="string">b"1\0"</span>)) }
+        <span class="kw">unsafe </span>{ en.add_match_subsystem(cstr_new(<span class="string">b"input\0"</span>)) }
         en.scan_devices();
 
         <span class="kw">for </span>dev <span class="kw">in </span>en.iter() {
@@ -1516,7 +1517,7 @@
                     <span class="kw">let </span>idx = gamepads.len();
                     gamepad
                         .register_fd(<span class="kw-2">&amp;</span>epoll, idx <span class="kw">as </span>u64)
-                        .map_err(|e| errno_to_platform_error(e, <span class="string">&quot;registering gamepad in epoll&quot;</span>))<span class="question-mark">?</span>;
+                        .map_err(|e| errno_to_platform_error(e, <span class="string">"registering gamepad in epoll"</span>))<span class="question-mark">?</span>;
                     gamepads.push(gamepad);
                 }
             }
@@ -1524,12 +1525,12 @@
 
         <span class="kw">let </span>(hotplug_tx, hotplug_rx) = mpsc::channel();
         std::thread::Builder::new()
-            .name(<span class="string">&quot;gilrs&quot;</span>.to_owned())
+            .name(<span class="string">"gilrs"</span>.to_owned())
             .spawn(<span class="kw">move </span>|| {
                 <span class="kw">let </span>udev = <span class="kw">match </span>Udev::new() {
                     <span class="prelude-val">Some</span>(udev) =&gt; udev,
                     <span class="prelude-val">None </span>=&gt; {
-                        <span class="macro">error!</span>(<span class="string">&quot;Failed to create udev for hot plug thread!&quot;</span>);
+                        <span class="macro">error!</span>(<span class="string">"Failed to create udev for hot plug thread!"</span>);
                         <span class="kw">return</span>;
                     }
                 };
@@ -1537,14 +1538,14 @@
                 <span class="kw">let </span>monitor = <span class="kw">match </span>Monitor::new(<span class="kw-2">&amp;</span>udev) {
                     <span class="prelude-val">Some</span>(m) =&gt; m,
                     <span class="prelude-val">None </span>=&gt; {
-                        <span class="macro">error!</span>(<span class="string">&quot;Failed to create udev monitor for hot plug thread!&quot;</span>);
+                        <span class="macro">error!</span>(<span class="string">"Failed to create udev monitor for hot plug thread!"</span>);
                         <span class="kw">return</span>;
                     }
                 };
 
                 handle_hotplug(hotplug_tx, monitor, hotplug_event)
             })
-            .expect(<span class="string">&quot;failed to spawn thread&quot;</span>);
+            .expect(<span class="string">"failed to spawn thread"</span>);
 
         <span class="prelude-val">Ok</span>(Gilrs {
             gamepads,
@@ -1569,7 +1570,7 @@
         <span class="kw">if </span><span class="self">self</span>.to_check.is_empty() {
             <span class="kw">let </span><span class="kw-2">mut </span>events = [EpollEvent::new(EpollFlags::empty(), <span class="number">0</span>); <span class="number">16</span>];
             <span class="kw">let </span>timeout = <span class="kw">if let </span><span class="prelude-val">Some</span>(timeout) = timeout {
-                timeout.as_millis().try_into().expect(<span class="string">&quot;timeout too large&quot;</span>)
+                timeout.as_millis().try_into().expect(<span class="string">"timeout too large"</span>)
             } <span class="kw">else </span>{
                 -<span class="number">1
             </span>};
@@ -1577,7 +1578,7 @@
             <span class="kw">let </span>n = <span class="kw">match </span><span class="self">self</span>.epoll.wait(<span class="kw-2">&amp;mut </span>events, timeout) {
                 <span class="prelude-val">Ok</span>(n) =&gt; n,
                 <span class="prelude-val">Err</span>(e) =&gt; {
-                    <span class="macro">error!</span>(<span class="string">&quot;epoll failed: {}&quot;</span>, e);
+                    <span class="macro">error!</span>(<span class="string">"epoll failed: {}"</span>, e);
                     <span class="kw">return </span><span class="prelude-val">None</span>;
                 }
             };
@@ -1607,7 +1608,7 @@
             <span class="kw">let </span>gamepad = <span class="kw">match </span><span class="self">self</span>.gamepads.get_mut(idx) {
                 <span class="prelude-val">Some</span>(gp) =&gt; gp,
                 <span class="prelude-val">None </span>=&gt; {
-                    <span class="macro">warn!</span>(<span class="string">&quot;Somehow got invalid index from event&quot;</span>);
+                    <span class="macro">warn!</span>(<span class="string">"Somehow got invalid index from event"</span>);
                     <span class="self">self</span>.to_check.pop_front();
                     <span class="kw">return </span><span class="prelude-val">None</span>;
                 }
@@ -1665,7 +1666,7 @@
                             .position(|gp| gp.uuid() == gamepad.uuid &amp;&amp; !gp.is_connected)
                         {
                             <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = gamepad.register_fd(<span class="kw-2">&amp;</span><span class="self">self</span>.epoll, id <span class="kw">as </span>u64) {
-                                <span class="macro">error!</span>(<span class="string">&quot;Failed to add gamepad to epoll: {}&quot;</span>, e);
+                                <span class="macro">error!</span>(<span class="string">"Failed to add gamepad to epoll: {}"</span>, e);
                             }
                             <span class="self">self</span>.gamepads[id] = gamepad;
                             <span class="prelude-val">Some</span>(Event::new(id, EventType::Connected))
@@ -1673,7 +1674,7 @@
                             <span class="kw">if let </span><span class="prelude-val">Err</span>(e) =
                                 gamepad.register_fd(<span class="kw-2">&amp;</span><span class="self">self</span>.epoll, <span class="self">self</span>.gamepads.len() <span class="kw">as </span>u64)
                             {
-                                <span class="macro">error!</span>(<span class="string">&quot;Failed to add gamepad to epoll: {}&quot;</span>, e);
+                                <span class="macro">error!</span>(<span class="string">"Failed to add gamepad to epoll: {}"</span>, e);
                             }
                             <span class="self">self</span>.gamepads.push(gamepad);
                             <span class="prelude-val">Some</span>(Event::new(<span class="self">self</span>.gamepads.len() - <span class="number">1</span>, EventType::Connected))
@@ -1688,13 +1689,13 @@
                     {
                         <span class="kw">let </span>gamepad_fd = <span class="kw">unsafe </span>{ BorrowedFd::borrow_raw(<span class="self">self</span>.gamepads[id].fd) };
                         <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = <span class="self">self</span>.epoll.delete(gamepad_fd) {
-                            <span class="macro">error!</span>(<span class="string">&quot;Failed to remove disconnected gamepad from epoll: {}&quot;</span>, e);
+                            <span class="macro">error!</span>(<span class="string">"Failed to remove disconnected gamepad from epoll: {}"</span>, e);
                         }
 
                         <span class="self">self</span>.gamepads[id].disconnect();
                         <span class="kw">return </span><span class="prelude-val">Some</span>(Event::new(id, EventType::Disconnected));
                     } <span class="kw">else </span>{
-                        <span class="macro">debug!</span>(<span class="string">&quot;Could not find disconnected gamepad {devpath:?}&quot;</span>);
+                        <span class="macro">debug!</span>(<span class="string">"Could not find disconnected gamepad {devpath:?}"</span>);
                     }
                 }
             }
@@ -1733,7 +1734,7 @@
             })
             .is_err()
         {
-            <span class="macro">debug!</span>(<span class="string">&quot;All receivers dropped, ending hot plug loop.&quot;</span>);
+            <span class="macro">debug!</span>(<span class="string">"All receivers dropped, ending hot plug loop."</span>);
             <span class="kw">return </span><span class="bool-val">false</span>;
         }
         sent = <span class="bool-val">true</span>;
@@ -1744,7 +1745,7 @@
             ))
             .is_err()
         {
-            <span class="macro">debug!</span>(<span class="string">&quot;All receivers dropped, ending hot plug loop.&quot;</span>);
+            <span class="macro">debug!</span>(<span class="string">"All receivers dropped, ending hot plug loop."</span>);
             <span class="kw">return </span><span class="bool-val">false</span>;
         }
         sent = <span class="bool-val">true</span>;
@@ -1752,7 +1753,7 @@
     <span class="kw">if </span>sent {
         <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = event_fd.write(<span class="kw-2">&amp;</span><span class="number">0u64</span>.to_ne_bytes()) {
             <span class="macro">error!</span>(
-                <span class="string">&quot;Failed to notify other thread about new hotplug events: {}&quot;</span>,
+                <span class="string">"Failed to notify other thread about new hotplug events: {}"</span>,
                 e
             );
         }
@@ -1761,7 +1762,7 @@
 </span>}
 
 <span class="kw">fn </span>get_gamepad_path(name: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Option</span>&lt;(PathBuf, PathBuf)&gt; {
-    <span class="kw">let </span>event_id = <span class="kw">match </span>name.strip_prefix(<span class="string">&quot;event&quot;</span>) {
+    <span class="kw">let </span>event_id = <span class="kw">match </span>name.strip_prefix(<span class="string">"event"</span>) {
         <span class="prelude-val">Some</span>(event_id) =&gt; event_id,
         <span class="prelude-val">None </span>=&gt; <span class="kw">return </span><span class="prelude-val">None</span>,
     };
@@ -1774,7 +1775,7 @@
     }
 
     <span class="kw">let </span>gamepad_path = Path::new(INPUT_DIR_PATH).join(name);
-    <span class="kw">let </span>syspath = Path::new(<span class="string">&quot;/sys/class/input/&quot;</span>).join(name);
+    <span class="kw">let </span>syspath = Path::new(<span class="string">"/sys/class/input/"</span>).join(name);
     <span class="prelude-val">Some</span>((gamepad_path, syspath))
 }
 
@@ -1789,8 +1790,8 @@
         <span class="kw">let </span>dev = monitor.device();
 
         <span class="kw">unsafe </span>{
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(val) = dev.property_value(cstr_new(<span class="string">b&quot;ID_INPUT_JOYSTICK\0&quot;</span>)) {
-                <span class="kw">if </span>val != cstr_new(<span class="string">b&quot;1\0&quot;</span>) {
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(val) = dev.property_value(cstr_new(<span class="string">b"ID_INPUT_JOYSTICK\0"</span>)) {
+                <span class="kw">if </span>val != cstr_new(<span class="string">b"1\0"</span>) {
                     <span class="kw">continue</span>;
                 }
             } <span class="kw">else </span>{
@@ -1804,7 +1805,7 @@
 
             <span class="kw">let </span><span class="kw-2">mut </span>sent = <span class="bool-val">false</span>;
 
-            <span class="kw">if </span>action == cstr_new(<span class="string">b&quot;add\0&quot;</span>) {
+            <span class="kw">if </span>action == cstr_new(<span class="string">b"add\0"</span>) {
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(devpath) = dev.devnode() {
                     <span class="kw">let </span>syspath = Path::new(OsStr::from_bytes(dev.syspath().to_bytes()));
                     <span class="kw">if </span>sender
@@ -1814,21 +1815,21 @@
                         })
                         .is_err()
                     {
-                        <span class="macro">debug!</span>(<span class="string">&quot;All receivers dropped, ending hot plug loop.&quot;</span>);
+                        <span class="macro">debug!</span>(<span class="string">"All receivers dropped, ending hot plug loop."</span>);
                         <span class="kw">break</span>;
                     }
                     sent = <span class="bool-val">true</span>;
                 }
-            } <span class="kw">else if </span>action == cstr_new(<span class="string">b&quot;remove\0&quot;</span>) {
+            } <span class="kw">else if </span>action == cstr_new(<span class="string">b"remove\0"</span>) {
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(devnode) = dev.devnode() {
                     <span class="kw">if let </span><span class="prelude-val">Ok</span>(str) = devnode.to_str() {
                         <span class="kw">if </span>sender.send(HotplugEvent::Removed(str.to_owned())).is_err() {
-                            <span class="macro">debug!</span>(<span class="string">&quot;All receivers dropped, ending hot plug loop.&quot;</span>);
+                            <span class="macro">debug!</span>(<span class="string">"All receivers dropped, ending hot plug loop."</span>);
                             <span class="kw">break</span>;
                         }
                         sent = <span class="bool-val">true</span>;
                     } <span class="kw">else </span>{
-                        <span class="macro">warn!</span>(<span class="string">&quot;Received event with devnode that is not valid utf8: {devnode:?}&quot;</span>)
+                        <span class="macro">warn!</span>(<span class="string">"Received event with devnode that is not valid utf8: {devnode:?}"</span>)
                     }
                 }
             }
@@ -1836,7 +1837,7 @@
             <span class="kw">if </span>sent {
                 <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = event.write(<span class="kw-2">&amp;</span><span class="number">0u64</span>.to_ne_bytes()) {
                     <span class="macro">error!</span>(
-                        <span class="string">&quot;Failed to notify other thread about new hotplug events: {}&quot;</span>,
+                        <span class="string">"Failed to notify other thread about new hotplug events: {}"</span>,
                         e
                     );
                 }
@@ -1909,8 +1910,8 @@
 
 <span class="kw">impl </span>Gamepad {
     <span class="kw">fn </span>open(path: <span class="kw-2">&amp;</span>CStr, syspath: <span class="kw-2">&amp;</span>Path, discovery_backend: DiscoveryBackend) -&gt; <span class="prelude-ty">Option</span>&lt;Gamepad&gt; {
-        <span class="kw">if unsafe </span>{ !c::strstr(path.as_ptr(), <span class="string">b&quot;js\0&quot;</span>.as_ptr() <span class="kw">as </span><span class="kw-2">*const </span>c_char).is_null() } {
-            <span class="macro">trace!</span>(<span class="string">&quot;Device {:?} is js interface, ignoring.&quot;</span>, path);
+        <span class="kw">if unsafe </span>{ !c::strstr(path.as_ptr(), <span class="string">b"js\0"</span>.as_ptr() <span class="kw">as </span><span class="kw-2">*const </span>c_char).is_null() } {
+            <span class="macro">trace!</span>(<span class="string">"Device {:?} is js interface, ignoring."</span>, path);
             <span class="kw">return </span><span class="prelude-val">None</span>;
         }
 
@@ -1921,7 +1922,7 @@
                     DiscoveryBackend::Inotify =&gt; log::Level::Debug,
                     <span class="kw">_ </span>=&gt; log::Level::Error,
                 },
-                <span class="string">&quot;Failed to open {:?}&quot;</span>,
+                <span class="string">"Failed to open {:?}"</span>,
                 path
             );
             <span class="kw">return </span><span class="prelude-val">None</span>;
@@ -1930,7 +1931,7 @@
         <span class="kw">let </span>uuid = <span class="kw">match </span><span class="self">Self</span>::create_uuid(fd) {
             <span class="prelude-val">Some</span>(uuid) =&gt; uuid,
             <span class="prelude-val">None </span>=&gt; {
-                <span class="macro">error!</span>(<span class="string">&quot;Failed to get id of device {:?}&quot;</span>, path);
+                <span class="macro">error!</span>(<span class="string">"Failed to get id of device {:?}"</span>, path);
                 <span class="kw">unsafe </span>{
                     c::close(fd);
                 }
@@ -1939,8 +1940,8 @@
         };
 
         <span class="kw">let </span>name = <span class="self">Self</span>::get_name(fd).unwrap_or_else(|| {
-            <span class="macro">error!</span>(<span class="string">&quot;Failed to get name od device {:?}&quot;</span>, path);
-            <span class="string">&quot;Unknown&quot;</span>.into()
+            <span class="macro">error!</span>(<span class="string">"Failed to get name od device {:?}"</span>, path);
+            <span class="string">"Unknown"</span>.into()
         });
 
         <span class="kw">let </span>axesi = AxesInfo::new(fd);
@@ -1972,15 +1973,15 @@
                     DiscoveryBackend::Inotify =&gt; log::Level::Debug,
                     <span class="kw">_ </span>=&gt; log::Level::Warn,
                 },
-                <span class="string">&quot;{:?} doesn&#39;t have at least 1 button and 2 axes, ignoring.&quot;</span>,
+                <span class="string">"{:?} doesn't have at least 1 button and 2 axes, ignoring."</span>,
                 path
             );
             <span class="kw">return </span><span class="prelude-val">None</span>;
         }
 
-        <span class="macro">info!</span>(<span class="string">&quot;Gamepad {} ({}) connected.&quot;</span>, gamepad.devpath, gamepad.name);
+        <span class="macro">info!</span>(<span class="string">"Gamepad {} ({}) connected."</span>, gamepad.devpath, gamepad.name);
         <span class="macro">debug!</span>(
-            <span class="string">&quot;Gamepad {}: uuid: {}, ff_supported: {}, axes: {:?}, buttons: {:?}, axes_info: {:?}&quot;</span>,
+            <span class="string">"Gamepad {}: uuid: {}, ff_supported: {}, axes: {:?}, buttons: {:?}, axes_info: {:?}"</span>,
             gamepad.devpath,
             gamepad.uuid,
             gamepad.ff_supported,
@@ -2118,13 +2119,13 @@
         <span class="kw">use </span>std::fs::{<span class="self">self</span>};
         <span class="kw">use </span>std::os::unix::io::IntoRawFd;
 
-        <span class="comment">// Returned syspath points to &lt;device path&gt;/input/inputXX/eventXX. First &quot;device&quot; is
+        <span class="comment">// Returned syspath points to &lt;device path&gt;/input/inputXX/eventXX. First "device" is
         // symlink to inputXX, second to actual device root.
-        </span><span class="kw">let </span>syspath = syspath.join(<span class="string">&quot;device/device/power_supply&quot;</span>);
+        </span><span class="kw">let </span>syspath = syspath.join(<span class="string">"device/device/power_supply"</span>);
         <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="kw-2">mut </span>read_dir) = fs::read_dir(syspath) {
             <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="prelude-val">Ok</span>(bat_entry)) = read_dir.next() {
-                <span class="kw">if let </span><span class="prelude-val">Ok</span>(cap) = File::open(bat_entry.path().join(<span class="string">&quot;capacity&quot;</span>)) {
-                    <span class="kw">if let </span><span class="prelude-val">Ok</span>(status) = File::open(bat_entry.path().join(<span class="string">&quot;status&quot;</span>)) {
+                <span class="kw">if let </span><span class="prelude-val">Ok</span>(cap) = File::open(bat_entry.path().join(<span class="string">"capacity"</span>)) {
+                    <span class="kw">if let </span><span class="prelude-val">Ok</span>(status) = File::open(bat_entry.path().join(<span class="string">"status"</span>)) {
                         <span class="kw">return </span>(cap.into_raw_fd(), status.into_raw_fd());
                     }
                 }
@@ -2170,7 +2171,7 @@
                     <span class="prelude-val">Some</span>(EventType::AxisValueChanged(event.value, event.into()))
                 }
                 <span class="kw">_ </span>=&gt; {
-                    <span class="macro">trace!</span>(<span class="string">&quot;Skipping event {:?}&quot;</span>, event);
+                    <span class="macro">trace!</span>(<span class="string">"Skipping event {:?}"</span>, event);
                     <span class="prelude-val">None
                 </span>}
             };
@@ -2201,11 +2202,11 @@
                     <span class="comment">// Nothing to read (non-blocking IO)
                     </span><span class="prelude-val">None
                 </span>} <span class="kw">else if </span>n % size <span class="kw">as </span>isize != <span class="number">0 </span>{
-                    <span class="macro">error!</span>(<span class="string">&quot;Unexpected read of size {}&quot;</span>, n);
+                    <span class="macro">error!</span>(<span class="string">"Unexpected read of size {}"</span>, n);
                     <span class="prelude-val">None
                 </span>} <span class="kw">else </span>{
                     <span class="kw">let </span>n = n <span class="kw">as </span>usize / size;
-                    <span class="macro">trace!</span>(<span class="string">&quot;Got {} new events&quot;</span>, n);
+                    <span class="macro">trace!</span>(<span class="string">"Got {} new events"</span>, n);
                     <span class="kw">for </span>ev <span class="kw">in </span>event_buf[<span class="number">1</span>..n].iter().rev() {
                         <span class="self">self</span>.events.push(ev.assume_init());
                     }
@@ -2298,7 +2299,7 @@
                         <span class="prelude-val">Ok</span>(cap) =&gt; cap,
                         <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; {
                             <span class="macro">error!</span>(
-                                <span class="string">&quot;Failed to parse battery capacity: {}&quot;</span>,
+                                <span class="string">"Failed to parse battery capacity: {}"</span>,
                                 str::from_utf8_unchecked(<span class="kw-2">&amp;</span>buff[..(len - <span class="number">1</span>)])
                             );
                             <span class="kw">return </span>PowerInfo::Unknown;
@@ -2314,11 +2315,11 @@
                     <span class="kw">if </span>len &gt; <span class="number">0 </span>{
                         <span class="kw">let </span>len = len <span class="kw">as </span>usize;
                         <span class="kw">return match </span>str::from_utf8_unchecked(<span class="kw-2">&amp;</span>buff[..(len - <span class="number">1</span>)]) {
-                            <span class="string">&quot;Charging&quot; </span>=&gt; PowerInfo::Charging(cap),
-                            <span class="string">&quot;Discharging&quot; </span>=&gt; PowerInfo::Discharging(cap),
-                            <span class="string">&quot;Full&quot; </span>| <span class="string">&quot;Not charging&quot; </span>=&gt; PowerInfo::Charged,
+                            <span class="string">"Charging" </span>=&gt; PowerInfo::Charging(cap),
+                            <span class="string">"Discharging" </span>=&gt; PowerInfo::Discharging(cap),
+                            <span class="string">"Full" </span>| <span class="string">"Not charging" </span>=&gt; PowerInfo::Charged,
                             s =&gt; {
-                                <span class="macro">error!</span>(<span class="string">&quot;Unknown battery status value: {}&quot;</span>, s);
+                                <span class="macro">error!</span>(<span class="string">"Unknown battery status value: {}"</span>, s);
                                 PowerInfo::Unknown
                             }
                         };
@@ -2418,11 +2419,11 @@
     CStr::from_bytes_with_nul_unchecked(bytes)
 }
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;serde-serialize&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"serde-serialize"</span>)]
 </span><span class="kw">use </span>serde::{Deserialize, Serialize};
 
 <span class="attr">#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
-#[cfg_attr(feature = <span class="string">&quot;serde-serialize&quot;</span>, derive(Serialize, Deserialize))]
+#[cfg_attr(feature = <span class="string">"serde-serialize"</span>, derive(Serialize, Deserialize))]
 </span><span class="kw">pub struct </span>EvCode {
     kind: u16,
     code: u16,
@@ -2448,18 +2449,18 @@
 }
 
 <span class="kw">impl </span>Display <span class="kw">for </span>EvCode {
-    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; FmtResult {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; FmtResult {
         <span class="kw">match </span><span class="self">self</span>.kind {
-            EV_SYN =&gt; f.write_str(<span class="string">&quot;SYN&quot;</span>)<span class="question-mark">?</span>,
-            EV_KEY =&gt; f.write_str(<span class="string">&quot;KEY&quot;</span>)<span class="question-mark">?</span>,
-            <span class="number">0x02 </span>=&gt; f.write_str(<span class="string">&quot;REL&quot;</span>)<span class="question-mark">?</span>,
-            EV_ABS =&gt; f.write_str(<span class="string">&quot;ABS&quot;</span>)<span class="question-mark">?</span>,
-            <span class="number">0x04 </span>=&gt; f.write_str(<span class="string">&quot;MSC&quot;</span>)<span class="question-mark">?</span>,
-            <span class="number">0x05 </span>=&gt; f.write_str(<span class="string">&quot;SW&quot;</span>)<span class="question-mark">?</span>,
-            kind =&gt; f.write_fmt(<span class="macro">format_args!</span>(<span class="string">&quot;EV_TYPE_{}&quot;</span>, kind))<span class="question-mark">?</span>,
+            EV_SYN =&gt; f.write_str(<span class="string">"SYN"</span>)<span class="question-mark">?</span>,
+            EV_KEY =&gt; f.write_str(<span class="string">"KEY"</span>)<span class="question-mark">?</span>,
+            <span class="number">0x02 </span>=&gt; f.write_str(<span class="string">"REL"</span>)<span class="question-mark">?</span>,
+            EV_ABS =&gt; f.write_str(<span class="string">"ABS"</span>)<span class="question-mark">?</span>,
+            <span class="number">0x04 </span>=&gt; f.write_str(<span class="string">"MSC"</span>)<span class="question-mark">?</span>,
+            <span class="number">0x05 </span>=&gt; f.write_str(<span class="string">"SW"</span>)<span class="question-mark">?</span>,
+            kind =&gt; f.write_fmt(<span class="macro">format_args!</span>(<span class="string">"EV_TYPE_{}"</span>, kind))<span class="question-mark">?</span>,
         }
 
-        f.write_fmt(<span class="macro">format_args!</span>(<span class="string">&quot;({})&quot;</span>, <span class="self">self</span>.code))
+        f.write_fmt(<span class="macro">format_args!</span>(<span class="string">"({})"</span>, <span class="self">self</span>.code))
     }
 }
 
@@ -2468,22 +2469,22 @@
 </span><span class="kw">enum </span>Error {
     UdevCtx,
     UdevEnumerate,
-    Errno(Errno, <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str),
+    Errno(Errno, <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str),
 }
 
 <span class="kw">impl </span>Display <span class="kw">for </span>Error {
-    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; FmtResult {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; FmtResult {
         <span class="kw">match </span><span class="kw-2">*</span><span class="self">self </span>{
-            Error::UdevCtx =&gt; f.write_str(<span class="string">&quot;Failed to create udev context&quot;</span>),
-            Error::UdevEnumerate =&gt; f.write_str(<span class="string">&quot;Failed to create udev enumerate object&quot;</span>),
-            Error::Errno(e, ctx) =&gt; f.write_fmt(<span class="macro">format_args!</span>(<span class="string">&quot;{} failed: {}&quot;</span>, ctx, e)),
+            Error::UdevCtx =&gt; f.write_str(<span class="string">"Failed to create udev context"</span>),
+            Error::UdevEnumerate =&gt; f.write_str(<span class="string">"Failed to create udev enumerate object"</span>),
+            Error::Errno(e, ctx) =&gt; f.write_fmt(<span class="macro">format_args!</span>(<span class="string">"{} failed: {}"</span>, ctx, e)),
         }
     }
 }
 
 <span class="kw">impl </span>error::Error <span class="kw">for </span>Error {}
 
-<span class="kw">fn </span>errno_to_platform_error(errno: Errno, ctx: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str) -&gt; PlatformError {
+<span class="kw">fn </span>errno_to_platform_error(errno: Errno, ctx: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str) -&gt; PlatformError {
     PlatformError::Other(Box::new(Error::Errno(errno, ctx)))
 }
 
@@ -2682,7 +2683,7 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>sdl_uuid() {
-        <span class="kw">let </span>x = Uuid::parse_str(<span class="string">&quot;030000005e0400008e02000020200000&quot;</span>).unwrap();
+        <span class="kw">let </span>x = Uuid::parse_str(<span class="string">"030000005e0400008e02000020200000"</span>).unwrap();
         <span class="kw">let </span>y = create_uuid(ioctl::input_id {
             bustype: <span class="number">0x3</span>,
             vendor: <span class="number">0x045e</span>,

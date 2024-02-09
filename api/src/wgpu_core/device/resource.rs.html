@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/wgpu-core-0.17.1/src/device/resource.rs`."><title>resource.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="wgpu_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/wgpu-core-0.17.1/src/device/resource.rs`."><title>resource.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="wgpu_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -3158,7 +3159,7 @@
 <a href="#3158" id="3158">3158</a>
 <a href="#3159" id="3159">3159</a>
 <a href="#3160" id="3160">3160</a>
-</pre></div><pre class="rust"><code><span class="attr">#[cfg(feature = <span class="string">&quot;trace&quot;</span>)]
+</pre></div><pre class="rust"><code><span class="attr">#[cfg(feature = <span class="string">"trace"</span>)]
 </span><span class="kw">use </span><span class="kw">crate</span>::device::trace;
 <span class="kw">use crate</span>::{
     binding_model, command, conv,
@@ -3248,16 +3249,16 @@
     // switch to borrow Device immutably, such as `write_buffer`, `write_texture`,
     // and `buffer_unmap`.
     </span><span class="kw">pub</span>(<span class="kw">super</span>) pending_writes: queue::PendingWrites&lt;A&gt;,
-    <span class="attr">#[cfg(feature = <span class="string">&quot;trace&quot;</span>)]
+    <span class="attr">#[cfg(feature = <span class="string">"trace"</span>)]
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) trace: <span class="prelude-ty">Option</span>&lt;Mutex&lt;trace::Trace&gt;&gt;,
 }
 
 <span class="attr">#[derive(Clone, Debug, Error)]
 #[non_exhaustive]
 </span><span class="kw">pub enum </span>CreateDeviceError {
-    <span class="attr">#[error(<span class="string">&quot;Not enough memory left&quot;</span>)]
+    <span class="attr">#[error(<span class="string">"Not enough memory left"</span>)]
     </span>OutOfMemory,
-    <span class="attr">#[error(<span class="string">&quot;Failed to create internal buffer for initializing textures&quot;</span>)]
+    <span class="attr">#[error(<span class="string">"Failed to create internal buffer for initializing textures"</span>)]
     </span>FailedToCreateZeroBuffer(<span class="attr">#[from] </span>DeviceError),
 }
 
@@ -3291,9 +3292,9 @@
         desc: <span class="kw-2">&amp;</span>DeviceDescriptor,
         trace_path: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>std::path::Path&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, CreateDeviceError&gt; {
-        <span class="attr">#[cfg(not(feature = <span class="string">&quot;trace&quot;</span>))]
+        <span class="attr">#[cfg(not(feature = <span class="string">"trace"</span>))]
         </span><span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw">_</span>) = trace_path {
-            <span class="macro">log::error!</span>(<span class="string">&quot;Feature &#39;trace&#39; is not enabled&quot;</span>);
+            <span class="macro">log::error!</span>(<span class="string">"Feature 'trace' is not enabled"</span>);
         }
         <span class="kw">let </span>fence =
             <span class="kw">unsafe </span>{ open.device.create_fence() }.map_err(|<span class="kw">_</span>| CreateDeviceError::OutOfMemory)<span class="question-mark">?</span>;
@@ -3310,7 +3311,7 @@
         </span><span class="kw">let </span>zero_buffer = <span class="kw">unsafe </span>{
             open.device
                 .create_buffer(<span class="kw-2">&amp;</span>hal::BufferDescriptor {
-                    label: <span class="prelude-val">Some</span>(<span class="string">&quot;(wgpu internal) zero init buffer&quot;</span>),
+                    label: <span class="prelude-val">Some</span>(<span class="string">"(wgpu internal) zero init buffer"</span>),
                     size: ZERO_BUFFER_SIZE,
                     usage: hal::BufferUses::COPY_SRC | hal::BufferUses::COPY_DST,
                     memory_flags: hal::MemoryFlags::empty(),
@@ -3336,7 +3337,7 @@
                 }));
         }
 
-        <span class="kw">let </span>life_guard = LifeGuard::new(<span class="string">&quot;&lt;device&gt;&quot;</span>);
+        <span class="kw">let </span>life_guard = LifeGuard::new(<span class="string">"&lt;device&gt;"</span>);
         <span class="kw">let </span>ref_count = life_guard.add_ref();
         <span class="prelude-val">Ok</span>(<span class="self">Self </span>{
             raw: open.device,
@@ -3351,7 +3352,7 @@
             trackers: Mutex::new(Tracker::new()),
             life_tracker: Mutex::new(life::LifetimeTracker::new()),
             temp_suspected: life::SuspectedResources::default(),
-            <span class="attr">#[cfg(feature = <span class="string">&quot;trace&quot;</span>)]
+            <span class="attr">#[cfg(feature = <span class="string">"trace"</span>)]
             </span>trace: trace_path.and_then(|path| <span class="kw">match </span>trace::Trace::new(path) {
                 <span class="prelude-val">Ok</span>(<span class="kw-2">mut </span>trace) =&gt; {
                     trace.add(trace::Action::Init {
@@ -3361,7 +3362,7 @@
                     <span class="prelude-val">Some</span>(Mutex::new(trace))
                 }
                 <span class="prelude-val">Err</span>(e) =&gt; {
-                    <span class="macro">log::error!</span>(<span class="string">&quot;Unable to start a trace in &#39;{:?}&#39;: {:?}&quot;</span>, path, e);
+                    <span class="macro">log::error!</span>(<span class="string">"Unable to start a trace in '{:?}': {:?}"</span>, path, e);
                     <span class="prelude-val">None
                 </span>}
             }),
@@ -3373,11 +3374,11 @@
         })
     }
 
-    <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>lock_life&lt;<span class="lifetime">&#39;this</span>, <span class="lifetime">&#39;token</span>: <span class="lifetime">&#39;this</span>&gt;(
-        <span class="kw-2">&amp;</span><span class="lifetime">&#39;this </span><span class="self">self</span>,
+    <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>lock_life&lt;<span class="lifetime">'this</span>, <span class="lifetime">'token</span>: <span class="lifetime">'this</span>&gt;(
+        <span class="kw-2">&amp;</span><span class="lifetime">'this </span><span class="self">self</span>,
         <span class="comment">//TODO: fix this - the token has to be borrowed for the lock
-        </span>_token: <span class="kw-2">&amp;mut </span>Token&lt;<span class="lifetime">&#39;token</span>, <span class="self">Self</span>&gt;,
-    ) -&gt; MutexGuard&lt;<span class="lifetime">&#39;this</span>, life::LifetimeTracker&lt;A&gt;&gt; {
+        </span>_token: <span class="kw-2">&amp;mut </span>Token&lt;<span class="lifetime">'token</span>, <span class="self">Self</span>&gt;,
+    ) -&gt; MutexGuard&lt;<span class="lifetime">'this</span>, life::LifetimeTracker&lt;A&gt;&gt; {
         <span class="self">self</span>.life_tracker.lock()
     }
 
@@ -3394,17 +3395,17 @@
     ///   submissions still in flight. (We have to take the locks needed to
     ///   produce this information for other reasons, so we might as well just
     ///   return it to our callers.)
-    </span><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>maintain&lt;<span class="lifetime">&#39;this</span>, <span class="lifetime">&#39;token</span>: <span class="lifetime">&#39;this</span>, G: GlobalIdentityHandlerFactory&gt;(
-        <span class="kw-2">&amp;</span><span class="lifetime">&#39;this </span><span class="self">self</span>,
+    </span><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>maintain&lt;<span class="lifetime">'this</span>, <span class="lifetime">'token</span>: <span class="lifetime">'this</span>, G: GlobalIdentityHandlerFactory&gt;(
+        <span class="kw-2">&amp;</span><span class="lifetime">'this </span><span class="self">self</span>,
         hub: <span class="kw-2">&amp;</span>Hub&lt;A, G&gt;,
         maintain: wgt::Maintain&lt;queue::WrappedSubmissionIndex&gt;,
-        token: <span class="kw-2">&amp;mut </span>Token&lt;<span class="lifetime">&#39;token</span>, <span class="self">Self</span>&gt;,
+        token: <span class="kw-2">&amp;mut </span>Token&lt;<span class="lifetime">'token</span>, <span class="self">Self</span>&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(UserClosures, bool), WaitIdleError&gt; {
-        <span class="macro">profiling::scope!</span>(<span class="string">&quot;Device::maintain&quot;</span>);
+        <span class="macro">profiling::scope!</span>(<span class="string">"Device::maintain"</span>);
         <span class="kw">let </span><span class="kw-2">mut </span>life_tracker = <span class="self">self</span>.lock_life(token);
 
         <span class="comment">// Normally, `temp_suspected` exists only to save heap
-        // allocations: it&#39;s cleared at the start of the function
+        // allocations: it's cleared at the start of the function
         // call, and cleared by the end. But `Global::queue_submit` is
         // fallible; if it exits early, it may leave some resources in
         // `temp_suspected`.
@@ -3415,7 +3416,7 @@
         life_tracker.triage_suspected(
             hub,
             <span class="kw-2">&amp;</span><span class="self">self</span>.trackers,
-            <span class="attr">#[cfg(feature = <span class="string">&quot;trace&quot;</span>)]
+            <span class="attr">#[cfg(feature = <span class="string">"trace"</span>)]
             </span><span class="self">self</span>.trace.as_ref(),
             token,
         );
@@ -3424,7 +3425,7 @@
         <span class="kw">let </span>last_done_index = <span class="kw">if </span>maintain.is_wait() {
             <span class="kw">let </span>index_to_wait_for = <span class="kw">match </span>maintain {
                 wgt::Maintain::WaitForSubmissionIndex(submission_index) =&gt; {
-                    <span class="comment">// We don&#39;t need to check to see if the queue id matches
+                    <span class="comment">// We don't need to check to see if the queue id matches
                     // as we already checked this from inside the poll call.
                     </span>submission_index.index
                 }
@@ -3456,11 +3457,11 @@
         <span class="prelude-val">Ok</span>((closures, life_tracker.queue_empty()))
     }
 
-    <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>untrack&lt;<span class="lifetime">&#39;this</span>, <span class="lifetime">&#39;token</span>: <span class="lifetime">&#39;this</span>, G: GlobalIdentityHandlerFactory&gt;(
-        <span class="kw-2">&amp;</span><span class="lifetime">&#39;this </span><span class="kw-2">mut </span><span class="self">self</span>,
+    <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>untrack&lt;<span class="lifetime">'this</span>, <span class="lifetime">'token</span>: <span class="lifetime">'this</span>, G: GlobalIdentityHandlerFactory&gt;(
+        <span class="kw-2">&amp;</span><span class="lifetime">'this </span><span class="kw-2">mut </span><span class="self">self</span>,
         hub: <span class="kw-2">&amp;</span>Hub&lt;A, G&gt;,
         trackers: <span class="kw-2">&amp;</span>Tracker&lt;A&gt;,
-        token: <span class="kw-2">&amp;mut </span>Token&lt;<span class="lifetime">&#39;token</span>, <span class="self">Self</span>&gt;,
+        token: <span class="kw-2">&amp;mut </span>Token&lt;<span class="lifetime">'token</span>, <span class="self">Self</span>&gt;,
     ) {
         <span class="self">self</span>.temp_suspected.clear();
         <span class="comment">// As the tracker is cleared/dropped, we need to consider all the resources
@@ -3839,14 +3840,14 @@
         }
 
         <span class="comment">// Enforce having COPY_DST/DEPTH_STENCIL_WRITE/COLOR_TARGET otherwise we
-        // wouldn&#39;t be able to initialize the texture.
+        // wouldn't be able to initialize the texture.
         </span><span class="kw">let </span>hal_usage = conv::map_texture_usage(desc.usage, desc.format.into())
             | <span class="kw">if </span>desc.format.is_depth_stencil_format() {
                 hal::TextureUses::DEPTH_STENCIL_WRITE
             } <span class="kw">else if </span>desc.usage.contains(wgt::TextureUsages::COPY_DST) {
                 hal::TextureUses::COPY_DST <span class="comment">// (set already)
             </span>} <span class="kw">else </span>{
-                <span class="comment">// Use COPY_DST only if we can&#39;t use COLOR_TARGET
+                <span class="comment">// Use COPY_DST only if we can't use COLOR_TARGET
                 </span><span class="kw">if </span>format_features
                     .allowed_usages
                     .contains(wgt::TextureUsages::RENDER_ATTACHMENT)
@@ -3895,7 +3896,7 @@
             <span class="kw">for </span>mip_level <span class="kw">in </span><span class="number">0</span>..desc.mip_level_count {
                 <span class="kw">for </span>array_layer <span class="kw">in </span><span class="number">0</span>..desc.size.depth_or_array_layers {
                     <span class="kw">let </span>desc = hal::TextureViewDescriptor {
-                        label: <span class="prelude-val">Some</span>(<span class="string">&quot;(wgpu internal) clear texture view&quot;</span>),
+                        label: <span class="prelude-val">Some</span>(<span class="string">"(wgpu internal) clear texture view"</span>),
                         format: desc.format,
                         dimension,
                         usage,
@@ -4112,26 +4113,26 @@
         };
 
         <span class="comment">// https://gpuweb.github.io/gpuweb/#abstract-opdef-renderable-texture-view
-        </span><span class="kw">let </span>render_extent = <span class="lifetime">&#39;b</span>: <span class="kw">loop </span>{
+        </span><span class="kw">let </span>render_extent = <span class="lifetime">'b</span>: <span class="kw">loop </span>{
             <span class="kw">if </span>!texture
                 .desc
                 .usage
                 .contains(wgt::TextureUsages::RENDER_ATTACHMENT)
             {
-                <span class="kw">break </span><span class="lifetime">&#39;b </span><span class="prelude-val">Err</span>(TextureViewNotRenderableReason::Usage(texture.desc.usage));
+                <span class="kw">break </span><span class="lifetime">'b </span><span class="prelude-val">Err</span>(TextureViewNotRenderableReason::Usage(texture.desc.usage));
             }
 
             <span class="kw">if </span>!(resolved_dimension == TextureViewDimension::D2
                 || (<span class="self">self</span>.features.contains(wgt::Features::MULTIVIEW)
                     &amp;&amp; resolved_dimension == TextureViewDimension::D2Array))
             {
-                <span class="kw">break </span><span class="lifetime">&#39;b </span><span class="prelude-val">Err</span>(TextureViewNotRenderableReason::Dimension(
+                <span class="kw">break </span><span class="lifetime">'b </span><span class="prelude-val">Err</span>(TextureViewNotRenderableReason::Dimension(
                     resolved_dimension,
                 ));
             }
 
             <span class="kw">if </span>resolved_mip_level_count != <span class="number">1 </span>{
-                <span class="kw">break </span><span class="lifetime">&#39;b </span><span class="prelude-val">Err</span>(TextureViewNotRenderableReason::MipLevelCount(
+                <span class="kw">break </span><span class="lifetime">'b </span><span class="prelude-val">Err</span>(TextureViewNotRenderableReason::MipLevelCount(
                     resolved_mip_level_count,
                 ));
             }
@@ -4139,16 +4140,16 @@
             <span class="kw">if </span>resolved_array_layer_count != <span class="number">1
                 </span>&amp;&amp; !(<span class="self">self</span>.features.contains(wgt::Features::MULTIVIEW))
             {
-                <span class="kw">break </span><span class="lifetime">&#39;b </span><span class="prelude-val">Err</span>(TextureViewNotRenderableReason::ArrayLayerCount(
+                <span class="kw">break </span><span class="lifetime">'b </span><span class="prelude-val">Err</span>(TextureViewNotRenderableReason::ArrayLayerCount(
                     resolved_array_layer_count,
                 ));
             }
 
             <span class="kw">if </span>aspects != hal::FormatAspects::from(texture.desc.format) {
-                <span class="kw">break </span><span class="lifetime">&#39;b </span><span class="prelude-val">Err</span>(TextureViewNotRenderableReason::Aspects(aspects));
+                <span class="kw">break </span><span class="lifetime">'b </span><span class="prelude-val">Err</span>(TextureViewNotRenderableReason::Aspects(aspects));
             }
 
-            <span class="kw">break </span><span class="lifetime">&#39;b </span><span class="prelude-val">Ok</span>(texture
+            <span class="kw">break </span><span class="lifetime">'b </span><span class="prelude-val">Ok</span>(texture
                 .desc
                 .compute_render_extent(desc.range.base_mip_level));
         };
@@ -4176,7 +4177,7 @@
         };
 
         <span class="macro">log::debug!</span>(
-            <span class="string">&quot;Create view for texture {:?} filters usages to {:?}&quot;</span>,
+            <span class="string">"Create view for texture {:?} filters usages to {:?}"</span>,
             texture_id,
             usage
         );
@@ -4308,7 +4309,7 @@
             <span class="comment">// Clamp anisotropy clamp to [1, 16] per the wgpu-hal interface
             </span>desc.anisotropy_clamp.min(<span class="number">16</span>)
         } <span class="kw">else </span>{
-            <span class="comment">// If it isn&#39;t supported, set this unconditionally to 1
+            <span class="comment">// If it isn't supported, set this unconditionally to 1
             </span><span class="number">1
         </span>};
 
@@ -4344,16 +4345,16 @@
         })
     }
 
-    <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>create_shader_module&lt;<span class="lifetime">&#39;a</span>&gt;(
+    <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>create_shader_module&lt;<span class="lifetime">'a</span>&gt;(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         self_id: id::DeviceId,
-        desc: <span class="kw-2">&amp;</span>pipeline::ShaderModuleDescriptor&lt;<span class="lifetime">&#39;a</span>&gt;,
-        source: pipeline::ShaderModuleSource&lt;<span class="lifetime">&#39;a</span>&gt;,
+        desc: <span class="kw-2">&amp;</span>pipeline::ShaderModuleDescriptor&lt;<span class="lifetime">'a</span>&gt;,
+        source: pipeline::ShaderModuleSource&lt;<span class="lifetime">'a</span>&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;pipeline::ShaderModule&lt;A&gt;, pipeline::CreateShaderModuleError&gt; {
         <span class="kw">let </span>(module, source) = <span class="kw">match </span>source {
-            <span class="attr">#[cfg(feature = <span class="string">&quot;wgsl&quot;</span>)]
+            <span class="attr">#[cfg(feature = <span class="string">"wgsl"</span>)]
             </span>pipeline::ShaderModuleSource::Wgsl(code) =&gt; {
-                <span class="macro">profiling::scope!</span>(<span class="string">&quot;naga::wgsl::parse_str&quot;</span>);
+                <span class="macro">profiling::scope!</span>(<span class="string">"naga::wgsl::parse_str"</span>);
                 <span class="kw">let </span>module = naga::front::wgsl::parse_str(<span class="kw-2">&amp;</span>code).map_err(|inner| {
                     pipeline::CreateShaderModuleError::Parsing(pipeline::ShaderError {
                         source: code.to_string(),
@@ -4364,7 +4365,7 @@
                 (Cow::Owned(module), code.into_owned())
             }
             pipeline::ShaderModuleSource::Naga(module) =&gt; (module, String::new()),
-            pipeline::ShaderModuleSource::Dummy(<span class="kw">_</span>) =&gt; <span class="macro">panic!</span>(<span class="string">&quot;found `ShaderModuleSource::Dummy`&quot;</span>),
+            pipeline::ShaderModuleSource::Dummy(<span class="kw">_</span>) =&gt; <span class="macro">panic!</span>(<span class="string">"found `ShaderModuleSource::Dummy`"</span>),
         };
         <span class="kw">for </span>(<span class="kw">_</span>, var) <span class="kw">in </span>module.global_variables.iter() {
             <span class="kw">match </span>var.binding {
@@ -4380,7 +4381,7 @@
         }
 
         <span class="kw">use </span>naga::valid::Capabilities <span class="kw">as </span>Caps;
-        <span class="macro">profiling::scope!</span>(<span class="string">&quot;naga::validate&quot;</span>);
+        <span class="macro">profiling::scope!</span>(<span class="string">"naga::validate"</span>);
 
         <span class="kw">let </span><span class="kw-2">mut </span>caps = Caps::empty();
         caps.set(
@@ -4461,7 +4462,7 @@
                         pipeline::CreateShaderModuleError::Device(error.into())
                     }
                     hal::ShaderError::Compilation(<span class="kw-2">ref </span>msg) =&gt; {
-                        <span class="macro">log::error!</span>(<span class="string">&quot;Shader error: {}&quot;</span>, msg);
+                        <span class="macro">log::error!</span>(<span class="string">"Shader error: {}"</span>, msg);
                         pipeline::CreateShaderModuleError::Generation
                     }
                 })
@@ -4481,11 +4482,11 @@
     }
 
     <span class="attr">#[allow(unused_unsafe)]
-    </span><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">unsafe fn </span>create_shader_module_spirv&lt;<span class="lifetime">&#39;a</span>&gt;(
+    </span><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">unsafe fn </span>create_shader_module_spirv&lt;<span class="lifetime">'a</span>&gt;(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         self_id: id::DeviceId,
-        desc: <span class="kw-2">&amp;</span>pipeline::ShaderModuleDescriptor&lt;<span class="lifetime">&#39;a</span>&gt;,
-        source: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u32],
+        desc: <span class="kw-2">&amp;</span>pipeline::ShaderModuleDescriptor&lt;<span class="lifetime">'a</span>&gt;,
+        source: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u32],
     ) -&gt; <span class="prelude-ty">Result</span>&lt;pipeline::ShaderModule&lt;A&gt;, pipeline::CreateShaderModuleError&gt; {
         <span class="self">self</span>.require_features(wgt::Features::SPIRV_SHADER_PASSTHROUGH)<span class="question-mark">?</span>;
         <span class="kw">let </span>hal_desc = hal::ShaderModuleDescriptor {
@@ -4501,7 +4502,7 @@
                         pipeline::CreateShaderModuleError::Device(error.into())
                     }
                     hal::ShaderError::Compilation(<span class="kw-2">ref </span>msg) =&gt; {
-                        <span class="macro">log::error!</span>(<span class="string">&quot;Shader error: {}&quot;</span>, msg);
+                        <span class="macro">log::error!</span>(<span class="string">"Shader error: {}"</span>, msg);
                         pipeline::CreateShaderModuleError::Generation
                     }
                 })
@@ -4534,10 +4535,10 @@
             })
     }
 
-    <span class="kw">fn </span>get_introspection_bind_group_layouts&lt;<span class="lifetime">&#39;a</span>&gt;(
+    <span class="kw">fn </span>get_introspection_bind_group_layouts&lt;<span class="lifetime">'a</span>&gt;(
         pipeline_layout: <span class="kw-2">&amp;</span>binding_model::PipelineLayout&lt;A&gt;,
-        bgl_guard: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Storage&lt;binding_model::BindGroupLayout&lt;A&gt;, id::BindGroupLayoutId&gt;,
-    ) -&gt; ArrayVec&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>binding_model::BindEntryMap, { hal::MAX_BIND_GROUPS }&gt; {
+        bgl_guard: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Storage&lt;binding_model::BindGroupLayout&lt;A&gt;, id::BindGroupLayoutId&gt;,
+    ) -&gt; ArrayVec&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>binding_model::BindEntryMap, { hal::MAX_BIND_GROUPS }&gt; {
         pipeline_layout
             .bind_group_layout_ids
             .iter()
@@ -4547,10 +4548,10 @@
 
     <span class="doccomment">/// Generate information about late-validated buffer bindings for pipelines.
     </span><span class="comment">//TODO: should this be combined with `get_introspection_bind_group_layouts` in some way?
-    </span><span class="kw">fn </span>make_late_sized_buffer_groups&lt;<span class="lifetime">&#39;a</span>&gt;(
+    </span><span class="kw">fn </span>make_late_sized_buffer_groups&lt;<span class="lifetime">'a</span>&gt;(
         shader_binding_sizes: <span class="kw-2">&amp;</span>FastHashMap&lt;naga::ResourceBinding, wgt::BufferSize&gt;,
         layout: <span class="kw-2">&amp;</span>binding_model::PipelineLayout&lt;A&gt;,
-        bgl_guard: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Storage&lt;binding_model::BindGroupLayout&lt;A&gt;, id::BindGroupLayoutId&gt;,
+        bgl_guard: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Storage&lt;binding_model::BindGroupLayout&lt;A&gt;, id::BindGroupLayoutId&gt;,
     ) -&gt; ArrayVec&lt;pipeline::LateSizedBufferGroup, { hal::MAX_BIND_GROUPS }&gt; {
         <span class="comment">// Given the shader-required binding sizes and the pipeline layout,
         // return the filtered list of them in the layout order,
@@ -4785,11 +4786,11 @@
             count_validator,
             entries: entry_map,
             <span class="attr">#[cfg(debug_assertions)]
-            </span>label: label.unwrap_or(<span class="string">&quot;&quot;</span>).to_string(),
+            </span>label: label.unwrap_or(<span class="string">""</span>).to_string(),
         })
     }
 
-    <span class="kw">fn </span>create_buffer_binding&lt;<span class="lifetime">&#39;a</span>&gt;(
+    <span class="kw">fn </span>create_buffer_binding&lt;<span class="lifetime">'a</span>&gt;(
         bb: <span class="kw-2">&amp;</span>binding_model::BufferBinding,
         binding: u32,
         decl: <span class="kw-2">&amp;</span>wgt::BindGroupLayoutEntry,
@@ -4797,9 +4798,9 @@
         dynamic_binding_info: <span class="kw-2">&amp;mut </span>Vec&lt;binding_model::BindGroupDynamicBindingData&gt;,
         late_buffer_binding_sizes: <span class="kw-2">&amp;mut </span>FastHashMap&lt;u32, wgt::BufferSize&gt;,
         used: <span class="kw-2">&amp;mut </span>BindGroupStates&lt;A&gt;,
-        storage: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Storage&lt;Buffer&lt;A&gt;, id::BufferId&gt;,
+        storage: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Storage&lt;Buffer&lt;A&gt;, id::BufferId&gt;,
         limits: <span class="kw-2">&amp;</span>wgt::Limits,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;hal::BufferBinding&lt;<span class="lifetime">&#39;a</span>, A&gt;, binding_model::CreateBindGroupError&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;hal::BufferBinding&lt;<span class="lifetime">'a</span>, A&gt;, binding_model::CreateBindGroupError&gt; {
         <span class="kw">use </span><span class="kw">crate</span>::binding_model::CreateBindGroupError <span class="kw">as </span>Error;
 
         <span class="kw">let </span>(binding_ty, dynamic, min_size) = <span class="kw">match </span>decl.ty {
@@ -4812,7 +4813,7 @@
                 <span class="kw">return </span><span class="prelude-val">Err</span>(Error::WrongBindingType {
                     binding,
                     actual: decl.ty,
-                    expected: <span class="string">&quot;UniformBuffer, StorageBuffer or ReadonlyStorageBuffer&quot;</span>,
+                    expected: <span class="string">"UniformBuffer, StorageBuffer or ReadonlyStorageBuffer"</span>,
                 })
             }
         };
@@ -4978,7 +4979,7 @@
         // Record binding info for dynamic offset validation
         </span><span class="kw">let </span><span class="kw-2">mut </span>dynamic_binding_info = Vec::new();
         <span class="comment">// Map of binding -&gt; shader reflected size
-        //Note: we can&#39;t collect into a vector right away because
+        //Note: we can't collect into a vector right away because
         // it needs to be in BGL iteration order, not BG entry order.
         </span><span class="kw">let </span><span class="kw-2">mut </span>late_buffer_binding_sizes = FastHashMap::default();
         <span class="comment">// fill out the descriptors
@@ -5082,7 +5083,7 @@
                             <span class="kw">return </span><span class="prelude-val">Err</span>(Error::WrongBindingType {
                                 binding,
                                 actual: decl.ty,
-                                expected: <span class="string">&quot;Sampler&quot;</span>,
+                                expected: <span class="string">"Sampler"</span>,
                             })
                         }
                     }
@@ -5111,7 +5112,7 @@
                         binding,
                         decl,
                         view,
-                        <span class="string">&quot;SampledTexture, ReadonlyStorageTexture or WriteonlyStorageTexture&quot;</span>,
+                        <span class="string">"SampledTexture, ReadonlyStorageTexture or WriteonlyStorageTexture"</span>,
                     )<span class="question-mark">?</span>;
                     <span class="self">Self</span>::create_texture_binding(
                         view,
@@ -5140,7 +5141,7 @@
                             .ok_or(Error::InvalidTextureView(id))<span class="question-mark">?</span>;
                         <span class="kw">let </span>(pub_usage, internal_use) =
                             <span class="self">Self</span>::texture_use_parameters(binding, decl, view,
-                                                         <span class="string">&quot;SampledTextureArray, ReadonlyStorageTextureArray or WriteonlyStorageTextureArray&quot;</span>)<span class="question-mark">?</span>;
+                                                         <span class="string">"SampledTextureArray, ReadonlyStorageTextureArray or WriteonlyStorageTextureArray"</span>)<span class="question-mark">?</span>;
                         <span class="self">Self</span>::create_texture_binding(
                             view,
                             <span class="kw-2">&amp;</span>texture_guard,
@@ -5250,7 +5251,7 @@
         binding: u32,
         decl: <span class="kw-2">&amp;</span>wgt::BindGroupLayoutEntry,
         view: <span class="kw-2">&amp;</span><span class="kw">crate</span>::resource::TextureView&lt;A&gt;,
-        expected: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
+        expected: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(wgt::TextureUsages, hal::TextureUses), binding_model::CreateBindGroupError&gt; {
         <span class="kw">use </span><span class="kw">crate</span>::binding_model::CreateBindGroupError <span class="kw">as </span>Error;
         <span class="kw">if </span>view
@@ -5482,7 +5483,7 @@
         })
     }
 
-    <span class="comment">//TODO: refactor this. It&#39;s the only method of `Device` that registers new objects
+    <span class="comment">//TODO: refactor this. It's the only method of `Device` that registers new objects
     // (the pipeline layout).
     </span><span class="kw">fn </span>derive_pipeline_layout(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
@@ -5502,7 +5503,7 @@
         <span class="kw">let </span>group_count = derived_group_layouts.len();
         <span class="kw">if </span>ids.group_ids.len() &lt; group_count {
             <span class="macro">log::error!</span>(
-                <span class="string">&quot;Not enough bind group IDs ({}) specified for the implicit layout ({})&quot;</span>,
+                <span class="string">"Not enough bind group IDs ({}) specified for the implicit layout ({})"</span>,
                 ids.group_ids.len(),
                 derived_group_layouts.len()
             );
@@ -5703,7 +5704,7 @@
                 .iter()
                 .any(|ct| ct.write_mask != first.write_mask || ct.blend != first.blend)
         } {
-            <span class="macro">log::info!</span>(<span class="string">&quot;Color targets: {:?}&quot;</span>, color_targets);
+            <span class="macro">log::info!</span>(<span class="string">"Color targets: {:?}"</span>, color_targets);
             <span class="self">self</span>.require_downlevel_flags(wgt::DownlevelFlags::INDEPENDENT_BLEND)<span class="question-mark">?</span>;
         }
 
@@ -6036,10 +6037,10 @@
                     }
                     <span class="kw">_ </span>=&gt; {
                         <span class="macro">log::info!</span>(
-                            <span class="string">&quot;The fragment stage {:?} output @location({}) values are ignored&quot;</span>,
+                            <span class="string">"The fragment stage {:?} output @location({}) values are ignored"</span>,
                             fragment_stage
                                 .as_ref()
-                                .map_or(<span class="string">&quot;&quot;</span>, |stage| stage.entry_point),
+                                .map_or(<span class="string">""</span>, |stage| stage.entry_point),
                             i
                         );
                     }
@@ -6185,8 +6186,8 @@
         <span class="kw">let </span>using_device_features = <span class="self">self
             </span>.features
             .contains(wgt::Features::TEXTURE_ADAPTER_SPECIFIC_FORMAT_FEATURES);
-        <span class="comment">// If we&#39;re running downlevel, we need to manually ask the backend what
-        // we can use as we can&#39;t trust WebGPU.
+        <span class="comment">// If we're running downlevel, we need to manually ask the backend what
+        // we can use as we can't trust WebGPU.
         </span><span class="kw">let </span>downlevel = !<span class="self">self</span>.downlevel.is_webgpu_compliant();
 
         <span class="kw">if </span>using_device_features || downlevel {
@@ -6207,7 +6208,7 @@
                 .map_err(DeviceError::from)<span class="question-mark">?
         </span>};
         <span class="kw">if </span>last_done_index &lt; submission_index {
-            <span class="macro">log::info!</span>(<span class="string">&quot;Waiting for submission {:?}&quot;</span>, submission_index);
+            <span class="macro">log::info!</span>(<span class="string">"Waiting for submission {:?}"</span>, submission_index);
             <span class="kw">unsafe </span>{
                 <span class="self">self</span>.raw
                     .wait(<span class="kw-2">&amp;</span><span class="self">self</span>.fence, submission_index, !<span class="number">0</span>)
@@ -6218,7 +6219,7 @@
                 .triage_submissions(submission_index, <span class="kw-2">&amp;</span><span class="self">self</span>.command_allocator);
             <span class="macro">assert!</span>(
                 closures.is_empty(),
-                <span class="string">&quot;wait_for_submit is not expected to work with closures&quot;
+                <span class="string">"wait_for_submit is not expected to work with closures"
             </span>);
         }
         <span class="prelude-val">Ok</span>(())
@@ -6259,7 +6260,7 @@
                 value: id::Valid(self_id),
                 ref_count: <span class="self">self</span>.life_guard.add_ref(),
             },
-            life_guard: LifeGuard::new(<span class="string">&quot;&quot;</span>),
+            life_guard: LifeGuard::new(<span class="string">""</span>),
             desc: desc.map_label(|<span class="kw">_</span>| ()),
         })
     }
@@ -6290,11 +6291,11 @@
         <span class="kw">let </span><span class="kw-2">mut </span>life_tracker = <span class="self">self</span>.life_tracker.lock();
         <span class="kw">let </span>current_index = <span class="self">self</span>.active_submission_index;
         <span class="kw">if let </span><span class="prelude-val">Err</span>(error) = <span class="kw">unsafe </span>{ <span class="self">self</span>.raw.wait(<span class="kw-2">&amp;</span><span class="self">self</span>.fence, current_index, CLEANUP_WAIT_MS) } {
-            <span class="macro">log::error!</span>(<span class="string">&quot;failed to wait for the device: {:?}&quot;</span>, error);
+            <span class="macro">log::error!</span>(<span class="string">"failed to wait for the device: {:?}"</span>, error);
         }
         <span class="kw">let _ </span>= life_tracker.triage_submissions(current_index, <span class="kw-2">&amp;</span><span class="self">self</span>.command_allocator);
         life_tracker.cleanup(<span class="kw-2">&amp;</span><span class="self">self</span>.raw);
-        <span class="attr">#[cfg(feature = <span class="string">&quot;trace&quot;</span>)]
+        <span class="attr">#[cfg(feature = <span class="string">"trace"</span>)]
         </span>{
             <span class="self">self</span>.trace = <span class="prelude-val">None</span>;
         }
@@ -6312,7 +6313,7 @@
 }
 
 <span class="kw">impl</span>&lt;A: HalApi&gt; <span class="kw">crate</span>::resource::Resource <span class="kw">for </span>Device&lt;A&gt; {
-    <span class="kw">const </span>TYPE: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str = <span class="string">&quot;Device&quot;</span>;
+    <span class="kw">const </span>TYPE: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str = <span class="string">"Device"</span>;
 
     <span class="kw">fn </span>life_guard(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>LifeGuard {
         <span class="kw-2">&amp;</span><span class="self">self</span>.life_guard

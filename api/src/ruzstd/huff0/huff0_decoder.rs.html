@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ruzstd-0.4.0/src/huff0/huff0_decoder.rs`."><title>huff0_decoder.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="ruzstd" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ruzstd-0.4.0/src/huff0/huff0_decoder.rs`."><title>huff0_decoder.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="ruzstd" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -419,35 +420,35 @@
     </span>FSEDecoderError(<span class="attr">#[from] </span>FSEDecoderError),
     <span class="attr">#[error(transparent)]
     </span>FSETableError(<span class="attr">#[from] </span>FSETableError),
-    <span class="attr">#[error(<span class="string">&quot;Source needs to have at least one byte&quot;</span>)]
+    <span class="attr">#[error(<span class="string">"Source needs to have at least one byte"</span>)]
     </span>SourceIsEmpty,
-    <span class="attr">#[error(<span class="string">&quot;Header says there should be {expected_bytes} bytes for the weights but there are only {got_bytes} bytes in the stream&quot;</span>)]
+    <span class="attr">#[error(<span class="string">"Header says there should be {expected_bytes} bytes for the weights but there are only {got_bytes} bytes in the stream"</span>)]
     </span>NotEnoughBytesForWeights {
         got_bytes: usize,
         expected_bytes: u8,
     },
-    <span class="attr">#[error(<span class="string">&quot;Padding at the end of the sequence_section was more than a byte long: {skipped_bits} bits. Probably caused by data corruption&quot;</span>)]
+    <span class="attr">#[error(<span class="string">"Padding at the end of the sequence_section was more than a byte long: {skipped_bits} bits. Probably caused by data corruption"</span>)]
     </span>ExtraPadding { skipped_bits: i32 },
-    <span class="attr">#[error(<span class="string">&quot;More than 255 weights decoded (got {got} weights). Stream is probably corrupted&quot;</span>)]
+    <span class="attr">#[error(<span class="string">"More than 255 weights decoded (got {got} weights). Stream is probably corrupted"</span>)]
     </span>TooManyWeights { got: usize },
-    <span class="attr">#[error(<span class="string">&quot;Can&#39;t build huffman table without any weights&quot;</span>)]
+    <span class="attr">#[error(<span class="string">"Can't build huffman table without any weights"</span>)]
     </span>MissingWeights,
-    <span class="attr">#[error(<span class="string">&quot;Leftover must be power of two but is: {got}&quot;</span>)]
+    <span class="attr">#[error(<span class="string">"Leftover must be power of two but is: {got}"</span>)]
     </span>LeftoverIsNotAPowerOf2 { got: u32 },
-    <span class="attr">#[error(<span class="string">&quot;Not enough bytes in stream to decompress weights. Is: {have}, Should be: {need}&quot;</span>)]
+    <span class="attr">#[error(<span class="string">"Not enough bytes in stream to decompress weights. Is: {have}, Should be: {need}"</span>)]
     </span>NotEnoughBytesToDecompressWeights { have: usize, need: usize },
-    <span class="attr">#[error(<span class="string">&quot;FSE table used more bytes: {used} than were meant to be used for the whole stream of huffman weights ({available_bytes})&quot;</span>)]
+    <span class="attr">#[error(<span class="string">"FSE table used more bytes: {used} than were meant to be used for the whole stream of huffman weights ({available_bytes})"</span>)]
     </span>FSETableUsedTooManyBytes { used: usize, available_bytes: u8 },
-    <span class="attr">#[error(<span class="string">&quot;Source needs to have at least {need} bytes, got: {got}&quot;</span>)]
+    <span class="attr">#[error(<span class="string">"Source needs to have at least {need} bytes, got: {got}"</span>)]
     </span>NotEnoughBytesInSource { got: usize, need: usize },
-    <span class="attr">#[error(<span class="string">&quot;Cant have weight: {got} bigger than max_num_bits: {MAX_MAX_NUM_BITS}&quot;</span>)]
+    <span class="attr">#[error(<span class="string">"Cant have weight: {got} bigger than max_num_bits: {MAX_MAX_NUM_BITS}"</span>)]
     </span>WeightBiggerThanMaxNumBits { got: u8 },
-    <span class="attr">#[error(<span class="string">&quot;max_bits derived from weights is: {got} should be lower than: {MAX_MAX_NUM_BITS}&quot;</span>)]
+    <span class="attr">#[error(<span class="string">"max_bits derived from weights is: {got} should be lower than: {MAX_MAX_NUM_BITS}"</span>)]
     </span>MaxBitsTooHigh { got: u8 },
 }
 
-<span class="kw">pub struct </span>HuffmanDecoder&lt;<span class="lifetime">&#39;table</span>&gt; {
-    table: <span class="kw-2">&amp;</span><span class="lifetime">&#39;table </span>HuffmanTable,
+<span class="kw">pub struct </span>HuffmanDecoder&lt;<span class="lifetime">'table</span>&gt; {
+    table: <span class="kw-2">&amp;</span><span class="lifetime">'table </span>HuffmanTable,
     <span class="kw">pub </span>state: u64,
 }
 
@@ -471,12 +472,12 @@
     u32::BITS - x.leading_zeros()
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;t</span>&gt; HuffmanDecoder&lt;<span class="lifetime">&#39;t</span>&gt; {
-    <span class="kw">pub fn </span>new(table: <span class="kw-2">&amp;</span><span class="lifetime">&#39;t </span>HuffmanTable) -&gt; HuffmanDecoder&lt;<span class="lifetime">&#39;t</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'t</span>&gt; HuffmanDecoder&lt;<span class="lifetime">'t</span>&gt; {
+    <span class="kw">pub fn </span>new(table: <span class="kw-2">&amp;</span><span class="lifetime">'t </span>HuffmanTable) -&gt; HuffmanDecoder&lt;<span class="lifetime">'t</span>&gt; {
         HuffmanDecoder { table, state: <span class="number">0 </span>}
     }
 
-    <span class="kw">pub fn </span>reset(<span class="kw-2">mut </span><span class="self">self</span>, new_table: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;t </span>HuffmanTable&gt;) {
+    <span class="kw">pub fn </span>reset(<span class="kw-2">mut </span><span class="self">self</span>, new_table: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'t </span>HuffmanTable&gt;) {
         <span class="self">self</span>.state = <span class="number">0</span>;
         <span class="kw">if let </span><span class="prelude-val">Some</span>(next_table) = new_table {
             <span class="self">self</span>.table = next_table;
@@ -489,7 +490,7 @@
 
     <span class="kw">pub fn </span>init_state(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        br: <span class="kw-2">&amp;mut </span>BitReaderReversed&lt;<span class="lifetime">&#39;_</span>&gt;,
+        br: <span class="kw-2">&amp;mut </span>BitReaderReversed&lt;<span class="lifetime">'_</span>&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;u8, HuffmanDecoderError&gt; {
         <span class="kw">let </span>num_bits = <span class="self">self</span>.table.max_num_bits;
         <span class="kw">let </span>new_bits = br.get_bits(num_bits)<span class="question-mark">?</span>;
@@ -499,7 +500,7 @@
 
     <span class="kw">pub fn </span>next_state(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        br: <span class="kw-2">&amp;mut </span>BitReaderReversed&lt;<span class="lifetime">&#39;_</span>&gt;,
+        br: <span class="kw-2">&amp;mut </span>BitReaderReversed&lt;<span class="lifetime">'_</span>&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;u8, HuffmanDecoderError&gt; {
         <span class="kw">let </span>num_bits = <span class="self">self</span>.table.decode[<span class="self">self</span>.state <span class="kw">as </span>usize].num_bits;
         <span class="kw">let </span>new_bits = br.get_bits(num_bits)<span class="question-mark">?</span>;
@@ -589,7 +590,7 @@
                 }
 
                 <span class="macro">vprintln!</span>(
-                    <span class="string">&quot;Building fse table for huffman weights used: {}&quot;</span>,
+                    <span class="string">"Building fse table for huffman weights used: {}"</span>,
                     bytes_used_by_fse_header
                 );
                 <span class="kw">let </span><span class="kw-2">mut </span>dec1 = FSEDecoder::new(<span class="kw-2">&amp;</span><span class="self">self</span>.fse_table);
@@ -766,7 +767,7 @@
 
         <span class="macro">assert!</span>(
             <span class="self">self</span>.rank_indexes[<span class="number">0</span>] == <span class="self">self</span>.decode.len(),
-            <span class="string">&quot;rank_idx[0]: {} should be: {}&quot;</span>,
+            <span class="string">"rank_idx[0]: {} should be: {}"</span>,
             <span class="self">self</span>.rank_indexes[<span class="number">0</span>],
             <span class="self">self</span>.decode.len()
         );

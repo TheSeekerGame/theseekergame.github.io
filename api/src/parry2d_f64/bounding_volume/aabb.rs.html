@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/parry2d-f64-0.13.5/src/bounding_volume/aabb.rs`."><title>aabb.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="parry2d_f64" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/parry2d-f64-0.13.6/src/bounding_volume/aabb.rs`."><title>aabb.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="parry2d_f64" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -573,6 +574,10 @@
 <a href="#573" id="573">573</a>
 <a href="#574" id="574">574</a>
 <a href="#575" id="575">575</a>
+<a href="#576" id="576">576</a>
+<a href="#577" id="577">577</a>
+<a href="#578" id="578">578</a>
+<a href="#579" id="579">579</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! Axis Aligned Bounding Box.
 
 </span><span class="kw">use </span><span class="kw">crate</span>::bounding_volume::{BoundingSphere, BoundingVolume};
@@ -583,21 +588,21 @@
 <span class="kw">use </span>na;
 <span class="kw">use </span>num::Bounded;
 
-<span class="attr">#[cfg(not(feature = <span class="string">&quot;std&quot;</span>))]
+<span class="attr">#[cfg(not(feature = <span class="string">"std"</span>))]
 </span><span class="kw">use </span>na::ComplexField; <span class="comment">// for .abs()
 
-</span><span class="attr">#[cfg(feature = <span class="string">&quot;rkyv&quot;</span>)]
+</span><span class="attr">#[cfg(feature = <span class="string">"rkyv"</span>)]
 </span><span class="kw">use </span>rkyv::{bytecheck, CheckBytes};
 
 <span class="doccomment">/// An Axis Aligned Bounding Box.
-</span><span class="attr">#[cfg_attr(feature = <span class="string">&quot;serde&quot;</span>, derive(Serialize, Deserialize))]
-#[cfg_attr(feature = <span class="string">&quot;bytemuck&quot;</span>, derive(bytemuck::Pod, bytemuck::Zeroable))]
+</span><span class="attr">#[cfg_attr(feature = <span class="string">"serde"</span>, derive(Serialize, Deserialize))]
+#[cfg_attr(feature = <span class="string">"bytemuck"</span>, derive(bytemuck::Pod, bytemuck::Zeroable))]
 #[cfg_attr(
-    feature = <span class="string">&quot;rkyv&quot;</span>,
+    feature = <span class="string">"rkyv"</span>,
     derive(rkyv::Archive, rkyv::Deserialize, rkyv::Serialize, CheckBytes),
-    archive(<span class="kw">as </span>= <span class="string">&quot;Self&quot;</span>)
+    archive(<span class="kw">as </span>= <span class="string">"Self"</span>)
 )]
-#[cfg_attr(feature = <span class="string">&quot;cuda&quot;</span>, derive(cust_core::DeviceCopy))]
+#[cfg_attr(feature = <span class="string">"cuda"</span>, derive(cust_core::DeviceCopy))]
 #[derive(Debug, PartialEq, Copy, Clone)]
 #[repr(C)]
 </span><span class="kw">pub struct </span>Aabb {
@@ -606,19 +611,21 @@
 }
 
 <span class="kw">impl </span>Aabb {
-    <span class="doccomment">/// The vertex indices of each edge of this Aabb.
+    <span class="doccomment">/// The vertex indices of each edge of this `Aabb`.
     ///
-    /// This gives, for each edge of this Aabb, the indices of its
+    /// This gives, for each edge of this `Aabb`, the indices of its
     /// vertices when taken from the `self.vertices()` array.
     /// Here is how the faces are numbered, assuming
     /// a right-handed coordinate system:
     ///
+    /// ```text
     ///    y             3 - 2
     ///    |           7 − 6 |
-    ///    ___ x       |   | 1  (the zero is bellow 3 and on the left of 1, hidden by the 4-5-6-7 face.)
-    ///   /            4 - 5
+    ///    ___ x       |   | 1  (the zero is below 3 and on the left of 1,
+    ///   /            4 - 5     hidden by the 4-5-6-7 face.)
     ///  z
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+    /// ```
+    </span><span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
     </span><span class="kw">pub const </span>EDGES_VERTEX_IDS: [(usize, usize); <span class="number">12</span>] = [
         (<span class="number">0</span>, <span class="number">1</span>),
         (<span class="number">1</span>, <span class="number">2</span>),
@@ -634,19 +641,21 @@
         (<span class="number">3</span>, <span class="number">7</span>),
     ];
 
-    <span class="doccomment">/// The vertex indices of each face of this Aabb.
+    <span class="doccomment">/// The vertex indices of each face of this `Aabb`.
     ///
-    /// This gives, for each face of this Aabb, the indices of its
+    /// This gives, for each face of this `Aabb`, the indices of its
     /// vertices when taken from the `self.vertices()` array.
     /// Here is how the faces are numbered, assuming
     /// a right-handed coordinate system:
     ///
+    /// ```text
     ///    y             3 - 2
     ///    |           7 − 6 |
-    ///    ___ x       |   | 1  (the zero is bellow 3 and on the left of 1, hidden by the 4-5-6-7 face.)
-    ///   /            4 - 5
+    ///    ___ x       |   | 1  (the zero is below 3 and on the left of 1,
+    ///   /            4 - 5     hidden by the 4-5-6-7 face.)
     ///  z
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+    /// ```
+    </span><span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
     </span><span class="kw">pub const </span>FACES_VERTEX_IDS: [(usize, usize, usize, usize); <span class="number">6</span>] = [
         (<span class="number">1</span>, <span class="number">2</span>, <span class="number">6</span>, <span class="number">5</span>),
         (<span class="number">0</span>, <span class="number">3</span>, <span class="number">7</span>, <span class="number">4</span>),
@@ -667,9 +676,9 @@
         Aabb { mins, maxs }
     }
 
-    <span class="doccomment">/// Creates an invalid Aabb with `mins` components set to `Real::max_values` and `maxs`components set to `-Real::max_values`.
+    <span class="doccomment">/// Creates an invalid `Aabb` with `mins` components set to `Real::max_values` and `maxs`components set to `-Real::max_values`.
     ///
-    /// This is often used as the initial values of some Aabb merging algorithms.
+    /// This is often used as the initial values of some `Aabb` merging algorithms.
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>new_invalid() -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::new(
@@ -678,56 +687,56 @@
         )
     }
 
-    <span class="doccomment">/// Creates a new Aabb from its center and its half-extents.
+    <span class="doccomment">/// Creates a new `Aabb` from its center and its half-extents.
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>from_half_extents(center: Point&lt;Real&gt;, half_extents: Vector&lt;Real&gt;) -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::new(center - half_extents, center + half_extents)
     }
 
-    <span class="doccomment">/// Creates a new Aabb from a set of points.
-    </span><span class="kw">pub fn </span>from_points&lt;<span class="lifetime">&#39;a</span>, I&gt;(pts: I) -&gt; <span class="self">Self
+    <span class="doccomment">/// Creates a new `Aabb` from a set of points.
+    </span><span class="kw">pub fn </span>from_points&lt;<span class="lifetime">'a</span>, I&gt;(pts: I) -&gt; <span class="self">Self
     </span><span class="kw">where
-        </span>I: IntoIterator&lt;Item = <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Point&lt;Real&gt;&gt;,
+        </span>I: IntoIterator&lt;Item = <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Point&lt;Real&gt;&gt;,
     {
         <span class="kw">super</span>::aabb_utils::local_point_cloud_aabb(pts)
     }
 
-    <span class="doccomment">/// The center of this Aabb.
+    <span class="doccomment">/// The center of this `Aabb`.
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>center(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Point&lt;Real&gt; {
         na::center(<span class="kw-2">&amp;</span><span class="self">self</span>.mins, <span class="kw-2">&amp;</span><span class="self">self</span>.maxs)
     }
 
-    <span class="doccomment">/// The half extents of this Aabb.
+    <span class="doccomment">/// The half extents of this `Aabb`.
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>half_extents(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Vector&lt;Real&gt; {
         <span class="kw">let </span>half: Real = na::convert::&lt;f64, Real&gt;(<span class="number">0.5</span>);
         (<span class="self">self</span>.maxs - <span class="self">self</span>.mins) * half
     }
 
-    <span class="doccomment">/// The volume of this Aabb.
+    <span class="doccomment">/// The volume of this `Aabb`.
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>volume(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Real {
         <span class="kw">let </span>extents = <span class="self">self</span>.extents();
-        <span class="attr">#[cfg(feature = <span class="string">&quot;dim2&quot;</span>)]
+        <span class="attr">#[cfg(feature = <span class="string">"dim2"</span>)]
         </span><span class="kw">return </span>extents.x * extents.y;
-        <span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+        <span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
         </span><span class="kw">return </span>extents.x * extents.y * extents.z;
     }
 
-    <span class="doccomment">/// The extents of this Aabb.
+    <span class="doccomment">/// The extents of this `Aabb`.
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>extents(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Vector&lt;Real&gt; {
         <span class="self">self</span>.maxs - <span class="self">self</span>.mins
     }
 
-    <span class="doccomment">/// Enlarges this Aabb so it also contains the point `pt`.
+    <span class="doccomment">/// Enlarges this `Aabb` so it also contains the point `pt`.
     </span><span class="kw">pub fn </span>take_point(<span class="kw-2">&amp;mut </span><span class="self">self</span>, pt: Point&lt;Real&gt;) {
         <span class="self">self</span>.mins = <span class="self">self</span>.mins.coords.inf(<span class="kw-2">&amp;</span>pt.coords).into();
         <span class="self">self</span>.maxs = <span class="self">self</span>.maxs.coords.sup(<span class="kw-2">&amp;</span>pt.coords).into();
     }
 
-    <span class="doccomment">/// Computes the Aabb bounding `self` transformed by `m`.
+    <span class="doccomment">/// Computes the `Aabb` bounding `self` transformed by `m`.
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>transform_by(<span class="kw-2">&amp;</span><span class="self">self</span>, m: <span class="kw-2">&amp;</span>Isometry&lt;Real&gt;) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span>ls_center = <span class="self">self</span>.center();
@@ -739,15 +748,15 @@
 
     <span class="attr">#[inline]
     </span><span class="kw">pub fn </span>scaled(<span class="self">self</span>, scale: <span class="kw-2">&amp;</span>Vector&lt;Real&gt;) -&gt; <span class="self">Self </span>{
-        <span class="kw">let </span>a = <span class="self">self</span>.mins.coords.component_mul(<span class="kw-2">&amp;</span>scale);
-        <span class="kw">let </span>b = <span class="self">self</span>.maxs.coords.component_mul(<span class="kw-2">&amp;</span>scale);
+        <span class="kw">let </span>a = <span class="self">self</span>.mins.coords.component_mul(scale);
+        <span class="kw">let </span>b = <span class="self">self</span>.maxs.coords.component_mul(scale);
         <span class="self">Self </span>{
             mins: a.inf(<span class="kw-2">&amp;</span>b).into(),
             maxs: a.sup(<span class="kw-2">&amp;</span>b).into(),
         }
     }
 
-    <span class="doccomment">/// The smallest bounding sphere containing this Aabb.
+    <span class="doccomment">/// The smallest bounding sphere containing this `Aabb`.
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>bounding_sphere(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; BoundingSphere {
         <span class="kw">let </span>center = <span class="self">self</span>.center();
@@ -766,7 +775,7 @@
         <span class="bool-val">true
     </span>}
 
-    <span class="doccomment">/// Computes the intersection of this Aabb and another one.
+    <span class="doccomment">/// Computes the intersection of this `Aabb` and another one.
     </span><span class="kw">pub fn </span>intersection(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span>Aabb) -&gt; <span class="prelude-ty">Option</span>&lt;Aabb&gt; {
         <span class="kw">let </span>result = Aabb {
             mins: Point::from(<span class="self">self</span>.mins.coords.sup(<span class="kw-2">&amp;</span>other.mins.coords)),
@@ -782,17 +791,17 @@
         <span class="prelude-val">Some</span>(result)
     }
 
-    <span class="doccomment">/// Returns the difference between this Aabb and `rhs`.
+    <span class="doccomment">/// Returns the difference between this `Aabb` and `rhs`.
     ///
-    /// Removing another Aabb from `self` will result in zero, one, or up to 4 (in 2D) or 8 (in 3D)
+    /// Removing another `Aabb` from `self` will result in zero, one, or up to 4 (in 2D) or 8 (in 3D)
     /// new smaller Aabbs.
     </span><span class="kw">pub fn </span>difference(<span class="kw-2">&amp;</span><span class="self">self</span>, rhs: <span class="kw-2">&amp;</span>Aabb) -&gt; ArrayVec&lt;<span class="self">Self</span>, TWO_DIM&gt; {
         <span class="self">self</span>.difference_with_cut_sequence(rhs).<span class="number">0
     </span>}
 
-    <span class="doccomment">/// Returns the difference between this Aabb and `rhs`.
+    <span class="doccomment">/// Returns the difference between this `Aabb` and `rhs`.
     ///
-    /// Removing another Aabb from `self` will result in zero, one, or up to 4 (in 2D) or 8 (in 3D)
+    /// Removing another `Aabb` from `self` will result in zero, one, or up to 4 (in 2D) or 8 (in 3D)
     /// new smaller Aabbs.
     ///
     /// # Return
@@ -847,9 +856,9 @@
         (result, cut_sequence)
     }
 
-    <span class="doccomment">/// Computes the vertices of this Aabb.
+    <span class="doccomment">/// Computes the vertices of this `Aabb`.
     </span><span class="attr">#[inline]
-    #[cfg(feature = <span class="string">&quot;dim2&quot;</span>)]
+    #[cfg(feature = <span class="string">"dim2"</span>)]
     </span><span class="kw">pub fn </span>vertices(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; [Point&lt;Real&gt;; <span class="number">4</span>] {
         [
             Point::new(<span class="self">self</span>.mins.x, <span class="self">self</span>.mins.y),
@@ -859,9 +868,9 @@
         ]
     }
 
-    <span class="doccomment">/// Computes the vertices of this Aabb.
+    <span class="doccomment">/// Computes the vertices of this `Aabb`.
     </span><span class="attr">#[inline]
-    #[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+    #[cfg(feature = <span class="string">"dim3"</span>)]
     </span><span class="kw">pub fn </span>vertices(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; [Point&lt;Real&gt;; <span class="number">8</span>] {
         [
             Point::new(<span class="self">self</span>.mins.x, <span class="self">self</span>.mins.y, <span class="self">self</span>.mins.z),
@@ -875,9 +884,9 @@
         ]
     }
 
-    <span class="doccomment">/// Splits this Aabb at its center, into four parts (as in a quad-tree).
+    <span class="doccomment">/// Splits this `Aabb` at its center, into four parts (as in a quad-tree).
     </span><span class="attr">#[inline]
-    #[cfg(feature = <span class="string">&quot;dim2&quot;</span>)]
+    #[cfg(feature = <span class="string">"dim2"</span>)]
     </span><span class="kw">pub fn </span>split_at_center(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; [Aabb; <span class="number">4</span>] {
         <span class="kw">let </span>center = <span class="self">self</span>.center();
 
@@ -895,9 +904,9 @@
         ]
     }
 
-    <span class="doccomment">/// Splits this Aabb at its center, into height parts (as in an octree).
+    <span class="doccomment">/// Splits this `Aabb` at its center, into eight parts (as in an octree).
     </span><span class="attr">#[inline]
-    #[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
+    #[cfg(feature = <span class="string">"dim3"</span>)]
     </span><span class="kw">pub fn </span>split_at_center(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; [Aabb; <span class="number">8</span>] {
         <span class="kw">let </span>center = <span class="self">self</span>.center();
 
@@ -937,20 +946,20 @@
         ]
     }
 
-    <span class="doccomment">/// Projects every point of Aabb on an arbitrary axis.
+    <span class="doccomment">/// Projects every point of `Aabb` on an arbitrary axis.
     </span><span class="kw">pub fn </span>project_on_axis(<span class="kw-2">&amp;</span><span class="self">self</span>, axis: <span class="kw-2">&amp;</span>UnitVector&lt;Real&gt;) -&gt; (Real, Real) {
         <span class="kw">let </span>cuboid = Cuboid::new(<span class="self">self</span>.half_extents());
         <span class="kw">let </span>shift = cuboid
             .local_support_point_toward(axis)
             .coords
-            .dot(<span class="kw-2">&amp;</span>axis)
+            .dot(axis)
             .abs();
-        <span class="kw">let </span>center = <span class="self">self</span>.center().coords.dot(<span class="kw-2">&amp;</span>axis);
+        <span class="kw">let </span>center = <span class="self">self</span>.center().coords.dot(axis);
         (center - shift, center + shift)
     }
 
-    <span class="attr">#[cfg(feature = <span class="string">&quot;dim3&quot;</span>)]
-    #[cfg(feature = <span class="string">&quot;std&quot;</span>)]
+    <span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
+    #[cfg(feature = <span class="string">"std"</span>)]
     </span><span class="kw">pub fn </span>intersects_spiral(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         point: <span class="kw-2">&amp;</span>Point&lt;Real&gt;,
@@ -1046,8 +1055,8 @@
             (<span class="self">self</span>.maxs[<span class="number">2</span>], Vector::z(), <span class="number">2</span>),
         ];
 
-        <span class="kw">let </span>range = <span class="self">self</span>.project_on_axis(<span class="kw-2">&amp;</span>axis);
-        <span class="kw">let </span>range_bias = center.coords.dot(<span class="kw-2">&amp;</span>axis);
+        <span class="kw">let </span>range = <span class="self">self</span>.project_on_axis(axis);
+        <span class="kw">let </span>range_bias = center.coords.dot(axis);
         <span class="kw">let </span>interval = Interval::sort(range.<span class="number">0</span>, range.<span class="number">1</span>) - range_bias;
 
         <span class="kw">for </span>(bias, axis, i) <span class="kw">in </span><span class="kw-2">&amp;</span>planes {
@@ -1113,14 +1122,14 @@
 
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>loosen(<span class="kw-2">&amp;mut </span><span class="self">self</span>, amount: Real) {
-        <span class="macro">assert!</span>(amount &gt;= <span class="number">0.0</span>, <span class="string">&quot;The loosening margin must be positive.&quot;</span>);
+        <span class="macro">assert!</span>(amount &gt;= <span class="number">0.0</span>, <span class="string">"The loosening margin must be positive."</span>);
         <span class="self">self</span>.mins = <span class="self">self</span>.mins + Vector::repeat(-amount);
         <span class="self">self</span>.maxs = <span class="self">self</span>.maxs + Vector::repeat(amount);
     }
 
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>loosened(<span class="kw-2">&amp;</span><span class="self">self</span>, amount: Real) -&gt; Aabb {
-        <span class="macro">assert!</span>(amount &gt;= <span class="number">0.0</span>, <span class="string">&quot;The loosening margin must be positive.&quot;</span>);
+        <span class="macro">assert!</span>(amount &gt;= <span class="number">0.0</span>, <span class="string">"The loosening margin must be positive."</span>);
         Aabb {
             mins: <span class="self">self</span>.mins + Vector::repeat(-amount),
             maxs: <span class="self">self</span>.maxs + Vector::repeat(amount),
@@ -1129,18 +1138,18 @@
 
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>tighten(<span class="kw-2">&amp;mut </span><span class="self">self</span>, amount: Real) {
-        <span class="macro">assert!</span>(amount &gt;= <span class="number">0.0</span>, <span class="string">&quot;The tightening margin must be positive.&quot;</span>);
+        <span class="macro">assert!</span>(amount &gt;= <span class="number">0.0</span>, <span class="string">"The tightening margin must be positive."</span>);
         <span class="self">self</span>.mins = <span class="self">self</span>.mins + Vector::repeat(amount);
         <span class="self">self</span>.maxs = <span class="self">self</span>.maxs + Vector::repeat(-amount);
         <span class="macro">assert!</span>(
             na::partial_le(<span class="kw-2">&amp;</span><span class="self">self</span>.mins, <span class="kw-2">&amp;</span><span class="self">self</span>.maxs),
-            <span class="string">&quot;The tightening margin is to large.&quot;
+            <span class="string">"The tightening margin is to large."
         </span>);
     }
 
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>tightened(<span class="kw-2">&amp;</span><span class="self">self</span>, amount: Real) -&gt; Aabb {
-        <span class="macro">assert!</span>(amount &gt;= <span class="number">0.0</span>, <span class="string">&quot;The tightening margin must be positive.&quot;</span>);
+        <span class="macro">assert!</span>(amount &gt;= <span class="number">0.0</span>, <span class="string">"The tightening margin must be positive."</span>);
 
         Aabb::new(
             <span class="self">self</span>.mins + Vector::repeat(amount),

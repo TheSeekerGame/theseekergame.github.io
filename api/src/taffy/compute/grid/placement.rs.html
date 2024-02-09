@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/taffy-0.3.18/src/compute/grid/placement.rs`."><title>placement.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="taffy" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/taffy-0.3.18/src/compute/grid/placement.rs`."><title>placement.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="taffy" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -621,7 +622,7 @@
 /// Place items into the grid, generating new rows/column into the implicit grid as required
 ///
 /// [Specification](https://www.w3.org/TR/css-grid-2/#auto-placement-algo)
-</span><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>place_grid_items&lt;<span class="lifetime">&#39;a</span>, ChildIter&gt;(
+</span><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>place_grid_items&lt;<span class="lifetime">'a</span>, ChildIter&gt;(
     cell_occupancy_matrix: <span class="kw-2">&amp;mut </span>CellOccupancyMatrix,
     items: <span class="kw-2">&amp;mut </span>Vec&lt;GridItem&gt;,
     children_iter: <span class="kw">impl </span>Fn() -&gt; ChildIter,
@@ -629,7 +630,7 @@
     align_items: AlignItems,
     justify_items: AlignItems,
 ) <span class="kw">where
-    </span>ChildIter: Iterator&lt;Item = (usize, Node, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Style)&gt;,
+    </span>ChildIter: Iterator&lt;Item = (usize, Node, <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Style)&gt;,
 {
     <span class="kw">let </span>primary_axis = grid_auto_flow.primary_axis();
     <span class="kw">let </span>secondary_axis = primary_axis.other_axis();
@@ -637,7 +638,7 @@
     <span class="kw">let </span>map_child_style_to_origin_zero_placement = {
         <span class="kw">let </span>explicit_col_count = cell_occupancy_matrix.track_counts(AbsoluteAxis::Horizontal).explicit;
         <span class="kw">let </span>explicit_row_count = cell_occupancy_matrix.track_counts(AbsoluteAxis::Vertical).explicit;
-        <span class="kw">move </span>|(index, node, style): (usize, Node, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Style)| -&gt; (<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Style) {
+        <span class="kw">move </span>|(index, node, style): (usize, Node, <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Style)| -&gt; (<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>, <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Style) {
             <span class="kw">let </span>origin_zero_placement = InBothAbsAxis {
                 horizontal: style.grid_column.map(|placement| placement.into_origin_zero_placement(explicit_col_count)),
                 vertical: style.grid_row.map(|placement| placement.into_origin_zero_placement(explicit_row_count)),
@@ -654,7 +655,7 @@
         .for_each(|(index, child_node, child_placement, style)| {
             idx += <span class="number">1</span>;
             <span class="attr">#[cfg(test)]
-            </span><span class="macro">println!</span>(<span class="string">&quot;Definite Item {idx}\n==============&quot;</span>);
+            </span><span class="macro">println!</span>(<span class="string">"Definite Item {idx}\n=============="</span>);
 
             <span class="kw">let </span>(row_span, col_span) = place_definite_grid_item(child_placement, primary_axis);
             record_grid_placement(
@@ -683,7 +684,7 @@
         .for_each(|(index, child_node, child_placement, style)| {
             idx += <span class="number">1</span>;
             <span class="attr">#[cfg(test)]
-            </span><span class="macro">println!</span>(<span class="string">&quot;Definite Secondary Item {idx}\n==============&quot;</span>);
+            </span><span class="macro">println!</span>(<span class="string">"Definite Secondary Item {idx}\n=============="</span>);
 
             <span class="kw">let </span>(primary_span, secondary_span) =
                 place_definite_secondary_axis_item(<span class="kw-2">&amp;*</span>cell_occupancy_matrix, child_placement, grid_auto_flow);
@@ -735,7 +736,7 @@
         .for_each(|(index, child_node, child_placement, style)| {
             idx += <span class="number">1</span>;
             <span class="attr">#[cfg(test)]
-            </span><span class="macro">println!</span>(<span class="string">&quot;\nAuto Item {idx}\n==============&quot;</span>);
+            </span><span class="macro">println!</span>(<span class="string">"\nAuto Item {idx}\n=============="</span>);
 
             <span class="comment">// Compute placement
             </span><span class="kw">let </span>(primary_span, secondary_span) = place_indefinitely_positioned_item(
@@ -760,7 +761,7 @@
                 CellOccupancyState::AutoPlaced,
             );
 
-            <span class="comment">// If using the &quot;dense&quot; placement algorithm then reset the grid position back to grid_start_position ready for the next item
+            <span class="comment">// If using the "dense" placement algorithm then reset the grid position back to grid_start_position ready for the next item
             // Otherwise set it to the position of the current item so that the next item it placed after it.
             </span>grid_position = <span class="kw">match </span>grid_auto_flow.is_dense() {
                 <span class="bool-val">true </span>=&gt; grid_start_position,
@@ -896,7 +897,7 @@
                 <span class="kw">continue</span>;
             }
 
-            <span class="comment">// Once we find a free space that&#39;s in bounds, return that position
+            <span class="comment">// Once we find a free space that's in bounds, return that position
             </span><span class="kw">return </span>(primary_span, secondary_span);
         }
     }
@@ -919,9 +920,9 @@
     placement_type: CellOccupancyState,
 ) {
     <span class="attr">#[cfg(test)]
-    </span><span class="macro">println!</span>(<span class="string">&quot;BEFORE placement:&quot;</span>);
+    </span><span class="macro">println!</span>(<span class="string">"BEFORE placement:"</span>);
     <span class="attr">#[cfg(test)]
-    </span><span class="macro">println!</span>(<span class="string">&quot;{cell_occupancy_matrix:?}&quot;</span>);
+    </span><span class="macro">println!</span>(<span class="string">"{cell_occupancy_matrix:?}"</span>);
 
     <span class="comment">// Mark area of grid as occupied
     </span>cell_occupancy_matrix.mark_area_as(primary_axis, primary_span, secondary_span, placement_type);
@@ -942,17 +943,17 @@
     ));
 
     <span class="attr">#[cfg(test)]
-    </span><span class="macro">println!</span>(<span class="string">&quot;AFTER placement:&quot;</span>);
+    </span><span class="macro">println!</span>(<span class="string">"AFTER placement:"</span>);
     <span class="attr">#[cfg(test)]
-    </span><span class="macro">println!</span>(<span class="string">&quot;{cell_occupancy_matrix:?}&quot;</span>);
+    </span><span class="macro">println!</span>(<span class="string">"{cell_occupancy_matrix:?}"</span>);
     <span class="attr">#[cfg(test)]
-    </span><span class="macro">println!</span>(<span class="string">&quot;\n&quot;</span>);
+    </span><span class="macro">println!</span>(<span class="string">"\n"</span>);
 }
 
 <span class="attr">#[allow(clippy::bool_assert_comparison)]
 #[cfg(test)]
 </span><span class="kw">mod </span>tests {
-    <span class="comment">// It&#39;s more readable if the test code is uniform, so we tolerate unnecessary clones in tests
+    <span class="comment">// It's more readable if the test code is uniform, so we tolerate unnecessary clones in tests
     </span><span class="attr">#![allow(clippy::redundant_clone)]
 
     </span><span class="kw">mod </span>test_placement_algorithm {
@@ -1002,14 +1003,14 @@
             {
                 <span class="macro">assert_eq!</span>(item.node, <span class="kw-2">*</span>node);
                 <span class="kw">let </span>actual_placement = (item.column.start, item.column.end, item.row.start, item.row.end);
-                <span class="macro">assert_eq!</span>(actual_placement, (<span class="kw-2">*</span>expected_placement).into_oz(), <span class="string">&quot;Item {idx} (0-indexed)&quot;</span>);
+                <span class="macro">assert_eq!</span>(actual_placement, (<span class="kw-2">*</span>expected_placement).into_oz(), <span class="string">"Item {idx} (0-indexed)"</span>);
             }
 
             <span class="comment">// Assert that the correct number of implicit rows have been generated
             </span><span class="kw">let </span>actual_row_counts = <span class="kw-2">*</span>cell_occupancy_matrix.track_counts(<span class="kw">crate</span>::compute::grid::AbsoluteAxis::Vertical);
-            <span class="macro">assert_eq!</span>(actual_row_counts, expected_row_counts, <span class="string">&quot;row track counts&quot;</span>);
+            <span class="macro">assert_eq!</span>(actual_row_counts, expected_row_counts, <span class="string">"row track counts"</span>);
             <span class="kw">let </span>actual_col_counts = <span class="kw-2">*</span>cell_occupancy_matrix.track_counts(<span class="kw">crate</span>::compute::grid::AbsoluteAxis::Horizontal);
-            <span class="macro">assert_eq!</span>(actual_col_counts, expected_col_counts, <span class="string">&quot;column track counts&quot;</span>);
+            <span class="macro">assert_eq!</span>(actual_col_counts, expected_col_counts, <span class="string">"column track counts"</span>);
         }
 
         <span class="attr">#[test]
@@ -1188,7 +1189,7 @@
                     <span class="comment">// output order, node, style (grid coords), expected_placement (oz coords)
                     </span>(<span class="number">1</span>, sm.insert(()), (auto(), span(<span class="number">3</span>), auto(), auto()).into_grid_child(), (<span class="number">0</span>, <span class="number">3</span>, <span class="number">0</span>, <span class="number">1</span>)), <span class="comment">// Width 3
                     </span>(<span class="number">2</span>, sm.insert(()), (auto(), span(<span class="number">3</span>), auto(), auto()).into_grid_child(), (<span class="number">0</span>, <span class="number">3</span>, <span class="number">1</span>, <span class="number">2</span>)), <span class="comment">// Width 3 (wraps to next row)
-                    </span>(<span class="number">3</span>, sm.insert(()), (auto(), span(<span class="number">1</span>), auto(), auto()).into_grid_child(), (<span class="number">3</span>, <span class="number">4</span>, <span class="number">1</span>, <span class="number">2</span>)), <span class="comment">// Width 1 (uses second row as we&#39;re already on it)
+                    </span>(<span class="number">3</span>, sm.insert(()), (auto(), span(<span class="number">1</span>), auto(), auto()).into_grid_child(), (<span class="number">3</span>, <span class="number">4</span>, <span class="number">1</span>, <span class="number">2</span>)), <span class="comment">// Width 1 (uses second row as we're already on it)
                 </span>]
             };
             <span class="kw">let </span>expected_cols = TrackCounts { negative_implicit: <span class="number">0</span>, explicit: <span class="number">4</span>, positive_implicit: <span class="number">0 </span>};

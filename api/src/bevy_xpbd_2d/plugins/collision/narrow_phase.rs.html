@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_xpbd_2d-0.3.2/src/plugins/collision/narrow_phase.rs`."><title>narrow_phase.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="bevy_xpbd_2d" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy_xpbd-da54805458a155a5/46f3189/crates/bevy_xpbd_2d/../../src/plugins/collision/narrow_phase.rs`."><title>narrow_phase.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="bevy_xpbd_2d" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -215,13 +216,39 @@
 <a href="#215" id="215">215</a>
 <a href="#216" id="216">216</a>
 <a href="#217" id="217">217</a>
+<a href="#218" id="218">218</a>
+<a href="#219" id="219">219</a>
+<a href="#220" id="220">220</a>
+<a href="#221" id="221">221</a>
+<a href="#222" id="222">222</a>
+<a href="#223" id="223">223</a>
+<a href="#224" id="224">224</a>
+<a href="#225" id="225">225</a>
+<a href="#226" id="226">226</a>
+<a href="#227" id="227">227</a>
+<a href="#228" id="228">228</a>
+<a href="#229" id="229">229</a>
+<a href="#230" id="230">230</a>
+<a href="#231" id="231">231</a>
+<a href="#232" id="232">232</a>
+<a href="#233" id="233">233</a>
+<a href="#234" id="234">234</a>
+<a href="#235" id="235">235</a>
+<a href="#236" id="236">236</a>
+<a href="#237" id="237">237</a>
+<a href="#238" id="238">238</a>
+<a href="#239" id="239">239</a>
+<a href="#240" id="240">240</a>
+<a href="#241" id="241">241</a>
+<a href="#242" id="242">242</a>
+<a href="#243" id="243">243</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! Computes contacts between entities.
 //!
 //! See [`NarrowPhasePlugin`].
 
 </span><span class="kw">use </span><span class="kw">crate</span>::prelude::<span class="kw-2">*</span>;
 <span class="kw">use </span>bevy::ecs::query::Has;
-<span class="attr">#[cfg(feature = <span class="string">&quot;parallel&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"parallel"</span>)]
 </span><span class="kw">use </span>bevy::tasks::{ComputeTaskPool, ParallelSlice};
 
 <span class="doccomment">/// Computes contacts between entities.
@@ -241,7 +268,7 @@
         <span class="comment">// Manage collision states like `during_current_frame` and remove old contacts
         // TODO: It would be nice not to have collision state logic in the narrow phase
         </span>app.get_schedule_mut(PhysicsSchedule)
-            .expect(<span class="string">&quot;add PhysicsSchedule first&quot;</span>)
+            .expect(<span class="string">"add PhysicsSchedule first"</span>)
             .add_systems(
                 (
                     <span class="comment">// Reset collision states before the substepping loop
@@ -261,7 +288,7 @@
 
         <span class="comment">// Reset substep collision states and collect contacts into `Collisions`
         </span>app.get_schedule_mut(SubstepSchedule)
-            .expect(<span class="string">&quot;add SubstepSchedule first&quot;</span>)
+            .expect(<span class="string">"add SubstepSchedule first"</span>)
             .add_systems(
                 (reset_substep_collision_states, collect_collisions)
                     .chain()
@@ -272,6 +299,7 @@
 
 <span class="doccomment">/// A resource for configuring the [narrow phase](NarrowPhasePlugin).
 </span><span class="attr">#[derive(Resource, Reflect, Clone, Debug, PartialEq)]
+#[cfg_attr(feature = <span class="string">"serialize"</span>, derive(serde::Serialize, serde::Deserialize))]
 #[reflect(Resource)]
 </span><span class="kw">pub struct </span>NarrowPhaseConfig {
     <span class="doccomment">/// The maximum separation distance allowed for a collision to be accepted.
@@ -285,9 +313,9 @@
 <span class="kw">impl </span>Default <span class="kw">for </span>NarrowPhaseConfig {
     <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
-            <span class="attr">#[cfg(feature = <span class="string">&quot;2d&quot;</span>)]
+            <span class="attr">#[cfg(feature = <span class="string">"2d"</span>)]
             </span>prediction_distance: <span class="number">1.0</span>,
-            <span class="attr">#[cfg(feature = <span class="string">&quot;3d&quot;</span>)]
+            <span class="attr">#[cfg(feature = <span class="string">"3d"</span>)]
             </span>prediction_distance: <span class="number">0.01</span>,
         }
     }
@@ -298,106 +326,131 @@
 #[allow(clippy::type_complexity)]
 </span><span class="kw">pub fn </span>collect_collisions(
     bodies: Query&lt;(
-        <span class="kw-2">&amp;</span>Position,
+        Ref&lt;Position&gt;,
         <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>AccumulatedTranslation&gt;,
-        <span class="kw-2">&amp;</span>Rotation,
+        Ref&lt;Rotation&gt;,
         <span class="kw-2">&amp;</span>Collider,
     )&gt;,
     broad_collision_pairs: Res&lt;BroadCollisionPairs&gt;,
     <span class="kw-2">mut </span>collisions: ResMut&lt;Collisions&gt;,
     narrow_phase_config: Res&lt;NarrowPhaseConfig&gt;,
 ) {
-    <span class="attr">#[cfg(feature = <span class="string">&quot;parallel&quot;</span>)]
+    <span class="comment">// We want to preserve collisions between entities that are stationary
+    // but not included in [`BroadCollisionPairs`].
+    </span><span class="kw">let </span>stationary_collisions = collisions.<span class="number">0</span>.keys().filter(|&amp;&amp;(e1, e2)| {
+        <span class="kw">if let </span><span class="prelude-val">Ok</span>([bundle1, bundle2]) = bodies.get_many([e1, e2]) {
+            <span class="kw">let </span>(position1, <span class="kw">_</span>, rotation1, <span class="kw">_</span>) = bundle1;
+            <span class="kw">let </span>(position2, <span class="kw">_</span>, rotation2, <span class="kw">_</span>) = bundle2;
+            !(position1.is_changed()
+                || rotation1.is_changed()
+                || position2.is_changed()
+                || rotation2.is_changed())
+        } <span class="kw">else </span>{
+            <span class="bool-val">false
+        </span>}
+    });
+    <span class="kw">let </span>broad_collision_pairs = stationary_collisions
+        .chain(broad_collision_pairs.<span class="number">0</span>.iter())
+        .collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;();
+
+    <span class="attr">#[cfg(feature = <span class="string">"parallel"</span>)]
     </span>{
         <span class="kw">let </span>pool = ComputeTaskPool::get();
         <span class="comment">// TODO: Verify if `par_splat_map` is deterministic. If not, sort the collisions.
         </span><span class="kw">let </span>new_collisions = broad_collision_pairs
-            .<span class="number">0
-            </span>.par_splat_map(pool, <span class="prelude-val">None</span>, |chunks| {
+            .iter()
+            .par_splat_map(pool, <span class="prelude-val">None</span>, |chunks| {
                 <span class="kw">let </span><span class="kw-2">mut </span>new_collisions: Vec&lt;Contacts&gt; = <span class="macro">vec!</span>[];
-                <span class="kw">for </span>(entity1, entity2) <span class="kw">in </span>chunks {
-                    <span class="kw">if let </span><span class="prelude-val">Ok</span>([bundle1, bundle2]) = bodies.get_many([<span class="kw-2">*</span>entity1, <span class="kw-2">*</span>entity2]) {
-                        <span class="kw">let </span>(position1, accumulated_translation1, rotation1, collider1) = bundle1;
-                        <span class="kw">let </span>(position2, accumulated_translation2, rotation2, collider2) = bundle2;
-
-                        <span class="kw">let </span>position1 =
-                            position1.<span class="number">0 </span>+ accumulated_translation1.copied().unwrap_or_default().<span class="number">0</span>;
-                        <span class="kw">let </span>position2 =
-                            position2.<span class="number">0 </span>+ accumulated_translation2.copied().unwrap_or_default().<span class="number">0</span>;
-
-                        <span class="kw">let </span>previous_contact = collisions.get_internal().get(<span class="kw-2">&amp;</span>(<span class="kw-2">*</span>entity1, <span class="kw-2">*</span>entity2));
-
-                        <span class="kw">let </span>contacts = Contacts {
-                            entity1: <span class="kw-2">*</span>entity1,
-                            entity2: <span class="kw-2">*</span>entity2,
-                            during_current_frame: <span class="bool-val">true</span>,
-                            during_current_substep: <span class="bool-val">true</span>,
-                            during_previous_frame: previous_contact
-                                .map_or(<span class="bool-val">false</span>, |c| c.during_previous_frame),
-                            manifolds: contact_query::contact_manifolds(
-                                collider1,
-                                position1,
-                                <span class="kw-2">*</span>rotation1,
-                                collider2,
-                                position2,
-                                <span class="kw-2">*</span>rotation2,
-                                narrow_phase_config.prediction_distance,
-                            ),
-                        };
-
-                        <span class="kw">if </span>!contacts.manifolds.is_empty() {
+                <span class="kw">for </span><span class="kw-2">&amp;</span>(entity1, entity2) <span class="kw">in </span>chunks {
+                    process_collision_pair(
+                        <span class="kw-2">*</span>entity1,
+                        <span class="kw-2">*</span>entity2,
+                        <span class="kw-2">&amp;</span>bodies,
+                        <span class="kw-2">&amp;</span>collisions,
+                        <span class="kw-2">&amp;</span>narrow_phase_config,
+                        |contacts| {
                             new_collisions.push(contacts);
-                        }
-                    }
+                        },
+                    );
                 }
                 new_collisions
             })
             .into_iter()
             .flatten();
+
         collisions.extend(new_collisions);
     }
-    <span class="attr">#[cfg(not(feature = <span class="string">&quot;parallel&quot;</span>))]
+    <span class="attr">#[cfg(not(feature = <span class="string">"parallel"</span>))]
     </span>{
-        <span class="kw">for </span>(entity1, entity2) <span class="kw">in </span>broad_collision_pairs.<span class="number">0</span>.iter() {
-            <span class="kw">if let </span><span class="prelude-val">Ok</span>([bundle1, bundle2]) = bodies.get_many([<span class="kw-2">*</span>entity1, <span class="kw-2">*</span>entity2]) {
-                <span class="kw">let </span>(position1, accumulated_translation1, rotation1, collider1) = bundle1;
-                <span class="kw">let </span>(position2, accumulated_translation2, rotation2, collider2) = bundle2;
+        <span class="kw">let </span><span class="kw-2">mut </span>new_collisions = <span class="macro">vec!</span>[];
+        <span class="kw">for </span><span class="kw-2">&amp;</span>(entity1, entity2) <span class="kw">in </span>broad_collision_pairs {
+            process_collision_pair(
+                entity1,
+                entity2,
+                <span class="kw-2">&amp;</span>bodies,
+                <span class="kw-2">&amp;</span>collisions,
+                <span class="kw-2">&amp;</span>narrow_phase_config,
+                |contacts| {
+                    new_collisions.push(contacts);
+                },
+            );
+        }
 
-                <span class="kw">let </span>position1 =
-                    position1.<span class="number">0 </span>+ accumulated_translation1.copied().unwrap_or_default().<span class="number">0</span>;
-                <span class="kw">let </span>position2 =
-                    position2.<span class="number">0 </span>+ accumulated_translation2.copied().unwrap_or_default().<span class="number">0</span>;
+        collisions.extend(new_collisions);
+    }
+}
 
-                <span class="kw">let </span>previous_contact = collisions.get_internal().get(<span class="kw-2">&amp;</span>(<span class="kw-2">*</span>entity1, <span class="kw-2">*</span>entity2));
+<span class="doccomment">/// Helper method that calculates the intersection between two colliders to determine if they are in contact.
+</span><span class="attr">#[allow(clippy::type_complexity)]
+</span><span class="kw">fn </span>process_collision_pair&lt;F&gt;(
+    entity1: Entity,
+    entity2: Entity,
+    bodies: <span class="kw-2">&amp;</span>Query&lt;(
+        Ref&lt;Position&gt;,
+        <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>AccumulatedTranslation&gt;,
+        Ref&lt;Rotation&gt;,
+        <span class="kw-2">&amp;</span>Collider,
+    )&gt;,
+    collisions: <span class="kw-2">&amp;</span>ResMut&lt;Collisions&gt;,
+    narrow_phase_config: <span class="kw-2">&amp;</span>Res&lt;NarrowPhaseConfig&gt;,
+    <span class="kw-2">mut </span>handle_collision: F,
+) <span class="kw">where
+    </span>F: FnMut(Contacts),
+{
+    <span class="kw">if let </span><span class="prelude-val">Ok</span>([bundle1, bundle2]) = bodies.get_many([entity1, entity2]) {
+        <span class="kw">let </span>(position1, accumulated_translation1, rotation1, collider1) = bundle1;
+        <span class="kw">let </span>(position2, accumulated_translation2, rotation2, collider2) = bundle2;
 
-                <span class="kw">let </span>contacts = Contacts {
-                    entity1: <span class="kw-2">*</span>entity1,
-                    entity2: <span class="kw-2">*</span>entity2,
-                    during_current_frame: <span class="bool-val">true</span>,
-                    during_current_substep: <span class="bool-val">true</span>,
-                    during_previous_frame: previous_contact
-                        .map_or(<span class="bool-val">false</span>, |c| c.during_previous_frame),
-                    manifolds: contact_query::contact_manifolds(
-                        collider1,
-                        position1,
-                        <span class="kw-2">*</span>rotation1,
-                        collider2,
-                        position2,
-                        <span class="kw-2">*</span>rotation2,
-                        narrow_phase_config.prediction_distance,
-                    ),
-                };
+        <span class="kw">let </span>position1 = position1.<span class="number">0 </span>+ accumulated_translation1.copied().unwrap_or_default().<span class="number">0</span>;
+        <span class="kw">let </span>position2 = position2.<span class="number">0 </span>+ accumulated_translation2.copied().unwrap_or_default().<span class="number">0</span>;
 
-                <span class="kw">if </span>!contacts.manifolds.is_empty() {
-                    collisions.insert_collision_pair(contacts);
-                }
-            }
+        <span class="kw">let </span>previous_contact = collisions.get_internal().get(<span class="kw-2">&amp;</span>(entity1, entity2));
+
+        <span class="kw">let </span>contacts = Contacts {
+            entity1,
+            entity2,
+            during_current_frame: <span class="bool-val">true</span>,
+            during_current_substep: <span class="bool-val">true</span>,
+            during_previous_frame: previous_contact.map_or(<span class="bool-val">false</span>, |c| c.during_previous_frame),
+            manifolds: contact_query::contact_manifolds(
+                collider1,
+                position1,
+                <span class="kw-2">*</span>rotation1,
+                collider2,
+                position2,
+                <span class="kw-2">*</span>rotation2,
+                narrow_phase_config.prediction_distance,
+            ),
+        };
+
+        <span class="kw">if </span>!contacts.manifolds.is_empty() {
+            handle_collision(contacts);
         }
     }
 }
 
 <span class="comment">// TODO: The collision state handling feels a bit confusing and error-prone.
-//       Ideally, the narrow phase wouldn&#39;t need to handle it at all, or it would at least be simpler.
+//       Ideally, the narrow phase wouldn't need to handle it at all, or it would at least be simpler.
 </span><span class="doccomment">/// Resets collision states like `during_current_frame` and `during_previous_frame`.
 </span><span class="kw">pub fn </span>reset_collision_states(
     <span class="kw-2">mut </span>collisions: ResMut&lt;Collisions&gt;,

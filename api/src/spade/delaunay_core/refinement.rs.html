@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spade-2.5.1/src/delaunay_core/refinement.rs`."><title>refinement.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="spade" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spade-2.6.0/src/delaunay_core/refinement.rs`."><title>refinement.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="spade" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1235,9 +1236,9 @@
 <a href="#1235" id="1235">1235</a>
 <a href="#1236" id="1236">1236</a>
 <a href="#1237" id="1237">1237</a>
-</pre></div><pre class="rust"><code><span class="attr">#[cfg(not(feature = <span class="string">&quot;std&quot;</span>))]
+</pre></div><pre class="rust"><code><span class="attr">#[cfg(not(feature = <span class="string">"std"</span>))]
 </span><span class="kw">use </span>hashbrown::{HashMap, HashSet};
-<span class="attr">#[cfg(feature = <span class="string">&quot;std&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"std"</span>)]
 </span><span class="kw">use </span>std::collections::{HashMap, HashSet};
 
 <span class="kw">use </span>alloc::collections::VecDeque;
@@ -1357,10 +1358,10 @@
 }
 
 <span class="kw">impl </span>alloc::fmt::Debug <span class="kw">for </span>AngleLimit {
-    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>core::fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; alloc::fmt::Result {
-        f.debug_struct(<span class="string">&quot;AngleLimit&quot;</span>)
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>core::fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; alloc::fmt::Result {
+        f.debug_struct(<span class="string">"AngleLimit"</span>)
             .field(
-                <span class="string">&quot;angle limit (deg)&quot;</span>,
+                <span class="string">"angle limit (deg)"</span>,
                 <span class="kw-2">&amp;</span>(<span class="number">0.5 </span>/ <span class="self">self</span>.radius_to_shortest_edge_limit)
                     .asin()
                     .to_degrees(),
@@ -1455,10 +1456,10 @@
     /// &lt;table&gt;
     /// &lt;tr&gt;&lt;th&gt;0° (no angle refinement)&lt;/th&gt;&lt;th&gt;20°&lt;/th&gt;&lt;th&gt;30°&lt;/th&gt;&lt;th&gt;34°&lt;/th&gt;&lt;/tr&gt;
     /// &lt;tr&gt;&lt;td&gt;
-    </span><span class="attr">#[doc = <span class="macro">concat!</span>(<span class="macro">include_str!</span>(<span class="string">&quot;../../images/angle_limit_00.svg&quot;</span>), <span class="string">&quot;&lt;/td&gt;&lt;td&gt;&quot;</span>)]
-    #[doc = <span class="macro">concat!</span>(<span class="macro">include_str!</span>(<span class="string">&quot;../../images/angle_limit_20.svg&quot;</span>), <span class="string">&quot;&lt;/td&gt;&lt;td&gt;&quot;</span>)]
-    #[doc = <span class="macro">concat!</span>(<span class="macro">include_str!</span>(<span class="string">&quot;../../images/angle_limit_30.svg&quot;</span>), <span class="string">&quot;&lt;/td&gt;&lt;td&gt;&quot;</span>)]
-    #[doc = <span class="macro">concat!</span>(<span class="macro">include_str!</span>(<span class="string">&quot;../../images/angle_limit_34.svg&quot;</span>), <span class="string">&quot;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&quot;</span>)]
+    </span><span class="attr">#[doc = <span class="macro">concat!</span>(<span class="macro">include_str!</span>(<span class="string">"../../images/angle_limit_00.svg"</span>), <span class="string">"&lt;/td&gt;&lt;td&gt;"</span>)]
+    #[doc = <span class="macro">concat!</span>(<span class="macro">include_str!</span>(<span class="string">"../../images/angle_limit_20.svg"</span>), <span class="string">"&lt;/td&gt;&lt;td&gt;"</span>)]
+    #[doc = <span class="macro">concat!</span>(<span class="macro">include_str!</span>(<span class="string">"../../images/angle_limit_30.svg"</span>), <span class="string">"&lt;/td&gt;&lt;td&gt;"</span>)]
+    #[doc = <span class="macro">concat!</span>(<span class="macro">include_str!</span>(<span class="string">"../../images/angle_limit_34.svg"</span>), <span class="string">"&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;"</span>)]
     </span><span class="doccomment">///
     /// *See also [ConstrainedDelaunayTriangulation::refine]*
     </span><span class="kw">pub fn </span>with_angle_limit(<span class="kw-2">mut </span><span class="self">self</span>, angle_limit: AngleLimit) -&gt; <span class="self">Self </span>{
@@ -1472,7 +1473,7 @@
     /// exhaustion of additionally available vertices (see [Self::with_max_additional_vertices]).
     ///
     /// Note that there is no guarantee that no face below this area bound will be kept intact - in some cases, a split
-    /// will still be required to restore the triangulation&#39;s Delaunay property. Also, this value does not specify a lower
+    /// will still be required to restore the triangulation's Delaunay property. Also, this value does not specify a lower
     /// bound for the smallest possible triangle in the triangulation.
     ///
     /// Should be set to something lower than [Self::with_max_allowed_area]. If this method is not called, no lower
@@ -1491,9 +1492,9 @@
     /// as any large triangle above the bound will be split into smaller parts.
     ///
     /// # Examples of different maximum area values
-    </span><span class="attr">#[doc = <span class="macro">concat!</span>(<span class="macro">include_str!</span>(<span class="string">&quot;../../images/refinement_maximum_area_no_limit.svg&quot;</span>))]
-    #[doc = <span class="macro">concat!</span>(<span class="macro">include_str!</span>(<span class="string">&quot;../../images/refinement_maximum_area_200.svg&quot;</span>))]
-    #[doc = <span class="macro">concat!</span>(<span class="macro">include_str!</span>(<span class="string">&quot;../../images/refinement_maximum_area_100.svg&quot;</span>))]
+    </span><span class="attr">#[doc = <span class="macro">concat!</span>(<span class="macro">include_str!</span>(<span class="string">"../../images/refinement_maximum_area_no_limit.svg"</span>))]
+    #[doc = <span class="macro">concat!</span>(<span class="macro">include_str!</span>(<span class="string">"../../images/refinement_maximum_area_200.svg"</span>))]
+    #[doc = <span class="macro">concat!</span>(<span class="macro">include_str!</span>(<span class="string">"../../images/refinement_maximum_area_100.svg"</span>))]
     </span><span class="doccomment">///
     /// Should be set to something larger than [Self::with_min_required_area]. If this method is not called, no upper area
     /// bound check will be performed.
@@ -1518,9 +1519,9 @@
 
     <span class="doccomment">/// Prevents constraint edges from being split during refinement.
     ///
-    /// By default, constraint edges may be split in order to restore the triangulation&#39;s Delaunay property.
+    /// By default, constraint edges may be split in order to restore the triangulation's Delaunay property.
     /// The resulting two new edges will *become new constraint edges*, hence the original shape outlined by
-    /// constraint edges remains the same - no &quot;gaps&quot; or deviations are introduced.
+    /// constraint edges remains the same - no "gaps" or deviations are introduced.
     ///
     /// Enabling this option will, in general, reduce the quality of the resulting mesh - it is not necessarily
     /// Delaunay anymore and faces adjacent to long constraint edges may violate the configured [AngleLimit].
@@ -1533,7 +1534,7 @@
     ///
     /// This is useful if the constraint edges form a *closed shape* with a clearly defined inner and outer part.
     /// Spade will determine inner and outer faces by identifying which faces can be reached from the outer face
-    /// without &quot;crossing&quot; a constraint edge, similar to a flood fill algorithm.
+    /// without "crossing" a constraint edge, similar to a flood fill algorithm.
     ///
     /// Any holes in the triangulation will also be excluded. More specifically, any point with an odd winding number
     /// is considered to be inner (see e.g. [Wikipedia](https://en.wikipedia.org/wiki/Point_in_polygon#Winding_number_algorithm)).
@@ -1548,10 +1549,10 @@
     /// &lt;table&gt;
     /// &lt;tr&gt;&lt;th&gt;Unrefined&lt;/th&gt;&lt;th&gt;Refined&lt;/th&gt;&lt;/tr&gt;
     /// &lt;tr&gt;&lt;td&gt;
-    </span><span class="attr">#[doc = <span class="macro">concat!</span>(<span class="macro">include_str!</span>(<span class="string">&quot;../../images/exclude_outer_faces_unrefined.svg&quot;</span>), <span class="string">&quot;&lt;/td&gt;&lt;td&gt;&quot;</span>,<span class="macro">include_str!</span>(<span class="string">&quot;../../images/exclude_outer_faces_refined.svg&quot;</span>), <span class="string">&quot; &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&quot;</span>)]
+    </span><span class="attr">#[doc = <span class="macro">concat!</span>(<span class="macro">include_str!</span>(<span class="string">"../../images/exclude_outer_faces_unrefined.svg"</span>), <span class="string">"&lt;/td&gt;&lt;td&gt;"</span>,<span class="macro">include_str!</span>(<span class="string">"../../images/exclude_outer_faces_refined.svg"</span>), <span class="string">" &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;"</span>)]
     </span><span class="doccomment">///
     /// *A refinement operation configured to exclude outer faces. All colored faces are considered outer faces and are
-    /// ignored during refinement. Note that the inner part of the &quot;A&quot; shape forms a hole and is also excluded.*
+    /// ignored during refinement. Note that the inner part of the "A" shape forms a hole and is also excluded.*
     </span><span class="kw">pub fn </span>exclude_outer_faces(<span class="kw-2">mut </span><span class="self">self</span>, exclude: bool) -&gt; <span class="self">Self </span>{
         <span class="self">self</span>.exclude_outer_faces = exclude;
         <span class="self">self
@@ -1604,7 +1605,7 @@
     /// triangles are. A skewed triangle is a triangle with very large or very small (acute) inner angles.
     /// Some applications (e.g. interpolation and finite element methods) perform poorly in the presence of skewed triangles.
     ///
-    /// Refining by inserting additional points (called &quot;steiner points&quot;) may increase the minimum angle. The given
+    /// Refining by inserting additional points (called "steiner points") may increase the minimum angle. The given
     /// [RefinementParameters] should be used to modify the refinement behavior.
     ///
     /// # General usage
@@ -1621,7 +1622,7 @@
     ///     let mut cdt = ConstrainedDelaunayTriangulation::bulk_load(vertices)?;
     ///     let result = cdt.refine(RefinementParameters::default());
     ///     if !result.refinement_complete {
-    ///         panic!(&quot;Refinement failed - I should consider using different parameters.&quot;)
+    ///         panic!("Refinement failed - I should consider using different parameters.")
     ///     }
     ///
     ///     return Ok(cdt)
@@ -1633,7 +1634,7 @@
     /// &lt;table&gt;
     /// &lt;tr&gt;&lt;th&gt;Unrefined&lt;/th&gt;&lt;th&gt;Refined&lt;/th&gt;&lt;/tr&gt;
     /// &lt;tr&gt;&lt;td&gt;
-    </span><span class="attr">#[doc = <span class="macro">concat!</span>(<span class="macro">include_str!</span>(<span class="string">&quot;../../images/unrefined.svg&quot;</span>), <span class="string">&quot;&lt;/td&gt;&lt;td&gt;&quot;</span>,<span class="macro">include_str!</span>(<span class="string">&quot;../../images/refined.svg&quot;</span>), <span class="string">&quot; &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&quot;</span>)]
+    </span><span class="attr">#[doc = <span class="macro">concat!</span>(<span class="macro">include_str!</span>(<span class="string">"../../images/unrefined.svg"</span>), <span class="string">"&lt;/td&gt;&lt;td&gt;"</span>,<span class="macro">include_str!</span>(<span class="string">"../../images/refined.svg"</span>), <span class="string">" &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;"</span>)]
     </span><span class="doccomment">///
     /// *A refinement example. The CDT on the left has some acute angles and skewed triangles.
     /// The refined CDT on the right contains several additional points that prevents such triangles from appearing while keeping
@@ -1642,13 +1643,13 @@
     /// # Quality guarantees
     ///
     /// Refinement will ensure that the resulting triangulation fulfills a few properties:
-    ///  - The triangulation&#39;s minimum angle will be larger than the angle specified by
+    ///  - The triangulation's minimum angle will be larger than the angle specified by
     ///    [with_angle_limit](crate::RefinementParameters::with_angle_limit).&lt;br&gt;
     ///    *Exception*: Acute input angles (small angles between initial constraint edges) cannot be maximized as the constraint edges
     ///    must be kept intact. The algorithm will, for the most part, leave those places unchanged.&lt;br&gt;
     ///    *Exception*: The refinement will often not be able to increase the minimal angle much above 30 degrees as every newly
     ///    inserted steiner point may create additional skewed triangles.
-    ///  - The refinement will fullfil the *Delaunay Property*: Every triangle&#39;s circumcenter will not contain any other vertex.&lt;br&gt;
+    ///  - The refinement will fullfil the *Delaunay Property*: Every triangle's circumcenter will not contain any other vertex.&lt;br&gt;
     ///    *Exception*: Refining with [keep_constraint_edges](crate::RefinementParameters::keep_constraint_edges) cannot restore
     ///    the Delaunay property if doing so would require splitting a constraint edge.&lt;br&gt;
     ///    *Exception*: Refining with [exclude_outer_faces](crate::RefinementParameters::exclude_outer_faces) will not
@@ -1675,7 +1676,7 @@
     /// [minimum required area](RefinementParameters::with_min_required_area).
     ///
     /// Meshes with very small input angles (angles between two constraint edges) may lead to poorly refined results.
-    /// Please consider providing a bug report if you encounter an input mesh which you think isn&#39;t refined well.
+    /// Please consider providing a bug report if you encounter an input mesh which you think isn't refined well.
     ///
     /// # Stability guarantees
     ///
@@ -1694,8 +1695,8 @@
     /// Wikipedia: &lt;https://en.wikipedia.org/wiki/Delaunay_refinement&gt;
     ///
     ///
-    </span><span class="attr">#[doc(alias = <span class="string">&quot;Refinement&quot;</span>)]
-    #[doc(alias = <span class="string">&quot;Delaunay Refinement&quot;</span>)]
+    </span><span class="attr">#[doc(alias = <span class="string">"Refinement"</span>)]
+    #[doc(alias = <span class="string">"Delaunay Refinement"</span>)]
     </span><span class="kw">pub fn </span>refine(<span class="kw-2">&amp;mut </span><span class="self">self</span>, parameters: RefinementParameters&lt;V::Scalar&gt;) -&gt; RefinementResult {
         <span class="kw">use </span>PositionInTriangulation::<span class="kw-2">*</span>;
 
@@ -1729,7 +1730,7 @@
                 .map(|edge| edge.fix()),
         );
 
-        <span class="comment">// Stores all faces that should be checked for their area and angles (&quot;skinniness&quot;).
+        <span class="comment">// Stores all faces that should be checked for their area and angles ("skinniness").
         </span><span class="kw">let </span><span class="kw-2">mut </span>skinny_triangle_candidates: VecDeque&lt;<span class="kw">_</span>&gt; = <span class="self">self</span>.fixed_inner_faces().collect();
 
         <span class="kw">let </span>num_initial_vertices: usize = <span class="self">self</span>.num_vertices();
@@ -1744,17 +1745,17 @@
         <span class="comment">// Main loop of the algorithm
         //
         // Some terminology:
-        //  - &quot;Skinny triangle&quot; refers to any triangle that has a minimum inner angle less than the allowed limit specified
+        //  - "Skinny triangle" refers to any triangle that has a minimum inner angle less than the allowed limit specified
         //    by the refinement parameters. The algorithm will attempt to insert steiner points to increase their minimal
         //    angle.
         //  - An edge is *encroached* by a point if that point lies in the diametral circle of the edge (the smallest circle
         //    fully containing the edge)
-        //  - a &quot;fixed&quot; edge is a constraint edge or an edge of the convex hull. These are special as they may not be
+        //  - a "fixed" edge is a constraint edge or an edge of the convex hull. These are special as they may not be
         //    flipped - the input geometry must remain the same.
-        //  - &quot;input angle&quot; is any angle between two fixed edges. Small input angles cannot be refined away as
+        //  - "input angle" is any angle between two fixed edges. Small input angles cannot be refined away as
         //    the input geometry must be kept intact.
-        //  - &quot;excluded faces&quot; may exist if the triangulation&#39;s outer faces should not be refined. They are excluded from
-        //     the third step in the main loop (see below). We don&#39;t simply delete these faces to keep the triangulation&#39;s
+        //  - "excluded faces" may exist if the triangulation's outer faces should not be refined. They are excluded from
+        //     the third step in the main loop (see below). We don't simply delete these faces to keep the triangulation's
         //     convexity.
         //
         // Every iterations performs up to three checks:
@@ -1768,7 +1769,7 @@
         //
         // See method `resolve_encroachment` for more details on how step 1 and 2 manage to split edges in order to resolve
         // an encroachment.
-        </span><span class="lifetime">&#39;main_loop</span>: <span class="kw">loop </span>{
+        </span><span class="lifetime">'main_loop</span>: <span class="kw">loop </span>{
             <span class="kw">if </span><span class="self">self</span>.num_vertices() &gt;= max_allowed_vertices {
                 refinement_complete = <span class="bool-val">false</span>;
                 <span class="kw">break</span>;
@@ -1848,7 +1849,7 @@
                     //
                     // Such an input angle cannot be maximized as that would require flipping at least one of its edges.
                     //
-                    // See Miller, Gary; Pav, Steven; Walkington, Noel (2005). &quot;When and why Delaunay refinement algorithms work&quot;.
+                    // See Miller, Gary; Pav, Steven; Walkington, Noel (2005). "When and why Delaunay refinement algorithms work".
                     // for more details on this idea.
                     </span><span class="kw">let </span>original_from = constraint_edge_map
                         .get(<span class="kw-2">&amp;</span>shortest_edge.from().fix())
@@ -1859,8 +1860,8 @@
                         <span class="kw">for </span>to_input_vertex <span class="kw">in </span>original_to.iter().flatten() {
                             <span class="kw">if </span>from_input_vertex == to_input_vertex {
                                 <span class="comment">// The two edges are input segments and join a common segment.
-                                // Don&#39;t attempt to subdivide it any further, this is as good as we can get.
-                                </span><span class="kw">continue </span><span class="lifetime">&#39;main_loop</span>;
+                                // Don't attempt to subdivide it any further, this is as good as we can get.
+                                </span><span class="kw">continue </span><span class="lifetime">'main_loop</span>;
                             }
                         }
                     }
@@ -1874,12 +1875,12 @@
                 <span class="macro">assert!</span>(forcibly_split_segments_buffer.is_empty());
                 legalize_edges_buffer.clear();
 
-                <span class="comment">// &quot;Simulate&quot; inserting the circumcenter by locating the insertion site and identifying which edges
+                <span class="comment">// "Simulate" inserting the circumcenter by locating the insertion site and identifying which edges
                 // would need to be flipped (legalized) by the insertion. If any of these edges is fixed, an
                 // encroachment with this edge is found.
                 //
                 // First step: fill `legalize_edges_buffer` with the initial set of edges that would need to be legalized
-                // if the triangle&#39;s circumcenter would be inserted.
+                // if the triangle's circumcenter would be inserted.
                 </span><span class="kw">match </span><span class="self">self</span>.locate_with_hint(circumcenter, locate_hint) {
                     OnEdge(edge) =&gt; {
                         <span class="kw">let </span>edge = <span class="self">self</span>.directed_edge(edge);
@@ -1889,7 +1890,7 @@
 
                         <span class="kw">if </span>edge.is_constraint_edge() {
                             <span class="comment">// Splitting constraint edges may require updating the `excluded_faces` set.
-                            // This is a little cumbersome, we&#39;ll re-use the existing implementation of edge
+                            // This is a little cumbersome, we'll re-use the existing implementation of edge
                             // splitting (see function resolve_encroachment).
                             </span>forcibly_split_segments_buffer.push(edge.fix().as_undirected());
                             <span class="kw">continue</span>;
@@ -1918,27 +1919,27 @@
 
                 <span class="kw">let </span><span class="kw-2">mut </span>is_encroaching = <span class="bool-val">false</span>;
 
-                <span class="comment">// Next step: Perform the regular legalization procedure by &quot;simulating&quot; edge flips
+                <span class="comment">// Next step: Perform the regular legalization procedure by "simulating" edge flips
                 </span><span class="kw">while let </span><span class="prelude-val">Some</span>(edge) = legalize_edges_buffer.pop() {
                     <span class="kw">let </span>edge = <span class="self">self</span>.directed_edge(edge);
                     <span class="kw">let </span>[from, to] = edge.as_undirected().positions();
                     <span class="kw">if </span><span class="self">Self</span>::is_fixed_edge(edge.as_undirected()) {
                         <span class="kw">if </span>is_encroaching_edge(from, to, circumcenter) {
-                            <span class="comment">// We found an encroaching edge! Makes sure that we won&#39;t attempt to
+                            <span class="comment">// We found an encroaching edge! Makes sure that we won't attempt to
                             // insert the circumcenter.
                             </span>is_encroaching = <span class="bool-val">true</span>;
 
                             <span class="kw">if </span>!parameters.keep_constraint_edges || !edge.is_constraint_edge() {
-                                <span class="comment">// New circumcenter would encroach a constraint edge. Don&#39;t insert the circumcenter
+                                <span class="comment">// New circumcenter would encroach a constraint edge. Don't insert the circumcenter
                                 // but force splitting the segment
                                 </span>forcibly_split_segments_buffer.push(edge.as_undirected().fix());
                             }
                         }
-                        <span class="kw">continue</span>; <span class="comment">// Don&#39;t actually flip the edge as it&#39;s fixed - continue with any other edge instead.
+                        <span class="kw">continue</span>; <span class="comment">// Don't actually flip the edge as it's fixed - continue with any other edge instead.
                     </span>}
 
                     <span class="comment">// edge is not a fixed edge. Check if it needs to be legalized.
-                    // We&#39;ve already checked that this edge is not part of the convex hull - unwrap is safe
+                    // We've already checked that this edge is not part of the convex hull - unwrap is safe
                     </span><span class="kw">let </span>opposite = edge.rev().opposite_position().unwrap();
                     <span class="kw">let </span>from = edge.from().position();
                     <span class="kw">let </span>to = edge.to().position();
@@ -1955,10 +1956,10 @@
                 }
 
                 <span class="kw">if </span>!is_encroaching {
-                    <span class="comment">// The circumcenter doesn&#39;t encroach any segment. Continue really inserting it.
+                    <span class="comment">// The circumcenter doesn't encroach any segment. Continue really inserting it.
                     </span><span class="kw">let </span>new_vertex = <span class="self">self
                         </span>.insert_with_hint(circumcenter.into(), locate_hint)
-                        .expect(<span class="string">&quot;Failed to insert circumcenter, likely due to loss of precision. Consider refining with fewer additional vertices.&quot;</span>);
+                        .expect(<span class="string">"Failed to insert circumcenter, likely due to loss of precision. Consider refining with fewer additional vertices."</span>);
 
                     <span class="comment">// Add all new and changed faces to the skinny candidate list
                     </span>skinny_triangle_candidates.extend(
@@ -2001,12 +2002,12 @@
         // There are a few details that make this more complicated:
         //
         // # Runaway encroachment
-        // Any input angle less than 45 degrees may lead to a &quot;runaway encroachment&quot;. In such a situation, any of the
-        // angle&#39;s edges will encroach *the other* edge. This goes on forever, subdividing the edges infinitely.
+        // Any input angle less than 45 degrees may lead to a "runaway encroachment". In such a situation, any of the
+        // angle's edges will encroach *the other* edge. This goes on forever, subdividing the edges infinitely.
         //
         // To work around this, spade will split edges at their center position only *once*.
         // Any subsegment will not be split at its center position but *rounded towards the nearest power of 2*.
-        // With this behavior, neighboring edges will eventually share vertices equally far away from the offending angle&#39;s
+        // With this behavior, neighboring edges will eventually share vertices equally far away from the offending angle's
         // apex vertex. Points and edges in such a configuration cannot encroach each other. Refer to the original paper
         // by Ruppert for more details.
         //
@@ -2029,7 +2030,7 @@
                 </span>(half, half)
             }
             <span class="kw">_ </span>=&gt; {
-                <span class="comment">// One point is a steiner point, another point isn&#39;t. This will trigger rounding the distance to
+                <span class="comment">// One point is a steiner point, another point isn't. This will trigger rounding the distance to
                 // the nearest power of two to prevent runaway encroachment.
 
                 </span><span class="kw">let </span>half_length = segment.length_2().sqrt() * half;
@@ -2121,7 +2122,7 @@
 <span class="doccomment">/// Check if final_position would violate a ordering constraint. This is needed since final_position is constructed
 /// with imprecise calculations and may not even be representable in the underlying floating point type. In rare cases,
 /// this means that the newly formed triangles would not be ordered ccw.
-/// We&#39;ll simply skip these refinements steps as it should only happen for very bad input geometries.
+/// We'll simply skip these refinements steps as it should only happen for very bad input geometries.
 ///
 /// Before (v0 = segment.from(), v1 = segment.to()):
 ///     v2
@@ -2190,8 +2191,8 @@
         <span class="kw">return </span>HashSet::new();
     }
 
-    <span class="comment">// Determine excluded faces by &quot;peeling of&quot; outer layers and adding them to an outer layer set.
-    // This needs to be done repeatedly to also get inner &quot;holes&quot; within the triangulation
+    <span class="comment">// Determine excluded faces by "peeling of" outer layers and adding them to an outer layer set.
+    // This needs to be done repeatedly to also get inner "holes" within the triangulation
     </span><span class="kw">let </span><span class="kw-2">mut </span>inner_faces = HashSet::new();
     <span class="kw">let </span><span class="kw-2">mut </span>outer_faces = HashSet::new();
 
@@ -2206,7 +2207,7 @@
         // next, inner layer.
         </span><span class="kw">while let </span><span class="prelude-val">Some</span>(next_edge) = current_todo_list.pop() {
             <span class="kw">let </span>(list, face_set) = <span class="kw">if </span>next_edge.is_constraint_edge() {
-                <span class="comment">// We&#39;re crossing a constraint edge - add that face to the *next* todo list
+                <span class="comment">// We're crossing a constraint edge - add that face to the *next* todo list
                 </span>(<span class="kw-2">&amp;mut </span>next_todo_list, <span class="kw-2">&amp;mut </span>inner_faces)
             } <span class="kw">else </span>{
                 (<span class="kw-2">&amp;mut </span>current_todo_list, <span class="kw-2">&amp;mut </span>outer_faces)
@@ -2251,8 +2252,8 @@
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_zero_angle_limit_dbg() {
         <span class="kw">let </span>limit = AngleLimit::from_deg(<span class="number">0.0</span>);
-        <span class="kw">let </span>debug_string = <span class="macro">alloc::format!</span>(<span class="string">&quot;{:?}&quot;</span>, limit);
-        <span class="macro">assert_eq!</span>(debug_string, <span class="string">&quot;AngleLimit { angle limit (deg): 0.0 }&quot;</span>);
+        <span class="kw">let </span>debug_string = <span class="macro">alloc::format!</span>(<span class="string">"{:?}"</span>, limit);
+        <span class="macro">assert_eq!</span>(debug_string, <span class="string">"AngleLimit { angle limit (deg): 0.0 }"</span>);
     }
 
     <span class="attr">#[test]

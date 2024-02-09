@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `engine/src/script.rs`."><title>script.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="theseeker_engine" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `engine/src/script.rs`."><title>script.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="theseeker_engine" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -641,6 +642,20 @@
 <a href="#641" id="641">641</a>
 <a href="#642" id="642">642</a>
 <a href="#643" id="643">643</a>
+<a href="#644" id="644">644</a>
+<a href="#645" id="645">645</a>
+<a href="#646" id="646">646</a>
+<a href="#647" id="647">647</a>
+<a href="#648" id="648">648</a>
+<a href="#649" id="649">649</a>
+<a href="#650" id="650">650</a>
+<a href="#651" id="651">651</a>
+<a href="#652" id="652">652</a>
+<a href="#653" id="653">653</a>
+<a href="#654" id="654">654</a>
+<a href="#655" id="655">655</a>
+<a href="#656" id="656">656</a>
+<a href="#657" id="657">657</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::marker::PhantomData;
 
 <span class="kw">use </span>bevy::asset::Asset;
@@ -718,46 +733,52 @@
     </span>}
 }
 
+<span class="kw">pub struct </span>ScriptMetadata {
+    <span class="kw">pub </span>key: <span class="prelude-ty">Option</span>&lt;String&gt;,
+    <span class="kw">pub </span>key_previous: <span class="prelude-ty">Option</span>&lt;String&gt;,
+}
+
 <span class="kw">pub type </span>ActionId = usize;
 
-<span class="kw">pub trait </span>ScriptAsset: Asset + Sized + Send + Sync + <span class="lifetime">&#39;static </span>{
-    <span class="kw">type </span>Settings: Sized + Send + Sync + <span class="lifetime">&#39;static</span>;
+<span class="kw">pub trait </span>ScriptAsset: Asset + Sized + Send + Sync + <span class="lifetime">'static </span>{
+    <span class="kw">type </span>Settings: Sized + Send + Sync + <span class="lifetime">'static</span>;
     <span class="kw">type </span>RunIf: ScriptRunIf&lt;Tracker = <span class="self">Self</span>::Tracker&gt;;
     <span class="kw">type </span>Action: ScriptAction&lt;Tracker = <span class="self">Self</span>::Tracker, ActionParams = <span class="self">Self</span>::ActionParams&gt;;
     <span class="kw">type </span>ActionParams: ScriptActionParams&lt;Tracker = <span class="self">Self</span>::Tracker&gt;;
     <span class="kw">type </span>Tracker: ScriptTracker&lt;RunIf = <span class="self">Self</span>::RunIf, Settings = <span class="self">Self</span>::Settings&gt;;
-    <span class="kw">type </span>BuildParam: SystemParam + <span class="lifetime">&#39;static</span>;
+    <span class="kw">type </span>BuildParam: SystemParam + <span class="lifetime">'static</span>;
 
-    <span class="kw">fn </span>build&lt;<span class="lifetime">&#39;w</span>&gt;(
+    <span class="kw">fn </span>build&lt;<span class="lifetime">'w</span>&gt;(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         builder: ScriptRuntimeBuilder&lt;<span class="self">Self</span>&gt;,
         entity: Entity,
-        param: <span class="kw-2">&amp;mut </span>&lt;<span class="self">Self</span>::BuildParam <span class="kw">as </span>SystemParam&gt;::Item&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;_</span>&gt;,
+        param: <span class="kw-2">&amp;mut </span>&lt;<span class="self">Self</span>::BuildParam <span class="kw">as </span>SystemParam&gt;::Item&lt;<span class="lifetime">'w</span>, <span class="lifetime">'_</span>&gt;,
     ) -&gt; ScriptRuntimeBuilder&lt;<span class="self">Self</span>&gt;;
 
     <span class="kw">fn </span>into_settings(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="self">Self</span>::Settings;
 }
 
-<span class="kw">pub trait </span>ScriptTracker: Default + Send + Sync + <span class="lifetime">&#39;static </span>{
+<span class="kw">pub trait </span>ScriptTracker: Default + Send + Sync + <span class="lifetime">'static </span>{
     <span class="kw">type </span>RunIf: ScriptRunIf;
-    <span class="kw">type </span>Settings: Sized + Send + Sync + <span class="lifetime">&#39;static</span>;
-    <span class="kw">type </span>InitParam: SystemParam + <span class="lifetime">&#39;static</span>;
-    <span class="kw">type </span>UpdateParam: SystemParam + <span class="lifetime">&#39;static</span>;
+    <span class="kw">type </span>Settings: Sized + Send + Sync + <span class="lifetime">'static</span>;
+    <span class="kw">type </span>InitParam: SystemParam + <span class="lifetime">'static</span>;
+    <span class="kw">type </span>UpdateParam: SystemParam + <span class="lifetime">'static</span>;
 
-    <span class="kw">fn </span>init&lt;<span class="lifetime">&#39;w</span>&gt;(
+    <span class="kw">fn </span>init&lt;<span class="lifetime">'w</span>&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         entity: Entity,
         settings: <span class="kw-2">&amp;</span><span class="self">Self</span>::Settings,
-        param: <span class="kw-2">&amp;mut </span>&lt;<span class="self">Self</span>::InitParam <span class="kw">as </span>SystemParam&gt;::Item&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;_</span>&gt;,
+        metadata: <span class="kw-2">&amp;</span>ScriptMetadata,
+        param: <span class="kw-2">&amp;mut </span>&lt;<span class="self">Self</span>::InitParam <span class="kw">as </span>SystemParam&gt;::Item&lt;<span class="lifetime">'w</span>, <span class="lifetime">'_</span>&gt;,
     );
     <span class="kw">fn </span>transfer_progress(<span class="kw-2">&amp;mut </span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="self">Self</span>);
     <span class="kw">fn </span>track_action(<span class="kw-2">&amp;mut </span><span class="self">self</span>, run_if: <span class="kw-2">&amp;</span><span class="self">Self</span>::RunIf, action_id: ActionId);
     <span class="kw">fn </span>finalize(<span class="kw-2">&amp;mut </span><span class="self">self</span>);
-    <span class="kw">fn </span>update&lt;<span class="lifetime">&#39;w</span>&gt;(
+    <span class="kw">fn </span>update&lt;<span class="lifetime">'w</span>&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         entity: Entity,
         settings: <span class="kw-2">&amp;</span><span class="self">Self</span>::Settings,
-        param: <span class="kw-2">&amp;mut </span>&lt;<span class="self">Self</span>::UpdateParam <span class="kw">as </span>SystemParam&gt;::Item&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;_</span>&gt;,
+        param: <span class="kw-2">&amp;mut </span>&lt;<span class="self">Self</span>::UpdateParam <span class="kw">as </span>SystemParam&gt;::Item&lt;<span class="lifetime">'w</span>, <span class="lifetime">'_</span>&gt;,
         queue: <span class="kw-2">&amp;mut </span>Vec&lt;ActionId&gt;,
     ) -&gt; ScriptUpdateResult;
     <span class="kw">fn </span>set_slot(<span class="kw-2">&amp;mut </span><span class="self">self</span>, _slot: <span class="kw-2">&amp;</span>str, _state: bool) {}
@@ -765,48 +786,48 @@
         Default::default()
     }
     <span class="kw">fn </span>clear_slots(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {}
-    <span class="kw">fn </span>do_start&lt;<span class="lifetime">&#39;w</span>&gt;(
+    <span class="kw">fn </span>do_start&lt;<span class="lifetime">'w</span>&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         _entity: Entity,
         _settings: <span class="kw-2">&amp;</span><span class="self">Self</span>::Settings,
-        _param: <span class="kw-2">&amp;mut </span>&lt;<span class="self">Self</span>::UpdateParam <span class="kw">as </span>SystemParam&gt;::Item&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;_</span>&gt;,
+        _param: <span class="kw-2">&amp;mut </span>&lt;<span class="self">Self</span>::UpdateParam <span class="kw">as </span>SystemParam&gt;::Item&lt;<span class="lifetime">'w</span>, <span class="lifetime">'_</span>&gt;,
         _queue: <span class="kw-2">&amp;mut </span>Vec&lt;ActionId&gt;,
     ) {}
-    <span class="kw">fn </span>do_stop&lt;<span class="lifetime">&#39;w</span>&gt;(
+    <span class="kw">fn </span>do_stop&lt;<span class="lifetime">'w</span>&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         _entity: Entity,
         _settings: <span class="kw-2">&amp;</span><span class="self">Self</span>::Settings,
-        _param: <span class="kw-2">&amp;mut </span>&lt;<span class="self">Self</span>::UpdateParam <span class="kw">as </span>SystemParam&gt;::Item&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;_</span>&gt;,
+        _param: <span class="kw-2">&amp;mut </span>&lt;<span class="self">Self</span>::UpdateParam <span class="kw">as </span>SystemParam&gt;::Item&lt;<span class="lifetime">'w</span>, <span class="lifetime">'_</span>&gt;,
         _queue: <span class="kw-2">&amp;mut </span>Vec&lt;ActionId&gt;,
     ) {}
 }
 
-<span class="kw">pub trait </span>ScriptRunIf: Clone + Send + Sync + <span class="lifetime">&#39;static </span>{
+<span class="kw">pub trait </span>ScriptRunIf: Clone + Send + Sync + <span class="lifetime">'static </span>{
     <span class="kw">type </span>Tracker: ScriptTracker;
 }
 
-<span class="kw">pub trait </span>ScriptAction: Clone + Send + Sync + <span class="lifetime">&#39;static </span>{
+<span class="kw">pub trait </span>ScriptAction: Clone + Send + Sync + <span class="lifetime">'static </span>{
     <span class="kw">type </span>Tracker: ScriptTracker;
     <span class="kw">type </span>ActionParams: ScriptActionParams&lt;Tracker = <span class="self">Self</span>::Tracker&gt;;
-    <span class="kw">type </span>Param: SystemParam + <span class="lifetime">&#39;static</span>;
-    <span class="kw">fn </span>run&lt;<span class="lifetime">&#39;w</span>&gt;(
+    <span class="kw">type </span>Param: SystemParam + <span class="lifetime">'static</span>;
+    <span class="kw">fn </span>run&lt;<span class="lifetime">'w</span>&gt;(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         entity: Entity,
         actionparams: <span class="kw-2">&amp;</span><span class="self">Self</span>::ActionParams,
         tracker: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::Tracker,
-        param: <span class="kw-2">&amp;mut </span>&lt;<span class="self">Self</span>::Param <span class="kw">as </span>SystemParam&gt;::Item&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;_</span>&gt;,
+        param: <span class="kw-2">&amp;mut </span>&lt;<span class="self">Self</span>::Param <span class="kw">as </span>SystemParam&gt;::Item&lt;<span class="lifetime">'w</span>, <span class="lifetime">'_</span>&gt;,
     ) -&gt; ScriptUpdateResult;
 }
 
-<span class="kw">pub trait </span>ScriptActionParams: Clone + Send + Sync + <span class="lifetime">&#39;static </span>{
+<span class="kw">pub trait </span>ScriptActionParams: Clone + Send + Sync + <span class="lifetime">'static </span>{
     <span class="kw">type </span>Tracker: ScriptTracker;
-    <span class="kw">type </span>ShouldRunParam: SystemParam + <span class="lifetime">&#39;static</span>;
+    <span class="kw">type </span>ShouldRunParam: SystemParam + <span class="lifetime">'static</span>;
 
-    <span class="kw">fn </span>should_run&lt;<span class="lifetime">&#39;w</span>&gt;(
+    <span class="kw">fn </span>should_run&lt;<span class="lifetime">'w</span>&gt;(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         _tracker: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::Tracker,
         _action_id: ActionId,
-        _param: <span class="kw-2">&amp;mut </span>&lt;<span class="self">Self</span>::ShouldRunParam <span class="kw">as </span>SystemParam&gt;::Item&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;_</span>&gt;,
+        _param: <span class="kw-2">&amp;mut </span>&lt;<span class="self">Self</span>::ShouldRunParam <span class="kw">as </span>SystemParam&gt;::Item&lt;<span class="lifetime">'w</span>, <span class="lifetime">'_</span>&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(), ScriptUpdateResult&gt; {
         <span class="prelude-val">Ok</span>(())
     }
@@ -840,21 +861,24 @@
 }
 
 <span class="kw">struct </span>ScriptRuntime&lt;T: ScriptAsset&gt; {
+    key: <span class="prelude-ty">Option</span>&lt;String&gt;,
     settings: &lt;T::Tracker <span class="kw">as </span>ScriptTracker&gt;::Settings,
     actions: Vec&lt;(T::ActionParams, T::Action)&gt;,
     tracker: T::Tracker,
 }
 
 <span class="kw">impl</span>&lt;T: ScriptAsset&gt; ScriptRuntimeBuilder&lt;T&gt; {
-    <span class="kw">pub fn </span>new&lt;<span class="lifetime">&#39;w</span>&gt;(
+    <span class="kw">pub fn </span>new&lt;<span class="lifetime">'w</span>&gt;(
         entity: Entity,
         settings: &lt;T::Tracker <span class="kw">as </span>ScriptTracker&gt;::Settings,
-        param: <span class="kw-2">&amp;mut </span>&lt;&lt;T::Tracker <span class="kw">as </span>ScriptTracker&gt;::InitParam <span class="kw">as </span>SystemParam&gt;::Item&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;_</span>&gt;,
+        metadata: <span class="kw-2">&amp;</span>ScriptMetadata,
+        param: <span class="kw-2">&amp;mut </span>&lt;&lt;T::Tracker <span class="kw">as </span>ScriptTracker&gt;::InitParam <span class="kw">as </span>SystemParam&gt;::Item&lt;<span class="lifetime">'w</span>, <span class="lifetime">'_</span>&gt;,
     ) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span><span class="kw-2">mut </span>tracker = T::Tracker::default();
-        tracker.init(entity, <span class="kw-2">&amp;</span>settings, param);
+        tracker.init(entity, <span class="kw-2">&amp;</span>settings, metadata, param);
         ScriptRuntimeBuilder {
             runtime: ScriptRuntime {
+                key: metadata.key.clone(),
                 settings,
                 actions: <span class="macro">vec!</span>[],
                 tracker,
@@ -920,11 +944,7 @@
                 <span class="kw">continue</span>;
             }
         };
-        <span class="comment">// trace!(
-        //     &quot;Script actions to run: {}&quot;,
-        //     action_queue.len(),
-        // );
-        </span><span class="kw">for </span>action_id <span class="kw">in </span>action_queue.<span class="number">0</span>.drain(..) {
+        <span class="kw">for </span>action_id <span class="kw">in </span>action_queue.<span class="number">0</span>.drain(..) {
             <span class="kw">let </span>action = <span class="kw-2">&amp;</span>script_rt.actions[action_id];
             {
                 <span class="kw">let </span><span class="kw-2">mut </span>shouldrun_param = params.p2().into_inner();
@@ -960,7 +980,7 @@
     )&gt;,
     <span class="kw-2">mut </span>action_queue: ResMut&lt;ScriptActionQueue&lt;T&gt;&gt;,
 ) {
-    <span class="lifetime">&#39;outer</span>: <span class="kw">for </span>(e, player) <span class="kw">in </span><span class="kw-2">&amp;mut </span>q_script {
+    <span class="lifetime">'outer</span>: <span class="kw">for </span>(e, player) <span class="kw">in </span><span class="kw-2">&amp;mut </span>q_script {
         <span class="kw">let </span>player = player.into_inner();
 
         <span class="kw">let </span><span class="kw-2">mut </span>is_loop = <span class="bool-val">true</span>;
@@ -1011,11 +1031,11 @@
                 }
                 <span class="kw">_ </span>=&gt; {
                     player.state = old_state;
-                    <span class="kw">continue </span><span class="lifetime">&#39;outer</span>;
+                    <span class="kw">continue </span><span class="lifetime">'outer</span>;
                 }
             };
             <span class="comment">// trace!(
-            //     &quot;Script actions to run: {}&quot;,
+            //     "Script actions to run: {}",
             //     action_queue.len(),
             // );
             </span><span class="kw">for </span>action_id <span class="kw">in </span>action_queue.<span class="number">0</span>.drain(..) {
@@ -1067,11 +1087,20 @@
     )&gt;,
 ) {
     <span class="kw">for </span>(e, <span class="kw-2">mut </span>player) <span class="kw">in </span><span class="kw-2">&amp;mut </span>q_script {
+        <span class="kw">let </span><span class="kw-2">mut </span>metadata = ScriptMetadata {
+            key: <span class="prelude-val">None</span>,
+            key_previous: <span class="kw">match </span><span class="kw-2">&amp;</span>player.state {
+                | ScriptPlayerState::ChangingHandle { old_runtime, .. }
+                | ScriptPlayerState::ChangingKey { old_runtime, ..  } =&gt; old_runtime.key.clone(),
+                <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
+            },
+        };
         <span class="kw">let </span>handle = <span class="kw">match </span><span class="kw-2">&amp;</span>player.state {
             ScriptPlayerState::PrePlayHandle { handle, .. } =&gt; {
                 handle.clone()
             }
             ScriptPlayerState::PrePlayKey { key, .. } =&gt; {
+                metadata.key = <span class="prelude-val">Some</span>(key.clone());
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(handle) = preloaded.get_single_asset(<span class="kw-2">&amp;</span>key) {
                     handle
                 } <span class="kw">else </span>{
@@ -1084,7 +1113,7 @@
             <span class="kw">let </span>settings = script.into_settings();
             <span class="kw">let </span>builder = {
                 <span class="kw">let </span><span class="kw-2">mut </span>tracker_init_param = params.p0().into_inner();
-                ScriptRuntimeBuilder::new(e, settings, <span class="kw-2">&amp;mut </span>tracker_init_param)
+                ScriptRuntimeBuilder::new(e, settings, <span class="kw-2">&amp;</span>metadata, <span class="kw-2">&amp;mut </span>tracker_init_param)
             };
             <span class="kw">let </span>builder = {
                 <span class="kw">let </span><span class="kw-2">mut </span>build_param = params.p1().into_inner();

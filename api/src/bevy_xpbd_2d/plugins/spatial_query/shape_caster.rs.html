@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_xpbd_2d-0.3.2/src/plugins/spatial_query/shape_caster.rs`."><title>shape_caster.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="bevy_xpbd_2d" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy_xpbd-da54805458a155a5/46f3189/crates/bevy_xpbd_2d/../../src/plugins/spatial_query/shape_caster.rs`."><title>shape_caster.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="bevy_xpbd_2d" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -422,6 +423,9 @@
 <a href="#422" id="422">422</a>
 <a href="#423" id="423">423</a>
 <a href="#424" id="424">424</a>
+<a href="#425" id="425">425</a>
+<a href="#426" id="426">426</a>
+<a href="#427" id="427">427</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::prelude::<span class="kw-2">*</span>;
 <span class="kw">use </span>bevy::{
     ecs::entity::{EntityMapper, MapEntities},
@@ -442,19 +446,19 @@
 /// Computing lots of hits can be expensive, especially against complex geometry, so the maximum number of hits
 /// is one by default. This can be configured through the `max_hits` property.
 ///
-/// The [`ShapeCaster`] is the easiest way to handle simple shapecasting. If you want more control and don&#39;t want
+/// The [`ShapeCaster`] is the easiest way to handle simple shapecasting. If you want more control and don't want
 /// to perform shapecasts on every frame, consider using the [`SpatialQuery`] system parameter.
 ///
 /// ## Example
 ///
 /// ```
 /// use bevy::prelude::*;
-/// # #[cfg(feature = &quot;2d&quot;)]
+/// # #[cfg(feature = "2d")]
 /// # use bevy_xpbd_2d::prelude::*;
-/// # #[cfg(feature = &quot;3d&quot;)]
+/// # #[cfg(feature = "3d")]
 /// use bevy_xpbd_3d::prelude::*;
 ///
-/// # #[cfg(all(feature = &quot;3d&quot;, feature = &quot;f32&quot;))]
+/// # #[cfg(all(feature = "3d", feature = "f32"))]
 /// fn setup(mut commands: Commands) {
 ///     // Spawn a shape caster with a ball shape moving right starting from the origin
 ///     commands.spawn(ShapeCaster::new(
@@ -468,12 +472,13 @@
 /// fn print_hits(query: Query&lt;(&amp;ShapeCaster, &amp;ShapeHits)&gt;) {
 ///     for (shape_caster, hits) in &amp;query {
 ///         for hit in hits.iter() {
-///             println!(&quot;Hit entity {:?}&quot;, hit.entity);
+///             println!("Hit entity {:?}", hit.entity);
 ///         }
 ///     }
 /// }
 /// ```
 </span><span class="attr">#[derive(Component)]
+#[cfg_attr(feature = <span class="string">"serialize"</span>, derive(serde::Serialize, serde::Deserialize))]
 </span><span class="kw">pub struct </span>ShapeCaster {
     <span class="doccomment">/// Controls if the shape caster is enabled.
     </span><span class="kw">pub </span>enabled: bool,
@@ -490,19 +495,19 @@
     /// of the shape caster entity or its parent. Expressed in radians.
     ///
     /// To get the global shape rotation, use the `global_shape_rotation` method.
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;2d&quot;</span>)]
+    </span><span class="attr">#[cfg(feature = <span class="string">"2d"</span>)]
     </span><span class="kw">pub </span>shape_rotation: Scalar,
     <span class="doccomment">/// The local rotation of the shape being cast relative to the [`Rotation`]
     /// of the shape caster entity or its parent.
     ///
     /// To get the global shape rotation, use the `global_shape_rotation` method.
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;3d&quot;</span>)]
+    </span><span class="attr">#[cfg(feature = <span class="string">"3d"</span>)]
     </span><span class="kw">pub </span>shape_rotation: Quaternion,
     <span class="doccomment">/// The global rotation of the shape.
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;2d&quot;</span>)]
+    </span><span class="attr">#[cfg(feature = <span class="string">"2d"</span>)]
     </span>global_shape_rotation: Scalar,
     <span class="doccomment">/// The global rotation of the shape.
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;3d&quot;</span>)]
+    </span><span class="attr">#[cfg(feature = <span class="string">"3d"</span>)]
     </span>global_shape_rotation: Quaternion,
     <span class="doccomment">/// The local direction of the shapecast relative to the [`Rotation`] of the shape caster entity or its parent.
     ///
@@ -535,13 +540,13 @@
             shape: Collider::ball(<span class="number">0.0</span>),
             origin: Vector::ZERO,
             global_origin: Vector::ZERO,
-            <span class="attr">#[cfg(feature = <span class="string">&quot;2d&quot;</span>)]
+            <span class="attr">#[cfg(feature = <span class="string">"2d"</span>)]
             </span>shape_rotation: <span class="number">0.0</span>,
-            <span class="attr">#[cfg(feature = <span class="string">&quot;3d&quot;</span>)]
+            <span class="attr">#[cfg(feature = <span class="string">"3d"</span>)]
             </span>shape_rotation: Quaternion::IDENTITY,
-            <span class="attr">#[cfg(feature = <span class="string">&quot;2d&quot;</span>)]
+            <span class="attr">#[cfg(feature = <span class="string">"2d"</span>)]
             </span>global_shape_rotation: <span class="number">0.0</span>,
-            <span class="attr">#[cfg(feature = <span class="string">&quot;3d&quot;</span>)]
+            <span class="attr">#[cfg(feature = <span class="string">"3d"</span>)]
             </span>global_shape_rotation: Quaternion::IDENTITY,
             direction: Vector::ZERO,
             global_direction: Vector::ZERO,
@@ -556,7 +561,7 @@
 
 <span class="kw">impl </span>ShapeCaster {
     <span class="doccomment">/// Creates a new [`ShapeCaster`] with a given shape, origin, shape rotation and direction.
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;2d&quot;</span>)]
+    </span><span class="attr">#[cfg(feature = <span class="string">"2d"</span>)]
     </span><span class="kw">pub fn </span>new(shape: Collider, origin: Vector, shape_rotation: Scalar, direction: Vector) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             shape,
@@ -566,7 +571,7 @@
             ..default()
         }
     }
-    <span class="attr">#[cfg(feature = <span class="string">&quot;3d&quot;</span>)]
+    <span class="attr">#[cfg(feature = <span class="string">"3d"</span>)]
     </span><span class="doccomment">/// Creates a new [`ShapeCaster`] with a given shape, origin, shape rotation and direction.
     </span><span class="kw">pub fn </span>new(
         shape: Collider,
@@ -625,7 +630,7 @@
         <span class="self">self
     </span>}
 
-    <span class="doccomment">/// Sets the shape caster&#39;s [query filter](SpatialQueryFilter) that controls which colliders
+    <span class="doccomment">/// Sets the shape caster's [query filter](SpatialQueryFilter) that controls which colliders
     /// should be included or excluded by shapecasts.
     </span><span class="kw">pub fn </span>with_query_filter(<span class="kw-2">mut </span><span class="self">self</span>, query_filter: SpatialQueryFilter) -&gt; <span class="self">Self </span>{
         <span class="self">self</span>.query_filter = query_filter;
@@ -648,13 +653,13 @@
     }
 
     <span class="doccomment">/// Returns the global rotation of the shape.
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;2d&quot;</span>)]
+    </span><span class="attr">#[cfg(feature = <span class="string">"2d"</span>)]
     </span><span class="kw">pub fn </span>global_shape_rotation(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Scalar {
         <span class="self">self</span>.global_shape_rotation
     }
 
     <span class="doccomment">/// Returns the global rotation of the shape.
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;3d&quot;</span>)]
+    </span><span class="attr">#[cfg(feature = <span class="string">"3d"</span>)]
     </span><span class="kw">pub fn </span>global_shape_rotation(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Quaternion {
         <span class="self">self</span>.global_shape_rotation
     }
@@ -670,13 +675,13 @@
     }
 
     <span class="doccomment">/// Sets the global rotation of the shape.
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;2d&quot;</span>)]
+    </span><span class="attr">#[cfg(feature = <span class="string">"2d"</span>)]
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>set_global_shape_rotation(<span class="kw-2">&amp;mut </span><span class="self">self</span>, global_rotation: Scalar) {
         <span class="self">self</span>.global_shape_rotation = global_rotation;
     }
 
     <span class="doccomment">/// Sets the global rotation of the shape.
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;3d&quot;</span>)]
+    </span><span class="attr">#[cfg(feature = <span class="string">"3d"</span>)]
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>set_global_shape_rotation(<span class="kw-2">&amp;mut </span><span class="self">self</span>, global_rotation: Quaternion) {
         <span class="self">self</span>.global_shape_rotation = global_rotation;
     }
@@ -701,11 +706,11 @@
         hits.count = <span class="number">0</span>;
 
         <span class="kw">let </span>shape_rotation: Rotation;
-        <span class="attr">#[cfg(feature = <span class="string">&quot;2d&quot;</span>)]
+        <span class="attr">#[cfg(feature = <span class="string">"2d"</span>)]
         </span>{
             shape_rotation = Rotation::from_radians(<span class="self">self</span>.global_shape_rotation());
         }
-        <span class="attr">#[cfg(feature = <span class="string">&quot;3d&quot;</span>)]
+        <span class="attr">#[cfg(feature = <span class="string">"3d"</span>)]
         </span>{
             shape_rotation = Rotation::from(<span class="self">self</span>.global_shape_rotation());
         }
@@ -759,16 +764,16 @@
 ///
 /// ```
 /// use bevy::prelude::*;
-/// # #[cfg(feature = &quot;2d&quot;)]
+/// # #[cfg(feature = "2d")]
 /// # use bevy_xpbd_2d::prelude::*;
-/// # #[cfg(feature = &quot;3d&quot;)]
+/// # #[cfg(feature = "3d")]
 /// use bevy_xpbd_3d::prelude::*;
 ///
 /// fn print_hits(query: Query&lt;&amp;ShapeHits, With&lt;ShapeCaster&gt;&gt;) {
 ///     for hits in &amp;query {
 ///         for hit in hits.iter() {
 ///             println!(
-///                 &quot;Hit entity {:?} with time of impact {}&quot;,
+///                 "Hit entity {:?} with time of impact {}",
 ///                 hit.entity,
 ///                 hit.time_of_impact,
 ///             );
@@ -777,6 +782,7 @@
 /// }
 /// ```
 </span><span class="attr">#[derive(Component, Clone, Debug)]
+#[cfg_attr(feature = <span class="string">"serialize"</span>, derive(serde::Serialize, serde::Deserialize))]
 </span><span class="kw">pub struct </span>ShapeHits {
     <span class="kw">pub</span>(<span class="kw">crate</span>) vector: Vec&lt;ShapeHitData&gt;,
     <span class="kw">pub</span>(<span class="kw">crate</span>) count: u32,
@@ -789,7 +795,7 @@
     }
 
     <span class="doccomment">/// Returns the number of hits.
-    </span><span class="attr">#[doc(alias = <span class="string">&quot;count&quot;</span>)]
+    </span><span class="attr">#[doc(alias = <span class="string">"count"</span>)]
     </span><span class="kw">pub fn </span>len(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
         <span class="self">self</span>.count <span class="kw">as </span>usize
     }
@@ -821,6 +827,7 @@
 
 <span class="doccomment">/// Data related to a hit during a [shapecast](spatial_query#shapecasting).
 </span><span class="attr">#[derive(Clone, Copy, Debug, PartialEq)]
+#[cfg_attr(feature = <span class="string">"serialize"</span>, derive(serde::Serialize, serde::Deserialize))]
 </span><span class="kw">pub struct </span>ShapeHitData {
     <span class="doccomment">/// The entity of the collider that was hit by the shape.
     </span><span class="kw">pub </span>entity: Entity,

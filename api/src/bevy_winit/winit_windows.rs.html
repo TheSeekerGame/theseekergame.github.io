@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy-3e956806168b8470/b5b6ea3/crates/bevy_winit/src/winit_windows.rs`."><title>winit_windows.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bevy_winit" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy-3e956806168b8470/b5b6ea3/crates/bevy_winit/src/winit_windows.rs`."><title>winit_windows.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bevy_winit" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -412,7 +413,7 @@
     <span class="doccomment">/// Maps `winit` window identifiers to entities.
     </span><span class="kw">pub </span>winit_to_entity: HashMap&lt;winit::window::WindowId, Entity&gt;,
     <span class="comment">// Many `winit` window functions (e.g. `set_window_icon`) can only be called on the main thread.
-    // If they&#39;re called on other threads, the program might hang. This marker indicates that this
+    // If they're called on other threads, the program might hang. This marker indicates that this
     // type is not thread-safe and will be `!Send` and `!Sync`.
     </span>_not_send_sync: core::marker::PhantomData&lt;<span class="kw-2">*const </span>()&gt;,
 }
@@ -501,7 +502,7 @@
         <span class="attr">#[allow(unused_mut)]
         </span><span class="kw">let </span><span class="kw-2">mut </span>winit_window_builder = winit_window_builder.with_title(window.title.as_str());
 
-        <span class="attr">#[cfg(target_arch = <span class="string">&quot;wasm32&quot;</span>)]
+        <span class="attr">#[cfg(target_arch = <span class="string">"wasm32"</span>)]
         </span>{
             <span class="kw">use </span>wasm_bindgen::JsCast;
             <span class="kw">use </span>winit::platform::web::WindowBuilderExtWebSys;
@@ -511,12 +512,12 @@
                 <span class="kw">let </span>document = window.document().unwrap();
                 <span class="kw">let </span>canvas = document
                     .query_selector(<span class="kw-2">&amp;</span>selector)
-                    .expect(<span class="string">&quot;Cannot query for canvas element.&quot;</span>);
+                    .expect(<span class="string">"Cannot query for canvas element."</span>);
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(canvas) = canvas {
                     <span class="kw">let </span>canvas = canvas.dyn_into::&lt;web_sys::HtmlCanvasElement&gt;().ok();
                     winit_window_builder = winit_window_builder.with_canvas(canvas);
                 } <span class="kw">else </span>{
-                    <span class="macro">panic!</span>(<span class="string">&quot;Cannot find element: {}.&quot;</span>, selector);
+                    <span class="macro">panic!</span>(<span class="string">"Cannot find element: {}."</span>, selector);
                 }
             }
 
@@ -549,19 +550,19 @@
         adapters.insert(entity, adapter);
         handlers.insert(entity, handler);
 
-        <span class="comment">// Do not set the grab mode on window creation if it&#39;s none. It can fail on mobile.
+        <span class="comment">// Do not set the grab mode on window creation if it's none. It can fail on mobile.
         </span><span class="kw">if </span>window.cursor.grab_mode != CursorGrabMode::None {
             attempt_grab(<span class="kw-2">&amp;</span>winit_window, window.cursor.grab_mode);
         }
 
         winit_window.set_cursor_visible(window.cursor.visible);
 
-        <span class="comment">// Do not set the cursor hittest on window creation if it&#39;s false, as it will always fail on
+        <span class="comment">// Do not set the cursor hittest on window creation if it's false, as it will always fail on
         // some platforms and log an unfixable warning.
         </span><span class="kw">if </span>!window.cursor.hit_test {
             <span class="kw">if let </span><span class="prelude-val">Err</span>(err) = winit_window.set_cursor_hittest(window.cursor.hit_test) {
                 <span class="macro">warn!</span>(
-                    <span class="string">&quot;Could not set cursor hit test for window {:?}: {:?}&quot;</span>,
+                    <span class="string">"Could not set cursor hit test for window {:?}: {:?}"</span>,
                     window.title, err
                 );
             }
@@ -570,7 +571,7 @@
         <span class="self">self</span>.entity_to_winit.insert(entity, winit_window.id());
         <span class="self">self</span>.winit_to_entity.insert(winit_window.id(), entity);
 
-        <span class="attr">#[cfg(target_arch = <span class="string">&quot;wasm32&quot;</span>)]
+        <span class="attr">#[cfg(target_arch = <span class="string">"wasm32"</span>)]
         </span>{
             <span class="kw">use </span>winit::platform::web::WindowExtWebSys;
 
@@ -582,7 +583,7 @@
                 <span class="kw">let </span>body = document.body().unwrap();
 
                 body.append_child(<span class="kw-2">&amp;</span>canvas)
-                    .expect(<span class="string">&quot;Append canvas to HTML body.&quot;</span>);
+                    .expect(<span class="string">"Append canvas to HTML body."</span>);
             }
         }
 
@@ -611,14 +612,14 @@
     /// This should mostly just be called when the window is closing.
     </span><span class="kw">pub fn </span>remove_window(<span class="kw-2">&amp;mut </span><span class="self">self</span>, entity: Entity) -&gt; <span class="prelude-ty">Option</span>&lt;winit::window::Window&gt; {
         <span class="kw">let </span>winit_id = <span class="self">self</span>.entity_to_winit.remove(<span class="kw-2">&amp;</span>entity)<span class="question-mark">?</span>;
-        <span class="comment">// Don&#39;t remove from `winit_to_window_id` so we know the window used to exist.
+        <span class="comment">// Don't remove from `winit_to_window_id` so we know the window used to exist.
         </span><span class="self">self</span>.windows.remove(<span class="kw-2">&amp;</span>winit_id)
     }
 }
 
-<span class="doccomment">/// Gets the &quot;best&quot; video mode which fits the given dimensions.
+<span class="doccomment">/// Gets the "best" video mode which fits the given dimensions.
 ///
-/// The heuristic for &quot;best&quot; prioritizes width, height, and refresh rate in that order.
+/// The heuristic for "best" prioritizes width, height, and refresh rate in that order.
 </span><span class="kw">pub fn </span>get_fitting_videomode(
     monitor: <span class="kw-2">&amp;</span>winit::monitor::MonitorHandle,
     width: u32,
@@ -651,9 +652,9 @@
     modes.first().unwrap().clone()
 }
 
-<span class="doccomment">/// Gets the &quot;best&quot; videomode from a monitor.
+<span class="doccomment">/// Gets the "best" videomode from a monitor.
 ///
-/// The heuristic for &quot;best&quot; prioritizes width, height, and refresh rate in that order.
+/// The heuristic for "best" prioritizes width, height, and refresh rate in that order.
 </span><span class="kw">pub fn </span>get_best_videomode(monitor: <span class="kw-2">&amp;</span>winit::monitor::MonitorHandle) -&gt; winit::monitor::VideoMode {
     <span class="kw">let </span><span class="kw-2">mut </span>modes = monitor.video_modes().collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;();
     modes.sort_by(|a, b| {
@@ -687,11 +688,11 @@
 
     <span class="kw">if let </span><span class="prelude-val">Err</span>(err) = grab_result {
         <span class="kw">let </span>err_desc = <span class="kw">match </span>grab_mode {
-            bevy_window::CursorGrabMode::Confined | bevy_window::CursorGrabMode::Locked =&gt; <span class="string">&quot;grab&quot;</span>,
-            bevy_window::CursorGrabMode::None =&gt; <span class="string">&quot;ungrab&quot;</span>,
+            bevy_window::CursorGrabMode::Confined | bevy_window::CursorGrabMode::Locked =&gt; <span class="string">"grab"</span>,
+            bevy_window::CursorGrabMode::None =&gt; <span class="string">"ungrab"</span>,
         };
 
-        <span class="macro">bevy_utils::tracing::error!</span>(<span class="string">&quot;Unable to {} cursor: {}&quot;</span>, err_desc, err);
+        <span class="macro">bevy_utils::tracing::error!</span>(<span class="string">"Unable to {} cursor: {}"</span>, err_desc, err);
     }
 }
 
@@ -715,7 +716,7 @@
             <span class="kw">let </span>maybe_monitor = <span class="kw">match </span>monitor_selection {
                 Current =&gt; {
                     <span class="kw">if </span>current_monitor.is_none() {
-                        <span class="macro">warn!</span>(<span class="string">&quot;Can&#39;t select current monitor on window creation or cannot find current monitor!&quot;</span>);
+                        <span class="macro">warn!</span>(<span class="string">"Can't select current monitor on window creation or cannot find current monitor!"</span>);
                     }
                     current_monitor
                 }
@@ -745,7 +746,7 @@
 
                 <span class="prelude-val">Some</span>(position.cast::&lt;i32&gt;())
             } <span class="kw">else </span>{
-                <span class="macro">warn!</span>(<span class="string">&quot;Couldn&#39;t get monitor selected with: {monitor_selection:?}&quot;</span>);
+                <span class="macro">warn!</span>(<span class="string">"Couldn't get monitor selected with: {monitor_selection:?}"</span>);
                 <span class="prelude-val">None
             </span>}
         }
@@ -756,8 +757,8 @@
 }
 
 <span class="comment">// WARNING: this only works under the assumption that wasm runtime is single threaded
-</span><span class="attr">#[cfg(target_arch = <span class="string">&quot;wasm32&quot;</span>)]
+</span><span class="attr">#[cfg(target_arch = <span class="string">"wasm32"</span>)]
 </span><span class="kw">unsafe impl </span>Send <span class="kw">for </span>WinitWindows {}
-<span class="attr">#[cfg(target_arch = <span class="string">&quot;wasm32&quot;</span>)]
+<span class="attr">#[cfg(target_arch = <span class="string">"wasm32"</span>)]
 </span><span class="kw">unsafe impl </span>Sync <span class="kw">for </span>WinitWindows {}
 </code></pre></div></section></main></body></html>

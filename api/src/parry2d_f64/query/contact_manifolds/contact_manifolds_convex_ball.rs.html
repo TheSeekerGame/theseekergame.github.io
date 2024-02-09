@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/parry2d-f64-0.13.5/src/query/contact_manifolds/contact_manifolds_convex_ball.rs`."><title>contact_manifolds_convex_ball.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="parry2d_f64" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/parry2d-f64-0.13.6/src/query/contact_manifolds/contact_manifolds_convex_ball.rs`."><title>contact_manifolds_convex_ball.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="parry2d_f64" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -74,7 +75,14 @@
 <a href="#74" id="74">74</a>
 <a href="#75" id="75">75</a>
 <a href="#76" id="76">76</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::math::{Isometry, Point, Real};
+<a href="#77" id="77">77</a>
+<a href="#78" id="78">78</a>
+<a href="#79" id="79">79</a>
+<a href="#80" id="80">80</a>
+<a href="#81" id="81">81</a>
+<a href="#82" id="82">82</a>
+<a href="#83" id="83">83</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::math::{Isometry, Point, Real, Vector};
 <span class="kw">use </span><span class="kw">crate</span>::query::{ContactManifold, TrackedContact};
 <span class="kw">use </span><span class="kw">crate</span>::shape::{Ball, PackedFeatureId, Shape};
 <span class="kw">use </span>na::Unit;
@@ -97,10 +105,10 @@
 }
 
 <span class="doccomment">/// Computes the contact manifold between a convex shape and a ball.
-</span><span class="kw">pub fn </span>contact_manifold_convex_ball&lt;<span class="lifetime">&#39;a</span>, ManifoldData, ContactData, S1&gt;(
+</span><span class="kw">pub fn </span>contact_manifold_convex_ball&lt;<span class="lifetime">'a</span>, ManifoldData, ContactData, S1&gt;(
     pos12: <span class="kw-2">&amp;</span>Isometry&lt;Real&gt;,
-    shape1: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>S1,
-    ball2: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Ball,
+    shape1: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>S1,
+    ball2: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Ball,
     prediction: Real,
     manifold: <span class="kw-2">&amp;mut </span>ContactManifold&lt;ManifoldData, ContactData&gt;,
     flipped: bool,
@@ -112,42 +120,49 @@
     <span class="kw">let </span>(proj, fid1) = shape1.project_local_point_and_get_feature(<span class="kw-2">&amp;</span>local_p2_1);
     <span class="kw">let </span>dpos = local_p2_1 - proj.point;
 
-    <span class="kw">if let </span><span class="prelude-val">Some</span>((<span class="kw-2">mut </span>local_n1, <span class="kw-2">mut </span>dist)) = Unit::try_new_and_get(dpos, <span class="number">0.0</span>) {
-        <span class="kw">if </span>proj.is_inside {
-            local_n1 = -local_n1;
-            dist = -dist;
-        }
+    <span class="comment">// local_n1 points from the surface towards our origin if defined, otherwise from the other
+    // shape's origin towards our origin if defined, otherwise towards +x
+    </span><span class="kw">let </span>(<span class="kw-2">mut </span>local_n1, <span class="kw-2">mut </span>dist) = Unit::try_new_and_get(dpos, <span class="number">0.0</span>).unwrap_or_else(|| {
+        (
+            Unit::try_new(pos12.translation.vector, <span class="number">0.0</span>).unwrap_or_else(|| Vector::x_axis()),
+            <span class="number">0.0</span>,
+        )
+    });
 
-        <span class="kw">if </span>dist &lt;= ball2.radius + prediction {
-            <span class="kw">let </span>local_n2 = pos12.inverse_transform_vector(<span class="kw-2">&amp;</span>-<span class="kw-2">*</span>local_n1);
-            <span class="kw">let </span>local_p2 = (local_n2 * ball2.radius).into();
-            <span class="kw">let </span>contact_point = TrackedContact::flipped(
-                proj.point,
-                local_p2,
-                fid1.into(),
-                PackedFeatureId::face(<span class="number">0</span>),
-                dist - ball2.radius,
-                flipped,
-            );
+    <span class="kw">if </span>proj.is_inside {
+        local_n1 = -local_n1;
+        dist = -dist;
+    }
 
-            <span class="kw">if </span>manifold.points.len() != <span class="number">1 </span>{
-                manifold.clear();
-                manifold.points.push(contact_point);
-            } <span class="kw">else </span>{
-                <span class="comment">// Copy only the geometry so we keep the warmstart impulses.
-                </span>manifold.points[<span class="number">0</span>].copy_geometry_from(contact_point);
-            }
+    <span class="kw">if </span>dist &lt;= ball2.radius + prediction {
+        <span class="kw">let </span>local_n2 = pos12.inverse_transform_vector(<span class="kw-2">&amp;</span>-<span class="kw-2">*</span>local_n1);
+        <span class="kw">let </span>local_p2 = (local_n2 * ball2.radius).into();
+        <span class="kw">let </span>contact_point = TrackedContact::flipped(
+            proj.point,
+            local_p2,
+            fid1.into(),
+            PackedFeatureId::face(<span class="number">0</span>),
+            dist - ball2.radius,
+            flipped,
+        );
 
-            <span class="kw">if </span>flipped {
-                manifold.local_n1 = local_n2;
-                manifold.local_n2 = <span class="kw-2">*</span>local_n1;
-            } <span class="kw">else </span>{
-                manifold.local_n1 = <span class="kw-2">*</span>local_n1;
-                manifold.local_n2 = local_n2;
-            }
-        } <span class="kw">else </span>{
+        <span class="kw">if </span>manifold.points.len() != <span class="number">1 </span>{
             manifold.clear();
+            manifold.points.push(contact_point);
+        } <span class="kw">else </span>{
+            <span class="comment">// Copy only the geometry so we keep the warmstart impulses.
+            </span>manifold.points[<span class="number">0</span>].copy_geometry_from(contact_point);
         }
+
+        <span class="kw">if </span>flipped {
+            manifold.local_n1 = local_n2;
+            manifold.local_n2 = <span class="kw-2">*</span>local_n1;
+        } <span class="kw">else </span>{
+            manifold.local_n1 = <span class="kw-2">*</span>local_n1;
+            manifold.local_n2 = local_n2;
+        }
+    } <span class="kw">else </span>{
+        manifold.clear();
     }
 }
 </code></pre></div></section></main></body></html>

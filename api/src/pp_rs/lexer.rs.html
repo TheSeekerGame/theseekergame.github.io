@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/pp-rs-0.2.1/src/lexer.rs`."><title>lexer.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="pp_rs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/pp-rs-0.2.1/src/lexer.rs`."><title>lexer.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="pp_rs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -645,13 +646,13 @@
 //
 // It expects that phases 1 to 3 are already done and that valid utf8 is passed in.
 </span><span class="attr">#[derive(Clone)]
-</span><span class="kw">pub struct </span>CharsAndLine&lt;<span class="lifetime">&#39;a</span>&gt; {
-    inner: Chars&lt;<span class="lifetime">&#39;a</span>&gt;,
+</span><span class="kw">pub struct </span>CharsAndLine&lt;<span class="lifetime">'a</span>&gt; {
+    inner: Chars&lt;<span class="lifetime">'a</span>&gt;,
     line: u32,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; CharsAndLine&lt;<span class="lifetime">&#39;a</span>&gt; {
-    <span class="kw">pub fn </span>new(input: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>str) -&gt; <span class="self">Self </span>{
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; CharsAndLine&lt;<span class="lifetime">'a</span>&gt; {
+    <span class="kw">pub fn </span>new(input: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>str) -&gt; <span class="self">Self </span>{
         CharsAndLine {
             inner: input.chars(),
             line: <span class="number">1</span>,
@@ -663,32 +664,32 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; Iterator <span class="kw">for </span>CharsAndLine&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; Iterator <span class="kw">for </span>CharsAndLine&lt;<span class="lifetime">'a</span>&gt; {
     <span class="kw">type </span>Item = CharAndLine;
 
     <span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt; {
         <span class="kw">let </span>current = <span class="self">self</span>.inner.next()<span class="question-mark">?</span>;
 
         <span class="kw">match </span>current {
-            <span class="string">&#39;\n&#39; </span>=&gt; {
+            <span class="string">'\n' </span>=&gt; {
                 <span class="comment">// Consume the token but see if we can grab a \r that follows
                 </span><span class="kw">let </span><span class="kw-2">mut </span>peek_inner = <span class="self">self</span>.inner.clone();
-                <span class="kw">if </span>peek_inner.next() == <span class="prelude-val">Some</span>(<span class="string">&#39;\r&#39;</span>) {
+                <span class="kw">if </span>peek_inner.next() == <span class="prelude-val">Some</span>(<span class="string">'\r'</span>) {
                     <span class="self">self</span>.inner = peek_inner;
                 }
 
-                <span class="kw">let </span>res = <span class="prelude-val">Some</span>((<span class="string">&#39;\n&#39;</span>, <span class="self">self</span>.line));
+                <span class="kw">let </span>res = <span class="prelude-val">Some</span>((<span class="string">'\n'</span>, <span class="self">self</span>.line));
                 <span class="self">self</span>.line += <span class="number">1</span>;
                 res
             }
-            <span class="string">&#39;\r&#39; </span>=&gt; {
+            <span class="string">'\r' </span>=&gt; {
                 <span class="comment">// Consume the token but see if we can grab a \n that follows
                 </span><span class="kw">let </span><span class="kw-2">mut </span>peek_inner = <span class="self">self</span>.inner.clone();
-                <span class="kw">if </span>peek_inner.next() == <span class="prelude-val">Some</span>(<span class="string">&#39;\n&#39;</span>) {
+                <span class="kw">if </span>peek_inner.next() == <span class="prelude-val">Some</span>(<span class="string">'\n'</span>) {
                     <span class="self">self</span>.inner = peek_inner;
                 }
 
-                <span class="kw">let </span>res = <span class="prelude-val">Some</span>((<span class="string">&#39;\n&#39;</span>, <span class="self">self</span>.line));
+                <span class="kw">let </span>res = <span class="prelude-val">Some</span>((<span class="string">'\n'</span>, <span class="self">self</span>.line));
                 <span class="self">self</span>.line += <span class="number">1</span>;
                 res
             }
@@ -700,17 +701,17 @@
 
 <span class="comment">// An iterator that adds stage 6 on top of CharsAndLocation:
 //
-//  6. Wherever a backslash (&#39;\&#39;) occurs immediately before a newline, both are deleted. Note that
+//  6. Wherever a backslash ('\') occurs immediately before a newline, both are deleted. Note that
 //     no whitespace is substituted, thereby allowing a single preprocessing token to span a
 //     newline. This operation is not recursive; any new {backslash newline} sequences generated
 //     are not removed.
 </span><span class="attr">#[derive(Clone)]
-</span><span class="kw">pub struct </span>SkipBackslashNewline&lt;<span class="lifetime">&#39;a</span>&gt; {
-    inner: CharsAndLine&lt;<span class="lifetime">&#39;a</span>&gt;,
+</span><span class="kw">pub struct </span>SkipBackslashNewline&lt;<span class="lifetime">'a</span>&gt; {
+    inner: CharsAndLine&lt;<span class="lifetime">'a</span>&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; SkipBackslashNewline&lt;<span class="lifetime">&#39;a</span>&gt; {
-    <span class="kw">pub fn </span>new(input: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>str) -&gt; <span class="self">Self </span>{
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; SkipBackslashNewline&lt;<span class="lifetime">'a</span>&gt; {
+    <span class="kw">pub fn </span>new(input: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>str) -&gt; <span class="self">Self </span>{
         SkipBackslashNewline {
             inner: CharsAndLine::new(input),
         }
@@ -721,15 +722,15 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; Iterator <span class="kw">for </span>SkipBackslashNewline&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; Iterator <span class="kw">for </span>SkipBackslashNewline&lt;<span class="lifetime">'a</span>&gt; {
     <span class="kw">type </span>Item = CharAndLine;
 
     <span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>current = <span class="self">self</span>.inner.next()<span class="question-mark">?</span>;
 
-        <span class="kw">while </span>current.<span class="number">0 </span>== <span class="string">&#39;\\&#39; </span>{
+        <span class="kw">while </span>current.<span class="number">0 </span>== <span class="string">'\\' </span>{
             <span class="kw">let </span><span class="kw-2">mut </span>peek_inner = <span class="self">self</span>.inner.clone();
-            <span class="kw">if let </span><span class="prelude-val">Some</span>((<span class="string">&#39;\n&#39;</span>, <span class="kw">_</span>)) = peek_inner.next() {
+            <span class="kw">if let </span><span class="prelude-val">Some</span>((<span class="string">'\n'</span>, <span class="kw">_</span>)) = peek_inner.next() {
                 <span class="self">self</span>.inner = peek_inner;
                 current = <span class="self">self</span>.next()<span class="question-mark">?</span>;
             } <span class="kw">else </span>{
@@ -744,21 +745,21 @@
 <span class="comment">// An iterator that adds stage 7 on top of SkipBackslashNewline:
 //
 //   7. All comments are replaced with a single space. All (non-zero) characters and invalid UTF-8
-//      byte sequences are allowed within comments. &#39;//&#39; style comments include the initial &#39;//&#39;
-//      marker and continue up to, but not including, the terminating newline. &#39;/…/&#39; comments
+//      byte sequences are allowed within comments. '//' style comments include the initial '//'
+//      marker and continue up to, but not including, the terminating newline. '/…/' comments
 //      include both the start and end marker.
 </span><span class="attr">#[derive(Clone)]
-</span><span class="kw">pub struct </span>ReplaceComments&lt;<span class="lifetime">&#39;a</span>&gt; {
-    inner: SkipBackslashNewline&lt;<span class="lifetime">&#39;a</span>&gt;,
+</span><span class="kw">pub struct </span>ReplaceComments&lt;<span class="lifetime">'a</span>&gt; {
+    inner: SkipBackslashNewline&lt;<span class="lifetime">'a</span>&gt;,
 }
 
 <span class="comment">// The lexer wants to know when whitespace is a comment to know if a comment was ever processed.
-// To avoid adding state we use a sentinel value of &#39;\r&#39; because all &#39;\r&#39; have been consumed and
-// turned into &#39;\n&#39; by CharsAndLocation.
-</span><span class="kw">pub const </span>COMMENT_SENTINEL_VALUE: char = <span class="string">&#39;\r&#39;</span>;
+// To avoid adding state we use a sentinel value of '\r' because all '\r' have been consumed and
+// turned into '\n' by CharsAndLocation.
+</span><span class="kw">pub const </span>COMMENT_SENTINEL_VALUE: char = <span class="string">'\r'</span>;
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; ReplaceComments&lt;<span class="lifetime">&#39;a</span>&gt; {
-    <span class="kw">pub fn </span>new(input: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>str) -&gt; <span class="self">Self </span>{
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; ReplaceComments&lt;<span class="lifetime">'a</span>&gt; {
+    <span class="kw">pub fn </span>new(input: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>str) -&gt; <span class="self">Self </span>{
         ReplaceComments {
             inner: SkipBackslashNewline::new(input),
         }
@@ -769,13 +770,13 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; Iterator <span class="kw">for </span>ReplaceComments&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; Iterator <span class="kw">for </span>ReplaceComments&lt;<span class="lifetime">'a</span>&gt; {
     <span class="kw">type </span>Item = CharAndLine;
 
     <span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt; {
         <span class="kw">let </span>current = <span class="self">self</span>.inner.next()<span class="question-mark">?</span>;
 
-        <span class="kw">if </span>current.<span class="number">0 </span>!= <span class="string">&#39;/&#39; </span>{
+        <span class="kw">if </span>current.<span class="number">0 </span>!= <span class="string">'/' </span>{
             <span class="macro">debug_assert!</span>(current.<span class="number">0 </span>!= COMMENT_SENTINEL_VALUE);
             <span class="kw">return </span><span class="prelude-val">Some</span>(current);
         }
@@ -783,10 +784,10 @@
         <span class="kw">let </span><span class="kw-2">mut </span>peek_inner = <span class="self">self</span>.inner.clone();
         <span class="kw">match </span>peek_inner.next() {
             <span class="comment">// The // case, consume until but not including the next \n
-            </span><span class="prelude-val">Some</span>((<span class="string">&#39;/&#39;</span>, <span class="kw">_</span>)) =&gt; {
+            </span><span class="prelude-val">Some</span>((<span class="string">'/'</span>, <span class="kw">_</span>)) =&gt; {
                 <span class="self">self</span>.inner = peek_inner.clone();
                 <span class="kw">while let </span><span class="prelude-val">Some</span>((next, <span class="kw">_</span>)) = peek_inner.next() {
-                    <span class="kw">if </span>next == <span class="string">&#39;\n&#39; </span>{
+                    <span class="kw">if </span>next == <span class="string">'\n' </span>{
                         <span class="kw">break</span>;
                     }
                     <span class="self">self</span>.inner = peek_inner.clone();
@@ -795,13 +796,13 @@
                 <span class="prelude-val">Some</span>((COMMENT_SENTINEL_VALUE, current.<span class="number">1</span>))
             }
             <span class="comment">// The /*, consume until the next */
-            </span><span class="prelude-val">Some</span>((<span class="string">&#39;*&#39;</span>, <span class="kw">_</span>)) =&gt; {
+            </span><span class="prelude-val">Some</span>((<span class="string">'*'</span>, <span class="kw">_</span>)) =&gt; {
                 <span class="kw">let </span><span class="kw-2">mut </span>was_star = <span class="bool-val">false</span>;
                 <span class="kw">while let </span><span class="prelude-val">Some</span>((next, <span class="kw">_</span>)) = peek_inner.next() {
-                    <span class="kw">if </span>was_star &amp;&amp; next == <span class="string">&#39;/&#39; </span>{
+                    <span class="kw">if </span>was_star &amp;&amp; next == <span class="string">'/' </span>{
                         <span class="kw">break</span>;
                     }
-                    was_star = next == <span class="string">&#39;*&#39;</span>;
+                    was_star = next == <span class="string">'*'</span>;
                 }
                 <span class="self">self</span>.inner = peek_inner;
 
@@ -822,17 +823,17 @@
 // `Lexer`. It looks like a Peekable&lt;Iterator&lt;char&gt;&gt; with `next_char` and `peek_char` but also
 // allows querying the last seen/consumed lines / offset.
 </span><span class="attr">#[derive(Clone)]
-</span><span class="kw">struct </span>LexerCharIterator&lt;<span class="lifetime">&#39;a</span>&gt; {
-    inner: ReplaceComments&lt;<span class="lifetime">&#39;a</span>&gt;,
+</span><span class="kw">struct </span>LexerCharIterator&lt;<span class="lifetime">'a</span>&gt; {
+    inner: ReplaceComments&lt;<span class="lifetime">'a</span>&gt;,
     peeked: <span class="prelude-ty">Option</span>&lt;(CharAndLine, <span class="kw-2">*const </span>u8)&gt;,
     last_consumed: (CharAndLine, <span class="kw-2">*const </span>u8),
     input_start: <span class="kw-2">*const </span>u8,
 }
 
-<span class="kw">pub const </span>NONE_CONSUMED_SENTINEL_VALUE: char = <span class="string">&#39;\r&#39;</span>;
+<span class="kw">pub const </span>NONE_CONSUMED_SENTINEL_VALUE: char = <span class="string">'\r'</span>;
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; LexerCharIterator&lt;<span class="lifetime">&#39;a</span>&gt; {
-    <span class="kw">pub fn </span>new(input: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>str) -&gt; <span class="self">Self </span>{
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; LexerCharIterator&lt;<span class="lifetime">'a</span>&gt; {
+    <span class="kw">pub fn </span>new(input: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>str) -&gt; <span class="self">Self </span>{
         LexerCharIterator {
             inner: ReplaceComments::new(input),
             peeked: <span class="prelude-val">None</span>,
@@ -906,15 +907,15 @@
 }
 
 <span class="kw">pub type </span>LexerItem = <span class="prelude-ty">Result</span>&lt;Token, (PreprocessorError, Location)&gt;;
-<span class="kw">pub struct </span>Lexer&lt;<span class="lifetime">&#39;a</span>&gt; {
-    inner: LexerCharIterator&lt;<span class="lifetime">&#39;a</span>&gt;,
+<span class="kw">pub struct </span>Lexer&lt;<span class="lifetime">'a</span>&gt; {
+    inner: LexerCharIterator&lt;<span class="lifetime">'a</span>&gt;,
     leading_whitespace: bool,
     start_of_line: bool,
     had_comments: bool,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; Lexer&lt;<span class="lifetime">&#39;a</span>&gt; {
-    <span class="kw">pub fn </span>new(input: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>str) -&gt; <span class="self">Self </span>{
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; Lexer&lt;<span class="lifetime">'a</span>&gt; {
+    <span class="kw">pub fn </span>new(input: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>str) -&gt; <span class="self">Self </span>{
         <span class="comment">// TODO bail out on source that is too large.
         </span>Lexer {
             inner: LexerCharIterator::new(input),
@@ -933,7 +934,7 @@
     </span><span class="kw">fn </span>parse_identifier(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;TokenValue, PreprocessorError&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>identifier = String::default();
 
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(c) = <span class="self">self</span>.next_char_if(|c| c.is_xid_start() || c == <span class="string">&#39;_&#39;</span>) {
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(c) = <span class="self">self</span>.next_char_if(|c| c.is_xid_start() || c == <span class="string">'_'</span>) {
             identifier.push(c);
         }
 
@@ -945,22 +946,22 @@
     }
 
     <span class="kw">fn </span>parse_integer_signedness_suffix(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; bool {
-        <span class="self">self</span>.next_char_if(|c| c == <span class="string">&#39;u&#39; </span>|| c == <span class="string">&#39;U&#39;</span>).is_none()
+        <span class="self">self</span>.next_char_if(|c| c == <span class="string">'u' </span>|| c == <span class="string">'U'</span>).is_none()
     }
 
     <span class="kw">fn </span>parse_integer_width_suffix(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;i32, PreprocessorError&gt; {
         <span class="kw">match </span><span class="self">self</span>.inner.peek_char() {
-            <span class="prelude-val">Some</span>(<span class="string">&#39;l&#39;</span>) | <span class="prelude-val">Some</span>(<span class="string">&#39;L&#39;</span>) =&gt; <span class="prelude-val">Err</span>(PreprocessorError::NotSupported64BitLiteral),
-            <span class="prelude-val">Some</span>(<span class="string">&#39;s&#39;</span>) | <span class="prelude-val">Some</span>(<span class="string">&#39;S&#39;</span>) =&gt; <span class="prelude-val">Err</span>(PreprocessorError::NotSupported16BitLiteral),
+            <span class="prelude-val">Some</span>(<span class="string">'l'</span>) | <span class="prelude-val">Some</span>(<span class="string">'L'</span>) =&gt; <span class="prelude-val">Err</span>(PreprocessorError::NotSupported64BitLiteral),
+            <span class="prelude-val">Some</span>(<span class="string">'s'</span>) | <span class="prelude-val">Some</span>(<span class="string">'S'</span>) =&gt; <span class="prelude-val">Err</span>(PreprocessorError::NotSupported16BitLiteral),
             <span class="kw">_ </span>=&gt; <span class="prelude-val">Ok</span>(<span class="number">32</span>),
         }
     }
 
     <span class="kw">fn </span>parse_float_width_suffix(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;i32, PreprocessorError&gt; {
         <span class="kw">match </span><span class="self">self</span>.inner.peek_char() {
-            <span class="prelude-val">Some</span>(<span class="string">&#39;l&#39;</span>) | <span class="prelude-val">Some</span>(<span class="string">&#39;L&#39;</span>) =&gt; <span class="prelude-val">Err</span>(PreprocessorError::NotSupported64BitLiteral),
-            <span class="prelude-val">Some</span>(<span class="string">&#39;h&#39;</span>) | <span class="prelude-val">Some</span>(<span class="string">&#39;H&#39;</span>) =&gt; <span class="prelude-val">Err</span>(PreprocessorError::NotSupported16BitLiteral),
-            <span class="prelude-val">Some</span>(<span class="string">&#39;f&#39;</span>) | <span class="prelude-val">Some</span>(<span class="string">&#39;F&#39;</span>) =&gt; {
+            <span class="prelude-val">Some</span>(<span class="string">'l'</span>) | <span class="prelude-val">Some</span>(<span class="string">'L'</span>) =&gt; <span class="prelude-val">Err</span>(PreprocessorError::NotSupported64BitLiteral),
+            <span class="prelude-val">Some</span>(<span class="string">'h'</span>) | <span class="prelude-val">Some</span>(<span class="string">'H'</span>) =&gt; <span class="prelude-val">Err</span>(PreprocessorError::NotSupported16BitLiteral),
+            <span class="prelude-val">Some</span>(<span class="string">'f'</span>) | <span class="prelude-val">Some</span>(<span class="string">'F'</span>) =&gt; {
                 <span class="self">self</span>.inner.next_char();
                 <span class="prelude-val">Ok</span>(<span class="number">32</span>)
             }
@@ -992,66 +993,66 @@
         raw.push(first_char);
 
         <span class="comment">// Handle hexadecimal numbers that needs to consume a..f in addition to digits.
-        </span><span class="kw">if </span>first_char == <span class="string">&#39;0&#39; </span>{
+        </span><span class="kw">if </span>first_char == <span class="string">'0' </span>{
             <span class="kw">match </span><span class="self">self</span>.inner.peek_char() {
-                <span class="prelude-val">Some</span>(<span class="string">&#39;x&#39;</span>) | <span class="prelude-val">Some</span>(<span class="string">&#39;X&#39;</span>) =&gt; {
+                <span class="prelude-val">Some</span>(<span class="string">'x'</span>) | <span class="prelude-val">Some</span>(<span class="string">'X'</span>) =&gt; {
                     <span class="self">self</span>.inner.next_char();
 
-                    raw += <span class="kw-2">&amp;</span><span class="self">self</span>.consume_chars(|c| <span class="macro">matches!</span>(c, <span class="string">&#39;0&#39;</span>..=<span class="string">&#39;9&#39; </span>| <span class="string">&#39;a&#39;</span>..=<span class="string">&#39;f&#39; </span>| <span class="string">&#39;A&#39;</span>..=<span class="string">&#39;F&#39;</span>));
+                    raw += <span class="kw-2">&amp;</span><span class="self">self</span>.consume_chars(|c| <span class="macro">matches!</span>(c, <span class="string">'0'</span>..=<span class="string">'9' </span>| <span class="string">'a'</span>..=<span class="string">'f' </span>| <span class="string">'A'</span>..=<span class="string">'F'</span>));
                     integer_radix = <span class="number">16</span>;
                 }
 
                 <span class="comment">// Octal numbers can also be the prefix of floats, so we need to parse all digits
                 // and not just 0..7 in case it is a float like 00009.0f, the parsing of all digits
                 // is done below, but we still need to remember the radix.
-                </span><span class="prelude-val">Some</span>(<span class="string">&#39;0&#39;</span>..=<span class="string">&#39;9&#39;</span>) =&gt; {
+                </span><span class="prelude-val">Some</span>(<span class="string">'0'</span>..=<span class="string">'9'</span>) =&gt; {
                     integer_radix = <span class="number">8</span>;
                 }
                 <span class="kw">_ </span>=&gt; {}
             };
         }
 
-        <span class="kw">if </span>first_char == <span class="string">&#39;.&#39; </span>{
+        <span class="kw">if </span>first_char == <span class="string">'.' </span>{
             is_float = <span class="bool-val">true</span>;
         } <span class="kw">else </span>{
             <span class="comment">// Parse any digits at the end of integers, or for the non-fractional part of floats.
-            </span>raw += <span class="kw-2">&amp;</span><span class="self">self</span>.consume_chars(|c| (<span class="string">&#39;0&#39;</span>..=<span class="string">&#39;9&#39;</span>).contains(<span class="kw-2">&amp;</span>c));
+            </span>raw += <span class="kw-2">&amp;</span><span class="self">self</span>.consume_chars(|c| (<span class="string">'0'</span>..=<span class="string">'9'</span>).contains(<span class="kw-2">&amp;</span>c));
 
-            <span class="kw">if </span><span class="self">self</span>.next_char_if(|c| c == <span class="string">&#39;.&#39;</span>).is_some() {
-                raw.push(<span class="string">&#39;.&#39;</span>);
+            <span class="kw">if </span><span class="self">self</span>.next_char_if(|c| c == <span class="string">'.'</span>).is_some() {
+                raw.push(<span class="string">'.'</span>);
                 is_float = <span class="bool-val">true</span>;
             }
         }
 
-        <span class="comment">// At this point either we&#39;re an integer missing only suffixes, or we&#39;re a float with
+        <span class="comment">// At this point either we're an integer missing only suffixes, or we're a float with
         // everything up to the . consumed.
         </span><span class="kw">if </span>is_float {
-            raw += <span class="kw-2">&amp;</span><span class="self">self</span>.consume_chars(|c| (<span class="string">&#39;0&#39;</span>..=<span class="string">&#39;9&#39;</span>).contains(<span class="kw-2">&amp;</span>c));
+            raw += <span class="kw-2">&amp;</span><span class="self">self</span>.consume_chars(|c| (<span class="string">'0'</span>..=<span class="string">'9'</span>).contains(<span class="kw-2">&amp;</span>c));
         }
 
-        <span class="comment">// Handle scientific notation with a (e|E)(+|-|)\d+ suffix when we&#39;re a float or an
+        <span class="comment">// Handle scientific notation with a (e|E)(+|-|)\d+ suffix when we're a float or an
         // an integer that could turn into a float if we add a exponent to it (so 0x1E-1
-        // isn&#39;t recognized as a float).
+        // isn't recognized as a float).
         </span><span class="kw">if </span>(is_float || integer_radix == <span class="number">8 </span>|| integer_radix == <span class="number">10</span>)
-            &amp;&amp; <span class="self">self</span>.next_char_if(|c| c == <span class="string">&#39;e&#39; </span>|| c == <span class="string">&#39;E&#39;</span>).is_some()
+            &amp;&amp; <span class="self">self</span>.next_char_if(|c| c == <span class="string">'e' </span>|| c == <span class="string">'E'</span>).is_some()
         {
-            raw.push(<span class="string">&#39;e&#39;</span>);
+            raw.push(<span class="string">'e'</span>);
             is_float = <span class="bool-val">true</span>;
 
             <span class="kw">match </span><span class="self">self</span>.inner.peek_char() {
-                <span class="prelude-val">Some</span>(<span class="string">&#39;+&#39;</span>) =&gt; {
+                <span class="prelude-val">Some</span>(<span class="string">'+'</span>) =&gt; {
                     <span class="self">self</span>.inner.next_char();
-                    raw.push(<span class="string">&#39;+&#39;</span>);
+                    raw.push(<span class="string">'+'</span>);
                 }
-                <span class="prelude-val">Some</span>(<span class="string">&#39;-&#39;</span>) =&gt; {
+                <span class="prelude-val">Some</span>(<span class="string">'-'</span>) =&gt; {
                     <span class="self">self</span>.inner.next_char();
-                    raw.push(<span class="string">&#39;-&#39;</span>);
+                    raw.push(<span class="string">'-'</span>);
                 }
                 <span class="kw">_ </span>=&gt; {}
             }
 
             <span class="comment">// TODO: what should we do when there is no number after the exponent?
-            </span>raw += <span class="kw-2">&amp;</span><span class="self">self</span>.consume_chars(|c| (<span class="string">&#39;0&#39;</span>..=<span class="string">&#39;9&#39;</span>).contains(<span class="kw-2">&amp;</span>c));
+            </span>raw += <span class="kw-2">&amp;</span><span class="self">self</span>.consume_chars(|c| (<span class="string">'0'</span>..=<span class="string">'9'</span>).contains(<span class="kw-2">&amp;</span>c));
         }
 
         <span class="kw">if </span>is_float {
@@ -1068,7 +1069,7 @@
             <span class="kw">let </span>signed = <span class="self">self</span>.parse_integer_signedness_suffix();
             <span class="kw">let </span>width = <span class="self">self</span>.parse_integer_width_suffix()<span class="question-mark">?</span>;
 
-            <span class="comment">// Skip the initial 0 in hexa or octal (in hexa we never added the &#39;x&#39;).
+            <span class="comment">// Skip the initial 0 in hexa or octal (in hexa we never added the 'x').
             </span><span class="kw">if </span>integer_radix != <span class="number">10 </span>{
                 raw = raw.split_off(<span class="number">1</span>);
             }
@@ -1085,66 +1086,66 @@
     <span class="kw">fn </span>parse_punctuation(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;TokenValue, PreprocessorError&gt; {
         <span class="kw">let </span>save_point = <span class="self">self</span>.inner.clone();
 
-        <span class="kw">let </span>char0 = <span class="self">self</span>.inner.next_char().unwrap_or(<span class="string">&#39;\0&#39;</span>);
-        <span class="kw">let </span>char1 = <span class="self">self</span>.inner.next_char().unwrap_or(<span class="string">&#39;\0&#39;</span>);
-        <span class="kw">let </span>char2 = <span class="self">self</span>.inner.next_char().unwrap_or(<span class="string">&#39;\0&#39;</span>);
+        <span class="kw">let </span>char0 = <span class="self">self</span>.inner.next_char().unwrap_or(<span class="string">'\0'</span>);
+        <span class="kw">let </span>char1 = <span class="self">self</span>.inner.next_char().unwrap_or(<span class="string">'\0'</span>);
+        <span class="kw">let </span>char2 = <span class="self">self</span>.inner.next_char().unwrap_or(<span class="string">'\0'</span>);
 
         <span class="kw">let </span>maybe_punct = <span class="kw">match </span>(char0, char1, char2) {
-            (<span class="string">&#39;&lt;&#39;</span>, <span class="string">&#39;&lt;&#39;</span>, <span class="string">&#39;=&#39;</span>) =&gt; <span class="prelude-val">Some</span>((Punct::LeftShiftAssign, <span class="number">3</span>)),
-            (<span class="string">&#39;&lt;&#39;</span>, <span class="string">&#39;&lt;&#39;</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::LeftShift, <span class="number">2</span>)),
-            (<span class="string">&#39;&lt;&#39;</span>, <span class="string">&#39;=&#39;</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::LessEqual, <span class="number">2</span>)),
-            (<span class="string">&#39;&lt;&#39;</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::LeftAngle, <span class="number">1</span>)),
+            (<span class="string">'&lt;'</span>, <span class="string">'&lt;'</span>, <span class="string">'='</span>) =&gt; <span class="prelude-val">Some</span>((Punct::LeftShiftAssign, <span class="number">3</span>)),
+            (<span class="string">'&lt;'</span>, <span class="string">'&lt;'</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::LeftShift, <span class="number">2</span>)),
+            (<span class="string">'&lt;'</span>, <span class="string">'='</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::LessEqual, <span class="number">2</span>)),
+            (<span class="string">'&lt;'</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::LeftAngle, <span class="number">1</span>)),
 
-            (<span class="string">&#39;&gt;&#39;</span>, <span class="string">&#39;&gt;&#39;</span>, <span class="string">&#39;=&#39;</span>) =&gt; <span class="prelude-val">Some</span>((Punct::RightShiftAssign, <span class="number">3</span>)),
-            (<span class="string">&#39;&gt;&#39;</span>, <span class="string">&#39;&gt;&#39;</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::RightShift, <span class="number">2</span>)),
-            (<span class="string">&#39;&gt;&#39;</span>, <span class="string">&#39;=&#39;</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::GreaterEqual, <span class="number">2</span>)),
-            (<span class="string">&#39;&gt;&#39;</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::RightAngle, <span class="number">1</span>)),
+            (<span class="string">'&gt;'</span>, <span class="string">'&gt;'</span>, <span class="string">'='</span>) =&gt; <span class="prelude-val">Some</span>((Punct::RightShiftAssign, <span class="number">3</span>)),
+            (<span class="string">'&gt;'</span>, <span class="string">'&gt;'</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::RightShift, <span class="number">2</span>)),
+            (<span class="string">'&gt;'</span>, <span class="string">'='</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::GreaterEqual, <span class="number">2</span>)),
+            (<span class="string">'&gt;'</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::RightAngle, <span class="number">1</span>)),
 
-            (<span class="string">&#39;+&#39;</span>, <span class="string">&#39;+&#39;</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::Increment, <span class="number">2</span>)),
-            (<span class="string">&#39;+&#39;</span>, <span class="string">&#39;=&#39;</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::AddAssign, <span class="number">2</span>)),
-            (<span class="string">&#39;+&#39;</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::Plus, <span class="number">1</span>)),
+            (<span class="string">'+'</span>, <span class="string">'+'</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::Increment, <span class="number">2</span>)),
+            (<span class="string">'+'</span>, <span class="string">'='</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::AddAssign, <span class="number">2</span>)),
+            (<span class="string">'+'</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::Plus, <span class="number">1</span>)),
 
-            (<span class="string">&#39;-&#39;</span>, <span class="string">&#39;-&#39;</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::Decrement, <span class="number">2</span>)),
-            (<span class="string">&#39;-&#39;</span>, <span class="string">&#39;=&#39;</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::SubAssign, <span class="number">2</span>)),
-            (<span class="string">&#39;-&#39;</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::Minus, <span class="number">1</span>)),
+            (<span class="string">'-'</span>, <span class="string">'-'</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::Decrement, <span class="number">2</span>)),
+            (<span class="string">'-'</span>, <span class="string">'='</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::SubAssign, <span class="number">2</span>)),
+            (<span class="string">'-'</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::Minus, <span class="number">1</span>)),
 
-            (<span class="string">&#39;&amp;&#39;</span>, <span class="string">&#39;&amp;&#39;</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::LogicalAnd, <span class="number">2</span>)),
-            (<span class="string">&#39;&amp;&#39;</span>, <span class="string">&#39;=&#39;</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::AndAssign, <span class="number">2</span>)),
-            (<span class="string">&#39;&amp;&#39;</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::Ampersand, <span class="number">1</span>)),
+            (<span class="string">'&amp;'</span>, <span class="string">'&amp;'</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::LogicalAnd, <span class="number">2</span>)),
+            (<span class="string">'&amp;'</span>, <span class="string">'='</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::AndAssign, <span class="number">2</span>)),
+            (<span class="string">'&amp;'</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::Ampersand, <span class="number">1</span>)),
 
-            (<span class="string">&#39;|&#39;</span>, <span class="string">&#39;|&#39;</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::LogicalOr, <span class="number">2</span>)),
-            (<span class="string">&#39;|&#39;</span>, <span class="string">&#39;=&#39;</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::OrAssign, <span class="number">2</span>)),
-            (<span class="string">&#39;|&#39;</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::Pipe, <span class="number">1</span>)),
+            (<span class="string">'|'</span>, <span class="string">'|'</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::LogicalOr, <span class="number">2</span>)),
+            (<span class="string">'|'</span>, <span class="string">'='</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::OrAssign, <span class="number">2</span>)),
+            (<span class="string">'|'</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::Pipe, <span class="number">1</span>)),
 
-            (<span class="string">&#39;^&#39;</span>, <span class="string">&#39;^&#39;</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::LogicalXor, <span class="number">2</span>)),
-            (<span class="string">&#39;^&#39;</span>, <span class="string">&#39;=&#39;</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::XorAssign, <span class="number">2</span>)),
-            (<span class="string">&#39;^&#39;</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::Caret, <span class="number">1</span>)),
+            (<span class="string">'^'</span>, <span class="string">'^'</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::LogicalXor, <span class="number">2</span>)),
+            (<span class="string">'^'</span>, <span class="string">'='</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::XorAssign, <span class="number">2</span>)),
+            (<span class="string">'^'</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::Caret, <span class="number">1</span>)),
 
-            (<span class="string">&#39;=&#39;</span>, <span class="string">&#39;=&#39;</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::EqualEqual, <span class="number">2</span>)),
-            (<span class="string">&#39;=&#39;</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::Equal, <span class="number">1</span>)),
-            (<span class="string">&#39;!&#39;</span>, <span class="string">&#39;=&#39;</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::NotEqual, <span class="number">2</span>)),
-            (<span class="string">&#39;!&#39;</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::Bang, <span class="number">1</span>)),
+            (<span class="string">'='</span>, <span class="string">'='</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::EqualEqual, <span class="number">2</span>)),
+            (<span class="string">'='</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::Equal, <span class="number">1</span>)),
+            (<span class="string">'!'</span>, <span class="string">'='</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::NotEqual, <span class="number">2</span>)),
+            (<span class="string">'!'</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::Bang, <span class="number">1</span>)),
 
-            (<span class="string">&#39;*&#39;</span>, <span class="string">&#39;=&#39;</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::MulAssign, <span class="number">2</span>)),
-            (<span class="string">&#39;*&#39;</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::Star, <span class="number">1</span>)),
-            (<span class="string">&#39;/&#39;</span>, <span class="string">&#39;=&#39;</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::DivAssign, <span class="number">2</span>)),
-            (<span class="string">&#39;/&#39;</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::Slash, <span class="number">1</span>)),
-            (<span class="string">&#39;%&#39;</span>, <span class="string">&#39;=&#39;</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::ModAssign, <span class="number">2</span>)),
-            (<span class="string">&#39;%&#39;</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::Percent, <span class="number">1</span>)),
+            (<span class="string">'*'</span>, <span class="string">'='</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::MulAssign, <span class="number">2</span>)),
+            (<span class="string">'*'</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::Star, <span class="number">1</span>)),
+            (<span class="string">'/'</span>, <span class="string">'='</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::DivAssign, <span class="number">2</span>)),
+            (<span class="string">'/'</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::Slash, <span class="number">1</span>)),
+            (<span class="string">'%'</span>, <span class="string">'='</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::ModAssign, <span class="number">2</span>)),
+            (<span class="string">'%'</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::Percent, <span class="number">1</span>)),
 
-            (<span class="string">&#39;(&#39;</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::LeftParen, <span class="number">1</span>)),
-            (<span class="string">&#39;)&#39;</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::RightParen, <span class="number">1</span>)),
-            (<span class="string">&#39;{&#39;</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::LeftBrace, <span class="number">1</span>)),
-            (<span class="string">&#39;}&#39;</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::RightBrace, <span class="number">1</span>)),
-            (<span class="string">&#39;[&#39;</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::LeftBracket, <span class="number">1</span>)),
-            (<span class="string">&#39;]&#39;</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::RightBracket, <span class="number">1</span>)),
+            (<span class="string">'('</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::LeftParen, <span class="number">1</span>)),
+            (<span class="string">')'</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::RightParen, <span class="number">1</span>)),
+            (<span class="string">'{'</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::LeftBrace, <span class="number">1</span>)),
+            (<span class="string">'}'</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::RightBrace, <span class="number">1</span>)),
+            (<span class="string">'['</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::LeftBracket, <span class="number">1</span>)),
+            (<span class="string">']'</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::RightBracket, <span class="number">1</span>)),
 
-            (<span class="string">&#39;,&#39;</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::Comma, <span class="number">1</span>)),
-            (<span class="string">&#39;;&#39;</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::Semicolon, <span class="number">1</span>)),
-            (<span class="string">&#39;:&#39;</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::Colon, <span class="number">1</span>)),
-            (<span class="string">&#39;~&#39;</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::Tilde, <span class="number">1</span>)),
-            (<span class="string">&#39;?&#39;</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::Question, <span class="number">1</span>)),
-            <span class="comment">// Note that Dot (&quot;.&quot;) is handled in Lexer::next since it can be
+            (<span class="string">','</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::Comma, <span class="number">1</span>)),
+            (<span class="string">';'</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::Semicolon, <span class="number">1</span>)),
+            (<span class="string">':'</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::Colon, <span class="number">1</span>)),
+            (<span class="string">'~'</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::Tilde, <span class="number">1</span>)),
+            (<span class="string">'?'</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((Punct::Question, <span class="number">1</span>)),
+            <span class="comment">// Note that Dot (".") is handled in Lexer::next since it can be
             // either punctuation or the start of a floating point number.
             </span><span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
         };
@@ -1155,7 +1156,7 @@
                 <span class="self">self</span>.inner.next_char();
             }
             <span class="prelude-val">Ok</span>(punct.into())
-        } <span class="kw">else if </span>char0 == <span class="string">&#39;#&#39; </span>{
+        } <span class="kw">else if </span>char0 == <span class="string">'#' </span>{
             <span class="self">self</span>.inner = save_point;
             <span class="self">self</span>.inner.next_char();
             <span class="prelude-val">Ok</span>(TokenValue::Hash)
@@ -1165,7 +1166,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; Iterator <span class="kw">for </span>Lexer&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; Iterator <span class="kw">for </span>Lexer&lt;<span class="lifetime">'a</span>&gt; {
     <span class="kw">type </span>Item = LexerItem;
 
     <span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt; {
@@ -1183,7 +1184,7 @@
             <span class="self">self</span>.start_of_line = <span class="bool-val">false</span>;
 
             <span class="kw">let </span>value = <span class="kw">match </span>current_char {
-                <span class="string">&#39; &#39; </span>| <span class="string">&#39;\t&#39; </span>| <span class="string">&#39;\x0b&#39; </span>| <span class="string">&#39;\x0c&#39; </span>| COMMENT_SENTINEL_VALUE =&gt; {
+                <span class="string">' ' </span>| <span class="string">'\t' </span>| <span class="string">'\x0b' </span>| <span class="string">'\x0c' </span>| COMMENT_SENTINEL_VALUE =&gt; {
                     <span class="kw">if </span>current_char == COMMENT_SENTINEL_VALUE {
                         <span class="self">self</span>.had_comments = <span class="bool-val">true</span>;
                     }
@@ -1192,30 +1193,30 @@
                     <span class="self">self</span>.inner.next_char();
                     <span class="kw">continue</span>;
                 }
-                <span class="string">&#39;\n&#39; </span>=&gt; {
+                <span class="string">'\n' </span>=&gt; {
                     <span class="self">self</span>.leading_whitespace = <span class="bool-val">true</span>;
                     <span class="self">self</span>.start_of_line = <span class="bool-val">true</span>;
                     <span class="self">self</span>.inner.next_char();
                     <span class="prelude-val">Ok</span>(TokenValue::NewLine)
                 }
 
-                c @ <span class="string">&#39;0&#39;</span>..=<span class="string">&#39;9&#39; </span>=&gt; {
+                c @ <span class="string">'0'</span>..=<span class="string">'9' </span>=&gt; {
                     <span class="self">self</span>.inner.next_char();
                     <span class="self">self</span>.parse_number(c)
                 }
 
                 <span class="comment">// Special case . as a punctuation because it can be the start of a float.
-                </span><span class="string">&#39;.&#39; </span>=&gt; {
+                </span><span class="string">'.' </span>=&gt; {
                     <span class="self">self</span>.inner.next_char();
 
                     <span class="kw">match </span><span class="self">self</span>.inner.peek_char() {
-                        <span class="prelude-val">Some</span>(<span class="string">&#39;0&#39;</span>..=<span class="string">&#39;9&#39;</span>) =&gt; <span class="self">self</span>.parse_number(<span class="string">&#39;.&#39;</span>),
+                        <span class="prelude-val">Some</span>(<span class="string">'0'</span>..=<span class="string">'9'</span>) =&gt; <span class="self">self</span>.parse_number(<span class="string">'.'</span>),
                         <span class="kw">_ </span>=&gt; <span class="prelude-val">Ok</span>(TokenValue::Punct(Punct::Dot)),
                     }
                 }
                 <span class="kw">_ </span>=&gt; {
                     <span class="comment">// TODO: see todo in `parse_identifier` for information
-                    </span><span class="kw">if </span>current_char.is_xid_start() || current_char == <span class="string">&#39;_&#39; </span>{
+                    </span><span class="kw">if </span>current_char.is_xid_start() || current_char == <span class="string">'_' </span>{
                         <span class="self">self</span>.parse_identifier()
                     } <span class="kw">else </span>{
                         <span class="self">self</span>.parse_punctuation()

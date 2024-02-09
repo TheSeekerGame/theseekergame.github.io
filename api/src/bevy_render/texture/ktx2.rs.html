@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy-3e956806168b8470/b5b6ea3/crates/bevy_render/src/texture/ktx2.rs`."><title>ktx2.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_render" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy-3e956806168b8470/b5b6ea3/crates/bevy_render/src/texture/ktx2.rs`."><title>ktx2.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_render" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1493,16 +1494,16 @@
 <a href="#1493" id="1493">1493</a>
 <a href="#1494" id="1494">1494</a>
 <a href="#1495" id="1495">1495</a>
-</pre></div><pre class="rust"><code><span class="attr">#[cfg(any(feature = <span class="string">&quot;flate2&quot;</span>, feature = <span class="string">&quot;ruzstd&quot;</span>))]
+</pre></div><pre class="rust"><code><span class="attr">#[cfg(any(feature = <span class="string">"flate2"</span>, feature = <span class="string">"ruzstd"</span>))]
 </span><span class="kw">use </span>std::io::Read;
 
 <span class="kw">use </span><span class="kw">crate</span>::color::SrgbColorSpace;
-<span class="attr">#[cfg(feature = <span class="string">&quot;basis-universal&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"basis-universal"</span>)]
 </span><span class="kw">use </span>basis_universal::{
     DecodeFlags, LowLevelUastcTranscoder, SliceParametersUastc, TranscoderBlockFormat,
 };
 <span class="kw">use </span>bevy_utils::default;
-<span class="attr">#[cfg(any(feature = <span class="string">&quot;flate2&quot;</span>, feature = <span class="string">&quot;ruzstd&quot;</span>))]
+<span class="attr">#[cfg(any(feature = <span class="string">"flate2"</span>, feature = <span class="string">"ruzstd"</span>))]
 </span><span class="kw">use </span>ktx2::SupercompressionScheme;
 <span class="kw">use </span>ktx2::{
     BasicDataFormatDescriptor, ChannelTypeQualifiers, ColorModel, DataFormatDescriptorHeader,
@@ -1521,7 +1522,7 @@
     is_srgb: bool,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;Image, TextureError&gt; {
     <span class="kw">let </span>ktx2 = ktx2::Reader::new(buffer)
-        .map_err(|err| TextureError::InvalidData(<span class="macro">format!</span>(<span class="string">&quot;Failed to parse ktx2 file: {err:?}&quot;</span>)))<span class="question-mark">?</span>;
+        .map_err(|err| TextureError::InvalidData(<span class="macro">format!</span>(<span class="string">"Failed to parse ktx2 file: {err:?}"</span>)))<span class="question-mark">?</span>;
     <span class="kw">let </span>Header {
         pixel_width: width,
         pixel_height: height,
@@ -1541,18 +1542,18 @@
     <span class="kw">if let </span><span class="prelude-val">Some</span>(supercompression_scheme) = supercompression_scheme {
         <span class="kw">for </span>(_level, _level_data) <span class="kw">in </span>ktx2.levels().enumerate() {
             <span class="kw">match </span>supercompression_scheme {
-                <span class="attr">#[cfg(feature = <span class="string">&quot;flate2&quot;</span>)]
+                <span class="attr">#[cfg(feature = <span class="string">"flate2"</span>)]
                 </span>SupercompressionScheme::ZLIB =&gt; {
                     <span class="kw">let </span><span class="kw-2">mut </span>decoder = flate2::bufread::ZlibDecoder::new(_level_data);
                     <span class="kw">let </span><span class="kw-2">mut </span>decompressed = Vec::new();
                     decoder.read_to_end(<span class="kw-2">&amp;mut </span>decompressed).map_err(|err| {
                         TextureError::SuperDecompressionError(<span class="macro">format!</span>(
-                            <span class="string">&quot;Failed to decompress {supercompression_scheme:?} for mip {_level}: {err:?}&quot;</span>,
+                            <span class="string">"Failed to decompress {supercompression_scheme:?} for mip {_level}: {err:?}"</span>,
                         ))
                     })<span class="question-mark">?</span>;
                     levels.push(decompressed);
                 }
-                <span class="attr">#[cfg(feature = <span class="string">&quot;ruzstd&quot;</span>)]
+                <span class="attr">#[cfg(feature = <span class="string">"ruzstd"</span>)]
                 </span>SupercompressionScheme::Zstandard =&gt; {
                     <span class="kw">let </span><span class="kw-2">mut </span>cursor = std::io::Cursor::new(_level_data);
                     <span class="kw">let </span><span class="kw-2">mut </span>decoder = ruzstd::StreamingDecoder::new(<span class="kw-2">&amp;mut </span>cursor)
@@ -1560,14 +1561,14 @@
                     <span class="kw">let </span><span class="kw-2">mut </span>decompressed = Vec::new();
                     decoder.read_to_end(<span class="kw-2">&amp;mut </span>decompressed).map_err(|err| {
                         TextureError::SuperDecompressionError(<span class="macro">format!</span>(
-                            <span class="string">&quot;Failed to decompress {supercompression_scheme:?} for mip {_level}: {err:?}&quot;</span>,
+                            <span class="string">"Failed to decompress {supercompression_scheme:?} for mip {_level}: {err:?}"</span>,
                         ))
                     })<span class="question-mark">?</span>;
                     levels.push(decompressed);
                 }
                 <span class="kw">_ </span>=&gt; {
                     <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::SuperDecompressionError(<span class="macro">format!</span>(
-                        <span class="string">&quot;Unsupported supercompression scheme: {supercompression_scheme:?}&quot;</span>,
+                        <span class="string">"Unsupported supercompression scheme: {supercompression_scheme:?}"</span>,
                     )));
                 }
             }
@@ -1645,7 +1646,7 @@
                         TextureFormat::Rgba8Unorm
                     }
                 }
-                <span class="attr">#[cfg(feature = <span class="string">&quot;basis-universal&quot;</span>)]
+                <span class="attr">#[cfg(feature = <span class="string">"basis-universal"</span>)]
                 </span>TranscodeFormat::Uastc(data_format) =&gt; {
                     <span class="kw">let </span>(transcode_block_format, texture_format) =
                         get_transcoded_formats(supported_compressed_formats, data_format, is_srgb);
@@ -1691,7 +1692,7 @@
                                     .map(|<span class="kw-2">mut </span>transcoded_level| transcoded[level].append(<span class="kw-2">&amp;mut </span>transcoded_level))
                                     .map_err(|error| {
                                         TextureError::SuperDecompressionError(<span class="macro">format!</span>(
-                                            <span class="string">&quot;Failed to transcode mip level {level} from UASTC to {transcode_block_format:?}: {error:?}&quot;</span>,
+                                            <span class="string">"Failed to transcode mip level {level} from UASTC to {transcode_block_format:?}: {error:?}"</span>,
                                         ))
                                     })<span class="question-mark">?</span>;
                                 offset += level_bytes;
@@ -1714,7 +1715,7 @@
                     transcoded = levels.to_vec();
                     texture_format
                 }
-                <span class="attr">#[cfg(not(feature = <span class="string">&quot;basis-universal&quot;</span>))]
+                <span class="attr">#[cfg(not(feature = <span class="string">"basis-universal"</span>))]
                 </span><span class="kw">_ </span>=&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(error),
             };
             levels = transcoded;
@@ -1724,7 +1725,7 @@
     })<span class="question-mark">?</span>;
     <span class="kw">if </span>!supported_compressed_formats.supports(texture_format) {
         <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(<span class="macro">format!</span>(
-            <span class="string">&quot;Format not supported by this GPU: {texture_format:?}&quot;</span>,
+            <span class="string">"Format not supported by this GPU: {texture_format:?}"</span>,
         )));
     }
 
@@ -1805,7 +1806,7 @@
     <span class="prelude-val">Ok</span>(image)
 }
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;basis-universal&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"basis-universal"</span>)]
 </span><span class="kw">pub fn </span>get_transcoded_formats(
     supported_compressed_formats: CompressedImageFormats,
     data_format: DataFormat,
@@ -1898,7 +1899,7 @@
         <span class="kw">if </span>data_format_descriptor.header == DataFormatDescriptorHeader::BASIC {
             <span class="kw">let </span>basic_data_format_descriptor =
                 BasicDataFormatDescriptor::parse(data_format_descriptor.data)
-                    .map_err(|err| TextureError::InvalidData(<span class="macro">format!</span>(<span class="string">&quot;KTX2: {err:?}&quot;</span>)))<span class="question-mark">?</span>;
+                    .map_err(|err| TextureError::InvalidData(<span class="macro">format!</span>(<span class="string">"KTX2: {err:?}"</span>)))<span class="question-mark">?</span>;
             <span class="kw">let </span>sample_information = basic_data_format_descriptor
                 .sample_information()
                 .collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;();
@@ -1911,7 +1912,7 @@
     }
 
     <span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(
-        <span class="string">&quot;Unknown&quot;</span>.to_string(),
+        <span class="string">"Unknown"</span>.to_string(),
     ))
 }
 
@@ -1938,7 +1939,7 @@
         .contains(ChannelTypeQualifiers::EXPONENT)
     {
         <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(
-            <span class="string">&quot;Unsupported KTX2 channel type qualifier: exponent&quot;</span>.to_string(),
+            <span class="string">"Unsupported KTX2 channel type qualifier: exponent"</span>.to_string(),
         ));
     }
     <span class="prelude-val">Ok</span>(
@@ -1984,7 +1985,7 @@
                     <span class="comment">// Only red channel allowed
                     </span><span class="kw">if </span>sample_information[<span class="number">0</span>].channel_type != <span class="number">0 </span>{
                         <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(
-                            <span class="string">&quot;Only red-component single-component KTX2 RGBSDA formats supported&quot;
+                            <span class="string">"Only red-component single-component KTX2 RGBSDA formats supported"
                                 </span>.to_string(),
                         ));
                     }
@@ -1996,13 +1997,13 @@
                             DataType::Unorm =&gt; TextureFormat::R8Unorm,
                             DataType::UnormSrgb =&gt; {
                                 <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(
-                                    <span class="string">&quot;UnormSrgb not supported for R8&quot;</span>.to_string(),
+                                    <span class="string">"UnormSrgb not supported for R8"</span>.to_string(),
                                 ));
                             }
                             DataType::Snorm =&gt; TextureFormat::R8Snorm,
                             DataType::Float =&gt; {
                                 <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(
-                                    <span class="string">&quot;Float not supported for R8&quot;</span>.to_string(),
+                                    <span class="string">"Float not supported for R8"</span>.to_string(),
                                 ));
                             }
                             DataType::Uint =&gt; TextureFormat::R8Uint,
@@ -2012,7 +2013,7 @@
                             DataType::Unorm =&gt; TextureFormat::R16Unorm,
                             DataType::UnormSrgb =&gt; {
                                 <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(
-                                    <span class="string">&quot;UnormSrgb not supported for R16&quot;</span>.to_string(),
+                                    <span class="string">"UnormSrgb not supported for R16"</span>.to_string(),
                                 ));
                             }
                             DataType::Snorm =&gt; TextureFormat::R16Snorm,
@@ -2023,17 +2024,17 @@
                         <span class="number">32 </span>=&gt; <span class="kw">match </span>data_type {
                             DataType::Unorm =&gt; {
                                 <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(
-                                    <span class="string">&quot;Unorm not supported for R32&quot;</span>.to_string(),
+                                    <span class="string">"Unorm not supported for R32"</span>.to_string(),
                                 ));
                             }
                             DataType::UnormSrgb =&gt; {
                                 <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(
-                                    <span class="string">&quot;UnormSrgb not supported for R32&quot;</span>.to_string(),
+                                    <span class="string">"UnormSrgb not supported for R32"</span>.to_string(),
                                 ));
                             }
                             DataType::Snorm =&gt; {
                                 <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(
-                                    <span class="string">&quot;Snorm not supported for R32&quot;</span>.to_string(),
+                                    <span class="string">"Snorm not supported for R32"</span>.to_string(),
                                 ));
                             }
                             DataType::Float =&gt; TextureFormat::R32Float,
@@ -2042,7 +2043,7 @@
                         },
                         v =&gt; {
                             <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(<span class="macro">format!</span>(
-                                <span class="string">&quot;Unsupported sample bit length for RGBSDA 1-channel format: {v}&quot;</span>,
+                                <span class="string">"Unsupported sample bit length for RGBSDA 1-channel format: {v}"</span>,
                             )));
                         }
                     }
@@ -2053,7 +2054,7 @@
                         </span>|| sample_information[<span class="number">1</span>].channel_type != <span class="number">1
                     </span>{
                         <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(
-                            <span class="string">&quot;Only red-green-component two-component KTX2 RGBSDA formats supported&quot;
+                            <span class="string">"Only red-green-component two-component KTX2 RGBSDA formats supported"
                                 </span>.to_string(),
                         ));
                     }
@@ -2078,13 +2079,13 @@
                             DataType::Unorm =&gt; TextureFormat::Rg8Unorm,
                             DataType::UnormSrgb =&gt; {
                                 <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(
-                                    <span class="string">&quot;UnormSrgb not supported for Rg8&quot;</span>.to_string(),
+                                    <span class="string">"UnormSrgb not supported for Rg8"</span>.to_string(),
                                 ));
                             }
                             DataType::Snorm =&gt; TextureFormat::Rg8Snorm,
                             DataType::Float =&gt; {
                                 <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(
-                                    <span class="string">&quot;Float not supported for Rg8&quot;</span>.to_string(),
+                                    <span class="string">"Float not supported for Rg8"</span>.to_string(),
                                 ));
                             }
                             DataType::Uint =&gt; TextureFormat::Rg8Uint,
@@ -2094,7 +2095,7 @@
                             DataType::Unorm =&gt; TextureFormat::Rg16Unorm,
                             DataType::UnormSrgb =&gt; {
                                 <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(
-                                    <span class="string">&quot;UnormSrgb not supported for Rg16&quot;</span>.to_string(),
+                                    <span class="string">"UnormSrgb not supported for Rg16"</span>.to_string(),
                                 ));
                             }
                             DataType::Snorm =&gt; TextureFormat::Rg16Snorm,
@@ -2105,17 +2106,17 @@
                         <span class="number">32 </span>=&gt; <span class="kw">match </span>data_type {
                             DataType::Unorm =&gt; {
                                 <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(
-                                    <span class="string">&quot;Unorm not supported for Rg32&quot;</span>.to_string(),
+                                    <span class="string">"Unorm not supported for Rg32"</span>.to_string(),
                                 ));
                             }
                             DataType::UnormSrgb =&gt; {
                                 <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(
-                                    <span class="string">&quot;UnormSrgb not supported for Rg32&quot;</span>.to_string(),
+                                    <span class="string">"UnormSrgb not supported for Rg32"</span>.to_string(),
                                 ));
                             }
                             DataType::Snorm =&gt; {
                                 <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(
-                                    <span class="string">&quot;Snorm not supported for Rg32&quot;</span>.to_string(),
+                                    <span class="string">"Snorm not supported for Rg32"</span>.to_string(),
                                 ));
                             }
                             DataType::Float =&gt; TextureFormat::Rg32Float,
@@ -2124,7 +2125,7 @@
                         },
                         v =&gt; {
                             <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(<span class="macro">format!</span>(
-                                <span class="string">&quot;Unsupported sample bit length for RGBSDA 2-channel format: {v}&quot;</span>,
+                                <span class="string">"Unsupported sample bit length for RGBSDA 2-channel format: {v}"</span>,
                             )));
                         }
                     }
@@ -2158,7 +2159,7 @@
                         ));
                     } <span class="kw">else </span>{
                         <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(
-                            <span class="string">&quot;3-component formats not supported&quot;</span>.to_string(),
+                            <span class="string">"3-component formats not supported"</span>.to_string(),
                         ));
                     }
                 }
@@ -2225,13 +2226,13 @@
                                     TextureFormat::Rgba8Snorm
                                 } <span class="kw">else </span>{
                                     <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(
-                                        <span class="string">&quot;Bgra8 not supported for Snorm&quot;</span>.to_string(),
+                                        <span class="string">"Bgra8 not supported for Snorm"</span>.to_string(),
                                     ));
                                 }
                             }
                             DataType::Float =&gt; {
                                 <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(
-                                    <span class="string">&quot;Float not supported for Rgba8/Bgra8&quot;</span>.to_string(),
+                                    <span class="string">"Float not supported for Rgba8/Bgra8"</span>.to_string(),
                                 ));
                             }
                             DataType::Uint =&gt; {
@@ -2245,7 +2246,7 @@
                                     }
                                 } <span class="kw">else </span>{
                                     <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(
-                                        <span class="string">&quot;Bgra8 not supported for Uint&quot;</span>.to_string(),
+                                        <span class="string">"Bgra8 not supported for Uint"</span>.to_string(),
                                     ));
                                 }
                             }
@@ -2256,7 +2257,7 @@
                                     </span>TextureFormat::Rgba8Snorm
                                 } <span class="kw">else </span>{
                                     <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(
-                                        <span class="string">&quot;Bgra8 not supported for Sint&quot;</span>.to_string(),
+                                        <span class="string">"Bgra8 not supported for Sint"</span>.to_string(),
                                     ));
                                 }
                             }
@@ -2267,13 +2268,13 @@
                                     TextureFormat::Rgba16Unorm
                                 } <span class="kw">else </span>{
                                     <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(
-                                        <span class="string">&quot;Bgra16 not supported for Unorm&quot;</span>.to_string(),
+                                        <span class="string">"Bgra16 not supported for Unorm"</span>.to_string(),
                                     ));
                                 }
                             }
                             DataType::UnormSrgb =&gt; {
                                 <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(
-                                    <span class="string">&quot;UnormSrgb not supported for Rgba16/Bgra16&quot;</span>.to_string(),
+                                    <span class="string">"UnormSrgb not supported for Rgba16/Bgra16"</span>.to_string(),
                                 ));
                             }
                             DataType::Snorm =&gt; {
@@ -2281,7 +2282,7 @@
                                     TextureFormat::Rgba16Snorm
                                 } <span class="kw">else </span>{
                                     <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(
-                                        <span class="string">&quot;Bgra16 not supported for Snorm&quot;</span>.to_string(),
+                                        <span class="string">"Bgra16 not supported for Snorm"</span>.to_string(),
                                     ));
                                 }
                             }
@@ -2290,7 +2291,7 @@
                                     TextureFormat::Rgba16Float
                                 } <span class="kw">else </span>{
                                     <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(
-                                        <span class="string">&quot;Bgra16 not supported for Float&quot;</span>.to_string(),
+                                        <span class="string">"Bgra16 not supported for Float"</span>.to_string(),
                                     ));
                                 }
                             }
@@ -2299,7 +2300,7 @@
                                     TextureFormat::Rgba16Uint
                                 } <span class="kw">else </span>{
                                     <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(
-                                        <span class="string">&quot;Bgra16 not supported for Uint&quot;</span>.to_string(),
+                                        <span class="string">"Bgra16 not supported for Uint"</span>.to_string(),
                                     ));
                                 }
                             }
@@ -2308,7 +2309,7 @@
                                     TextureFormat::Rgba16Sint
                                 } <span class="kw">else </span>{
                                     <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(
-                                        <span class="string">&quot;Bgra16 not supported for Sint&quot;</span>.to_string(),
+                                        <span class="string">"Bgra16 not supported for Sint"</span>.to_string(),
                                     ));
                                 }
                             }
@@ -2316,17 +2317,17 @@
                         <span class="number">32 </span>=&gt; <span class="kw">match </span>data_type {
                             DataType::Unorm =&gt; {
                                 <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(
-                                    <span class="string">&quot;Unorm not supported for Rgba32/Bgra32&quot;</span>.to_string(),
+                                    <span class="string">"Unorm not supported for Rgba32/Bgra32"</span>.to_string(),
                                 ));
                             }
                             DataType::UnormSrgb =&gt; {
                                 <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(
-                                    <span class="string">&quot;UnormSrgb not supported for Rgba32/Bgra32&quot;</span>.to_string(),
+                                    <span class="string">"UnormSrgb not supported for Rgba32/Bgra32"</span>.to_string(),
                                 ));
                             }
                             DataType::Snorm =&gt; {
                                 <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(
-                                    <span class="string">&quot;Snorm not supported for Rgba32/Bgra32&quot;</span>.to_string(),
+                                    <span class="string">"Snorm not supported for Rgba32/Bgra32"</span>.to_string(),
                                 ));
                             }
                             DataType::Float =&gt; {
@@ -2334,7 +2335,7 @@
                                     TextureFormat::Rgba32Float
                                 } <span class="kw">else </span>{
                                     <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(
-                                        <span class="string">&quot;Bgra32 not supported for Float&quot;</span>.to_string(),
+                                        <span class="string">"Bgra32 not supported for Float"</span>.to_string(),
                                     ));
                                 }
                             }
@@ -2343,7 +2344,7 @@
                                     TextureFormat::Rgba32Uint
                                 } <span class="kw">else </span>{
                                     <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(
-                                        <span class="string">&quot;Bgra32 not supported for Uint&quot;</span>.to_string(),
+                                        <span class="string">"Bgra32 not supported for Uint"</span>.to_string(),
                                     ));
                                 }
                             }
@@ -2352,21 +2353,21 @@
                                     TextureFormat::Rgba32Sint
                                 } <span class="kw">else </span>{
                                     <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(
-                                        <span class="string">&quot;Bgra32 not supported for Sint&quot;</span>.to_string(),
+                                        <span class="string">"Bgra32 not supported for Sint"</span>.to_string(),
                                     ));
                                 }
                             }
                         },
                         v =&gt; {
                             <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(<span class="macro">format!</span>(
-                                <span class="string">&quot;Unsupported sample bit length for RGBSDA 4-channel format: {v}&quot;</span>,
+                                <span class="string">"Unsupported sample bit length for RGBSDA 4-channel format: {v}"</span>,
                             )));
                         }
                     }
                 }
                 v =&gt; {
                     <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(<span class="macro">format!</span>(
-                        <span class="string">&quot;Unsupported channel count for RGBSDA format: {v}&quot;</span>,
+                        <span class="string">"Unsupported channel count for RGBSDA format: {v}"</span>,
                     )));
                 }
             }
@@ -2385,7 +2386,7 @@
         | <span class="prelude-val">Some</span>(ColorModel::CIEXYZ)
         | <span class="prelude-val">Some</span>(ColorModel::CIEXYY) =&gt; {
             <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(<span class="macro">format!</span>(
-                <span class="string">&quot;{:?}&quot;</span>,
+                <span class="string">"{:?}"</span>,
                 data_format_descriptor.color_model
             )));
         }
@@ -2436,13 +2437,13 @@
                             DataType::Unorm =&gt; TextureFormat::Rgba8Unorm,
                             DataType::UnormSrgb =&gt; {
                                 <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(
-                                    <span class="string">&quot;UnormSrgb not supported for XYZW&quot;</span>.to_string(),
+                                    <span class="string">"UnormSrgb not supported for XYZW"</span>.to_string(),
                                 ));
                             }
                             DataType::Snorm =&gt; TextureFormat::Rgba8Snorm,
                             DataType::Float =&gt; {
                                 <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(
-                                    <span class="string">&quot;Float not supported for Rgba8/Bgra8&quot;</span>.to_string(),
+                                    <span class="string">"Float not supported for Rgba8/Bgra8"</span>.to_string(),
                                 ));
                             }
                             DataType::Uint =&gt; TextureFormat::Rgba8Uint,
@@ -2452,7 +2453,7 @@
                             DataType::Unorm =&gt; TextureFormat::Rgba16Unorm,
                             DataType::UnormSrgb =&gt; {
                                 <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(
-                                    <span class="string">&quot;UnormSrgb not supported for Rgba16/Bgra16&quot;</span>.to_string(),
+                                    <span class="string">"UnormSrgb not supported for Rgba16/Bgra16"</span>.to_string(),
                                 ));
                             }
                             DataType::Snorm =&gt; TextureFormat::Rgba16Snorm,
@@ -2463,17 +2464,17 @@
                         <span class="number">32 </span>=&gt; <span class="kw">match </span>data_type {
                             DataType::Unorm =&gt; {
                                 <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(
-                                    <span class="string">&quot;Unorm not supported for Rgba32/Bgra32&quot;</span>.to_string(),
+                                    <span class="string">"Unorm not supported for Rgba32/Bgra32"</span>.to_string(),
                                 ));
                             }
                             DataType::UnormSrgb =&gt; {
                                 <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(
-                                    <span class="string">&quot;UnormSrgb not supported for Rgba32/Bgra32&quot;</span>.to_string(),
+                                    <span class="string">"UnormSrgb not supported for Rgba32/Bgra32"</span>.to_string(),
                                 ));
                             }
                             DataType::Snorm =&gt; {
                                 <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(
-                                    <span class="string">&quot;Snorm not supported for Rgba32/Bgra32&quot;</span>.to_string(),
+                                    <span class="string">"Snorm not supported for Rgba32/Bgra32"</span>.to_string(),
                                 ));
                             }
                             DataType::Float =&gt; TextureFormat::Rgba32Float,
@@ -2482,14 +2483,14 @@
                         },
                         v =&gt; {
                             <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(<span class="macro">format!</span>(
-                                <span class="string">&quot;Unsupported sample bit length for XYZW 4-channel format: {v}&quot;</span>,
+                                <span class="string">"Unsupported sample bit length for XYZW 4-channel format: {v}"</span>,
                             )));
                         }
                     }
                 }
                 v =&gt; {
                     <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(<span class="macro">format!</span>(
-                        <span class="string">&quot;Unsupported channel count for XYZW format: {v}&quot;</span>,
+                        <span class="string">"Unsupported channel count for XYZW format: {v}"</span>,
                     )));
                 }
             }
@@ -2575,7 +2576,7 @@
                     }
                     <span class="kw">_ </span>=&gt; {
                         <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(<span class="macro">format!</span>(
-                            <span class="string">&quot;Invalid ETC2 sample channel type: {}&quot;</span>,
+                            <span class="string">"Invalid ETC2 sample channel type: {}"</span>,
                             sample.channel_type
                         )))
                     }
@@ -2607,14 +2608,14 @@
                     }
                 } <span class="kw">else </span>{
                     <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(<span class="macro">format!</span>(
-                        <span class="string">&quot;Invalid ETC2 2-sample channel types: {} {}&quot;</span>,
+                        <span class="string">"Invalid ETC2 2-sample channel types: {} {}"</span>,
                         sample0.channel_type, sample1.channel_type
                     )));
                 }
             }
             v =&gt; {
                 <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(<span class="macro">format!</span>(
-                    <span class="string">&quot;Unsupported channel count for ETC2 format: {v}&quot;</span>,
+                    <span class="string">"Unsupported channel count for ETC2 format: {v}"</span>,
                 )));
             }
         },
@@ -2637,7 +2638,7 @@
                 (<span class="number">12</span>, <span class="number">12</span>) =&gt; AstcBlock::B12x12,
                 d =&gt; {
                     <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(<span class="macro">format!</span>(
-                        <span class="string">&quot;Invalid ASTC dimension: {} x {}&quot;</span>,
+                        <span class="string">"Invalid ASTC dimension: {} x {}"</span>,
                         d.<span class="number">0</span>, d.<span class="number">1
                     </span>)))
                 }
@@ -2655,12 +2656,12 @@
         }
         <span class="prelude-val">Some</span>(ColorModel::PVRTC) =&gt; {
             <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(
-                <span class="string">&quot;PVRTC is not supported&quot;</span>.to_string(),
+                <span class="string">"PVRTC is not supported"</span>.to_string(),
             ));
         }
         <span class="prelude-val">Some</span>(ColorModel::PVRTC2) =&gt; {
             <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(
-                <span class="string">&quot;PVRTC2 is not supported&quot;</span>.to_string(),
+                <span class="string">"PVRTC2 is not supported"</span>.to_string(),
             ));
         }
         <span class="prelude-val">Some</span>(ColorModel::UASTC) =&gt; {
@@ -2673,7 +2674,7 @@
                     <span class="number">6 </span>=&gt; DataFormat::Rg,
                     channel_type =&gt; {
                         <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(<span class="macro">format!</span>(
-                            <span class="string">&quot;Invalid KTX2 UASTC channel type: {channel_type}&quot;</span>,
+                            <span class="string">"Invalid KTX2 UASTC channel type: {channel_type}"</span>,
                         )))
                     }
                 }),
@@ -2681,12 +2682,12 @@
         }
         <span class="prelude-val">None </span>=&gt; {
             <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(
-                <span class="string">&quot;Unspecified KTX2 color model&quot;</span>.to_string(),
+                <span class="string">"Unspecified KTX2 color model"</span>.to_string(),
             ));
         }
         <span class="kw">_ </span>=&gt; {
             <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(<span class="macro">format!</span>(
-                <span class="string">&quot;Unknown KTX2 color model: {:?}&quot;</span>,
+                <span class="string">"Unknown KTX2 color model: {:?}"</span>,
                 data_format_descriptor.color_model
             )));
         }
@@ -2983,7 +2984,7 @@
         }
         <span class="kw">_ </span>=&gt; {
             <span class="kw">return </span><span class="prelude-val">Err</span>(TextureError::UnsupportedTextureFormat(<span class="macro">format!</span>(
-                <span class="string">&quot;{ktx2_format:?}&quot;
+                <span class="string">"{ktx2_format:?}"
             </span>)))
         }
     })

@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/taffy-0.3.18/src/compute/grid/track_sizing.rs`."><title>track_sizing.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="taffy" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/taffy-0.3.18/src/compute/grid/track_sizing.rs`."><title>track_sizing.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="taffy" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1346,7 +1347,7 @@
 <span class="kw">use </span>core::cmp::Ordering;
 
 <span class="doccomment">/// Takes an axis, and a list of grid items sorted firstly by whether they cross a flex track
-/// in the specified axis (items that don&#39;t cross a flex track first) and then by the number
+/// in the specified axis (items that don't cross a flex track first) and then by the number
 /// of tracks they cross in specified axis (ascending order).
 </span><span class="kw">struct </span>ItemBatcher {
     <span class="doccomment">/// The axis in which the ItemBatcher is operating. Used when querying properties from items.
@@ -1369,7 +1370,7 @@
     <span class="doccomment">/// This is basically a manual version of Iterator::next which passes `items`
     /// in as a parameter on each iteration to work around borrow checker rules
     </span><span class="attr">#[inline]
-    </span><span class="kw">fn </span>next&lt;<span class="lifetime">&#39;items</span>&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, items: <span class="kw-2">&amp;</span><span class="lifetime">&#39;items </span><span class="kw-2">mut </span>[GridItem]) -&gt; <span class="prelude-ty">Option</span>&lt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;items </span><span class="kw-2">mut </span>[GridItem], bool)&gt; {
+    </span><span class="kw">fn </span>next&lt;<span class="lifetime">'items</span>&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, items: <span class="kw-2">&amp;</span><span class="lifetime">'items </span><span class="kw-2">mut </span>[GridItem]) -&gt; <span class="prelude-ty">Option</span>&lt;(<span class="kw-2">&amp;</span><span class="lifetime">'items </span><span class="kw-2">mut </span>[GridItem], bool)&gt; {
         <span class="kw">if </span><span class="self">self</span>.current_is_flex || <span class="self">self</span>.index_offset &gt;= items.len() {
             <span class="kw">return </span><span class="prelude-val">None</span>;
         }
@@ -1398,17 +1399,17 @@
 }
 
 <span class="doccomment">/// This struct captures a bunch of variables which are used to compute the intrinsic sizes of children so that those variables
-/// don&#39;t have to be passed around all over the place below. It then has methods that implement the intrinsic sizing computations
-</span><span class="kw">struct </span>IntrisicSizeMeasurer&lt;<span class="lifetime">&#39;tree</span>, <span class="lifetime">&#39;oat</span>, Tree, EstimateFunction&gt;
+/// don't have to be passed around all over the place below. It then has methods that implement the intrinsic sizing computations
+</span><span class="kw">struct </span>IntrisicSizeMeasurer&lt;<span class="lifetime">'tree</span>, <span class="lifetime">'oat</span>, Tree, EstimateFunction&gt;
 <span class="kw">where
     </span>Tree: LayoutTree,
     EstimateFunction: Fn(<span class="kw-2">&amp;</span>GridTrack, <span class="prelude-ty">Option</span>&lt;f32&gt;) -&gt; <span class="prelude-ty">Option</span>&lt;f32&gt;,
 {
     <span class="doccomment">/// The layout tree
-    </span>tree: <span class="kw-2">&amp;</span><span class="lifetime">&#39;tree </span><span class="kw-2">mut </span>Tree,
+    </span>tree: <span class="kw-2">&amp;</span><span class="lifetime">'tree </span><span class="kw-2">mut </span>Tree,
     <span class="doccomment">/// The tracks in the opposite axis to the one we are currently sizing
-    </span>other_axis_tracks: <span class="kw-2">&amp;</span><span class="lifetime">&#39;oat </span>[GridTrack],
-    <span class="doccomment">/// A function that computes an estimate of an other-axis track&#39;s size which is passed to
+    </span>other_axis_tracks: <span class="kw-2">&amp;</span><span class="lifetime">'oat </span>[GridTrack],
+    <span class="doccomment">/// A function that computes an estimate of an other-axis track's size which is passed to
     /// the child size measurement functions
     </span>get_track_size_estimate: EstimateFunction,
     <span class="doccomment">/// The axis we are currently sizing
@@ -1417,7 +1418,7 @@
     </span>inner_node_size: Size&lt;<span class="prelude-ty">Option</span>&lt;f32&gt;&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;tree</span>, <span class="lifetime">&#39;oat</span>, Tree, EstimateFunction&gt; IntrisicSizeMeasurer&lt;<span class="lifetime">&#39;tree</span>, <span class="lifetime">&#39;oat</span>, Tree, EstimateFunction&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'tree</span>, <span class="lifetime">'oat</span>, Tree, EstimateFunction&gt; IntrisicSizeMeasurer&lt;<span class="lifetime">'tree</span>, <span class="lifetime">'oat</span>, Tree, EstimateFunction&gt;
 <span class="kw">where
     </span>Tree: LayoutTree,
     EstimateFunction: Fn(<span class="kw-2">&amp;</span>GridTrack, <span class="prelude-ty">Option</span>&lt;f32&gt;) -&gt; <span class="prelude-ty">Option</span>&lt;f32&gt;,
@@ -1436,14 +1437,14 @@
         )
     }
 
-    <span class="doccomment">/// Compute the item&#39;s resolved margins for size contributions. Horizontal percentage margins always resolve
+    <span class="doccomment">/// Compute the item's resolved margins for size contributions. Horizontal percentage margins always resolve
     /// to zero if the container size is indefinite as otherwise this would introduce a cyclic dependency.
     </span><span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>margins_axis_sums_with_baseline_shims(<span class="kw-2">&amp;</span><span class="self">self</span>, item: <span class="kw-2">&amp;</span>GridItem) -&gt; Size&lt;f32&gt; {
         item.margins_axis_sums_with_baseline_shims(<span class="self">self</span>.inner_node_size.width)
     }
 
-    <span class="doccomment">/// Retrieve the item&#39;s min content contribution from the cache or compute it using the provided parameters
+    <span class="doccomment">/// Retrieve the item's min content contribution from the cache or compute it using the provided parameters
     </span><span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>min_content_contribution(<span class="kw-2">&amp;mut </span><span class="self">self</span>, item: <span class="kw-2">&amp;mut </span>GridItem) -&gt; f32 {
         <span class="kw">let </span>available_space = <span class="self">self</span>.available_space(item);
@@ -1453,7 +1454,7 @@
         contribution + margin_axis_sums.get(<span class="self">self</span>.axis)
     }
 
-    <span class="doccomment">/// Retrieve the item&#39;s max content contribution from the cache or compute it using the provided parameters
+    <span class="doccomment">/// Retrieve the item's max content contribution from the cache or compute it using the provided parameters
     </span><span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>max_content_contribution(<span class="kw-2">&amp;mut </span><span class="self">self</span>, item: <span class="kw-2">&amp;mut </span>GridItem) -&gt; f32 {
         <span class="kw">let </span>available_space = <span class="self">self</span>.available_space(item);
@@ -1626,7 +1627,7 @@
 
     <span class="comment">// Pre-computations for 11.5 Resolve Intrinsic Track Sizes
 
-    // Compute an additional amount to add to each spanned gutter when computing item&#39;s estimated size in the
+    // Compute an additional amount to add to each spanned gutter when computing item's estimated size in the
     // in the opposite axis based on the alignment, container size, and estimated track sizes in that axis
     </span><span class="kw">let </span>gutter_alignment_adjustment = compute_alignment_gutter_adjustment(
         other_axis_alignment,
@@ -1658,8 +1659,8 @@
     // Distributes free space (if any) to tracks with FINITE growth limits, up to their limits.
     </span>maximise_tracks(axis_tracks, inner_node_size.get(axis), available_grid_space.get(axis));
 
-    <span class="comment">// For the purpose of the final two expansion steps (&quot;Expand Flexible Tracks&quot; and &quot;Stretch auto Tracks&quot;), we only want to expand
-    // into space generated by the grid container&#39;s size (as defined by either it&#39;s preferred size style or by it&#39;s parent node through
+    <span class="comment">// For the purpose of the final two expansion steps ("Expand Flexible Tracks" and "Stretch auto Tracks"), we only want to expand
+    // into space generated by the grid container's size (as defined by either it's preferred size style or by it's parent node through
     // something like stretch alignment), not just any available space. To do this we map definite available space to AvailableSpace::MaxContent
     // in the case that inner_node_size is None
     </span><span class="kw">let </span>axis_available_space_for_expansion = <span class="kw">if let </span><span class="prelude-val">Some</span>(available_space) = inner_node_size.get(axis) {
@@ -1689,14 +1690,14 @@
     </span>stretch_auto_tracks(axis_tracks, axis_min_size, axis_available_space_for_expansion);
 }
 
-<span class="doccomment">/// Whether it is a minimum or maximum size&#39;s space being distributed
+<span class="doccomment">/// Whether it is a minimum or maximum size's space being distributed
 /// This controls behaviour of the space distribution algorithm when distributing beyond limits
-/// See &quot;distributing space beyond limits&quot; at https://www.w3.org/TR/css-grid-1/#extra-space
+/// See "distributing space beyond limits" at https://www.w3.org/TR/css-grid-1/#extra-space
 </span><span class="attr">#[derive(Copy, Clone, Debug, PartialEq, Eq)]
 </span><span class="kw">enum </span>IntrinsicContributionType {
-    <span class="doccomment">/// It&#39;s a minimum size&#39;s space being distributed
+    <span class="doccomment">/// It's a minimum size's space being distributed
     </span>Minimum,
-    <span class="doccomment">/// It&#39;s a maximum size&#39;s space being distributed
+    <span class="doccomment">/// It's a maximum size's space being distributed
     </span>Maximum,
 }
 
@@ -1786,14 +1787,14 @@
         <span class="comment">// Get the row index of the current row
         </span><span class="kw">let </span>current_row = remaining_items[<span class="number">0</span>].placement(other_axis).start;
 
-        <span class="comment">// Find the item index of the first item that is in a different row (or None if we&#39;ve reached the end of the list)
+        <span class="comment">// Find the item index of the first item that is in a different row (or None if we've reached the end of the list)
         </span><span class="kw">let </span>next_row_first_item =
             remaining_items.iter().position(|item| item.placement(other_axis).start != current_row);
 
         <span class="comment">// Use this index to split the `remaining_items` slice in two slices:
         //    - A `row_items` slice containing the items (that start) in the current row
         //    - A new `remaining_items` consisting of the remainder of the `remaining_items` slice
-        //      that hasn&#39;t been split off into `row_items
+        //      that hasn't been split off into `row_items
         </span><span class="kw">let </span>row_items = <span class="kw">if let </span><span class="prelude-val">Some</span>(index) = next_row_first_item {
             <span class="kw">let </span>(row_items, tail) = remaining_items.split_at_mut(index);
             remaining_items = tail;
@@ -1864,12 +1865,12 @@
     </span>items.sort_by(cmp_by_cross_flex_then_span_then_start(axis));
 
     <span class="comment">// Step 2, Step 3 and Step 4
-    // 2 &amp; 3. Iterate over items that don&#39;t cross a flex track. Items should have already been sorted in ascending order
+    // 2 &amp; 3. Iterate over items that don't cross a flex track. Items should have already been sorted in ascending order
     // of the number of tracks they span. Step 2 is the 1 track case and has an optimised implementation
     // 4. Next, repeat the previous step instead considering (together, rather than grouped by span size) all items
     // that do span a track with a flexible sizing function while
 
-    // Compute item&#39;s intrinsic (content-based) sizes
+    // Compute item's intrinsic (content-based) sizes
     // Note: For items with a specified minimum size of auto (the initial value), the minimum contribution is usually equivalent
     // to the min-content contribution—but can differ in some cases, see §6.6 Automatic Minimum Size of Grid Items.
     // Also, minimum contribution &lt;= min-content contribution &lt;= max-content contribution.
@@ -1895,7 +1896,7 @@
                         f32_max(track.base_size, item_sizer.min_content_contribution(item))
                     }
                     <span class="comment">// If the container size is indefinite and has not yet been resolved then percentage sized
-                    // tracks should be treated as min-content (this matches Chrome&#39;s behaviour and seems sensible)
+                    // tracks should be treated as min-content (this matches Chrome's behaviour and seems sensible)
                     </span>MinTrackSizingFunction::Fixed(LengthPercentage::Percent(<span class="kw">_</span>)) =&gt; {
                         <span class="kw">if </span>axis_inner_node_size.is_none() {
                             f32_max(track.base_size, item_sizer.min_content_contribution(item))
@@ -1919,7 +1920,7 @@
                         f32_max(track.base_size, space)
                     }
                     MinTrackSizingFunction::Fixed(<span class="kw">_</span>) =&gt; {
-                        <span class="comment">// Do nothing as it&#39;s not an intrinsic track sizing function
+                        <span class="comment">// Do nothing as it's not an intrinsic track sizing function
                         </span>track.base_size
                     }
                 };
@@ -1940,7 +1941,7 @@
                     || track.max_track_sizing_function.uses_percentage() &amp;&amp; axis_inner_node_size.is_none()
                 {
                     <span class="comment">// If the container size is indefinite and has not yet been resolved then percentage sized
-                    // tracks should be treated as auto (this matches Chrome&#39;s behaviour and seems sensible)
+                    // tracks should be treated as auto (this matches Chrome's behaviour and seems sensible)
                     </span>track.growth_limit_planned_increase =
                         f32_max(track.growth_limit_planned_increase, item_sizer.max_content_contribution(item));
                 } <span class="kw">else if </span>track.max_track_sizing_function.is_intrinsic() {
@@ -2003,7 +2004,7 @@
 
         <span class="comment">// 2. For content-based minimums:
         // Next continue to increase the base size of tracks with a min track sizing function of min-content or max-content
-        // by distributing extra space as needed to account for these items&#39; min-content contributions.
+        // by distributing extra space as needed to account for these items' min-content contributions.
         </span><span class="kw">let </span>has_min_or_max_content_min_track_sizing_function = <span class="kw">move </span>|track: <span class="kw-2">&amp;</span>GridTrack| {
             <span class="kw">use </span>MinTrackSizingFunction::{MaxContent, MinContent};
             <span class="macro">matches!</span>(track.min_track_sizing_function, MinContent | MaxContent)
@@ -2028,7 +2029,7 @@
         <span class="comment">// 3. For max-content minimums:
 
         // If the grid container is being sized under a max-content constraint, continue to increase the base size of tracks with
-        // a min track sizing function of auto or max-content by distributing extra space as needed to account for these items&#39;
+        // a min track sizing function of auto or max-content by distributing extra space as needed to account for these items'
         // limited max-content contributions.
 
         // Define fit_content_limited_growth_limit function. This is passed to the distribute_space_up_to_limits
@@ -2042,7 +2043,7 @@
             /// The latter condition was added in order to match Chrome. But I believe it is due to the provision
             /// under minmax here https://www.w3.org/TR/css-grid-1/#track-sizes which states that:
             ///
-            ///    &quot;If the max is less than the min, then the max will be floored by the min (essentially yielding minmax(min, min))&quot;
+            ///    "If the max is less than the min, then the max will be floored by the min (essentially yielding minmax(min, min))"
             </span><span class="attr">#[inline(always)]
             </span><span class="kw">fn </span>has_auto_min_track_sizing_function(track: <span class="kw-2">&amp;</span>GridTrack) -&gt; bool {
                 track.min_track_sizing_function == MinTrackSizingFunction::Auto
@@ -2100,7 +2101,7 @@
         }
 
         <span class="comment">// In all cases, continue to increase the base size of tracks with a min track sizing function of max-content by distributing
-        // extra space as needed to account for these items&#39; max-content contributions.
+        // extra space as needed to account for these items' max-content contributions.
         </span><span class="kw">let </span>has_max_content_min_track_sizing_function =
             <span class="kw">move </span>|track: <span class="kw-2">&amp;</span>GridTrack| <span class="macro">matches!</span>(track.min_track_sizing_function, MinTrackSizingFunction::MaxContent);
         <span class="kw">for </span>item <span class="kw">in </span>batch.iter_mut() {
@@ -2132,7 +2133,7 @@
         // It cannot also have an intrinsic max track sizing function, so these steps do not apply.
         </span><span class="kw">if </span>!is_flex {
             <span class="comment">// 5. For intrinsic maximums: Next increase the growth limit of tracks with an intrinsic max track sizing function by
-            // distributing extra space as needed to account for these items&#39; min-content contributions.
+            // distributing extra space as needed to account for these items' min-content contributions.
             </span><span class="kw">let </span>has_intrinsic_max_track_sizing_function =
                 <span class="kw">move </span>|track: <span class="kw-2">&amp;</span>GridTrack| track.max_track_sizing_function.definite_value(axis_inner_node_size).is_none();
             <span class="kw">for </span>item <span class="kw">in </span>batch.iter_mut() {
@@ -2152,7 +2153,7 @@
             </span>flush_planned_growth_limit_increases(axis_tracks, <span class="bool-val">true</span>);
 
             <span class="comment">// 6. For max-content maximums: Lastly continue to increase the growth limit of tracks with a max track sizing function of max-content
-            // by distributing extra space as needed to account for these items&#39; max-content contributions. However, limit the growth of any
+            // by distributing extra space as needed to account for these items' max-content contributions. However, limit the growth of any
             // fit-content() tracks by their fit-content() argument.
             </span><span class="kw">let </span>has_max_content_max_track_sizing_function = |track: <span class="kw-2">&amp;</span>GridTrack| {
                 track.max_track_sizing_function.is_max_content_alike()
@@ -2178,7 +2179,7 @@
 
     <span class="comment">// Step 5. If any track still has an infinite growth limit (because, for example, it had no items placed
     // in it or it is a flexible track), set its growth limit to its base size.
-    // NOTE: this step is super-important to ensure that the &quot;Maximise Tracks&quot; step doesn&#39;t affect flexible tracks
+    // NOTE: this step is super-important to ensure that the "Maximise Tracks" step doesn't affect flexible tracks
     </span>axis_tracks
         .iter_mut()
         .filter(|track| track.growth_limit == f32::INFINITY)
@@ -2229,7 +2230,7 @@
         )
     }
 
-    <span class="doccomment">/// Inner function that doesn&#39;t account for differences due to distributing to flex items
+    <span class="doccomment">/// Inner function that doesn't account for differences due to distributing to flex items
     /// This difference is handled by the closure passed in above
     </span><span class="kw">fn </span>distribute_item_space_to_base_size_inner(
         space: f32,

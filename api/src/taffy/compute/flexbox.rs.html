@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/taffy-0.3.18/src/compute/flexbox.rs`."><title>flexbox.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="taffy" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/taffy-0.3.18/src/compute/flexbox.rs`."><title>flexbox.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="taffy" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -2151,13 +2152,13 @@
 <span class="kw">use </span><span class="kw">crate</span>::sys::{f32_max, new_vec_with_capacity};
 <span class="kw">use </span><span class="kw">crate</span>::tree::LayoutTree;
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;debug&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"debug"</span>)]
 </span><span class="kw">use </span><span class="kw">crate</span>::debug::NODE_LOGGER;
 
-<span class="doccomment">/// The public interface to Taffy&#39;s Flexbox algorithm implementation
+<span class="doccomment">/// The public interface to Taffy's Flexbox algorithm implementation
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>FlexboxAlgorithm;
 <span class="kw">impl </span>LayoutAlgorithm <span class="kw">for </span>FlexboxAlgorithm {
-    <span class="kw">const </span>NAME: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str = <span class="string">&quot;FLEXBOX&quot;</span>;
+    <span class="kw">const </span>NAME: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str = <span class="string">"FLEXBOX"</span>;
 
     <span class="kw">fn </span>perform_layout(
         tree: <span class="kw-2">&amp;mut </span><span class="kw">impl </span>LayoutTree,
@@ -2187,7 +2188,7 @@
     <span class="doccomment">/// The identifier for the associated [`Node`](crate::node::Node)
     </span>node: Node,
 
-    <span class="doccomment">/// The order of the node relative to it&#39;s siblings
+    <span class="doccomment">/// The order of the node relative to it's siblings
     </span>order: u32,
 
     <span class="doccomment">/// The base size of this item
@@ -2246,20 +2247,20 @@
 
     <span class="doccomment">/// A temporary value for the main offset
     ///
-    /// Offset is the relative position from the item&#39;s natural flow position based on
+    /// Offset is the relative position from the item's natural flow position based on
     /// relative position values, alignment, and justification. Does not include margin/padding/border.
     </span>offset_main: f32,
     <span class="doccomment">/// A temporary value for the cross offset
     ///
-    /// Offset is the relative position from the item&#39;s natural flow position based on
+    /// Offset is the relative position from the item's natural flow position based on
     /// relative position values, alignment, and justification. Does not include margin/padding/border.
     </span>offset_cross: f32,
 }
 
 <span class="doccomment">/// A line of [`FlexItem`] used for intermediate computation
-</span><span class="kw">struct </span>FlexLine&lt;<span class="lifetime">&#39;a</span>&gt; {
+</span><span class="kw">struct </span>FlexLine&lt;<span class="lifetime">'a</span>&gt; {
     <span class="doccomment">/// The slice of items to iterate over during computation of this line
-    </span>items: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>[FlexItem],
+    </span>items: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>[FlexItem],
     <span class="doccomment">/// The dimensions of the cross-axis
     </span>cross_size: f32,
     <span class="doccomment">/// The relative offset of the cross-axis
@@ -2279,9 +2280,9 @@
     <span class="doccomment">/// Is the wrap direction inverted
     </span>is_wrap_reverse: bool,
 
-    <span class="doccomment">/// The item&#39;s min_size style
+    <span class="doccomment">/// The item's min_size style
     </span>min_size: Size&lt;<span class="prelude-ty">Option</span>&lt;f32&gt;&gt;,
-    <span class="doccomment">/// The item&#39;s max_size style
+    <span class="doccomment">/// The item's max_size style
     </span>max_size: Size&lt;<span class="prelude-ty">Option</span>&lt;f32&gt;&gt;,
     <span class="doccomment">/// The margin of this section
     </span>margin: Rect&lt;f32&gt;,
@@ -2338,16 +2339,16 @@
     });
     <span class="kw">let </span>styled_based_known_dimensions = known_dimensions.or(min_max_definite_size).or(clamped_style_size);
 
-    <span class="comment">// Short-circuit layout if the container&#39;s size is fully determined by the container&#39;s size and the run mode
-    // is ComputeSize (and thus the container&#39;s size is all that we&#39;re interested in)
+    <span class="comment">// Short-circuit layout if the container's size is fully determined by the container's size and the run mode
+    // is ComputeSize (and thus the container's size is all that we're interested in)
     </span><span class="kw">if </span>run_mode == RunMode::ComputeSize {
         <span class="kw">if let </span>Size { width: <span class="prelude-val">Some</span>(width), height: <span class="prelude-val">Some</span>(height) } = styled_based_known_dimensions {
             <span class="kw">return </span>Size { width, height }.into();
         }
     }
 
-    <span class="attr">#[cfg(feature = <span class="string">&quot;debug&quot;</span>)]
-    </span>NODE_LOGGER.log(<span class="string">&quot;FLEX: single-pass&quot;</span>);
+    <span class="attr">#[cfg(feature = <span class="string">"debug"</span>)]
+    </span>NODE_LOGGER.log(<span class="string">"FLEX: single-pass"</span>);
     compute_preliminary(tree, node, styled_based_known_dimensions, parent_size, available_space, run_mode)
 }
 
@@ -2368,29 +2369,29 @@
     // 9.1. Initial Setup
 
     // 1. Generate anonymous flex items as described in §4 Flex Items.
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;debug&quot;</span>)]
-    </span>NODE_LOGGER.log(<span class="string">&quot;generate_anonymous_flex_items&quot;</span>);
+    </span><span class="attr">#[cfg(feature = <span class="string">"debug"</span>)]
+    </span>NODE_LOGGER.log(<span class="string">"generate_anonymous_flex_items"</span>);
     <span class="kw">let </span><span class="kw-2">mut </span>flex_items = generate_anonymous_flex_items(tree, node, <span class="kw-2">&amp;</span>constants);
 
     <span class="comment">// 9.2. Line Length Determination
 
     // 2. Determine the available main and cross space for the flex items
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;debug&quot;</span>)]
-    </span>NODE_LOGGER.log(<span class="string">&quot;determine_available_space&quot;</span>);
+    </span><span class="attr">#[cfg(feature = <span class="string">"debug"</span>)]
+    </span>NODE_LOGGER.log(<span class="string">"determine_available_space"</span>);
     <span class="kw">let </span>available_space = determine_available_space(known_dimensions, available_space, <span class="kw-2">&amp;</span>constants);
 
     <span class="comment">// 3. Determine the flex base size and hypothetical main size of each item.
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;debug&quot;</span>)]
-    </span>NODE_LOGGER.log(<span class="string">&quot;determine_flex_base_size&quot;</span>);
+    </span><span class="attr">#[cfg(feature = <span class="string">"debug"</span>)]
+    </span>NODE_LOGGER.log(<span class="string">"determine_flex_base_size"</span>);
     determine_flex_base_size(tree, <span class="kw-2">&amp;</span>constants, available_space, <span class="kw-2">&amp;mut </span>flex_items);
 
-    <span class="attr">#[cfg(feature = <span class="string">&quot;debug&quot;</span>)]
+    <span class="attr">#[cfg(feature = <span class="string">"debug"</span>)]
     </span><span class="kw">for </span>item <span class="kw">in </span>flex_items.iter() {
-        NODE_LOGGER.labelled_log(<span class="string">&quot;item.flex_basis&quot;</span>, item.flex_basis);
-        NODE_LOGGER.labelled_log(<span class="string">&quot;item.inner_flex_basis&quot;</span>, item.inner_flex_basis);
-        NODE_LOGGER.labelled_debug_log(<span class="string">&quot;item.hypothetical_outer_size&quot;</span>, item.hypothetical_outer_size);
-        NODE_LOGGER.labelled_debug_log(<span class="string">&quot;item.hypothetical_inner_size&quot;</span>, item.hypothetical_inner_size);
-        NODE_LOGGER.labelled_debug_log(<span class="string">&quot;item.resolved_minimum_size&quot;</span>, item.resolved_minimum_size);
+        NODE_LOGGER.labelled_log(<span class="string">"item.flex_basis"</span>, item.flex_basis);
+        NODE_LOGGER.labelled_log(<span class="string">"item.inner_flex_basis"</span>, item.inner_flex_basis);
+        NODE_LOGGER.labelled_debug_log(<span class="string">"item.hypothetical_outer_size"</span>, item.hypothetical_outer_size);
+        NODE_LOGGER.labelled_debug_log(<span class="string">"item.hypothetical_inner_size"</span>, item.hypothetical_inner_size);
+        NODE_LOGGER.labelled_debug_log(<span class="string">"item.resolved_minimum_size"</span>, item.resolved_minimum_size);
     }
 
     <span class="comment">// 4. Determine the main size of the flex container
@@ -2399,14 +2400,14 @@
     // 9.3. Main Size Determination
 
     // 5. Collect flex items into flex lines.
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;debug&quot;</span>)]
-    </span>NODE_LOGGER.log(<span class="string">&quot;collect_flex_lines&quot;</span>);
+    </span><span class="attr">#[cfg(feature = <span class="string">"debug"</span>)]
+    </span>NODE_LOGGER.log(<span class="string">"collect_flex_lines"</span>);
     <span class="kw">let </span><span class="kw-2">mut </span>flex_lines = collect_flex_lines(<span class="kw-2">&amp;</span>constants, available_space, <span class="kw-2">&amp;mut </span>flex_items);
 
-    <span class="comment">// If container size is undefined, determine the container&#39;s main size
+    <span class="comment">// If container size is undefined, determine the container's main size
     // and then re-resolve gaps based on newly determined size
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;debug&quot;</span>)]
-    </span>NODE_LOGGER.log(<span class="string">&quot;determine_container_main_size&quot;</span>);
+    </span><span class="attr">#[cfg(feature = <span class="string">"debug"</span>)]
+    </span>NODE_LOGGER.log(<span class="string">"determine_container_main_size"</span>);
     <span class="kw">let </span>original_gap = constants.gap;
     <span class="kw">if let </span><span class="prelude-val">Some</span>(inner_main_size) = constants.node_inner_size.main(constants.dir) {
         <span class="kw">let </span>outer_main_size = inner_main_size + constants.padding_border.main_axis_sum(constants.dir);
@@ -2418,10 +2419,10 @@
         constants.node_inner_size.set_main(constants.dir, <span class="prelude-val">Some</span>(constants.inner_container_size.main(constants.dir)));
         constants.node_outer_size.set_main(constants.dir, <span class="prelude-val">Some</span>(constants.container_size.main(constants.dir)));
 
-        <span class="attr">#[cfg(feature = <span class="string">&quot;debug&quot;</span>)]
-        </span>NODE_LOGGER.labelled_debug_log(<span class="string">&quot;constants.node_outer_size&quot;</span>, constants.node_outer_size);
-        <span class="attr">#[cfg(feature = <span class="string">&quot;debug&quot;</span>)]
-        </span>NODE_LOGGER.labelled_debug_log(<span class="string">&quot;constants.node_inner_size&quot;</span>, constants.node_inner_size);
+        <span class="attr">#[cfg(feature = <span class="string">"debug"</span>)]
+        </span>NODE_LOGGER.labelled_debug_log(<span class="string">"constants.node_outer_size"</span>, constants.node_outer_size);
+        <span class="attr">#[cfg(feature = <span class="string">"debug"</span>)]
+        </span>NODE_LOGGER.labelled_debug_log(<span class="string">"constants.node_inner_size"</span>, constants.node_inner_size);
 
         <span class="comment">// Re-resolve percentage gaps
         </span><span class="kw">let </span>style = tree.style(node);
@@ -2431,8 +2432,8 @@
     }
 
     <span class="comment">// 6. Resolve the flexible lengths of all the flex items to find their used main size.
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;debug&quot;</span>)]
-    </span>NODE_LOGGER.log(<span class="string">&quot;resolve_flexible_lengths&quot;</span>);
+    </span><span class="attr">#[cfg(feature = <span class="string">"debug"</span>)]
+    </span>NODE_LOGGER.log(<span class="string">"resolve_flexible_lengths"</span>);
     <span class="kw">for </span>line <span class="kw">in </span><span class="kw-2">&amp;mut </span>flex_lines {
         resolve_flexible_lengths(line, <span class="kw-2">&amp;</span>constants, original_gap);
     }
@@ -2440,26 +2441,26 @@
     <span class="comment">// 9.4. Cross Size Determination
 
     // 7. Determine the hypothetical cross size of each item.
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;debug&quot;</span>)]
-    </span>NODE_LOGGER.log(<span class="string">&quot;determine_hypothetical_cross_size&quot;</span>);
+    </span><span class="attr">#[cfg(feature = <span class="string">"debug"</span>)]
+    </span>NODE_LOGGER.log(<span class="string">"determine_hypothetical_cross_size"</span>);
     <span class="kw">for </span>line <span class="kw">in </span><span class="kw-2">&amp;mut </span>flex_lines {
         determine_hypothetical_cross_size(tree, line, <span class="kw-2">&amp;</span>constants, available_space);
     }
 
     <span class="comment">// Calculate child baselines. This function is internally smart and only computes child baselines
     // if they are necessary.
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;debug&quot;</span>)]
-    </span>NODE_LOGGER.log(<span class="string">&quot;calculate_children_base_lines&quot;</span>);
+    </span><span class="attr">#[cfg(feature = <span class="string">"debug"</span>)]
+    </span>NODE_LOGGER.log(<span class="string">"calculate_children_base_lines"</span>);
     calculate_children_base_lines(tree, known_dimensions, available_space, <span class="kw-2">&amp;mut </span>flex_lines, <span class="kw-2">&amp;</span>constants);
 
     <span class="comment">// 8. Calculate the cross size of each flex line.
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;debug&quot;</span>)]
-    </span>NODE_LOGGER.log(<span class="string">&quot;calculate_cross_size&quot;</span>);
+    </span><span class="attr">#[cfg(feature = <span class="string">"debug"</span>)]
+    </span>NODE_LOGGER.log(<span class="string">"calculate_cross_size"</span>);
     calculate_cross_size(<span class="kw-2">&amp;mut </span>flex_lines, known_dimensions, <span class="kw-2">&amp;</span>constants);
 
-    <span class="comment">// 9. Handle &#39;align-content: stretch&#39;.
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;debug&quot;</span>)]
-    </span>NODE_LOGGER.log(<span class="string">&quot;handle_align_content_stretch&quot;</span>);
+    <span class="comment">// 9. Handle 'align-content: stretch'.
+    </span><span class="attr">#[cfg(feature = <span class="string">"debug"</span>)]
+    </span>NODE_LOGGER.log(<span class="string">"handle_align_content_stretch"</span>);
     handle_align_content_stretch(<span class="kw-2">&amp;mut </span>flex_lines, known_dimensions, <span class="kw-2">&amp;</span>constants);
 
     <span class="comment">// 10. Collapse visibility:collapse items. If any flex items have visibility: collapse,
@@ -2478,27 +2479,27 @@
     // TODO implement once (if ever) we support visibility:collapse
 
     // 11. Determine the used cross size of each flex item.
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;debug&quot;</span>)]
-    </span>NODE_LOGGER.log(<span class="string">&quot;determine_used_cross_size&quot;</span>);
+    </span><span class="attr">#[cfg(feature = <span class="string">"debug"</span>)]
+    </span>NODE_LOGGER.log(<span class="string">"determine_used_cross_size"</span>);
     determine_used_cross_size(tree, <span class="kw-2">&amp;mut </span>flex_lines, <span class="kw-2">&amp;</span>constants);
 
     <span class="comment">// 9.5. Main-Axis Alignment
 
     // 12. Distribute any remaining free space.
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;debug&quot;</span>)]
-    </span>NODE_LOGGER.log(<span class="string">&quot;distribute_remaining_free_space&quot;</span>);
+    </span><span class="attr">#[cfg(feature = <span class="string">"debug"</span>)]
+    </span>NODE_LOGGER.log(<span class="string">"distribute_remaining_free_space"</span>);
     distribute_remaining_free_space(<span class="kw-2">&amp;mut </span>flex_lines, <span class="kw-2">&amp;</span>constants);
 
     <span class="comment">// 9.6. Cross-Axis Alignment
 
     // 13. Resolve cross-axis auto margins (also includes 14).
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;debug&quot;</span>)]
-    </span>NODE_LOGGER.log(<span class="string">&quot;resolve_cross_axis_auto_margins&quot;</span>);
+    </span><span class="attr">#[cfg(feature = <span class="string">"debug"</span>)]
+    </span>NODE_LOGGER.log(<span class="string">"resolve_cross_axis_auto_margins"</span>);
     resolve_cross_axis_auto_margins(<span class="kw-2">&amp;mut </span>flex_lines, <span class="kw-2">&amp;</span>constants);
 
     <span class="comment">// 15. Determine the flex container’s used cross size.
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;debug&quot;</span>)]
-    </span>NODE_LOGGER.log(<span class="string">&quot;determine_container_cross_size&quot;</span>);
+    </span><span class="attr">#[cfg(feature = <span class="string">"debug"</span>)]
+    </span>NODE_LOGGER.log(<span class="string">"determine_container_cross_size"</span>);
     <span class="kw">let </span>total_line_cross_size = determine_container_cross_size(<span class="kw-2">&amp;</span>flex_lines, known_dimensions, <span class="kw-2">&amp;mut </span>constants);
 
     <span class="comment">// We have the container size.
@@ -2508,22 +2509,22 @@
     }
 
     <span class="comment">// 16. Align all flex lines per align-content.
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;debug&quot;</span>)]
-    </span>NODE_LOGGER.log(<span class="string">&quot;align_flex_lines_per_align_content&quot;</span>);
+    </span><span class="attr">#[cfg(feature = <span class="string">"debug"</span>)]
+    </span>NODE_LOGGER.log(<span class="string">"align_flex_lines_per_align_content"</span>);
     align_flex_lines_per_align_content(<span class="kw-2">&amp;mut </span>flex_lines, <span class="kw-2">&amp;</span>constants, total_line_cross_size);
 
     <span class="comment">// Do a final layout pass and gather the resulting layouts
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;debug&quot;</span>)]
-    </span>NODE_LOGGER.log(<span class="string">&quot;final_layout_pass&quot;</span>);
+    </span><span class="attr">#[cfg(feature = <span class="string">"debug"</span>)]
+    </span>NODE_LOGGER.log(<span class="string">"final_layout_pass"</span>);
     final_layout_pass(tree, <span class="kw-2">&amp;mut </span>flex_lines, <span class="kw-2">&amp;</span>constants);
 
     <span class="comment">// Before returning we perform absolute layout on all absolutely positioned children
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;debug&quot;</span>)]
-    </span>NODE_LOGGER.log(<span class="string">&quot;perform_absolute_layout_on_absolute_children&quot;</span>);
+    </span><span class="attr">#[cfg(feature = <span class="string">"debug"</span>)]
+    </span>NODE_LOGGER.log(<span class="string">"perform_absolute_layout_on_absolute_children"</span>);
     perform_absolute_layout_on_absolute_children(tree, node, <span class="kw-2">&amp;</span>constants);
 
-    <span class="attr">#[cfg(feature = <span class="string">&quot;debug&quot;</span>)]
-    </span>NODE_LOGGER.log(<span class="string">&quot;hidden_layout&quot;</span>);
+    <span class="attr">#[cfg(feature = <span class="string">"debug"</span>)]
+    </span>NODE_LOGGER.log(<span class="string">"hidden_layout"</span>);
     <span class="kw">let </span>len = tree.child_count(node);
     <span class="kw">for </span>order <span class="kw">in </span><span class="number">0</span>..len {
         <span class="kw">let </span>child = tree.child(node, order);
@@ -2540,7 +2541,7 @@
         }
     }
 
-    <span class="comment">// 8.5. Flex Container Baselines: calculate the flex container&#39;s first baseline
+    <span class="comment">// 8.5. Flex Container Baselines: calculate the flex container's first baseline
     // See https://www.w3.org/TR/css-flexbox-1/#flex-baselines
     </span><span class="kw">let </span>first_vertical_baseline = <span class="kw">if </span>flex_lines.is_empty() {
         <span class="prelude-val">None
@@ -2765,7 +2766,7 @@
             ckd
         };
 
-        child.flex_basis = <span class="lifetime">&#39;flex_basis</span>: {
+        child.flex_basis = <span class="lifetime">'flex_basis</span>: {
             <span class="comment">// A. If the item has a definite used flex basis, that’s the flex base size.
 
             // B. If the flex item has an intrinsic aspect ratio,
@@ -2779,7 +2780,7 @@
             </span><span class="kw">let </span>flex_basis = child_style.flex_basis.maybe_resolve(constants.node_inner_size.main(dir));
             <span class="kw">let </span>main_size = child.size.main(dir);
             <span class="kw">if let </span><span class="prelude-val">Some</span>(flex_basis) = flex_basis.or(main_size) {
-                <span class="kw">break </span><span class="lifetime">&#39;flex_basis </span>flex_basis;
+                <span class="kw">break </span><span class="lifetime">'flex_basis </span>flex_basis;
             };
 
             <span class="comment">// C. If the used flex basis is content or depends on its available space,
@@ -2808,7 +2809,7 @@
 
             </span><span class="kw">let </span>child_available_space = available_space.with_cross(dir, cross_axis_available_space);
 
-            <span class="kw">break </span><span class="lifetime">&#39;flex_basis </span>GenericAlgorithm::measure_size(
+            <span class="kw">break </span><span class="lifetime">'flex_basis </span>GenericAlgorithm::measure_size(
                 tree,
                 child.node,
                 child_known_dimensions,
@@ -2821,7 +2822,7 @@
 
         <span class="comment">// Floor flex-basis by the padding_border_sum (floors inner_flex_basis at zero)
         // This seems to be in violation of the spec which explicitly states that the content box should not be floored at zero
-        // (like it usually is) when calculating the flex-basis. But including this matches both Chrome and Firefox&#39;s behaviour.
+        // (like it usually is) when calculating the flex-basis. But including this matches both Chrome and Firefox's behaviour.
         //
         // TODO: resolve spec violation
         // Spec: https://www.w3.org/TR/css-flexbox-1/#intrinsic-item-contributions
@@ -2882,34 +2883,34 @@
 ///
 ///     - Otherwise, starting from the first uncollected item, collect consecutive items one by one until the first time that the next collected item would not fit into the flex container’s inner main size
 ///         (or until a forced break is encountered, see [§10 Fragmenting Flex Layout](https://www.w3.org/TR/css-flexbox-1/#pagination)).
-///         If the very first uncollected item wouldn&#39;t fit, collect just it into the line.
+///         If the very first uncollected item wouldn't fit, collect just it into the line.
 ///
 ///         For this step, the size of a flex item is its outer hypothetical main size. (**Note: This can be negative**.)
 ///
 ///         Repeat until all flex items have been collected into flex lines.
 ///
-///         **Note that the &quot;collect as many&quot; line will collect zero-sized flex items onto the end of the previous line even if the last non-zero item exactly &quot;filled up&quot; the line**.
+///         **Note that the "collect as many" line will collect zero-sized flex items onto the end of the previous line even if the last non-zero item exactly "filled up" the line**.
 </span><span class="attr">#[inline]
-</span><span class="kw">fn </span>collect_flex_lines&lt;<span class="lifetime">&#39;a</span>&gt;(
+</span><span class="kw">fn </span>collect_flex_lines&lt;<span class="lifetime">'a</span>&gt;(
     constants: <span class="kw-2">&amp;</span>AlgoConstants,
     available_space: Size&lt;AvailableSpace&gt;,
-    flex_items: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Vec&lt;FlexItem&gt;,
-) -&gt; Vec&lt;FlexLine&lt;<span class="lifetime">&#39;a</span>&gt;&gt; {
+    flex_items: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Vec&lt;FlexItem&gt;,
+) -&gt; Vec&lt;FlexLine&lt;<span class="lifetime">'a</span>&gt;&gt; {
     <span class="kw">if </span>!constants.is_wrap {
         <span class="kw">let </span><span class="kw-2">mut </span>lines = new_vec_with_capacity(<span class="number">1</span>);
         lines.push(FlexLine { items: flex_items.as_mut_slice(), cross_size: <span class="number">0.0</span>, offset_cross: <span class="number">0.0 </span>});
         lines
     } <span class="kw">else </span>{
         <span class="kw">match </span>available_space.main(constants.dir) {
-            <span class="comment">// If we&#39;re sizing under a max-content constraint then the flex items will never wrap
+            <span class="comment">// If we're sizing under a max-content constraint then the flex items will never wrap
             // (at least for now - future extensions to the CSS spec may add provisions for forced wrap points)
             </span>AvailableSpace::MaxContent =&gt; {
                 <span class="kw">let </span><span class="kw-2">mut </span>lines = new_vec_with_capacity(<span class="number">1</span>);
                 lines.push(FlexLine { items: flex_items.as_mut_slice(), cross_size: <span class="number">0.0</span>, offset_cross: <span class="number">0.0 </span>});
                 lines
             }
-            <span class="comment">// If flex-wrap is Wrap and we&#39;re sizing under a min-content constraint, then we take every possible wrapping opportunity
-            // and place each item in it&#39;s own line
+            <span class="comment">// If flex-wrap is Wrap and we're sizing under a min-content constraint, then we take every possible wrapping opportunity
+            // and place each item in it's own line
             </span>AvailableSpace::MinContent =&gt; {
                 <span class="kw">let </span><span class="kw-2">mut </span>lines = new_vec_with_capacity(flex_items.len());
                 <span class="kw">let </span><span class="kw-2">mut </span>items = <span class="kw-2">&amp;mut </span>flex_items[..];
@@ -2952,11 +2953,11 @@
     }
 }
 
-<span class="doccomment">/// Determine the container&#39;s main size (if not already known)
+<span class="doccomment">/// Determine the container's main size (if not already known)
 </span><span class="kw">fn </span>determine_container_main_size(
     tree: <span class="kw-2">&amp;mut </span><span class="kw">impl </span>LayoutTree,
     available_space: Size&lt;AvailableSpace&gt;,
-    lines: <span class="kw-2">&amp;mut </span>Vec&lt;FlexLine&lt;<span class="lifetime">&#39;_</span>&gt;&gt;,
+    lines: <span class="kw-2">&amp;mut </span>Vec&lt;FlexLine&lt;<span class="lifetime">'_</span>&gt;&gt;,
     constants: <span class="kw-2">&amp;mut </span>AlgoConstants,
 ) {
     <span class="kw">let </span>dir = constants.dir;
@@ -3010,7 +3011,7 @@
             AvailableSpace::MinContent | AvailableSpace::MaxContent =&gt; {
                 <span class="comment">// Define a base main_size variable. This is mutated once for iteration over the outer
                 // loop over the flex lines as:
-                //   &quot;The flex container’s max-content size is the largest sum of the afore-calculated sizes of all items within a single line.&quot;
+                //   "The flex container’s max-content size is the largest sum of the afore-calculated sizes of all items within a single line."
                 </span><span class="kw">let </span><span class="kw-2">mut </span>main_size = <span class="number">0.0</span>;
 
                 <span class="kw">for </span>line <span class="kw">in </span>lines.iter_mut() {
@@ -3076,15 +3077,15 @@
                                 .main(constants.dir)
                                     + item.margin.main_axis_sum(constants.dir);
 
-                                <span class="comment">// This is somewhat bizarre in that it&#39;s asymetrical depending whether the flex container is a column or a row.
+                                <span class="comment">// This is somewhat bizarre in that it's asymetrical depending whether the flex container is a column or a row.
                                 //
                                 // I *think* this might relate to https://drafts.csswg.org/css-flexbox-1/#algo-main-container:
                                 //
-                                //    &quot;The automatic block size of a block-level flex container is its max-content size.&quot;
+                                //    "The automatic block size of a block-level flex container is its max-content size."
                                 //
                                 // Which could suggest that flex-basis defining a vertical size does not shrink because it is in the block axis, and the automatic size
                                 // in the block axis is a MAX content size. Whereas a flex-basis defining a horizontal size does shrink because the automatic size in
-                                // inline axis is MIN content size (although I don&#39;t have a reference for that).
+                                // inline axis is MIN content size (although I don't have a reference for that).
                                 //
                                 // Ultimately, this was not found by reading the spec, but by trial and error fixing tests to align with Webkit/Firefox output.
                                 // (see the `flex_basis_unconstraint_row` and `flex_basis_uncontraint_column` generated tests which demonstrate this)
@@ -3106,14 +3107,14 @@
                                 <span class="kw">let </span>scaled_shrink_factor = f32_max(<span class="number">1.0</span>, item.flex_shrink * item.inner_flex_basis);
                                 diff / scaled_shrink_factor
                             } <span class="kw">else </span>{
-                                <span class="comment">// We are assuming that diff is 0.0 here and that we haven&#39;t accidentally introduced a NaN
+                                <span class="comment">// We are assuming that diff is 0.0 here and that we haven't accidentally introduced a NaN
                                 </span><span class="number">0.0
                             </span>}
                         };
                     }
 
-                    <span class="comment">// TODO Spec says to scale everything by the line&#39;s max flex fraction. But neither Chrome nor firefox implement this
-                    // so we don&#39;t either. But if we did want to, we&#39;d need this computation here (and to use it below):
+                    <span class="comment">// TODO Spec says to scale everything by the line's max flex fraction. But neither Chrome nor firefox implement this
+                    // so we don't either. But if we did want to, we'd need this computation here (and to use it below):
                     //
                     // Within each line, find the largest max-content flex fraction among all the flex items.
                     // let line_flex_fraction = line
@@ -3172,7 +3173,7 @@
 }
 
 <span class="doccomment">/// Resolve the flexible lengths of the items within a flex line.
-/// Sets the `main` component of each item&#39;s `target_size` and `outer_target_size`
+/// Sets the `main` component of each item's `target_size` and `outer_target_size`
 ///
 /// # [9.7. Resolving Flexible Lengths](https://www.w3.org/TR/css-flexbox-1/#resolve-flexible-lengths)
 </span><span class="attr">#[inline]
@@ -3553,12 +3554,12 @@
     }
 }
 
-<span class="doccomment">/// Handle &#39;align-content: stretch&#39;.
+<span class="doccomment">/// Handle 'align-content: stretch'.
 ///
 /// # [9.4. Cross Size Determination](https://www.w3.org/TR/css-flexbox-1/#cross-sizing)
 ///
-/// - [**Handle &#39;align-content: stretch&#39;**](https://www.w3.org/TR/css-flexbox-1/#algo-line-stretch). If the flex container has a definite cross size, align-content is stretch,
-///     and the sum of the flex lines&#39; cross sizes is less than the flex container’s inner cross size,
+/// - [**Handle 'align-content: stretch'**](https://www.w3.org/TR/css-flexbox-1/#algo-line-stretch). If the flex container has a definite cross size, align-content is stretch,
+///     and the sum of the flex lines' cross sizes is less than the flex container’s inner cross size,
 ///     increase the cross size of each flex line by equal amounts such that the sum of their cross sizes exactly equals the flex container’s inner cross size.
 </span><span class="attr">#[inline]
 </span><span class="kw">fn </span>handle_align_content_stretch(flex_lines: <span class="kw-2">&amp;mut </span>[FlexLine], node_size: Size&lt;<span class="prelude-ty">Option</span>&lt;f32&gt;&gt;, constants: <span class="kw-2">&amp;</span>AlgoConstants) {
@@ -3610,7 +3611,7 @@
                     &amp;&amp; !child.margin_is_auto.cross_end(constants.dir)
                     &amp;&amp; child_style.size.cross(constants.dir) == Dimension::Auto
                 {
-                    <span class="comment">// For some reason this particular usage of max_width is an exception to the rule that max_width&#39;s transfer
+                    <span class="comment">// For some reason this particular usage of max_width is an exception to the rule that max_width's transfer
                     // using the aspect_ratio (if set). Both Chrome and Firefox agree on this. And reading the spec, it seems like
                     // a reasonable interpretation. Although it seems to me that the spec *should* apply aspect_ratio here.
                     </span><span class="kw">let </span>max_size_ignoring_aspect_ratio = child_style.max_size.maybe_resolve(constants.node_inner_size);
@@ -3753,7 +3754,7 @@
 /// # [9.6. Cross-Axis Alignment](https://www.w3.org/TR/css-flexbox-1/#cross-alignment)
 ///
 /// - [**Align all flex items along the cross-axis**](https://www.w3.org/TR/css-flexbox-1/#algo-cross-align) per `align-self`,
-///     if neither of the item&#39;s cross-axis margins are `auto`.
+///     if neither of the item's cross-axis margins are `auto`.
 </span><span class="attr">#[inline]
 </span><span class="kw">fn </span>align_flex_items_along_cross_axis(
     child: <span class="kw-2">&amp;</span>FlexItem,
@@ -3810,7 +3811,7 @@
 ///
 ///     - If the cross size property is a definite size, use that, clamped by the used min and max cross sizes of the flex container.
 ///
-///     - Otherwise, use the sum of the flex lines&#39; cross sizes, clamped by the used min and max cross sizes of the flex container.
+///     - Otherwise, use the sum of the flex lines' cross sizes, clamped by the used min and max cross sizes of the flex container.
 </span><span class="attr">#[inline]
 #[must_use]
 </span><span class="kw">fn </span>determine_container_cross_size(
@@ -4120,7 +4121,7 @@
                 - resolved_margin.main_end(constants.dir)
         } <span class="kw">else </span>{
             <span class="comment">// Stretch is an invalid value for justify_content in the flexbox algorithm, so we
-            // treat it as if it wasn&#39;t set (and thus we default to FlexStart behaviour)
+            // treat it as if it wasn't set (and thus we default to FlexStart behaviour)
             </span><span class="kw">match </span>(constants.justify_content.unwrap_or(JustifyContent::Start), constants.is_wrap_reverse) {
                 (JustifyContent::SpaceBetween, <span class="kw">_</span>)
                 | (JustifyContent::Start, <span class="kw">_</span>)
@@ -4162,7 +4163,7 @@
         } <span class="kw">else </span>{
             <span class="kw">match </span>(align_self, constants.is_wrap_reverse) {
                 <span class="comment">// Stretch alignment does not apply to absolutely positioned items
-                // See &quot;Example 3&quot; at https://www.w3.org/TR/css-flexbox-1/#abspos-items
+                // See "Example 3" at https://www.w3.org/TR/css-flexbox-1/#abspos-items
                 // Note: Stretch should be FlexStart not Start when we support both
                 </span>(AlignSelf::Start, <span class="kw">_</span>)
                 | (AlignSelf::Baseline | AlignSelf::Stretch | AlignSelf::FlexStart, <span class="bool-val">false</span>)

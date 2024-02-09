@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ruzstd-0.4.0/src/tests/decode_corpus.rs`."><title>decode_corpus.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="ruzstd" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ruzstd-0.4.0/src/tests/decode_corpus.rs`."><title>decode_corpus.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="ruzstd" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -206,13 +207,13 @@
     <span class="kw">let </span><span class="kw-2">mut </span>speeds = Vec::new();
     <span class="kw">let </span><span class="kw-2">mut </span>speeds_read = Vec::new();
 
-    <span class="kw">let </span><span class="kw-2">mut </span>files: Vec&lt;<span class="kw">_</span>&gt; = fs::read_dir(<span class="string">&quot;./decodecorpus_files&quot;</span>).unwrap().collect();
-    <span class="kw">if </span>fs::read_dir(<span class="string">&quot;./local_corpus_files&quot;</span>).is_ok() {
-        files.extend(fs::read_dir(<span class="string">&quot;./local_corpus_files&quot;</span>).unwrap());
+    <span class="kw">let </span><span class="kw-2">mut </span>files: Vec&lt;<span class="kw">_</span>&gt; = fs::read_dir(<span class="string">"./decodecorpus_files"</span>).unwrap().collect();
+    <span class="kw">if </span>fs::read_dir(<span class="string">"./local_corpus_files"</span>).is_ok() {
+        files.extend(fs::read_dir(<span class="string">"./local_corpus_files"</span>).unwrap());
     }
 
     files.sort_by_key(|x| <span class="kw">match </span>x {
-        <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="string">&quot;&quot;</span>.to_owned(),
+        <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="string">""</span>.to_owned(),
         <span class="prelude-val">Ok</span>(entry) =&gt; entry.path().to_str().unwrap().to_owned(),
     });
 
@@ -224,10 +225,10 @@
         <span class="kw">let </span>file_size = metadata.len();
 
         <span class="kw">let </span>p = String::from(f.path().to_str().unwrap());
-        <span class="kw">if </span>!p.ends_with(<span class="string">&quot;.zst&quot;</span>) {
+        <span class="kw">if </span>!p.ends_with(<span class="string">".zst"</span>) {
             <span class="kw">continue</span>;
         }
-        <span class="macro">println!</span>(<span class="string">&quot;Trying file: {}&quot;</span>, p);
+        <span class="macro">println!</span>(<span class="string">"Trying file: {}"</span>, p);
 
         <span class="kw">let </span><span class="kw-2">mut </span>content = fs::File::open(f.path()).unwrap();
 
@@ -245,17 +246,17 @@
             <span class="prelude-val">Some</span>(chksum) =&gt; {
                 <span class="kw">if </span>frame_dec.get_calculated_checksum().unwrap() != chksum {
                     <span class="macro">println!</span>(
-                        <span class="string">&quot;Checksum did not match! From data: {}, calculated while decoding: {}\n&quot;</span>,
+                        <span class="string">"Checksum did not match! From data: {}, calculated while decoding: {}\n"</span>,
                         chksum,
                         frame_dec.get_calculated_checksum().unwrap()
                     );
                     fail_counter_chksum += <span class="number">1</span>;
                     failed.push(p.clone().to_string());
                 } <span class="kw">else </span>{
-                    <span class="macro">println!</span>(<span class="string">&quot;Checksums are ok!\n&quot;</span>);
+                    <span class="macro">println!</span>(<span class="string">"Checksums are ok!\n"</span>);
                 }
             }
-            <span class="prelude-val">None </span>=&gt; <span class="macro">println!</span>(<span class="string">&quot;No checksums to test\n&quot;</span>),
+            <span class="prelude-val">None </span>=&gt; <span class="macro">println!</span>(<span class="string">"No checksums to test\n"</span>),
         }
 
         <span class="kw">let </span><span class="kw-2">mut </span>original_p = p.clone();
@@ -263,12 +264,12 @@
         <span class="kw">let </span>original_f = fs::File::open(original_p).unwrap();
         <span class="kw">let </span>original: Vec&lt;u8&gt; = original_f.bytes().map(|x| x.unwrap()).collect();
 
-        <span class="macro">println!</span>(<span class="string">&quot;Results for file: {}&quot;</span>, p.clone());
+        <span class="macro">println!</span>(<span class="string">"Results for file: {}"</span>, p.clone());
         <span class="kw">let </span><span class="kw-2">mut </span>success = <span class="bool-val">true</span>;
 
         <span class="kw">if </span>original.len() != result.len() {
             <span class="macro">println!</span>(
-                <span class="string">&quot;Result has wrong length: {}, should be: {}&quot;</span>,
+                <span class="string">"Result has wrong length: {}, should be: {}"</span>,
                 result.len(),
                 original.len()
             );
@@ -278,7 +279,7 @@
 
         <span class="kw">if </span>frame_dec.bytes_read_from_source() != file_size {
             <span class="macro">println!</span>(
-                <span class="string">&quot;Framedecoder counted wrong amount of bytes: {}, should be: {}&quot;</span>,
+                <span class="string">"Framedecoder counted wrong amount of bytes: {}, should be: {}"</span>,
                 frame_dec.bytes_read_from_source(),
                 file_size
             );
@@ -296,14 +297,14 @@
             <span class="kw">if </span>original[idx] != result[idx] {
                 counter += <span class="number">1</span>;
                 <span class="comment">//println!(
-                //    &quot;Original {} not equal to result {} at byte: {}&quot;,
+                //    "Original {} not equal to result {} at byte: {}",
                 //    original[idx], result[idx], idx,
                 //);
             </span>}
         }
 
         <span class="kw">if </span>counter &gt; <span class="number">0 </span>{
-            <span class="macro">println!</span>(<span class="string">&quot;Result differs in at least {} bytes from original&quot;</span>, counter);
+            <span class="macro">println!</span>(<span class="string">"Result differs in at least {} bytes from original"</span>, counter);
             success = <span class="bool-val">false</span>;
             fail_counter_diff += <span class="number">1</span>;
         }
@@ -318,17 +319,17 @@
         <span class="kw">let </span>dur = end_time.as_micros() <span class="kw">as </span>usize;
         <span class="kw">let </span>speed = result.len() / <span class="kw">if </span>dur == <span class="number">0 </span>{ <span class="number">1 </span>} <span class="kw">else </span>{ dur };
         <span class="kw">let </span>speed_read = file_size <span class="kw">as </span>usize / <span class="kw">if </span>dur == <span class="number">0 </span>{ <span class="number">1 </span>} <span class="kw">else </span>{ dur };
-        <span class="macro">println!</span>(<span class="string">&quot;SPEED: {}&quot;</span>, speed);
-        <span class="macro">println!</span>(<span class="string">&quot;SPEED_read: {}&quot;</span>, speed_read);
+        <span class="macro">println!</span>(<span class="string">"SPEED: {}"</span>, speed);
+        <span class="macro">println!</span>(<span class="string">"SPEED_read: {}"</span>, speed_read);
         speeds.push(speed);
         speeds_read.push(speed_read);
     }
 
-    <span class="macro">println!</span>(<span class="string">&quot;###################&quot;</span>);
-    <span class="macro">println!</span>(<span class="string">&quot;Summary:&quot;</span>);
-    <span class="macro">println!</span>(<span class="string">&quot;###################&quot;</span>);
+    <span class="macro">println!</span>(<span class="string">"###################"</span>);
+    <span class="macro">println!</span>(<span class="string">"Summary:"</span>);
+    <span class="macro">println!</span>(<span class="string">"###################"</span>);
     <span class="macro">println!</span>(
-        <span class="string">&quot;Total: {}, Success: {}, WrongSize: {}, WrongBytecount: {}, WrongChecksum: {}, Diffs: {}&quot;</span>,
+        <span class="string">"Total: {}, Success: {}, WrongSize: {}, WrongBytecount: {}, WrongChecksum: {}, Diffs: {}"</span>,
         total_counter,
         success_counter,
         fail_counter_size,
@@ -336,9 +337,9 @@
         fail_counter_chksum,
         fail_counter_diff
     );
-    <span class="macro">println!</span>(<span class="string">&quot;Failed files: &quot;</span>);
+    <span class="macro">println!</span>(<span class="string">"Failed files: "</span>);
     <span class="kw">for </span>f <span class="kw">in </span><span class="kw-2">&amp;</span>failed {
-        <span class="macro">println!</span>(<span class="string">&quot;{}&quot;</span>, f);
+        <span class="macro">println!</span>(<span class="string">"{}"</span>, f);
     }
 
     <span class="kw">let </span>speed_len = speeds.len();
@@ -346,11 +347,11 @@
     <span class="kw">let </span>avg_speed = sum_speed / speed_len;
     <span class="kw">let </span>avg_speed_bps = avg_speed * <span class="number">1_000_000</span>;
     <span class="kw">if </span>avg_speed_bps &lt; <span class="number">1000 </span>{
-        <span class="macro">println!</span>(<span class="string">&quot;Average speed: {} B/s&quot;</span>, avg_speed_bps);
+        <span class="macro">println!</span>(<span class="string">"Average speed: {} B/s"</span>, avg_speed_bps);
     } <span class="kw">else if </span>avg_speed_bps &lt; <span class="number">1_000_000 </span>{
-        <span class="macro">println!</span>(<span class="string">&quot;Average speed: {} KB/s&quot;</span>, avg_speed_bps / <span class="number">1000</span>);
+        <span class="macro">println!</span>(<span class="string">"Average speed: {} KB/s"</span>, avg_speed_bps / <span class="number">1000</span>);
     } <span class="kw">else </span>{
-        <span class="macro">println!</span>(<span class="string">&quot;Average speed: {} MB/s&quot;</span>, avg_speed_bps / <span class="number">1_000_000</span>);
+        <span class="macro">println!</span>(<span class="string">"Average speed: {} MB/s"</span>, avg_speed_bps / <span class="number">1_000_000</span>);
     }
 
     <span class="kw">let </span>speed_read_len = speeds_read.len();
@@ -358,12 +359,12 @@
     <span class="kw">let </span>avg_speed_read = sum_speed_read / speed_read_len;
     <span class="kw">let </span>avg_speed_read_bps = avg_speed_read * <span class="number">1_000_000</span>;
     <span class="kw">if </span>avg_speed_read_bps &lt; <span class="number">1000 </span>{
-        <span class="macro">println!</span>(<span class="string">&quot;Average speed reading: {} B/s&quot;</span>, avg_speed_read_bps);
+        <span class="macro">println!</span>(<span class="string">"Average speed reading: {} B/s"</span>, avg_speed_read_bps);
     } <span class="kw">else if </span>avg_speed_bps &lt; <span class="number">1_000_000 </span>{
-        <span class="macro">println!</span>(<span class="string">&quot;Average speed reading: {} KB/s&quot;</span>, avg_speed_read_bps / <span class="number">1000</span>);
+        <span class="macro">println!</span>(<span class="string">"Average speed reading: {} KB/s"</span>, avg_speed_read_bps / <span class="number">1000</span>);
     } <span class="kw">else </span>{
         <span class="macro">println!</span>(
-            <span class="string">&quot;Average speed reading: {} MB/s&quot;</span>,
+            <span class="string">"Average speed reading: {} MB/s"</span>,
             avg_speed_read_bps / <span class="number">1_000_000
         </span>);
     }

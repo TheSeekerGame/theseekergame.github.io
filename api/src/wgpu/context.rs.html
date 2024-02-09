@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/wgpu-0.17.2/src/context.rs`."><title>context.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="wgpu" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../wgpu/index.html"><img src="https://raw.githubusercontent.com/gfx-rs/wgpu/master/logo.png" alt="wgpu"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/wgpu-0.17.2/src/context.rs`."><title>context.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="wgpu" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><a class="sub-logo-container" href="../../wgpu/index.html"><img src="https://raw.githubusercontent.com/gfx-rs/wgpu/master/logo.png" alt="wgpu"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -4042,14 +4043,14 @@
 <span class="doccomment">/// Meta trait for an id tracked by a context.
 ///
 /// There is no need to manually implement this trait since there is a blanket implementation for this trait.
-</span><span class="kw">pub trait </span>ContextId: Into&lt;ObjectId&gt; + From&lt;ObjectId&gt; + Debug + <span class="lifetime">&#39;static </span>{}
-<span class="kw">impl</span>&lt;T: Into&lt;ObjectId&gt; + From&lt;ObjectId&gt; + Debug + <span class="lifetime">&#39;static</span>&gt; ContextId <span class="kw">for </span>T {}
+</span><span class="kw">pub trait </span>ContextId: Into&lt;ObjectId&gt; + From&lt;ObjectId&gt; + Debug + <span class="lifetime">'static </span>{}
+<span class="kw">impl</span>&lt;T: Into&lt;ObjectId&gt; + From&lt;ObjectId&gt; + Debug + <span class="lifetime">'static</span>&gt; ContextId <span class="kw">for </span>T {}
 
 <span class="doccomment">/// Meta trait for an data associated with an id tracked by a context.
 ///
 /// There is no need to manually implement this trait since there is a blanket implementation for this trait.
-</span><span class="kw">pub trait </span>ContextData: Debug + WasmNotSend + WasmNotSync + <span class="lifetime">&#39;static </span>{}
-<span class="kw">impl</span>&lt;T: Debug + WasmNotSend + WasmNotSync + <span class="lifetime">&#39;static</span>&gt; ContextData <span class="kw">for </span>T {}
+</span><span class="kw">pub trait </span>ContextData: Debug + WasmNotSend + WasmNotSync + <span class="lifetime">'static </span>{}
+<span class="kw">impl</span>&lt;T: Debug + WasmNotSend + WasmNotSync + <span class="lifetime">'static</span>&gt; ContextData <span class="kw">for </span>T {}
 
 <span class="kw">pub trait </span>Context: Debug + WasmNotSend + WasmNotSync + Sized {
     <span class="kw">type </span>AdapterId: ContextId + WasmNotSend + WasmNotSync;
@@ -4095,13 +4096,13 @@
     <span class="kw">type </span>SurfaceId: ContextId + WasmNotSend + WasmNotSync;
     <span class="kw">type </span>SurfaceData: ContextData;
 
-    <span class="kw">type </span>SurfaceOutputDetail: WasmNotSend + WasmNotSync + <span class="lifetime">&#39;static</span>;
+    <span class="kw">type </span>SurfaceOutputDetail: WasmNotSend + WasmNotSync + <span class="lifetime">'static</span>;
     <span class="kw">type </span>SubmissionIndex: ContextId + Clone + Copy + WasmNotSend + WasmNotSync;
     <span class="kw">type </span>SubmissionIndexData: ContextData + Copy;
 
     <span class="kw">type </span>RequestAdapterFuture: Future&lt;Output = <span class="prelude-ty">Option</span>&lt;(<span class="self">Self</span>::AdapterId, <span class="self">Self</span>::AdapterData)&gt;&gt;
         + WasmNotSend
-        + <span class="lifetime">&#39;static</span>;
+        + <span class="lifetime">'static</span>;
     <span class="kw">type </span>RequestDeviceFuture: Future&lt;
             Output = <span class="prelude-ty">Result</span>&lt;
                 (
@@ -4113,8 +4114,8 @@
                 RequestDeviceError,
             &gt;,
         &gt; + WasmNotSend
-        + <span class="lifetime">&#39;static</span>;
-    <span class="kw">type </span>PopErrorScopeFuture: Future&lt;Output = <span class="prelude-ty">Option</span>&lt;Error&gt;&gt; + WasmNotSend + <span class="lifetime">&#39;static</span>;
+        + <span class="lifetime">'static</span>;
+    <span class="kw">type </span>PopErrorScopeFuture: Future&lt;Output = <span class="prelude-ty">Option</span>&lt;Error&gt;&gt; + WasmNotSend + <span class="lifetime">'static</span>;
 
     <span class="kw">fn </span>init(instance_desc: wgt::InstanceDescriptor) -&gt; <span class="self">Self</span>;
     <span class="kw">fn </span>instance_create_surface(
@@ -4124,7 +4125,7 @@
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(<span class="self">Self</span>::SurfaceId, <span class="self">Self</span>::SurfaceData), <span class="kw">crate</span>::CreateSurfaceError&gt;;
     <span class="kw">fn </span>instance_request_adapter(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        options: <span class="kw-2">&amp;</span>RequestAdapterOptions&lt;<span class="lifetime">&#39;_</span>&gt;,
+        options: <span class="kw-2">&amp;</span>RequestAdapterOptions&lt;<span class="lifetime">'_</span>&gt;,
     ) -&gt; <span class="self">Self</span>::RequestAdapterFuture;
     <span class="kw">fn </span>adapter_request_device(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
@@ -4329,8 +4330,8 @@
         sub_range: Range&lt;BufferAddress&gt;,
     ) -&gt; Box&lt;<span class="kw">dyn </span>BufferMappedRange&gt;;
     <span class="attr">#[cfg(all(
-        target_arch = <span class="string">&quot;wasm32&quot;</span>,
-        not(any(target_os = <span class="string">&quot;emscripten&quot;</span>, feature = <span class="string">&quot;webgl&quot;</span>))
+        target_arch = <span class="string">"wasm32"</span>,
+        not(any(target_os = <span class="string">"emscripten"</span>, feature = <span class="string">"webgl"</span>))
     ))]
     </span><span class="kw">fn </span>buffer_get_mapped_range_as_array_buffer(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
@@ -4473,7 +4474,7 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         encoder: <span class="kw-2">&amp;</span><span class="self">Self</span>::CommandEncoderId,
         encoder_data: <span class="kw-2">&amp;</span><span class="self">Self</span>::CommandEncoderData,
-        desc: <span class="kw-2">&amp;</span>RenderPassDescriptor&lt;<span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>&gt;,
+        desc: <span class="kw-2">&amp;</span>RenderPassDescriptor&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;,
     ) -&gt; (<span class="self">Self</span>::RenderPassId, <span class="self">Self</span>::RenderPassData);
     <span class="kw">fn </span>command_encoder_end_render_pass(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
@@ -4592,7 +4593,7 @@
         data_layout: ImageDataLayout,
         size: Extent3d,
     );
-    <span class="attr">#[cfg(all(target_arch = <span class="string">&quot;wasm32&quot;</span>, not(target_os = <span class="string">&quot;emscripten&quot;</span>)))]
+    <span class="attr">#[cfg(all(target_arch = <span class="string">"wasm32"</span>, not(target_os = <span class="string">"emscripten"</span>)))]
     </span><span class="kw">fn </span>queue_copy_external_image_to_texture(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         queue: <span class="kw-2">&amp;</span><span class="self">Self</span>::QueueId,
@@ -5014,12 +5015,12 @@
         pass: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::RenderPassId,
         pass_data: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::RenderPassData,
     );
-    <span class="kw">fn </span>render_pass_execute_bundles&lt;<span class="lifetime">&#39;a</span>&gt;(
+    <span class="kw">fn </span>render_pass_execute_bundles&lt;<span class="lifetime">'a</span>&gt;(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         pass: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::RenderPassId,
         pass_data: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::RenderPassData,
         render_bundles: Box&lt;
-            <span class="kw">dyn </span>Iterator&lt;Item = (<span class="self">Self</span>::RenderBundleId, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">Self</span>::RenderBundleData)&gt; + <span class="lifetime">&#39;a</span>,
+            <span class="kw">dyn </span>Iterator&lt;Item = (<span class="self">Self</span>::RenderBundleId, <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="self">Self</span>::RenderBundleData)&gt; + <span class="lifetime">'a</span>,
         &gt;,
     );
 }
@@ -5029,7 +5030,7 @@
 </span><span class="kw">pub struct </span>ObjectId {
     <span class="doccomment">/// ID that is unique at any given time
     </span>id: <span class="prelude-ty">Option</span>&lt;NonZeroU64&gt;,
-    <span class="attr">#[cfg(feature = <span class="string">&quot;expose-ids&quot;</span>)]
+    <span class="attr">#[cfg(feature = <span class="string">"expose-ids"</span>)]
     </span><span class="doccomment">/// ID that is unique at all times
     </span>global_id: <span class="prelude-ty">Option</span>&lt;NonZeroU64&gt;,
 }
@@ -5037,14 +5038,14 @@
 <span class="kw">impl </span>ObjectId {
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const </span>UNUSED: <span class="self">Self </span>= ObjectId {
         id: <span class="prelude-val">None</span>,
-        <span class="attr">#[cfg(feature = <span class="string">&quot;expose-ids&quot;</span>)]
+        <span class="attr">#[cfg(feature = <span class="string">"expose-ids"</span>)]
         </span>global_id: <span class="prelude-val">None</span>,
     };
 
-    <span class="kw">pub fn </span>new(id: NonZeroU64, <span class="attr">#[cfg(feature = <span class="string">&quot;expose-ids&quot;</span>)] </span>global_id: NonZeroU64) -&gt; <span class="self">Self </span>{
+    <span class="kw">pub fn </span>new(id: NonZeroU64, <span class="attr">#[cfg(feature = <span class="string">"expose-ids"</span>)] </span>global_id: NonZeroU64) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             id: <span class="prelude-val">Some</span>(id),
-            <span class="attr">#[cfg(feature = <span class="string">&quot;expose-ids&quot;</span>)]
+            <span class="attr">#[cfg(feature = <span class="string">"expose-ids"</span>)]
             </span>global_id: <span class="prelude-val">Some</span>(global_id),
         }
     }
@@ -5053,7 +5054,7 @@
     </span><span class="kw">pub fn </span>from_global_id(global_id: NonZeroU64) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             id: <span class="prelude-val">Some</span>(global_id),
-            <span class="attr">#[cfg(feature = <span class="string">&quot;expose-ids&quot;</span>)]
+            <span class="attr">#[cfg(feature = <span class="string">"expose-ids"</span>)]
             </span>global_id: <span class="prelude-val">Some</span>(global_id),
         }
     }
@@ -5063,23 +5064,23 @@
         <span class="self">self</span>.id.unwrap()
     }
 
-    <span class="attr">#[cfg(feature = <span class="string">&quot;expose-ids&quot;</span>)]
-    #[cfg_attr(docsrs, doc(cfg(feature = <span class="string">&quot;expose-ids&quot;</span>)))]
+    <span class="attr">#[cfg(feature = <span class="string">"expose-ids"</span>)]
+    #[cfg_attr(docsrs, doc(cfg(feature = <span class="string">"expose-ids"</span>)))]
     </span><span class="kw">pub fn </span>global_id(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; NonZeroU64 {
         <span class="self">self</span>.global_id.unwrap()
     }
 }
 
 <span class="attr">#[cfg(any(
-    not(target_arch = <span class="string">&quot;wasm32&quot;</span>),
+    not(target_arch = <span class="string">"wasm32"</span>),
     all(
-        feature = <span class="string">&quot;fragile-send-sync-non-atomic-wasm&quot;</span>,
-        not(target_feature = <span class="string">&quot;atomics&quot;</span>)
+        feature = <span class="string">"fragile-send-sync-non-atomic-wasm"</span>,
+        not(target_feature = <span class="string">"atomics"</span>)
     )
 ))]
 </span><span class="macro">static_assertions::assert_impl_all!</span>(ObjectId: Send, Sync);
 
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>downcast_ref&lt;T: Debug + WasmNotSend + WasmNotSync + <span class="lifetime">&#39;static</span>&gt;(
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>downcast_ref&lt;T: Debug + WasmNotSend + WasmNotSync + <span class="lifetime">'static</span>&gt;(
     data: <span class="kw-2">&amp;</span><span class="kw">crate</span>::Data,
 ) -&gt; <span class="kw-2">&amp;</span>T {
     <span class="macro">strict_assert!</span>(data.is::&lt;T&gt;());
@@ -5087,7 +5088,7 @@
     </span><span class="kw">unsafe </span>{ <span class="kw-2">&amp;*</span>(data <span class="kw">as </span><span class="kw-2">*const </span><span class="kw">dyn </span>Any <span class="kw">as </span><span class="kw-2">*const </span>T) }
 }
 
-<span class="kw">fn </span>downcast_mut&lt;T: Debug + WasmNotSend + WasmNotSync + <span class="lifetime">&#39;static</span>&gt;(data: <span class="kw-2">&amp;mut </span><span class="kw">crate</span>::Data) -&gt; <span class="kw-2">&amp;mut </span>T {
+<span class="kw">fn </span>downcast_mut&lt;T: Debug + WasmNotSend + WasmNotSync + <span class="lifetime">'static</span>&gt;(data: <span class="kw-2">&amp;mut </span><span class="kw">crate</span>::Data) -&gt; <span class="kw-2">&amp;mut </span>T {
     <span class="macro">strict_assert!</span>(data.is::&lt;T&gt;());
     <span class="comment">// Copied from std.
     </span><span class="kw">unsafe </span>{ <span class="kw-2">&amp;mut *</span>(data <span class="kw">as </span><span class="kw-2">*mut </span><span class="kw">dyn </span>Any <span class="kw">as </span><span class="kw-2">*mut </span>T) }
@@ -5120,93 +5121,93 @@
 }
 
 <span class="attr">#[cfg(any(
-    not(target_arch = <span class="string">&quot;wasm32&quot;</span>),
+    not(target_arch = <span class="string">"wasm32"</span>),
     all(
-        feature = <span class="string">&quot;fragile-send-sync-non-atomic-wasm&quot;</span>,
-        not(target_feature = <span class="string">&quot;atomics&quot;</span>)
+        feature = <span class="string">"fragile-send-sync-non-atomic-wasm"</span>,
+        not(target_feature = <span class="string">"atomics"</span>)
     )
 ))]
-</span><span class="kw">pub type </span>BufferMapCallback = Box&lt;<span class="kw">dyn </span>FnOnce(<span class="prelude-ty">Result</span>&lt;(), BufferAsyncError&gt;) + Send + <span class="lifetime">&#39;static</span>&gt;;
+</span><span class="kw">pub type </span>BufferMapCallback = Box&lt;<span class="kw">dyn </span>FnOnce(<span class="prelude-ty">Result</span>&lt;(), BufferAsyncError&gt;) + Send + <span class="lifetime">'static</span>&gt;;
 <span class="attr">#[cfg(not(any(
-    not(target_arch = <span class="string">&quot;wasm32&quot;</span>),
+    not(target_arch = <span class="string">"wasm32"</span>),
     all(
-        feature = <span class="string">&quot;fragile-send-sync-non-atomic-wasm&quot;</span>,
-        not(target_feature = <span class="string">&quot;atomics&quot;</span>)
+        feature = <span class="string">"fragile-send-sync-non-atomic-wasm"</span>,
+        not(target_feature = <span class="string">"atomics"</span>)
     )
 )))]
-</span><span class="kw">pub type </span>BufferMapCallback = Box&lt;<span class="kw">dyn </span>FnOnce(<span class="prelude-ty">Result</span>&lt;(), BufferAsyncError&gt;) + <span class="lifetime">&#39;static</span>&gt;;
+</span><span class="kw">pub type </span>BufferMapCallback = Box&lt;<span class="kw">dyn </span>FnOnce(<span class="prelude-ty">Result</span>&lt;(), BufferAsyncError&gt;) + <span class="lifetime">'static</span>&gt;;
 
 <span class="attr">#[cfg(any(
-    not(target_arch = <span class="string">&quot;wasm32&quot;</span>),
+    not(target_arch = <span class="string">"wasm32"</span>),
     all(
-        feature = <span class="string">&quot;fragile-send-sync-non-atomic-wasm&quot;</span>,
-        not(target_feature = <span class="string">&quot;atomics&quot;</span>)
+        feature = <span class="string">"fragile-send-sync-non-atomic-wasm"</span>,
+        not(target_feature = <span class="string">"atomics"</span>)
     )
 ))]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">type </span>AdapterRequestDeviceFuture =
     Box&lt;<span class="kw">dyn </span>Future&lt;Output = <span class="prelude-ty">Result</span>&lt;DeviceRequest, RequestDeviceError&gt;&gt; + Send&gt;;
 <span class="attr">#[cfg(not(any(
-    not(target_arch = <span class="string">&quot;wasm32&quot;</span>),
+    not(target_arch = <span class="string">"wasm32"</span>),
     all(
-        feature = <span class="string">&quot;fragile-send-sync-non-atomic-wasm&quot;</span>,
-        not(target_feature = <span class="string">&quot;atomics&quot;</span>)
+        feature = <span class="string">"fragile-send-sync-non-atomic-wasm"</span>,
+        not(target_feature = <span class="string">"atomics"</span>)
     )
 )))]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">type </span>AdapterRequestDeviceFuture =
     Box&lt;<span class="kw">dyn </span>Future&lt;Output = <span class="prelude-ty">Result</span>&lt;DeviceRequest, RequestDeviceError&gt;&gt;&gt;;
 
 <span class="attr">#[cfg(any(
-    not(target_arch = <span class="string">&quot;wasm32&quot;</span>),
+    not(target_arch = <span class="string">"wasm32"</span>),
     all(
-        feature = <span class="string">&quot;fragile-send-sync-non-atomic-wasm&quot;</span>,
-        not(target_feature = <span class="string">&quot;atomics&quot;</span>)
+        feature = <span class="string">"fragile-send-sync-non-atomic-wasm"</span>,
+        not(target_feature = <span class="string">"atomics"</span>)
     )
 ))]
 </span><span class="kw">pub type </span>InstanceRequestAdapterFuture =
     Box&lt;<span class="kw">dyn </span>Future&lt;Output = <span class="prelude-ty">Option</span>&lt;(ObjectId, Box&lt;<span class="kw">crate</span>::Data&gt;)&gt;&gt; + Send&gt;;
 <span class="attr">#[cfg(not(any(
-    not(target_arch = <span class="string">&quot;wasm32&quot;</span>),
+    not(target_arch = <span class="string">"wasm32"</span>),
     all(
-        feature = <span class="string">&quot;fragile-send-sync-non-atomic-wasm&quot;</span>,
-        not(target_feature = <span class="string">&quot;atomics&quot;</span>)
+        feature = <span class="string">"fragile-send-sync-non-atomic-wasm"</span>,
+        not(target_feature = <span class="string">"atomics"</span>)
     )
 )))]
 </span><span class="kw">pub type </span>InstanceRequestAdapterFuture =
     Box&lt;<span class="kw">dyn </span>Future&lt;Output = <span class="prelude-ty">Option</span>&lt;(ObjectId, Box&lt;<span class="kw">crate</span>::Data&gt;)&gt;&gt;&gt;;
 
 <span class="attr">#[cfg(any(
-    not(target_arch = <span class="string">&quot;wasm32&quot;</span>),
+    not(target_arch = <span class="string">"wasm32"</span>),
     all(
-        feature = <span class="string">&quot;fragile-send-sync-non-atomic-wasm&quot;</span>,
-        not(target_feature = <span class="string">&quot;atomics&quot;</span>)
+        feature = <span class="string">"fragile-send-sync-non-atomic-wasm"</span>,
+        not(target_feature = <span class="string">"atomics"</span>)
     )
 ))]
 </span><span class="kw">pub type </span>DevicePopErrorFuture = Box&lt;<span class="kw">dyn </span>Future&lt;Output = <span class="prelude-ty">Option</span>&lt;Error&gt;&gt; + Send&gt;;
 <span class="attr">#[cfg(not(any(
-    not(target_arch = <span class="string">&quot;wasm32&quot;</span>),
+    not(target_arch = <span class="string">"wasm32"</span>),
     all(
-        feature = <span class="string">&quot;fragile-send-sync-non-atomic-wasm&quot;</span>,
-        not(target_feature = <span class="string">&quot;atomics&quot;</span>)
+        feature = <span class="string">"fragile-send-sync-non-atomic-wasm"</span>,
+        not(target_feature = <span class="string">"atomics"</span>)
     )
 )))]
 </span><span class="kw">pub type </span>DevicePopErrorFuture = Box&lt;<span class="kw">dyn </span>Future&lt;Output = <span class="prelude-ty">Option</span>&lt;Error&gt;&gt;&gt;;
 
 <span class="attr">#[cfg(any(
-    not(target_arch = <span class="string">&quot;wasm32&quot;</span>),
+    not(target_arch = <span class="string">"wasm32"</span>),
     all(
-        feature = <span class="string">&quot;fragile-send-sync-non-atomic-wasm&quot;</span>,
-        not(target_feature = <span class="string">&quot;atomics&quot;</span>)
+        feature = <span class="string">"fragile-send-sync-non-atomic-wasm"</span>,
+        not(target_feature = <span class="string">"atomics"</span>)
     )
 ))]
-</span><span class="kw">pub type </span>SubmittedWorkDoneCallback = Box&lt;<span class="kw">dyn </span>FnOnce() + Send + <span class="lifetime">&#39;static</span>&gt;;
+</span><span class="kw">pub type </span>SubmittedWorkDoneCallback = Box&lt;<span class="kw">dyn </span>FnOnce() + Send + <span class="lifetime">'static</span>&gt;;
 <span class="attr">#[cfg(not(any(
-    not(target_arch = <span class="string">&quot;wasm32&quot;</span>),
+    not(target_arch = <span class="string">"wasm32"</span>),
     all(
-        feature = <span class="string">&quot;fragile-send-sync-non-atomic-wasm&quot;</span>,
-        not(target_feature = <span class="string">&quot;atomics&quot;</span>)
+        feature = <span class="string">"fragile-send-sync-non-atomic-wasm"</span>,
+        not(target_feature = <span class="string">"atomics"</span>)
     )
 )))]
-</span><span class="kw">pub type </span>SubmittedWorkDoneCallback = Box&lt;<span class="kw">dyn </span>FnOnce() + <span class="lifetime">&#39;static</span>&gt;;
+</span><span class="kw">pub type </span>SubmittedWorkDoneCallback = Box&lt;<span class="kw">dyn </span>FnOnce() + <span class="lifetime">'static</span>&gt;;
 
 <span class="doccomment">/// An object safe variant of [`Context`] implemented by all types that implement [`Context`].
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">trait </span>DynContext: Debug + WasmNotSend + WasmNotSync {
@@ -5220,7 +5221,7 @@
     <span class="attr">#[allow(clippy::type_complexity)]
     </span><span class="kw">fn </span>instance_request_adapter(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        options: <span class="kw-2">&amp;</span>RequestAdapterOptions&lt;<span class="lifetime">&#39;_</span>&gt;,
+        options: <span class="kw-2">&amp;</span>RequestAdapterOptions&lt;<span class="lifetime">'_</span>&gt;,
     ) -&gt; Pin&lt;InstanceRequestAdapterFuture&gt;;
     <span class="kw">fn </span>adapter_request_device(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
@@ -5407,8 +5408,8 @@
         sub_range: Range&lt;BufferAddress&gt;,
     ) -&gt; Box&lt;<span class="kw">dyn </span>BufferMappedRange&gt;;
     <span class="attr">#[cfg(all(
-        target_arch = <span class="string">&quot;wasm32&quot;</span>,
-        not(any(target_os = <span class="string">&quot;emscripten&quot;</span>, feature = <span class="string">&quot;webgl&quot;</span>))
+        target_arch = <span class="string">"wasm32"</span>,
+        not(any(target_os = <span class="string">"emscripten"</span>, feature = <span class="string">"webgl"</span>))
     ))]
     </span><span class="kw">fn </span>buffer_get_mapped_range_as_array_buffer(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
@@ -5515,7 +5516,7 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         encoder: <span class="kw-2">&amp;</span>ObjectId,
         encoder_data: <span class="kw-2">&amp;</span><span class="kw">crate</span>::Data,
-        desc: <span class="kw-2">&amp;</span>RenderPassDescriptor&lt;<span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>&gt;,
+        desc: <span class="kw-2">&amp;</span>RenderPassDescriptor&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;,
     ) -&gt; (ObjectId, Box&lt;<span class="kw">crate</span>::Data&gt;);
     <span class="kw">fn </span>command_encoder_end_render_pass(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
@@ -5630,7 +5631,7 @@
         data_layout: ImageDataLayout,
         size: Extent3d,
     );
-    <span class="attr">#[cfg(all(target_arch = <span class="string">&quot;wasm32&quot;</span>, not(target_os = <span class="string">&quot;emscripten&quot;</span>)))]
+    <span class="attr">#[cfg(all(target_arch = <span class="string">"wasm32"</span>, not(target_os = <span class="string">"emscripten"</span>)))]
     </span><span class="kw">fn </span>queue_copy_external_image_to_texture(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         queue: <span class="kw-2">&amp;</span>ObjectId,
@@ -5639,11 +5640,11 @@
         dest: <span class="kw">crate</span>::ImageCopyTextureTagged,
         size: wgt::Extent3d,
     );
-    <span class="kw">fn </span>queue_submit&lt;<span class="lifetime">&#39;a</span>&gt;(
+    <span class="kw">fn </span>queue_submit&lt;<span class="lifetime">'a</span>&gt;(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         queue: <span class="kw-2">&amp;</span>ObjectId,
         queue_data: <span class="kw-2">&amp;</span><span class="kw">crate</span>::Data,
-        command_buffers: Box&lt;<span class="kw">dyn </span>Iterator&lt;Item = (ObjectId, Box&lt;<span class="kw">crate</span>::Data&gt;)&gt; + <span class="lifetime">&#39;a</span>&gt;,
+        command_buffers: Box&lt;<span class="kw">dyn </span>Iterator&lt;Item = (ObjectId, Box&lt;<span class="kw">crate</span>::Data&gt;)&gt; + <span class="lifetime">'a</span>&gt;,
     ) -&gt; (ObjectId, Arc&lt;<span class="kw">crate</span>::Data&gt;);
     <span class="kw">fn </span>queue_get_timestamp_period(<span class="kw-2">&amp;</span><span class="self">self</span>, queue: <span class="kw-2">&amp;</span>ObjectId, queue_data: <span class="kw-2">&amp;</span><span class="kw">crate</span>::Data) -&gt; f32;
     <span class="kw">fn </span>queue_on_submitted_work_done(
@@ -6040,18 +6041,18 @@
         pass: <span class="kw-2">&amp;mut </span>ObjectId,
         pass_data: <span class="kw-2">&amp;mut </span><span class="kw">crate</span>::Data,
     );
-    <span class="kw">fn </span>render_pass_execute_bundles&lt;<span class="lifetime">&#39;a</span>&gt;(
+    <span class="kw">fn </span>render_pass_execute_bundles&lt;<span class="lifetime">'a</span>&gt;(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         pass: <span class="kw-2">&amp;mut </span>ObjectId,
         pass_data: <span class="kw-2">&amp;mut </span><span class="kw">crate</span>::Data,
-        render_bundles: Box&lt;<span class="kw">dyn </span>Iterator&lt;Item = (<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>ObjectId, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw">crate</span>::Data)&gt; + <span class="lifetime">&#39;a</span>&gt;,
+        render_bundles: Box&lt;<span class="kw">dyn </span>Iterator&lt;Item = (<span class="kw-2">&amp;</span><span class="lifetime">'a </span>ObjectId, <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw">crate</span>::Data)&gt; + <span class="lifetime">'a</span>&gt;,
     );
 }
 
 <span class="comment">// Blanket impl of DynContext for all types which implement Context.
 </span><span class="kw">impl</span>&lt;T&gt; DynContext <span class="kw">for </span>T
 <span class="kw">where
-    </span>T: Context + <span class="lifetime">&#39;static</span>,
+    </span>T: Context + <span class="lifetime">'static</span>,
 {
     <span class="kw">fn </span>as_any(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="kw">dyn </span>Any {
         <span class="self">self
@@ -6069,7 +6070,7 @@
 
     <span class="kw">fn </span>instance_request_adapter(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        options: <span class="kw-2">&amp;</span>RequestAdapterOptions&lt;<span class="lifetime">&#39;_</span>&gt;,
+        options: <span class="kw-2">&amp;</span>RequestAdapterOptions&lt;<span class="lifetime">'_</span>&gt;,
     ) -&gt; Pin&lt;InstanceRequestAdapterFuture&gt; {
         <span class="kw">let </span>future: T::RequestAdapterFuture = Context::instance_request_adapter(<span class="self">self</span>, options);
         Box::pin(<span class="kw">async move </span>{
@@ -6495,8 +6496,8 @@
     }
 
     <span class="attr">#[cfg(all(
-        target_arch = <span class="string">&quot;wasm32&quot;</span>,
-        not(any(target_os = <span class="string">&quot;emscripten&quot;</span>, feature = <span class="string">&quot;webgl&quot;</span>))
+        target_arch = <span class="string">"wasm32"</span>,
+        not(any(target_os = <span class="string">"emscripten"</span>, feature = <span class="string">"webgl"</span>))
     ))]
     </span><span class="kw">fn </span>buffer_get_mapped_range_as_array_buffer(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
@@ -6794,7 +6795,7 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         encoder: <span class="kw-2">&amp;</span>ObjectId,
         encoder_data: <span class="kw-2">&amp;</span><span class="kw">crate</span>::Data,
-        desc: <span class="kw-2">&amp;</span>RenderPassDescriptor&lt;<span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>&gt;,
+        desc: <span class="kw-2">&amp;</span>RenderPassDescriptor&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;,
     ) -&gt; (ObjectId, Box&lt;<span class="kw">crate</span>::Data&gt;) {
         <span class="kw">let </span>encoder = &lt;T::CommandEncoderId&gt;::from(<span class="kw-2">*</span>encoder);
         <span class="kw">let </span>encoder_data = downcast_ref(encoder_data);
@@ -7041,7 +7042,7 @@
         Context::queue_write_texture(<span class="self">self</span>, <span class="kw-2">&amp;</span>queue, queue_data, texture, data, data_layout, size)
     }
 
-    <span class="attr">#[cfg(all(target_arch = <span class="string">&quot;wasm32&quot;</span>, not(target_os = <span class="string">&quot;emscripten&quot;</span>)))]
+    <span class="attr">#[cfg(all(target_arch = <span class="string">"wasm32"</span>, not(target_os = <span class="string">"emscripten"</span>)))]
     </span><span class="kw">fn </span>queue_copy_external_image_to_texture(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         queue: <span class="kw-2">&amp;</span>ObjectId,
@@ -7055,11 +7056,11 @@
         Context::queue_copy_external_image_to_texture(<span class="self">self</span>, <span class="kw-2">&amp;</span>queue, queue_data, source, dest, size)
     }
 
-    <span class="kw">fn </span>queue_submit&lt;<span class="lifetime">&#39;a</span>&gt;(
+    <span class="kw">fn </span>queue_submit&lt;<span class="lifetime">'a</span>&gt;(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         queue: <span class="kw-2">&amp;</span>ObjectId,
         queue_data: <span class="kw-2">&amp;</span><span class="kw">crate</span>::Data,
-        command_buffers: Box&lt;<span class="kw">dyn </span>Iterator&lt;Item = (ObjectId, Box&lt;<span class="kw">crate</span>::Data&gt;)&gt; + <span class="lifetime">&#39;a</span>&gt;,
+        command_buffers: Box&lt;<span class="kw">dyn </span>Iterator&lt;Item = (ObjectId, Box&lt;<span class="kw">crate</span>::Data&gt;)&gt; + <span class="lifetime">'a</span>&gt;,
     ) -&gt; (ObjectId, Arc&lt;<span class="kw">crate</span>::Data&gt;) {
         <span class="kw">let </span>queue = &lt;T::QueueId&gt;::from(<span class="kw-2">*</span>queue);
         <span class="kw">let </span>queue_data = downcast_ref(queue_data);
@@ -7999,11 +8000,11 @@
         Context::render_pass_end_pipeline_statistics_query(<span class="self">self</span>, <span class="kw-2">&amp;mut </span>pass, pass_data)
     }
 
-    <span class="kw">fn </span>render_pass_execute_bundles&lt;<span class="lifetime">&#39;a</span>&gt;(
+    <span class="kw">fn </span>render_pass_execute_bundles&lt;<span class="lifetime">'a</span>&gt;(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         pass: <span class="kw-2">&amp;mut </span>ObjectId,
         pass_data: <span class="kw-2">&amp;mut </span><span class="kw">crate</span>::Data,
-        render_bundles: Box&lt;<span class="kw">dyn </span>Iterator&lt;Item = (<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>ObjectId, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw">crate</span>::Data)&gt; + <span class="lifetime">&#39;a</span>&gt;,
+        render_bundles: Box&lt;<span class="kw">dyn </span>Iterator&lt;Item = (<span class="kw-2">&amp;</span><span class="lifetime">'a </span>ObjectId, <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw">crate</span>::Data)&gt; + <span class="lifetime">'a</span>&gt;,
     ) {
         <span class="kw">let </span><span class="kw-2">mut </span>pass = &lt;T::RenderPassId&gt;::from(<span class="kw-2">*</span>pass);
         <span class="kw">let </span>pass_data = downcast_mut::&lt;T::RenderPassData&gt;(pass_data);

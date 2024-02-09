@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/naga-0.13.0/src/front/wgsl/lower/construction.rs`."><title>construction.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../../../" data-static-root-path="../../../../../static.files/" data-current-crate="naga" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../../../src-files.js"></script><script defer src="../../../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/naga-0.13.0/src/front/wgsl/lower/construction.rs`."><title>construction.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../../../" data-static-root-path="../../../../../static.files/" data-current-crate="naga" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../../../src-files.js"></script><script defer src="../../../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -626,7 +627,7 @@
 }
 
 <span class="kw">impl </span>ConcreteConstructorHandle {
-    <span class="kw">fn </span>borrow&lt;<span class="lifetime">&#39;a</span>&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, module: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw">crate</span>::Module) -&gt; ConcreteConstructor&lt;<span class="lifetime">&#39;a</span>&gt; {
+    <span class="kw">fn </span>borrow&lt;<span class="lifetime">'a</span>&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, module: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw">crate</span>::Module) -&gt; ConcreteConstructor&lt;<span class="lifetime">'a</span>&gt; {
         <span class="kw">match </span><span class="kw-2">*</span><span class="self">self </span>{
             <span class="self">Self</span>::PartialVector { size } =&gt; ConcreteConstructor::PartialVector { size },
             <span class="self">Self</span>::PartialMatrix { columns, rows } =&gt; {
@@ -638,7 +639,7 @@
     }
 }
 
-<span class="kw">enum </span>ConcreteConstructor&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">enum </span>ConcreteConstructor&lt;<span class="lifetime">'a</span>&gt; {
     PartialVector {
         size: <span class="kw">crate</span>::VectorSize,
     },
@@ -647,40 +648,40 @@
         rows: <span class="kw">crate</span>::VectorSize,
     },
     PartialArray,
-    Type(Handle&lt;<span class="kw">crate</span>::Type&gt;, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw">crate</span>::TypeInner),
+    Type(Handle&lt;<span class="kw">crate</span>::Type&gt;, <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw">crate</span>::TypeInner),
 }
 
 <span class="kw">impl </span>ConcreteConstructorHandle {
     <span class="kw">fn </span>to_error_string(<span class="kw-2">&amp;</span><span class="self">self</span>, ctx: ExpressionContext) -&gt; String {
         <span class="kw">match </span><span class="kw-2">*</span><span class="self">self </span>{
             <span class="self">Self</span>::PartialVector { size } =&gt; {
-                <span class="macro">format!</span>(<span class="string">&quot;vec{}&lt;?&gt;&quot;</span>, size <span class="kw">as </span>u32,)
+                <span class="macro">format!</span>(<span class="string">"vec{}&lt;?&gt;"</span>, size <span class="kw">as </span>u32,)
             }
             <span class="self">Self</span>::PartialMatrix { columns, rows } =&gt; {
-                <span class="macro">format!</span>(<span class="string">&quot;mat{}x{}&lt;?&gt;&quot;</span>, columns <span class="kw">as </span>u32, rows <span class="kw">as </span>u32,)
+                <span class="macro">format!</span>(<span class="string">"mat{}x{}&lt;?&gt;"</span>, columns <span class="kw">as </span>u32, rows <span class="kw">as </span>u32,)
             }
-            <span class="self">Self</span>::PartialArray =&gt; <span class="string">&quot;array&lt;?, ?&gt;&quot;</span>.to_string(),
+            <span class="self">Self</span>::PartialArray =&gt; <span class="string">"array&lt;?, ?&gt;"</span>.to_string(),
             <span class="self">Self</span>::Type(ty) =&gt; ctx.format_type(ty),
         }
     }
 }
 
-<span class="kw">enum </span>ComponentsHandle&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">enum </span>ComponentsHandle&lt;<span class="lifetime">'a</span>&gt; {
     <span class="prelude-val">None</span>,
     One {
         component: Handle&lt;<span class="kw">crate</span>::Expression&gt;,
         span: Span,
-        ty: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>TypeResolution,
+        ty: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>TypeResolution,
     },
     Many {
         components: Vec&lt;Handle&lt;<span class="kw">crate</span>::Expression&gt;&gt;,
         spans: Vec&lt;Span&gt;,
-        first_component_ty: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>TypeResolution,
+        first_component_ty: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>TypeResolution,
     },
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; ComponentsHandle&lt;<span class="lifetime">&#39;a</span>&gt; {
-    <span class="kw">fn </span>borrow(<span class="self">self</span>, module: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw">crate</span>::Module) -&gt; Components&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; ComponentsHandle&lt;<span class="lifetime">'a</span>&gt; {
+    <span class="kw">fn </span>borrow(<span class="self">self</span>, module: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw">crate</span>::Module) -&gt; Components&lt;<span class="lifetime">'a</span>&gt; {
         <span class="kw">match </span><span class="self">self </span>{
             <span class="self">Self</span>::None =&gt; Components::None,
             <span class="self">Self</span>::One {
@@ -705,21 +706,21 @@
     }
 }
 
-<span class="kw">enum </span>Components&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">enum </span>Components&lt;<span class="lifetime">'a</span>&gt; {
     <span class="prelude-val">None</span>,
     One {
         component: Handle&lt;<span class="kw">crate</span>::Expression&gt;,
         span: Span,
-        ty_inner: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw">crate</span>::TypeInner,
+        ty_inner: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw">crate</span>::TypeInner,
     },
     Many {
         components: Vec&lt;Handle&lt;<span class="kw">crate</span>::Expression&gt;&gt;,
         spans: Vec&lt;Span&gt;,
-        first_component_ty_inner: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw">crate</span>::TypeInner,
+        first_component_ty_inner: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw">crate</span>::TypeInner,
     },
 }
 
-<span class="kw">impl </span>Components&lt;<span class="lifetime">&#39;_</span>&gt; {
+<span class="kw">impl </span>Components&lt;<span class="lifetime">'_</span>&gt; {
     <span class="kw">fn </span>into_components_vec(<span class="self">self</span>) -&gt; Vec&lt;Handle&lt;<span class="kw">crate</span>::Expression&gt;&gt; {
         <span class="kw">match </span><span class="self">self </span>{
             <span class="self">Self</span>::None =&gt; <span class="macro">vec!</span>[],
@@ -729,16 +730,16 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;source</span>, <span class="lifetime">&#39;temp</span>&gt; Lowerer&lt;<span class="lifetime">&#39;source</span>, <span class="lifetime">&#39;temp</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'source</span>, <span class="lifetime">'temp</span>&gt; Lowerer&lt;<span class="lifetime">'source</span>, <span class="lifetime">'temp</span>&gt; {
     <span class="doccomment">/// Generate Naga IR for a type constructor expression.
     ///
     /// The `constructor` value represents the head of the constructor
     /// expression, which is at least a hint of which type is being built; if
-    /// it&#39;s one of the `Partial` variants, we need to consider the argument
+    /// it's one of the `Partial` variants, we need to consider the argument
     /// types as well.
     ///
     /// This is used for [`Construct`] expressions, but also for [`Call`]
-    /// expressions, once we&#39;ve determined that the &quot;callable&quot; (in WGSL spec
+    /// expressions, once we've determined that the "callable" (in WGSL spec
     /// terms) is actually a type.
     ///
     /// [`Construct`]: ast::Expression::Construct
@@ -746,11 +747,11 @@
     </span><span class="kw">pub fn </span>construct(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         span: Span,
-        constructor: <span class="kw-2">&amp;</span>ast::ConstructorType&lt;<span class="lifetime">&#39;source</span>&gt;,
+        constructor: <span class="kw-2">&amp;</span>ast::ConstructorType&lt;<span class="lifetime">'source</span>&gt;,
         ty_span: Span,
-        components: <span class="kw-2">&amp;</span>[Handle&lt;ast::Expression&lt;<span class="lifetime">&#39;source</span>&gt;&gt;],
-        <span class="kw-2">mut </span>ctx: ExpressionContext&lt;<span class="lifetime">&#39;source</span>, <span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;Handle&lt;<span class="kw">crate</span>::Expression&gt;, Error&lt;<span class="lifetime">&#39;source</span>&gt;&gt; {
+        components: <span class="kw-2">&amp;</span>[Handle&lt;ast::Expression&lt;<span class="lifetime">'source</span>&gt;&gt;],
+        <span class="kw-2">mut </span>ctx: ExpressionContext&lt;<span class="lifetime">'source</span>, <span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Handle&lt;<span class="kw">crate</span>::Expression&gt;, Error&lt;<span class="lifetime">'source</span>&gt;&gt; {
         <span class="kw">let </span>constructor_h = <span class="self">self</span>.constructor(constructor, ctx.reborrow())<span class="question-mark">?</span>;
 
         <span class="kw">let </span>components_h = <span class="kw">match </span><span class="kw-2">*</span>components {
@@ -1125,7 +1126,7 @@
                 <span class="kw">return </span><span class="prelude-val">Err</span>(Error::InvalidConstructorComponentType(spans[<span class="number">0</span>], <span class="number">0</span>));
             }
 
-            <span class="comment">// Other types can&#39;t be constructed
+            <span class="comment">// Other types can't be constructed
             </span><span class="kw">_ </span>=&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(Error::TypeNotConstructible(ty_span)),
         };
 
@@ -1136,7 +1137,7 @@
     <span class="doccomment">/// Build a Naga IR [`Type`] for `constructor` if there is enough
     /// information to do so.
     ///
-    /// For `Partial` variants of [`ast::ConstructorType`], we don&#39;t know the
+    /// For `Partial` variants of [`ast::ConstructorType`], we don't know the
     /// component type, so in that case we return the appropriate `Partial`
     /// variant of [`ConcreteConstructorHandle`].
     ///
@@ -1147,17 +1148,17 @@
     ///
     /// Note that constructing an [`Array`] type may require inserting
     /// [`Constant`]s as well as `Type`s into `ctx.module`, to represent the
-    /// array&#39;s length.
+    /// array's length.
     ///
     /// [`Type`]: crate::Type
     /// [`ctx.module`]: ExpressionContext::module
     /// [`Array`]: crate::TypeInner::Array
     /// [`Constant`]: crate::Constant
-    </span><span class="kw">fn </span>constructor&lt;<span class="lifetime">&#39;out</span>&gt;(
+    </span><span class="kw">fn </span>constructor&lt;<span class="lifetime">'out</span>&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        constructor: <span class="kw-2">&amp;</span>ast::ConstructorType&lt;<span class="lifetime">&#39;source</span>&gt;,
-        <span class="kw-2">mut </span>ctx: ExpressionContext&lt;<span class="lifetime">&#39;source</span>, <span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;out</span>&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;ConcreteConstructorHandle, Error&lt;<span class="lifetime">&#39;source</span>&gt;&gt; {
+        constructor: <span class="kw-2">&amp;</span>ast::ConstructorType&lt;<span class="lifetime">'source</span>&gt;,
+        <span class="kw-2">mut </span>ctx: ExpressionContext&lt;<span class="lifetime">'source</span>, <span class="lifetime">'_</span>, <span class="lifetime">'out</span>&gt;,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;ConcreteConstructorHandle, Error&lt;<span class="lifetime">'source</span>&gt;&gt; {
         <span class="kw">let </span>c = <span class="kw">match </span><span class="kw-2">*</span>constructor {
             ast::ConstructorType::Scalar { width, kind } =&gt; {
                 <span class="kw">let </span>ty = ctx.ensure_type_exists(<span class="kw">crate</span>::TypeInner::Scalar { width, kind });

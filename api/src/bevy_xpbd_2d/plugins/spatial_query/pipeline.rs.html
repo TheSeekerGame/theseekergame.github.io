@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_xpbd_2d-0.3.2/src/plugins/spatial_query/pipeline.rs`."><title>pipeline.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="bevy_xpbd_2d" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy_xpbd-da54805458a155a5/46f3189/crates/bevy_xpbd_2d/../../src/plugins/spatial_query/pipeline.rs`."><title>pipeline.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="bevy_xpbd_2d" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -725,6 +726,105 @@
 <a href="#725" id="725">725</a>
 <a href="#726" id="726">726</a>
 <a href="#727" id="727">727</a>
+<a href="#728" id="728">728</a>
+<a href="#729" id="729">729</a>
+<a href="#730" id="730">730</a>
+<a href="#731" id="731">731</a>
+<a href="#732" id="732">732</a>
+<a href="#733" id="733">733</a>
+<a href="#734" id="734">734</a>
+<a href="#735" id="735">735</a>
+<a href="#736" id="736">736</a>
+<a href="#737" id="737">737</a>
+<a href="#738" id="738">738</a>
+<a href="#739" id="739">739</a>
+<a href="#740" id="740">740</a>
+<a href="#741" id="741">741</a>
+<a href="#742" id="742">742</a>
+<a href="#743" id="743">743</a>
+<a href="#744" id="744">744</a>
+<a href="#745" id="745">745</a>
+<a href="#746" id="746">746</a>
+<a href="#747" id="747">747</a>
+<a href="#748" id="748">748</a>
+<a href="#749" id="749">749</a>
+<a href="#750" id="750">750</a>
+<a href="#751" id="751">751</a>
+<a href="#752" id="752">752</a>
+<a href="#753" id="753">753</a>
+<a href="#754" id="754">754</a>
+<a href="#755" id="755">755</a>
+<a href="#756" id="756">756</a>
+<a href="#757" id="757">757</a>
+<a href="#758" id="758">758</a>
+<a href="#759" id="759">759</a>
+<a href="#760" id="760">760</a>
+<a href="#761" id="761">761</a>
+<a href="#762" id="762">762</a>
+<a href="#763" id="763">763</a>
+<a href="#764" id="764">764</a>
+<a href="#765" id="765">765</a>
+<a href="#766" id="766">766</a>
+<a href="#767" id="767">767</a>
+<a href="#768" id="768">768</a>
+<a href="#769" id="769">769</a>
+<a href="#770" id="770">770</a>
+<a href="#771" id="771">771</a>
+<a href="#772" id="772">772</a>
+<a href="#773" id="773">773</a>
+<a href="#774" id="774">774</a>
+<a href="#775" id="775">775</a>
+<a href="#776" id="776">776</a>
+<a href="#777" id="777">777</a>
+<a href="#778" id="778">778</a>
+<a href="#779" id="779">779</a>
+<a href="#780" id="780">780</a>
+<a href="#781" id="781">781</a>
+<a href="#782" id="782">782</a>
+<a href="#783" id="783">783</a>
+<a href="#784" id="784">784</a>
+<a href="#785" id="785">785</a>
+<a href="#786" id="786">786</a>
+<a href="#787" id="787">787</a>
+<a href="#788" id="788">788</a>
+<a href="#789" id="789">789</a>
+<a href="#790" id="790">790</a>
+<a href="#791" id="791">791</a>
+<a href="#792" id="792">792</a>
+<a href="#793" id="793">793</a>
+<a href="#794" id="794">794</a>
+<a href="#795" id="795">795</a>
+<a href="#796" id="796">796</a>
+<a href="#797" id="797">797</a>
+<a href="#798" id="798">798</a>
+<a href="#799" id="799">799</a>
+<a href="#800" id="800">800</a>
+<a href="#801" id="801">801</a>
+<a href="#802" id="802">802</a>
+<a href="#803" id="803">803</a>
+<a href="#804" id="804">804</a>
+<a href="#805" id="805">805</a>
+<a href="#806" id="806">806</a>
+<a href="#807" id="807">807</a>
+<a href="#808" id="808">808</a>
+<a href="#809" id="809">809</a>
+<a href="#810" id="810">810</a>
+<a href="#811" id="811">811</a>
+<a href="#812" id="812">812</a>
+<a href="#813" id="813">813</a>
+<a href="#814" id="814">814</a>
+<a href="#815" id="815">815</a>
+<a href="#816" id="816">816</a>
+<a href="#817" id="817">817</a>
+<a href="#818" id="818">818</a>
+<a href="#819" id="819">819</a>
+<a href="#820" id="820">820</a>
+<a href="#821" id="821">821</a>
+<a href="#822" id="822">822</a>
+<a href="#823" id="823">823</a>
+<a href="#824" id="824">824</a>
+<a href="#825" id="825">825</a>
+<a href="#826" id="826">826</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::sync::Arc;
 
 <span class="kw">use </span><span class="kw">crate</span>::prelude::<span class="kw-2">*</span>;
@@ -747,7 +847,7 @@
 
 <span class="doccomment">/// A resource for the spatial query pipeline.
 ///
-/// The pipeline maintains a quaternary bounding volume hierarchy `Qbvh` of the world&#39;s colliders
+/// The pipeline maintains a quaternary bounding volume hierarchy `Qbvh` of the world's colliders
 /// as an acceleration structure for spatial queries.
 </span><span class="attr">#[derive(Resource, Clone)]
 </span><span class="kw">pub struct </span>SpatialQueryPipeline {
@@ -785,16 +885,29 @@
         }
     }
 
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>as_composite_shape_with_predicate&lt;<span class="lifetime">'a</span>&gt;(
+        <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="self">self</span>,
+        query_filter: SpatialQueryFilter,
+        predicate: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw">dyn </span>Fn(Entity) -&gt; bool,
+    ) -&gt; QueryPipelineAsCompositeShapeWithPredicate {
+        QueryPipelineAsCompositeShapeWithPredicate {
+            pipeline: <span class="self">self</span>,
+            colliders: <span class="kw-2">&amp;</span><span class="self">self</span>.colliders,
+            query_filter,
+            predicate,
+        }
+    }
+
     <span class="doccomment">/// Updates the associated acceleration structures with a new set of entities.
-    </span><span class="kw">pub fn </span>update&lt;<span class="lifetime">&#39;a</span>&gt;(
+    </span><span class="kw">pub fn </span>update&lt;<span class="lifetime">'a</span>&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         colliders: <span class="kw">impl </span>Iterator&lt;
             Item = (
                 Entity,
-                <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Position,
-                <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Rotation,
-                <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Collider,
-                <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>CollisionLayers&gt;,
+                <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Position,
+                <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Rotation,
+                <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Collider,
+                <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>CollisionLayers&gt;,
             ),
         &gt;,
         added_colliders: <span class="kw">impl </span>Iterator&lt;Item = Entity&gt;,
@@ -832,11 +945,11 @@
             }
         }
 
-        <span class="kw">struct </span>DataGenerator&lt;<span class="lifetime">&#39;a</span>&gt;(
-            <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>HashMap&lt;Entity, (Isometry&lt;Scalar&gt;, Collider, CollisionLayers)&gt;,
+        <span class="kw">struct </span>DataGenerator&lt;<span class="lifetime">'a</span>&gt;(
+            <span class="kw-2">&amp;</span><span class="lifetime">'a </span>HashMap&lt;Entity, (Isometry&lt;Scalar&gt;, Collider, CollisionLayers)&gt;,
         );
 
-        <span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; parry::partitioning::QbvhDataGenerator&lt;u32&gt; <span class="kw">for </span>DataGenerator&lt;<span class="lifetime">&#39;a</span>&gt; {
+        <span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; parry::partitioning::QbvhDataGenerator&lt;u32&gt; <span class="kw">for </span>DataGenerator&lt;<span class="lifetime">'a</span>&gt; {
             <span class="kw">fn </span>size_hint(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
                 <span class="self">self</span>.<span class="number">0</span>.len()
             }
@@ -869,7 +982,7 @@
     /// - `direction`: What direction the ray is cast in.
     /// - `max_time_of_impact`: The maximum distance that the ray can travel.
     /// - `solid`: If true and the ray origin is inside of a collider, the hit point will be the ray origin itself.
-    /// Otherwise, the collider will be treated as hollow, and the hit point will be at the collider&#39;s boundary.
+    /// Otherwise, the collider will be treated as hollow, and the hit point will be at the collider's boundary.
     /// - `query_filter`: A [`SpatialQueryFilter`] that determines which colliders are taken into account in the query.
     ///
     /// See also: [`SpatialQuery::cast_ray`]
@@ -899,6 +1012,48 @@
             })
     }
 
+    <span class="doccomment">/// Casts a [ray](spatial_query#raycasting) and computes the closest [hit](RayHitData) with a collider.
+    /// If there are no hits, `None` is returned.
+    ///
+    /// ## Arguments
+    ///
+    /// - `origin`: Where the ray is cast from.
+    /// - `direction`: What direction the ray is cast in.
+    /// - `max_time_of_impact`: The maximum distance that the ray can travel.
+    /// - `solid`: If true and the ray origin is inside of a collider, the hit point will be the ray origin itself.
+    /// Otherwise, the collider will be treated as hollow, and the hit point will be at the collider's boundary.
+    /// - `query_filter`: A [`SpatialQueryFilter`] that determines which colliders are taken into account in the query.
+    /// - `predicate`: A function with which the colliders are filtered. Given the Entity it should return false, if the
+    /// entity should be ignored.
+    ///
+    /// See also: [`SpatialQuery::cast_ray`]
+    </span><span class="kw">pub fn </span>cast_ray_predicate(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        origin: Vector,
+        direction: Vector,
+        max_time_of_impact: Scalar,
+        solid: bool,
+        query_filter: SpatialQueryFilter,
+        predicate: <span class="kw-2">&amp;</span><span class="kw">dyn </span>Fn(Entity) -&gt; bool,
+    ) -&gt; <span class="prelude-ty">Option</span>&lt;RayHitData&gt; {
+        <span class="kw">let </span>pipeline_shape = <span class="self">self</span>.as_composite_shape_with_predicate(query_filter, predicate);
+        <span class="kw">let </span>ray = parry::query::Ray::new(origin.into(), direction.into());
+        <span class="kw">let </span><span class="kw-2">mut </span>visitor = RayCompositeShapeToiAndNormalBestFirstVisitor::new(
+            <span class="kw-2">&amp;</span>pipeline_shape,
+            <span class="kw-2">&amp;</span>ray,
+            max_time_of_impact,
+            solid,
+        );
+
+        <span class="self">self</span>.qbvh
+            .traverse_best_first(<span class="kw-2">&amp;mut </span>visitor)
+            .map(|(<span class="kw">_</span>, (entity_index, hit))| RayHitData {
+                entity: <span class="self">self</span>.entity_from_index(entity_index),
+                time_of_impact: hit.toi,
+                normal: hit.normal.into(),
+            })
+    }
+
     <span class="doccomment">/// Casts a [ray](spatial_query#raycasting) and computes all [hits](RayHitData) until `max_hits` is reached.
     ///
     /// Note that the order of the results is not guaranteed, and if there are more hits than `max_hits`,
@@ -911,7 +1066,7 @@
     /// - `max_time_of_impact`: The maximum distance that the ray can travel.
     /// - `max_hits`: The maximum number of hits. Additional hits will be missed.
     /// - `solid`: If true and the ray origin is inside of a collider, the hit point will be the ray origin itself.
-    /// Otherwise, the collider will be treated as hollow, and the hit point will be at the collider&#39;s boundary.
+    /// Otherwise, the collider will be treated as hollow, and the hit point will be at the collider's boundary.
     /// - `query_filter`: A [`SpatialQueryFilter`] that determines which colliders are taken into account in the query.
     ///
     /// See also: [`SpatialQuery::ray_hits`]
@@ -950,7 +1105,7 @@
     /// - `direction`: What direction the ray is cast in.
     /// - `max_time_of_impact`: The maximum distance that the ray can travel.
     /// - `solid`: If true and the ray origin is inside of a collider, the hit point will be the ray origin itself.
-    /// Otherwise, the collider will be treated as hollow, and the hit point will be at the collider&#39;s boundary.
+    /// Otherwise, the collider will be treated as hollow, and the hit point will be at the collider's boundary.
     /// - `query_filter`: A [`SpatialQueryFilter`] that determines which colliders are taken into account in the query.
     /// - `callback`: A callback function called for each hit.
     ///
@@ -1026,11 +1181,11 @@
         query_filter: SpatialQueryFilter,
     ) -&gt; <span class="prelude-ty">Option</span>&lt;ShapeHitData&gt; {
         <span class="kw">let </span>rotation: Rotation;
-        <span class="attr">#[cfg(feature = <span class="string">&quot;2d&quot;</span>)]
+        <span class="attr">#[cfg(feature = <span class="string">"2d"</span>)]
         </span>{
             rotation = Rotation::from_radians(shape_rotation);
         }
-        <span class="attr">#[cfg(feature = <span class="string">&quot;3d&quot;</span>)]
+        <span class="attr">#[cfg(feature = <span class="string">"3d"</span>)]
         </span>{
             rotation = Rotation::from(shape_rotation);
         }
@@ -1138,11 +1293,11 @@
         <span class="kw-2">mut </span>callback: <span class="kw">impl </span>FnMut(ShapeHitData) -&gt; bool,
     ) {
         <span class="kw">let </span>rotation: Rotation;
-        <span class="attr">#[cfg(feature = <span class="string">&quot;2d&quot;</span>)]
+        <span class="attr">#[cfg(feature = <span class="string">"2d"</span>)]
         </span>{
             rotation = Rotation::from_radians(shape_rotation);
         }
-        <span class="attr">#[cfg(feature = <span class="string">&quot;3d&quot;</span>)]
+        <span class="attr">#[cfg(feature = <span class="string">"3d"</span>)]
         </span>{
             rotation = Rotation::from(shape_rotation);
         }
@@ -1186,13 +1341,13 @@
     }
 
     <span class="doccomment">/// Finds the [projection](spatial_query#point-projection) of a given point on the closest [collider](Collider).
-    /// If one isn&#39;t found, `None` is returned.
+    /// If one isn't found, `None` is returned.
     ///
     /// ## Arguments
     ///
     /// - `point`: The point that should be projected.
     /// - `solid`: If true and the point is inside of a collider, the projection will be at the point.
-    /// Otherwise, the collider will be treated as hollow, and the projection will be at the collider&#39;s boundary.
+    /// Otherwise, the collider will be treated as hollow, and the projection will be at the collider's boundary.
     /// - `query_filter`: A [`SpatialQueryFilter`] that determines which colliders are taken into account in the query.
     ///
     /// See also: [`SpatialQuery::project_point`]
@@ -1360,11 +1515,11 @@
     ) {
         <span class="kw">let </span>colliders = <span class="kw-2">&amp;</span><span class="self">self</span>.colliders;
         <span class="kw">let </span>rotation: Rotation;
-        <span class="attr">#[cfg(feature = <span class="string">&quot;2d&quot;</span>)]
+        <span class="attr">#[cfg(feature = <span class="string">"2d"</span>)]
         </span>{
             rotation = Rotation::from_radians(shape_rotation);
         }
-        <span class="attr">#[cfg(feature = <span class="string">&quot;3d&quot;</span>)]
+        <span class="attr">#[cfg(feature = <span class="string">"3d"</span>)]
         </span>{
             rotation = Rotation::from(shape_rotation);
         }
@@ -1400,13 +1555,13 @@
     }
 }
 
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>QueryPipelineAsCompositeShape&lt;<span class="lifetime">&#39;a</span>&gt; {
-    colliders: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>HashMap&lt;Entity, (Isometry&lt;Scalar&gt;, Collider, CollisionLayers)&gt;,
-    pipeline: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>SpatialQueryPipeline,
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>QueryPipelineAsCompositeShape&lt;<span class="lifetime">'a</span>&gt; {
+    colliders: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>HashMap&lt;Entity, (Isometry&lt;Scalar&gt;, Collider, CollisionLayers)&gt;,
+    pipeline: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>SpatialQueryPipeline,
     query_filter: SpatialQueryFilter,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; TypedSimdCompositeShape <span class="kw">for </span>QueryPipelineAsCompositeShape&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; TypedSimdCompositeShape <span class="kw">for </span>QueryPipelineAsCompositeShape&lt;<span class="lifetime">'a</span>&gt; {
     <span class="kw">type </span>PartShape = <span class="kw">dyn </span>Shape;
     <span class="kw">type </span>PartId = u32;
     <span class="kw">type </span>QbvhStorage = DefaultStorage;
@@ -1442,8 +1597,52 @@
     }
 }
 
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>QueryPipelineAsCompositeShapeWithPredicate&lt;<span class="lifetime">'a</span>, <span class="lifetime">'b</span>&gt; {
+    colliders: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>HashMap&lt;Entity, (Isometry&lt;Scalar&gt;, Collider, CollisionLayers)&gt;,
+    pipeline: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>SpatialQueryPipeline,
+    query_filter: SpatialQueryFilter,
+    predicate: <span class="kw-2">&amp;</span><span class="lifetime">'b </span><span class="kw">dyn </span>Fn(Entity) -&gt; bool,
+}
+
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, <span class="lifetime">'b</span>&gt; TypedSimdCompositeShape <span class="kw">for </span>QueryPipelineAsCompositeShapeWithPredicate&lt;<span class="lifetime">'a</span>, <span class="lifetime">'b</span>&gt; {
+    <span class="kw">type </span>PartShape = <span class="kw">dyn </span>Shape;
+    <span class="kw">type </span>PartId = u32;
+    <span class="kw">type </span>QbvhStorage = DefaultStorage;
+
+    <span class="kw">fn </span>map_typed_part_at(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        shape_id: <span class="self">Self</span>::PartId,
+        <span class="kw-2">mut </span>f: <span class="kw">impl </span>FnMut(<span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Isometry&lt;Scalar&gt;&gt;, <span class="kw-2">&amp;</span><span class="self">Self</span>::PartShape),
+    ) {
+        <span class="kw">if let </span><span class="prelude-val">Some</span>((entity, (iso, shape, layers))) =
+            <span class="self">self</span>.colliders
+                .get_key_value(<span class="kw-2">&amp;</span>utils::entity_from_index_and_gen(
+                    shape_id,
+                    <span class="kw-2">*</span><span class="self">self</span>.pipeline.entity_generations.get(<span class="kw-2">&amp;</span>shape_id).unwrap(),
+                ))
+        {
+            <span class="kw">if </span><span class="self">self</span>.query_filter.test(<span class="kw-2">*</span>entity, <span class="kw-2">*</span>layers) &amp;&amp; (<span class="self">self</span>.predicate)(<span class="kw-2">*</span>entity) {
+                f(<span class="prelude-val">Some</span>(iso), <span class="kw-2">&amp;**</span>shape.shape_scaled());
+            }
+        }
+    }
+
+    <span class="kw">fn </span>map_untyped_part_at(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        shape_id: <span class="self">Self</span>::PartId,
+        f: <span class="kw">impl </span>FnMut(<span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Isometry&lt;Scalar&gt;&gt;, <span class="kw-2">&amp;</span><span class="kw">dyn </span>Shape),
+    ) {
+        <span class="self">self</span>.map_typed_part_at(shape_id, f);
+    }
+
+    <span class="kw">fn </span>typed_qbvh(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>parry::partitioning::GenericQbvh&lt;<span class="self">Self</span>::PartId, <span class="self">Self</span>::QbvhStorage&gt; {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.pipeline.qbvh
+    }
+}
+
 <span class="doccomment">/// The result of a [point projection](spatial_query#point-projection) on a [collider](Collider).
 </span><span class="attr">#[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = <span class="string">"serialize"</span>, derive(serde::Serialize, serde::Deserialize))]
 </span><span class="kw">pub struct </span>PointProjection {
     <span class="doccomment">/// The entity of the collider that the point was projected onto.
     </span><span class="kw">pub </span>entity: Entity,

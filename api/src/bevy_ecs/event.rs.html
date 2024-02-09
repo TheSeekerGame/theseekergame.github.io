@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy-3e956806168b8470/b5b6ea3/crates/bevy_ecs/src/event.rs`."><title>event.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bevy_ecs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy-3e956806168b8470/b5b6ea3/crates/bevy_ecs/src/event.rs`."><title>event.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bevy_ecs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1161,7 +1162,7 @@
 /// You can conveniently access events using the [`EventReader`] and [`EventWriter`] system parameter.
 ///
 /// Events must be thread-safe.
-</span><span class="kw">pub trait </span>Event: Send + Sync + <span class="lifetime">&#39;static </span>{}
+</span><span class="kw">pub trait </span>Event: Send + Sync + <span class="lifetime">'static </span>{}
 
 <span class="doccomment">/// An `EventId` uniquely identifies an event stored in a specific [`World`].
 ///
@@ -1193,8 +1194,8 @@
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter) -&gt; fmt::Result {
         <span class="macro">write!</span>(
             f,
-            <span class="string">&quot;event&lt;{}&gt;#{}&quot;</span>,
-            std::any::type_name::&lt;E&gt;().split(<span class="string">&quot;::&quot;</span>).last().unwrap(),
+            <span class="string">"event&lt;{}&gt;#{}"</span>,
+            std::any::type_name::&lt;E&gt;().split(<span class="string">"::"</span>).last().unwrap(),
             <span class="self">self</span>.id,
         )
     }
@@ -1333,14 +1334,14 @@
             .min(<span class="self">self</span>.events_b.start_event_count)
     }
 
-    <span class="doccomment">/// &quot;Sends&quot; an `event` by writing it to the current event buffer. [`EventReader`]s can then read
+    <span class="doccomment">/// "Sends" an `event` by writing it to the current event buffer. [`EventReader`]s can then read
     /// the event.
     </span><span class="kw">pub fn </span>send(<span class="kw-2">&amp;mut </span><span class="self">self</span>, event: E) {
         <span class="kw">let </span>event_id = EventId {
             id: <span class="self">self</span>.event_count,
             _marker: PhantomData,
         };
-        <span class="macro">detailed_trace!</span>(<span class="string">&quot;Events::send() -&gt; id: {}&quot;</span>, event_id);
+        <span class="macro">detailed_trace!</span>(<span class="string">"Events::send() -&gt; id: {}"</span>, event_id);
 
         <span class="kw">let </span>event_instance = EventInstance { event_id, event };
 
@@ -1382,8 +1383,8 @@
     /// of all events that were removed. In general, this should be called once per frame/update.
     ///
     /// If you do not need to take ownership of the removed events, use [`Events::update`] instead.
-    </span><span class="attr">#[must_use = <span class="string">&quot;If you do not need the returned events, call .update() instead.&quot;</span>]
-    </span><span class="kw">pub fn </span>update_drain(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw">impl </span>Iterator&lt;Item = E&gt; + <span class="lifetime">&#39;_ </span>{
+    </span><span class="attr">#[must_use = <span class="string">"If you do not need the returned events, call .update() instead."</span>]
+    </span><span class="kw">pub fn </span>update_drain(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw">impl </span>Iterator&lt;Item = E&gt; + <span class="lifetime">'_ </span>{
         std::mem::swap(<span class="kw-2">&amp;mut </span><span class="self">self</span>.events_a, <span class="kw-2">&amp;mut </span><span class="self">self</span>.events_b);
         <span class="kw">let </span>iter = <span class="self">self</span>.events_b.events.drain(..);
         <span class="self">self</span>.events_b.start_event_count = <span class="self">self</span>.event_count;
@@ -1422,7 +1423,7 @@
     </span>}
 
     <span class="doccomment">/// Creates a draining iterator that removes all events.
-    </span><span class="kw">pub fn </span>drain(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw">impl </span>Iterator&lt;Item = E&gt; + <span class="lifetime">&#39;_ </span>{
+    </span><span class="kw">pub fn </span>drain(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw">impl </span>Iterator&lt;Item = E&gt; + <span class="lifetime">'_ </span>{
         <span class="self">self</span>.reset_start_event_count();
 
         <span class="comment">// Drain the oldest events first, then the newest
@@ -1432,8 +1433,8 @@
             .map(|i| i.event)
     }
 
-    <span class="doccomment">/// Iterates over events that happened since the last &quot;update&quot; call.
-    /// WARNING: You probably don&#39;t want to use this call. In most cases you should use an
+    <span class="doccomment">/// Iterates over events that happened since the last "update" call.
+    /// WARNING: You probably don't want to use this call. In most cases you should use an
     /// [`EventReader`]. You should only use this if you know you only need to consume events
     /// between the last `update()` call and your call to `iter_current_update_events`.
     /// If events happen outside that window, they will not be handled. For example, any events that
@@ -1491,7 +1492,7 @@
 
         <span class="kw">if </span>old_count != event_count {
             <span class="macro">detailed_trace!</span>(
-                <span class="string">&quot;Events::extend() -&gt; ids: ({}..{})&quot;</span>,
+                <span class="string">"Events::extend() -&gt; ids: ({}..{})"</span>,
                 <span class="self">self</span>.event_count,
                 event_count
             );
@@ -1533,35 +1534,35 @@
 
 <span class="doccomment">/// Reads events of type `T` in order and tracks which events have already been read.
 </span><span class="attr">#[derive(SystemParam, Debug)]
-</span><span class="kw">pub struct </span>EventReader&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, E: Event&gt; {
-    reader: Local&lt;<span class="lifetime">&#39;s</span>, ManualEventReader&lt;E&gt;&gt;,
-    events: Res&lt;<span class="lifetime">&#39;w</span>, Events&lt;E&gt;&gt;,
+</span><span class="kw">pub struct </span>EventReader&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, E: Event&gt; {
+    reader: Local&lt;<span class="lifetime">'s</span>, ManualEventReader&lt;E&gt;&gt;,
+    events: Res&lt;<span class="lifetime">'w</span>, Events&lt;E&gt;&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, E: Event&gt; EventReader&lt;<span class="lifetime">&#39;w</span>, <span class="lifetime">&#39;s</span>, E&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, E: Event&gt; EventReader&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, E&gt; {
     <span class="doccomment">/// Iterates over the events this [`EventReader`] has not seen yet. This updates the
-    /// [`EventReader`]&#39;s event counter, which means subsequent event reads will not include events
+    /// [`EventReader`]'s event counter, which means subsequent event reads will not include events
     /// that happened before now.
-    </span><span class="kw">pub fn </span>read(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; EventIterator&lt;<span class="lifetime">&#39;_</span>, E&gt; {
+    </span><span class="kw">pub fn </span>read(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; EventIterator&lt;<span class="lifetime">'_</span>, E&gt; {
         <span class="self">self</span>.reader.read(<span class="kw-2">&amp;</span><span class="self">self</span>.events)
     }
 
     <span class="doccomment">/// Iterates over the events this [`EventReader`] has not seen yet. This updates the
-    /// [`EventReader`]&#39;s event counter, which means subsequent event reads will not include events
+    /// [`EventReader`]'s event counter, which means subsequent event reads will not include events
     /// that happened before now.
-    </span><span class="attr">#[deprecated = <span class="string">&quot;use `.read()` instead.&quot;</span>]
-    </span><span class="kw">pub fn </span>iter(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; EventIterator&lt;<span class="lifetime">&#39;_</span>, E&gt; {
+    </span><span class="attr">#[deprecated = <span class="string">"use `.read()` instead."</span>]
+    </span><span class="kw">pub fn </span>iter(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; EventIterator&lt;<span class="lifetime">'_</span>, E&gt; {
         <span class="self">self</span>.reader.read(<span class="kw-2">&amp;</span><span class="self">self</span>.events)
     }
 
     <span class="doccomment">/// Like [`read`](Self::read), except also returning the [`EventId`] of the events.
-    </span><span class="kw">pub fn </span>read_with_id(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; EventIteratorWithId&lt;<span class="lifetime">&#39;_</span>, E&gt; {
+    </span><span class="kw">pub fn </span>read_with_id(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; EventIteratorWithId&lt;<span class="lifetime">'_</span>, E&gt; {
         <span class="self">self</span>.reader.read_with_id(<span class="kw-2">&amp;</span><span class="self">self</span>.events)
     }
 
     <span class="doccomment">/// Like [`iter`](Self::iter), except also returning the [`EventId`] of the events.
-    </span><span class="attr">#[deprecated = <span class="string">&quot;use `.read_with_id() instead.&quot;</span>]
-    </span><span class="kw">pub fn </span>iter_with_id(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; EventIteratorWithId&lt;<span class="lifetime">&#39;_</span>, E&gt; {
+    </span><span class="attr">#[deprecated = <span class="string">"use `.read_with_id() instead."</span>]
+    </span><span class="kw">pub fn </span>iter_with_id(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; EventIteratorWithId&lt;<span class="lifetime">'_</span>, E&gt; {
         <span class="self">self</span>.reader.read_with_id(<span class="kw-2">&amp;</span><span class="self">self</span>.events)
     }
 
@@ -1575,7 +1576,7 @@
     /// # Example
     ///
     /// The following example shows a useful pattern where some behavior is triggered if new events are available.
-    /// [`EventReader::clear()`] is used so the same events don&#39;t re-trigger the behavior the next time the system runs.
+    /// [`EventReader::clear()`] is used so the same events don't re-trigger the behavior the next time the system runs.
     ///
     /// ```
     /// # use bevy_ecs::prelude::*;
@@ -1627,7 +1628,7 @@
 ///
 /// `EventWriter` can only send events of one specific type, which must be known at compile-time.
 /// This is not a problem most of the time, but you may find a situation where you cannot know
-/// ahead of time every kind of event you&#39;ll need to send. In this case, you can use the &quot;type-erased event&quot; pattern.
+/// ahead of time every kind of event you'll need to send. In this case, you can use the "type-erased event" pattern.
 ///
 /// ```
 /// # use bevy_ecs::{prelude::*, event::Events};
@@ -1637,11 +1638,11 @@
 ///     // Send an event of a specific type without having to declare that
 ///     // type as a SystemParam.
 ///     //
-///     // Effectively, we&#39;re just moving the type parameter from the /type/ to the /method/,
+///     // Effectively, we're just moving the type parameter from the /type/ to the /method/,
 ///     // which allows one to do all kinds of clever things with type erasure, such as sending
 ///     // custom events to unknown 3rd party plugins (modding API).
 ///     //
-///     // NOTE: the event won&#39;t actually be sent until commands get applied during
+///     // NOTE: the event won't actually be sent until commands get applied during
 ///     // apply_deferred.
 ///     commands.add(|w: &amp;mut World| {
 ///         w.send_event(MyEvent);
@@ -1650,11 +1651,11 @@
 /// ```
 /// Note that this is considered *non-idiomatic*, and should only be used when `EventWriter` will not work.
 </span><span class="attr">#[derive(SystemParam)]
-</span><span class="kw">pub struct </span>EventWriter&lt;<span class="lifetime">&#39;w</span>, E: Event&gt; {
-    events: ResMut&lt;<span class="lifetime">&#39;w</span>, Events&lt;E&gt;&gt;,
+</span><span class="kw">pub struct </span>EventWriter&lt;<span class="lifetime">'w</span>, E: Event&gt; {
+    events: ResMut&lt;<span class="lifetime">'w</span>, Events&lt;E&gt;&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;w</span>, E: Event&gt; EventWriter&lt;<span class="lifetime">&#39;w</span>, E&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'w</span>, E: Event&gt; EventWriter&lt;<span class="lifetime">'w</span>, E&gt; {
     <span class="doccomment">/// Sends an `event`, which can later be read by [`EventReader`]s.
     ///
     /// See [`Events`] for details.
@@ -1699,24 +1700,24 @@
 <span class="attr">#[allow(clippy::len_without_is_empty)] </span><span class="comment">// Check fails since the is_empty implementation has a signature other than `(&amp;self) -&gt; bool`
 </span><span class="kw">impl</span>&lt;E: Event&gt; ManualEventReader&lt;E&gt; {
     <span class="doccomment">/// See [`EventReader::read`]
-    </span><span class="kw">pub fn </span>read&lt;<span class="lifetime">&#39;a</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span><span class="self">self</span>, events: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Events&lt;E&gt;) -&gt; EventIterator&lt;<span class="lifetime">&#39;a</span>, E&gt; {
+    </span><span class="kw">pub fn </span>read&lt;<span class="lifetime">'a</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span><span class="self">self</span>, events: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Events&lt;E&gt;) -&gt; EventIterator&lt;<span class="lifetime">'a</span>, E&gt; {
         <span class="self">self</span>.read_with_id(events).without_id()
     }
 
     <span class="doccomment">/// See [`EventReader::iter`]
-    </span><span class="attr">#[deprecated = <span class="string">&quot;use `.read()` instead.&quot;</span>]
-    </span><span class="kw">pub fn </span>iter&lt;<span class="lifetime">&#39;a</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span><span class="self">self</span>, events: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Events&lt;E&gt;) -&gt; EventIterator&lt;<span class="lifetime">&#39;a</span>, E&gt; {
+    </span><span class="attr">#[deprecated = <span class="string">"use `.read()` instead."</span>]
+    </span><span class="kw">pub fn </span>iter&lt;<span class="lifetime">'a</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span><span class="self">self</span>, events: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Events&lt;E&gt;) -&gt; EventIterator&lt;<span class="lifetime">'a</span>, E&gt; {
         <span class="self">self</span>.read_with_id(events).without_id()
     }
 
     <span class="doccomment">/// See [`EventReader::read_with_id`]
-    </span><span class="kw">pub fn </span>read_with_id&lt;<span class="lifetime">&#39;a</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span><span class="self">self</span>, events: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Events&lt;E&gt;) -&gt; EventIteratorWithId&lt;<span class="lifetime">&#39;a</span>, E&gt; {
+    </span><span class="kw">pub fn </span>read_with_id&lt;<span class="lifetime">'a</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span><span class="self">self</span>, events: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Events&lt;E&gt;) -&gt; EventIteratorWithId&lt;<span class="lifetime">'a</span>, E&gt; {
         EventIteratorWithId::new(<span class="self">self</span>, events)
     }
 
     <span class="doccomment">/// See [`EventReader::iter_with_id`]
-    </span><span class="attr">#[deprecated = <span class="string">&quot;use `.read_with_id() instead.&quot;</span>]
-    </span><span class="kw">pub fn </span>iter_with_id&lt;<span class="lifetime">&#39;a</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span><span class="self">self</span>, events: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Events&lt;E&gt;) -&gt; EventIteratorWithId&lt;<span class="lifetime">&#39;a</span>, E&gt; {
+    </span><span class="attr">#[deprecated = <span class="string">"use `.read_with_id() instead."</span>]
+    </span><span class="kw">pub fn </span>iter_with_id&lt;<span class="lifetime">'a</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span><span class="self">self</span>, events: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Events&lt;E&gt;) -&gt; EventIteratorWithId&lt;<span class="lifetime">'a</span>, E&gt; {
         EventIteratorWithId::new(<span class="self">self</span>, events)
     }
 
@@ -1752,19 +1753,19 @@
 
 <span class="doccomment">/// An iterator that yields any unread events from an [`EventReader`] or [`ManualEventReader`].
 </span><span class="attr">#[derive(Debug)]
-</span><span class="kw">pub struct </span>EventIterator&lt;<span class="lifetime">&#39;a</span>, E: Event&gt; {
-    iter: EventIteratorWithId&lt;<span class="lifetime">&#39;a</span>, E&gt;,
+</span><span class="kw">pub struct </span>EventIterator&lt;<span class="lifetime">'a</span>, E: Event&gt; {
+    iter: EventIteratorWithId&lt;<span class="lifetime">'a</span>, E&gt;,
 }
 
 <span class="doccomment">/// An iterator that yields any unread events from an [`EventReader`] or [`ManualEventReader`].
 ///
 /// This is a type alias for [`EventIterator`], which used to be called `ManualEventIterator`.
 /// This type alias will be removed in the next release of bevy, so you should use [`EventIterator`] directly instead.
-</span><span class="attr">#[deprecated = <span class="string">&quot;This type has been renamed to `EventIterator`.&quot;</span>]
-</span><span class="kw">pub type </span>ManualEventIterator&lt;<span class="lifetime">&#39;a</span>, E&gt; = EventIterator&lt;<span class="lifetime">&#39;a</span>, E&gt;;
+</span><span class="attr">#[deprecated = <span class="string">"This type has been renamed to `EventIterator`."</span>]
+</span><span class="kw">pub type </span>ManualEventIterator&lt;<span class="lifetime">'a</span>, E&gt; = EventIterator&lt;<span class="lifetime">'a</span>, E&gt;;
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, E: Event&gt; Iterator <span class="kw">for </span>EventIterator&lt;<span class="lifetime">&#39;a</span>, E&gt; {
-    <span class="kw">type </span>Item = <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>E;
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, E: Event&gt; Iterator <span class="kw">for </span>EventIterator&lt;<span class="lifetime">'a</span>, E&gt; {
+    <span class="kw">type </span>Item = <span class="kw-2">&amp;</span><span class="lifetime">'a </span>E;
     <span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt; {
         <span class="self">self</span>.iter.next().map(|(event, <span class="kw">_</span>)| event)
     }
@@ -1789,7 +1790,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, E: Event&gt; ExactSizeIterator <span class="kw">for </span>EventIterator&lt;<span class="lifetime">&#39;a</span>, E&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, E: Event&gt; ExactSizeIterator <span class="kw">for </span>EventIterator&lt;<span class="lifetime">'a</span>, E&gt; {
     <span class="kw">fn </span>len(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
         <span class="self">self</span>.iter.len()
     }
@@ -1797,9 +1798,9 @@
 
 <span class="doccomment">/// An iterator that yields any unread events (and their IDs) from an [`EventReader`] or [`ManualEventReader`].
 </span><span class="attr">#[derive(Debug)]
-</span><span class="kw">pub struct </span>EventIteratorWithId&lt;<span class="lifetime">&#39;a</span>, E: Event&gt; {
-    reader: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>ManualEventReader&lt;E&gt;,
-    chain: Chain&lt;Iter&lt;<span class="lifetime">&#39;a</span>, EventInstance&lt;E&gt;&gt;, Iter&lt;<span class="lifetime">&#39;a</span>, EventInstance&lt;E&gt;&gt;&gt;,
+</span><span class="kw">pub struct </span>EventIteratorWithId&lt;<span class="lifetime">'a</span>, E: Event&gt; {
+    reader: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>ManualEventReader&lt;E&gt;,
+    chain: Chain&lt;Iter&lt;<span class="lifetime">'a</span>, EventInstance&lt;E&gt;&gt;, Iter&lt;<span class="lifetime">'a</span>, EventInstance&lt;E&gt;&gt;&gt;,
     unread: usize,
 }
 
@@ -1807,12 +1808,12 @@
 ///
 /// This is a type alias for [`EventIteratorWithId`], which used to be called `ManualEventIteratorWithId`.
 /// This type alias will be removed in the next release of bevy, so you should use [`EventIteratorWithId`] directly instead.
-</span><span class="attr">#[deprecated = <span class="string">&quot;This type has been renamed to `EventIteratorWithId`.&quot;</span>]
-</span><span class="kw">pub type </span>ManualEventIteratorWithId&lt;<span class="lifetime">&#39;a</span>, E&gt; = EventIteratorWithId&lt;<span class="lifetime">&#39;a</span>, E&gt;;
+</span><span class="attr">#[deprecated = <span class="string">"This type has been renamed to `EventIteratorWithId`."</span>]
+</span><span class="kw">pub type </span>ManualEventIteratorWithId&lt;<span class="lifetime">'a</span>, E&gt; = EventIteratorWithId&lt;<span class="lifetime">'a</span>, E&gt;;
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, E: Event&gt; EventIteratorWithId&lt;<span class="lifetime">&#39;a</span>, E&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, E: Event&gt; EventIteratorWithId&lt;<span class="lifetime">'a</span>, E&gt; {
     <span class="doccomment">/// Creates a new iterator that yields any `events` that have not yet been seen by `reader`.
-    </span><span class="kw">pub fn </span>new(reader: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>ManualEventReader&lt;E&gt;, events: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Events&lt;E&gt;) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">pub fn </span>new(reader: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>ManualEventReader&lt;E&gt;, events: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Events&lt;E&gt;) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span>a_index = (reader.last_event_count).saturating_sub(events.events_a.start_event_count);
         <span class="kw">let </span>b_index = (reader.last_event_count).saturating_sub(events.events_b.start_event_count);
         <span class="kw">let </span>a = events.events_a.get(a_index..).unwrap_or_default();
@@ -1833,13 +1834,13 @@
     }
 
     <span class="doccomment">/// Iterate over only the events.
-    </span><span class="kw">pub fn </span>without_id(<span class="self">self</span>) -&gt; EventIterator&lt;<span class="lifetime">&#39;a</span>, E&gt; {
+    </span><span class="kw">pub fn </span>without_id(<span class="self">self</span>) -&gt; EventIterator&lt;<span class="lifetime">'a</span>, E&gt; {
         EventIterator { iter: <span class="self">self </span>}
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, E: Event&gt; Iterator <span class="kw">for </span>EventIteratorWithId&lt;<span class="lifetime">&#39;a</span>, E&gt; {
-    <span class="kw">type </span>Item = (<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>E, EventId&lt;E&gt;);
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, E: Event&gt; Iterator <span class="kw">for </span>EventIteratorWithId&lt;<span class="lifetime">'a</span>, E&gt; {
+    <span class="kw">type </span>Item = (<span class="kw-2">&amp;</span><span class="lifetime">'a </span>E, EventId&lt;E&gt;);
     <span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt; {
         <span class="kw">match </span><span class="self">self
             </span>.chain
@@ -1847,7 +1848,7 @@
             .map(|instance| (<span class="kw-2">&amp;</span>instance.event, instance.event_id))
         {
             <span class="prelude-val">Some</span>(item) =&gt; {
-                <span class="macro">detailed_trace!</span>(<span class="string">&quot;EventReader::iter() -&gt; {}&quot;</span>, item.<span class="number">1</span>);
+                <span class="macro">detailed_trace!</span>(<span class="string">"EventReader::iter() -&gt; {}"</span>, item.<span class="number">1</span>);
                 <span class="self">self</span>.reader.last_event_count += <span class="number">1</span>;
                 <span class="self">self</span>.unread -= <span class="number">1</span>;
                 <span class="prelude-val">Some</span>(item)
@@ -1887,7 +1888,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, E: Event&gt; ExactSizeIterator <span class="kw">for </span>EventIteratorWithId&lt;<span class="lifetime">&#39;a</span>, E&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, E: Event&gt; ExactSizeIterator <span class="kw">for </span>EventIteratorWithId&lt;<span class="lifetime">'a</span>, E&gt; {
     <span class="kw">fn </span>len(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
         <span class="self">self</span>.unread
     }
@@ -1910,7 +1911,7 @@
     <span class="kw-2">mut </span>events: ResMut&lt;Events&lt;T&gt;&gt;,
 ) {
     <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">mut </span>s) = signal {
-        <span class="comment">// If we haven&#39;t got a signal to update the events, but we *could* get such a signal
+        <span class="comment">// If we haven't got a signal to update the events, but we *could* get such a signal
         // return early and update the events later.
         </span><span class="kw">if </span>!std::mem::replace(<span class="kw-2">&amp;mut </span>s.<span class="number">0</span>, <span class="bool-val">false</span>) {
             <span class="kw">return</span>;
@@ -1920,7 +1921,7 @@
     events.update();
 }
 
-<span class="doccomment">/// A run condition that checks if the event&#39;s [`event_update_system`]
+<span class="doccomment">/// A run condition that checks if the event's [`event_update_system`]
 /// needs to run or not.
 </span><span class="kw">pub fn </span>event_update_condition&lt;T: Event&gt;(events: Res&lt;Events&lt;T&gt;&gt;) -&gt; bool {
     !events.events_a.is_empty() || !events.events_b.is_empty()
@@ -1955,12 +1956,12 @@
         <span class="macro">assert_eq!</span>(
             get_events(<span class="kw-2">&amp;</span>events, <span class="kw-2">&amp;mut </span>reader_a),
             <span class="macro">vec!</span>[event_0],
-            <span class="string">&quot;reader_a created before event receives event&quot;
+            <span class="string">"reader_a created before event receives event"
         </span>);
         <span class="macro">assert_eq!</span>(
             get_events(<span class="kw-2">&amp;</span>events, <span class="kw-2">&amp;mut </span>reader_a),
             <span class="macro">vec!</span>[],
-            <span class="string">&quot;second iteration of reader_a created before event results in zero events&quot;
+            <span class="string">"second iteration of reader_a created before event results in zero events"
         </span>);
 
         <span class="kw">let </span><span class="kw-2">mut </span>reader_b = events.get_reader();
@@ -1968,12 +1969,12 @@
         <span class="macro">assert_eq!</span>(
             get_events(<span class="kw-2">&amp;</span>events, <span class="kw-2">&amp;mut </span>reader_b),
             <span class="macro">vec!</span>[event_0],
-            <span class="string">&quot;reader_b created after event receives event&quot;
+            <span class="string">"reader_b created after event receives event"
         </span>);
         <span class="macro">assert_eq!</span>(
             get_events(<span class="kw-2">&amp;</span>events, <span class="kw-2">&amp;mut </span>reader_b),
             <span class="macro">vec!</span>[],
-            <span class="string">&quot;second iteration of reader_b created after event results in zero events&quot;
+            <span class="string">"second iteration of reader_b created after event results in zero events"
         </span>);
 
         events.send(event_1);
@@ -1983,18 +1984,18 @@
         <span class="macro">assert_eq!</span>(
             get_events(<span class="kw-2">&amp;</span>events, <span class="kw-2">&amp;mut </span>reader_c),
             <span class="macro">vec!</span>[event_0, event_1],
-            <span class="string">&quot;reader_c created after two events receives both events&quot;
+            <span class="string">"reader_c created after two events receives both events"
         </span>);
         <span class="macro">assert_eq!</span>(
             get_events(<span class="kw-2">&amp;</span>events, <span class="kw-2">&amp;mut </span>reader_c),
             <span class="macro">vec!</span>[],
-            <span class="string">&quot;second iteration of reader_c created after two event results in zero events&quot;
+            <span class="string">"second iteration of reader_c created after two event results in zero events"
         </span>);
 
         <span class="macro">assert_eq!</span>(
             get_events(<span class="kw-2">&amp;</span>events, <span class="kw-2">&amp;mut </span>reader_a),
             <span class="macro">vec!</span>[event_1],
-            <span class="string">&quot;reader_a receives next unread event&quot;
+            <span class="string">"reader_a receives next unread event"
         </span>);
 
         events.update();
@@ -2006,17 +2007,17 @@
         <span class="macro">assert_eq!</span>(
             get_events(<span class="kw-2">&amp;</span>events, <span class="kw-2">&amp;mut </span>reader_a),
             <span class="macro">vec!</span>[event_2],
-            <span class="string">&quot;reader_a receives event created after update&quot;
+            <span class="string">"reader_a receives event created after update"
         </span>);
         <span class="macro">assert_eq!</span>(
             get_events(<span class="kw-2">&amp;</span>events, <span class="kw-2">&amp;mut </span>reader_b),
             <span class="macro">vec!</span>[event_1, event_2],
-            <span class="string">&quot;reader_b receives events created before and after update&quot;
+            <span class="string">"reader_b receives events created before and after update"
         </span>);
         <span class="macro">assert_eq!</span>(
             get_events(<span class="kw-2">&amp;</span>events, <span class="kw-2">&amp;mut </span>reader_d),
             <span class="macro">vec!</span>[event_0, event_1, event_2],
-            <span class="string">&quot;reader_d receives all events created before and after update&quot;
+            <span class="string">"reader_d receives all events created before and after update"
         </span>);
 
         events.update();
@@ -2024,7 +2025,7 @@
         <span class="macro">assert_eq!</span>(
             get_events(<span class="kw-2">&amp;</span>events, <span class="kw-2">&amp;mut </span>reader_missed),
             <span class="macro">vec!</span>[event_2],
-            <span class="string">&quot;reader_missed missed events unread after two update() calls&quot;
+            <span class="string">"reader_missed missed events unread after two update() calls"
         </span>);
     }
 
@@ -2180,9 +2181,9 @@
         reader.initialize(<span class="kw-2">&amp;mut </span>world);
 
         <span class="kw">let </span>is_empty = reader.run((), <span class="kw-2">&amp;mut </span>world);
-        <span class="macro">assert!</span>(!is_empty, <span class="string">&quot;EventReader should not be empty&quot;</span>);
+        <span class="macro">assert!</span>(!is_empty, <span class="string">"EventReader should not be empty"</span>);
         <span class="kw">let </span>is_empty = reader.run((), <span class="kw-2">&amp;mut </span>world);
-        <span class="macro">assert!</span>(is_empty, <span class="string">&quot;EventReader should be empty&quot;</span>);
+        <span class="macro">assert!</span>(is_empty, <span class="string">"EventReader should be empty"</span>);
     }
 
     <span class="attr">#[test]
@@ -2251,7 +2252,7 @@
         reader.initialize(<span class="kw-2">&amp;mut </span>world);
 
         <span class="kw">let </span>last = reader.run((), <span class="kw-2">&amp;mut </span>world);
-        <span class="macro">assert!</span>(last.is_none(), <span class="string">&quot;EventReader should be empty&quot;</span>);
+        <span class="macro">assert!</span>(last.is_none(), <span class="string">"EventReader should be empty"</span>);
 
         world.send_event(TestEvent { i: <span class="number">0 </span>});
         <span class="kw">let </span>last = reader.run((), <span class="kw-2">&amp;mut </span>world);
@@ -2264,7 +2265,7 @@
         <span class="macro">assert_eq!</span>(last, <span class="prelude-val">Some</span>(TestEvent { i: <span class="number">3 </span>}));
 
         <span class="kw">let </span>last = reader.run((), <span class="kw-2">&amp;mut </span>world);
-        <span class="macro">assert!</span>(last.is_none(), <span class="string">&quot;EventReader should be empty&quot;</span>);
+        <span class="macro">assert!</span>(last.is_none(), <span class="string">"EventReader should be empty"</span>);
     }
 
     <span class="attr">#[derive(Event, Clone, PartialEq, Debug, Default)]

@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/naga-0.13.0/src/front/wgsl/lower/mod.rs`."><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../../../" data-static-root-path="../../../../../static.files/" data-current-crate="naga" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../../../src-files.js"></script><script defer src="../../../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/naga-0.13.0/src/front/wgsl/lower/mod.rs`."><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../../../" data-static-root-path="../../../../../static.files/" data-current-crate="naga" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../../../src-files.js"></script><script defer src="../../../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -2496,26 +2497,26 @@
 <span class="kw">mod </span>construction;
 
 <span class="doccomment">/// State for constructing a `crate::Module`.
-</span><span class="kw">pub struct </span>GlobalContext&lt;<span class="lifetime">&#39;source</span>, <span class="lifetime">&#39;temp</span>, <span class="lifetime">&#39;out</span>&gt; {
-    <span class="doccomment">/// The `TranslationUnit`&#39;s expressions arena.
-    </span>ast_expressions: <span class="kw-2">&amp;</span><span class="lifetime">&#39;temp </span>Arena&lt;ast::Expression&lt;<span class="lifetime">&#39;source</span>&gt;&gt;,
+</span><span class="kw">pub struct </span>GlobalContext&lt;<span class="lifetime">'source</span>, <span class="lifetime">'temp</span>, <span class="lifetime">'out</span>&gt; {
+    <span class="doccomment">/// The `TranslationUnit`'s expressions arena.
+    </span>ast_expressions: <span class="kw-2">&amp;</span><span class="lifetime">'temp </span>Arena&lt;ast::Expression&lt;<span class="lifetime">'source</span>&gt;&gt;,
 
-    <span class="doccomment">/// The `TranslationUnit`&#39;s types arena.
-    </span>types: <span class="kw-2">&amp;</span><span class="lifetime">&#39;temp </span>Arena&lt;ast::Type&lt;<span class="lifetime">&#39;source</span>&gt;&gt;,
+    <span class="doccomment">/// The `TranslationUnit`'s types arena.
+    </span>types: <span class="kw-2">&amp;</span><span class="lifetime">'temp </span>Arena&lt;ast::Type&lt;<span class="lifetime">'source</span>&gt;&gt;,
 
     <span class="comment">// Naga IR values.
     </span><span class="doccomment">/// The map from the names of module-scope declarations to the Naga IR
     /// `Handle`s we have built for them, owned by `Lowerer::lower`.
-    </span>globals: <span class="kw-2">&amp;</span><span class="lifetime">&#39;temp </span><span class="kw-2">mut </span>FastHashMap&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;source </span>str, LoweredGlobalDecl&gt;,
+    </span>globals: <span class="kw-2">&amp;</span><span class="lifetime">'temp </span><span class="kw-2">mut </span>FastHashMap&lt;<span class="kw-2">&amp;</span><span class="lifetime">'source </span>str, LoweredGlobalDecl&gt;,
 
-    <span class="doccomment">/// The module we&#39;re constructing.
-    </span>module: <span class="kw-2">&amp;</span><span class="lifetime">&#39;out </span><span class="kw-2">mut </span><span class="kw">crate</span>::Module,
+    <span class="doccomment">/// The module we're constructing.
+    </span>module: <span class="kw-2">&amp;</span><span class="lifetime">'out </span><span class="kw-2">mut </span><span class="kw">crate</span>::Module,
 
-    const_typifier: <span class="kw-2">&amp;</span><span class="lifetime">&#39;temp </span><span class="kw-2">mut </span>Typifier,
+    const_typifier: <span class="kw-2">&amp;</span><span class="lifetime">'temp </span><span class="kw-2">mut </span>Typifier,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;source</span>&gt; GlobalContext&lt;<span class="lifetime">&#39;source</span>, <span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>&gt; {
-    <span class="kw">fn </span>reborrow(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; GlobalContext&lt;<span class="lifetime">&#39;source</span>, <span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'source</span>&gt; GlobalContext&lt;<span class="lifetime">'source</span>, <span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt; {
+    <span class="kw">fn </span>reborrow(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; GlobalContext&lt;<span class="lifetime">'source</span>, <span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt; {
         GlobalContext {
             ast_expressions: <span class="self">self</span>.ast_expressions,
             globals: <span class="self">self</span>.globals,
@@ -2525,7 +2526,7 @@
         }
     }
 
-    <span class="kw">fn </span>as_const(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; ExpressionContext&lt;<span class="lifetime">&#39;source</span>, <span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>&gt; {
+    <span class="kw">fn </span>as_const(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; ExpressionContext&lt;<span class="lifetime">'source</span>, <span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt; {
         ExpressionContext {
             ast_expressions: <span class="self">self</span>.ast_expressions,
             globals: <span class="self">self</span>.globals,
@@ -2544,47 +2545,47 @@
 }
 
 <span class="doccomment">/// State for lowering a statement within a function.
-</span><span class="kw">pub struct </span>StatementContext&lt;<span class="lifetime">&#39;source</span>, <span class="lifetime">&#39;temp</span>, <span class="lifetime">&#39;out</span>&gt; {
+</span><span class="kw">pub struct </span>StatementContext&lt;<span class="lifetime">'source</span>, <span class="lifetime">'temp</span>, <span class="lifetime">'out</span>&gt; {
     <span class="comment">// WGSL AST values.
     </span><span class="doccomment">/// A reference to [`TranslationUnit::expressions`] for the translation unit
-    /// we&#39;re lowering.
+    /// we're lowering.
     ///
     /// [`TranslationUnit::expressions`]: ast::TranslationUnit::expressions
-    </span>ast_expressions: <span class="kw-2">&amp;</span><span class="lifetime">&#39;temp </span>Arena&lt;ast::Expression&lt;<span class="lifetime">&#39;source</span>&gt;&gt;,
+    </span>ast_expressions: <span class="kw-2">&amp;</span><span class="lifetime">'temp </span>Arena&lt;ast::Expression&lt;<span class="lifetime">'source</span>&gt;&gt;,
 
     <span class="doccomment">/// A reference to [`TranslationUnit::types`] for the translation unit
-    /// we&#39;re lowering.
+    /// we're lowering.
     ///
     /// [`TranslationUnit::types`]: ast::TranslationUnit::types
-    </span>types: <span class="kw-2">&amp;</span><span class="lifetime">&#39;temp </span>Arena&lt;ast::Type&lt;<span class="lifetime">&#39;source</span>&gt;&gt;,
+    </span>types: <span class="kw-2">&amp;</span><span class="lifetime">'temp </span>Arena&lt;ast::Type&lt;<span class="lifetime">'source</span>&gt;&gt;,
 
     <span class="comment">// Naga IR values.
     </span><span class="doccomment">/// The map from the names of module-scope declarations to the Naga IR
     /// `Handle`s we have built for them, owned by `Lowerer::lower`.
-    </span>globals: <span class="kw-2">&amp;</span><span class="lifetime">&#39;temp </span><span class="kw-2">mut </span>FastHashMap&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;source </span>str, LoweredGlobalDecl&gt;,
+    </span>globals: <span class="kw-2">&amp;</span><span class="lifetime">'temp </span><span class="kw-2">mut </span>FastHashMap&lt;<span class="kw-2">&amp;</span><span class="lifetime">'source </span>str, LoweredGlobalDecl&gt;,
 
-    <span class="doccomment">/// A map from `ast::Local` handles to the Naga expressions we&#39;ve built for them.
+    <span class="doccomment">/// A map from `ast::Local` handles to the Naga expressions we've built for them.
     ///
     /// The Naga expressions are either [`LocalVariable`] or
     /// [`FunctionArgument`] expressions.
     ///
     /// [`LocalVariable`]: crate::Expression::LocalVariable
     /// [`FunctionArgument`]: crate::Expression::FunctionArgument
-    </span>local_table: <span class="kw-2">&amp;</span><span class="lifetime">&#39;temp </span><span class="kw-2">mut </span>FastHashMap&lt;Handle&lt;ast::Local&gt;, TypedExpression&gt;,
+    </span>local_table: <span class="kw-2">&amp;</span><span class="lifetime">'temp </span><span class="kw-2">mut </span>FastHashMap&lt;Handle&lt;ast::Local&gt;, TypedExpression&gt;,
 
-    const_typifier: <span class="kw-2">&amp;</span><span class="lifetime">&#39;temp </span><span class="kw-2">mut </span>Typifier,
-    typifier: <span class="kw-2">&amp;</span><span class="lifetime">&#39;temp </span><span class="kw-2">mut </span>Typifier,
-    variables: <span class="kw-2">&amp;</span><span class="lifetime">&#39;out </span><span class="kw-2">mut </span>Arena&lt;<span class="kw">crate</span>::LocalVariable&gt;,
-    naga_expressions: <span class="kw-2">&amp;</span><span class="lifetime">&#39;out </span><span class="kw-2">mut </span>Arena&lt;<span class="kw">crate</span>::Expression&gt;,
+    const_typifier: <span class="kw-2">&amp;</span><span class="lifetime">'temp </span><span class="kw-2">mut </span>Typifier,
+    typifier: <span class="kw-2">&amp;</span><span class="lifetime">'temp </span><span class="kw-2">mut </span>Typifier,
+    variables: <span class="kw-2">&amp;</span><span class="lifetime">'out </span><span class="kw-2">mut </span>Arena&lt;<span class="kw">crate</span>::LocalVariable&gt;,
+    naga_expressions: <span class="kw-2">&amp;</span><span class="lifetime">'out </span><span class="kw-2">mut </span>Arena&lt;<span class="kw">crate</span>::Expression&gt;,
     <span class="doccomment">/// Stores the names of expressions that are assigned in `let` statement
     /// Also stores the spans of the names, for use in errors.
-    </span>named_expressions: <span class="kw-2">&amp;</span><span class="lifetime">&#39;out </span><span class="kw-2">mut </span>IndexMap&lt;Handle&lt;<span class="kw">crate</span>::Expression&gt;, (String, Span)&gt;,
-    arguments: <span class="kw-2">&amp;</span><span class="lifetime">&#39;out </span>[<span class="kw">crate</span>::FunctionArgument],
-    module: <span class="kw-2">&amp;</span><span class="lifetime">&#39;out </span><span class="kw-2">mut </span><span class="kw">crate</span>::Module,
+    </span>named_expressions: <span class="kw-2">&amp;</span><span class="lifetime">'out </span><span class="kw-2">mut </span>IndexMap&lt;Handle&lt;<span class="kw">crate</span>::Expression&gt;, (String, Span)&gt;,
+    arguments: <span class="kw-2">&amp;</span><span class="lifetime">'out </span>[<span class="kw">crate</span>::FunctionArgument],
+    module: <span class="kw-2">&amp;</span><span class="lifetime">'out </span><span class="kw-2">mut </span><span class="kw">crate</span>::Module,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;temp</span>&gt; StatementContext&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;temp</span>, <span class="lifetime">&#39;_</span>&gt; {
-    <span class="kw">fn </span>reborrow(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; StatementContext&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, <span class="lifetime">'temp</span>&gt; StatementContext&lt;<span class="lifetime">'a</span>, <span class="lifetime">'temp</span>, <span class="lifetime">'_</span>&gt; {
+    <span class="kw">fn </span>reborrow(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; StatementContext&lt;<span class="lifetime">'a</span>, <span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt; {
         StatementContext {
             local_table: <span class="self">self</span>.local_table,
             globals: <span class="self">self</span>.globals,
@@ -2600,13 +2601,13 @@
         }
     }
 
-    <span class="kw">fn </span>as_expression&lt;<span class="lifetime">&#39;t</span>&gt;(
-        <span class="kw-2">&amp;</span><span class="lifetime">&#39;t </span><span class="kw-2">mut </span><span class="self">self</span>,
-        block: <span class="kw-2">&amp;</span><span class="lifetime">&#39;t </span><span class="kw-2">mut </span><span class="kw">crate</span>::Block,
-        emitter: <span class="kw-2">&amp;</span><span class="lifetime">&#39;t </span><span class="kw-2">mut </span>Emitter,
-    ) -&gt; ExpressionContext&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;t</span>, <span class="lifetime">&#39;_</span>&gt;
+    <span class="kw">fn </span>as_expression&lt;<span class="lifetime">'t</span>&gt;(
+        <span class="kw-2">&amp;</span><span class="lifetime">'t </span><span class="kw-2">mut </span><span class="self">self</span>,
+        block: <span class="kw-2">&amp;</span><span class="lifetime">'t </span><span class="kw-2">mut </span><span class="kw">crate</span>::Block,
+        emitter: <span class="kw-2">&amp;</span><span class="lifetime">'t </span><span class="kw-2">mut </span>Emitter,
+    ) -&gt; ExpressionContext&lt;<span class="lifetime">'a</span>, <span class="lifetime">'t</span>, <span class="lifetime">'_</span>&gt;
     <span class="kw">where
-        </span><span class="lifetime">&#39;temp</span>: <span class="lifetime">&#39;t</span>,
+        </span><span class="lifetime">'temp</span>: <span class="lifetime">'t</span>,
     {
         ExpressionContext {
             globals: <span class="self">self</span>.globals,
@@ -2626,7 +2627,7 @@
         }
     }
 
-    <span class="kw">fn </span>as_global(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; GlobalContext&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>&gt; {
+    <span class="kw">fn </span>as_global(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; GlobalContext&lt;<span class="lifetime">'a</span>, <span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt; {
         GlobalContext {
             ast_expressions: <span class="self">self</span>.ast_expressions,
             globals: <span class="self">self</span>.globals,
@@ -2650,19 +2651,19 @@
     }
 }
 
-<span class="kw">pub struct </span>RuntimeExpressionContext&lt;<span class="lifetime">&#39;temp</span>, <span class="lifetime">&#39;out</span>&gt; {
-    local_table: <span class="kw-2">&amp;</span><span class="lifetime">&#39;temp </span><span class="kw-2">mut </span>FastHashMap&lt;Handle&lt;ast::Local&gt;, TypedExpression&gt;,
+<span class="kw">pub struct </span>RuntimeExpressionContext&lt;<span class="lifetime">'temp</span>, <span class="lifetime">'out</span>&gt; {
+    local_table: <span class="kw-2">&amp;</span><span class="lifetime">'temp </span><span class="kw-2">mut </span>FastHashMap&lt;Handle&lt;ast::Local&gt;, TypedExpression&gt;,
 
-    naga_expressions: <span class="kw-2">&amp;</span><span class="lifetime">&#39;out </span><span class="kw-2">mut </span>Arena&lt;<span class="kw">crate</span>::Expression&gt;,
-    local_vars: <span class="kw-2">&amp;</span><span class="lifetime">&#39;out </span>Arena&lt;<span class="kw">crate</span>::LocalVariable&gt;,
-    arguments: <span class="kw-2">&amp;</span><span class="lifetime">&#39;out </span>[<span class="kw">crate</span>::FunctionArgument],
-    block: <span class="kw-2">&amp;</span><span class="lifetime">&#39;temp </span><span class="kw-2">mut </span><span class="kw">crate</span>::Block,
-    emitter: <span class="kw-2">&amp;</span><span class="lifetime">&#39;temp </span><span class="kw-2">mut </span>Emitter,
-    typifier: <span class="kw-2">&amp;</span><span class="lifetime">&#39;temp </span><span class="kw-2">mut </span>Typifier,
+    naga_expressions: <span class="kw-2">&amp;</span><span class="lifetime">'out </span><span class="kw-2">mut </span>Arena&lt;<span class="kw">crate</span>::Expression&gt;,
+    local_vars: <span class="kw-2">&amp;</span><span class="lifetime">'out </span>Arena&lt;<span class="kw">crate</span>::LocalVariable&gt;,
+    arguments: <span class="kw-2">&amp;</span><span class="lifetime">'out </span>[<span class="kw">crate</span>::FunctionArgument],
+    block: <span class="kw-2">&amp;</span><span class="lifetime">'temp </span><span class="kw-2">mut </span><span class="kw">crate</span>::Block,
+    emitter: <span class="kw-2">&amp;</span><span class="lifetime">'temp </span><span class="kw-2">mut </span>Emitter,
+    typifier: <span class="kw-2">&amp;</span><span class="lifetime">'temp </span><span class="kw-2">mut </span>Typifier,
 }
 
-<span class="kw">impl </span>RuntimeExpressionContext&lt;<span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>&gt; {
-    <span class="kw">fn </span>reborrow(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; RuntimeExpressionContext&lt;<span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>&gt; {
+<span class="kw">impl </span>RuntimeExpressionContext&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt; {
+    <span class="kw">fn </span>reborrow(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; RuntimeExpressionContext&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt; {
         RuntimeExpressionContext {
             local_table: <span class="self">self</span>.local_table,
             naga_expressions: <span class="self">self</span>.naga_expressions,
@@ -2676,16 +2677,16 @@
 }
 
 <span class="doccomment">/// The type of Naga IR expression we are lowering an [`ast::Expression`] to.
-</span><span class="kw">pub enum </span>ExpressionContextType&lt;<span class="lifetime">&#39;temp</span>, <span class="lifetime">&#39;out</span>&gt; {
+</span><span class="kw">pub enum </span>ExpressionContextType&lt;<span class="lifetime">'temp</span>, <span class="lifetime">'out</span>&gt; {
     <span class="doccomment">/// We are lowering to an arbitrary runtime expression, to be
-    /// included in a function&#39;s body.
+    /// included in a function's body.
     ///
     /// The given [`RuntimeExpressionContext`] holds information about local
     /// variables, arguments, and other definitions available only to runtime
     /// expressions, not constant or override expressions.
-    </span>Runtime(RuntimeExpressionContext&lt;<span class="lifetime">&#39;temp</span>, <span class="lifetime">&#39;out</span>&gt;),
+    </span>Runtime(RuntimeExpressionContext&lt;<span class="lifetime">'temp</span>, <span class="lifetime">'out</span>&gt;),
 
-    <span class="doccomment">/// We are lowering to a constant expression, to be included in the module&#39;s
+    <span class="doccomment">/// We are lowering to a constant expression, to be included in the module's
     /// constant expression arena.
     ///
     /// Everything constant expressions are allowed to refer to is
@@ -2699,10 +2700,10 @@
 /// [`ExpressionContext`]s come in two kinds, distinguished by
 /// the value of the [`expr_type`] field:
 ///
-/// - A [`Runtime`] context contributes [`naga::Expression`]s to a [`naga::Function`]&#39;s
+/// - A [`Runtime`] context contributes [`naga::Expression`]s to a [`naga::Function`]'s
 ///   runtime expression arena.
 ///
-/// - A [`Constant`] context contributes [`naga::Expression`]s to a [`naga::Module`]&#39;s
+/// - A [`Constant`] context contributes [`naga::Expression`]s to a [`naga::Module`]'s
 ///   constant expression arena.
 ///
 /// [`ExpressionContext`]s are constructed in restricted ways:
@@ -2714,11 +2715,11 @@
 ///   [`GlobalContext::as_const`].
 ///
 /// - You can demote a [`Runtime`] context to a [`Constant`] context
-///   by calling [`as_const`], but there&#39;s no way to go in the other
+///   by calling [`as_const`], but there's no way to go in the other
 ///   direction, producing a runtime context from a constant one. This
 ///   is because runtime expressions can refer to constant
 ///   expressions, via [`Expression::Constant`], but constant
-///   expressions can&#39;t refer to a function&#39;s expressions.
+///   expressions can't refer to a function's expressions.
 ///
 /// - You can always call [`ExpressionContext::reborrow`] to get a fresh context
 ///   for a recursive call. The reborrowed context is equivalent to the original.
@@ -2734,33 +2735,33 @@
 /// [`naga::Module`]: crate::Module
 /// [`as_const`]: ExpressionContext::as_const
 /// [`Expression::Constant`]: crate::Expression::Constant
-</span><span class="kw">pub struct </span>ExpressionContext&lt;<span class="lifetime">&#39;source</span>, <span class="lifetime">&#39;temp</span>, <span class="lifetime">&#39;out</span>&gt; {
+</span><span class="kw">pub struct </span>ExpressionContext&lt;<span class="lifetime">'source</span>, <span class="lifetime">'temp</span>, <span class="lifetime">'out</span>&gt; {
     <span class="comment">// WGSL AST values.
-    </span>ast_expressions: <span class="kw-2">&amp;</span><span class="lifetime">&#39;temp </span>Arena&lt;ast::Expression&lt;<span class="lifetime">&#39;source</span>&gt;&gt;,
-    types: <span class="kw-2">&amp;</span><span class="lifetime">&#39;temp </span>Arena&lt;ast::Type&lt;<span class="lifetime">&#39;source</span>&gt;&gt;,
+    </span>ast_expressions: <span class="kw-2">&amp;</span><span class="lifetime">'temp </span>Arena&lt;ast::Expression&lt;<span class="lifetime">'source</span>&gt;&gt;,
+    types: <span class="kw-2">&amp;</span><span class="lifetime">'temp </span>Arena&lt;ast::Type&lt;<span class="lifetime">'source</span>&gt;&gt;,
 
     <span class="comment">// Naga IR values.
     </span><span class="doccomment">/// The map from the names of module-scope declarations to the Naga IR
     /// `Handle`s we have built for them, owned by `Lowerer::lower`.
-    </span>globals: <span class="kw-2">&amp;</span><span class="lifetime">&#39;temp </span><span class="kw-2">mut </span>FastHashMap&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;source </span>str, LoweredGlobalDecl&gt;,
+    </span>globals: <span class="kw-2">&amp;</span><span class="lifetime">'temp </span><span class="kw-2">mut </span>FastHashMap&lt;<span class="kw-2">&amp;</span><span class="lifetime">'source </span>str, LoweredGlobalDecl&gt;,
 
-    <span class="doccomment">/// The IR [`Module`] we&#39;re constructing.
+    <span class="doccomment">/// The IR [`Module`] we're constructing.
     ///
     /// [`Module`]: crate::Module
-    </span>module: <span class="kw-2">&amp;</span><span class="lifetime">&#39;out </span><span class="kw-2">mut </span><span class="kw">crate</span>::Module,
+    </span>module: <span class="kw-2">&amp;</span><span class="lifetime">'out </span><span class="kw-2">mut </span><span class="kw">crate</span>::Module,
 
     <span class="doccomment">/// Type judgments for [`module::const_expressions`].
     ///
     /// [`module::const_expressions`]: crate::Module::const_expressions
-    </span>const_typifier: <span class="kw-2">&amp;</span><span class="lifetime">&#39;temp </span><span class="kw-2">mut </span>Typifier,
+    </span>const_typifier: <span class="kw-2">&amp;</span><span class="lifetime">'temp </span><span class="kw-2">mut </span>Typifier,
 
     <span class="doccomment">/// Whether we are lowering a constant expression or a general
     /// runtime expression, and the data needed in each case.
-    </span>expr_type: ExpressionContextType&lt;<span class="lifetime">&#39;temp</span>, <span class="lifetime">&#39;out</span>&gt;,
+    </span>expr_type: ExpressionContextType&lt;<span class="lifetime">'temp</span>, <span class="lifetime">'out</span>&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;source</span>, <span class="lifetime">&#39;temp</span>, <span class="lifetime">&#39;out</span>&gt; ExpressionContext&lt;<span class="lifetime">&#39;source</span>, <span class="lifetime">&#39;temp</span>, <span class="lifetime">&#39;out</span>&gt; {
-    <span class="kw">fn </span>reborrow(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; ExpressionContext&lt;<span class="lifetime">&#39;source</span>, <span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'source</span>, <span class="lifetime">'temp</span>, <span class="lifetime">'out</span>&gt; ExpressionContext&lt;<span class="lifetime">'source</span>, <span class="lifetime">'temp</span>, <span class="lifetime">'out</span>&gt; {
+    <span class="kw">fn </span>reborrow(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; ExpressionContext&lt;<span class="lifetime">'source</span>, <span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt; {
         ExpressionContext {
             globals: <span class="self">self</span>.globals,
             types: <span class="self">self</span>.types,
@@ -2776,7 +2777,7 @@
         }
     }
 
-    <span class="kw">fn </span>as_const(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; ExpressionContext&lt;<span class="lifetime">&#39;source</span>, <span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>&gt; {
+    <span class="kw">fn </span>as_const(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; ExpressionContext&lt;<span class="lifetime">'source</span>, <span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt; {
         ExpressionContext {
             globals: <span class="self">self</span>.globals,
             types: <span class="self">self</span>.types,
@@ -2787,7 +2788,7 @@
         }
     }
 
-    <span class="kw">fn </span>as_global(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; GlobalContext&lt;<span class="lifetime">&#39;source</span>, <span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>&gt; {
+    <span class="kw">fn </span>as_global(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; GlobalContext&lt;<span class="lifetime">'source</span>, <span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt; {
         GlobalContext {
             ast_expressions: <span class="self">self</span>.ast_expressions,
             globals: <span class="self">self</span>.globals,
@@ -2832,7 +2833,7 @@
     <span class="kw">fn </span>runtime_expression_ctx(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         span: Span,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;RuntimeExpressionContext&lt;<span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>&gt;, Error&lt;<span class="lifetime">&#39;source</span>&gt;&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;RuntimeExpressionContext&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;, Error&lt;<span class="lifetime">'source</span>&gt;&gt; {
         <span class="kw">match </span><span class="self">self</span>.expr_type {
             ExpressionContextType::Runtime(<span class="kw-2">ref mut </span>ctx) =&gt; <span class="prelude-val">Ok</span>(ctx.reborrow()),
             ExpressionContextType::Constant =&gt; <span class="prelude-val">Err</span>(Error::UnexpectedOperationInConstContext(span)),
@@ -2842,7 +2843,7 @@
     <span class="kw">fn </span>array_length(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         const_expr: Handle&lt;<span class="kw">crate</span>::Expression&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;NonZeroU32, Error&lt;<span class="lifetime">&#39;source</span>&gt;&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;NonZeroU32, Error&lt;<span class="lifetime">'source</span>&gt;&gt; {
         <span class="kw">let </span>span = <span class="self">self</span>.module.const_expressions.get_span(const_expr);
         <span class="kw">let </span>len = <span class="self">self
             </span>.module
@@ -2859,7 +2860,7 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         expr: Handle&lt;<span class="kw">crate</span>::Expression&gt;,
         gather_span: Span,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw">crate</span>::SwizzleComponent, Error&lt;<span class="lifetime">&#39;source</span>&gt;&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw">crate</span>::SwizzleComponent, Error&lt;<span class="lifetime">'source</span>&gt;&gt; {
         <span class="kw">match </span><span class="self">self</span>.expr_type {
             ExpressionContextType::Runtime(<span class="kw-2">ref </span>ctx) =&gt; {
                 <span class="kw">let </span>expr_span = ctx.naga_expressions.get_span(expr);
@@ -2874,19 +2875,19 @@
                     .ok_or(Error::InvalidGatherComponent(expr_span))
             }
             <span class="comment">// This means a `gather` operation appeared in a constant expression.
-            // This error refers to the `gather` itself, not its &quot;component&quot; argument.
+            // This error refers to the `gather` itself, not its "component" argument.
             </span>ExpressionContextType::Constant =&gt; {
                 <span class="prelude-val">Err</span>(Error::UnexpectedOperationInConstContext(gather_span))
             }
         }
     }
 
-    <span class="doccomment">/// Determine the type of `handle`, and add it to the module&#39;s arena.
+    <span class="doccomment">/// Determine the type of `handle`, and add it to the module's arena.
     ///
-    /// If you just need a `TypeInner` for `handle`&#39;s type, use
+    /// If you just need a `TypeInner` for `handle`'s type, use
     /// [`grow_types`] and [`resolved_inner`] instead. This function
     /// should only be used when the type of `handle` needs to appear
-    /// in the module&#39;s final `Arena&lt;Type&gt;`, for example, if you&#39;re
+    /// in the module's final `Arena&lt;Type&gt;`, for example, if you're
     /// creating a [`LocalVariable`] whose type is inferred from its
     /// initializer.
     ///
@@ -2896,10 +2897,10 @@
     </span><span class="kw">fn </span>register_type(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         handle: Handle&lt;<span class="kw">crate</span>::Expression&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;Handle&lt;<span class="kw">crate</span>::Type&gt;, Error&lt;<span class="lifetime">&#39;source</span>&gt;&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Handle&lt;<span class="kw">crate</span>::Type&gt;, Error&lt;<span class="lifetime">'source</span>&gt;&gt; {
         <span class="self">self</span>.grow_types(handle)<span class="question-mark">?</span>;
         <span class="comment">// This is equivalent to calling ExpressionContext::typifier(),
-        // except that this lets the borrow checker see that it&#39;s okay
+        // except that this lets the borrow checker see that it's okay
         // to also borrow self.module.types mutably below.
         </span><span class="kw">let </span>typifier = <span class="kw">match </span><span class="self">self</span>.expr_type {
             ExpressionContextType::Runtime(<span class="kw-2">ref </span>ctx) =&gt; ctx.typifier,
@@ -2917,10 +2918,10 @@
     /// documentation explains the steps we take to avoid filling
     /// arenas with intermediate types.
     ///
-    /// This function takes `&amp;mut self`, so it can&#39;t conveniently
+    /// This function takes `&amp;mut self`, so it can't conveniently
     /// return a shared reference to the resulting `TypeResolution`:
     /// the shared reference would extend the mutable borrow, and you
-    /// wouldn&#39;t be able to use `self` for anything else. Instead, you
+    /// wouldn't be able to use `self` for anything else. Instead, you
     /// should call `grow_types` to cover the handles you need, and
     /// then use `self.typifier[handle]` or
     /// [`self.resolved_inner(handle)`] to get at their resolutions.
@@ -2931,7 +2932,7 @@
     </span><span class="kw">fn </span>grow_types(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         handle: Handle&lt;<span class="kw">crate</span>::Expression&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;mut </span><span class="self">Self</span>, Error&lt;<span class="lifetime">&#39;source</span>&gt;&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;mut </span><span class="self">Self</span>, Error&lt;<span class="lifetime">'source</span>&gt;&gt; {
         <span class="kw">let </span>empty_arena = Arena::new();
         <span class="kw">let </span>resolve_ctx = <span class="kw">match </span><span class="self">self</span>.expr_type {
             ExpressionContextType::Runtime(<span class="kw-2">ref </span>ctx) =&gt; {
@@ -2964,7 +2965,7 @@
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         image: Handle&lt;<span class="kw">crate</span>::Expression&gt;,
         span: Span,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;(<span class="kw">crate</span>::ImageClass, bool), Error&lt;<span class="lifetime">&#39;source</span>&gt;&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;(<span class="kw">crate</span>::ImageClass, bool), Error&lt;<span class="lifetime">'source</span>&gt;&gt; {
         <span class="self">self</span>.grow_types(image)<span class="question-mark">?</span>;
         <span class="kw">match </span><span class="kw-2">*</span><span class="self">self</span>.resolved_inner(image) {
             <span class="kw">crate</span>::TypeInner::Image { class, arrayed, .. } =&gt; <span class="prelude-val">Ok</span>((class, arrayed)),
@@ -2972,12 +2973,12 @@
         }
     }
 
-    <span class="kw">fn </span>prepare_args&lt;<span class="lifetime">&#39;b</span>&gt;(
+    <span class="kw">fn </span>prepare_args&lt;<span class="lifetime">'b</span>&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        args: <span class="kw-2">&amp;</span><span class="lifetime">&#39;b </span>[Handle&lt;ast::Expression&lt;<span class="lifetime">&#39;source</span>&gt;&gt;],
+        args: <span class="kw-2">&amp;</span><span class="lifetime">'b </span>[Handle&lt;ast::Expression&lt;<span class="lifetime">'source</span>&gt;&gt;],
         min_args: u32,
         span: Span,
-    ) -&gt; ArgumentContext&lt;<span class="lifetime">&#39;b</span>, <span class="lifetime">&#39;source</span>&gt; {
+    ) -&gt; ArgumentContext&lt;<span class="lifetime">'b</span>, <span class="lifetime">'source</span>&gt; {
         ArgumentContext {
             args: args.iter(),
             min_args,
@@ -2987,13 +2988,13 @@
         }
     }
 
-    <span class="doccomment">/// Insert splats, if needed by the non-&#39;*&#39; operations.
+    <span class="doccomment">/// Insert splats, if needed by the non-'*' operations.
     </span><span class="kw">fn </span>binary_op_splat(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         op: <span class="kw">crate</span>::BinaryOperator,
         left: <span class="kw-2">&amp;mut </span>Handle&lt;<span class="kw">crate</span>::Expression&gt;,
         right: <span class="kw-2">&amp;mut </span>Handle&lt;<span class="kw">crate</span>::Expression&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&lt;<span class="lifetime">&#39;source</span>&gt;&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&lt;<span class="lifetime">'source</span>&gt;&gt; {
         <span class="kw">if </span>op != <span class="kw">crate</span>::BinaryOperator::Multiply {
             <span class="self">self</span>.grow_types(<span class="kw-2">*</span>left)<span class="question-mark">?</span>.grow_types(<span class="kw-2">*</span>right)<span class="question-mark">?</span>;
 
@@ -3091,16 +3092,16 @@
     }
 }
 
-<span class="kw">struct </span>ArgumentContext&lt;<span class="lifetime">&#39;ctx</span>, <span class="lifetime">&#39;source</span>&gt; {
-    args: std::slice::Iter&lt;<span class="lifetime">&#39;ctx</span>, Handle&lt;ast::Expression&lt;<span class="lifetime">&#39;source</span>&gt;&gt;&gt;,
+<span class="kw">struct </span>ArgumentContext&lt;<span class="lifetime">'ctx</span>, <span class="lifetime">'source</span>&gt; {
+    args: std::slice::Iter&lt;<span class="lifetime">'ctx</span>, Handle&lt;ast::Expression&lt;<span class="lifetime">'source</span>&gt;&gt;&gt;,
     min_args: u32,
     args_used: u32,
     total_args: u32,
     span: Span,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;source</span>&gt; ArgumentContext&lt;<span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;source</span>&gt; {
-    <span class="kw">pub fn </span>finish(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&lt;<span class="lifetime">&#39;source</span>&gt;&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'source</span>&gt; ArgumentContext&lt;<span class="lifetime">'_</span>, <span class="lifetime">'source</span>&gt; {
+    <span class="kw">pub fn </span>finish(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&lt;<span class="lifetime">'source</span>&gt;&gt; {
         <span class="kw">if </span><span class="self">self</span>.args.len() == <span class="number">0 </span>{
             <span class="prelude-val">Ok</span>(())
         } <span class="kw">else </span>{
@@ -3112,7 +3113,7 @@
         }
     }
 
-    <span class="kw">pub fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;Handle&lt;ast::Expression&lt;<span class="lifetime">&#39;source</span>&gt;&gt;, Error&lt;<span class="lifetime">&#39;source</span>&gt;&gt; {
+    <span class="kw">pub fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;Handle&lt;ast::Expression&lt;<span class="lifetime">'source</span>&gt;&gt;, Error&lt;<span class="lifetime">'source</span>&gt;&gt; {
         <span class="kw">match </span><span class="self">self</span>.args.next().copied() {
             <span class="prelude-val">Some</span>(arg) =&gt; {
                 <span class="self">self</span>.args_used += <span class="number">1</span>;
@@ -3129,7 +3130,7 @@
 
 <span class="doccomment">/// A Naga [`Expression`] handle, with WGSL type information.
 ///
-/// Naga and WGSL types are very close, but Naga lacks WGSL&#39;s &#39;reference&#39; types,
+/// Naga and WGSL types are very close, but Naga lacks WGSL's 'reference' types,
 /// which we need to know to apply the Load Rule. This struct carries a Naga
 /// `Handle&lt;Expression&gt;` along with enough information to determine its WGSL type.
 ///
@@ -3139,7 +3140,7 @@
     <span class="doccomment">/// The handle of the Naga expression.
     </span>handle: Handle&lt;<span class="kw">crate</span>::Expression&gt;,
 
-    <span class="doccomment">/// True if this expression&#39;s WGSL type is a reference.
+    <span class="doccomment">/// True if this expression's WGSL type is a reference.
     ///
     /// When this is true, `handle` must be a pointer.
     </span>is_reference: bool,
@@ -3163,10 +3164,10 @@
     <span class="kw">const fn </span>letter_component(letter: char) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw">crate</span>::SwizzleComponent&gt; {
         <span class="kw">use </span><span class="kw">crate</span>::SwizzleComponent <span class="kw">as </span>Sc;
         <span class="kw">match </span>letter {
-            <span class="string">&#39;x&#39; </span>| <span class="string">&#39;r&#39; </span>=&gt; <span class="prelude-val">Some</span>(Sc::X),
-            <span class="string">&#39;y&#39; </span>| <span class="string">&#39;g&#39; </span>=&gt; <span class="prelude-val">Some</span>(Sc::Y),
-            <span class="string">&#39;z&#39; </span>| <span class="string">&#39;b&#39; </span>=&gt; <span class="prelude-val">Some</span>(Sc::Z),
-            <span class="string">&#39;w&#39; </span>| <span class="string">&#39;a&#39; </span>=&gt; <span class="prelude-val">Some</span>(Sc::W),
+            <span class="string">'x' </span>| <span class="string">'r' </span>=&gt; <span class="prelude-val">Some</span>(Sc::X),
+            <span class="string">'y' </span>| <span class="string">'g' </span>=&gt; <span class="prelude-val">Some</span>(Sc::Y),
+            <span class="string">'z' </span>| <span class="string">'b' </span>=&gt; <span class="prelude-val">Some</span>(Sc::Z),
+            <span class="string">'w' </span>| <span class="string">'a' </span>=&gt; <span class="prelude-val">Some</span>(Sc::W),
             <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
         }
     }
@@ -3224,16 +3225,16 @@
 <span class="kw">impl </span>Texture {
     <span class="kw">pub fn </span>map(word: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>&gt; {
         <span class="prelude-val">Some</span>(<span class="kw">match </span>word {
-            <span class="string">&quot;textureGather&quot; </span>=&gt; <span class="self">Self</span>::Gather,
-            <span class="string">&quot;textureGatherCompare&quot; </span>=&gt; <span class="self">Self</span>::GatherCompare,
+            <span class="string">"textureGather" </span>=&gt; <span class="self">Self</span>::Gather,
+            <span class="string">"textureGatherCompare" </span>=&gt; <span class="self">Self</span>::GatherCompare,
 
-            <span class="string">&quot;textureSample&quot; </span>=&gt; <span class="self">Self</span>::Sample,
-            <span class="string">&quot;textureSampleBias&quot; </span>=&gt; <span class="self">Self</span>::SampleBias,
-            <span class="string">&quot;textureSampleCompare&quot; </span>=&gt; <span class="self">Self</span>::SampleCompare,
-            <span class="string">&quot;textureSampleCompareLevel&quot; </span>=&gt; <span class="self">Self</span>::SampleCompareLevel,
-            <span class="string">&quot;textureSampleGrad&quot; </span>=&gt; <span class="self">Self</span>::SampleGrad,
-            <span class="string">&quot;textureSampleLevel&quot; </span>=&gt; <span class="self">Self</span>::SampleLevel,
-            <span class="comment">// &quot;textureSampleBaseClampToEdge&quot; =&gt; Some(Self::SampleBaseClampToEdge),
+            <span class="string">"textureSample" </span>=&gt; <span class="self">Self</span>::Sample,
+            <span class="string">"textureSampleBias" </span>=&gt; <span class="self">Self</span>::SampleBias,
+            <span class="string">"textureSampleCompare" </span>=&gt; <span class="self">Self</span>::SampleCompare,
+            <span class="string">"textureSampleCompareLevel" </span>=&gt; <span class="self">Self</span>::SampleCompareLevel,
+            <span class="string">"textureSampleGrad" </span>=&gt; <span class="self">Self</span>::SampleGrad,
+            <span class="string">"textureSampleLevel" </span>=&gt; <span class="self">Self</span>::SampleLevel,
+            <span class="comment">// "textureSampleBaseClampToEdge" =&gt; Some(Self::SampleBaseClampToEdge),
             </span><span class="kw">_ </span>=&gt; <span class="kw">return </span><span class="prelude-val">None</span>,
         })
     }
@@ -3254,13 +3255,13 @@
     }
 }
 
-<span class="kw">pub struct </span>Lowerer&lt;<span class="lifetime">&#39;source</span>, <span class="lifetime">&#39;temp</span>&gt; {
-    index: <span class="kw-2">&amp;</span><span class="lifetime">&#39;temp </span>Index&lt;<span class="lifetime">&#39;source</span>&gt;,
+<span class="kw">pub struct </span>Lowerer&lt;<span class="lifetime">'source</span>, <span class="lifetime">'temp</span>&gt; {
+    index: <span class="kw-2">&amp;</span><span class="lifetime">'temp </span>Index&lt;<span class="lifetime">'source</span>&gt;,
     layouter: Layouter,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;source</span>, <span class="lifetime">&#39;temp</span>&gt; Lowerer&lt;<span class="lifetime">&#39;source</span>, <span class="lifetime">&#39;temp</span>&gt; {
-    <span class="kw">pub fn </span>new(index: <span class="kw-2">&amp;</span><span class="lifetime">&#39;temp </span>Index&lt;<span class="lifetime">&#39;source</span>&gt;) -&gt; <span class="self">Self </span>{
+<span class="kw">impl</span>&lt;<span class="lifetime">'source</span>, <span class="lifetime">'temp</span>&gt; Lowerer&lt;<span class="lifetime">'source</span>, <span class="lifetime">'temp</span>&gt; {
+    <span class="kw">pub fn </span>new(index: <span class="kw-2">&amp;</span><span class="lifetime">'temp </span>Index&lt;<span class="lifetime">'source</span>&gt;) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             index,
             layouter: Layouter::default(),
@@ -3269,8 +3270,8 @@
 
     <span class="kw">pub fn </span>lower(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        tu: <span class="kw-2">&amp;</span><span class="lifetime">&#39;temp </span>ast::TranslationUnit&lt;<span class="lifetime">&#39;source</span>&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw">crate</span>::Module, Error&lt;<span class="lifetime">&#39;source</span>&gt;&gt; {
+        tu: <span class="kw-2">&amp;</span><span class="lifetime">'temp </span>ast::TranslationUnit&lt;<span class="lifetime">'source</span>&gt;,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw">crate</span>::Module, Error&lt;<span class="lifetime">'source</span>&gt;&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>module = <span class="kw">crate</span>::Module::default();
 
         <span class="kw">let </span><span class="kw-2">mut </span>ctx = GlobalContext {
@@ -3374,10 +3375,10 @@
 
     <span class="kw">fn </span>function(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        f: <span class="kw-2">&amp;</span>ast::Function&lt;<span class="lifetime">&#39;source</span>&gt;,
+        f: <span class="kw-2">&amp;</span>ast::Function&lt;<span class="lifetime">'source</span>&gt;,
         span: Span,
-        <span class="kw-2">mut </span>ctx: GlobalContext&lt;<span class="lifetime">&#39;source</span>, <span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;LoweredGlobalDecl, Error&lt;<span class="lifetime">&#39;source</span>&gt;&gt; {
+        <span class="kw-2">mut </span>ctx: GlobalContext&lt;<span class="lifetime">'source</span>, <span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;LoweredGlobalDecl, Error&lt;<span class="lifetime">'source</span>&gt;&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>local_table = FastHashMap::default();
         <span class="kw">let </span><span class="kw-2">mut </span>local_variables = Arena::new();
         <span class="kw">let </span><span class="kw-2">mut </span>expressions = Arena::new();
@@ -3463,9 +3464,9 @@
 
     <span class="kw">fn </span>block(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        b: <span class="kw-2">&amp;</span>ast::Block&lt;<span class="lifetime">&#39;source</span>&gt;,
-        <span class="kw-2">mut </span>ctx: StatementContext&lt;<span class="lifetime">&#39;source</span>, <span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw">crate</span>::Block, Error&lt;<span class="lifetime">&#39;source</span>&gt;&gt; {
+        b: <span class="kw-2">&amp;</span>ast::Block&lt;<span class="lifetime">'source</span>&gt;,
+        <span class="kw-2">mut </span>ctx: StatementContext&lt;<span class="lifetime">'source</span>, <span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw">crate</span>::Block, Error&lt;<span class="lifetime">'source</span>&gt;&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>block = <span class="kw">crate</span>::Block::default();
 
         <span class="kw">for </span>stmt <span class="kw">in </span>b.stmts.iter() {
@@ -3477,10 +3478,10 @@
 
     <span class="kw">fn </span>statement(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        stmt: <span class="kw-2">&amp;</span>ast::Statement&lt;<span class="lifetime">&#39;source</span>&gt;,
+        stmt: <span class="kw-2">&amp;</span>ast::Statement&lt;<span class="lifetime">'source</span>&gt;,
         block: <span class="kw-2">&amp;mut </span><span class="kw">crate</span>::Block,
-        <span class="kw-2">mut </span>ctx: StatementContext&lt;<span class="lifetime">&#39;source</span>, <span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&lt;<span class="lifetime">&#39;source</span>&gt;&gt; {
+        <span class="kw-2">mut </span>ctx: StatementContext&lt;<span class="lifetime">'source</span>, <span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&lt;<span class="lifetime">'source</span>&gt;&gt; {
         <span class="kw">let </span>out = <span class="kw">match </span>stmt.kind {
             ast::StatementKind::Block(<span class="kw-2">ref </span>block) =&gt; {
                 <span class="kw">let </span>block = <span class="self">self</span>.block(block, ctx.reborrow())<span class="question-mark">?</span>;
@@ -3821,18 +3822,18 @@
 
     <span class="kw">fn </span>expression(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        expr: Handle&lt;ast::Expression&lt;<span class="lifetime">&#39;source</span>&gt;&gt;,
-        <span class="kw-2">mut </span>ctx: ExpressionContext&lt;<span class="lifetime">&#39;source</span>, <span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;Handle&lt;<span class="kw">crate</span>::Expression&gt;, Error&lt;<span class="lifetime">&#39;source</span>&gt;&gt; {
+        expr: Handle&lt;ast::Expression&lt;<span class="lifetime">'source</span>&gt;&gt;,
+        <span class="kw-2">mut </span>ctx: ExpressionContext&lt;<span class="lifetime">'source</span>, <span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Handle&lt;<span class="kw">crate</span>::Expression&gt;, Error&lt;<span class="lifetime">'source</span>&gt;&gt; {
         <span class="kw">let </span>expr = <span class="self">self</span>.expression_for_reference(expr, ctx.reborrow())<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(ctx.apply_load_rule(expr))
     }
 
     <span class="kw">fn </span>expression_for_reference(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        expr: Handle&lt;ast::Expression&lt;<span class="lifetime">&#39;source</span>&gt;&gt;,
-        <span class="kw-2">mut </span>ctx: ExpressionContext&lt;<span class="lifetime">&#39;source</span>, <span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;TypedExpression, Error&lt;<span class="lifetime">&#39;source</span>&gt;&gt; {
+        expr: Handle&lt;ast::Expression&lt;<span class="lifetime">'source</span>&gt;&gt;,
+        <span class="kw-2">mut </span>ctx: ExpressionContext&lt;<span class="lifetime">'source</span>, <span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;TypedExpression, Error&lt;<span class="lifetime">'source</span>&gt;&gt; {
         <span class="kw">let </span>span = ctx.ast_expressions.get_span(expr);
         <span class="kw">let </span>expr = <span class="kw-2">&amp;</span>ctx.ast_expressions[expr];
 
@@ -3843,7 +3844,7 @@
                     ast::Literal::Number(Number::I32(i)) =&gt; <span class="kw">crate</span>::Literal::I32(i),
                     ast::Literal::Number(Number::U32(u)) =&gt; <span class="kw">crate</span>::Literal::U32(u),
                     ast::Literal::Number(<span class="kw">_</span>) =&gt; {
-                        <span class="macro">unreachable!</span>(<span class="string">&quot;got abstract numeric type when not expected&quot;</span>);
+                        <span class="macro">unreachable!</span>(<span class="string">"got abstract numeric type when not expected"</span>);
                     }
                     ast::Literal::Bool(b) =&gt; <span class="kw">crate</span>::Literal::Bool(b),
                 };
@@ -3896,7 +3897,7 @@
                 // reference is required, the Load Rule is not applied.
                 </span><span class="kw">let </span>expr = <span class="self">self</span>.expression_for_reference(expr, ctx.reborrow())<span class="question-mark">?</span>;
                 <span class="kw">if </span>!expr.is_reference {
-                    <span class="kw">return </span><span class="prelude-val">Err</span>(Error::NotReference(<span class="string">&quot;the operand of the `&amp;` operator&quot;</span>, span));
+                    <span class="kw">return </span><span class="prelude-val">Err</span>(Error::NotReference(<span class="string">"the operand of the `&amp;` operator"</span>, span));
                 }
 
                 <span class="comment">// No code is generated. We just declare the pointer a reference now.
@@ -3945,7 +3946,7 @@
 
                 <span class="kw">if </span>wgsl_pointer {
                     <span class="kw">return </span><span class="prelude-val">Err</span>(Error::Pointer(
-                        <span class="string">&quot;the value indexed by a `[]` subscripting expression&quot;</span>,
+                        <span class="string">"the value indexed by a `[]` subscripting expression"</span>,
                         ctx.ast_expressions.get_span(base),
                     ));
                 }
@@ -4012,7 +4013,7 @@
 
                 <span class="kw">if </span>wgsl_pointer {
                     <span class="kw">return </span><span class="prelude-val">Err</span>(Error::Pointer(
-                        <span class="string">&quot;the value accessed by a `.member` expression&quot;</span>,
+                        <span class="string">"the value accessed by a `.member` expression"</span>,
                         ctx.ast_expressions.get_span(base),
                     ));
                 }
@@ -4102,17 +4103,17 @@
     <span class="doccomment">/// Generate Naga IR for call expressions and statements, and type
     /// constructor expressions.
     ///
-    /// The &quot;function&quot; being called is simply an `Ident` that we know refers to
+    /// The "function" being called is simply an `Ident` that we know refers to
     /// some module-scope definition.
     ///
     /// - If it is the name of a type, then the expression is a type constructor
     ///   expression: either constructing a value from components, a conversion
     ///   expression, or a zero value expression.
     ///
-    /// - If it is the name of a function, then we&#39;re generating a [`Call`]
+    /// - If it is the name of a function, then we're generating a [`Call`]
     ///   statement. We may be in the midst of generating code for an
     ///   expression, in which case we must generate an `Emit` statement to
-    ///   force evaluation of the IR expressions we&#39;ve generated so far, add the
+    ///   force evaluation of the IR expressions we've generated so far, add the
     ///   `Call` statement to the current block, and then resume generating
     ///   expressions.
     ///
@@ -4120,10 +4121,10 @@
     </span><span class="kw">fn </span>call(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         span: Span,
-        function: <span class="kw-2">&amp;</span>ast::Ident&lt;<span class="lifetime">&#39;source</span>&gt;,
-        arguments: <span class="kw-2">&amp;</span>[Handle&lt;ast::Expression&lt;<span class="lifetime">&#39;source</span>&gt;&gt;],
-        <span class="kw-2">mut </span>ctx: ExpressionContext&lt;<span class="lifetime">&#39;source</span>, <span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;Handle&lt;<span class="kw">crate</span>::Expression&gt;&gt;, Error&lt;<span class="lifetime">&#39;source</span>&gt;&gt; {
+        function: <span class="kw-2">&amp;</span>ast::Ident&lt;<span class="lifetime">'source</span>&gt;,
+        arguments: <span class="kw-2">&amp;</span>[Handle&lt;ast::Expression&lt;<span class="lifetime">'source</span>&gt;&gt;],
+        <span class="kw-2">mut </span>ctx: ExpressionContext&lt;<span class="lifetime">'source</span>, <span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;Handle&lt;<span class="kw">crate</span>::Expression&gt;&gt;, Error&lt;<span class="lifetime">'source</span>&gt;&gt; {
         <span class="kw">match </span>ctx.globals.get(function.name) {
             <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>LoweredGlobalDecl::Type(ty)) =&gt; {
                 <span class="kw">let </span>handle = <span class="self">self</span>.construct(
@@ -4214,7 +4215,7 @@
                     <span class="self">self</span>.texture_sample_helper(fun, arguments, span, ctx.reborrow())<span class="question-mark">?
                 </span>} <span class="kw">else </span>{
                     <span class="kw">match </span>function.name {
-                        <span class="string">&quot;select&quot; </span>=&gt; {
+                        <span class="string">"select" </span>=&gt; {
                             <span class="kw">let </span><span class="kw-2">mut </span>args = ctx.prepare_args(arguments, <span class="number">3</span>, span);
 
                             <span class="kw">let </span>reject = <span class="self">self</span>.expression(args.next()<span class="question-mark">?</span>, ctx.reborrow())<span class="question-mark">?</span>;
@@ -4229,21 +4230,21 @@
                                 condition,
                             }
                         }
-                        <span class="string">&quot;arrayLength&quot; </span>=&gt; {
+                        <span class="string">"arrayLength" </span>=&gt; {
                             <span class="kw">let </span><span class="kw-2">mut </span>args = ctx.prepare_args(arguments, <span class="number">1</span>, span);
                             <span class="kw">let </span>expr = <span class="self">self</span>.expression(args.next()<span class="question-mark">?</span>, ctx.reborrow())<span class="question-mark">?</span>;
                             args.finish()<span class="question-mark">?</span>;
 
                             <span class="kw">crate</span>::Expression::ArrayLength(expr)
                         }
-                        <span class="string">&quot;atomicLoad&quot; </span>=&gt; {
+                        <span class="string">"atomicLoad" </span>=&gt; {
                             <span class="kw">let </span><span class="kw-2">mut </span>args = ctx.prepare_args(arguments, <span class="number">1</span>, span);
                             <span class="kw">let </span>pointer = <span class="self">self</span>.atomic_pointer(args.next()<span class="question-mark">?</span>, ctx.reborrow())<span class="question-mark">?</span>;
                             args.finish()<span class="question-mark">?</span>;
 
                             <span class="kw">crate</span>::Expression::Load { pointer }
                         }
-                        <span class="string">&quot;atomicStore&quot; </span>=&gt; {
+                        <span class="string">"atomicStore" </span>=&gt; {
                             <span class="kw">let </span><span class="kw-2">mut </span>args = ctx.prepare_args(arguments, <span class="number">2</span>, span);
                             <span class="kw">let </span>pointer = <span class="self">self</span>.atomic_pointer(args.next()<span class="question-mark">?</span>, ctx.reborrow())<span class="question-mark">?</span>;
                             <span class="kw">let </span>value = <span class="self">self</span>.expression(args.next()<span class="question-mark">?</span>, ctx.reborrow())<span class="question-mark">?</span>;
@@ -4257,7 +4258,7 @@
                                 .push(<span class="kw">crate</span>::Statement::Store { pointer, value }, span);
                             <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>);
                         }
-                        <span class="string">&quot;atomicAdd&quot; </span>=&gt; {
+                        <span class="string">"atomicAdd" </span>=&gt; {
                             <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(<span class="self">self</span>.atomic_helper(
                                 span,
                                 <span class="kw">crate</span>::AtomicFunction::Add,
@@ -4265,7 +4266,7 @@
                                 ctx.reborrow(),
                             )<span class="question-mark">?</span>))
                         }
-                        <span class="string">&quot;atomicSub&quot; </span>=&gt; {
+                        <span class="string">"atomicSub" </span>=&gt; {
                             <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(<span class="self">self</span>.atomic_helper(
                                 span,
                                 <span class="kw">crate</span>::AtomicFunction::Subtract,
@@ -4273,7 +4274,7 @@
                                 ctx.reborrow(),
                             )<span class="question-mark">?</span>))
                         }
-                        <span class="string">&quot;atomicAnd&quot; </span>=&gt; {
+                        <span class="string">"atomicAnd" </span>=&gt; {
                             <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(<span class="self">self</span>.atomic_helper(
                                 span,
                                 <span class="kw">crate</span>::AtomicFunction::And,
@@ -4281,7 +4282,7 @@
                                 ctx.reborrow(),
                             )<span class="question-mark">?</span>))
                         }
-                        <span class="string">&quot;atomicOr&quot; </span>=&gt; {
+                        <span class="string">"atomicOr" </span>=&gt; {
                             <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(<span class="self">self</span>.atomic_helper(
                                 span,
                                 <span class="kw">crate</span>::AtomicFunction::InclusiveOr,
@@ -4289,7 +4290,7 @@
                                 ctx.reborrow(),
                             )<span class="question-mark">?</span>))
                         }
-                        <span class="string">&quot;atomicXor&quot; </span>=&gt; {
+                        <span class="string">"atomicXor" </span>=&gt; {
                             <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(<span class="self">self</span>.atomic_helper(
                                 span,
                                 <span class="kw">crate</span>::AtomicFunction::ExclusiveOr,
@@ -4297,7 +4298,7 @@
                                 ctx.reborrow(),
                             )<span class="question-mark">?</span>))
                         }
-                        <span class="string">&quot;atomicMin&quot; </span>=&gt; {
+                        <span class="string">"atomicMin" </span>=&gt; {
                             <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(<span class="self">self</span>.atomic_helper(
                                 span,
                                 <span class="kw">crate</span>::AtomicFunction::Min,
@@ -4305,7 +4306,7 @@
                                 ctx.reborrow(),
                             )<span class="question-mark">?</span>))
                         }
-                        <span class="string">&quot;atomicMax&quot; </span>=&gt; {
+                        <span class="string">"atomicMax" </span>=&gt; {
                             <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(<span class="self">self</span>.atomic_helper(
                                 span,
                                 <span class="kw">crate</span>::AtomicFunction::Max,
@@ -4313,7 +4314,7 @@
                                 ctx.reborrow(),
                             )<span class="question-mark">?</span>))
                         }
-                        <span class="string">&quot;atomicExchange&quot; </span>=&gt; {
+                        <span class="string">"atomicExchange" </span>=&gt; {
                             <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(<span class="self">self</span>.atomic_helper(
                                 span,
                                 <span class="kw">crate</span>::AtomicFunction::Exchange { compare: <span class="prelude-val">None </span>},
@@ -4321,7 +4322,7 @@
                                 ctx.reborrow(),
                             )<span class="question-mark">?</span>))
                         }
-                        <span class="string">&quot;atomicCompareExchangeWeak&quot; </span>=&gt; {
+                        <span class="string">"atomicCompareExchangeWeak" </span>=&gt; {
                             <span class="kw">let </span><span class="kw-2">mut </span>args = ctx.prepare_args(arguments, <span class="number">3</span>, span);
 
                             <span class="kw">let </span>pointer = <span class="self">self</span>.atomic_pointer(args.next()<span class="question-mark">?</span>, ctx.reborrow())<span class="question-mark">?</span>;
@@ -4363,7 +4364,7 @@
                             );
                             <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(result));
                         }
-                        <span class="string">&quot;storageBarrier&quot; </span>=&gt; {
+                        <span class="string">"storageBarrier" </span>=&gt; {
                             ctx.prepare_args(arguments, <span class="number">0</span>, span).finish()<span class="question-mark">?</span>;
 
                             <span class="kw">let </span>rctx = ctx.runtime_expression_ctx(span)<span class="question-mark">?</span>;
@@ -4371,7 +4372,7 @@
                                 .push(<span class="kw">crate</span>::Statement::Barrier(<span class="kw">crate</span>::Barrier::STORAGE), span);
                             <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>);
                         }
-                        <span class="string">&quot;workgroupBarrier&quot; </span>=&gt; {
+                        <span class="string">"workgroupBarrier" </span>=&gt; {
                             ctx.prepare_args(arguments, <span class="number">0</span>, span).finish()<span class="question-mark">?</span>;
 
                             <span class="kw">let </span>rctx = ctx.runtime_expression_ctx(span)<span class="question-mark">?</span>;
@@ -4379,7 +4380,7 @@
                                 .push(<span class="kw">crate</span>::Statement::Barrier(<span class="kw">crate</span>::Barrier::WORK_GROUP), span);
                             <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>);
                         }
-                        <span class="string">&quot;workgroupUniformLoad&quot; </span>=&gt; {
+                        <span class="string">"workgroupUniformLoad" </span>=&gt; {
                             <span class="kw">let </span><span class="kw-2">mut </span>args = ctx.prepare_args(arguments, <span class="number">1</span>, span);
                             <span class="kw">let </span>expr = args.next()<span class="question-mark">?</span>;
                             args.finish()<span class="question-mark">?</span>;
@@ -4392,7 +4393,7 @@
                                     space: <span class="kw">crate</span>::AddressSpace::WorkGroup,
                                 } =&gt; base,
                                 <span class="kw-2">ref </span>other =&gt; {
-                                    <span class="macro">log::error!</span>(<span class="string">&quot;Type {other:?} passed to workgroupUniformLoad&quot;</span>);
+                                    <span class="macro">log::error!</span>(<span class="string">"Type {other:?} passed to workgroupUniformLoad"</span>);
                                     <span class="kw">let </span>span = ctx.ast_expressions.get_span(expr);
                                     <span class="kw">return </span><span class="prelude-val">Err</span>(Error::InvalidWorkGroupUniformLoad(span));
                                 }
@@ -4410,7 +4411,7 @@
                             ctx.grow_types(pointer)<span class="question-mark">?</span>;
                             <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(result));
                         }
-                        <span class="string">&quot;textureStore&quot; </span>=&gt; {
+                        <span class="string">"textureStore" </span>=&gt; {
                             <span class="kw">let </span><span class="kw-2">mut </span>args = ctx.prepare_args(arguments, <span class="number">3</span>, span);
 
                             <span class="kw">let </span>image = args.next()<span class="question-mark">?</span>;
@@ -4441,7 +4442,7 @@
                             rctx.block.push(stmt, span);
                             <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>);
                         }
-                        <span class="string">&quot;textureLoad&quot; </span>=&gt; {
+                        <span class="string">"textureLoad" </span>=&gt; {
                             <span class="kw">let </span><span class="kw-2">mut </span>args = ctx.prepare_args(arguments, <span class="number">3</span>, span);
 
                             <span class="kw">let </span>image = args.next()<span class="question-mark">?</span>;
@@ -4475,7 +4476,7 @@
                                 sample,
                             }
                         }
-                        <span class="string">&quot;textureDimensions&quot; </span>=&gt; {
+                        <span class="string">"textureDimensions" </span>=&gt; {
                             <span class="kw">let </span><span class="kw-2">mut </span>args = ctx.prepare_args(arguments, <span class="number">1</span>, span);
                             <span class="kw">let </span>image = <span class="self">self</span>.expression(args.next()<span class="question-mark">?</span>, ctx.reborrow())<span class="question-mark">?</span>;
                             <span class="kw">let </span>level = args
@@ -4490,7 +4491,7 @@
                                 query: <span class="kw">crate</span>::ImageQuery::Size { level },
                             }
                         }
-                        <span class="string">&quot;textureNumLevels&quot; </span>=&gt; {
+                        <span class="string">"textureNumLevels" </span>=&gt; {
                             <span class="kw">let </span><span class="kw-2">mut </span>args = ctx.prepare_args(arguments, <span class="number">1</span>, span);
                             <span class="kw">let </span>image = <span class="self">self</span>.expression(args.next()<span class="question-mark">?</span>, ctx.reborrow())<span class="question-mark">?</span>;
                             args.finish()<span class="question-mark">?</span>;
@@ -4500,7 +4501,7 @@
                                 query: <span class="kw">crate</span>::ImageQuery::NumLevels,
                             }
                         }
-                        <span class="string">&quot;textureNumLayers&quot; </span>=&gt; {
+                        <span class="string">"textureNumLayers" </span>=&gt; {
                             <span class="kw">let </span><span class="kw-2">mut </span>args = ctx.prepare_args(arguments, <span class="number">1</span>, span);
                             <span class="kw">let </span>image = <span class="self">self</span>.expression(args.next()<span class="question-mark">?</span>, ctx.reborrow())<span class="question-mark">?</span>;
                             args.finish()<span class="question-mark">?</span>;
@@ -4510,7 +4511,7 @@
                                 query: <span class="kw">crate</span>::ImageQuery::NumLayers,
                             }
                         }
-                        <span class="string">&quot;textureNumSamples&quot; </span>=&gt; {
+                        <span class="string">"textureNumSamples" </span>=&gt; {
                             <span class="kw">let </span><span class="kw-2">mut </span>args = ctx.prepare_args(arguments, <span class="number">1</span>, span);
                             <span class="kw">let </span>image = <span class="self">self</span>.expression(args.next()<span class="question-mark">?</span>, ctx.reborrow())<span class="question-mark">?</span>;
                             args.finish()<span class="question-mark">?</span>;
@@ -4520,7 +4521,7 @@
                                 query: <span class="kw">crate</span>::ImageQuery::NumSamples,
                             }
                         }
-                        <span class="string">&quot;rayQueryInitialize&quot; </span>=&gt; {
+                        <span class="string">"rayQueryInitialize" </span>=&gt; {
                             <span class="kw">let </span><span class="kw-2">mut </span>args = ctx.prepare_args(arguments, <span class="number">3</span>, span);
                             <span class="kw">let </span>query = <span class="self">self</span>.ray_query_pointer(args.next()<span class="question-mark">?</span>, ctx.reborrow())<span class="question-mark">?</span>;
                             <span class="kw">let </span>acceleration_structure =
@@ -4542,7 +4543,7 @@
                                 .push(<span class="kw">crate</span>::Statement::RayQuery { query, fun }, span);
                             <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>);
                         }
-                        <span class="string">&quot;rayQueryProceed&quot; </span>=&gt; {
+                        <span class="string">"rayQueryProceed" </span>=&gt; {
                             <span class="kw">let </span><span class="kw-2">mut </span>args = ctx.prepare_args(arguments, <span class="number">1</span>, span);
                             <span class="kw">let </span>query = <span class="self">self</span>.ray_query_pointer(args.next()<span class="question-mark">?</span>, ctx.reborrow())<span class="question-mark">?</span>;
                             args.finish()<span class="question-mark">?</span>;
@@ -4555,7 +4556,7 @@
                                 .push(<span class="kw">crate</span>::Statement::RayQuery { query, fun }, span);
                             <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(result));
                         }
-                        <span class="string">&quot;rayQueryGetCommittedIntersection&quot; </span>=&gt; {
+                        <span class="string">"rayQueryGetCommittedIntersection" </span>=&gt; {
                             <span class="kw">let </span><span class="kw-2">mut </span>args = ctx.prepare_args(arguments, <span class="number">1</span>, span);
                             <span class="kw">let </span>query = <span class="self">self</span>.ray_query_pointer(args.next()<span class="question-mark">?</span>, ctx.reborrow())<span class="question-mark">?</span>;
                             args.finish()<span class="question-mark">?</span>;
@@ -4567,7 +4568,7 @@
                                 committed: <span class="bool-val">true</span>,
                             }
                         }
-                        <span class="string">&quot;RayDesc&quot; </span>=&gt; {
+                        <span class="string">"RayDesc" </span>=&gt; {
                             <span class="kw">let </span>ty = ctx.module.generate_ray_desc_type();
                             <span class="kw">let </span>handle = <span class="self">self</span>.construct(
                                 span,
@@ -4590,9 +4591,9 @@
 
     <span class="kw">fn </span>atomic_pointer(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        expr: Handle&lt;ast::Expression&lt;<span class="lifetime">&#39;source</span>&gt;&gt;,
-        <span class="kw-2">mut </span>ctx: ExpressionContext&lt;<span class="lifetime">&#39;source</span>, <span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;Handle&lt;<span class="kw">crate</span>::Expression&gt;, Error&lt;<span class="lifetime">&#39;source</span>&gt;&gt; {
+        expr: Handle&lt;ast::Expression&lt;<span class="lifetime">'source</span>&gt;&gt;,
+        <span class="kw-2">mut </span>ctx: ExpressionContext&lt;<span class="lifetime">'source</span>, <span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Handle&lt;<span class="kw">crate</span>::Expression&gt;, Error&lt;<span class="lifetime">'source</span>&gt;&gt; {
         <span class="kw">let </span>span = ctx.ast_expressions.get_span(expr);
         <span class="kw">let </span>pointer = <span class="self">self</span>.expression(expr, ctx.reborrow())<span class="question-mark">?</span>;
 
@@ -4601,12 +4602,12 @@
             <span class="kw">crate</span>::TypeInner::Pointer { base, .. } =&gt; <span class="kw">match </span>ctx.module.types[base].inner {
                 <span class="kw">crate</span>::TypeInner::Atomic { .. } =&gt; <span class="prelude-val">Ok</span>(pointer),
                 <span class="kw-2">ref </span>other =&gt; {
-                    <span class="macro">log::error!</span>(<span class="string">&quot;Pointer type to {:?} passed to atomic op&quot;</span>, other);
+                    <span class="macro">log::error!</span>(<span class="string">"Pointer type to {:?} passed to atomic op"</span>, other);
                     <span class="prelude-val">Err</span>(Error::InvalidAtomicPointer(span))
                 }
             },
             <span class="kw-2">ref </span>other =&gt; {
-                <span class="macro">log::error!</span>(<span class="string">&quot;Type {:?} passed to atomic op&quot;</span>, other);
+                <span class="macro">log::error!</span>(<span class="string">"Type {:?} passed to atomic op"</span>, other);
                 <span class="prelude-val">Err</span>(Error::InvalidAtomicPointer(span))
             }
         }
@@ -4616,9 +4617,9 @@
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         span: Span,
         fun: <span class="kw">crate</span>::AtomicFunction,
-        args: <span class="kw-2">&amp;</span>[Handle&lt;ast::Expression&lt;<span class="lifetime">&#39;source</span>&gt;&gt;],
-        <span class="kw-2">mut </span>ctx: ExpressionContext&lt;<span class="lifetime">&#39;source</span>, <span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;Handle&lt;<span class="kw">crate</span>::Expression&gt;, Error&lt;<span class="lifetime">&#39;source</span>&gt;&gt; {
+        args: <span class="kw-2">&amp;</span>[Handle&lt;ast::Expression&lt;<span class="lifetime">'source</span>&gt;&gt;],
+        <span class="kw-2">mut </span>ctx: ExpressionContext&lt;<span class="lifetime">'source</span>, <span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Handle&lt;<span class="kw">crate</span>::Expression&gt;, Error&lt;<span class="lifetime">'source</span>&gt;&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>args = ctx.prepare_args(args, <span class="number">2</span>, span);
 
         <span class="kw">let </span>pointer = <span class="self">self</span>.atomic_pointer(args.next()<span class="question-mark">?</span>, ctx.reborrow())<span class="question-mark">?</span>;
@@ -4652,17 +4653,17 @@
     <span class="kw">fn </span>texture_sample_helper(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         fun: Texture,
-        args: <span class="kw-2">&amp;</span>[Handle&lt;ast::Expression&lt;<span class="lifetime">&#39;source</span>&gt;&gt;],
+        args: <span class="kw-2">&amp;</span>[Handle&lt;ast::Expression&lt;<span class="lifetime">'source</span>&gt;&gt;],
         span: Span,
-        <span class="kw-2">mut </span>ctx: ExpressionContext&lt;<span class="lifetime">&#39;source</span>, <span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw">crate</span>::Expression, Error&lt;<span class="lifetime">&#39;source</span>&gt;&gt; {
+        <span class="kw-2">mut </span>ctx: ExpressionContext&lt;<span class="lifetime">'source</span>, <span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw">crate</span>::Expression, Error&lt;<span class="lifetime">'source</span>&gt;&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>args = ctx.prepare_args(args, fun.min_argument_count(), span);
 
-        <span class="kw">fn </span>get_image_and_span&lt;<span class="lifetime">&#39;source</span>&gt;(
-            lowerer: <span class="kw-2">&amp;mut </span>Lowerer&lt;<span class="lifetime">&#39;source</span>, <span class="lifetime">&#39;_</span>&gt;,
-            args: <span class="kw-2">&amp;mut </span>ArgumentContext&lt;<span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;source</span>&gt;,
-            ctx: <span class="kw-2">&amp;mut </span>ExpressionContext&lt;<span class="lifetime">&#39;source</span>, <span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>&gt;,
-        ) -&gt; <span class="prelude-ty">Result</span>&lt;(Handle&lt;<span class="kw">crate</span>::Expression&gt;, Span), Error&lt;<span class="lifetime">&#39;source</span>&gt;&gt; {
+        <span class="kw">fn </span>get_image_and_span&lt;<span class="lifetime">'source</span>&gt;(
+            lowerer: <span class="kw-2">&amp;mut </span>Lowerer&lt;<span class="lifetime">'source</span>, <span class="lifetime">'_</span>&gt;,
+            args: <span class="kw-2">&amp;mut </span>ArgumentContext&lt;<span class="lifetime">'_</span>, <span class="lifetime">'source</span>&gt;,
+            ctx: <span class="kw-2">&amp;mut </span>ExpressionContext&lt;<span class="lifetime">'source</span>, <span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;,
+        ) -&gt; <span class="prelude-ty">Result</span>&lt;(Handle&lt;<span class="kw">crate</span>::Expression&gt;, Span), Error&lt;<span class="lifetime">'source</span>&gt;&gt; {
             <span class="kw">let </span>image = args.next()<span class="question-mark">?</span>;
             <span class="kw">let </span>image_span = ctx.ast_expressions.get_span(image);
             <span class="kw">let </span>image = lowerer.expression(image, ctx.reborrow())<span class="question-mark">?</span>;
@@ -4672,7 +4673,7 @@
         <span class="kw">let </span>(image, image_span, gather) = <span class="kw">match </span>fun {
             Texture::Gather =&gt; {
                 <span class="kw">let </span>image_or_component = args.next()<span class="question-mark">?</span>;
-                <span class="comment">// Gathers from depth textures don&#39;t take an initial `component` argument.
+                <span class="comment">// Gathers from depth textures don't take an initial `component` argument.
                 </span><span class="kw">let </span>lowered_image_or_component =
                     <span class="self">self</span>.expression(image_or_component, ctx.reborrow())<span class="question-mark">?</span>;
 
@@ -4772,10 +4773,10 @@
 
     <span class="kw">fn </span>r#struct(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        s: <span class="kw-2">&amp;</span>ast::Struct&lt;<span class="lifetime">&#39;source</span>&gt;,
+        s: <span class="kw-2">&amp;</span>ast::Struct&lt;<span class="lifetime">'source</span>&gt;,
         span: Span,
-        <span class="kw-2">mut </span>ctx: GlobalContext&lt;<span class="lifetime">&#39;source</span>, <span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;Handle&lt;<span class="kw">crate</span>::Type&gt;, Error&lt;<span class="lifetime">&#39;source</span>&gt;&gt; {
+        <span class="kw-2">mut </span>ctx: GlobalContext&lt;<span class="lifetime">'source</span>, <span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Handle&lt;<span class="kw">crate</span>::Type&gt;, Error&lt;<span class="lifetime">'source</span>&gt;&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>offset = <span class="number">0</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>struct_alignment = Alignment::ONE;
         <span class="kw">let </span><span class="kw-2">mut </span>members = Vec::with_capacity(s.members.len());
@@ -4846,9 +4847,9 @@
     <span class="doccomment">/// Return a Naga `Handle&lt;Type&gt;` representing the front-end type `handle`.
     </span><span class="kw">fn </span>resolve_ast_type(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        handle: Handle&lt;ast::Type&lt;<span class="lifetime">&#39;source</span>&gt;&gt;,
-        <span class="kw-2">mut </span>ctx: GlobalContext&lt;<span class="lifetime">&#39;source</span>, <span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;Handle&lt;<span class="kw">crate</span>::Type&gt;, Error&lt;<span class="lifetime">&#39;source</span>&gt;&gt; {
+        handle: Handle&lt;ast::Type&lt;<span class="lifetime">'source</span>&gt;&gt;,
+        <span class="kw-2">mut </span>ctx: GlobalContext&lt;<span class="lifetime">'source</span>, <span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Handle&lt;<span class="kw">crate</span>::Type&gt;, Error&lt;<span class="lifetime">'source</span>&gt;&gt; {
         <span class="kw">let </span>inner = <span class="kw">match </span>ctx.types[handle] {
             ast::Type::Scalar { kind, width } =&gt; <span class="kw">crate</span>::TypeInner::Scalar { kind, width },
             ast::Type::Vector { size, kind, width } =&gt; {
@@ -4932,7 +4933,7 @@
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         binding: <span class="kw-2">&amp;</span><span class="prelude-ty">Option</span>&lt;<span class="kw">crate</span>::Binding&gt;,
         ty: Handle&lt;<span class="kw">crate</span>::Type&gt;,
-        ctx: GlobalContext&lt;<span class="lifetime">&#39;source</span>, <span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>&gt;,
+        ctx: GlobalContext&lt;<span class="lifetime">'source</span>, <span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;,
     ) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw">crate</span>::Binding&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>binding = binding.clone();
         <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref mut </span>binding) = binding {
@@ -4944,9 +4945,9 @@
 
     <span class="kw">fn </span>ray_query_pointer(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        expr: Handle&lt;ast::Expression&lt;<span class="lifetime">&#39;source</span>&gt;&gt;,
-        <span class="kw-2">mut </span>ctx: ExpressionContext&lt;<span class="lifetime">&#39;source</span>, <span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;Handle&lt;<span class="kw">crate</span>::Expression&gt;, Error&lt;<span class="lifetime">&#39;source</span>&gt;&gt; {
+        expr: Handle&lt;ast::Expression&lt;<span class="lifetime">'source</span>&gt;&gt;,
+        <span class="kw-2">mut </span>ctx: ExpressionContext&lt;<span class="lifetime">'source</span>, <span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Handle&lt;<span class="kw">crate</span>::Expression&gt;, Error&lt;<span class="lifetime">'source</span>&gt;&gt; {
         <span class="kw">let </span>span = ctx.ast_expressions.get_span(expr);
         <span class="kw">let </span>pointer = <span class="self">self</span>.expression(expr, ctx.reborrow())<span class="question-mark">?</span>;
 
@@ -4955,12 +4956,12 @@
             <span class="kw">crate</span>::TypeInner::Pointer { base, .. } =&gt; <span class="kw">match </span>ctx.module.types[base].inner {
                 <span class="kw">crate</span>::TypeInner::RayQuery =&gt; <span class="prelude-val">Ok</span>(pointer),
                 <span class="kw-2">ref </span>other =&gt; {
-                    <span class="macro">log::error!</span>(<span class="string">&quot;Pointer type to {:?} passed to ray query op&quot;</span>, other);
+                    <span class="macro">log::error!</span>(<span class="string">"Pointer type to {:?} passed to ray query op"</span>, other);
                     <span class="prelude-val">Err</span>(Error::InvalidRayQueryPointer(span))
                 }
             },
             <span class="kw-2">ref </span>other =&gt; {
-                <span class="macro">log::error!</span>(<span class="string">&quot;Type {:?} passed to ray query op&quot;</span>, other);
+                <span class="macro">log::error!</span>(<span class="string">"Type {:?} passed to ray query op"</span>, other);
                 <span class="prelude-val">Err</span>(Error::InvalidRayQueryPointer(span))
             }
         }
