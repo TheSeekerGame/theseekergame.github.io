@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["cli_camera_at","cli_camera_limits_args","cli_camera_limits_noargs","manage_camera_projection","setup_main_camera"],"struct":["CameraPlugin","GameViewLimits","MainCamera","MainCameraBundle"]};
+window.SIDEBAR_ITEMS = {"fn":["camera_follow_player","cli_camera_at","cli_camera_limits_args","cli_camera_limits_noargs","manage_camera_projection","setup_main_camera"],"struct":["CameraPlugin","GameViewLimits","MainCamera","MainCameraBundle"]};
