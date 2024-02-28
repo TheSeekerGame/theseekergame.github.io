@@ -120,9 +120,21 @@
 <a href="#119" id="119">119</a>
 <a href="#120" id="120">120</a>
 <a href="#121" id="121">121</a>
+<a href="#122" id="122">122</a>
+<a href="#123" id="123">123</a>
+<a href="#124" id="124">124</a>
+<a href="#125" id="125">125</a>
+<a href="#126" id="126">126</a>
+<a href="#127" id="127">127</a>
+<a href="#128" id="128">128</a>
+<a href="#129" id="129">129</a>
+<a href="#130" id="130">130</a>
+<a href="#131" id="131">131</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! Everything to do with the in-game camera(s)
 
-</span><span class="kw">use crate</span>::{game::player::PlayerGent, prelude::<span class="kw-2">*</span>};
+</span><span class="kw">use </span>bevy::core_pipeline::bloom::BloomSettings;
+<span class="kw">use </span>bevy::core_pipeline::tonemapping::Tonemapping;
+<span class="kw">use crate</span>::{game::player::PlayerGent, prelude::<span class="kw-2">*</span>};
 
 <span class="kw">pub struct </span>CameraPlugin;
 
@@ -163,21 +175,28 @@
 </span><span class="kw">pub struct </span>GameViewLimits(Rect);
 
 <span class="kw">fn </span>setup_main_camera(<span class="kw-2">mut </span>commands: Commands) {
-    <span class="kw">let </span><span class="kw-2">mut </span>camera = Camera2dBundle::default();
-
+    <span class="kw">let </span><span class="kw-2">mut </span>camera = Camera2dBundle {
+        camera: Camera {
+            hdr: <span class="bool-val">true</span>,
+            ..default()
+        },
+        tonemapping: Tonemapping::AcesFitted,
+        ..default()
+    };
     camera.projection.scale = <span class="number">1.0 </span>/ <span class="number">6.0</span>;
 
-    commands.spawn(MainCameraBundle {
+    commands.spawn((MainCameraBundle {
         camera,
         marker: MainCamera,
         despawn: StateDespawnMarker,
         <span class="comment">// TODO: manage this from somewhere
         </span>limits: GameViewLimits(Rect::new(<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">640.0</span>, <span class="number">480.0</span>)),
-    });
+
+    }, BloomSettings::NATURAL));
 }
 
 <span class="kw">fn </span>manage_camera_projection(<span class="comment">// mut q_cam: Query&lt;&amp;mut OrthographicProjection, With&lt;MainCamera&gt;&gt;,
-    // mut q_window: Query&lt;&amp;Window, With&lt;PrimaryWindow&gt;&gt;,
+                            // mut q_window: Query&lt;&amp;Window, With&lt;PrimaryWindow&gt;&gt;,
 </span>) {
     <span class="comment">// TODO
 </span>}
@@ -194,6 +213,7 @@
         }
     }
 }
+
 <span class="kw">fn </span>cli_camera_at(In(args): In&lt;Vec&lt;String&gt;&gt;, <span class="kw-2">mut </span>q_cam: Query&lt;<span class="kw-2">&amp;mut </span>Transform, With&lt;MainCamera&gt;&gt;) {
     <span class="kw">if </span>args.len() != <span class="number">2 </span>{
         <span class="macro">error!</span>(<span class="string">"\"camera_at &lt;x&gt; &lt;y&gt;\""</span>);
