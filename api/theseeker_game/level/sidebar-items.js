@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["game_level_init"],"struct":["LevelManagerPlugin"]};
+window.SIDEBAR_ITEMS = {"fn":["attach_parallax","game_level_init"],"struct":["LevelManagerPlugin"]};

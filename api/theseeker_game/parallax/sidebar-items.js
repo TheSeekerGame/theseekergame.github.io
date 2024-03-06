@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["apply_parallax","init_parallax"],"struct":["Parallax","ParallaxOffset","ParallaxOrigin","ParallaxPlugin"]};
