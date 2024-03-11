@@ -257,7 +257,7 @@ var srcIndex = new Map(JSON.parse('[\
 ["taffy",["",[["compute",[["common",[],["alignment.rs","mod.rs"]],["grid",[["types",[],["cell_occupancy.rs","coordinates.rs","grid_item.rs","grid_track.rs","grid_track_counts.rs","mod.rs"]],["util",[],["mod.rs"]]],["alignment.rs","explicit_grid.rs","implicit_grid.rs","mod.rs","placement.rs","track_sizing.rs"]]],["flexbox.rs","leaf.rs","mod.rs"]],["style",[],["alignment.rs","dimension.rs","flex.rs","grid.rs","mod.rs"]]],["axis.rs","data.rs","debug.rs","error.rs","geometry.rs","layout.rs","lib.rs","math.rs","node.rs","prelude.rs","resolve.rs","style_helpers.rs","sys.rs","tree.rs"]]],\
 ["termcolor",["",[],["lib.rs"]]],\
 ["theseeker_engine",["",[["assets",[],["animation.rs","script.rs"]],["script",[],["common.rs","label.rs"]]],["animation.rs","assets.rs","data.rs","gent.rs","lib.rs","script.rs","time.rs"]]],\
-["theseeker_game",["",[["game",[],["player.rs","wall.rs"]],["screens",[],["loading.rs"]],["ui",[],["console.rs","mainmenu.rs"]]],["appstate.rs","assets.rs","camera.rs","cli.rs","game.rs","gamestate.rs","graphics.rs","level.rs","locale.rs","main.rs","parallax.rs","ui.rs"]]],\
+["theseeker_game",["",[["game",[],["player.rs","wall.rs"]],["graphics",[],["darkness.rs","fog.rs","mod.rs"]],["screens",[],["loading.rs"]],["ui",[],["console.rs","mainmenu.rs"]]],["appstate.rs","assets.rs","camera.rs","cli.rs","game.rs","gamestate.rs","level.rs","locale.rs","main.rs","parallax.rs","ui.rs"]]],\
 ["thiserror",["",[],["aserror.rs","display.rs","lib.rs"]]],\
 ["thiserror_core",["",[],["aserror.rs","display.rs","lib.rs"]]],\
 ["thiserror_core_impl",["",[],["ast.rs","attr.rs","expand.rs","fmt.rs","generics.rs","lib.rs","prop.rs","span.rs","valid.rs"]]],\

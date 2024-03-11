@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["cleanup_fog","setup_fog","spawn_test_fog","update_fog"],"struct":["FogEmitter","FogLayer","FogMaterial","FogPlugin","_FogMaterialAsBindGroupUniformStructBindGroup0"]};

@@ -130,11 +130,22 @@
 <a href="#129" id="129">129</a>
 <a href="#130" id="130">130</a>
 <a href="#131" id="131">131</a>
+<a href="#132" id="132">132</a>
+<a href="#133" id="133">133</a>
+<a href="#134" id="134">134</a>
+<a href="#135" id="135">135</a>
+<a href="#136" id="136">136</a>
+<a href="#137" id="137">137</a>
+<a href="#138" id="138">138</a>
+<a href="#139" id="139">139</a>
+<a href="#140" id="140">140</a>
+<a href="#141" id="141">141</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! Everything to do with the in-game camera(s)
 
-</span><span class="kw">use </span>bevy::core_pipeline::bloom::BloomSettings;
-<span class="kw">use </span>bevy::core_pipeline::tonemapping::Tonemapping;
+</span><span class="kw">use </span><span class="kw">crate</span>::graphics::darkness::DarknessSettings;
 <span class="kw">use crate</span>::{game::player::PlayerGent, prelude::<span class="kw-2">*</span>};
+<span class="kw">use </span>bevy::core_pipeline::bloom::BloomSettings;
+<span class="kw">use </span>bevy::core_pipeline::tonemapping::Tonemapping;
 
 <span class="kw">pub struct </span>CameraPlugin;
 
@@ -185,14 +196,23 @@
     };
     camera.projection.scale = <span class="number">1.0 </span>/ <span class="number">6.0</span>;
 
-    commands.spawn((MainCameraBundle {
-        camera,
-        marker: MainCamera,
-        despawn: StateDespawnMarker,
-        <span class="comment">// TODO: manage this from somewhere
-        </span>limits: GameViewLimits(Rect::new(<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">640.0</span>, <span class="number">480.0</span>)),
-
-    }, BloomSettings::NATURAL));
+    commands.spawn((
+        MainCameraBundle {
+            camera,
+            marker: MainCamera,
+            despawn: StateDespawnMarker,
+            <span class="comment">// TODO: manage this from somewhere
+            </span>limits: GameViewLimits(Rect::new(<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">640.0</span>, <span class="number">480.0</span>)),
+        },
+        BloomSettings::NATURAL,
+        DarknessSettings {
+            bg_light_level: <span class="number">1.0</span>,
+            lantern_position: Default::default(),
+            lantern: <span class="number">0.0</span>,
+            lantern_color: Vec3::new(<span class="number">0.965</span>, <span class="number">0.882</span>, <span class="number">0.678</span>),
+            bg_light_color: Vec3::new(<span class="number">0.761</span>, <span class="number">0.773</span>, <span class="number">0.8</span>),
+        },
+    ));
 }
 
 <span class="kw">fn </span>manage_camera_projection(<span class="comment">// mut q_cam: Query&lt;&amp;mut OrthographicProjection, With&lt;MainCamera&gt;&gt;,
