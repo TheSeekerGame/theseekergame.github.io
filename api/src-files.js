@@ -215,6 +215,7 @@ var srcIndex = new Map(JSON.parse('[\
 ["profiling",["",[],["empty_impl.rs","lib.rs"]]],\
 ["quote",["",[],["ext.rs","format.rs","ident_fragment.rs","lib.rs","runtime.rs","spanned.rs","to_tokens.rs"]]],\
 ["radsort",["",[],["lib.rs","scalar.rs","sort.rs"]]],\
+["ran",["",[],["error.rs","lib.rs"]]],\
 ["rand",["",[["distributions",[],["bernoulli.rs","distribution.rs","float.rs","integer.rs","mod.rs","other.rs","slice.rs","uniform.rs","utils.rs","weighted.rs","weighted_index.rs"]],["rngs",[["adapter",[],["mod.rs","read.rs","reseeding.rs"]]],["mock.rs","mod.rs","std.rs","thread.rs"]],["seq",[],["index.rs","mod.rs"]]],["lib.rs","prelude.rs","rng.rs"]]],\
 ["rand_chacha",["",[],["chacha.rs","guts.rs","lib.rs"]]],\
 ["rand_core",["",[],["block.rs","error.rs","impls.rs","le.rs","lib.rs","os.rs"]]],\

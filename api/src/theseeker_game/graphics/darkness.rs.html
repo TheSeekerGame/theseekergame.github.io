@@ -394,7 +394,25 @@
 <a href="#393" id="393">393</a>
 <a href="#394" id="394">394</a>
 <a href="#395" id="395">395</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::parallax::Parallax;
+<a href="#396" id="396">396</a>
+<a href="#397" id="397">397</a>
+<a href="#398" id="398">398</a>
+<a href="#399" id="399">399</a>
+<a href="#400" id="400">400</a>
+<a href="#401" id="401">401</a>
+<a href="#402" id="402">402</a>
+<a href="#403" id="403">403</a>
+<a href="#404" id="404">404</a>
+<a href="#405" id="405">405</a>
+<a href="#406" id="406">406</a>
+<a href="#407" id="407">407</a>
+<a href="#408" id="408">408</a>
+<a href="#409" id="409">409</a>
+<a href="#410" id="410">410</a>
+<a href="#411" id="411">411</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::camera::MainCamera;
+<span class="kw">use </span><span class="kw">crate</span>::game::player::PlayerGent;
+<span class="kw">use </span><span class="kw">crate</span>::parallax::Parallax;
 <span class="kw">use </span>bevy::core_pipeline::core_2d;
 <span class="kw">use </span>bevy::core_pipeline::fullscreen_vertex_shader::fullscreen_shader_vertex_state;
 <span class="kw">use </span>bevy::ecs::query::QueryItem;
@@ -542,7 +560,20 @@
 }
 
 <span class="doccomment">/// Changes the intensity over time to show that the effect is controlled from the main world
-</span><span class="kw">fn </span>darkness_dynamics(<span class="kw-2">mut </span>settings: Query&lt;<span class="kw-2">&amp;mut </span>DarknessSettings&gt;, time: Res&lt;Time&gt;) {
+</span><span class="kw">fn </span>darkness_dynamics(
+    <span class="kw-2">mut </span>settings: Query&lt;<span class="kw-2">&amp;mut </span>DarknessSettings&gt;,
+    time: Res&lt;Time&gt;,
+    camera: Query&lt;<span class="kw-2">&amp;</span>Transform, (With&lt;MainCamera&gt;, Without&lt;PlayerGent&gt;)&gt;,
+    player: Query&lt;<span class="kw-2">&amp;</span>Transform, (With&lt;PlayerGent&gt;, Without&lt;MainCamera&gt;)&gt;,
+) {
+    <span class="kw">let </span><span class="kw-2">mut </span>offest = Vec2::new(<span class="number">0.0</span>, <span class="number">0.0</span>);
+    <span class="comment">// make sure the lantern is centered on the player even if the camera isn't
+    </span><span class="kw">if let </span><span class="prelude-val">Ok</span>(cam_transform) = camera.get_single() {
+        <span class="kw">if let </span><span class="prelude-val">Ok</span>(player_transform) = player.get_single() {
+            offest = player_transform.translation.xy() - cam_transform.translation.xy()
+        };
+    };
+
     <span class="kw">for </span><span class="kw-2">mut </span>setting <span class="kw">in </span><span class="kw-2">&amp;mut </span>settings {
         <span class="kw">let </span>seconds_per_day_cycle = <span class="number">30.0</span>;
 
@@ -561,6 +592,7 @@
         <span class="comment">// Set the intensity.
         // This will then be extracted to the render world and uploaded to the gpu automatically by the [`UniformComponentPlugin`]
         </span>setting.bg_light_level = intensity;
+        setting.lantern_position = offest;
     }
 }
 
