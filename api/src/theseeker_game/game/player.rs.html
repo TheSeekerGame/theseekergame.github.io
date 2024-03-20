@@ -610,52 +610,7 @@
 <a href="#609" id="609">609</a>
 <a href="#610" id="610">610</a>
 <a href="#611" id="611">611</a>
-<a href="#612" id="612">612</a>
-<a href="#613" id="613">613</a>
-<a href="#614" id="614">614</a>
-<a href="#615" id="615">615</a>
-<a href="#616" id="616">616</a>
-<a href="#617" id="617">617</a>
-<a href="#618" id="618">618</a>
-<a href="#619" id="619">619</a>
-<a href="#620" id="620">620</a>
-<a href="#621" id="621">621</a>
-<a href="#622" id="622">622</a>
-<a href="#623" id="623">623</a>
-<a href="#624" id="624">624</a>
-<a href="#625" id="625">625</a>
-<a href="#626" id="626">626</a>
-<a href="#627" id="627">627</a>
-<a href="#628" id="628">628</a>
-<a href="#629" id="629">629</a>
-<a href="#630" id="630">630</a>
-<a href="#631" id="631">631</a>
-<a href="#632" id="632">632</a>
-<a href="#633" id="633">633</a>
-<a href="#634" id="634">634</a>
-<a href="#635" id="635">635</a>
-<a href="#636" id="636">636</a>
-<a href="#637" id="637">637</a>
-<a href="#638" id="638">638</a>
-<a href="#639" id="639">639</a>
-<a href="#640" id="640">640</a>
-<a href="#641" id="641">641</a>
-<a href="#642" id="642">642</a>
-<a href="#643" id="643">643</a>
-<a href="#644" id="644">644</a>
-<a href="#645" id="645">645</a>
-<a href="#646" id="646">646</a>
-<a href="#647" id="647">647</a>
-<a href="#648" id="648">648</a>
-<a href="#649" id="649">649</a>
-<a href="#650" id="650">650</a>
-<a href="#651" id="651">651</a>
-<a href="#652" id="652">652</a>
-<a href="#653" id="653">653</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span>std::marker::PhantomData;
-
-<span class="kw">use </span>bevy::ecs::component::SparseStorage;
-<span class="kw">use </span>bevy_xpbd_2d::{SubstepSchedule, SubstepSet};
+</pre></div><pre class="rust"><code><span class="kw">use </span>bevy_xpbd_2d::{SubstepSchedule, SubstepSet};
 <span class="kw">use </span>leafwing_input_manager::{axislike::VirtualAxis, prelude::<span class="kw-2">*</span>};
 <span class="kw">use </span>theseeker_engine::{
     animation::SpriteAnimationBundle,
@@ -664,6 +619,7 @@
     script::ScriptPlayer,
 };
 
+<span class="kw">use </span><span class="kw">crate</span>::game::{attack::Health, gentstate::<span class="kw-2">*</span>};
 <span class="kw">use </span><span class="kw">crate</span>::prelude::<span class="kw-2">*</span>;
 
 <span class="kw">pub struct </span>PlayerPlugin;
@@ -672,12 +628,18 @@
     <span class="kw">fn </span>build(<span class="kw-2">&amp;</span><span class="self">self</span>, app: <span class="kw-2">&amp;mut </span>App) {
         app.add_systems(
             GameTickUpdate,
-            (setup_player.run_if(in_state(GameState::Playing)),)
-                .chain()
+            (setup_player.run_if(in_state(GameState::Playing)))
                 .before(PlayerStateSet::Transition)
                 .run_if(in_state(AppState::InGame)),
+        );
+        app.add_systems(
+            OnEnter(GameState::Paused),
+            (
+                debug_player,
+                <span class="kw">crate</span>::game::enemy::debug_enemy,
+            )
+                .chain(),
         )
-        .add_systems(OnEnter(GameState::Paused), debug_player)
         .add_plugins((
             InputManagerPlugin::&lt;PlayerAction&gt;::default(),
             PlayerBehaviorPlugin,
@@ -727,18 +689,19 @@
 
 <span class="attr">#[derive(Component)]
 </span><span class="kw">pub struct </span>PlayerGent {
-    e_gfx: Entity,
+    <span class="kw">pub </span>e_gfx: Entity,
 }
 
 <span class="attr">#[derive(Component)]
 </span><span class="kw">pub struct </span>PlayerGfx {
-    e_gent: Entity,
+    <span class="kw">pub </span>e_gent: Entity,
 }
 
 <span class="attr">#[derive(Actionlike, PartialEq, Eq, Clone, Copy, Hash, Debug, Reflect)]
 </span><span class="kw">pub enum </span>PlayerAction {
     Move,
     Jump,
+    Attack,
 }
 
 <span class="kw">fn </span>debug_player_states(
@@ -793,7 +756,8 @@
     </span>}
 }
 
-<span class="kw">fn </span>debug_player(world: <span class="kw-2">&amp;</span>World, query: Query&lt;Entity, With&lt;PlayerGent&gt;&gt;) {
+<span class="comment">// fn debug_player(world: &amp;World, query: Query&lt;Entity, With&lt;PlayerGfx&gt;&gt;) {
+</span><span class="kw">fn </span>debug_player(world: <span class="kw-2">&amp;</span>World, query: Query&lt;Entity, With&lt;PlayerGent&gt;&gt;) {
     <span class="kw">for </span>entity <span class="kw">in </span>query.iter() {
         <span class="kw">let </span>components = world.inspect_entity(entity);
         <span class="kw">for </span>component <span class="kw">in </span>components.iter() {
@@ -804,6 +768,7 @@
 
 <span class="kw">fn </span>setup_player(q: Query&lt;(<span class="kw-2">&amp;</span>Transform, Entity), Added&lt;PlayerBlueprint&gt;&gt;, <span class="kw-2">mut </span>commands: Commands) {
     <span class="kw">for </span>(xf_gent, e_gent) <span class="kw">in </span>q.iter() {
+        <span class="macro">println!</span>(<span class="string">"{:?}"</span>, xf_gent);
         <span class="kw">let </span>e_gfx = commands.spawn(()).id();
         commands.entity(e_gent).insert((
             PlayerGentBundle {
@@ -811,14 +776,19 @@
                 phys: GentPhysicsBundle {
                     rb: RigidBody::Kinematic,
                     collider: Collider::cuboid(<span class="number">6.0</span>, <span class="number">10.0</span>),
-                    shapecast: ShapeCaster::new(
-                        Collider::cuboid(<span class="number">6.0</span>, <span class="number">10.0</span>),
-                        Vec2::new(<span class="number">0.0</span>, -<span class="number">2.0</span>),
-                        <span class="number">0.0</span>,
-                        Vec2::NEG_Y.into(),
-                    ),
                 },
             },
+            Health {
+                current: <span class="number">100</span>,
+                max: <span class="number">100</span>,
+            },
+            <span class="comment">//get rid of this, move to shapecast with spatialquery
+            </span>ShapeCaster::new(
+                Collider::cuboid(<span class="number">6.0</span>, <span class="number">10.0</span>),
+                Vec2::new(<span class="number">0.0</span>, -<span class="number">2.0</span>),
+                <span class="number">0.0</span>,
+                Vec2::NEG_Y.into(),
+            ),
             <span class="comment">//have to use builder here *i think* because of different types between keycode and
             //axis
             </span>InputManagerBundle::&lt;PlayerAction&gt; {
@@ -829,9 +799,11 @@
                         VirtualAxis::from_keys(KeyCode::A, KeyCode::D),
                         PlayerAction::Move,
                     )
+                    .insert(KeyCode::Return, PlayerAction::Attack)
                     .build(),
             },
-            PlayerStateBundle::&lt;Falling&gt;::default(),
+            Falling::default(),
+            TransitionQueue::default(),
         ));
         commands.entity(e_gfx).insert((PlayerGfxBundle {
             marker: PlayerGfx { e_gent },
@@ -848,21 +820,15 @@
         <span class="comment">// println!("player spawned")
     </span>}
 }
-<span class="doccomment">///State transition plugin
-///Add a transition_from::&lt;T: PlayerState&gt;.run_if(any_with_component::&lt;T&gt;()) for each state
 
-</span><span class="kw">struct </span>PlayerTransitionPlugin;
+<span class="kw">struct </span>PlayerTransitionPlugin;
 
 <span class="kw">impl </span>Plugin <span class="kw">for </span>PlayerTransitionPlugin {
     <span class="kw">fn </span>build(<span class="kw-2">&amp;</span><span class="self">self</span>, app: <span class="kw-2">&amp;mut </span>App) {
         app.add_systems(
             GameTickUpdate,
             (
-                transition_from::&lt;Idle&gt;.run_if(any_with_component::&lt;Idle&gt;()),
-                transition_from::&lt;Running&gt;.run_if(any_with_component::&lt;Running&gt;()),
-                transition_from::&lt;Grounded&gt;.run_if(any_with_component::&lt;Grounded&gt;()),
-                transition_from::&lt;Jumping&gt;.run_if(any_with_component::&lt;Jumping&gt;()),
-                transition_from::&lt;Falling&gt;.run_if(any_with_component::&lt;Falling&gt;()),
+                (transition.run_if(any_with_component::&lt;TransitionQueue&gt;()),),
                 apply_deferred,
             )
                 .chain()
@@ -873,74 +839,33 @@
     }
 }
 
-<span class="kw">fn </span>transition_from&lt;T: Component + Send + Sync + <span class="lifetime">'static</span>&gt;(
-    <span class="kw-2">mut </span>query: Query&lt;(Entity, <span class="kw-2">&amp;mut </span>TransitionsFrom&lt;T&gt;)&gt;,
-    <span class="kw-2">mut </span>commands: Commands,
-) {
-    <span class="kw">for </span>(entity, <span class="kw-2">mut </span>trans) <span class="kw">in </span>query.iter_mut() {
-        <span class="kw">for </span>transition <span class="kw">in </span><span class="kw-2">&amp;</span>trans.transitions {
-            transition(entity, <span class="kw-2">&amp;mut </span>commands);
-        }
-        <span class="comment">//could decide to remove state + transitionsfrom here
-        </span><span class="kw">if </span>!<span class="kw-2">&amp;</span>trans.transitions.is_empty() {
-            commands.entity(entity).remove::&lt;T&gt;();
-            trans.transitions.clear();
-        }
-    }
-}
-
-<span class="kw">pub trait </span>Transitionable&lt;T: PlayerState + Default&gt; {
-    <span class="kw">fn </span>new_transition(_next: T) -&gt; Box&lt;<span class="kw">dyn </span>Fn(Entity, <span class="kw-2">&amp;mut </span>Commands) + Send + Sync + <span class="lifetime">'static</span>&gt; {
-        Box::new(|entity, commands| {
-            commands
-                .entity(entity)
-                .insert(PlayerStateBundle::&lt;T&gt;::default());
-        })
-    }
-}
-
-<span class="attr">#[derive(Component, Deref, DerefMut, Default)]
-</span><span class="kw">struct </span>TransitionsFrom&lt;T&gt; {
-    t: PhantomData&lt;T&gt;,
-    <span class="attr">#[deref]
-    </span>transitions: Vec&lt;Box&lt;<span class="kw">dyn </span>Fn(Entity, <span class="kw-2">&amp;mut </span>Commands) + Send + Sync&gt;&gt;,
-}
-
-<span class="attr">#[derive(Bundle, Default)]
-</span><span class="kw">pub struct </span>PlayerStateBundle&lt;T: PlayerState + Default&gt; {
-    state: T,
-    transitions: TransitionsFrom&lt;T&gt;,
-}
-
 <span class="comment">// States
 // states are components which are added to the entity on transition.
 // an entity can be in multiple states at once, eg Grounded and Running/Idle
 // Impl Playerstate for each state
-// Impl Transitionable&lt;T: PlayerState&gt; for each state that that should be able to be transitioned
+// Impl Transitionable&lt;T: GentState&gt; for each state that that should be able to be transitioned
 // from by a state
-</span><span class="kw">pub trait </span>PlayerState: Component&lt;Storage = SparseStorage&gt; + Clone {}
+// pub trait GentState: Component&lt;Storage = SparseStorage&gt; {}
 
-<span class="attr">#[derive(Component, Default, Copy, Clone, Debug)]
+</span><span class="attr">#[derive(Component, Default, Debug)]
 #[component(storage = <span class="string">"SparseSet"</span>)]
 </span><span class="kw">pub struct </span>Idle;
-<span class="kw">impl </span>PlayerState <span class="kw">for </span>Idle {}
-<span class="kw">impl </span>Transitionable&lt;Running&gt; <span class="kw">for </span>Idle {}
+<span class="kw">impl </span>GentState <span class="kw">for </span>Idle {}
+<span class="kw">impl </span>GenericState <span class="kw">for </span>Idle {}
 
-<span class="attr">#[derive(Component, Default, Copy, Clone, Debug)]
+<span class="attr">#[derive(Component, Default, Debug)]
 #[component(storage = <span class="string">"SparseSet"</span>)]
 </span><span class="kw">pub struct </span>Running;
-<span class="kw">impl </span>PlayerState <span class="kw">for </span>Running {}
-<span class="kw">impl </span>Transitionable&lt;Idle&gt; <span class="kw">for </span>Running {}
+<span class="kw">impl </span>GentState <span class="kw">for </span>Running {}
+<span class="kw">impl </span>GenericState <span class="kw">for </span>Running {}
 
-<span class="attr">#[derive(Component, Default, Copy, Clone, Debug)]
+<span class="attr">#[derive(Component, Default, Debug)]
 #[component(storage = <span class="string">"SparseSet"</span>)]
 </span><span class="kw">pub struct </span>Falling;
-<span class="kw">impl </span>PlayerState <span class="kw">for </span>Falling {}
-<span class="kw">impl </span>Transitionable&lt;Grounded&gt; <span class="kw">for </span>Falling {}
-<span class="kw">impl </span>Transitionable&lt;Running&gt; <span class="kw">for </span>Falling {}
-<span class="kw">impl </span>Transitionable&lt;Idle&gt; <span class="kw">for </span>Falling {}
+<span class="kw">impl </span>GentState <span class="kw">for </span>Falling {}
+<span class="kw">impl </span>GenericState <span class="kw">for </span>Falling {}
 
-<span class="attr">#[derive(Component, Clone, Debug)]
+<span class="attr">#[derive(Component, Debug)]
 #[component(storage = <span class="string">"SparseSet"</span>)]
 </span><span class="kw">pub struct </span>Jumping {
     current_air_ticks: u32,
@@ -955,45 +880,30 @@
         }
     }
 }
-<span class="kw">impl </span>PlayerState <span class="kw">for </span>Jumping {}
-<span class="kw">impl </span>Transitionable&lt;Falling&gt; <span class="kw">for </span>Jumping {}
-<span class="kw">impl </span>Transitionable&lt;Grounded&gt; <span class="kw">for </span>Jumping {}
+<span class="kw">impl </span>GentState <span class="kw">for </span>Jumping {}
+<span class="kw">impl </span>GenericState <span class="kw">for </span>Jumping {}
 
-<span class="attr">#[derive(Component, Default, Copy, Clone, Debug)]
+<span class="attr">#[derive(Component, Default, Debug)]
 #[component(storage = <span class="string">"SparseSet"</span>)]
 </span><span class="kw">pub struct </span>Grounded;
-<span class="kw">impl </span>PlayerState <span class="kw">for </span>Grounded {}
+<span class="kw">impl </span>GentState <span class="kw">for </span>Grounded {}
 <span class="comment">//cant be Idle or Running if not Grounded
 </span><span class="kw">impl </span>Transitionable&lt;Jumping&gt; <span class="kw">for </span>Grounded {
-    <span class="kw">fn </span>new_transition(_next: Jumping) -&gt; Box&lt;<span class="kw">dyn </span>Fn(Entity, <span class="kw-2">&amp;mut </span>Commands) + Send + Sync + <span class="lifetime">'static</span>&gt; {
-        Box::new(|entity, commands| {
-            commands
-                .entity(entity)
-                .insert(PlayerStateBundle::&lt;Jumping&gt;::default())
-                .remove::&lt;(Idle, Running)&gt;();
-        })
-    }
+    <span class="kw">type </span>Removals = (Grounded, Idle, Running);
 }
 <span class="comment">//cant be Idle or Running if not Grounded
 </span><span class="kw">impl </span>Transitionable&lt;Falling&gt; <span class="kw">for </span>Grounded {
-    <span class="kw">fn </span>new_transition(_next: Falling) -&gt; Box&lt;<span class="kw">dyn </span>Fn(Entity, <span class="kw-2">&amp;mut </span>Commands) + Send + Sync + <span class="lifetime">'static</span>&gt; {
-        Box::new(|entity, commands| {
-            commands
-                .entity(entity)
-                .insert(PlayerStateBundle::&lt;Falling&gt;::default())
-                .remove::&lt;(Idle, Running)&gt;();
-        })
-    }
+    <span class="kw">type </span>Removals = (Grounded, Idle, Running);
 }
 
-<span class="attr">#[derive(Component, Default, Copy, Clone, Debug)]
+<span class="attr">#[derive(Component, Default, Debug)]
 #[component(storage = <span class="string">"SparseSet"</span>)]
 </span><span class="kw">pub struct </span>Attacking;
-<span class="kw">impl </span>PlayerState <span class="kw">for </span>Attacking {}
+<span class="kw">impl </span>GentState <span class="kw">for </span>Attacking {}
 
-<span class="doccomment">///player behavior systems.
-///do stuff here in states and add transitions to other states by pushing
-///to a TransitionsFrom&lt;T: PlayerState&gt; components queue of transitions.
+<span class="doccomment">///Player behavior systems.
+///Do stuff here in states and add transitions to other states by pushing
+///to a TransitionQueue.
 </span><span class="kw">struct </span>PlayerBehaviorPlugin;
 
 <span class="kw">impl </span>Plugin <span class="kw">for </span>PlayerBehaviorPlugin {
@@ -1001,26 +911,29 @@
         app.add_systems(
             GameTickUpdate,
             (
-                player_idle.run_if(any_with_component::&lt;Idle&gt;()),
-                player_run.run_if(any_with_component::&lt;Running&gt;()),
-                player_jump.run_if(any_with_component::&lt;Jumping&gt;()),
+                player_idle.run_if(any_with_components::&lt;Idle, PlayerGent&gt;()),
+                player_run.run_if(any_with_components::&lt;Running, PlayerGent&gt;()),
+                player_jump.run_if(any_with_components::&lt;Jumping, PlayerGent&gt;()),
                 player_move,
-                player_grounded.run_if(any_with_component::&lt;Grounded&gt;()),
-                player_falling.run_if(any_with_component::&lt;Falling&gt;()),
+                player_grounded.run_if(any_with_components::&lt;
+                    Grounded,
+                    PlayerGent,
+                &gt;()),
+                player_falling.run_if(any_with_components::&lt;Falling, PlayerGent&gt;()),
             ),
         );
-        app.add_systems(
-            SubstepSchedule,
-            player_collisions.in_set(SubstepSet::SolveUserConstraints),
-        );
-    }
+        <span class="comment">// app.add_systems(
+        //     SubstepSchedule,
+        //     player_collisions.in_set(SubstepSet::SolveUserConstraints),
+        // );
+    </span>}
 }
 
 <span class="kw">fn </span>player_idle(
     <span class="kw-2">mut </span>query: Query&lt;
         (
             <span class="kw-2">&amp;</span>ActionState&lt;PlayerAction&gt;,
-            <span class="kw-2">&amp;mut </span>TransitionsFrom&lt;Idle&gt;,
+            <span class="kw-2">&amp;mut </span>TransitionQueue,
         ),
         (
             With&lt;Grounded&gt;,
@@ -1050,7 +963,8 @@
         <span class="kw-2">&amp;</span>ActionState&lt;PlayerAction&gt;,
         <span class="kw-2">&amp;</span>PlayerGent,
     )&gt;,
-    <span class="kw-2">mut </span>q_gfx_player: Query&lt;<span class="kw-2">&amp;mut </span>ScriptPlayer&lt;SpriteAnimation&gt;, With&lt;PlayerGfx&gt;&gt;,
+    <span class="comment">//kinda dont want to do flipping here
+    </span><span class="kw-2">mut </span>q_gfx_player: Query&lt;<span class="kw-2">&amp;mut </span>ScriptPlayer&lt;SpriteAnimation&gt;, With&lt;PlayerGfx&gt;&gt;,
 ) {
     <span class="kw">for </span>(<span class="kw-2">mut </span>velocity, action_state, gent) <span class="kw">in </span>q_gent.iter_mut() {
         <span class="kw">let </span><span class="kw-2">mut </span>direction: f32 = <span class="number">0.0</span>;
@@ -1080,7 +994,7 @@
         (
             <span class="kw-2">&amp;mut </span>LinearVelocity,
             <span class="kw-2">&amp;</span>ActionState&lt;PlayerAction&gt;,
-            <span class="kw-2">&amp;mut </span>TransitionsFrom&lt;Running&gt;,
+            <span class="kw-2">&amp;mut </span>TransitionQueue,
         ),
         (
             With&lt;PlayerGent&gt;,
@@ -1112,7 +1026,7 @@
             <span class="kw-2">&amp;</span>ActionState&lt;PlayerAction&gt;,
             <span class="kw-2">&amp;mut </span>LinearVelocity,
             <span class="kw-2">&amp;mut </span>Jumping,
-            <span class="kw-2">&amp;mut </span>TransitionsFrom&lt;Jumping&gt;,
+            <span class="kw-2">&amp;mut </span>TransitionQueue,
         ),
         With&lt;PlayerGent&gt;,
     &gt;,
@@ -1186,7 +1100,7 @@
         (
             <span class="kw-2">&amp;</span>ShapeHits,
             <span class="kw-2">&amp;</span>ActionState&lt;PlayerAction&gt;,
-            <span class="kw-2">&amp;mut </span>TransitionsFrom&lt;Grounded&gt;,
+            <span class="kw-2">&amp;mut </span>TransitionQueue,
         ),
         (With&lt;PlayerGent&gt;, With&lt;Grounded&gt;),
     &gt;,
@@ -1212,12 +1126,14 @@
         (
             <span class="kw-2">&amp;mut </span>LinearVelocity,
             <span class="kw-2">&amp;</span>ActionState&lt;PlayerAction&gt;,
-            <span class="kw-2">&amp;</span>ShapeHits,
-            <span class="kw-2">&amp;mut </span>TransitionsFrom&lt;Falling&gt;,
+            <span class="comment">//TODO: remove shapehits, use SpatialQuery
+            </span><span class="kw-2">&amp;</span>ShapeHits,
+            <span class="kw-2">&amp;mut </span>TransitionQueue,
         ),
         (With&lt;PlayerGent&gt;, With&lt;Falling&gt;),
     &gt;,
-) {
+    <span class="comment">//spatial_query: SpatialQuery
+</span>) {
     <span class="kw">for </span>(<span class="kw-2">mut </span>velocity, action_state, hits, <span class="kw-2">mut </span>transitions) <span class="kw">in </span>query.iter_mut() {
         <span class="kw">for </span>hit <span class="kw">in </span>hits.iter() {
             <span class="comment">//if we are ~touching the ground
@@ -1247,7 +1163,7 @@
 <span class="kw">impl </span>Plugin <span class="kw">for </span>PlayerAnimationPlugin {
     <span class="kw">fn </span>build(<span class="kw-2">&amp;</span><span class="self">self</span>, app: <span class="kw-2">&amp;mut </span>App) {
         app.add_systems(
-            Update,
+            GameTickUpdate,
             (
                 player_idle_animation,
                 player_falling_animation,

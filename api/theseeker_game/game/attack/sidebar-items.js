@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["attack_cleanup","attack_damage","attack_tick"],"struct":["Attack","AttackPlugin","Health"]};
