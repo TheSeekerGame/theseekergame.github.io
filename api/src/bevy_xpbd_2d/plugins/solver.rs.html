@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy_xpbd-da54805458a155a5/46f3189/crates/bevy_xpbd_2d/../../src/plugins/solver.rs`."><title>solver.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_xpbd_2d" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.0 (aedd173a2 2024-03-17)" data-channel="1.77.0" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy_xpbd-da54805458a155a5/ffc0006/crates/bevy_xpbd_2d/../../src/plugins/solver.rs`."><title>solver.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_xpbd_2d" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.0 (aedd173a2 2024-03-17)" data-channel="1.77.0" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
             <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
     <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../bevy_xpbd_2d/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
@@ -631,6 +631,44 @@
 <a href="#629" id="629">629</a>
 <a href="#630" id="630">630</a>
 <a href="#631" id="631">631</a>
+<a href="#632" id="632">632</a>
+<a href="#633" id="633">633</a>
+<a href="#634" id="634">634</a>
+<a href="#635" id="635">635</a>
+<a href="#636" id="636">636</a>
+<a href="#637" id="637">637</a>
+<a href="#638" id="638">638</a>
+<a href="#639" id="639">639</a>
+<a href="#640" id="640">640</a>
+<a href="#641" id="641">641</a>
+<a href="#642" id="642">642</a>
+<a href="#643" id="643">643</a>
+<a href="#644" id="644">644</a>
+<a href="#645" id="645">645</a>
+<a href="#646" id="646">646</a>
+<a href="#647" id="647">647</a>
+<a href="#648" id="648">648</a>
+<a href="#649" id="649">649</a>
+<a href="#650" id="650">650</a>
+<a href="#651" id="651">651</a>
+<a href="#652" id="652">652</a>
+<a href="#653" id="653">653</a>
+<a href="#654" id="654">654</a>
+<a href="#655" id="655">655</a>
+<a href="#656" id="656">656</a>
+<a href="#657" id="657">657</a>
+<a href="#658" id="658">658</a>
+<a href="#659" id="659">659</a>
+<a href="#660" id="660">660</a>
+<a href="#661" id="661">661</a>
+<a href="#662" id="662">662</a>
+<a href="#663" id="663">663</a>
+<a href="#664" id="664">664</a>
+<a href="#665" id="665">665</a>
+<a href="#666" id="666">666</a>
+<a href="#667" id="667">667</a>
+<a href="#668" id="668">668</a>
+<a href="#669" id="669">669</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! Solves positional and angular [constraints], updates velocities and solves velocity constraints
 //! (dynamic [friction](Friction), [restitution](Restitution) and [joint damping](joints#damping)).
 //!
@@ -702,6 +740,8 @@
                 .chain()
                 .in_set(SubstepSet::SolveVelocities),
         );
+
+        substeps.add_systems(store_contact_impulses.in_set(SubstepSet::StoreImpulses));
 
         substeps.add_systems(apply_translation.in_set(SubstepSet::ApplyTranslation));
     }
@@ -800,15 +840,14 @@
                 .friction
                 .unwrap_or(body1.friction)
                 .combine(<span class="kw-2">*</span>collider2.friction.unwrap_or(body2.friction));
-            <span class="kw">let </span>restitution_coefficient = collider1
+            <span class="kw">let </span>restitution = collider1
                 .restitution
                 .unwrap_or(body1.restitution)
-                .combine(<span class="kw-2">*</span>collider2.restitution.unwrap_or(body2.restitution))
-                .coefficient;
+                .combine(<span class="kw-2">*</span>collider2.restitution.unwrap_or(body2.restitution));
 
             <span class="comment">// Create and solve penetration constraints for each contact.
-            </span><span class="kw">for </span>contact_manifold <span class="kw">in </span>contacts.manifolds.iter() {
-                <span class="kw">for </span>contact <span class="kw">in </span>contact_manifold.contacts.iter() {
+            </span><span class="kw">for </span>(manifold_index, manifold) <span class="kw">in </span>contacts.manifolds.iter().enumerate() {
+                <span class="kw">for </span>contact <span class="kw">in </span>manifold.contacts.iter() {
                     <span class="comment">// Add collider transforms to local contact points
                     </span><span class="kw">let </span>contact = ContactData {
                         point1: collider1.transform.map_or(contact.point1, |t| {
@@ -827,10 +866,16 @@
                     };
 
                     <span class="kw">let </span><span class="kw-2">mut </span>constraint = PenetrationConstraint {
-                        dynamic_friction_coefficient: friction.dynamic_coefficient,
-                        static_friction_coefficient: friction.static_coefficient,
-                        restitution_coefficient,
-                        ..PenetrationConstraint::new(<span class="kw-2">&amp;</span>body1, <span class="kw-2">&amp;</span>body2, contact)
+                        friction,
+                        restitution,
+                        ..PenetrationConstraint::new(
+                            <span class="kw-2">&amp;</span>body1,
+                            <span class="kw-2">&amp;</span>body2,
+                            <span class="kw-2">*</span>collider_entity1,
+                            <span class="kw-2">*</span>collider_entity2,
+                            contact,
+                            manifold_index,
+                        )
                     };
                     constraint.solve([<span class="kw-2">&amp;mut </span>body1, <span class="kw-2">&amp;mut </span>body2], delta_secs);
                     penetration_constraints.<span class="number">0</span>.push(constraint);
@@ -844,7 +889,11 @@
                 }
             }
 
-            <span class="kw">if </span>contacts.during_current_substep &amp;&amp; body1.rb.is_added() || body2.rb.is_added() {
+            <span class="kw">if </span>contacts.during_current_substep
+                &amp;&amp; (body1.rb.is_added() || body2.rb.is_added())
+                &amp;&amp; body1.rb.is_dynamic()
+                &amp;&amp; body2.rb.is_dynamic()
+            {
                 <span class="comment">// if the RigidBody entity has a name, use that for debug.
                 </span><span class="kw">let </span>debug_id1 = <span class="kw">match </span>name1 {
                     <span class="prelude-val">Some</span>(n) =&gt; <span class="macro">format!</span>(<span class="string">"{:?} ({n})"</span>, body1.entity),
@@ -1051,13 +1100,13 @@
 </span><span class="attr">#[allow(clippy::type_complexity)]
 </span><span class="kw">fn </span>solve_vel(
     <span class="kw-2">mut </span>bodies: Query&lt;RigidBodyQuery, Without&lt;Sleeping&gt;&gt;,
-    penetration_constraints: Res&lt;PenetrationConstraints&gt;,
+    <span class="kw-2">mut </span>penetration_constraints: ResMut&lt;PenetrationConstraints&gt;,
     gravity: Res&lt;Gravity&gt;,
     time: Res&lt;Time&gt;,
 ) {
     <span class="kw">let </span>delta_secs = time.delta_seconds_adjusted();
 
-    <span class="kw">for </span>constraint <span class="kw">in </span>penetration_constraints.<span class="number">0</span>.iter() {
+    <span class="kw">for </span>constraint <span class="kw">in </span>penetration_constraints.<span class="number">0</span>.iter_mut() {
         <span class="kw">if let </span><span class="prelude-val">Ok</span>([<span class="kw-2">mut </span>body1, <span class="kw-2">mut </span>body2]) = bodies.get_many_mut(constraint.entities()) {
             <span class="kw">if </span>!body1.rb.is_dynamic() &amp;&amp; !body2.rb.is_dynamic() {
                 <span class="kw">continue</span>;
@@ -1108,29 +1157,32 @@
             </span><span class="kw">let </span>restitution_speed = compute_restitution(
                 normal_speed,
                 pre_solve_normal_speed,
-                constraint.restitution_coefficient,
+                constraint.restitution.coefficient,
                 gravity.<span class="number">0</span>,
                 delta_secs,
             );
             <span class="kw">if </span>restitution_speed.abs() &gt; Scalar::EPSILON {
                 <span class="kw">let </span>w1 = constraint.compute_generalized_inverse_mass(<span class="kw-2">&amp;</span>body1, r1, normal);
                 <span class="kw">let </span>w2 = constraint.compute_generalized_inverse_mass(<span class="kw-2">&amp;</span>body2, r2, normal);
-                p += restitution_speed / (w1 + w2) * normal;
+                <span class="kw">let </span>restitution_impulse = restitution_speed / (w1 + w2);
+                p += restitution_impulse * normal;
+                constraint.contact.normal_impulse += restitution_impulse;
             }
 
             <span class="comment">// Compute dynamic friction
             </span><span class="kw">if </span>tangent_speed &gt; Scalar::EPSILON {
-                <span class="kw">let </span>tangent_dir = tangent_vel / tangent_speed;
-                <span class="kw">let </span>w1 = constraint.compute_generalized_inverse_mass(<span class="kw-2">&amp;</span>body1, r1, tangent_dir);
-                <span class="kw">let </span>w2 = constraint.compute_generalized_inverse_mass(<span class="kw-2">&amp;</span>body2, r2, tangent_dir);
+                <span class="kw">let </span>tangent = tangent_vel / tangent_speed;
+                <span class="kw">let </span>w1 = constraint.compute_generalized_inverse_mass(<span class="kw-2">&amp;</span>body1, r1, tangent);
+                <span class="kw">let </span>w2 = constraint.compute_generalized_inverse_mass(<span class="kw-2">&amp;</span>body2, r2, tangent);
                 <span class="kw">let </span>friction_impulse = compute_dynamic_friction(
                     tangent_speed,
                     w1 + w2,
-                    constraint.dynamic_friction_coefficient,
+                    constraint.friction.dynamic_coefficient,
                     constraint.normal_lagrange,
                     delta_secs,
                 );
-                p += friction_impulse * tangent_dir;
+                p += friction_impulse * tangent;
+                constraint.contact.tangent_impulse += friction_impulse;
             }
 
             <span class="kw">if </span>body1.rb.is_dynamic() &amp;&amp; body1.dominance() &lt;= body2.dominance() {
@@ -1213,6 +1265,30 @@
             <span class="kw">if </span>rb2.is_dynamic() &amp;&amp; (!rb1.is_dynamic() || dominance2 &lt;= dominance1) {
                 lin_vel2.<span class="number">0 </span>-= p * inv_mass2.<span class="number">0</span>;
             }
+        }
+    }
+}
+
+<span class="kw">fn </span>store_contact_impulses(
+    constraints: Res&lt;PenetrationConstraints&gt;,
+    <span class="kw-2">mut </span>collisions: ResMut&lt;Collisions&gt;,
+) {
+    <span class="kw">for </span>constraint <span class="kw">in </span>constraints.<span class="number">0</span>.iter() {
+        <span class="kw">let </span><span class="prelude-val">Some</span>(collision) =
+            collisions.get_mut(constraint.collider_entity1, constraint.collider_entity2)
+        <span class="kw">else </span>{
+            <span class="kw">continue</span>;
+        };
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="prelude-val">Some</span>(contact)) = collision
+            .manifolds
+            .get_mut(constraint.manifold_index)
+            .map(|m| m.contacts.get_mut(constraint.contact.index))
+        {
+            contact.normal_impulse = constraint.contact.normal_impulse;
+            contact.tangent_impulse = constraint.contact.tangent_impulse;
+
+            collision.total_normal_impulse += contact.normal_impulse.abs();
+            collision.total_tangent_impulse += contact.tangent_impulse.abs();
         }
     }
 }

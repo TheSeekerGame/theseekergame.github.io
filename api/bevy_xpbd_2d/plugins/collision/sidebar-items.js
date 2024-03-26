@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["broad_phase","contact_query","contact_reporting","narrow_phase"],"struct":["Collisions","ContactData","ContactManifold","Contacts"]};
+window.SIDEBAR_ITEMS = {"mod":["broad_phase","collider_backend","contact_query","contact_reporting","narrow_phase"],"struct":["Collider","ColliderAabb","ColliderParent","ColliderTransform","CollidingEntities","Collisions","ContactData","ContactManifold","Contacts","Sensor","SingleContact"],"trait":["AnyCollider","ScalableCollider"],"type":["TriMeshFlags","VHACDParameters"]};

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy_xpbd-da54805458a155a5/46f3189/crates/bevy_xpbd_2d/../../src/constraints/penetration.rs`."><title>penetration.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_xpbd_2d" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.0 (aedd173a2 2024-03-17)" data-channel="1.77.0" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy_xpbd-da54805458a155a5/ffc0006/crates/bevy_xpbd_2d/../../src/constraints/penetration.rs`."><title>penetration.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_xpbd_2d" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.0 (aedd173a2 2024-03-17)" data-channel="1.77.0" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
             <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
     <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../bevy_xpbd_2d/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
@@ -195,6 +195,15 @@
 <a href="#193" id="193">193</a>
 <a href="#194" id="194">194</a>
 <a href="#195" id="195">195</a>
+<a href="#196" id="196">196</a>
+<a href="#197" id="197">197</a>
+<a href="#198" id="198">198</a>
+<a href="#199" id="199">199</a>
+<a href="#200" id="200">200</a>
+<a href="#201" id="201">201</a>
+<a href="#202" id="202">202</a>
+<a href="#203" id="203">203</a>
+<a href="#204" id="204">204</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! Penetration constraint.
 
 </span><span class="kw">use </span><span class="kw">crate</span>::prelude::<span class="kw-2">*</span>;
@@ -213,8 +222,14 @@
     </span><span class="kw">pub </span>entity1: Entity,
     <span class="doccomment">/// Second entity in the constraint.
     </span><span class="kw">pub </span>entity2: Entity,
+    <span class="doccomment">/// The entity of the collider of the first body.
+    </span><span class="kw">pub </span>collider_entity1: Entity,
+    <span class="doccomment">/// The entity of the collider of the second body.
+    </span><span class="kw">pub </span>collider_entity2: Entity,
     <span class="doccomment">/// Data associated with the contact.
     </span><span class="kw">pub </span>contact: ContactData,
+    <span class="doccomment">/// The index of the contact in the manifold.
+    </span><span class="kw">pub </span>manifold_index: usize,
     <span class="doccomment">/// Vector from the first entity's center of mass to the contact point in local coordinates.
     </span><span class="kw">pub </span>r1: Vector,
     <span class="doccomment">/// Vector from the second entity's center of mass to the contact point in local coordinates.
@@ -225,16 +240,10 @@
     </span><span class="kw">pub </span>tangent_lagrange: Scalar,
     <span class="doccomment">/// The constraint's compliance, the inverse of stiffness, has the unit meters / Newton.
     </span><span class="kw">pub </span>compliance: Scalar,
-    <span class="doccomment">/// The coefficient of [dynamic friction](Friction) in this contact.
-    </span><span class="kw">pub </span>dynamic_friction_coefficient: Scalar,
-    <span class="doccomment">/// The coefficient of [static friction](Friction) in this contact.
-    </span><span class="kw">pub </span>static_friction_coefficient: Scalar,
-    <span class="doccomment">/// The coefficient of [restitution](Restitution) in this contact.
-    </span><span class="kw">pub </span>restitution_coefficient: Scalar,
-    <span class="doccomment">/// Normal force acting along the constraint.
-    </span><span class="kw">pub </span>normal_force: Vector,
-    <span class="doccomment">/// Static friction force acting along this constraint.
-    </span><span class="kw">pub </span>static_friction_force: Vector,
+    <span class="doccomment">/// The effective [friction](Friction) of the contact.
+    </span><span class="kw">pub </span>friction: Friction,
+    <span class="doccomment">/// The effective [restitution](Restitution) of the contact.
+    </span><span class="kw">pub </span>restitution: Restitution,
 }
 
 <span class="kw">impl </span>XpbdConstraint&lt;<span class="number">2</span>&gt; <span class="kw">for </span>PenetrationConstraint {
@@ -267,10 +276,15 @@
 
 <span class="kw">impl </span>PenetrationConstraint {
     <span class="doccomment">/// Creates a new [`PenetrationConstraint`] with the given bodies and contact data.
+    ///
+    /// The `manifold_index` is the index of the contact in a [`ContactManifold`].
     </span><span class="kw">pub fn </span>new(
         body1: <span class="kw-2">&amp;</span>RigidBodyQueryItem,
         body2: <span class="kw-2">&amp;</span>RigidBodyQueryItem,
+        collider_entity1: Entity,
+        collider_entity2: Entity,
         contact: ContactData,
+        manifold_index: usize,
     ) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span>r1 = contact.point1 - body1.center_of_mass.<span class="number">0</span>;
         <span class="kw">let </span>r2 = contact.point2 - body2.center_of_mass.<span class="number">0</span>;
@@ -278,17 +292,17 @@
         <span class="self">Self </span>{
             entity1: body1.entity,
             entity2: body2.entity,
+            collider_entity1,
+            collider_entity2,
             contact,
+            manifold_index,
             r1,
             r2,
             normal_lagrange: <span class="number">0.0</span>,
             tangent_lagrange: <span class="number">0.0</span>,
             compliance: <span class="number">0.0</span>,
-            dynamic_friction_coefficient: <span class="number">0.0</span>,
-            static_friction_coefficient: <span class="number">0.0</span>,
-            restitution_coefficient: <span class="number">0.0</span>,
-            normal_force: Vector::ZERO,
-            static_friction_force: Vector::ZERO,
+            friction: body1.friction.combine(<span class="kw-2">*</span>body2.friction),
+            restitution: body1.restitution.combine(<span class="kw-2">*</span>body2.restitution),
         }
     }
 
@@ -323,8 +337,10 @@
         <span class="comment">// Apply positional correction to solve overlap
         </span><span class="self">self</span>.apply_positional_correction(body1, body2, delta_lagrange, normal, r1, r2);
 
-        <span class="comment">// Update normal force using the equation f = lambda * n / h^2
-        </span><span class="self">self</span>.normal_force = <span class="self">self</span>.normal_lagrange * normal / dt.powi(<span class="number">2</span>);
+        <span class="comment">// Update normal impulse.
+        // f = lambda / h^2
+        // i = f * h = lambda / h
+        </span><span class="self">self</span>.contact.normal_impulse += <span class="self">self</span>.normal_lagrange / dt;
     }
 
     <span class="kw">fn </span>solve_friction(
@@ -367,7 +383,7 @@
         <span class="kw">let </span>w = [w1, w2];
 
         <span class="comment">// Apply static friction if |delta_x_perp| &lt; mu_s * d
-        </span><span class="kw">if </span>sliding_len &lt; <span class="self">self</span>.static_friction_coefficient * penetration {
+        </span><span class="kw">if </span>sliding_len &lt; <span class="self">self</span>.friction.static_coefficient * penetration {
             <span class="comment">// Compute Lagrange multiplier update for static friction
             </span><span class="kw">let </span>delta_lagrange =
                 <span class="self">self</span>.compute_lagrange_update(lagrange, sliding_len, <span class="kw-2">&amp;</span>gradients, <span class="kw-2">&amp;</span>w, compliance, dt);
@@ -376,8 +392,10 @@
             <span class="comment">// Apply positional correction to handle static friction
             </span><span class="self">self</span>.apply_positional_correction(body1, body2, delta_lagrange, tangent, r1, r2);
 
-            <span class="comment">// Update static friction force using the equation f = lambda * n / h^2
-            </span><span class="self">self</span>.static_friction_force = <span class="self">self</span>.tangent_lagrange * tangent / dt.powi(<span class="number">2</span>);
+            <span class="comment">// Update static friction impulse.
+            // f = lambda / h^2
+            // i = f * h = lambda / h
+            </span><span class="self">self</span>.contact.tangent_impulse += <span class="self">self</span>.tangent_lagrange / dt;
         }
     }
 }

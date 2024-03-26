@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/parry2d-0.13.6/src/utils/interval.rs`."><title>interval.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="parry2d" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.0 (aedd173a2 2024-03-17)" data-channel="1.77.0" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/parry2d-0.13.7/src/utils/interval.rs`."><title>interval.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="parry2d" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.0 (aedd173a2 2024-03-17)" data-channel="1.77.0" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
             <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
     <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../parry2d/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
@@ -542,16 +542,6 @@
 <a href="#540" id="540">540</a>
 <a href="#541" id="541">541</a>
 <a href="#542" id="542">542</a>
-<a href="#543" id="543">543</a>
-<a href="#544" id="544">544</a>
-<a href="#545" id="545">545</a>
-<a href="#546" id="546">546</a>
-<a href="#547" id="547">547</a>
-<a href="#548" id="548">548</a>
-<a href="#549" id="549">549</a>
-<a href="#550" id="550">550</a>
-<a href="#551" id="551">551</a>
-<a href="#552" id="552">552</a>
 </pre></div><pre class="rust"><code><span class="comment">// "Complete Interval Arithmetic and its Implementation on the Computer"
 // Ulrich W. Kulisch
 </span><span class="kw">use </span>na::{RealField, SimdPartialOrd};
@@ -631,17 +621,15 @@
 
         <span class="kw">let </span>prev_width = candidate.width();
 
-        <span class="kw">for </span>new_candidate <span class="kw">in </span>new_candidates.iter() {
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(new_candidate) = new_candidate {
-                <span class="kw">if </span>new_candidate.width() &gt; prev_width * na::convert(<span class="number">0.75</span>) {
-                    <span class="comment">// If the new candidate range is still quite big compared to
-                    // new candidate, split it to accelerate the search.
-                    </span><span class="kw">let </span>[a, b] = new_candidate.split();
-                    push_candidate(a, recursion, results, candidates);
-                    push_candidate(b, recursion, results, candidates);
-                } <span class="kw">else </span>{
-                    push_candidate(<span class="kw-2">*</span>new_candidate, recursion, results, candidates);
-                }
+        <span class="kw">for </span>new_candidate <span class="kw">in </span>new_candidates.iter().flatten() {
+            <span class="kw">if </span>new_candidate.width() &gt; prev_width * na::convert(<span class="number">0.75</span>) {
+                <span class="comment">// If the new candidate range is still quite big compared to
+                // new candidate, split it to accelerate the search.
+                </span><span class="kw">let </span>[a, b] = new_candidate.split();
+                push_candidate(a, recursion, results, candidates);
+                push_candidate(b, recursion, results, candidates);
+            } <span class="kw">else </span>{
+                push_candidate(<span class="kw-2">*</span>new_candidate, recursion, results, candidates);
             }
         }
     }
@@ -913,14 +901,12 @@
             } <span class="kw">else </span>{
                 Interval(a1 * b2, a2 * b2)
             }
+        } <span class="kw">else if </span>b2 &lt;= T::zero() {
+            Interval(a2 * b1, a1 * b2)
+        } <span class="kw">else if </span>b1 &lt; T::zero() {
+            Interval(a2 * b1, a2 * b2)
         } <span class="kw">else </span>{
-            <span class="kw">if </span>b2 &lt;= T::zero() {
-                Interval(a2 * b1, a1 * b2)
-            } <span class="kw">else if </span>b1 &lt; T::zero() {
-                Interval(a2 * b1, a2 * b2)
-            } <span class="kw">else </span>{
-                Interval(a1 * b1, a2 * b2)
-            }
+            Interval(a1 * b1, a2 * b2)
         }
     }
 }
@@ -957,38 +943,32 @@
                 }
             } <span class="kw">else if </span>a1 &lt;= T::zero() {
                 (Interval(-infinity, infinity), <span class="prelude-val">None</span>)
+            } <span class="kw">else if </span>b2 == T::zero() {
+                (Interval(-infinity, a1 / b1), <span class="prelude-val">None</span>)
+            } <span class="kw">else if </span>b1 != T::zero() {
+                (
+                    Interval(-infinity, a1 / b1),
+                    <span class="prelude-val">Some</span>(Interval(a1 / b2, infinity)),
+                )
             } <span class="kw">else </span>{
-                <span class="kw">if </span>b2 == T::zero() {
-                    (Interval(-infinity, a1 / b1), <span class="prelude-val">None</span>)
-                } <span class="kw">else if </span>b1 != T::zero() {
-                    (
-                        Interval(-infinity, a1 / b1),
-                        <span class="prelude-val">Some</span>(Interval(a1 / b2, infinity)),
-                    )
-                } <span class="kw">else </span>{
-                    (Interval(a1 / b2, infinity), <span class="prelude-val">None</span>)
-                }
+                (Interval(a1 / b2, infinity), <span class="prelude-val">None</span>)
             }
+        } <span class="kw">else if </span>a2 &lt;= T::zero() {
+            <span class="kw">if </span>b2 &lt; T::zero() {
+                (Interval(a2 / b1, a1 / b2), <span class="prelude-val">None</span>)
+            } <span class="kw">else </span>{
+                (Interval(a1 / b1, a2 / b2), <span class="prelude-val">None</span>)
+            }
+        } <span class="kw">else if </span>a1 &lt; T::zero() {
+            <span class="kw">if </span>b2 &lt; T::zero() {
+                (Interval(a2 / b2, a1 / b2), <span class="prelude-val">None</span>)
+            } <span class="kw">else </span>{
+                (Interval(a1 / b1, a2 / b1), <span class="prelude-val">None</span>)
+            }
+        } <span class="kw">else if </span>b2 &lt; T::zero() {
+            (Interval(a2 / b2, a1 / b1), <span class="prelude-val">None</span>)
         } <span class="kw">else </span>{
-            <span class="kw">if </span>a2 &lt;= T::zero() {
-                <span class="kw">if </span>b2 &lt; T::zero() {
-                    (Interval(a2 / b1, a1 / b2), <span class="prelude-val">None</span>)
-                } <span class="kw">else </span>{
-                    (Interval(a1 / b1, a2 / b2), <span class="prelude-val">None</span>)
-                }
-            } <span class="kw">else if </span>a1 &lt; T::zero() {
-                <span class="kw">if </span>b2 &lt; T::zero() {
-                    (Interval(a2 / b2, a1 / b2), <span class="prelude-val">None</span>)
-                } <span class="kw">else </span>{
-                    (Interval(a1 / b1, a2 / b1), <span class="prelude-val">None</span>)
-                }
-            } <span class="kw">else </span>{
-                <span class="kw">if </span>b2 &lt; T::zero() {
-                    (Interval(a2 / b2, a1 / b1), <span class="prelude-val">None</span>)
-                } <span class="kw">else </span>{
-                    (Interval(a1 / b2, a2 / b1), <span class="prelude-val">None</span>)
-                }
-            }
+            (Interval(a1 / b2, a2 / b1), <span class="prelude-val">None</span>)
         }
     }
 }

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["Collisions","ContactData","ContactManifold","Contacts"]};
+window.SIDEBAR_ITEMS = {"struct":["Collider","ColliderAabb","ColliderParent","ColliderTransform","CollidingEntities","Collisions","ContactData","ContactManifold","Contacts","Sensor","SingleContact"],"trait":["AnyCollider","ScalableCollider"],"type":["TriMeshFlags","VHACDParameters"]};

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy_xpbd-da54805458a155a5/46f3189/crates/bevy_xpbd_2d/../../src/plugins/collision/broad_phase.rs`."><title>broad_phase.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="bevy_xpbd_2d" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.0 (aedd173a2 2024-03-17)" data-channel="1.77.0" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy_xpbd-da54805458a155a5/ffc0006/crates/bevy_xpbd_2d/../../src/plugins/collision/broad_phase.rs`."><title>broad_phase.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="bevy_xpbd_2d" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.0 (aedd173a2 2024-03-17)" data-channel="1.77.0" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
             <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
     <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../../bevy_xpbd_2d/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
@@ -218,94 +218,6 @@
 <a href="#216" id="216">216</a>
 <a href="#217" id="217">217</a>
 <a href="#218" id="218">218</a>
-<a href="#219" id="219">219</a>
-<a href="#220" id="220">220</a>
-<a href="#221" id="221">221</a>
-<a href="#222" id="222">222</a>
-<a href="#223" id="223">223</a>
-<a href="#224" id="224">224</a>
-<a href="#225" id="225">225</a>
-<a href="#226" id="226">226</a>
-<a href="#227" id="227">227</a>
-<a href="#228" id="228">228</a>
-<a href="#229" id="229">229</a>
-<a href="#230" id="230">230</a>
-<a href="#231" id="231">231</a>
-<a href="#232" id="232">232</a>
-<a href="#233" id="233">233</a>
-<a href="#234" id="234">234</a>
-<a href="#235" id="235">235</a>
-<a href="#236" id="236">236</a>
-<a href="#237" id="237">237</a>
-<a href="#238" id="238">238</a>
-<a href="#239" id="239">239</a>
-<a href="#240" id="240">240</a>
-<a href="#241" id="241">241</a>
-<a href="#242" id="242">242</a>
-<a href="#243" id="243">243</a>
-<a href="#244" id="244">244</a>
-<a href="#245" id="245">245</a>
-<a href="#246" id="246">246</a>
-<a href="#247" id="247">247</a>
-<a href="#248" id="248">248</a>
-<a href="#249" id="249">249</a>
-<a href="#250" id="250">250</a>
-<a href="#251" id="251">251</a>
-<a href="#252" id="252">252</a>
-<a href="#253" id="253">253</a>
-<a href="#254" id="254">254</a>
-<a href="#255" id="255">255</a>
-<a href="#256" id="256">256</a>
-<a href="#257" id="257">257</a>
-<a href="#258" id="258">258</a>
-<a href="#259" id="259">259</a>
-<a href="#260" id="260">260</a>
-<a href="#261" id="261">261</a>
-<a href="#262" id="262">262</a>
-<a href="#263" id="263">263</a>
-<a href="#264" id="264">264</a>
-<a href="#265" id="265">265</a>
-<a href="#266" id="266">266</a>
-<a href="#267" id="267">267</a>
-<a href="#268" id="268">268</a>
-<a href="#269" id="269">269</a>
-<a href="#270" id="270">270</a>
-<a href="#271" id="271">271</a>
-<a href="#272" id="272">272</a>
-<a href="#273" id="273">273</a>
-<a href="#274" id="274">274</a>
-<a href="#275" id="275">275</a>
-<a href="#276" id="276">276</a>
-<a href="#277" id="277">277</a>
-<a href="#278" id="278">278</a>
-<a href="#279" id="279">279</a>
-<a href="#280" id="280">280</a>
-<a href="#281" id="281">281</a>
-<a href="#282" id="282">282</a>
-<a href="#283" id="283">283</a>
-<a href="#284" id="284">284</a>
-<a href="#285" id="285">285</a>
-<a href="#286" id="286">286</a>
-<a href="#287" id="287">287</a>
-<a href="#288" id="288">288</a>
-<a href="#289" id="289">289</a>
-<a href="#290" id="290">290</a>
-<a href="#291" id="291">291</a>
-<a href="#292" id="292">292</a>
-<a href="#293" id="293">293</a>
-<a href="#294" id="294">294</a>
-<a href="#295" id="295">295</a>
-<a href="#296" id="296">296</a>
-<a href="#297" id="297">297</a>
-<a href="#298" id="298">298</a>
-<a href="#299" id="299">299</a>
-<a href="#300" id="300">300</a>
-<a href="#301" id="301">301</a>
-<a href="#302" id="302">302</a>
-<a href="#303" id="303">303</a>
-<a href="#304" id="304">304</a>
-<a href="#305" id="305">305</a>
-<a href="#306" id="306">306</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! Collects pairs of potentially colliding entities into [`BroadCollisionPairs`] using
 //! [AABB](ColliderAabb) intersection checks.
 //!
@@ -330,21 +242,44 @@
     <span class="kw">fn </span>build(<span class="kw-2">&amp;</span><span class="self">self</span>, app: <span class="kw-2">&amp;mut </span>App) {
         app.init_resource::&lt;AabbIntervals&gt;();
 
+        app.configure_sets(
+            PhysicsSchedule,
+            (
+                BroadPhaseSet::First,
+                BroadPhaseSet::UpdateStructures,
+                BroadPhaseSet::CollectCollisions,
+                BroadPhaseSet::Last,
+            )
+                .chain()
+                .in_set(PhysicsStepSet::BroadPhase),
+        );
+
         <span class="kw">let </span>physics_schedule = app
             .get_schedule_mut(PhysicsSchedule)
             .expect(<span class="string">"add PhysicsSchedule first"</span>);
 
         physics_schedule.add_systems(
-            (
-                update_aabb,
-                update_aabb_intervals,
-                add_new_aabb_intervals,
-                collect_collision_pairs,
-            )
+            (update_aabb_intervals, add_new_aabb_intervals)
                 .chain()
-                .in_set(PhysicsStepSet::BroadPhase),
+                .in_set(BroadPhaseSet::UpdateStructures),
         );
+
+        physics_schedule
+            .add_systems(collect_collision_pairs.in_set(BroadPhaseSet::CollectCollisions));
     }
+}
+
+<span class="doccomment">/// System sets for systems running in [`PhysicsStepSet::BroadPhase`].
+</span><span class="attr">#[derive(SystemSet, Clone, Copy, Debug, PartialEq, Eq, Hash)]
+</span><span class="kw">pub enum </span>BroadPhaseSet {
+    <span class="doccomment">/// Runs at the start of the broad phase. Empty by default.
+    </span>First,
+    <span class="doccomment">/// Updates acceleration structures and other data needed for broad phase collision detection.
+    </span>UpdateStructures,
+    <span class="doccomment">/// Detects potential intersections between entities and adds them to the [`BroadCollisionPairs`] resource.
+    </span>CollectCollisions,
+    <span class="doccomment">/// Runs at the end of the broad phase. Empty by default.
+    </span>Last,
 }
 
 <span class="doccomment">/// A list of entity pairs for potential collisions collected during the broad phase.
@@ -352,118 +287,6 @@
 #[cfg_attr(feature = <span class="string">"serialize"</span>, derive(serde::Serialize, serde::Deserialize))]
 #[reflect(Resource)]
 </span><span class="kw">pub struct </span>BroadCollisionPairs(<span class="kw">pub </span>Vec&lt;(Entity, Entity)&gt;);
-
-<span class="kw">type </span>AABBChanged = Or&lt;(
-    Changed&lt;Position&gt;,
-    Changed&lt;Rotation&gt;,
-    Changed&lt;LinearVelocity&gt;,
-    Changed&lt;AngularVelocity&gt;,
-    Changed&lt;Collider&gt;,
-)&gt;;
-
-<span class="doccomment">/// Updates the Axis-Aligned Bounding Boxes of all colliders. A safety margin will be added to account for sudden accelerations.
-</span><span class="attr">#[allow(clippy::type_complexity)]
-</span><span class="kw">fn </span>update_aabb(
-    <span class="kw-2">mut </span>colliders: Query&lt;
-        (
-            <span class="kw-2">&amp;</span>Collider,
-            <span class="kw-2">&amp;mut </span>ColliderAabb,
-            <span class="kw-2">&amp;</span>Position,
-            <span class="kw-2">&amp;</span>Rotation,
-            <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>ColliderParent&gt;,
-            <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>LinearVelocity&gt;,
-            <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>AngularVelocity&gt;,
-        ),
-        AABBChanged,
-    &gt;,
-    parent_velocity: Query&lt;
-        (<span class="kw-2">&amp;</span>Position, <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>LinearVelocity&gt;, <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>AngularVelocity&gt;),
-        With&lt;Children&gt;,
-    &gt;,
-    dt: Res&lt;Time&gt;,
-    narrow_phase_config: <span class="prelude-ty">Option</span>&lt;Res&lt;NarrowPhaseConfig&gt;&gt;,
-) {
-    <span class="comment">// Safety margin multiplier bigger than DELTA_TIME to account for sudden accelerations
-    </span><span class="kw">let </span>safety_margin_factor = <span class="number">2.0 </span>* dt.delta_seconds_adjusted();
-
-    <span class="kw">for </span>(collider, <span class="kw-2">mut </span>aabb, pos, rot, collider_parent, lin_vel, ang_vel) <span class="kw">in </span><span class="kw-2">&amp;mut </span>colliders {
-        <span class="kw">let </span>(lin_vel, ang_vel) = <span class="kw">if let </span>(<span class="prelude-val">Some</span>(lin_vel), <span class="prelude-val">Some</span>(ang_vel)) = (lin_vel, ang_vel) {
-            (<span class="kw-2">*</span>lin_vel, <span class="kw-2">*</span>ang_vel)
-        } <span class="kw">else if let </span><span class="prelude-val">Some</span>(<span class="prelude-val">Ok</span>((parent_pos, <span class="prelude-val">Some</span>(lin_vel), <span class="prelude-val">Some</span>(ang_vel)))) =
-            collider_parent.map(|p| parent_velocity.get(p.get()))
-        {
-            <span class="comment">// If the rigid body is rotating, off-center colliders will orbit around it,
-            // which affects their linear velocities. We need to compute the linear velocity
-            // at the offset position.
-            // TODO: This assumes that the colliders would continue moving in the same direction,
-            //       but because they are orbiting, the direction will change. We should take
-            //       into account the uniform circular motion.
-            </span><span class="kw">let </span>offset = pos.<span class="number">0 </span>- parent_pos.<span class="number">0</span>;
-            <span class="attr">#[cfg(feature = <span class="string">"2d"</span>)]
-            </span><span class="kw">let </span>vel_at_offset =
-                lin_vel.<span class="number">0 </span>+ Vector::new(-ang_vel.<span class="number">0 </span>* offset.y, ang_vel.<span class="number">0 </span>* offset.x) * <span class="number">1.0</span>;
-            <span class="attr">#[cfg(feature = <span class="string">"3d"</span>)]
-            </span><span class="kw">let </span>vel_at_offset = lin_vel.<span class="number">0 </span>+ ang_vel.cross(offset);
-            (LinearVelocity(vel_at_offset), <span class="kw-2">*</span>ang_vel)
-        } <span class="kw">else </span>{
-            (LinearVelocity::ZERO, AngularVelocity::ZERO)
-        };
-
-        <span class="comment">// Compute current isometry and predicted isometry for next feame
-        </span><span class="kw">let </span>start_iso = utils::make_isometry(<span class="kw-2">*</span>pos, <span class="kw-2">*</span>rot);
-        <span class="kw">let </span>end_iso = {
-            <span class="attr">#[cfg(feature = <span class="string">"2d"</span>)]
-            </span>{
-                utils::make_isometry(
-                    pos.<span class="number">0 </span>+ lin_vel.<span class="number">0 </span>* safety_margin_factor,
-                    <span class="kw-2">*</span>rot + Rotation::from_radians(safety_margin_factor * ang_vel.<span class="number">0</span>),
-                )
-            }
-            <span class="attr">#[cfg(feature = <span class="string">"3d"</span>)]
-            </span>{
-                <span class="kw">let </span>q = Quaternion::from_vec4(ang_vel.<span class="number">0</span>.extend(<span class="number">0.0</span>)) * rot.<span class="number">0</span>;
-                <span class="kw">let </span>(x, y, z, w) = (
-                    rot.x + safety_margin_factor * <span class="number">0.5 </span>* q.x,
-                    rot.y + safety_margin_factor * <span class="number">0.5 </span>* q.y,
-                    rot.z + safety_margin_factor * <span class="number">0.5 </span>* q.z,
-                    rot.w + safety_margin_factor * <span class="number">0.5 </span>* q.w,
-                );
-                utils::make_isometry(
-                    pos.<span class="number">0 </span>+ lin_vel.<span class="number">0 </span>* safety_margin_factor,
-                    Quaternion::from_xyzw(x, y, z, w).normalize(),
-                )
-            }
-        };
-
-        <span class="comment">// Compute swept AABB, the space that the body would occupy if it was integrated for one frame
-        </span>aabb.<span class="number">0 </span>= collider
-            .shape_scaled()
-            .compute_swept_aabb(<span class="kw-2">&amp;</span>start_iso, <span class="kw-2">&amp;</span>end_iso);
-
-        <span class="comment">// Add narrow phase prediction distance to AABBs to avoid missed collisions
-        </span><span class="kw">let </span>prediction_distance = <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref </span>config) = narrow_phase_config {
-            config.prediction_distance
-        } <span class="kw">else </span>{
-            <span class="attr">#[cfg(feature = <span class="string">"2d"</span>)]
-            </span>{
-                <span class="number">1.0
-            </span>}
-            <span class="attr">#[cfg(feature = <span class="string">"3d"</span>)]
-            </span>{
-                <span class="number">0.005
-            </span>}
-        };
-        aabb.maxs.x += prediction_distance;
-        aabb.mins.x -= prediction_distance;
-        aabb.maxs.y += prediction_distance;
-        aabb.mins.y -= prediction_distance;
-        <span class="attr">#[cfg(feature = <span class="string">"3d"</span>)]
-        </span>{
-            aabb.maxs.z += prediction_distance;
-            aabb.mins.z -= prediction_distance;
-        }
-    }
-}
 
 <span class="doccomment">/// True if the rigid body hasn't moved.
 </span><span class="kw">type </span>IsBodyInactive = bool;
@@ -493,7 +316,7 @@
 </span><span class="kw">fn </span>update_aabb_intervals(
     aabbs: Query&lt;(
         <span class="kw-2">&amp;</span>ColliderAabb,
-        <span class="kw-2">&amp;</span>ColliderParent,
+        <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>ColliderParent&gt;,
         <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>CollisionLayers&gt;,
         Ref&lt;Position&gt;,
         Ref&lt;Rotation&gt;,
@@ -507,10 +330,11 @@
                 aabbs.get(<span class="kw-2">*</span>collider_entity)
             {
                 <span class="kw-2">*</span>aabb = <span class="kw-2">*</span>new_aabb;
-                <span class="kw-2">*</span>collider_parent = <span class="kw-2">*</span>new_parent;
+                <span class="kw-2">*</span>collider_parent = new_parent.map_or(ColliderParent(<span class="kw-2">*</span>collider_entity), |p| <span class="kw-2">*</span>p);
                 <span class="kw-2">*</span>layers = new_layers.map_or(CollisionLayers::default(), |layers| <span class="kw-2">*</span>layers);
 
-                <span class="kw">let </span>is_static = rbs.get(new_parent.get()).is_ok_and(RigidBody::is_static);
+                <span class="kw">let </span>is_static =
+                    new_parent.is_some_and(|p| rbs.get(p.get()).is_ok_and(RigidBody::is_static));
                 <span class="kw-2">*</span>is_inactive = is_static || (!position.is_changed() &amp;&amp; !rotation.is_changed());
 
                 <span class="bool-val">true
@@ -527,7 +351,7 @@
     aabbs: Query&lt;
         (
             Entity,
-            <span class="kw-2">&amp;</span>ColliderParent,
+            <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>ColliderParent&gt;,
             <span class="kw-2">&amp;</span>ColliderAabb,
             <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>RigidBody&gt;,
             <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>CollisionLayers&gt;,
@@ -539,7 +363,7 @@
     <span class="kw">let </span>aabbs = aabbs.iter().map(|(ent, parent, aabb, rb, layers)| {
         (
             ent,
-            <span class="kw-2">*</span>parent,
+            parent.map_or(ColliderParent(ent), |p| <span class="kw-2">*</span>p),
             <span class="kw-2">*</span>aabb,
             <span class="comment">// Default to treating collider as immovable/static for filtering unnecessary collision checks
             </span>layers.map_or(CollisionLayers::default(), |layers| <span class="kw-2">*</span>layers),
@@ -603,7 +427,7 @@
 <span class="doccomment">/// Sorts a list iteratively using comparisons. In an ascending sort order, when a smaller value is encountered, it is moved lower in the list until it is larger than the item before it.
 ///
 /// This is relatively slow for large lists, but very efficient in cases where the list is already mostly sorted.
-</span><span class="kw">fn </span>insertion_sort&lt;T&gt;(items: <span class="kw-2">&amp;mut </span>Vec&lt;T&gt;, comparison: <span class="kw">fn</span>(<span class="kw-2">&amp;</span>T, <span class="kw-2">&amp;</span>T) -&gt; bool) {
+</span><span class="kw">fn </span>insertion_sort&lt;T&gt;(items: <span class="kw-2">&amp;mut </span>[T], comparison: <span class="kw">fn</span>(<span class="kw-2">&amp;</span>T, <span class="kw-2">&amp;</span>T) -&gt; bool) {
     <span class="kw">for </span>i <span class="kw">in </span><span class="number">1</span>..items.len() {
         <span class="kw">let </span><span class="kw-2">mut </span>j = i;
         <span class="kw">while </span>j &gt; <span class="number">0 </span>&amp;&amp; comparison(<span class="kw-2">&amp;</span>items[j - <span class="number">1</span>], <span class="kw-2">&amp;</span>items[j]) {

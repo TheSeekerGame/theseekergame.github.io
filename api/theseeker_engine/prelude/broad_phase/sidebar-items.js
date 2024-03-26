@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["BroadCollisionPairs","BroadPhasePlugin"]};
+window.SIDEBAR_ITEMS = {"enum":["BroadPhaseSet"],"struct":["BroadCollisionPairs","BroadPhasePlugin"]};

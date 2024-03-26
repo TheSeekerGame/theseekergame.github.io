@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/parry2d-0.13.6/src/transformation/voxelization/voxelized_volume.rs`."><title>voxelized_volume.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="parry2d" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.0 (aedd173a2 2024-03-17)" data-channel="1.77.0" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/parry2d-0.13.7/src/transformation/voxelization/voxelized_volume.rs`."><title>voxelized_volume.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="parry2d" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.0 (aedd173a2 2024-03-17)" data-channel="1.77.0" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
             <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
     <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../../parry2d/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
@@ -954,22 +954,6 @@
 <a href="#952" id="952">952</a>
 <a href="#953" id="953">953</a>
 <a href="#954" id="954">954</a>
-<a href="#955" id="955">955</a>
-<a href="#956" id="956">956</a>
-<a href="#957" id="957">957</a>
-<a href="#958" id="958">958</a>
-<a href="#959" id="959">959</a>
-<a href="#960" id="960">960</a>
-<a href="#961" id="961">961</a>
-<a href="#962" id="962">962</a>
-<a href="#963" id="963">963</a>
-<a href="#964" id="964">964</a>
-<a href="#965" id="965">965</a>
-<a href="#966" id="966">966</a>
-<a href="#967" id="967">967</a>
-<a href="#968" id="968">968</a>
-<a href="#969" id="969">969</a>
-<a href="#970" id="970">970</a>
 </pre></div><pre class="rust"><code><span class="comment">// Rust port, with modifications, of https://github.com/kmammou/v-hacd/blob/master/src/VHACD_Lib/src/vhacdVolume.cpp
 // By Khaled Mamou
 //
@@ -1229,57 +1213,47 @@
                             <span class="kw">let </span>aabb = Aabb::from_half_extents(pt, box_half_size);
 
                             <span class="attr">#[cfg(feature = <span class="string">"dim2"</span>)]
-                            </span>{
-                                <span class="kw">if </span>!detect_self_intersections {
-                                    <span class="kw">let </span>segment = <span class="kw">crate</span>::shape::Segment::from(tri_pts);
-                                    <span class="kw">let </span>intersect = query::details::intersection_test_aabb_segment(
-                                        <span class="kw-2">&amp;</span>aabb, <span class="kw-2">&amp;</span>segment,
-                                    );
+                            </span><span class="kw">if </span>!detect_self_intersections {
+                                <span class="kw">let </span>segment = <span class="kw">crate</span>::shape::Segment::from(tri_pts);
+                                <span class="kw">let </span>intersect =
+                                    query::details::intersection_test_aabb_segment(<span class="kw-2">&amp;</span>aabb, <span class="kw-2">&amp;</span>segment);
 
-                                    <span class="kw">if </span>intersect {
-                                        <span class="kw">if </span>keep_voxel_to_primitives_map {
-                                            data.num_primitive_intersections += <span class="number">1</span>;
-                                            result
-                                                .primitive_intersections
-                                                .push((id, tri_id <span class="kw">as </span>u32));
-                                        }
-
-                                        <span class="kw-2">*</span>value = VoxelValue::PrimitiveOnSurface;
+                                <span class="kw">if </span>intersect {
+                                    <span class="kw">if </span>keep_voxel_to_primitives_map {
+                                        data.num_primitive_intersections += <span class="number">1</span>;
+                                        result.primitive_intersections.push((id, tri_id <span class="kw">as </span>u32));
                                     }
+
+                                    <span class="kw-2">*</span>value = VoxelValue::PrimitiveOnSurface;
+                                }
+                            } <span class="kw">else if let </span><span class="prelude-val">Some</span>(params) =
+                                aabb.clip_line_parameters(<span class="kw-2">&amp;</span>tri_pts[<span class="number">0</span>], <span class="kw-2">&amp;</span>(tri_pts[<span class="number">1</span>] - tri_pts[<span class="number">0</span>]))
+                            {
+                                <span class="kw">let </span>eps = <span class="number">0.0</span>; <span class="comment">// -1.0e-6;
+
+                                </span><span class="macro">assert!</span>(params.<span class="number">0 </span>&lt;= params.<span class="number">1</span>);
+                                <span class="kw">if </span>params.<span class="number">0 </span>&gt; <span class="number">1.0 </span>+ eps || params.<span class="number">1 </span>&lt; <span class="number">0.0 </span>- eps {
+                                    <span class="kw">continue</span>;
+                                }
+
+                                data.multiplicity += ((params.<span class="number">0 </span>&gt;= -eps &amp;&amp; params.<span class="number">0 </span>&lt;= eps)
+                                    || (params.<span class="number">0 </span>&gt;= <span class="number">1.0 </span>- eps &amp;&amp; params.<span class="number">0 </span>&lt;= <span class="number">1.0 </span>+ eps))
+                                    <span class="kw">as </span>u32;
+                                data.multiplicity += ((params.<span class="number">1 </span>&gt;= -eps &amp;&amp; params.<span class="number">1 </span>&lt;= eps)
+                                    || (params.<span class="number">1 </span>&gt;= <span class="number">1.0 </span>- eps &amp;&amp; params.<span class="number">1 </span>&lt;= <span class="number">1.0 </span>+ eps))
+                                    <span class="kw">as </span>u32;
+                                data.multiplicity += (params.<span class="number">0 </span>&gt; eps) <span class="kw">as </span>u32 * <span class="number">2</span>;
+                                data.multiplicity += (params.<span class="number">1 </span>&lt; <span class="number">1.0 </span>- eps) <span class="kw">as </span>u32 * <span class="number">2</span>;
+
+                                <span class="kw">if </span>keep_voxel_to_primitives_map {
+                                    data.num_primitive_intersections += <span class="number">1</span>;
+                                    result.primitive_intersections.push((id, tri_id <span class="kw">as </span>u32));
+                                }
+
+                                <span class="kw">if </span>data.multiplicity &gt; <span class="number">4 </span>&amp;&amp; lock_high_multiplicities {
+                                    <span class="kw-2">*</span>value = VoxelValue::PrimitiveOnSurfaceNoWalk;
                                 } <span class="kw">else </span>{
-                                    <span class="kw">if let </span><span class="prelude-val">Some</span>(params) = aabb.clip_line_parameters(
-                                        <span class="kw-2">&amp;</span>tri_pts[<span class="number">0</span>],
-                                        <span class="kw-2">&amp;</span>(tri_pts[<span class="number">1</span>] - tri_pts[<span class="number">0</span>]),
-                                    ) {
-                                        <span class="kw">let </span>eps = <span class="number">0.0</span>; <span class="comment">// -1.0e-6;
-
-                                        </span><span class="macro">assert!</span>(params.<span class="number">0 </span>&lt;= params.<span class="number">1</span>);
-                                        <span class="kw">if </span>params.<span class="number">0 </span>&gt; <span class="number">1.0 </span>+ eps || params.<span class="number">1 </span>&lt; <span class="number">0.0 </span>- eps {
-                                            <span class="kw">continue</span>;
-                                        }
-
-                                        data.multiplicity += ((params.<span class="number">0 </span>&gt;= -eps &amp;&amp; params.<span class="number">0 </span>&lt;= eps)
-                                            || (params.<span class="number">0 </span>&gt;= <span class="number">1.0 </span>- eps &amp;&amp; params.<span class="number">0 </span>&lt;= <span class="number">1.0 </span>+ eps))
-                                            <span class="kw">as </span>u32;
-                                        data.multiplicity += ((params.<span class="number">1 </span>&gt;= -eps &amp;&amp; params.<span class="number">1 </span>&lt;= eps)
-                                            || (params.<span class="number">1 </span>&gt;= <span class="number">1.0 </span>- eps &amp;&amp; params.<span class="number">1 </span>&lt;= <span class="number">1.0 </span>+ eps))
-                                            <span class="kw">as </span>u32;
-                                        data.multiplicity += (params.<span class="number">0 </span>&gt; eps) <span class="kw">as </span>u32 * <span class="number">2</span>;
-                                        data.multiplicity += (params.<span class="number">1 </span>&lt; <span class="number">1.0 </span>- eps) <span class="kw">as </span>u32 * <span class="number">2</span>;
-
-                                        <span class="kw">if </span>keep_voxel_to_primitives_map {
-                                            data.num_primitive_intersections += <span class="number">1</span>;
-                                            result
-                                                .primitive_intersections
-                                                .push((id, tri_id <span class="kw">as </span>u32));
-                                        }
-
-                                        <span class="kw">if </span>data.multiplicity &gt; <span class="number">4 </span>&amp;&amp; lock_high_multiplicities {
-                                            <span class="kw-2">*</span>value = VoxelValue::PrimitiveOnSurfaceNoWalk;
-                                        } <span class="kw">else </span>{
-                                            <span class="kw-2">*</span>value = VoxelValue::PrimitiveOnSurface;
-                                        }
-                                    }
+                                    <span class="kw-2">*</span>value = VoxelValue::PrimitiveOnSurface;
                                 }
                             };
 
@@ -1749,18 +1723,18 @@
                         }
 
                         <span class="kw">let </span>s = vertices.len() <span class="kw">as </span>u32;
-                        indices.push([s + <span class="number">0</span>, s + <span class="number">2</span>, s + <span class="number">1</span>]);
-                        indices.push([s + <span class="number">0</span>, s + <span class="number">3</span>, s + <span class="number">2</span>]);
+                        indices.push([s, s + <span class="number">2</span>, s + <span class="number">1</span>]);
+                        indices.push([s, s + <span class="number">3</span>, s + <span class="number">2</span>]);
                         indices.push([s + <span class="number">4</span>, s + <span class="number">5</span>, s + <span class="number">6</span>]);
                         indices.push([s + <span class="number">4</span>, s + <span class="number">6</span>, s + <span class="number">7</span>]);
                         indices.push([s + <span class="number">7</span>, s + <span class="number">6</span>, s + <span class="number">2</span>]);
                         indices.push([s + <span class="number">7</span>, s + <span class="number">2</span>, s + <span class="number">3</span>]);
                         indices.push([s + <span class="number">4</span>, s + <span class="number">1</span>, s + <span class="number">5</span>]);
-                        indices.push([s + <span class="number">4</span>, s + <span class="number">0</span>, s + <span class="number">1</span>]);
+                        indices.push([s + <span class="number">4</span>, s, s + <span class="number">1</span>]);
                         indices.push([s + <span class="number">6</span>, s + <span class="number">5</span>, s + <span class="number">1</span>]);
                         indices.push([s + <span class="number">6</span>, s + <span class="number">1</span>, s + <span class="number">2</span>]);
-                        indices.push([s + <span class="number">7</span>, s + <span class="number">0</span>, s + <span class="number">4</span>]);
-                        indices.push([s + <span class="number">7</span>, s + <span class="number">3</span>, s + <span class="number">0</span>]);
+                        indices.push([s + <span class="number">7</span>, s, s + <span class="number">4</span>]);
+                        indices.push([s + <span class="number">7</span>, s + <span class="number">3</span>, s]);
                     }
                 }
             }
@@ -1770,24 +1744,24 @@
     }
 }
 
-<span class="kw">impl </span>Into&lt;VoxelSet&gt; <span class="kw">for </span>VoxelizedVolume {
-    <span class="kw">fn </span>into(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; VoxelSet {
+<span class="kw">impl </span>From&lt;VoxelizedVolume&gt; <span class="kw">for </span>VoxelSet {
+    <span class="kw">fn </span>from(<span class="kw-2">mut </span>shape: VoxelizedVolume) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span><span class="kw-2">mut </span>curr_intersection_index = <span class="number">0</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>vset = VoxelSet::new();
         <span class="kw">let </span><span class="kw-2">mut </span>vset_intersections = Vec::new();
-        vset.origin = <span class="self">self</span>.origin;
-        vset.scale = <span class="self">self</span>.scale;
+        vset.origin = shape.origin;
+        vset.scale = shape.scale;
 
         <span class="attr">#[cfg(feature = <span class="string">"dim2"</span>)]
         </span><span class="kw">let </span>k1 = <span class="number">1</span>;
         <span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
-        </span><span class="kw">let </span>k1 = <span class="self">self</span>.resolution[<span class="number">2</span>];
+        </span><span class="kw">let </span>k1 = shape.resolution[<span class="number">2</span>];
 
-        <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..<span class="self">self</span>.resolution[<span class="number">0</span>] {
-            <span class="kw">for </span>j <span class="kw">in </span><span class="number">0</span>..<span class="self">self</span>.resolution[<span class="number">1</span>] {
+        <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..shape.resolution[<span class="number">0</span>] {
+            <span class="kw">for </span>j <span class="kw">in </span><span class="number">0</span>..shape.resolution[<span class="number">1</span>] {
                 <span class="kw">for </span>k <span class="kw">in </span><span class="number">0</span>..k1 {
-                    <span class="kw">let </span>id = <span class="self">self</span>.voxel_index(i, j, k) <span class="kw">as </span>usize;
-                    <span class="kw">let </span>value = <span class="self">self</span>.values[id];
+                    <span class="kw">let </span>id = shape.voxel_index(i, j, k) <span class="kw">as </span>usize;
+                    <span class="kw">let </span>value = shape.values[id];
                     <span class="attr">#[cfg(feature = <span class="string">"dim2"</span>)]
                     </span><span class="kw">let </span>coords = Point::new(i, j);
                     <span class="attr">#[cfg(feature = <span class="string">"dim3"</span>)]
@@ -1797,30 +1771,24 @@
                         <span class="kw">let </span>voxel = Voxel {
                             coords,
                             is_on_surface: <span class="bool-val">false</span>,
-                            intersections_range: (
-                                curr_intersection_index <span class="kw">as </span>usize,
-                                curr_intersection_index <span class="kw">as </span>usize,
-                            ),
+                            intersections_range: (curr_intersection_index, curr_intersection_index),
                         };
                         vset.voxels.push(voxel);
                     } <span class="kw">else if </span>value == VoxelValue::PrimitiveOnSurface {
                         <span class="kw">let </span><span class="kw-2">mut </span>voxel = Voxel {
                             coords,
                             is_on_surface: <span class="bool-val">true</span>,
-                            intersections_range: (
-                                curr_intersection_index <span class="kw">as </span>usize,
-                                curr_intersection_index <span class="kw">as </span>usize,
-                            ),
+                            intersections_range: (curr_intersection_index, curr_intersection_index),
                         };
 
-                        <span class="kw">if </span>!<span class="self">self</span>.primitive_intersections.is_empty() {
+                        <span class="kw">if </span>!shape.primitive_intersections.is_empty() {
                             <span class="kw">let </span>num_intersections =
-                                <span class="self">self</span>.data[id].num_primitive_intersections <span class="kw">as </span>usize;
+                                shape.data[id].num_primitive_intersections <span class="kw">as </span>usize;
                             <span class="comment">// We store the index where we should write the intersection on the
                             // vset into num_primitive_intersections. That way we can reuse it
                             // afterwards when copying the set of intersection into a single
                             // flat Vec.
-                            </span><span class="self">self</span>.data[id].num_primitive_intersections =
+                            </span>shape.data[id].num_primitive_intersections =
                                 curr_intersection_index <span class="kw">as </span>u32;
                             curr_intersection_index += num_intersections;
                             voxel.intersections_range.<span class="number">1 </span>= curr_intersection_index;
@@ -1832,10 +1800,10 @@
             }
         }
 
-        <span class="kw">if </span>!<span class="self">self</span>.primitive_intersections.is_empty() {
-            vset_intersections.resize(<span class="self">self</span>.primitive_intersections.len(), <span class="number">0</span>);
-            <span class="kw">for </span>(voxel_id, prim_id) <span class="kw">in </span><span class="self">self</span>.primitive_intersections {
-                <span class="kw">let </span>num_inter = <span class="kw-2">&amp;mut </span><span class="self">self</span>.data[voxel_id <span class="kw">as </span>usize].num_primitive_intersections;
+        <span class="kw">if </span>!shape.primitive_intersections.is_empty() {
+            vset_intersections.resize(shape.primitive_intersections.len(), <span class="number">0</span>);
+            <span class="kw">for </span>(voxel_id, prim_id) <span class="kw">in </span>shape.primitive_intersections {
+                <span class="kw">let </span>num_inter = <span class="kw-2">&amp;mut </span>shape.data[voxel_id <span class="kw">as </span>usize].num_primitive_intersections;
                 vset_intersections[<span class="kw-2">*</span>num_inter <span class="kw">as </span>usize] = prim_id;
                 <span class="kw-2">*</span>num_inter += <span class="number">1</span>;
             }

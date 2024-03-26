@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["collect_collisions","reset_collision_states","reset_substep_collision_states"],"struct":["NarrowPhaseConfig","NarrowPhasePlugin"]};
+window.SIDEBAR_ITEMS = {"enum":["NarrowPhaseSet"],"fn":["collect_collisions","reset_collision_states","reset_substep_collision_states"],"struct":["NarrowPhaseConfig","NarrowPhasePlugin"]};
