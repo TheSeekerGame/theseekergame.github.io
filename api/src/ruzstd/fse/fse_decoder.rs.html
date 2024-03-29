@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ruzstd-0.4.0/src/fse/fse_decoder.rs`."><title>fse_decoder.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="ruzstd" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.0 (aedd173a2 2024-03-17)" data-channel="1.77.0" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ruzstd-0.5.0/src/fse/fse_decoder.rs`."><title>fse_decoder.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="ruzstd" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.1 (7cf61ebde 2024-03-27)" data-channel="1.77.1" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
             <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
     <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../ruzstd/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
@@ -345,6 +345,12 @@
 <a href="#343" id="343">343</a>
 <a href="#344" id="344">344</a>
 <a href="#345" id="345">345</a>
+<a href="#346" id="346">346</a>
+<a href="#347" id="347">347</a>
+<a href="#348" id="348">348</a>
+<a href="#349" id="349">349</a>
+<a href="#350" id="350">350</a>
+<a href="#351" id="351">351</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::decoding::bit_reader::BitReader;
 <span class="kw">use </span><span class="kw">crate</span>::decoding::bit_reader_reverse::{BitReaderReversed, GetBitsError};
 <span class="kw">use </span>alloc::vec::Vec;
@@ -363,22 +369,26 @@
     }
 }
 
-<span class="attr">#[derive(Debug, thiserror::Error)]
+<span class="attr">#[derive(Debug, derive_more::Display, derive_more::From)]
+#[cfg_attr(feature = <span class="string">"std"</span>, derive(derive_more::Error))]
 #[non_exhaustive]
 </span><span class="kw">pub enum </span>FSETableError {
-    <span class="attr">#[error(<span class="string">"Acclog must be at least 1"</span>)]
+    <span class="attr">#[display(fmt = <span class="string">"Acclog must be at least 1"</span>)]
     </span>AccLogIsZero,
-    <span class="attr">#[error(<span class="string">"Found FSE acc_log: {got} bigger than allowed maximum in this case: {max}"</span>)]
+    <span class="attr">#[display(fmt = <span class="string">"Found FSE acc_log: {got} bigger than allowed maximum in this case: {max}"</span>)]
     </span>AccLogTooBig { got: u8, max: u8 },
-    <span class="attr">#[error(transparent)]
-    </span>GetBitsError(<span class="attr">#[from] </span>GetBitsError),
-    <span class="attr">#[error(<span class="string">"The counter ({got}) exceeded the expected sum: {expected_sum}. This means an error or corrupted data \n {symbol_probabilities:?}"</span>)]
+    <span class="attr">#[display(fmt = <span class="string">"{_0:?}"</span>)]
+    #[from]
+    </span>GetBitsError(GetBitsError),
+    <span class="attr">#[display(
+        fmt = <span class="string">"The counter ({got}) exceeded the expected sum: {expected_sum}. This means an error or corrupted data \n {symbol_probabilities:?}"
+    </span>)]
     </span>ProbabilityCounterMismatch {
         got: u32,
         expected_sum: u32,
         symbol_probabilities: Vec&lt;i32&gt;,
     },
-    <span class="attr">#[error(<span class="string">"There are too many symbols in this distribution: {got}. Max: 256"</span>)]
+    <span class="attr">#[display(fmt = <span class="string">"There are too many symbols in this distribution: {got}. Max: 256"</span>)]
     </span>TooManySymbols { got: usize },
 }
 
@@ -387,12 +397,14 @@
     table: <span class="kw-2">&amp;</span><span class="lifetime">'table </span>FSETable,
 }
 
-<span class="attr">#[derive(Debug, thiserror::Error)]
+<span class="attr">#[derive(Debug, derive_more::Display, derive_more::From)]
+#[cfg_attr(feature = <span class="string">"std"</span>, derive(derive_more::Error))]
 #[non_exhaustive]
 </span><span class="kw">pub enum </span>FSEDecoderError {
-    <span class="attr">#[error(transparent)]
-    </span>GetBitsError(<span class="attr">#[from] </span>GetBitsError),
-    <span class="attr">#[error(<span class="string">"Tried to use an uninitialized table!"</span>)]
+    <span class="attr">#[display(fmt = <span class="string">"{_0:?}"</span>)]
+    #[from]
+    </span>GetBitsError(GetBitsError),
+    <span class="attr">#[display(fmt = <span class="string">"Tried to use an uninitialized table!"</span>)]
     </span>TableIsUninitialized,
 }
 
@@ -413,7 +425,7 @@
 <span class="kw">impl</span>&lt;<span class="lifetime">'t</span>&gt; FSEDecoder&lt;<span class="lifetime">'t</span>&gt; {
     <span class="kw">pub fn </span>new(table: <span class="kw-2">&amp;</span><span class="lifetime">'t </span>FSETable) -&gt; FSEDecoder&lt;<span class="lifetime">'_</span>&gt; {
         FSEDecoder {
-            state: table.decode.get(<span class="number">0</span>).copied().unwrap_or(Entry {
+            state: table.decode.first().copied().unwrap_or(Entry {
                 base_line: <span class="number">0</span>,
                 num_bits: <span class="number">0</span>,
                 symbol: <span class="number">0</span>,

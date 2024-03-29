@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ruzstd-0.4.0/src/decoding/ringbuffer.rs`."><title>ringbuffer.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="ruzstd" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.0 (aedd173a2 2024-03-17)" data-channel="1.77.0" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ruzstd-0.5.0/src/decoding/ringbuffer.rs`."><title>ringbuffer.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="ruzstd" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.1 (7cf61ebde 2024-03-27)" data-channel="1.77.1" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
             <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
     <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../ruzstd/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
@@ -633,11 +633,62 @@
 <a href="#631" id="631">631</a>
 <a href="#632" id="632">632</a>
 <a href="#633" id="633">633</a>
+<a href="#634" id="634">634</a>
+<a href="#635" id="635">635</a>
+<a href="#636" id="636">636</a>
+<a href="#637" id="637">637</a>
+<a href="#638" id="638">638</a>
+<a href="#639" id="639">639</a>
+<a href="#640" id="640">640</a>
+<a href="#641" id="641">641</a>
+<a href="#642" id="642">642</a>
+<a href="#643" id="643">643</a>
+<a href="#644" id="644">644</a>
+<a href="#645" id="645">645</a>
+<a href="#646" id="646">646</a>
+<a href="#647" id="647">647</a>
+<a href="#648" id="648">648</a>
+<a href="#649" id="649">649</a>
+<a href="#650" id="650">650</a>
+<a href="#651" id="651">651</a>
+<a href="#652" id="652">652</a>
+<a href="#653" id="653">653</a>
+<a href="#654" id="654">654</a>
+<a href="#655" id="655">655</a>
+<a href="#656" id="656">656</a>
+<a href="#657" id="657">657</a>
+<a href="#658" id="658">658</a>
+<a href="#659" id="659">659</a>
+<a href="#660" id="660">660</a>
+<a href="#661" id="661">661</a>
+<a href="#662" id="662">662</a>
+<a href="#663" id="663">663</a>
+<a href="#664" id="664">664</a>
+<a href="#665" id="665">665</a>
+<a href="#666" id="666">666</a>
+<a href="#667" id="667">667</a>
+<a href="#668" id="668">668</a>
+<a href="#669" id="669">669</a>
+<a href="#670" id="670">670</a>
+<a href="#671" id="671">671</a>
+<a href="#672" id="672">672</a>
+<a href="#673" id="673">673</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>alloc::alloc::{alloc, dealloc};
 <span class="kw">use </span>core::{alloc::Layout, ptr::NonNull, slice};
 
 <span class="kw">pub struct </span>RingBuffer {
-    buf: NonNull&lt;u8&gt;,
+    <span class="comment">// Safety invariants:
+    //
+    // 1.
+    //    a.`buf` must be a valid allocation of capacity `cap`
+    //    b. ...unless `cap=0`, in which case it is dangling
+    // 2. If tail≥head
+    //    a. `head..tail` must contain initialized memory.
+    //    b. Else, `head..` and `..tail` must be initialized
+    // 3. `head` and `tail` are in bounds (≥ 0 and &lt; cap)
+    // 4. `tail` is never `cap` except for a full buffer, and instead uses the value `0`. In other words, `tail` always points to the place
+    //    where the next element would go (if there is space)
+    </span>buf: NonNull&lt;u8&gt;,
     cap: usize,
     head: usize,
     tail: usize,
@@ -646,9 +697,11 @@
 <span class="kw">impl </span>RingBuffer {
     <span class="kw">pub fn </span>new() -&gt; <span class="self">Self </span>{
         RingBuffer {
-            buf: NonNull::dangling(),
+            <span class="comment">// SAFETY: Upholds invariant 1a as stated
+            </span>buf: NonNull::dangling(),
             cap: <span class="number">0</span>,
-            head: <span class="number">0</span>,
+            <span class="comment">// SAFETY: Upholds invariant 2-4
+            </span>head: <span class="number">0</span>,
             tail: <span class="number">0</span>,
         }
     }
@@ -664,7 +717,9 @@
     }
 
     <span class="kw">pub fn </span>clear(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-        <span class="self">self</span>.head = <span class="number">0</span>;
+        <span class="comment">// SAFETY: Upholds invariant 2, trivially
+        // SAFETY: Upholds invariant 3; 0 is always valid
+        </span><span class="self">self</span>.head = <span class="number">0</span>;
         <span class="self">self</span>.tail = <span class="number">0</span>;
     }
 
@@ -716,7 +771,8 @@
             <span class="kw">let </span>((s1_ptr, s1_len), (s2_ptr, s2_len)) = <span class="self">self</span>.data_slice_parts();
 
             <span class="kw">unsafe </span>{
-                new_buf.as_ptr().copy_from_nonoverlapping(s1_ptr, s1_len);
+                <span class="comment">// SAFETY: Upholds invariant 2, we end up populating (0..(len₁ + len₂))
+                </span>new_buf.as_ptr().copy_from_nonoverlapping(s1_ptr, s1_len);
                 new_buf
                     .as_ptr()
                     .add(s1_len)
@@ -724,10 +780,13 @@
                 dealloc(<span class="self">self</span>.buf.as_ptr(), current_layout);
             }
 
-            <span class="self">self</span>.tail = s1_len + s2_len;
+            <span class="comment">// SAFETY: Upholds invariant 3, head is 0 and in bounds, tail is only ever `cap` if the buffer
+            // is entirely full
+            </span><span class="self">self</span>.tail = s1_len + s2_len;
             <span class="self">self</span>.head = <span class="number">0</span>;
         }
-        <span class="self">self</span>.buf = new_buf;
+        <span class="comment">// SAFETY: Upholds invariant 1: the buffer was just allocated correctly
+        </span><span class="self">self</span>.buf = new_buf;
         <span class="self">self</span>.cap = new_cap;
     }
 
@@ -735,14 +794,18 @@
     </span><span class="kw">pub fn </span>push_back(<span class="kw-2">&amp;mut </span><span class="self">self</span>, byte: u8) {
         <span class="self">self</span>.reserve(<span class="number">1</span>);
 
-        <span class="kw">unsafe </span>{ <span class="self">self</span>.buf.as_ptr().add(<span class="self">self</span>.tail).write(byte) };
-        <span class="self">self</span>.tail = (<span class="self">self</span>.tail + <span class="number">1</span>) % <span class="self">self</span>.cap;
+        <span class="comment">// SAFETY: Upholds invariant 2 by writing initialized memory
+        </span><span class="kw">unsafe </span>{ <span class="self">self</span>.buf.as_ptr().add(<span class="self">self</span>.tail).write(byte) };
+        <span class="comment">// SAFETY: Upholds invariant 3 by wrapping `tail` around
+        </span><span class="self">self</span>.tail = (<span class="self">self</span>.tail + <span class="number">1</span>) % <span class="self">self</span>.cap;
     }
 
     <span class="attr">#[allow(dead_code)]
     </span><span class="kw">pub fn </span>get(<span class="kw-2">&amp;</span><span class="self">self</span>, idx: usize) -&gt; <span class="prelude-ty">Option</span>&lt;u8&gt; {
         <span class="kw">if </span>idx &lt; <span class="self">self</span>.len() {
-            <span class="kw">let </span>idx = (<span class="self">self</span>.head + idx) % <span class="self">self</span>.cap;
+            <span class="comment">// SAFETY: Establishes invariants on memory being initialized and the range being in-bounds
+            // (Invariants 2 &amp; 3)
+            </span><span class="kw">let </span>idx = (<span class="self">self</span>.head + idx) % <span class="self">self</span>.cap;
             <span class="prelude-val">Some</span>(<span class="kw">unsafe </span>{ <span class="self">self</span>.buf.as_ptr().add(idx).read() })
         } <span class="kw">else </span>{
             <span class="prelude-val">None
@@ -765,28 +828,35 @@
         <span class="macro">debug_assert!</span>(f1_len + f2_len &gt;= len, <span class="string">"{} + {} &lt; {}"</span>, f1_len, f2_len, len);
 
         <span class="kw">let </span>in_f1 = usize::min(len, f1_len);
+
         <span class="kw">let </span>in_f2 = len - in_f1;
 
         <span class="macro">debug_assert!</span>(in_f1 + in_f2 == len);
 
         <span class="kw">unsafe </span>{
-            <span class="kw">if </span>in_f1 &gt; <span class="number">0 </span>{
+            <span class="comment">// SAFETY: `in_f₁ + in_f₂ = len`, so this writes `len` bytes total
+            // upholding invariant 2
+            </span><span class="kw">if </span>in_f1 &gt; <span class="number">0 </span>{
                 f1_ptr.copy_from_nonoverlapping(ptr, in_f1);
             }
             <span class="kw">if </span>in_f2 &gt; <span class="number">0 </span>{
                 f2_ptr.copy_from_nonoverlapping(ptr.add(in_f1), in_f2);
             }
         }
-        <span class="self">self</span>.tail = (<span class="self">self</span>.tail + len) % <span class="self">self</span>.cap;
+        <span class="comment">// SAFETY: Upholds invariant 3 by wrapping `tail` around.
+        </span><span class="self">self</span>.tail = (<span class="self">self</span>.tail + len) % <span class="self">self</span>.cap;
     }
 
     <span class="kw">pub fn </span>drop_first_n(<span class="kw-2">&amp;mut </span><span class="self">self</span>, amount: usize) {
         <span class="macro">debug_assert!</span>(amount &lt;= <span class="self">self</span>.len());
         <span class="kw">let </span>amount = usize::min(amount, <span class="self">self</span>.len());
-        <span class="self">self</span>.head = (<span class="self">self</span>.head + amount) % <span class="self">self</span>.cap;
+        <span class="comment">// SAFETY: we maintain invariant 2 here since this will always lead to a smaller buffer
+        // for amount≤len
+        </span><span class="self">self</span>.head = (<span class="self">self</span>.head + amount) % <span class="self">self</span>.cap;
     }
 
-    <span class="kw">fn </span>data_slice_lengths(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; (usize, usize) {
+    <span class="comment">// SAFETY: other code relies on this pointing to initialized halves of the buffer only
+    </span><span class="kw">fn </span>data_slice_lengths(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; (usize, usize) {
         <span class="kw">let </span>len_after_head;
         <span class="kw">let </span>len_to_tail;
 
@@ -801,7 +871,8 @@
         (len_after_head, len_to_tail)
     }
 
-    <span class="kw">fn </span>data_slice_parts(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; ((<span class="kw-2">*const </span>u8, usize), (<span class="kw-2">*const </span>u8, usize)) {
+    <span class="comment">// SAFETY: other code relies on this pointing to initialized halves of the buffer only
+    </span><span class="kw">fn </span>data_slice_parts(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; ((<span class="kw-2">*const </span>u8, usize), (<span class="kw-2">*const </span>u8, usize)) {
         <span class="kw">let </span>(len_after_head, len_to_tail) = <span class="self">self</span>.data_slice_lengths();
 
         (
@@ -812,13 +883,16 @@
     <span class="kw">pub fn </span>as_slices(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; (<span class="kw-2">&amp;</span>[u8], <span class="kw-2">&amp;</span>[u8]) {
         <span class="kw">let </span>(s1, s2) = <span class="self">self</span>.data_slice_parts();
         <span class="kw">unsafe </span>{
-            <span class="kw">let </span>s1 = slice::from_raw_parts(s1.<span class="number">0</span>, s1.<span class="number">1</span>);
+            <span class="comment">// SAFETY: relies on the behavior of data_slice_parts for producing initialized memory
+            </span><span class="kw">let </span>s1 = slice::from_raw_parts(s1.<span class="number">0</span>, s1.<span class="number">1</span>);
             <span class="kw">let </span>s2 = slice::from_raw_parts(s2.<span class="number">0</span>, s2.<span class="number">1</span>);
             (s1, s2)
         }
     }
 
-    <span class="kw">fn </span>free_slice_lengths(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; (usize, usize) {
+    <span class="comment">// SAFETY: other code relies on this producing the lengths of free zones
+    // at the beginning/end of the buffer. Everything else must be initialized
+    </span><span class="kw">fn </span>free_slice_lengths(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; (usize, usize) {
         <span class="kw">let </span>len_to_head;
         <span class="kw">let </span>len_after_tail;
 
@@ -833,7 +907,9 @@
         (len_to_head, len_after_tail)
     }
 
-    <span class="kw">fn </span>free_slice_parts(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; ((<span class="kw-2">*mut </span>u8, usize), (<span class="kw-2">*mut </span>u8, usize)) {
+    <span class="comment">// SAFETY: Other code relies on this pointing to the free zones, data after the first and before the second must
+    // be valid
+    </span><span class="kw">fn </span>free_slice_parts(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; ((<span class="kw-2">*mut </span>u8, usize), (<span class="kw-2">*mut </span>u8, usize)) {
         <span class="kw">let </span>(len_to_head, len_after_tail) = <span class="self">self</span>.free_slice_lengths();
 
         (
@@ -854,16 +930,19 @@
         }
 
         <span class="self">self</span>.reserve(len);
-        <span class="kw">unsafe </span>{ <span class="self">self</span>.extend_from_within_unchecked(start, len) }
+
+        <span class="comment">// SAFETY: Requirements checked:
+        // 1. explicitly checked above, resulting in a panic if it does not hold
+        // 2. explicitly reserved enough memory
+        </span><span class="kw">unsafe </span>{ <span class="self">self</span>.extend_from_within_unchecked(start, len) }
     }
 
     <span class="doccomment">/// SAFETY:
-    /// Needs start + len &lt;= self.len()
-    /// And more then len reserved space
+    /// For this to be safe two requirements need to hold:
+    /// 1. start + len &lt;= self.len() so we do not copy uninitialised memory
+    /// 2. More then len reserved space so we do not write out-of-bounds
     </span><span class="attr">#[warn(unsafe_op_in_unsafe_fn)]
     </span><span class="kw">pub unsafe fn </span>extend_from_within_unchecked(<span class="kw-2">&amp;mut </span><span class="self">self</span>, start: usize, len: usize) {
-        <span class="macro">debug_assert!</span>(!<span class="self">self</span>.buf.as_ptr().is_null());
-
         <span class="kw">if </span><span class="self">self</span>.head &lt; <span class="self">self</span>.tail {
             <span class="comment">// continous data slice  |____HDDDDDDDT_____|
             </span><span class="kw">let </span>after_tail = usize::min(len, <span class="self">self</span>.cap - <span class="self">self</span>.tail);
@@ -974,6 +1053,7 @@
         }
 
         <span class="comment">// SAFETY: is we were succesfully able to construct this layout when we allocated then it's also valid do so now
+        // Relies on / establishes invariant 1
         </span><span class="kw">let </span>current_layout = <span class="kw">unsafe </span>{ Layout::array::&lt;u8&gt;(<span class="self">self</span>.cap).unwrap_unchecked() };
 
         <span class="kw">unsafe </span>{

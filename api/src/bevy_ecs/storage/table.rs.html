@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy-3e956806168b8470/b5b6ea3/crates/bevy_ecs/src/storage/table.rs`."><title>table.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_ecs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.0 (aedd173a2 2024-03-17)" data-channel="1.77.0" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_ecs-0.13.1/src/storage/table.rs`."><title>table.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_ecs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.1 (7cf61ebde 2024-03-27)" data-channel="1.77.1" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
             <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
     <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../bevy_ecs/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
@@ -957,6 +957,10 @@
 <a href="#955" id="955">955</a>
 <a href="#956" id="956">956</a>
 <a href="#957" id="957">957</a>
+<a href="#958" id="958">958</a>
+<a href="#959" id="959">959</a>
+<a href="#960" id="960">960</a>
+<a href="#961" id="961">961</a>
 </pre></div><pre class="rust"><code><span class="kw">use crate</span>::{
     component::{ComponentId, ComponentInfo, ComponentTicks, Components, Tick, TickCells},
     entity::Entity,
@@ -994,25 +998,48 @@
 
     <span class="doccomment">/// Creates a new [`TableId`].
     ///
-    /// `index` *must* be retrieved from calling [`TableId::index`] on a `TableId` you got
+    /// `index` *must* be retrieved from calling [`TableId::as_u32`] on a `TableId` you got
     /// from a table of a given [`World`] or the created ID may be invalid.
     ///
     /// [`World`]: crate::world::World
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>new(index: usize) -&gt; <span class="self">Self </span>{
-        TableId(index <span class="kw">as </span>u32)
+    </span><span class="kw">pub const fn </span>from_u32(index: u32) -&gt; <span class="self">Self </span>{
+        <span class="self">Self</span>(index)
+    }
+
+    <span class="doccomment">/// Creates a new [`TableId`].
+    ///
+    /// `index` *must* be retrieved from calling [`TableId::as_usize`] on a `TableId` you got
+    /// from a table of a given [`World`] or the created ID may be invalid.
+    ///
+    /// [`World`]: crate::world::World
+    ///
+    /// # Panics
+    ///
+    /// Will panic if the provided value does not fit within a [`u32`].
+    </span><span class="attr">#[inline]
+    </span><span class="kw">pub const fn </span>from_usize(index: usize) -&gt; <span class="self">Self </span>{
+        <span class="macro">assert!</span>(index <span class="kw">as </span>u32 <span class="kw">as </span>usize == index);
+        <span class="self">Self</span>(index <span class="kw">as </span>u32)
     }
 
     <span class="doccomment">/// Gets the underlying table index from the ID.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>index(<span class="self">self</span>) -&gt; usize {
-        <span class="self">self</span>.<span class="number">0 </span><span class="kw">as </span>usize
+    </span><span class="kw">pub const fn </span>as_u32(<span class="self">self</span>) -&gt; u32 {
+        <span class="self">self</span>.<span class="number">0
+    </span>}
+
+    <span class="doccomment">/// Gets the underlying table index from the ID.
+    </span><span class="attr">#[inline]
+    </span><span class="kw">pub const fn </span>as_usize(<span class="self">self</span>) -&gt; usize {
+        <span class="comment">// usize is at least u32 in Bevy
+        </span><span class="self">self</span>.<span class="number">0 </span><span class="kw">as </span>usize
     }
 
     <span class="doccomment">/// The [`TableId`] of the [`Table`] without any components.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub const fn </span>empty() -&gt; TableId {
-        TableId(<span class="number">0</span>)
+    </span><span class="kw">pub const fn </span>empty() -&gt; <span class="self">Self </span>{
+        <span class="self">Self</span>(<span class="number">0</span>)
     }
 }
 
@@ -1031,7 +1058,6 @@
 /// [`Archetype`]: crate::archetype::Archetype
 /// [`Archetype::entity_table_row`]: crate::archetype::Archetype::entity_table_row
 /// [`Archetype::table_id`]: crate::archetype::Archetype::table_id
-/// [`Entity`]: crate::entity::Entity
 </span><span class="attr">#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 </span><span class="comment">// SAFETY: Must be repr(transparent) due to the safety requirements on EntityLocation
 </span><span class="attr">#[repr(transparent)]
@@ -1042,15 +1068,33 @@
 
     <span class="doccomment">/// Creates a `TableRow`.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub const fn </span>new(index: usize) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">pub const fn </span>from_u32(index: u32) -&gt; <span class="self">Self </span>{
+        <span class="self">Self</span>(index)
+    }
+
+    <span class="doccomment">/// Creates a `TableRow` from a [`usize`] index.
+    ///
+    /// # Panics
+    ///
+    /// Will panic if the provided value does not fit within a [`u32`].
+    </span><span class="attr">#[inline]
+    </span><span class="kw">pub const fn </span>from_usize(index: usize) -&gt; <span class="self">Self </span>{
+        <span class="macro">assert!</span>(index <span class="kw">as </span>u32 <span class="kw">as </span>usize == index);
         <span class="self">Self</span>(index <span class="kw">as </span>u32)
     }
 
-    <span class="doccomment">/// Gets the index of the row.
+    <span class="doccomment">/// Gets the index of the row as a [`usize`].
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub const fn </span>index(<span class="self">self</span>) -&gt; usize {
-        <span class="self">self</span>.<span class="number">0 </span><span class="kw">as </span>usize
+    </span><span class="kw">pub const fn </span>as_usize(<span class="self">self</span>) -&gt; usize {
+        <span class="comment">// usize is at least u32 in Bevy
+        </span><span class="self">self</span>.<span class="number">0 </span><span class="kw">as </span>usize
     }
+
+    <span class="doccomment">/// Gets the index of the row as a [`usize`].
+    </span><span class="attr">#[inline]
+    </span><span class="kw">pub const fn </span>as_u32(<span class="self">self</span>) -&gt; u32 {
+        <span class="self">self</span>.<span class="number">0
+    </span>}
 }
 
 <span class="doccomment">/// A type-erased contiguous container for data of a homogeneous type.
@@ -1099,10 +1143,13 @@
     /// Assumes data has already been allocated for the given row.
     </span><span class="attr">#[inline]
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>initialize(<span class="kw-2">&amp;mut </span><span class="self">self</span>, row: TableRow, data: OwningPtr&lt;<span class="lifetime">'_</span>&gt;, tick: Tick) {
-        <span class="macro">debug_assert!</span>(row.index() &lt; <span class="self">self</span>.len());
-        <span class="self">self</span>.data.initialize_unchecked(row.index(), data);
-        <span class="kw-2">*</span><span class="self">self</span>.added_ticks.get_unchecked_mut(row.index()).get_mut() = tick;
-        <span class="kw-2">*</span><span class="self">self</span>.changed_ticks.get_unchecked_mut(row.index()).get_mut() = tick;
+        <span class="macro">debug_assert!</span>(row.as_usize() &lt; <span class="self">self</span>.len());
+        <span class="self">self</span>.data.initialize_unchecked(row.as_usize(), data);
+        <span class="kw-2">*</span><span class="self">self</span>.added_ticks.get_unchecked_mut(row.as_usize()).get_mut() = tick;
+        <span class="kw-2">*</span><span class="self">self
+            </span>.changed_ticks
+            .get_unchecked_mut(row.as_usize())
+            .get_mut() = tick;
     }
 
     <span class="doccomment">/// Writes component data to the column at given row.
@@ -1112,21 +1159,12 @@
     /// Assumes data has already been allocated for the given row.
     </span><span class="attr">#[inline]
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>replace(<span class="kw-2">&amp;mut </span><span class="self">self</span>, row: TableRow, data: OwningPtr&lt;<span class="lifetime">'_</span>&gt;, change_tick: Tick) {
-        <span class="macro">debug_assert!</span>(row.index() &lt; <span class="self">self</span>.len());
-        <span class="self">self</span>.data.replace_unchecked(row.index(), data);
-        <span class="kw-2">*</span><span class="self">self</span>.changed_ticks.get_unchecked_mut(row.index()).get_mut() = change_tick;
-    }
-
-    <span class="doccomment">/// Writes component data to the column at given row.
-    /// Assumes the slot is initialized, calls drop.
-    /// Does not update the Component's ticks.
-    ///
-    /// # Safety
-    /// Assumes data has already been allocated for the given row.
-    </span><span class="attr">#[inline]
-    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>replace_untracked(<span class="kw-2">&amp;mut </span><span class="self">self</span>, row: TableRow, data: OwningPtr&lt;<span class="lifetime">'_</span>&gt;) {
-        <span class="macro">debug_assert!</span>(row.index() &lt; <span class="self">self</span>.len());
-        <span class="self">self</span>.data.replace_unchecked(row.index(), data);
+        <span class="macro">debug_assert!</span>(row.as_usize() &lt; <span class="self">self</span>.len());
+        <span class="self">self</span>.data.replace_unchecked(row.as_usize(), data);
+        <span class="kw-2">*</span><span class="self">self
+            </span>.changed_ticks
+            .get_unchecked_mut(row.as_usize())
+            .get_mut() = change_tick;
     }
 
     <span class="doccomment">/// Gets the current number of elements stored in the column.
@@ -1151,42 +1189,15 @@
     /// # Safety
     /// `row` must be within the range `[0, self.len())`.
     ///
-    /// [`Drop`]: std::ops::Drop
     </span><span class="attr">#[inline]
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>swap_remove_unchecked(<span class="kw-2">&amp;mut </span><span class="self">self</span>, row: TableRow) {
-        <span class="self">self</span>.data.swap_remove_and_drop_unchecked(row.index());
-        <span class="self">self</span>.added_ticks.swap_remove(row.index());
-        <span class="self">self</span>.changed_ticks.swap_remove(row.index());
+        <span class="self">self</span>.data.swap_remove_and_drop_unchecked(row.as_usize());
+        <span class="self">self</span>.added_ticks.swap_remove(row.as_usize());
+        <span class="self">self</span>.changed_ticks.swap_remove(row.as_usize());
     }
 
     <span class="doccomment">/// Removes an element from the [`Column`] and returns it and its change detection ticks.
-    /// This does not preserve ordering, but is O(1).
-    ///
-    /// The element is replaced with the last element in the [`Column`].
-    ///
-    /// It is the caller's responsibility to ensure that the removed value is dropped or used.
-    /// Failure to do so may result in resources not being released (i.e. files handles not being
-    /// released, memory leaks, etc.)
-    ///
-    /// Returns `None` if `row` is out of bounds.
-    </span><span class="attr">#[inline]
-    #[must_use = <span class="string">"The returned pointer should be used to drop the removed component"</span>]
-    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>swap_remove_and_forget(
-        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        row: TableRow,
-    ) -&gt; <span class="prelude-ty">Option</span>&lt;(OwningPtr&lt;<span class="lifetime">'_</span>&gt;, ComponentTicks)&gt; {
-        (row.index() &lt; <span class="self">self</span>.data.len()).then(|| {
-            <span class="comment">// SAFETY: The row was length checked before this.
-            </span><span class="kw">let </span>data = <span class="kw">unsafe </span>{ <span class="self">self</span>.data.swap_remove_and_forget_unchecked(row.index()) };
-            <span class="kw">let </span>added = <span class="self">self</span>.added_ticks.swap_remove(row.index()).into_inner();
-            <span class="kw">let </span>changed = <span class="self">self</span>.changed_ticks.swap_remove(row.index()).into_inner();
-            (data, ComponentTicks { added, changed })
-        })
-    }
-
-    <span class="doccomment">/// Removes an element from the [`Column`] and returns it and its change detection ticks.
-    /// This does not preserve ordering, but is O(1). Unlike [`Column::swap_remove_and_forget`]
-    /// this does not do any bounds checking.
+    /// This does not preserve ordering, but is O(1) and does not do any bounds checking.
     ///
     /// The element is replaced with the last element in the [`Column`].
     ///
@@ -1202,9 +1213,9 @@
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         row: TableRow,
     ) -&gt; (OwningPtr&lt;<span class="lifetime">'_</span>&gt;, ComponentTicks) {
-        <span class="kw">let </span>data = <span class="self">self</span>.data.swap_remove_and_forget_unchecked(row.index());
-        <span class="kw">let </span>added = <span class="self">self</span>.added_ticks.swap_remove(row.index()).into_inner();
-        <span class="kw">let </span>changed = <span class="self">self</span>.changed_ticks.swap_remove(row.index()).into_inner();
+        <span class="kw">let </span>data = <span class="self">self</span>.data.swap_remove_and_forget_unchecked(row.as_usize());
+        <span class="kw">let </span>added = <span class="self">self</span>.added_ticks.swap_remove(row.as_usize()).into_inner();
+        <span class="kw">let </span>changed = <span class="self">self</span>.changed_ticks.swap_remove(row.as_usize()).into_inner();
         (data, ComponentTicks { added, changed })
     }
 
@@ -1227,12 +1238,12 @@
         dst_row: TableRow,
     ) {
         <span class="macro">debug_assert!</span>(<span class="self">self</span>.data.layout() == other.data.layout());
-        <span class="kw">let </span>ptr = <span class="self">self</span>.data.get_unchecked_mut(dst_row.index());
-        other.data.swap_remove_unchecked(src_row.index(), ptr);
-        <span class="kw-2">*</span><span class="self">self</span>.added_ticks.get_unchecked_mut(dst_row.index()) =
-            other.added_ticks.swap_remove(src_row.index());
-        <span class="kw-2">*</span><span class="self">self</span>.changed_ticks.get_unchecked_mut(dst_row.index()) =
-            other.changed_ticks.swap_remove(src_row.index());
+        <span class="kw">let </span>ptr = <span class="self">self</span>.data.get_unchecked_mut(dst_row.as_usize());
+        other.data.swap_remove_unchecked(src_row.as_usize(), ptr);
+        <span class="kw-2">*</span><span class="self">self</span>.added_ticks.get_unchecked_mut(dst_row.as_usize()) =
+            other.added_ticks.swap_remove(src_row.as_usize());
+        <span class="kw-2">*</span><span class="self">self</span>.changed_ticks.get_unchecked_mut(dst_row.as_usize()) =
+            other.changed_ticks.swap_remove(src_row.as_usize());
     }
 
     <span class="doccomment">/// Pushes a new value onto the end of the [`Column`].
@@ -1270,8 +1281,6 @@
     ///
     /// # Safety
     /// The type `T` must be the type of the items in this column.
-    ///
-    /// [`UnsafeCell`]: std::cell::UnsafeCell
     </span><span class="kw">pub unsafe fn </span>get_data_slice&lt;T&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[UnsafeCell&lt;T&gt;] {
         <span class="self">self</span>.data.get_slice()
     }
@@ -1281,8 +1290,6 @@
     /// Note: The values stored within are [`UnsafeCell`].
     /// Users of this API must ensure that accesses to each individual element
     /// adhere to the safety invariants of [`UnsafeCell`].
-    ///
-    /// [`UnsafeCell`]: std::cell::UnsafeCell
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>get_added_ticks_slice(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[UnsafeCell&lt;Tick&gt;] {
         <span class="kw-2">&amp;</span><span class="self">self</span>.added_ticks
@@ -1293,8 +1300,6 @@
     /// Note: The values stored within are [`UnsafeCell`].
     /// Users of this API must ensure that accesses to each individual element
     /// adhere to the safety invariants of [`UnsafeCell`].
-    ///
-    /// [`UnsafeCell`]: std::cell::UnsafeCell
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>get_changed_ticks_slice(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[UnsafeCell&lt;Tick&gt;] {
         <span class="kw-2">&amp;</span><span class="self">self</span>.changed_ticks
@@ -1305,15 +1310,15 @@
     /// Returns `None` if `row` is out of bounds.
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>get(<span class="kw-2">&amp;</span><span class="self">self</span>, row: TableRow) -&gt; <span class="prelude-ty">Option</span>&lt;(Ptr&lt;<span class="lifetime">'_</span>&gt;, TickCells&lt;<span class="lifetime">'_</span>&gt;)&gt; {
-        (row.index() &lt; <span class="self">self</span>.data.len())
+        (row.as_usize() &lt; <span class="self">self</span>.data.len())
             <span class="comment">// SAFETY: The row is length checked before fetching the pointer. This is being
             // accessed through a read-only reference to the column.
             </span>.then(|| <span class="kw">unsafe </span>{
                 (
-                    <span class="self">self</span>.data.get_unchecked(row.index()),
+                    <span class="self">self</span>.data.get_unchecked(row.as_usize()),
                     TickCells {
-                        added: <span class="self">self</span>.added_ticks.get_unchecked(row.index()),
-                        changed: <span class="self">self</span>.changed_ticks.get_unchecked(row.index()),
+                        added: <span class="self">self</span>.added_ticks.get_unchecked(row.as_usize()),
+                        changed: <span class="self">self</span>.changed_ticks.get_unchecked(row.as_usize()),
                     },
                 )
             })
@@ -1324,9 +1329,11 @@
     /// Returns `None` if `row` is out of bounds.
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>get_data(<span class="kw-2">&amp;</span><span class="self">self</span>, row: TableRow) -&gt; <span class="prelude-ty">Option</span>&lt;Ptr&lt;<span class="lifetime">'_</span>&gt;&gt; {
-        <span class="comment">// SAFETY: The row is length checked before fetching the pointer. This is being
-        // accessed through a read-only reference to the column.
-        </span>(row.index() &lt; <span class="self">self</span>.data.len()).then(|| <span class="kw">unsafe </span>{ <span class="self">self</span>.data.get_unchecked(row.index()) })
+        (row.as_usize() &lt; <span class="self">self</span>.data.len()).then(|| {
+            <span class="comment">// SAFETY: The row is length checked before fetching the pointer. This is being
+            // accessed through a read-only reference to the column.
+            </span><span class="kw">unsafe </span>{ <span class="self">self</span>.data.get_unchecked(row.as_usize()) }
+        })
     }
 
     <span class="doccomment">/// Fetches a read-only reference to the data at `row`. Unlike [`Column::get`] this does not
@@ -1337,8 +1344,8 @@
     /// - no other mutable reference to the data of the same row can exist at the same time
     </span><span class="attr">#[inline]
     </span><span class="kw">pub unsafe fn </span>get_data_unchecked(<span class="kw-2">&amp;</span><span class="self">self</span>, row: TableRow) -&gt; Ptr&lt;<span class="lifetime">'_</span>&gt; {
-        <span class="macro">debug_assert!</span>(row.index() &lt; <span class="self">self</span>.data.len());
-        <span class="self">self</span>.data.get_unchecked(row.index())
+        <span class="macro">debug_assert!</span>(row.as_usize() &lt; <span class="self">self</span>.data.len());
+        <span class="self">self</span>.data.get_unchecked(row.as_usize())
     }
 
     <span class="doccomment">/// Fetches a mutable reference to the data at `row`.
@@ -1346,9 +1353,11 @@
     /// Returns `None` if `row` is out of bounds.
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>get_data_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>, row: TableRow) -&gt; <span class="prelude-ty">Option</span>&lt;PtrMut&lt;<span class="lifetime">'_</span>&gt;&gt; {
-        <span class="comment">// SAFETY: The row is length checked before fetching the pointer. This is being
-        // accessed through an exclusive reference to the column.
-        </span>(row.index() &lt; <span class="self">self</span>.data.len()).then(|| <span class="kw">unsafe </span>{ <span class="self">self</span>.data.get_unchecked_mut(row.index()) })
+        (row.as_usize() &lt; <span class="self">self</span>.data.len()).then(|| {
+            <span class="comment">// SAFETY: The row is length checked before fetching the pointer. This is being
+            // accessed through an exclusive reference to the column.
+            </span><span class="kw">unsafe </span>{ <span class="self">self</span>.data.get_unchecked_mut(row.as_usize()) }
+        })
     }
 
     <span class="doccomment">/// Fetches a mutable reference to the data at `row`. Unlike [`Column::get_data_mut`] this does not
@@ -1359,8 +1368,8 @@
     /// - no other reference to the data of the same row can exist at the same time
     </span><span class="attr">#[inline]
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>get_data_unchecked_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>, row: TableRow) -&gt; PtrMut&lt;<span class="lifetime">'_</span>&gt; {
-        <span class="macro">debug_assert!</span>(row.index() &lt; <span class="self">self</span>.data.len());
-        <span class="self">self</span>.data.get_unchecked_mut(row.index())
+        <span class="macro">debug_assert!</span>(row.as_usize() &lt; <span class="self">self</span>.data.len());
+        <span class="self">self</span>.data.get_unchecked_mut(row.as_usize())
     }
 
     <span class="doccomment">/// Fetches the "added" change detection tick for the value at `row`.
@@ -1370,11 +1379,9 @@
     /// Note: The values stored within are [`UnsafeCell`].
     /// Users of this API must ensure that accesses to each individual element
     /// adhere to the safety invariants of [`UnsafeCell`].
-    ///
-    /// [`UnsafeCell`]: std::cell::UnsafeCell
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>get_added_tick(<span class="kw-2">&amp;</span><span class="self">self</span>, row: TableRow) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>UnsafeCell&lt;Tick&gt;&gt; {
-        <span class="self">self</span>.added_ticks.get(row.index())
+        <span class="self">self</span>.added_ticks.get(row.as_usize())
     }
 
     <span class="doccomment">/// Fetches the "changed" change detection tick for the value at `row`.
@@ -1384,11 +1391,9 @@
     /// Note: The values stored within are [`UnsafeCell`].
     /// Users of this API must ensure that accesses to each individual element
     /// adhere to the safety invariants of [`UnsafeCell`].
-    ///
-    /// [`UnsafeCell`]: std::cell::UnsafeCell
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>get_changed_tick(<span class="kw-2">&amp;</span><span class="self">self</span>, row: TableRow) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>UnsafeCell&lt;Tick&gt;&gt; {
-        <span class="self">self</span>.changed_ticks.get(row.index())
+        <span class="self">self</span>.changed_ticks.get(row.as_usize())
     }
 
     <span class="doccomment">/// Fetches the change detection ticks for the value at `row`.
@@ -1396,7 +1401,7 @@
     /// Returns `None` if `row` is out of bounds.
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>get_ticks(<span class="kw-2">&amp;</span><span class="self">self</span>, row: TableRow) -&gt; <span class="prelude-ty">Option</span>&lt;ComponentTicks&gt; {
-        <span class="kw">if </span>row.index() &lt; <span class="self">self</span>.data.len() {
+        <span class="kw">if </span>row.as_usize() &lt; <span class="self">self</span>.data.len() {
             <span class="comment">// SAFETY: The size of the column has already been checked.
             </span><span class="prelude-val">Some</span>(<span class="kw">unsafe </span>{ <span class="self">self</span>.get_ticks_unchecked(row) })
         } <span class="kw">else </span>{
@@ -1411,8 +1416,8 @@
     /// `row` must be within the range `[0, self.len())`.
     </span><span class="attr">#[inline]
     </span><span class="kw">pub unsafe fn </span>get_added_tick_unchecked(<span class="kw-2">&amp;</span><span class="self">self</span>, row: TableRow) -&gt; <span class="kw-2">&amp;</span>UnsafeCell&lt;Tick&gt; {
-        <span class="macro">debug_assert!</span>(row.index() &lt; <span class="self">self</span>.added_ticks.len());
-        <span class="self">self</span>.added_ticks.get_unchecked(row.index())
+        <span class="macro">debug_assert!</span>(row.as_usize() &lt; <span class="self">self</span>.added_ticks.len());
+        <span class="self">self</span>.added_ticks.get_unchecked(row.as_usize())
     }
 
     <span class="doccomment">/// Fetches the "changed" change detection tick for the value at `row`. Unlike [`Column::get_changed_tick`]
@@ -1422,8 +1427,8 @@
     /// `row` must be within the range `[0, self.len())`.
     </span><span class="attr">#[inline]
     </span><span class="kw">pub unsafe fn </span>get_changed_tick_unchecked(<span class="kw-2">&amp;</span><span class="self">self</span>, row: TableRow) -&gt; <span class="kw-2">&amp;</span>UnsafeCell&lt;Tick&gt; {
-        <span class="macro">debug_assert!</span>(row.index() &lt; <span class="self">self</span>.changed_ticks.len());
-        <span class="self">self</span>.changed_ticks.get_unchecked(row.index())
+        <span class="macro">debug_assert!</span>(row.as_usize() &lt; <span class="self">self</span>.changed_ticks.len());
+        <span class="self">self</span>.changed_ticks.get_unchecked(row.as_usize())
     }
 
     <span class="doccomment">/// Fetches the change detection ticks for the value at `row`. Unlike [`Column::get_ticks`]
@@ -1433,11 +1438,11 @@
     /// `row` must be within the range `[0, self.len())`.
     </span><span class="attr">#[inline]
     </span><span class="kw">pub unsafe fn </span>get_ticks_unchecked(<span class="kw-2">&amp;</span><span class="self">self</span>, row: TableRow) -&gt; ComponentTicks {
-        <span class="macro">debug_assert!</span>(row.index() &lt; <span class="self">self</span>.added_ticks.len());
-        <span class="macro">debug_assert!</span>(row.index() &lt; <span class="self">self</span>.changed_ticks.len());
+        <span class="macro">debug_assert!</span>(row.as_usize() &lt; <span class="self">self</span>.added_ticks.len());
+        <span class="macro">debug_assert!</span>(row.as_usize() &lt; <span class="self">self</span>.changed_ticks.len());
         ComponentTicks {
-            added: <span class="self">self</span>.added_ticks.get_unchecked(row.index()).read(),
-            changed: <span class="self">self</span>.changed_ticks.get_unchecked(row.index()).read(),
+            added: <span class="self">self</span>.added_ticks.get_unchecked(row.as_usize()).read(),
+            changed: <span class="self">self</span>.changed_ticks.get_unchecked(row.as_usize()).read(),
         }
     }
 
@@ -1536,12 +1541,12 @@
         <span class="kw">for </span>column <span class="kw">in </span><span class="self">self</span>.columns.values_mut() {
             column.swap_remove_unchecked(row);
         }
-        <span class="kw">let </span>is_last = row.index() == <span class="self">self</span>.entities.len() - <span class="number">1</span>;
-        <span class="self">self</span>.entities.swap_remove(row.index());
+        <span class="kw">let </span>is_last = row.as_usize() == <span class="self">self</span>.entities.len() - <span class="number">1</span>;
+        <span class="self">self</span>.entities.swap_remove(row.as_usize());
         <span class="kw">if </span>is_last {
             <span class="prelude-val">None
         </span>} <span class="kw">else </span>{
-            <span class="prelude-val">Some</span>(<span class="self">self</span>.entities[row.index()])
+            <span class="prelude-val">Some</span>(<span class="self">self</span>.entities[row.as_usize()])
         }
     }
 
@@ -1558,9 +1563,9 @@
         row: TableRow,
         new_table: <span class="kw-2">&amp;mut </span>Table,
     ) -&gt; TableMoveResult {
-        <span class="macro">debug_assert!</span>(row.index() &lt; <span class="self">self</span>.entity_count());
-        <span class="kw">let </span>is_last = row.index() == <span class="self">self</span>.entities.len() - <span class="number">1</span>;
-        <span class="kw">let </span>new_row = new_table.allocate(<span class="self">self</span>.entities.swap_remove(row.index()));
+        <span class="macro">debug_assert!</span>(row.as_usize() &lt; <span class="self">self</span>.entity_count());
+        <span class="kw">let </span>is_last = row.as_usize() == <span class="self">self</span>.entities.len() - <span class="number">1</span>;
+        <span class="kw">let </span>new_row = new_table.allocate(<span class="self">self</span>.entities.swap_remove(row.as_usize()));
         <span class="kw">for </span>(component_id, column) <span class="kw">in </span><span class="self">self</span>.columns.iter_mut() {
             <span class="kw">if let </span><span class="prelude-val">Some</span>(new_column) = new_table.get_column_mut(<span class="kw-2">*</span>component_id) {
                 new_column.initialize_from_unchecked(column, row, new_row);
@@ -1574,7 +1579,7 @@
             swapped_entity: <span class="kw">if </span>is_last {
                 <span class="prelude-val">None
             </span>} <span class="kw">else </span>{
-                <span class="prelude-val">Some</span>(<span class="self">self</span>.entities[row.index()])
+                <span class="prelude-val">Some</span>(<span class="self">self</span>.entities[row.as_usize()])
             },
         }
     }
@@ -1590,9 +1595,9 @@
         row: TableRow,
         new_table: <span class="kw-2">&amp;mut </span>Table,
     ) -&gt; TableMoveResult {
-        <span class="macro">debug_assert!</span>(row.index() &lt; <span class="self">self</span>.entity_count());
-        <span class="kw">let </span>is_last = row.index() == <span class="self">self</span>.entities.len() - <span class="number">1</span>;
-        <span class="kw">let </span>new_row = new_table.allocate(<span class="self">self</span>.entities.swap_remove(row.index()));
+        <span class="macro">debug_assert!</span>(row.as_usize() &lt; <span class="self">self</span>.entity_count());
+        <span class="kw">let </span>is_last = row.as_usize() == <span class="self">self</span>.entities.len() - <span class="number">1</span>;
+        <span class="kw">let </span>new_row = new_table.allocate(<span class="self">self</span>.entities.swap_remove(row.as_usize()));
         <span class="kw">for </span>(component_id, column) <span class="kw">in </span><span class="self">self</span>.columns.iter_mut() {
             <span class="kw">if let </span><span class="prelude-val">Some</span>(new_column) = new_table.get_column_mut(<span class="kw-2">*</span>component_id) {
                 new_column.initialize_from_unchecked(column, row, new_row);
@@ -1605,7 +1610,7 @@
             swapped_entity: <span class="kw">if </span>is_last {
                 <span class="prelude-val">None
             </span>} <span class="kw">else </span>{
-                <span class="prelude-val">Some</span>(<span class="self">self</span>.entities[row.index()])
+                <span class="prelude-val">Some</span>(<span class="self">self</span>.entities[row.as_usize()])
             },
         }
     }
@@ -1621,9 +1626,9 @@
         row: TableRow,
         new_table: <span class="kw-2">&amp;mut </span>Table,
     ) -&gt; TableMoveResult {
-        <span class="macro">debug_assert!</span>(row.index() &lt; <span class="self">self</span>.entity_count());
-        <span class="kw">let </span>is_last = row.index() == <span class="self">self</span>.entities.len() - <span class="number">1</span>;
-        <span class="kw">let </span>new_row = new_table.allocate(<span class="self">self</span>.entities.swap_remove(row.index()));
+        <span class="macro">debug_assert!</span>(row.as_usize() &lt; <span class="self">self</span>.entity_count());
+        <span class="kw">let </span>is_last = row.as_usize() == <span class="self">self</span>.entities.len() - <span class="number">1</span>;
+        <span class="kw">let </span>new_row = new_table.allocate(<span class="self">self</span>.entities.swap_remove(row.as_usize()));
         <span class="kw">for </span>(component_id, column) <span class="kw">in </span><span class="self">self</span>.columns.iter_mut() {
             new_table
                 .get_column_mut(<span class="kw-2">*</span>component_id)
@@ -1635,7 +1640,7 @@
             swapped_entity: <span class="kw">if </span>is_last {
                 <span class="prelude-val">None
             </span>} <span class="kw">else </span>{
-                <span class="prelude-val">Some</span>(<span class="self">self</span>.entities[row.index()])
+                <span class="prelude-val">Some</span>(<span class="self">self</span>.entities[row.as_usize()])
             },
         }
     }
@@ -1699,7 +1704,7 @@
             column.added_ticks.push(UnsafeCell::new(Tick::new(<span class="number">0</span>)));
             column.changed_ticks.push(UnsafeCell::new(Tick::new(<span class="number">0</span>)));
         }
-        TableRow::new(index)
+        TableRow::from_usize(index)
     }
 
     <span class="doccomment">/// Gets the number of entities currently being stored in the table.
@@ -1790,7 +1795,7 @@
     /// Returns `None` if `id` is invalid.
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>get(<span class="kw-2">&amp;</span><span class="self">self</span>, id: TableId) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Table&gt; {
-        <span class="self">self</span>.tables.get(id.index())
+        <span class="self">self</span>.tables.get(id.as_usize())
     }
 
     <span class="doccomment">/// Fetches mutable references to two different [`Table`]s.
@@ -1800,12 +1805,12 @@
     /// Panics if `a` and `b` are equal.
     </span><span class="attr">#[inline]
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>get_2_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>, a: TableId, b: TableId) -&gt; (<span class="kw-2">&amp;mut </span>Table, <span class="kw-2">&amp;mut </span>Table) {
-        <span class="kw">if </span>a.index() &gt; b.index() {
-            <span class="kw">let </span>(b_slice, a_slice) = <span class="self">self</span>.tables.split_at_mut(a.index());
-            (<span class="kw-2">&amp;mut </span>a_slice[<span class="number">0</span>], <span class="kw-2">&amp;mut </span>b_slice[b.index()])
+        <span class="kw">if </span>a.as_usize() &gt; b.as_usize() {
+            <span class="kw">let </span>(b_slice, a_slice) = <span class="self">self</span>.tables.split_at_mut(a.as_usize());
+            (<span class="kw-2">&amp;mut </span>a_slice[<span class="number">0</span>], <span class="kw-2">&amp;mut </span>b_slice[b.as_usize()])
         } <span class="kw">else </span>{
-            <span class="kw">let </span>(a_slice, b_slice) = <span class="self">self</span>.tables.split_at_mut(b.index());
-            (<span class="kw-2">&amp;mut </span>a_slice[a.index()], <span class="kw-2">&amp;mut </span>b_slice[<span class="number">0</span>])
+            <span class="kw">let </span>(a_slice, b_slice) = <span class="self">self</span>.tables.split_at_mut(b.as_usize());
+            (<span class="kw-2">&amp;mut </span>a_slice[a.as_usize()], <span class="kw-2">&amp;mut </span>b_slice[<span class="number">0</span>])
         }
     }
 
@@ -1830,7 +1835,10 @@
                     table = table.add_column(components.get_info_unchecked(<span class="kw-2">*</span>component_id));
                 }
                 tables.push(table.build());
-                (component_ids.to_vec(), TableId::new(tables.len() - <span class="number">1</span>))
+                (
+                    component_ids.to_vec(),
+                    TableId::from_usize(tables.len() - <span class="number">1</span>),
+                )
             });
 
         <span class="kw-2">*</span>value
@@ -1860,14 +1868,14 @@
 
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>index(<span class="kw-2">&amp;</span><span class="self">self</span>, index: TableId) -&gt; <span class="kw-2">&amp;</span><span class="self">Self</span>::Output {
-        <span class="kw-2">&amp;</span><span class="self">self</span>.tables[index.index()]
+        <span class="kw-2">&amp;</span><span class="self">self</span>.tables[index.as_usize()]
     }
 }
 
 <span class="kw">impl </span>IndexMut&lt;TableId&gt; <span class="kw">for </span>Tables {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>index_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>, index: TableId) -&gt; <span class="kw-2">&amp;mut </span><span class="self">Self</span>::Output {
-        <span class="kw-2">&amp;mut </span><span class="self">self</span>.tables[index.index()]
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>.tables[index.as_usize()]
     }
 }
 

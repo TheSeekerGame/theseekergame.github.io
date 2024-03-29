@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ruzstd-0.4.0/src/decoding/decodebuffer.rs`."><title>decodebuffer.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="ruzstd" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.0 (aedd173a2 2024-03-17)" data-channel="1.77.0" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ruzstd-0.5.0/src/decoding/decodebuffer.rs`."><title>decodebuffer.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="ruzstd" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.1 (7cf61ebde 2024-03-27)" data-channel="1.77.1" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
             <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
     <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../ruzstd/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
@@ -428,6 +428,24 @@
 <a href="#426" id="426">426</a>
 <a href="#427" id="427">427</a>
 <a href="#428" id="428">428</a>
+<a href="#429" id="429">429</a>
+<a href="#430" id="430">430</a>
+<a href="#431" id="431">431</a>
+<a href="#432" id="432">432</a>
+<a href="#433" id="433">433</a>
+<a href="#434" id="434">434</a>
+<a href="#435" id="435">435</a>
+<a href="#436" id="436">436</a>
+<a href="#437" id="437">437</a>
+<a href="#438" id="438">438</a>
+<a href="#439" id="439">439</a>
+<a href="#440" id="440">440</a>
+<a href="#441" id="441">441</a>
+<a href="#442" id="442">442</a>
+<a href="#443" id="443">443</a>
+<a href="#444" id="444">444</a>
+<a href="#445" id="445">445</a>
+<a href="#446" id="446">446</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::io::{Error, Read, Write};
 <span class="kw">use </span>alloc::vec::Vec;
 <span class="kw">use </span>core::hash::Hasher;
@@ -445,12 +463,13 @@
     <span class="kw">pub </span>hash: XxHash64,
 }
 
-<span class="attr">#[derive(Debug, thiserror::Error)]
+<span class="attr">#[derive(Debug, derive_more::Display)]
+#[cfg_attr(feature = <span class="string">"std"</span>, derive(derive_more::Error))]
 #[non_exhaustive]
 </span><span class="kw">pub enum </span>DecodebufferError {
-    <span class="attr">#[error(<span class="string">"Need {need} bytes from the dictionary but it is only {got} bytes long"</span>)]
+    <span class="attr">#[display(fmt = <span class="string">"Need {need} bytes from the dictionary but it is only {got} bytes long"</span>)]
     </span>NotEnoughBytesInDictionary { got: usize, need: usize },
-    <span class="attr">#[error(<span class="string">"offset: {offset} bigger than buffer: {buf_len}"</span>)]
+    <span class="attr">#[display(fmt = <span class="string">"offset: {offset} bigger than buffer: {buf_len}"</span>)]
     </span>OffsetTooBig { offset: usize, buf_len: usize },
 }
 
@@ -550,8 +569,18 @@
                 </span><span class="kw">while </span>copied_counter_left &gt; <span class="number">0 </span>{
                     <span class="kw">let </span>chunksize = usize::min(offset, copied_counter_left);
 
-                    <span class="comment">// SAFETY:
-                    // we know that start_idx &lt;= buf_len and start_idx + offset == buf_len and we reserverd match_length space
+                    <span class="comment">// SAFETY: Requirements checked:
+                    // 1. start_idx + chunksize must be &lt;= self.buffer.len()
+                    //      We know that:
+                    //      1. start_idx starts at buffer.len() - offset
+                    //      2. chunksize &lt;= offset (== offset for each iteration but the last, and match_length modulo offset in the last iteration)
+                    //      3. the buffer grows by offset many bytes each iteration but the last
+                    //      4. start_idx is increased by the same amount as the buffer grows each iteration
+                    //
+                    //      Thus follows: start_idx + chunksize == self.buffer.len() in each iteration but the last, where match_length modulo offset == chunksize &lt; offset
+                    //          Meaning: start_idx + chunksize &lt;= self.buffer.len()
+                    //
+                    // 2. explicitly reserved enough memory for the whole match_length
                     </span><span class="kw">unsafe </span>{
                         <span class="self">self</span>.buffer
                             .extend_from_within_unchecked(start_idx, chunksize)
@@ -561,8 +590,15 @@
                 }
             } <span class="kw">else </span>{
                 <span class="comment">// can just copy parts of the existing buffer
-                // SAFETY:
-                // we know that start_idx and end_idx &lt;= buf_len and we reserverd match_length space
+                // SAFETY: Requirements checked:
+                // 1. start_idx + match_length must be &lt;= self.buffer.len()
+                //      We know that:
+                //      1. start_idx = self.buffer.len() - offset
+                //      2. end_idx = start_idx + match_length
+                //      3. end_idx &lt;= self.buffer.len()
+                //      Thus follows: start_idx + match_length &lt;= self.buffer.len()
+                //
+                // 2. explicitly reserved enough memory for the whole match_length
                 </span><span class="kw">unsafe </span>{
                     <span class="self">self</span>.buffer
                         .extend_from_within_unchecked(start_idx, match_length)

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/winit-0.28.7/src/platform_impl/linux/x11/dnd.rs`."><title>dnd.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../../../" data-static-root-path="../../../../../static.files/" data-current-crate="winit" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.0 (aedd173a2 2024-03-17)" data-channel="1.77.0" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../../../src-files.js"></script><script defer src="../../../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/winit-0.29.15/src/platform_impl/linux/x11/dnd.rs`."><title>dnd.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../../../" data-static-root-path="../../../../../static.files/" data-current-crate="winit" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.1 (7cf61ebde 2024-03-27)" data-channel="1.77.1" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../../../src-files.js"></script><script defer src="../../../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
             <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
     <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../../../winit/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
@@ -184,38 +184,6 @@
 <a href="#182" id="182">182</a>
 <a href="#183" id="183">183</a>
 <a href="#184" id="184">184</a>
-<a href="#185" id="185">185</a>
-<a href="#186" id="186">186</a>
-<a href="#187" id="187">187</a>
-<a href="#188" id="188">188</a>
-<a href="#189" id="189">189</a>
-<a href="#190" id="190">190</a>
-<a href="#191" id="191">191</a>
-<a href="#192" id="192">192</a>
-<a href="#193" id="193">193</a>
-<a href="#194" id="194">194</a>
-<a href="#195" id="195">195</a>
-<a href="#196" id="196">196</a>
-<a href="#197" id="197">197</a>
-<a href="#198" id="198">198</a>
-<a href="#199" id="199">199</a>
-<a href="#200" id="200">200</a>
-<a href="#201" id="201">201</a>
-<a href="#202" id="202">202</a>
-<a href="#203" id="203">203</a>
-<a href="#204" id="204">204</a>
-<a href="#205" id="205">205</a>
-<a href="#206" id="206">206</a>
-<a href="#207" id="207">207</a>
-<a href="#208" id="208">208</a>
-<a href="#209" id="209">209</a>
-<a href="#210" id="210">210</a>
-<a href="#211" id="211">211</a>
-<a href="#212" id="212">212</a>
-<a href="#213" id="213">213</a>
-<a href="#214" id="214">214</a>
-<a href="#215" id="215">215</a>
-<a href="#216" id="216">216</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{
     io,
     os::raw::<span class="kw-2">*</span>,
@@ -225,55 +193,12 @@
 };
 
 <span class="kw">use </span>percent_encoding::percent_decode;
+<span class="kw">use </span>x11rb::protocol::xproto::{<span class="self">self</span>, ConnectionExt};
 
-<span class="kw">use super</span>::{ffi, util, XConnection, XError};
-
-<span class="attr">#[derive(Debug)]
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>DndAtoms {
-    <span class="kw">pub </span>enter: ffi::Atom,
-    <span class="kw">pub </span>leave: ffi::Atom,
-    <span class="kw">pub </span>drop: ffi::Atom,
-    <span class="kw">pub </span>position: ffi::Atom,
-    <span class="kw">pub </span>status: ffi::Atom,
-    <span class="kw">pub </span>action_private: ffi::Atom,
-    <span class="kw">pub </span>selection: ffi::Atom,
-    <span class="kw">pub </span>finished: ffi::Atom,
-    <span class="kw">pub </span>type_list: ffi::Atom,
-    <span class="kw">pub </span>uri_list: ffi::Atom,
-    <span class="kw">pub </span>none: ffi::Atom,
-}
-
-<span class="kw">impl </span>DndAtoms {
-    <span class="kw">pub fn </span>new(xconn: <span class="kw-2">&amp;</span>Arc&lt;XConnection&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, XError&gt; {
-        <span class="kw">let </span>names = [
-            <span class="string">b"XdndEnter\0"</span>.as_ptr() <span class="kw">as </span><span class="kw-2">*mut </span>c_char,
-            <span class="string">b"XdndLeave\0"</span>.as_ptr() <span class="kw">as </span><span class="kw-2">*mut </span>c_char,
-            <span class="string">b"XdndDrop\0"</span>.as_ptr() <span class="kw">as </span><span class="kw-2">*mut </span>c_char,
-            <span class="string">b"XdndPosition\0"</span>.as_ptr() <span class="kw">as </span><span class="kw-2">*mut </span>c_char,
-            <span class="string">b"XdndStatus\0"</span>.as_ptr() <span class="kw">as </span><span class="kw-2">*mut </span>c_char,
-            <span class="string">b"XdndActionPrivate\0"</span>.as_ptr() <span class="kw">as </span><span class="kw-2">*mut </span>c_char,
-            <span class="string">b"XdndSelection\0"</span>.as_ptr() <span class="kw">as </span><span class="kw-2">*mut </span>c_char,
-            <span class="string">b"XdndFinished\0"</span>.as_ptr() <span class="kw">as </span><span class="kw-2">*mut </span>c_char,
-            <span class="string">b"XdndTypeList\0"</span>.as_ptr() <span class="kw">as </span><span class="kw-2">*mut </span>c_char,
-            <span class="string">b"text/uri-list\0"</span>.as_ptr() <span class="kw">as </span><span class="kw-2">*mut </span>c_char,
-            <span class="string">b"None\0"</span>.as_ptr() <span class="kw">as </span><span class="kw-2">*mut </span>c_char,
-        ];
-        <span class="kw">let </span>atoms = <span class="kw">unsafe </span>{ xconn.get_atoms(<span class="kw-2">&amp;</span>names) }<span class="question-mark">?</span>;
-        <span class="prelude-val">Ok</span>(DndAtoms {
-            enter: atoms[<span class="number">0</span>],
-            leave: atoms[<span class="number">1</span>],
-            drop: atoms[<span class="number">2</span>],
-            position: atoms[<span class="number">3</span>],
-            status: atoms[<span class="number">4</span>],
-            action_private: atoms[<span class="number">5</span>],
-            selection: atoms[<span class="number">6</span>],
-            finished: atoms[<span class="number">7</span>],
-            type_list: atoms[<span class="number">8</span>],
-            uri_list: atoms[<span class="number">9</span>],
-            none: atoms[<span class="number">10</span>],
-        })
-    }
-}
+<span class="kw">use super</span>::{
+    atoms::{AtomName::None <span class="kw">as </span>DndNone, <span class="kw-2">*</span>},
+    util, CookieResultExt, X11Error, XConnection,
+};
 
 <span class="attr">#[derive(Debug, Clone, Copy)]
 </span><span class="kw">pub enum </span>DndState {
@@ -302,24 +227,21 @@
     }
 }
 
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>Dnd {
+<span class="kw">pub struct </span>Dnd {
     xconn: Arc&lt;XConnection&gt;,
-    <span class="kw">pub </span>atoms: DndAtoms,
     <span class="comment">// Populated by XdndEnter event handler
     </span><span class="kw">pub </span>version: <span class="prelude-ty">Option</span>&lt;c_long&gt;,
-    <span class="kw">pub </span>type_list: <span class="prelude-ty">Option</span>&lt;Vec&lt;c_ulong&gt;&gt;,
+    <span class="kw">pub </span>type_list: <span class="prelude-ty">Option</span>&lt;Vec&lt;xproto::Atom&gt;&gt;,
     <span class="comment">// Populated by XdndPosition event handler
-    </span><span class="kw">pub </span>source_window: <span class="prelude-ty">Option</span>&lt;c_ulong&gt;,
+    </span><span class="kw">pub </span>source_window: <span class="prelude-ty">Option</span>&lt;xproto::Window&gt;,
     <span class="comment">// Populated by SelectionNotify event handler (triggered by XdndPosition event handler)
     </span><span class="kw">pub </span>result: <span class="prelude-ty">Option</span>&lt;<span class="prelude-ty">Result</span>&lt;Vec&lt;PathBuf&gt;, DndDataParseError&gt;&gt;,
 }
 
 <span class="kw">impl </span>Dnd {
-    <span class="kw">pub fn </span>new(xconn: Arc&lt;XConnection&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, XError&gt; {
-        <span class="kw">let </span>atoms = DndAtoms::new(<span class="kw-2">&amp;</span>xconn)<span class="question-mark">?</span>;
+    <span class="kw">pub fn </span>new(xconn: Arc&lt;XConnection&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, X11Error&gt; {
         <span class="prelude-val">Ok</span>(Dnd {
             xconn,
-            atoms,
             version: <span class="prelude-val">None</span>,
             type_list: <span class="prelude-val">None</span>,
             source_window: <span class="prelude-val">None</span>,
@@ -336,71 +258,85 @@
 
     <span class="kw">pub unsafe fn </span>send_status(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        this_window: c_ulong,
-        target_window: c_ulong,
+        this_window: xproto::Window,
+        target_window: xproto::Window,
         state: DndState,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;(), XError&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;(), X11Error&gt; {
+        <span class="kw">let </span>atoms = <span class="self">self</span>.xconn.atoms();
         <span class="kw">let </span>(accepted, action) = <span class="kw">match </span>state {
-            DndState::Accepted =&gt; (<span class="number">1</span>, <span class="self">self</span>.atoms.action_private <span class="kw">as </span>c_long),
-            DndState::Rejected =&gt; (<span class="number">0</span>, <span class="self">self</span>.atoms.none <span class="kw">as </span>c_long),
+            DndState::Accepted =&gt; (<span class="number">1</span>, atoms[XdndActionPrivate]),
+            DndState::Rejected =&gt; (<span class="number">0</span>, atoms[DndNone]),
         };
         <span class="self">self</span>.xconn
             .send_client_msg(
                 target_window,
                 target_window,
-                <span class="self">self</span>.atoms.status,
+                atoms[XdndStatus] <span class="kw">as _</span>,
                 <span class="prelude-val">None</span>,
-                [this_window <span class="kw">as </span>c_long, accepted, <span class="number">0</span>, <span class="number">0</span>, action],
-            )
-            .flush()
+                [this_window, accepted, <span class="number">0</span>, <span class="number">0</span>, action <span class="kw">as _</span>],
+            )<span class="question-mark">?
+            </span>.ignore_error();
+
+        <span class="prelude-val">Ok</span>(())
     }
 
     <span class="kw">pub unsafe fn </span>send_finished(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        this_window: c_ulong,
-        target_window: c_ulong,
+        this_window: xproto::Window,
+        target_window: xproto::Window,
         state: DndState,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;(), XError&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;(), X11Error&gt; {
+        <span class="kw">let </span>atoms = <span class="self">self</span>.xconn.atoms();
         <span class="kw">let </span>(accepted, action) = <span class="kw">match </span>state {
-            DndState::Accepted =&gt; (<span class="number">1</span>, <span class="self">self</span>.atoms.action_private <span class="kw">as </span>c_long),
-            DndState::Rejected =&gt; (<span class="number">0</span>, <span class="self">self</span>.atoms.none <span class="kw">as </span>c_long),
+            DndState::Accepted =&gt; (<span class="number">1</span>, atoms[XdndActionPrivate]),
+            DndState::Rejected =&gt; (<span class="number">0</span>, atoms[DndNone]),
         };
         <span class="self">self</span>.xconn
             .send_client_msg(
                 target_window,
                 target_window,
-                <span class="self">self</span>.atoms.finished,
+                atoms[XdndFinished] <span class="kw">as _</span>,
                 <span class="prelude-val">None</span>,
-                [this_window <span class="kw">as </span>c_long, accepted, action, <span class="number">0</span>, <span class="number">0</span>],
-            )
-            .flush()
+                [this_window, accepted, action <span class="kw">as _</span>, <span class="number">0</span>, <span class="number">0</span>],
+            )<span class="question-mark">?
+            </span>.ignore_error();
+
+        <span class="prelude-val">Ok</span>(())
     }
 
     <span class="kw">pub unsafe fn </span>get_type_list(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        source_window: c_ulong,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;ffi::Atom&gt;, util::GetPropertyError&gt; {
-        <span class="self">self</span>.xconn
-            .get_property(source_window, <span class="self">self</span>.atoms.type_list, ffi::XA_ATOM)
+        source_window: xproto::Window,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;xproto::Atom&gt;, util::GetPropertyError&gt; {
+        <span class="kw">let </span>atoms = <span class="self">self</span>.xconn.atoms();
+        <span class="self">self</span>.xconn.get_property(
+            source_window,
+            atoms[XdndTypeList],
+            xproto::Atom::from(xproto::AtomEnum::ATOM),
+        )
     }
 
-    <span class="kw">pub unsafe fn </span>convert_selection(<span class="kw-2">&amp;</span><span class="self">self</span>, window: c_ulong, time: c_ulong) {
-        (<span class="self">self</span>.xconn.xlib.XConvertSelection)(
-            <span class="self">self</span>.xconn.display,
-            <span class="self">self</span>.atoms.selection,
-            <span class="self">self</span>.atoms.uri_list,
-            <span class="self">self</span>.atoms.selection,
-            window,
-            time,
-        );
+    <span class="kw">pub unsafe fn </span>convert_selection(<span class="kw-2">&amp;</span><span class="self">self</span>, window: xproto::Window, time: xproto::Timestamp) {
+        <span class="kw">let </span>atoms = <span class="self">self</span>.xconn.atoms();
+        <span class="self">self</span>.xconn
+            .xcb_connection()
+            .convert_selection(
+                window,
+                atoms[XdndSelection],
+                atoms[TextUriList],
+                atoms[XdndSelection],
+                time,
+            )
+            .expect_then_ignore_error(<span class="string">"Failed to send XdndSelection event"</span>)
     }
 
     <span class="kw">pub unsafe fn </span>read_data(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        window: c_ulong,
+        window: xproto::Window,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;c_uchar&gt;, util::GetPropertyError&gt; {
+        <span class="kw">let </span>atoms = <span class="self">self</span>.xconn.atoms();
         <span class="self">self</span>.xconn
-            .get_property(window, <span class="self">self</span>.atoms.selection, <span class="self">self</span>.atoms.uri_list)
+            .get_property(window, atoms[XdndSelection], atoms[TextUriList])
     }
 
     <span class="kw">pub fn </span>parse_data(<span class="kw-2">&amp;</span><span class="self">self</span>, data: <span class="kw-2">&amp;mut </span>[c_uchar]) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;PathBuf&gt;, DndDataParseError&gt; {

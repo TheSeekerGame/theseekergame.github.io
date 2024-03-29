@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["Arc2dBuilder","Circle2dBuilder","CircleBuilder","Gizmos","SphereBuilder"]};
+window.SIDEBAR_ITEMS = {"struct":["Gizmos","SphereBuilder"]};

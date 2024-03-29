@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["ActionDiff","ActionStateDriverTarget"],"struct":["ActionData","ActionState","ActionStateDriver","Timing"]};
+window.SIDEBAR_ITEMS = {"struct":["ActionData","ActionState"]};

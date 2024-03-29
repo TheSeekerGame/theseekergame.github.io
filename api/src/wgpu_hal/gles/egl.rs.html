@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/wgpu-hal-0.17.2/src/gles/egl.rs`."><title>egl.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="wgpu_hal" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.0 (aedd173a2 2024-03-17)" data-channel="1.77.0" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/wgpu-hal-0.19.3/src/gles/egl.rs`."><title>egl.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="wgpu_hal" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.1 (7cf61ebde 2024-03-27)" data-channel="1.77.1" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
             <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
     <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../wgpu_hal/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
@@ -1375,14 +1375,10 @@
 <a href="#1373" id="1373">1373</a>
 <a href="#1374" id="1374">1374</a>
 <a href="#1375" id="1375">1375</a>
-<a href="#1376" id="1376">1376</a>
-<a href="#1377" id="1377">1377</a>
-<a href="#1378" id="1378">1378</a>
-<a href="#1379" id="1379">1379</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>glow::HasContext;
-<span class="kw">use </span>parking_lot::{Mutex, MutexGuard};
+<span class="kw">use </span>parking_lot::{Mutex, MutexGuard, RwLock};
 
-<span class="kw">use </span>std::{ffi, os::raw, ptr, sync::Arc, time::Duration};
+<span class="kw">use </span>std::{ffi, os::raw, ptr, rc::Rc, sync::Arc, time::Duration};
 
 <span class="doccomment">/// The amount of time to wait while trying to obtain a lock to the adapter context
 </span><span class="kw">const </span>CONTEXT_LOCK_TIMEOUT_SECS: u64 = <span class="number">1</span>;
@@ -1409,10 +1405,10 @@
 
 <span class="kw">type </span>WlDisplayDisconnectFun = <span class="kw">unsafe extern </span><span class="string">"system" </span><span class="kw">fn</span>(display: <span class="kw-2">*const </span>raw::c_void);
 
-<span class="attr">#[cfg(not(target_os = <span class="string">"emscripten"</span>))]
+<span class="attr">#[cfg(not(Emscripten))]
 </span><span class="kw">type </span>EglInstance = khronos_egl::DynamicInstance&lt;khronos_egl::EGL1_4&gt;;
 
-<span class="attr">#[cfg(target_os = <span class="string">"emscripten"</span>)]
+<span class="attr">#[cfg(Emscripten)]
 </span><span class="kw">type </span>EglInstance = khronos_egl::Instance&lt;khronos_egl::Static&gt;;
 
 <span class="kw">type </span>WlEglWindowCreateFun = <span class="kw">unsafe extern </span><span class="string">"system" </span><span class="kw">fn</span>(
@@ -1430,16 +1426,6 @@
 );
 
 <span class="kw">type </span>WlEglWindowDestroyFun = <span class="kw">unsafe extern </span><span class="string">"system" </span><span class="kw">fn</span>(window: <span class="kw-2">*const </span>raw::c_void);
-
-<span class="attr">#[cfg(target_os = <span class="string">"android"</span>)]
-</span><span class="kw">extern </span><span class="string">"C" </span>{
-    <span class="kw">pub fn </span>ANativeWindow_setBuffersGeometry(
-        window: <span class="kw-2">*mut </span>raw::c_void,
-        width: i32,
-        height: i32,
-        format: i32,
-    ) -&gt; i32;
-}
 
 <span class="kw">type </span>EglLabel = <span class="kw-2">*const </span>raw::c_void;
 
@@ -1540,9 +1526,9 @@
 }
 
 <span class="kw">fn </span>open_x_display() -&gt; <span class="prelude-ty">Option</span>&lt;DisplayOwner&gt; {
-    <span class="macro">log::info!</span>(<span class="string">"Loading X11 library to get the current display"</span>);
+    <span class="macro">log::debug!</span>(<span class="string">"Loading X11 library to get the current display"</span>);
     <span class="kw">unsafe </span>{
-        <span class="kw">let </span>library = libloading::Library::new(<span class="string">"libX11.so"</span>).ok()<span class="question-mark">?</span>;
+        <span class="kw">let </span>library = find_library(<span class="kw-2">&amp;</span>[<span class="string">"libX11.so.6"</span>, <span class="string">"libX11.so"</span>])<span class="question-mark">?</span>;
         <span class="kw">let </span>func: libloading::Symbol&lt;XOpenDisplayFun&gt; = library.get(<span class="string">b"XOpenDisplay"</span>).unwrap();
         <span class="kw">let </span>result = func(ptr::null());
         ptr::NonNull::new(result).map(|ptr| DisplayOwner {
@@ -1566,7 +1552,7 @@
     <span class="comment">/* We try to connect and disconnect here to simply ensure there
      * is an active wayland display available.
      */
-    </span><span class="macro">log::info!</span>(<span class="string">"Loading Wayland library to get the current display"</span>);
+    </span><span class="macro">log::debug!</span>(<span class="string">"Loading Wayland library to get the current display"</span>);
     <span class="kw">let </span>library = <span class="kw">unsafe </span>{
         <span class="kw">let </span>client_library = find_library(<span class="kw-2">&amp;</span>[<span class="string">"libwayland-client.so.0"</span>, <span class="string">"libwayland-client.so"</span>])<span class="question-mark">?</span>;
         <span class="kw">let </span>wl_display_connect: libloading::Symbol&lt;WlDisplayConnectFun&gt; =
@@ -1624,7 +1610,7 @@
     <span class="kw">let </span><span class="kw-2">mut </span>attributes = Vec::with_capacity(<span class="number">9</span>);
     <span class="kw">for </span>tier_max <span class="kw">in </span>(<span class="number">0</span>..tiers.len()).rev() {
         <span class="kw">let </span>name = tiers[tier_max].<span class="number">0</span>;
-        <span class="macro">log::info!</span>(<span class="string">"\tTrying {}"</span>, name);
+        <span class="macro">log::debug!</span>(<span class="string">"\tTrying {}"</span>, name);
 
         attributes.clear();
         <span class="kw">for </span><span class="kw-2">&amp;</span>(<span class="kw">_</span>, tier_attr) <span class="kw">in </span>tiers[..=tier_max].iter() {
@@ -1664,56 +1650,10 @@
         }
     }
 
-    <span class="prelude-val">Err</span>(<span class="kw">crate</span>::InstanceError)
-}
-
-<span class="kw">fn </span>gl_debug_message_callback(source: u32, gltype: u32, id: u32, severity: u32, message: <span class="kw-2">&amp;</span>str) {
-    <span class="kw">let </span>source_str = <span class="kw">match </span>source {
-        glow::DEBUG_SOURCE_API =&gt; <span class="string">"API"</span>,
-        glow::DEBUG_SOURCE_WINDOW_SYSTEM =&gt; <span class="string">"Window System"</span>,
-        glow::DEBUG_SOURCE_SHADER_COMPILER =&gt; <span class="string">"ShaderCompiler"</span>,
-        glow::DEBUG_SOURCE_THIRD_PARTY =&gt; <span class="string">"Third Party"</span>,
-        glow::DEBUG_SOURCE_APPLICATION =&gt; <span class="string">"Application"</span>,
-        glow::DEBUG_SOURCE_OTHER =&gt; <span class="string">"Other"</span>,
-        <span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(),
-    };
-
-    <span class="kw">let </span>log_severity = <span class="kw">match </span>severity {
-        glow::DEBUG_SEVERITY_HIGH =&gt; log::Level::Error,
-        glow::DEBUG_SEVERITY_MEDIUM =&gt; log::Level::Warn,
-        glow::DEBUG_SEVERITY_LOW =&gt; log::Level::Info,
-        glow::DEBUG_SEVERITY_NOTIFICATION =&gt; log::Level::Trace,
-        <span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(),
-    };
-
-    <span class="kw">let </span>type_str = <span class="kw">match </span>gltype {
-        glow::DEBUG_TYPE_DEPRECATED_BEHAVIOR =&gt; <span class="string">"Deprecated Behavior"</span>,
-        glow::DEBUG_TYPE_ERROR =&gt; <span class="string">"Error"</span>,
-        glow::DEBUG_TYPE_MARKER =&gt; <span class="string">"Marker"</span>,
-        glow::DEBUG_TYPE_OTHER =&gt; <span class="string">"Other"</span>,
-        glow::DEBUG_TYPE_PERFORMANCE =&gt; <span class="string">"Performance"</span>,
-        glow::DEBUG_TYPE_POP_GROUP =&gt; <span class="string">"Pop Group"</span>,
-        glow::DEBUG_TYPE_PORTABILITY =&gt; <span class="string">"Portability"</span>,
-        glow::DEBUG_TYPE_PUSH_GROUP =&gt; <span class="string">"Push Group"</span>,
-        glow::DEBUG_TYPE_UNDEFINED_BEHAVIOR =&gt; <span class="string">"Undefined Behavior"</span>,
-        <span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(),
-    };
-
-    <span class="kw">let _ </span>= std::panic::catch_unwind(|| {
-        <span class="macro">log::log!</span>(
-            log_severity,
-            <span class="string">"GLES: [{}/{}] ID {} : {}"</span>,
-            source_str,
-            type_str,
-            id,
-            message
-        );
-    });
-
-    <span class="kw">if </span><span class="macro">cfg!</span>(debug_assertions) &amp;&amp; log_severity == log::Level::Error {
-        <span class="comment">// Set canary and continue
-        </span><span class="kw">crate</span>::VALIDATION_CANARY.set();
-    }
+    <span class="comment">// TODO: include diagnostic details that are currently logged
+    </span><span class="prelude-val">Err</span>(<span class="kw">crate</span>::InstanceError::new(String::from(
+        <span class="string">"unable to find an acceptable EGL framebuffer configuration"</span>,
+    )))
 }
 
 <span class="attr">#[derive(Clone, Debug)]
@@ -1861,19 +1801,27 @@
     </span>version: (i32, i32),
     supports_native_window: bool,
     config: khronos_egl::Config,
-    <span class="attr">#[cfg_attr(target_os = <span class="string">"emscripten"</span>, allow(dead_code))]
+    <span class="attr">#[cfg_attr(Emscripten, allow(dead_code))]
     </span>wl_display: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">*mut </span>raw::c_void&gt;,
+    <span class="attr">#[cfg_attr(Emscripten, allow(dead_code))]
+    </span>force_gles_minor_version: wgt::Gles3MinorVersion,
     <span class="doccomment">/// Method by which the framebuffer should support srgb
     </span>srgb_kind: SrgbFrameBufferKind,
 }
 
 <span class="kw">impl </span>Inner {
     <span class="kw">fn </span>create(
-        flags: <span class="kw">crate</span>::InstanceFlags,
+        flags: wgt::InstanceFlags,
         egl: Arc&lt;EglInstance&gt;,
         display: khronos_egl::Display,
+        force_gles_minor_version: wgt::Gles3MinorVersion,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, <span class="kw">crate</span>::InstanceError&gt; {
-        <span class="kw">let </span>version = egl.initialize(display).map_err(|<span class="kw">_</span>| <span class="kw">crate</span>::InstanceError)<span class="question-mark">?</span>;
+        <span class="kw">let </span>version = egl.initialize(display).map_err(|e| {
+            <span class="kw">crate</span>::InstanceError::with_source(
+                String::from(<span class="string">"failed to initialize EGL display connection"</span>),
+                e,
+            )
+        })<span class="question-mark">?</span>;
         <span class="kw">let </span>vendor = egl
             .query_string(<span class="prelude-val">Some</span>(display), khronos_egl::VENDOR)
             .unwrap();
@@ -1881,17 +1829,17 @@
             .query_string(<span class="prelude-val">Some</span>(display), khronos_egl::EXTENSIONS)
             .unwrap()
             .to_string_lossy();
-        <span class="macro">log::info!</span>(<span class="string">"Display vendor {:?}, version {:?}"</span>, vendor, version,);
+        <span class="macro">log::debug!</span>(<span class="string">"Display vendor {:?}, version {:?}"</span>, vendor, version,);
         <span class="macro">log::debug!</span>(
             <span class="string">"Display extensions: {:#?}"</span>,
             display_extensions.split_whitespace().collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;()
         );
 
         <span class="kw">let </span>srgb_kind = <span class="kw">if </span>version &gt;= (<span class="number">1</span>, <span class="number">5</span>) {
-            <span class="macro">log::info!</span>(<span class="string">"\tEGL surface: +srgb"</span>);
+            <span class="macro">log::debug!</span>(<span class="string">"\tEGL surface: +srgb"</span>);
             SrgbFrameBufferKind::Core
         } <span class="kw">else if </span>display_extensions.contains(<span class="string">"EGL_KHR_gl_colorspace"</span>) {
-            <span class="macro">log::info!</span>(<span class="string">"\tEGL surface: +srgb khr"</span>);
+            <span class="macro">log::debug!</span>(<span class="string">"\tEGL surface: +srgb khr"</span>);
             SrgbFrameBufferKind::Khr
         } <span class="kw">else </span>{
             <span class="macro">log::warn!</span>(<span class="string">"\tEGL surface: -srgb"</span>);
@@ -1923,19 +1871,30 @@
 
         <span class="comment">//TODO: make it so `Device` == EGL Context
         </span><span class="kw">let </span><span class="kw-2">mut </span>context_attributes = <span class="macro">vec!</span>[
-            khronos_egl::CONTEXT_CLIENT_VERSION,
+            khronos_egl::CONTEXT_MAJOR_VERSION,
             <span class="number">3</span>, <span class="comment">// Request GLES 3.0 or higher
         </span>];
-        <span class="kw">if </span>flags.contains(<span class="kw">crate</span>::InstanceFlags::DEBUG) {
+
+        <span class="kw">if </span>force_gles_minor_version != wgt::Gles3MinorVersion::Automatic {
+            context_attributes.push(khronos_egl::CONTEXT_MINOR_VERSION);
+            context_attributes.push(<span class="kw">match </span>force_gles_minor_version {
+                wgt::Gles3MinorVersion::Version0 =&gt; <span class="number">0</span>,
+                wgt::Gles3MinorVersion::Version1 =&gt; <span class="number">1</span>,
+                wgt::Gles3MinorVersion::Version2 =&gt; <span class="number">2</span>,
+                <span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(),
+            });
+        }
+
+        <span class="kw">if </span>flags.contains(wgt::InstanceFlags::DEBUG) {
             <span class="kw">if </span>version &gt;= (<span class="number">1</span>, <span class="number">5</span>) {
-                <span class="macro">log::info!</span>(<span class="string">"\tEGL context: +debug"</span>);
+                <span class="macro">log::debug!</span>(<span class="string">"\tEGL context: +debug"</span>);
                 context_attributes.push(khronos_egl::CONTEXT_OPENGL_DEBUG);
                 context_attributes.push(khronos_egl::TRUE <span class="kw">as _</span>);
             } <span class="kw">else if </span>supports_khr_context {
-                <span class="macro">log::info!</span>(<span class="string">"\tEGL context: +debug KHR"</span>);
+                <span class="macro">log::debug!</span>(<span class="string">"\tEGL context: +debug KHR"</span>);
                 khr_context_flags |= EGL_CONTEXT_OPENGL_DEBUG_BIT_KHR;
             } <span class="kw">else </span>{
-                <span class="macro">log::info!</span>(<span class="string">"\tEGL context: -debug"</span>);
+                <span class="macro">log::debug!</span>(<span class="string">"\tEGL context: -debug"</span>);
             }
         }
         <span class="kw">if </span>needs_robustness {
@@ -1943,11 +1902,11 @@
             // (regardless of whether the extension is supported!).
             // In fact, Angle does precisely that awful behavior, so we don't try it there.
             </span><span class="kw">if </span>version &gt;= (<span class="number">1</span>, <span class="number">5</span>) &amp;&amp; !display_extensions.contains(<span class="string">"EGL_ANGLE_"</span>) {
-                <span class="macro">log::info!</span>(<span class="string">"\tEGL context: +robust access"</span>);
+                <span class="macro">log::debug!</span>(<span class="string">"\tEGL context: +robust access"</span>);
                 context_attributes.push(khronos_egl::CONTEXT_OPENGL_ROBUST_ACCESS);
                 context_attributes.push(khronos_egl::TRUE <span class="kw">as _</span>);
             } <span class="kw">else if </span>display_extensions.contains(<span class="string">"EGL_EXT_create_context_robustness"</span>) {
-                <span class="macro">log::info!</span>(<span class="string">"\tEGL context: +robust access EXT"</span>);
+                <span class="macro">log::debug!</span>(<span class="string">"\tEGL context: +robust access EXT"</span>);
                 context_attributes.push(EGL_CONTEXT_OPENGL_ROBUST_ACCESS_EXT);
                 context_attributes.push(khronos_egl::TRUE <span class="kw">as _</span>);
             } <span class="kw">else </span>{
@@ -1966,8 +1925,10 @@
         <span class="kw">let </span>context = <span class="kw">match </span>egl.create_context(display, config, <span class="prelude-val">None</span>, <span class="kw-2">&amp;</span>context_attributes) {
             <span class="prelude-val">Ok</span>(context) =&gt; context,
             <span class="prelude-val">Err</span>(e) =&gt; {
-                <span class="macro">log::warn!</span>(<span class="string">"unable to create GLES 3.x context: {:?}"</span>, e);
-                <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="kw">crate</span>::InstanceError);
+                <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="kw">crate</span>::InstanceError::with_source(
+                    String::from(<span class="string">"unable to create GLES 3.x context"</span>),
+                    e,
+                ));
             }
         };
 
@@ -1975,9 +1936,9 @@
         // and creating dummy pbuffer surface if not.
         </span><span class="kw">let </span>pbuffer = <span class="kw">if </span>version &gt;= (<span class="number">1</span>, <span class="number">5</span>)
             || display_extensions.contains(<span class="string">"EGL_KHR_surfaceless_context"</span>)
-            || <span class="macro">cfg!</span>(target_os = <span class="string">"emscripten"</span>)
+            || <span class="macro">cfg!</span>(Emscripten)
         {
-            <span class="macro">log::info!</span>(<span class="string">"\tEGL context: +surfaceless"</span>);
+            <span class="macro">log::debug!</span>(<span class="string">"\tEGL context: +surfaceless"</span>);
             <span class="prelude-val">None
         </span>} <span class="kw">else </span>{
             <span class="kw">let </span>attributes = [
@@ -1990,8 +1951,10 @@
             egl.create_pbuffer_surface(display, config, <span class="kw-2">&amp;</span>attributes)
                 .map(<span class="prelude-val">Some</span>)
                 .map_err(|e| {
-                    <span class="macro">log::warn!</span>(<span class="string">"Error in create_pbuffer_surface: {:?}"</span>, e);
-                    <span class="kw">crate</span>::InstanceError
+                    <span class="kw">crate</span>::InstanceError::with_source(
+                        String::from(<span class="string">"error in create_pbuffer_surface"</span>),
+                        e,
+                    )
                 })<span class="question-mark">?
         </span>};
 
@@ -2008,6 +1971,7 @@
             config,
             wl_display: <span class="prelude-val">None</span>,
             srgb_kind,
+            force_gles_minor_version,
         })
     }
 }
@@ -2037,13 +2001,13 @@
 
 <span class="attr">#[derive(Clone, Debug)]
 </span><span class="kw">struct </span>WindowSystemInterface {
-    display_owner: <span class="prelude-ty">Option</span>&lt;Arc&lt;DisplayOwner&gt;&gt;,
+    display_owner: <span class="prelude-ty">Option</span>&lt;Rc&lt;DisplayOwner&gt;&gt;,
     kind: WindowKind,
 }
 
 <span class="kw">pub struct </span>Instance {
     wsi: WindowSystemInterface,
-    flags: <span class="kw">crate</span>::InstanceFlags,
+    flags: wgt::InstanceFlags,
     inner: Mutex&lt;Inner&gt;,
 }
 
@@ -2077,11 +2041,12 @@
 
 <span class="kw">impl </span><span class="kw">crate</span>::Instance&lt;<span class="kw">super</span>::Api&gt; <span class="kw">for </span>Instance {
     <span class="kw">unsafe fn </span>init(desc: <span class="kw-2">&amp;</span><span class="kw">crate</span>::InstanceDescriptor) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, <span class="kw">crate</span>::InstanceError&gt; {
-        <span class="attr">#[cfg(target_os = <span class="string">"emscripten"</span>)]
+        <span class="macro">profiling::scope!</span>(<span class="string">"Init OpenGL (EGL) Backend"</span>);
+        <span class="attr">#[cfg(Emscripten)]
         </span><span class="kw">let </span>egl_result: <span class="prelude-ty">Result</span>&lt;EglInstance, khronos_egl::Error&gt; =
             <span class="prelude-val">Ok</span>(khronos_egl::Instance::new(khronos_egl::Static));
 
-        <span class="attr">#[cfg(not(target_os = <span class="string">"emscripten"</span>))]
+        <span class="attr">#[cfg(not(Emscripten))]
         </span><span class="kw">let </span>egl_result = <span class="kw">if </span><span class="macro">cfg!</span>(windows) {
             <span class="kw">unsafe </span>{
                 khronos_egl::DynamicInstance::&lt;khronos_egl::EGL1_4&gt;::load_required_from_filename(
@@ -2100,8 +2065,10 @@
         <span class="kw">let </span>egl = <span class="kw">match </span>egl_result {
             <span class="prelude-val">Ok</span>(egl) =&gt; Arc::new(egl),
             <span class="prelude-val">Err</span>(e) =&gt; {
-                <span class="macro">log::info!</span>(<span class="string">"Unable to open libEGL: {:?}"</span>, e);
-                <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="kw">crate</span>::InstanceError);
+                <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="kw">crate</span>::InstanceError::with_source(
+                    String::from(<span class="string">"unable to open libEGL"</span>),
+                    e,
+                ));
             }
         };
 
@@ -2132,73 +2099,78 @@
             <span class="prelude-val">None
         </span>};
 
-        <span class="attr">#[cfg(not(target_os = <span class="string">"emscripten"</span>))]
+        <span class="attr">#[cfg(not(Emscripten))]
         </span><span class="kw">let </span>egl1_5 = egl.upcast::&lt;khronos_egl::EGL1_5&gt;();
 
-        <span class="attr">#[cfg(target_os = <span class="string">"emscripten"</span>)]
+        <span class="attr">#[cfg(Emscripten)]
         </span><span class="kw">let </span>egl1_5: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Arc&lt;EglInstance&gt;&gt; = <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>egl);
 
         <span class="kw">let </span>(display, display_owner, wsi_kind) =
             <span class="kw">if let </span>(<span class="prelude-val">Some</span>(library), <span class="prelude-val">Some</span>(egl)) = (wayland_library, egl1_5) {
                 <span class="macro">log::info!</span>(<span class="string">"Using Wayland platform"</span>);
                 <span class="kw">let </span>display_attributes = [khronos_egl::ATTRIB_NONE];
-                <span class="kw">let </span>display = egl
-                    .get_platform_display(
+                <span class="kw">let </span>display = <span class="kw">unsafe </span>{
+                    egl.get_platform_display(
                         EGL_PLATFORM_WAYLAND_KHR,
                         khronos_egl::DEFAULT_DISPLAY,
                         <span class="kw-2">&amp;</span>display_attributes,
                     )
-                    .unwrap();
-                (display, <span class="prelude-val">Some</span>(Arc::new(library)), WindowKind::Wayland)
+                }
+                .unwrap();
+                (display, <span class="prelude-val">Some</span>(Rc::new(library)), WindowKind::Wayland)
             } <span class="kw">else if let </span>(<span class="prelude-val">Some</span>(display_owner), <span class="prelude-val">Some</span>(egl)) = (x11_display_library, egl1_5) {
                 <span class="macro">log::info!</span>(<span class="string">"Using X11 platform"</span>);
                 <span class="kw">let </span>display_attributes = [khronos_egl::ATTRIB_NONE];
-                <span class="kw">let </span>display = egl
-                    .get_platform_display(
+                <span class="kw">let </span>display = <span class="kw">unsafe </span>{
+                    egl.get_platform_display(
                         EGL_PLATFORM_X11_KHR,
                         display_owner.display.as_ptr(),
                         <span class="kw-2">&amp;</span>display_attributes,
                     )
-                    .unwrap();
-                (display, <span class="prelude-val">Some</span>(Arc::new(display_owner)), WindowKind::X11)
+                }
+                .unwrap();
+                (display, <span class="prelude-val">Some</span>(Rc::new(display_owner)), WindowKind::X11)
             } <span class="kw">else if let </span>(<span class="prelude-val">Some</span>(display_owner), <span class="prelude-val">Some</span>(egl)) = (angle_x11_display_library, egl1_5) {
                 <span class="macro">log::info!</span>(<span class="string">"Using Angle platform with X11"</span>);
                 <span class="kw">let </span>display_attributes = [
                     EGL_PLATFORM_ANGLE_NATIVE_PLATFORM_TYPE_ANGLE <span class="kw">as </span>khronos_egl::Attrib,
                     EGL_PLATFORM_X11_KHR <span class="kw">as </span>khronos_egl::Attrib,
                     EGL_PLATFORM_ANGLE_DEBUG_LAYERS_ENABLED <span class="kw">as </span>khronos_egl::Attrib,
-                    usize::from(desc.flags.contains(<span class="kw">crate</span>::InstanceFlags::VALIDATION)),
+                    usize::from(desc.flags.contains(wgt::InstanceFlags::VALIDATION)),
                     khronos_egl::ATTRIB_NONE,
                 ];
-                <span class="kw">let </span>display = egl
-                    .get_platform_display(
+                <span class="kw">let </span>display = <span class="kw">unsafe </span>{
+                    egl.get_platform_display(
                         EGL_PLATFORM_ANGLE_ANGLE,
                         display_owner.display.as_ptr(),
                         <span class="kw-2">&amp;</span>display_attributes,
                     )
-                    .unwrap();
-                (display, <span class="prelude-val">Some</span>(Arc::new(display_owner)), WindowKind::AngleX11)
+                }
+                .unwrap();
+                (display, <span class="prelude-val">Some</span>(Rc::new(display_owner)), WindowKind::AngleX11)
             } <span class="kw">else if </span>client_ext_str.contains(<span class="string">"EGL_MESA_platform_surfaceless"</span>) {
-                <span class="macro">log::info!</span>(<span class="string">"No windowing system present. Using surfaceless platform"</span>);
+                <span class="macro">log::warn!</span>(<span class="string">"No windowing system present. Using surfaceless platform"</span>);
                 <span class="kw">let </span>egl = egl1_5.expect(<span class="string">"Failed to get EGL 1.5 for surfaceless"</span>);
-                <span class="kw">let </span>display = egl
-                    .get_platform_display(
+                <span class="kw">let </span>display = <span class="kw">unsafe </span>{
+                    egl.get_platform_display(
                         EGL_PLATFORM_SURFACELESS_MESA,
                         std::ptr::null_mut(),
                         <span class="kw-2">&amp;</span>[khronos_egl::ATTRIB_NONE],
                     )
-                    .unwrap();
+                }
+                .unwrap();
+
                 (display, <span class="prelude-val">None</span>, WindowKind::Unknown)
             } <span class="kw">else </span>{
-                <span class="macro">log::info!</span>(<span class="string">"EGL_MESA_platform_surfaceless not available. Using default platform"</span>);
-                <span class="kw">let </span>display = egl.get_display(khronos_egl::DEFAULT_DISPLAY).unwrap();
+                <span class="macro">log::warn!</span>(<span class="string">"EGL_MESA_platform_surfaceless not available. Using default platform"</span>);
+                <span class="kw">let </span>display = <span class="kw">unsafe </span>{ egl.get_display(khronos_egl::DEFAULT_DISPLAY) }.unwrap();
                 (display, <span class="prelude-val">None</span>, WindowKind::Unknown)
             };
 
-        <span class="kw">if </span>desc.flags.contains(<span class="kw">crate</span>::InstanceFlags::VALIDATION)
+        <span class="kw">if </span>desc.flags.contains(wgt::InstanceFlags::VALIDATION)
             &amp;&amp; client_ext_str.contains(<span class="string">"EGL_KHR_debug"</span>)
         {
-            <span class="macro">log::info!</span>(<span class="string">"Enabling EGL debug output"</span>);
+            <span class="macro">log::debug!</span>(<span class="string">"Enabling EGL debug output"</span>);
             <span class="kw">let </span>function: EglDebugMessageControlFun = {
                 <span class="kw">let </span>addr = egl.get_proc_address(<span class="string">"eglDebugMessageControlKHR"</span>).unwrap();
                 <span class="kw">unsafe </span>{ std::mem::transmute(addr) }
@@ -2217,7 +2189,7 @@
             <span class="kw">unsafe </span>{ (function)(<span class="prelude-val">Some</span>(egl_debug_proc), attributes.as_ptr()) };
         }
 
-        <span class="kw">let </span>inner = Inner::create(desc.flags, egl, display)<span class="question-mark">?</span>;
+        <span class="kw">let </span>inner = Inner::create(desc.flags, egl, display, desc.gles_minor_version)<span class="question-mark">?</span>;
 
         <span class="prelude-val">Ok</span>(Instance {
             wsi: WindowSystemInterface {
@@ -2237,10 +2209,7 @@
     ) -&gt; <span class="prelude-ty">Result</span>&lt;Surface, <span class="kw">crate</span>::InstanceError&gt; {
         <span class="kw">use </span>raw_window_handle::RawWindowHandle <span class="kw">as </span>Rwh;
 
-        <span class="attr">#[cfg_attr(
-            any(target_os = <span class="string">"android"</span>, target_os = <span class="string">"emscripten"</span>),
-            allow(unused_mut)
-        )]
+        <span class="attr">#[cfg_attr(any(target_os = <span class="string">"android"</span>, Emscripten), allow(unused_mut))]
         </span><span class="kw">let </span><span class="kw-2">mut </span>inner = <span class="self">self</span>.inner.lock();
 
         <span class="kw">match </span>(window_handle, display_handle) {
@@ -2261,19 +2230,25 @@
                     .unwrap();
 
                 <span class="kw">let </span>ret = <span class="kw">unsafe </span>{
-                    ANativeWindow_setBuffersGeometry(handle.a_native_window, <span class="number">0</span>, <span class="number">0</span>, format)
+                    ndk_sys::ANativeWindow_setBuffersGeometry(
+                        handle.a_native_window.as_ptr() <span class="kw">as </span><span class="kw-2">*mut </span>ndk_sys::ANativeWindow,
+                        <span class="number">0</span>,
+                        <span class="number">0</span>,
+                        format,
+                    )
                 };
 
                 <span class="kw">if </span>ret != <span class="number">0 </span>{
-                    <span class="macro">log::error!</span>(<span class="string">"Error returned from ANativeWindow_setBuffersGeometry"</span>);
-                    <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="kw">crate</span>::InstanceError);
+                    <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="kw">crate</span>::InstanceError::new(<span class="macro">format!</span>(
+                        <span class="string">"error {ret} returned from ANativeWindow_setBuffersGeometry"</span>,
+                    )));
                 }
             }
-            <span class="attr">#[cfg(not(target_os = <span class="string">"emscripten"</span>))]
+            <span class="attr">#[cfg(not(Emscripten))]
             </span>(Rwh::Wayland(<span class="kw">_</span>), raw_window_handle::RawDisplayHandle::Wayland(display_handle)) =&gt; {
                 <span class="kw">if </span>inner
                     .wl_display
-                    .map(|ptr| ptr != display_handle.display)
+                    .map(|ptr| ptr != display_handle.display.as_ptr())
                     .unwrap_or(<span class="bool-val">true</span>)
                 {
                     <span class="comment">/* Wayland displays are not sharable between surfaces so if the
@@ -2287,33 +2262,39 @@
                     <span class="kw">use </span>std::ops::DerefMut;
                     <span class="kw">let </span>display_attributes = [khronos_egl::ATTRIB_NONE];
 
-                    <span class="kw">let </span>display = inner
-                        .egl
-                        .instance
-                        .upcast::&lt;khronos_egl::EGL1_5&gt;()
-                        .unwrap()
-                        .get_platform_display(
-                            EGL_PLATFORM_WAYLAND_KHR,
-                            display_handle.display,
-                            <span class="kw-2">&amp;</span>display_attributes,
-                        )
-                        .unwrap();
+                    <span class="kw">let </span>display = <span class="kw">unsafe </span>{
+                        inner
+                            .egl
+                            .instance
+                            .upcast::&lt;khronos_egl::EGL1_5&gt;()
+                            .unwrap()
+                            .get_platform_display(
+                                EGL_PLATFORM_WAYLAND_KHR,
+                                display_handle.display.as_ptr(),
+                                <span class="kw-2">&amp;</span>display_attributes,
+                            )
+                    }
+                    .unwrap();
 
-                    <span class="kw">let </span>new_inner =
-                        Inner::create(<span class="self">self</span>.flags, Arc::clone(<span class="kw-2">&amp;</span>inner.egl.instance), display)
-                            .map_err(|<span class="kw">_</span>| <span class="kw">crate</span>::InstanceError)<span class="question-mark">?</span>;
+                    <span class="kw">let </span>new_inner = Inner::create(
+                        <span class="self">self</span>.flags,
+                        Arc::clone(<span class="kw-2">&amp;</span>inner.egl.instance),
+                        display,
+                        inner.force_gles_minor_version,
+                    )<span class="question-mark">?</span>;
 
                     <span class="kw">let </span>old_inner = std::mem::replace(inner.deref_mut(), new_inner);
-                    inner.wl_display = <span class="prelude-val">Some</span>(display_handle.display);
+                    inner.wl_display = <span class="prelude-val">Some</span>(display_handle.display.as_ptr());
 
                     drop(old_inner);
                 }
             }
-            <span class="attr">#[cfg(target_os = <span class="string">"emscripten"</span>)]
+            <span class="attr">#[cfg(Emscripten)]
             </span>(Rwh::Web(<span class="kw">_</span>), <span class="kw">_</span>) =&gt; {}
             other =&gt; {
-                <span class="macro">log::error!</span>(<span class="string">"Unsupported window: {:?}"</span>, other);
-                <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="kw">crate</span>::InstanceError);
+                <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="kw">crate</span>::InstanceError::new(<span class="macro">format!</span>(
+                    <span class="string">"unsupported window: {other:?}"
+                </span>)));
             }
         };
 
@@ -2325,7 +2306,7 @@
             config: inner.config,
             presentable: inner.supports_native_window,
             raw_window_handle: window_handle,
-            swapchain: <span class="prelude-val">None</span>,
+            swapchain: RwLock::new(<span class="prelude-val">None</span>),
             srgb_kind: inner.srgb_kind,
         })
     }
@@ -2335,7 +2316,7 @@
         <span class="kw">let </span>inner = <span class="self">self</span>.inner.lock();
         inner.egl.make_current();
 
-        <span class="kw">let </span>gl = <span class="kw">unsafe </span>{
+        <span class="kw">let </span><span class="kw-2">mut </span>gl = <span class="kw">unsafe </span>{
             glow::Context::from_loader_function(|name| {
                 inner
                     .egl
@@ -2345,16 +2326,16 @@
             })
         };
 
-        <span class="kw">if </span><span class="self">self</span>.flags.contains(<span class="kw">crate</span>::InstanceFlags::DEBUG) &amp;&amp; gl.supports_debug() {
-            <span class="macro">log::info!</span>(<span class="string">"Max label length: {}"</span>, <span class="kw">unsafe </span>{
+        <span class="kw">if </span><span class="self">self</span>.flags.contains(wgt::InstanceFlags::DEBUG) &amp;&amp; gl.supports_debug() {
+            <span class="macro">log::debug!</span>(<span class="string">"Max label length: {}"</span>, <span class="kw">unsafe </span>{
                 gl.get_parameter_i32(glow::MAX_LABEL_LENGTH)
             });
         }
 
-        <span class="kw">if </span><span class="self">self</span>.flags.contains(<span class="kw">crate</span>::InstanceFlags::VALIDATION) &amp;&amp; gl.supports_debug() {
-            <span class="macro">log::info!</span>(<span class="string">"Enabling GLES debug output"</span>);
+        <span class="kw">if </span><span class="self">self</span>.flags.contains(wgt::InstanceFlags::VALIDATION) &amp;&amp; gl.supports_debug() {
+            <span class="macro">log::debug!</span>(<span class="string">"Enabling GLES debug output"</span>);
             <span class="kw">unsafe </span>{ gl.enable(glow::DEBUG_OUTPUT) };
-            <span class="kw">unsafe </span>{ gl.debug_message_callback(gl_debug_message_callback) };
+            <span class="kw">unsafe </span>{ gl.debug_message_callback(<span class="kw">super</span>::gl_debug_message_callback) };
         }
 
         inner.egl.unmake_current();
@@ -2423,7 +2404,7 @@
     config: khronos_egl::Config,
     <span class="kw">pub</span>(<span class="kw">super</span>) presentable: bool,
     raw_window_handle: raw_window_handle::RawWindowHandle,
-    swapchain: <span class="prelude-ty">Option</span>&lt;Swapchain&gt;,
+    swapchain: RwLock&lt;<span class="prelude-ty">Option</span>&lt;Swapchain&gt;&gt;,
     srgb_kind: SrgbFrameBufferKind,
 }
 
@@ -2432,11 +2413,13 @@
 
 <span class="kw">impl </span>Surface {
     <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">unsafe fn </span>present(
-        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
         _suf_texture: <span class="kw">super</span>::Texture,
-        gl: <span class="kw-2">&amp;</span>glow::Context,
+        context: <span class="kw-2">&amp;</span>AdapterContext,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(), <span class="kw">crate</span>::SurfaceError&gt; {
-        <span class="kw">let </span>sc = <span class="self">self</span>.swapchain.as_ref().unwrap();
+        <span class="kw">let </span>gl = <span class="kw">unsafe </span>{ context.get_without_egl_lock() };
+        <span class="kw">let </span>swapchain = <span class="self">self</span>.swapchain.read();
+        <span class="kw">let </span>sc = swapchain.as_ref().unwrap();
 
         <span class="self">self</span>.egl
             .instance
@@ -2481,7 +2464,8 @@
             .map_err(|e| {
                 <span class="macro">log::error!</span>(<span class="string">"swap_buffers failed: {}"</span>, e);
                 <span class="kw">crate</span>::SurfaceError::Lost
-            })<span class="question-mark">?</span>;
+                <span class="comment">// TODO: should we unset the current context here?
+            </span>})<span class="question-mark">?</span>;
         <span class="self">self</span>.egl
             .instance
             .make_current(<span class="self">self</span>.egl.display, <span class="prelude-val">None</span>, <span class="prelude-val">None</span>, <span class="prelude-val">None</span>)
@@ -2494,11 +2478,11 @@
     }
 
     <span class="kw">unsafe fn </span>unconfigure_impl(
-        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
         device: <span class="kw-2">&amp;</span><span class="kw">super</span>::Device,
     ) -&gt; <span class="prelude-ty">Option</span>&lt;(khronos_egl::Surface, <span class="prelude-ty">Option</span>&lt;<span class="kw-2">*mut </span>raw::c_void&gt;)&gt; {
         <span class="kw">let </span>gl = <span class="kw-2">&amp;</span>device.shared.context.lock();
-        <span class="kw">match </span><span class="self">self</span>.swapchain.take() {
+        <span class="kw">match </span><span class="self">self</span>.swapchain.write().take() {
             <span class="prelude-val">Some</span>(sc) =&gt; {
                 <span class="kw">unsafe </span>{ gl.delete_renderbuffer(sc.renderbuffer) };
                 <span class="kw">unsafe </span>{ gl.delete_framebuffer(sc.framebuffer) };
@@ -2518,7 +2502,7 @@
 
 <span class="kw">impl </span><span class="kw">crate</span>::Surface&lt;<span class="kw">super</span>::Api&gt; <span class="kw">for </span>Surface {
     <span class="kw">unsafe fn </span>configure(
-        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
         device: <span class="kw-2">&amp;</span><span class="kw">super</span>::Device,
         config: <span class="kw-2">&amp;</span><span class="kw">crate</span>::SurfaceConfiguration,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(), <span class="kw">crate</span>::SurfaceError&gt; {
@@ -2543,30 +2527,35 @@
                         <span class="kw-2">&amp;mut </span>temp_xcb_handle <span class="kw">as </span><span class="kw-2">*mut </span><span class="kw">_ as </span><span class="kw-2">*mut </span>std::ffi::c_void
                     }
                     (WindowKind::AngleX11, Rwh::Xcb(handle)) =&gt; {
-                        handle.window <span class="kw">as </span><span class="kw-2">*mut </span>std::ffi::c_void
+                        handle.window.get() <span class="kw">as </span><span class="kw-2">*mut </span>std::ffi::c_void
                     }
-                    (WindowKind::Unknown, Rwh::AndroidNdk(handle)) =&gt; handle.a_native_window,
+                    (WindowKind::Unknown, Rwh::AndroidNdk(handle)) =&gt; {
+                        handle.a_native_window.as_ptr()
+                    }
                     (WindowKind::Wayland, Rwh::Wayland(handle)) =&gt; {
                         <span class="kw">let </span>library = <span class="kw-2">&amp;</span><span class="self">self</span>.wsi.display_owner.as_ref().unwrap().library;
                         <span class="kw">let </span>wl_egl_window_create: libloading::Symbol&lt;WlEglWindowCreateFun&gt; =
                             <span class="kw">unsafe </span>{ library.get(<span class="string">b"wl_egl_window_create"</span>) }.unwrap();
-                        <span class="kw">let </span>window = <span class="kw">unsafe </span>{ wl_egl_window_create(handle.surface, <span class="number">640</span>, <span class="number">480</span>) }
-                            <span class="kw">as </span><span class="kw-2">*mut </span><span class="kw">_ as </span><span class="kw-2">*mut </span>std::ffi::c_void;
+                        <span class="kw">let </span>window =
+                            <span class="kw">unsafe </span>{ wl_egl_window_create(handle.surface.as_ptr(), <span class="number">640</span>, <span class="number">480</span>) }
+                                <span class="kw">as </span><span class="kw-2">*mut </span><span class="kw">_</span>;
                         wl_window = <span class="prelude-val">Some</span>(window);
                         window
                     }
-                    <span class="attr">#[cfg(target_os = <span class="string">"emscripten"</span>)]
+                    <span class="attr">#[cfg(Emscripten)]
                     </span>(WindowKind::Unknown, Rwh::Web(handle)) =&gt; handle.id <span class="kw">as </span><span class="kw-2">*mut </span>std::ffi::c_void,
-                    (WindowKind::Unknown, Rwh::Win32(handle)) =&gt; handle.hwnd,
+                    (WindowKind::Unknown, Rwh::Win32(handle)) =&gt; {
+                        handle.hwnd.get() <span class="kw">as </span><span class="kw-2">*mut </span>std::ffi::c_void
+                    }
                     (WindowKind::Unknown, Rwh::AppKit(handle)) =&gt; {
                         <span class="attr">#[cfg(not(target_os = <span class="string">"macos"</span>))]
-                        </span><span class="kw">let </span>window_ptr = handle.ns_view;
+                        </span><span class="kw">let </span>window_ptr = handle.ns_view.as_ptr();
                         <span class="attr">#[cfg(target_os = <span class="string">"macos"</span>)]
                         </span><span class="kw">let </span>window_ptr = {
                             <span class="kw">use </span>objc::{msg_send, runtime::Object, sel, sel_impl};
                             <span class="comment">// ns_view always have a layer and don't need to verify that it exists.
                             </span><span class="kw">let </span>layer: <span class="kw-2">*mut </span>Object =
-                                <span class="macro">msg_send!</span>[handle.ns_view <span class="kw">as </span><span class="kw-2">*mut </span>Object, layer];
+                                <span class="macro">msg_send!</span>[handle.ns_view.as_ptr() <span class="kw">as </span><span class="kw-2">*mut </span>Object, layer];
                             layer <span class="kw">as </span><span class="kw-2">*mut </span>ffi::c_void
                         };
                         window_ptr
@@ -2610,10 +2599,10 @@
                 }
                 attributes.push(khronos_egl::ATTRIB_NONE <span class="kw">as </span>i32);
 
-                <span class="attr">#[cfg(not(target_os = <span class="string">"emscripten"</span>))]
+                <span class="attr">#[cfg(not(Emscripten))]
                 </span><span class="kw">let </span>egl1_5 = <span class="self">self</span>.egl.instance.upcast::&lt;khronos_egl::EGL1_5&gt;();
 
-                <span class="attr">#[cfg(target_os = <span class="string">"emscripten"</span>)]
+                <span class="attr">#[cfg(Emscripten)]
                 </span><span class="kw">let </span>egl1_5: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Arc&lt;EglInstance&gt;&gt; = <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.egl.instance);
 
                 <span class="comment">// Careful, we can still be in 1.4 version even if `upcast` succeeds
@@ -2623,12 +2612,14 @@
                             .into_iter()
                             .map(|v| v <span class="kw">as </span>usize)
                             .collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;();
-                        egl.create_platform_window_surface(
-                            <span class="self">self</span>.egl.display,
-                            <span class="self">self</span>.config,
-                            native_window_ptr,
-                            <span class="kw-2">&amp;</span>attributes_usize,
-                        )
+                        <span class="kw">unsafe </span>{
+                            egl.create_platform_window_surface(
+                                <span class="self">self</span>.egl.display,
+                                <span class="self">self</span>.config,
+                                native_window_ptr,
+                                <span class="kw-2">&amp;</span>attributes_usize,
+                            )
+                        }
                     }
                     <span class="kw">_ </span>=&gt; <span class="kw">unsafe </span>{
                         <span class="self">self</span>.egl.instance.create_window_surface(
@@ -2696,7 +2687,8 @@
         <span class="kw">unsafe </span>{ gl.bind_renderbuffer(glow::RENDERBUFFER, <span class="prelude-val">None</span>) };
         <span class="kw">unsafe </span>{ gl.bind_framebuffer(glow::READ_FRAMEBUFFER, <span class="prelude-val">None</span>) };
 
-        <span class="self">self</span>.swapchain = <span class="prelude-val">Some</span>(Swapchain {
+        <span class="kw">let </span><span class="kw-2">mut </span>swapchain = <span class="self">self</span>.swapchain.write();
+        <span class="kw-2">*</span>swapchain = <span class="prelude-val">Some</span>(Swapchain {
             surface,
             wl_window,
             renderbuffer,
@@ -2710,7 +2702,7 @@
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="kw">unsafe fn </span>unconfigure(<span class="kw-2">&amp;mut </span><span class="self">self</span>, device: <span class="kw-2">&amp;</span><span class="kw">super</span>::Device) {
+    <span class="kw">unsafe fn </span>unconfigure(<span class="kw-2">&amp;</span><span class="self">self</span>, device: <span class="kw-2">&amp;</span><span class="kw">super</span>::Device) {
         <span class="kw">if let </span><span class="prelude-val">Some</span>((surface, wl_window)) = <span class="kw">unsafe </span>{ <span class="self">self</span>.unconfigure_impl(device) } {
             <span class="self">self</span>.egl
                 .instance
@@ -2731,10 +2723,11 @@
     }
 
     <span class="kw">unsafe fn </span>acquire_texture(
-        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
         _timeout_ms: <span class="prelude-ty">Option</span>&lt;Duration&gt;, <span class="comment">//TODO
     </span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;<span class="kw">crate</span>::AcquiredSurfaceTexture&lt;<span class="kw">super</span>::Api&gt;&gt;, <span class="kw">crate</span>::SurfaceError&gt; {
-        <span class="kw">let </span>sc = <span class="self">self</span>.swapchain.as_ref().unwrap();
+        <span class="kw">let </span>swapchain = <span class="self">self</span>.swapchain.read();
+        <span class="kw">let </span>sc = swapchain.as_ref().unwrap();
         <span class="kw">let </span>texture = <span class="kw">super</span>::Texture {
             inner: <span class="kw">super</span>::TextureInner::Renderbuffer {
                 raw: sc.renderbuffer,
@@ -2749,13 +2742,12 @@
                 height: sc.extent.height,
                 depth: <span class="number">1</span>,
             },
-            is_cubemap: <span class="bool-val">false</span>,
         };
         <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(<span class="kw">crate</span>::AcquiredSurfaceTexture {
             texture,
             suboptimal: <span class="bool-val">false</span>,
         }))
     }
-    <span class="kw">unsafe fn </span>discard_texture(<span class="kw-2">&amp;mut </span><span class="self">self</span>, _texture: <span class="kw">super</span>::Texture) {}
+    <span class="kw">unsafe fn </span>discard_texture(<span class="kw-2">&amp;</span><span class="self">self</span>, _texture: <span class="kw">super</span>::Texture) {}
 }
 </code></pre></div></section></main></body></html>

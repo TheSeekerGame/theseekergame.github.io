@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"derive":["DynActionMarker"],"struct":["DynAction","DynActionRegistry"],"trait":["DynActionMarker","RegisterActionToAppExt"]};

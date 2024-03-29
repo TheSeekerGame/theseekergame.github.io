@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ruzstd-0.4.0/src/decoding/sequence_section_decoder.rs`."><title>sequence_section_decoder.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="ruzstd" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.0 (aedd173a2 2024-03-17)" data-channel="1.77.0" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ruzstd-0.5.0/src/decoding/sequence_section_decoder.rs`."><title>sequence_section_decoder.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="ruzstd" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.1 (7cf61ebde 2024-03-27)" data-channel="1.77.1" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
             <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
     <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../ruzstd/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
@@ -475,6 +475,12 @@
 <a href="#473" id="473">473</a>
 <a href="#474" id="474">474</a>
 <a href="#475" id="475">475</a>
+<a href="#476" id="476">476</a>
+<a href="#477" id="477">477</a>
+<a href="#478" id="478">478</a>
+<a href="#479" id="479">479</a>
+<a href="#480" id="480">480</a>
+<a href="#481" id="481">481</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::blocks::sequence_section::ModeType;
 <span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::blocks::sequence_section::Sequence;
 <span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::blocks::sequence_section::SequencesHeader;
@@ -483,32 +489,38 @@
 <span class="kw">use </span><span class="kw">crate</span>::fse::{FSEDecoder, FSEDecoderError, FSETableError};
 <span class="kw">use </span>alloc::vec::Vec;
 
-<span class="attr">#[derive(Debug, thiserror::Error)]
+<span class="attr">#[derive(Debug, derive_more::Display, derive_more::From)]
+#[cfg_attr(feature = <span class="string">"std"</span>, derive(derive_more::Error))]
 #[non_exhaustive]
 </span><span class="kw">pub enum </span>DecodeSequenceError {
-    <span class="attr">#[error(transparent)]
-    </span>GetBitsError(<span class="attr">#[from] </span>GetBitsError),
-    <span class="attr">#[error(transparent)]
-    </span>FSEDecoderError(<span class="attr">#[from] </span>FSEDecoderError),
-    <span class="attr">#[error(transparent)]
-    </span>FSETableError(<span class="attr">#[from] </span>FSETableError),
-    <span class="attr">#[error(<span class="string">"Padding at the end of the sequence_section was more than a byte long: {skipped_bits} bits. Probably caused by data corruption"</span>)]
+    <span class="attr">#[display(fmt = <span class="string">"{_0:?}"</span>)]
+    #[from]
+    </span>GetBitsError(GetBitsError),
+    <span class="attr">#[display(fmt = <span class="string">"{_0:?}"</span>)]
+    #[from]
+    </span>FSEDecoderError(FSEDecoderError),
+    <span class="attr">#[display(fmt = <span class="string">"{_0:?}"</span>)]
+    #[from]
+    </span>FSETableError(FSETableError),
+    <span class="attr">#[display(
+        fmt = <span class="string">"Padding at the end of the sequence_section was more than a byte long: {skipped_bits} bits. Probably caused by data corruption"
+    </span>)]
     </span>ExtraPadding { skipped_bits: i32 },
-    <span class="attr">#[error(<span class="string">"Do not support offsets bigger than 1&lt;&lt;32; got: {offset_code}"</span>)]
+    <span class="attr">#[display(fmt = <span class="string">"Do not support offsets bigger than 1&lt;&lt;32; got: {offset_code}"</span>)]
     </span>UnsupportedOffset { offset_code: u8 },
-    <span class="attr">#[error(<span class="string">"Read an offset == 0. That is an illegal value for offsets"</span>)]
+    <span class="attr">#[display(fmt = <span class="string">"Read an offset == 0. That is an illegal value for offsets"</span>)]
     </span>ZeroOffset,
-    <span class="attr">#[error(<span class="string">"Bytestream did not contain enough bytes to decode num_sequences"</span>)]
+    <span class="attr">#[display(fmt = <span class="string">"Bytestream did not contain enough bytes to decode num_sequences"</span>)]
     </span>NotEnoughBytesForNumSequences,
-    <span class="attr">#[error(<span class="string">"Did not use full bitstream. Bits left: {bits_remaining} ({} bytes)"</span>, bits_remaining / <span class="number">8</span>)]
+    <span class="attr">#[display(fmt = <span class="string">"Did not use full bitstream. Bits left: {bits_remaining} ({} bytes)"</span>, bits_remaining / <span class="number">8</span>)]
     </span>ExtraBits { bits_remaining: isize },
-    <span class="attr">#[error(<span class="string">"compression modes are none but they must be set to something"</span>)]
+    <span class="attr">#[display(fmt = <span class="string">"compression modes are none but they must be set to something"</span>)]
     </span>MissingCompressionMode,
-    <span class="attr">#[error(<span class="string">"Need a byte to read for RLE ll table"</span>)]
+    <span class="attr">#[display(fmt = <span class="string">"Need a byte to read for RLE ll table"</span>)]
     </span>MissingByteForRleLlTable,
-    <span class="attr">#[error(<span class="string">"Need a byte to read for RLE of table"</span>)]
+    <span class="attr">#[display(fmt = <span class="string">"Need a byte to read for RLE of table"</span>)]
     </span>MissingByteForRleOfTable,
-    <span class="attr">#[error(<span class="string">"Need a byte to read for RLE ml table"</span>)]
+    <span class="attr">#[display(fmt = <span class="string">"Need a byte to read for RLE ml table"</span>)]
     </span>MissingByteForRleMlTable,
 }
 
@@ -550,7 +562,7 @@
 <span class="kw">fn </span>decode_sequences_with_rle(
     section: <span class="kw-2">&amp;</span>SequencesHeader,
     br: <span class="kw-2">&amp;mut </span>BitReaderReversed&lt;<span class="lifetime">'_</span>&gt;,
-    scratch: <span class="kw-2">&amp;mut </span>FSEScratch,
+    scratch: <span class="kw-2">&amp;</span>FSEScratch,
     target: <span class="kw-2">&amp;mut </span>Vec&lt;Sequence&gt;,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;(), DecodeSequenceError&gt; {
     <span class="kw">let </span><span class="kw-2">mut </span>ll_dec = FSEDecoder::new(<span class="kw-2">&amp;</span>scratch.literal_lengths);
@@ -655,7 +667,7 @@
 <span class="kw">fn </span>decode_sequences_without_rle(
     section: <span class="kw-2">&amp;</span>SequencesHeader,
     br: <span class="kw-2">&amp;mut </span>BitReaderReversed&lt;<span class="lifetime">'_</span>&gt;,
-    scratch: <span class="kw-2">&amp;mut </span>FSEScratch,
+    scratch: <span class="kw-2">&amp;</span>FSEScratch,
     target: <span class="kw-2">&amp;mut </span>Vec&lt;Sequence&gt;,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;(), DecodeSequenceError&gt; {
     <span class="kw">let </span><span class="kw-2">mut </span>ll_dec = FSEDecoder::new(<span class="kw-2">&amp;</span>scratch.literal_lengths);

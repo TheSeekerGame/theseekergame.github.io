@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy-3e956806168b8470/b5b6ea3/crates/bevy_render/src/render_phase/draw.rs`."><title>draw.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_render" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.0 (aedd173a2 2024-03-17)" data-channel="1.77.0" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_render-0.13.1/src/render_phase/draw.rs`."><title>draw.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_render" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.1 (7cf61ebde 2024-03-27)" data-channel="1.77.1" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
             <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
     <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../bevy_render/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
@@ -313,15 +313,35 @@
 <a href="#311" id="311">311</a>
 <a href="#312" id="312">312</a>
 <a href="#313" id="313">313</a>
+<a href="#314" id="314">314</a>
+<a href="#315" id="315">315</a>
+<a href="#316" id="316">316</a>
+<a href="#317" id="317">317</a>
+<a href="#318" id="318">318</a>
+<a href="#319" id="319">319</a>
+<a href="#320" id="320">320</a>
+<a href="#321" id="321">321</a>
+<a href="#322" id="322">322</a>
+<a href="#323" id="323">323</a>
+<a href="#324" id="324">324</a>
+<a href="#325" id="325">325</a>
+<a href="#326" id="326">326</a>
+<a href="#327" id="327">327</a>
+<a href="#328" id="328">328</a>
+<a href="#329" id="329">329</a>
+<a href="#330" id="330">330</a>
+<a href="#331" id="331">331</a>
+<a href="#332" id="332">332</a>
+<a href="#333" id="333">333</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::render_phase::{PhaseItem, TrackedRenderPass};
 <span class="kw">use </span>bevy_app::App;
 <span class="kw">use </span>bevy_ecs::{
     entity::Entity,
-    query::{QueryState, ROQueryItem, ReadOnlyWorldQuery},
+    query::{QueryState, ROQueryItem, ReadOnlyQueryData},
     system::{ReadOnlySystemParam, Resource, SystemParam, SystemParamItem, SystemState},
     world::World,
 };
-<span class="kw">use </span>bevy_utils::{all_tuples, HashMap};
+<span class="kw">use </span>bevy_utils::{all_tuples, TypeIdMap};
 <span class="kw">use </span>std::{
     any::TypeId,
     fmt::Debug,
@@ -362,7 +382,7 @@
 /// For retrieval, the [`Draw`] functions are mapped to their respective [`TypeId`]s.
 </span><span class="kw">pub struct </span>DrawFunctionsInternal&lt;P: PhaseItem&gt; {
     <span class="kw">pub </span>draw_functions: Vec&lt;Box&lt;<span class="kw">dyn </span>Draw&lt;P&gt;&gt;&gt;,
-    <span class="kw">pub </span>indices: HashMap&lt;TypeId, DrawFunctionId&gt;,
+    <span class="kw">pub </span>indices: TypeIdMap&lt;DrawFunctionId&gt;,
 }
 
 <span class="kw">impl</span>&lt;P: PhaseItem&gt; DrawFunctionsInternal&lt;P&gt; {
@@ -426,7 +446,7 @@
         <span class="self">Self </span>{
             internal: RwLock::new(DrawFunctionsInternal {
                 draw_functions: Vec::new(),
-                indices: HashMap::default(),
+                indices: Default::default(),
             }),
         }
     }
@@ -457,22 +477,28 @@
 /// Compared to the draw function the required ECS data is fetched automatically
 /// (by the [`RenderCommandState`]) from the render world.
 /// Therefore the three types [`Param`](RenderCommand::Param),
-/// [`ViewWorldQuery`](RenderCommand::ViewWorldQuery) and
-/// [`ItemWorldQuery`](RenderCommand::ItemWorldQuery) are used.
+/// [`ViewQuery`](RenderCommand::ViewQuery) and
+/// [`ItemQuery`](RenderCommand::ItemQuery) are used.
 /// They specify which information is required to execute the render command.
 ///
 /// Multiple render commands can be combined together by wrapping them in a tuple.
 ///
 /// # Example
-/// The `DrawPbr` draw function is created from the following render command
+///
+/// The `DrawMaterial` draw function is created from the following render command
 /// tuple. Const generics are used to set specific bind group locations:
 ///
-/// ```ignore
-/// pub type DrawPbr = (
+/// ```
+/// # use bevy_render::render_phase::SetItemPipeline;
+/// # struct SetMeshViewBindGroup&lt;const N: usize&gt;;
+/// # struct SetMeshBindGroup&lt;const N: usize&gt;;
+/// # struct SetMaterialBindGroup&lt;M, const N: usize&gt;(core::marker::PhantomData&lt;M&gt;);
+/// # struct DrawMesh;
+/// pub type DrawMaterial&lt;M&gt; = (
 ///     SetItemPipeline,
 ///     SetMeshViewBindGroup&lt;0&gt;,
-///     SetStandardMaterialBindGroup&lt;1&gt;,
-///     SetTransformBindGroup&lt;2&gt;,
+///     SetMeshBindGroup&lt;1&gt;,
+///     SetMaterialBindGroup&lt;M, 2&gt;,
 ///     DrawMesh,
 /// );
 /// ```
@@ -494,19 +520,24 @@
     /// The view entity refers to the camera, or shadow-casting light, etc. from which the phase
     /// item will be rendered from.
     /// All components have to be accessed read only.
-    </span><span class="kw">type </span>ViewWorldQuery: ReadOnlyWorldQuery;
+    </span><span class="kw">type </span>ViewQuery: ReadOnlyQueryData;
     <span class="doccomment">/// Specifies the ECS data of the item entity required by [`RenderCommand::render`].
     ///
     /// The item is the entity that will be rendered for the corresponding view.
     /// All components have to be accessed read only.
-    </span><span class="kw">type </span>ItemWorldQuery: ReadOnlyWorldQuery;
+    ///
+    /// For efficiency reasons, Bevy doesn't always extract entities to the
+    /// render world; for instance, entities that simply consist of meshes are
+    /// often not extracted. If the entity doesn't exist in the render world,
+    /// the supplied query data will be `None`.
+    </span><span class="kw">type </span>ItemQuery: ReadOnlyQueryData;
 
     <span class="doccomment">/// Renders a [`PhaseItem`] by recording commands (e.g. setting pipelines, binding bind groups,
     /// issuing draw calls, etc.) via the [`TrackedRenderPass`].
     </span><span class="kw">fn </span>render&lt;<span class="lifetime">'w</span>&gt;(
         item: <span class="kw-2">&amp;</span>P,
-        view: ROQueryItem&lt;<span class="lifetime">'w</span>, <span class="self">Self</span>::ViewWorldQuery&gt;,
-        entity: ROQueryItem&lt;<span class="lifetime">'w</span>, <span class="self">Self</span>::ItemWorldQuery&gt;,
+        view: ROQueryItem&lt;<span class="lifetime">'w</span>, <span class="self">Self</span>::ViewQuery&gt;,
+        entity: <span class="prelude-ty">Option</span>&lt;ROQueryItem&lt;<span class="lifetime">'w</span>, <span class="self">Self</span>::ItemQuery&gt;&gt;,
         param: SystemParamItem&lt;<span class="lifetime">'w</span>, <span class="lifetime">'_</span>, <span class="self">Self</span>::Param&gt;,
         pass: <span class="kw-2">&amp;mut </span>TrackedRenderPass&lt;<span class="lifetime">'w</span>&gt;,
     ) -&gt; RenderCommandResult;
@@ -522,20 +553,29 @@
     ($((<span class="macro-nonterminal">$name</span>: ident, <span class="macro-nonterminal">$view</span>: ident, <span class="macro-nonterminal">$entity</span>: ident)),<span class="kw-2">*</span>) =&gt; {
         <span class="kw">impl</span>&lt;P: PhaseItem, $(<span class="macro-nonterminal">$name</span>: RenderCommand&lt;P&gt;),<span class="kw-2">*</span>&gt; RenderCommand&lt;P&gt; <span class="kw">for </span>($(<span class="macro-nonterminal">$name</span>,)<span class="kw-2">*</span>) {
             <span class="kw">type </span>Param = ($(<span class="macro-nonterminal">$name::Param</span>,)<span class="kw-2">*</span>);
-            <span class="kw">type </span>ViewWorldQuery = ($(<span class="macro-nonterminal">$name::ViewWorldQuery</span>,)<span class="kw-2">*</span>);
-            <span class="kw">type </span>ItemWorldQuery = ($(<span class="macro-nonterminal">$name::ItemWorldQuery</span>,)<span class="kw-2">*</span>);
+            <span class="kw">type </span>ViewQuery = ($(<span class="macro-nonterminal">$name::ViewQuery</span>,)<span class="kw-2">*</span>);
+            <span class="kw">type </span>ItemQuery = ($(<span class="macro-nonterminal">$name::ItemQuery</span>,)<span class="kw-2">*</span>);
 
             <span class="attr">#[allow(non_snake_case)]
             </span><span class="kw">fn </span>render&lt;<span class="lifetime">'w</span>&gt;(
                 _item: <span class="kw-2">&amp;</span>P,
-                ($(<span class="macro-nonterminal">$view</span>,)<span class="kw-2">*</span>): ROQueryItem&lt;<span class="lifetime">'w</span>, <span class="self">Self</span>::ViewWorldQuery&gt;,
-                ($(<span class="macro-nonterminal">$entity</span>,)<span class="kw-2">*</span>): ROQueryItem&lt;<span class="lifetime">'w</span>, <span class="self">Self</span>::ItemWorldQuery&gt;,
+                ($(<span class="macro-nonterminal">$view</span>,)<span class="kw-2">*</span>): ROQueryItem&lt;<span class="lifetime">'w</span>, <span class="self">Self</span>::ViewQuery&gt;,
+                maybe_entities: <span class="prelude-ty">Option</span>&lt;ROQueryItem&lt;<span class="lifetime">'w</span>, <span class="self">Self</span>::ItemQuery&gt;&gt;,
                 ($(<span class="macro-nonterminal">$name</span>,)<span class="kw-2">*</span>): SystemParamItem&lt;<span class="lifetime">'w</span>, <span class="lifetime">'_</span>, <span class="self">Self</span>::Param&gt;,
                 _pass: <span class="kw-2">&amp;mut </span>TrackedRenderPass&lt;<span class="lifetime">'w</span>&gt;,
             ) -&gt; RenderCommandResult {
-                $(<span class="kw">if let </span>RenderCommandResult::Failure = <span class="macro-nonterminal">$name::render</span>(_item, <span class="macro-nonterminal">$view</span>, <span class="macro-nonterminal">$entity</span>, <span class="macro-nonterminal">$name</span>, _pass) {
-                    <span class="kw">return </span>RenderCommandResult::Failure;
-                })*
+                <span class="kw">match </span>maybe_entities {
+                    <span class="prelude-val">None </span>=&gt; {
+                        $(<span class="kw">if let </span>RenderCommandResult::Failure = <span class="macro-nonterminal">$name::render</span>(_item, <span class="macro-nonterminal">$view</span>, <span class="prelude-val">None</span>, <span class="macro-nonterminal">$name</span>, _pass) {
+                            <span class="kw">return </span>RenderCommandResult::Failure;
+                        })*
+                    }
+                    <span class="prelude-val">Some</span>(($(<span class="macro-nonterminal">$entity</span>,)<span class="kw-2">*</span>)) =&gt; {
+                        $(<span class="kw">if let </span>RenderCommandResult::Failure = <span class="macro-nonterminal">$name::render</span>(_item, <span class="macro-nonterminal">$view</span>, <span class="prelude-val">Some</span>(<span class="macro-nonterminal">$entity</span>), <span class="macro-nonterminal">$name</span>, _pass) {
+                            <span class="kw">return </span>RenderCommandResult::Failure;
+                        })*
+                    }
+                }
                 RenderCommandResult::Success
             }
         }
@@ -546,12 +586,12 @@
 
 <span class="doccomment">/// Wraps a [`RenderCommand`] into a state so that it can be used as a [`Draw`] function.
 ///
-/// The [`RenderCommand::Param`], [`RenderCommand::ViewWorldQuery`] and
-/// [`RenderCommand::ItemWorldQuery`] are fetched from the ECS and passed to the command.
+/// The [`RenderCommand::Param`], [`RenderCommand::ViewQuery`] and
+/// [`RenderCommand::ItemQuery`] are fetched from the ECS and passed to the command.
 </span><span class="kw">pub struct </span>RenderCommandState&lt;P: PhaseItem + <span class="lifetime">'static</span>, C: RenderCommand&lt;P&gt;&gt; {
     state: SystemState&lt;C::Param&gt;,
-    view: QueryState&lt;C::ViewWorldQuery&gt;,
-    entity: QueryState&lt;C::ItemWorldQuery&gt;,
+    view: QueryState&lt;C::ViewQuery&gt;,
+    entity: QueryState&lt;C::ItemQuery&gt;,
 }
 
 <span class="kw">impl</span>&lt;P: PhaseItem, C: RenderCommand&lt;P&gt;&gt; RenderCommandState&lt;P, C&gt; {
@@ -587,7 +627,7 @@
     ) {
         <span class="kw">let </span>param = <span class="self">self</span>.state.get_manual(world);
         <span class="kw">let </span>view = <span class="self">self</span>.view.get_manual(world, view).unwrap();
-        <span class="kw">let </span>entity = <span class="self">self</span>.entity.get_manual(world, item.entity()).unwrap();
+        <span class="kw">let </span>entity = <span class="self">self</span>.entity.get_manual(world, item.entity()).ok();
         <span class="comment">// TODO: handle/log `RenderCommand` failure
         </span>C::render(item, view, entity, param, pass);
     }

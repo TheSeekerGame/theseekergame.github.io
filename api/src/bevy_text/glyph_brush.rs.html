@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy-3e956806168b8470/b5b6ea3/crates/bevy_text/src/glyph_brush.rs`."><title>glyph_brush.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bevy_text" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.0 (aedd173a2 2024-03-17)" data-channel="1.77.0" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_text-0.13.1/src/glyph_brush.rs`."><title>glyph_brush.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bevy_text" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.1 (7cf61ebde 2024-03-27)" data-channel="1.77.1" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
             <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
     <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../bevy_text/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
@@ -232,22 +232,21 @@
 <a href="#230" id="230">230</a>
 <a href="#231" id="231">231</a>
 <a href="#232" id="232">232</a>
-<a href="#233" id="233">233</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>ab_glyph::{Font <span class="kw">as _</span>, FontArc, Glyph, PxScaleFont, ScaleFont <span class="kw">as _</span>};
 <span class="kw">use </span>bevy_asset::{AssetId, Assets};
 <span class="kw">use </span>bevy_math::{Rect, Vec2};
 <span class="kw">use </span>bevy_reflect::Reflect;
 <span class="kw">use </span>bevy_render::texture::Image;
-<span class="kw">use </span>bevy_sprite::TextureAtlas;
-<span class="kw">use </span>bevy_utils::tracing::warn;
+<span class="kw">use </span>bevy_sprite::TextureAtlasLayout;
+<span class="kw">use </span>bevy_utils::warn_once;
 <span class="kw">use </span>glyph_brush_layout::{
     BuiltInLineBreaker, FontId, GlyphPositioner, Layout, SectionGeometry, SectionGlyph,
     SectionText, ToSectionText,
 };
 
 <span class="kw">use crate</span>::{
-    error::TextError, BreakLineOn, Font, FontAtlasSet, FontAtlasSets, FontAtlasWarning,
-    GlyphAtlasInfo, TextAlignment, TextSettings, YAxisOrientation,
+    error::TextError, BreakLineOn, Font, FontAtlasSet, FontAtlasSets, GlyphAtlasInfo, JustifyText,
+    TextSettings, YAxisOrientation,
 };
 
 <span class="kw">pub struct </span>GlyphBrush {
@@ -271,7 +270,7 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         sections: <span class="kw-2">&amp;</span>[S],
         bounds: Vec2,
-        text_alignment: TextAlignment,
+        text_alignment: JustifyText,
         linebreak_behavior: BreakLineOn,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;SectionGlyph&gt;, TextError&gt; {
         <span class="kw">let </span>geom = SectionGeometry {
@@ -295,10 +294,9 @@
         sections: <span class="kw-2">&amp;</span>[SectionText],
         font_atlas_sets: <span class="kw-2">&amp;mut </span>FontAtlasSets,
         fonts: <span class="kw-2">&amp;</span>Assets&lt;Font&gt;,
-        texture_atlases: <span class="kw-2">&amp;mut </span>Assets&lt;TextureAtlas&gt;,
+        texture_atlases: <span class="kw-2">&amp;mut </span>Assets&lt;TextureAtlasLayout&gt;,
         textures: <span class="kw-2">&amp;mut </span>Assets&lt;Image&gt;,
         text_settings: <span class="kw-2">&amp;</span>TextSettings,
-        font_atlas_warning: <span class="kw-2">&amp;mut </span>FontAtlasWarning,
         y_axis_orientation: YAxisOrientation,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;PositionedGlyph&gt;, TextError&gt; {
         <span class="kw">if </span>glyphs.is_empty() {
@@ -349,11 +347,9 @@
                     })<span class="question-mark">?</span>;
 
                 <span class="kw">if </span>!text_settings.allow_dynamic_font_size
-                    &amp;&amp; !font_atlas_warning.warned
                     &amp;&amp; font_atlas_set.len() &gt; text_settings.soft_max_font_atlases.get()
                 {
-                    <span class="macro">warn!</span>(<span class="string">"warning[B0005]: Number of font atlases has exceeded the maximum of {}. Performance and memory usage may suffer."</span>, text_settings.soft_max_font_atlases.get());
-                    font_atlas_warning.warned = <span class="bool-val">true</span>;
+                    <span class="macro">warn_once!</span>(<span class="string">"warning[B0005]: Number of font atlases has exceeded the maximum of {}. Performance and memory usage may suffer."</span>, text_settings.soft_max_font_atlases.get());
                 }
 
                 <span class="kw">let </span>texture_atlas = texture_atlases.get(<span class="kw-2">&amp;</span>atlas_info.texture_atlas).unwrap();
@@ -371,7 +367,9 @@
                     }
                 };
 
-                <span class="kw">let </span>position = adjust.position(Vec2::new(x, y));
+                <span class="comment">// We must offset by 1 to account for glyph texture padding.
+                // See https://github.com/bevyengine/bevy/pull/11662
+                </span><span class="kw">let </span>position = adjust.position(Vec2::new(x, y) - <span class="number">1.</span>);
 
                 positioned_glyphs.push(PositionedGlyph {
                     position,
@@ -443,13 +441,13 @@
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>compute_text_bounds&lt;T&gt;(
     section_glyphs: <span class="kw-2">&amp;</span>[SectionGlyph],
     get_scaled_font: <span class="kw">impl </span>Fn(usize) -&gt; PxScaleFont&lt;T&gt;,
-) -&gt; bevy_math::Rect
+) -&gt; Rect
 <span class="kw">where
     </span>T: ab_glyph::Font,
 {
     <span class="kw">let </span><span class="kw-2">mut </span>text_bounds = Rect {
-        min: Vec2::splat(std::f32::MAX),
-        max: Vec2::splat(std::f32::MIN),
+        min: Vec2::splat(f32::MAX),
+        max: Vec2::splat(f32::MIN),
     };
 
     <span class="kw">for </span>sg <span class="kw">in </span>section_glyphs {

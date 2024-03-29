@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/winit-0.28.7/src/platform_impl/linux/x11/window.rs`."><title>window.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../../../" data-static-root-path="../../../../../static.files/" data-current-crate="winit" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.0 (aedd173a2 2024-03-17)" data-channel="1.77.0" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../../../src-files.js"></script><script defer src="../../../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/winit-0.29.15/src/platform_impl/linux/x11/window.rs`."><title>window.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../../../" data-static-root-path="../../../../../static.files/" data-current-crate="winit" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.1 (7cf61ebde 2024-03-27)" data-channel="1.77.1" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../../../src-files.js"></script><script defer src="../../../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
             <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
     <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../../../winit/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
@@ -1632,37 +1632,388 @@
 <a href="#1630" id="1630">1630</a>
 <a href="#1631" id="1631">1631</a>
 <a href="#1632" id="1632">1632</a>
+<a href="#1633" id="1633">1633</a>
+<a href="#1634" id="1634">1634</a>
+<a href="#1635" id="1635">1635</a>
+<a href="#1636" id="1636">1636</a>
+<a href="#1637" id="1637">1637</a>
+<a href="#1638" id="1638">1638</a>
+<a href="#1639" id="1639">1639</a>
+<a href="#1640" id="1640">1640</a>
+<a href="#1641" id="1641">1641</a>
+<a href="#1642" id="1642">1642</a>
+<a href="#1643" id="1643">1643</a>
+<a href="#1644" id="1644">1644</a>
+<a href="#1645" id="1645">1645</a>
+<a href="#1646" id="1646">1646</a>
+<a href="#1647" id="1647">1647</a>
+<a href="#1648" id="1648">1648</a>
+<a href="#1649" id="1649">1649</a>
+<a href="#1650" id="1650">1650</a>
+<a href="#1651" id="1651">1651</a>
+<a href="#1652" id="1652">1652</a>
+<a href="#1653" id="1653">1653</a>
+<a href="#1654" id="1654">1654</a>
+<a href="#1655" id="1655">1655</a>
+<a href="#1656" id="1656">1656</a>
+<a href="#1657" id="1657">1657</a>
+<a href="#1658" id="1658">1658</a>
+<a href="#1659" id="1659">1659</a>
+<a href="#1660" id="1660">1660</a>
+<a href="#1661" id="1661">1661</a>
+<a href="#1662" id="1662">1662</a>
+<a href="#1663" id="1663">1663</a>
+<a href="#1664" id="1664">1664</a>
+<a href="#1665" id="1665">1665</a>
+<a href="#1666" id="1666">1666</a>
+<a href="#1667" id="1667">1667</a>
+<a href="#1668" id="1668">1668</a>
+<a href="#1669" id="1669">1669</a>
+<a href="#1670" id="1670">1670</a>
+<a href="#1671" id="1671">1671</a>
+<a href="#1672" id="1672">1672</a>
+<a href="#1673" id="1673">1673</a>
+<a href="#1674" id="1674">1674</a>
+<a href="#1675" id="1675">1675</a>
+<a href="#1676" id="1676">1676</a>
+<a href="#1677" id="1677">1677</a>
+<a href="#1678" id="1678">1678</a>
+<a href="#1679" id="1679">1679</a>
+<a href="#1680" id="1680">1680</a>
+<a href="#1681" id="1681">1681</a>
+<a href="#1682" id="1682">1682</a>
+<a href="#1683" id="1683">1683</a>
+<a href="#1684" id="1684">1684</a>
+<a href="#1685" id="1685">1685</a>
+<a href="#1686" id="1686">1686</a>
+<a href="#1687" id="1687">1687</a>
+<a href="#1688" id="1688">1688</a>
+<a href="#1689" id="1689">1689</a>
+<a href="#1690" id="1690">1690</a>
+<a href="#1691" id="1691">1691</a>
+<a href="#1692" id="1692">1692</a>
+<a href="#1693" id="1693">1693</a>
+<a href="#1694" id="1694">1694</a>
+<a href="#1695" id="1695">1695</a>
+<a href="#1696" id="1696">1696</a>
+<a href="#1697" id="1697">1697</a>
+<a href="#1698" id="1698">1698</a>
+<a href="#1699" id="1699">1699</a>
+<a href="#1700" id="1700">1700</a>
+<a href="#1701" id="1701">1701</a>
+<a href="#1702" id="1702">1702</a>
+<a href="#1703" id="1703">1703</a>
+<a href="#1704" id="1704">1704</a>
+<a href="#1705" id="1705">1705</a>
+<a href="#1706" id="1706">1706</a>
+<a href="#1707" id="1707">1707</a>
+<a href="#1708" id="1708">1708</a>
+<a href="#1709" id="1709">1709</a>
+<a href="#1710" id="1710">1710</a>
+<a href="#1711" id="1711">1711</a>
+<a href="#1712" id="1712">1712</a>
+<a href="#1713" id="1713">1713</a>
+<a href="#1714" id="1714">1714</a>
+<a href="#1715" id="1715">1715</a>
+<a href="#1716" id="1716">1716</a>
+<a href="#1717" id="1717">1717</a>
+<a href="#1718" id="1718">1718</a>
+<a href="#1719" id="1719">1719</a>
+<a href="#1720" id="1720">1720</a>
+<a href="#1721" id="1721">1721</a>
+<a href="#1722" id="1722">1722</a>
+<a href="#1723" id="1723">1723</a>
+<a href="#1724" id="1724">1724</a>
+<a href="#1725" id="1725">1725</a>
+<a href="#1726" id="1726">1726</a>
+<a href="#1727" id="1727">1727</a>
+<a href="#1728" id="1728">1728</a>
+<a href="#1729" id="1729">1729</a>
+<a href="#1730" id="1730">1730</a>
+<a href="#1731" id="1731">1731</a>
+<a href="#1732" id="1732">1732</a>
+<a href="#1733" id="1733">1733</a>
+<a href="#1734" id="1734">1734</a>
+<a href="#1735" id="1735">1735</a>
+<a href="#1736" id="1736">1736</a>
+<a href="#1737" id="1737">1737</a>
+<a href="#1738" id="1738">1738</a>
+<a href="#1739" id="1739">1739</a>
+<a href="#1740" id="1740">1740</a>
+<a href="#1741" id="1741">1741</a>
+<a href="#1742" id="1742">1742</a>
+<a href="#1743" id="1743">1743</a>
+<a href="#1744" id="1744">1744</a>
+<a href="#1745" id="1745">1745</a>
+<a href="#1746" id="1746">1746</a>
+<a href="#1747" id="1747">1747</a>
+<a href="#1748" id="1748">1748</a>
+<a href="#1749" id="1749">1749</a>
+<a href="#1750" id="1750">1750</a>
+<a href="#1751" id="1751">1751</a>
+<a href="#1752" id="1752">1752</a>
+<a href="#1753" id="1753">1753</a>
+<a href="#1754" id="1754">1754</a>
+<a href="#1755" id="1755">1755</a>
+<a href="#1756" id="1756">1756</a>
+<a href="#1757" id="1757">1757</a>
+<a href="#1758" id="1758">1758</a>
+<a href="#1759" id="1759">1759</a>
+<a href="#1760" id="1760">1760</a>
+<a href="#1761" id="1761">1761</a>
+<a href="#1762" id="1762">1762</a>
+<a href="#1763" id="1763">1763</a>
+<a href="#1764" id="1764">1764</a>
+<a href="#1765" id="1765">1765</a>
+<a href="#1766" id="1766">1766</a>
+<a href="#1767" id="1767">1767</a>
+<a href="#1768" id="1768">1768</a>
+<a href="#1769" id="1769">1769</a>
+<a href="#1770" id="1770">1770</a>
+<a href="#1771" id="1771">1771</a>
+<a href="#1772" id="1772">1772</a>
+<a href="#1773" id="1773">1773</a>
+<a href="#1774" id="1774">1774</a>
+<a href="#1775" id="1775">1775</a>
+<a href="#1776" id="1776">1776</a>
+<a href="#1777" id="1777">1777</a>
+<a href="#1778" id="1778">1778</a>
+<a href="#1779" id="1779">1779</a>
+<a href="#1780" id="1780">1780</a>
+<a href="#1781" id="1781">1781</a>
+<a href="#1782" id="1782">1782</a>
+<a href="#1783" id="1783">1783</a>
+<a href="#1784" id="1784">1784</a>
+<a href="#1785" id="1785">1785</a>
+<a href="#1786" id="1786">1786</a>
+<a href="#1787" id="1787">1787</a>
+<a href="#1788" id="1788">1788</a>
+<a href="#1789" id="1789">1789</a>
+<a href="#1790" id="1790">1790</a>
+<a href="#1791" id="1791">1791</a>
+<a href="#1792" id="1792">1792</a>
+<a href="#1793" id="1793">1793</a>
+<a href="#1794" id="1794">1794</a>
+<a href="#1795" id="1795">1795</a>
+<a href="#1796" id="1796">1796</a>
+<a href="#1797" id="1797">1797</a>
+<a href="#1798" id="1798">1798</a>
+<a href="#1799" id="1799">1799</a>
+<a href="#1800" id="1800">1800</a>
+<a href="#1801" id="1801">1801</a>
+<a href="#1802" id="1802">1802</a>
+<a href="#1803" id="1803">1803</a>
+<a href="#1804" id="1804">1804</a>
+<a href="#1805" id="1805">1805</a>
+<a href="#1806" id="1806">1806</a>
+<a href="#1807" id="1807">1807</a>
+<a href="#1808" id="1808">1808</a>
+<a href="#1809" id="1809">1809</a>
+<a href="#1810" id="1810">1810</a>
+<a href="#1811" id="1811">1811</a>
+<a href="#1812" id="1812">1812</a>
+<a href="#1813" id="1813">1813</a>
+<a href="#1814" id="1814">1814</a>
+<a href="#1815" id="1815">1815</a>
+<a href="#1816" id="1816">1816</a>
+<a href="#1817" id="1817">1817</a>
+<a href="#1818" id="1818">1818</a>
+<a href="#1819" id="1819">1819</a>
+<a href="#1820" id="1820">1820</a>
+<a href="#1821" id="1821">1821</a>
+<a href="#1822" id="1822">1822</a>
+<a href="#1823" id="1823">1823</a>
+<a href="#1824" id="1824">1824</a>
+<a href="#1825" id="1825">1825</a>
+<a href="#1826" id="1826">1826</a>
+<a href="#1827" id="1827">1827</a>
+<a href="#1828" id="1828">1828</a>
+<a href="#1829" id="1829">1829</a>
+<a href="#1830" id="1830">1830</a>
+<a href="#1831" id="1831">1831</a>
+<a href="#1832" id="1832">1832</a>
+<a href="#1833" id="1833">1833</a>
+<a href="#1834" id="1834">1834</a>
+<a href="#1835" id="1835">1835</a>
+<a href="#1836" id="1836">1836</a>
+<a href="#1837" id="1837">1837</a>
+<a href="#1838" id="1838">1838</a>
+<a href="#1839" id="1839">1839</a>
+<a href="#1840" id="1840">1840</a>
+<a href="#1841" id="1841">1841</a>
+<a href="#1842" id="1842">1842</a>
+<a href="#1843" id="1843">1843</a>
+<a href="#1844" id="1844">1844</a>
+<a href="#1845" id="1845">1845</a>
+<a href="#1846" id="1846">1846</a>
+<a href="#1847" id="1847">1847</a>
+<a href="#1848" id="1848">1848</a>
+<a href="#1849" id="1849">1849</a>
+<a href="#1850" id="1850">1850</a>
+<a href="#1851" id="1851">1851</a>
+<a href="#1852" id="1852">1852</a>
+<a href="#1853" id="1853">1853</a>
+<a href="#1854" id="1854">1854</a>
+<a href="#1855" id="1855">1855</a>
+<a href="#1856" id="1856">1856</a>
+<a href="#1857" id="1857">1857</a>
+<a href="#1858" id="1858">1858</a>
+<a href="#1859" id="1859">1859</a>
+<a href="#1860" id="1860">1860</a>
+<a href="#1861" id="1861">1861</a>
+<a href="#1862" id="1862">1862</a>
+<a href="#1863" id="1863">1863</a>
+<a href="#1864" id="1864">1864</a>
+<a href="#1865" id="1865">1865</a>
+<a href="#1866" id="1866">1866</a>
+<a href="#1867" id="1867">1867</a>
+<a href="#1868" id="1868">1868</a>
+<a href="#1869" id="1869">1869</a>
+<a href="#1870" id="1870">1870</a>
+<a href="#1871" id="1871">1871</a>
+<a href="#1872" id="1872">1872</a>
+<a href="#1873" id="1873">1873</a>
+<a href="#1874" id="1874">1874</a>
+<a href="#1875" id="1875">1875</a>
+<a href="#1876" id="1876">1876</a>
+<a href="#1877" id="1877">1877</a>
+<a href="#1878" id="1878">1878</a>
+<a href="#1879" id="1879">1879</a>
+<a href="#1880" id="1880">1880</a>
+<a href="#1881" id="1881">1881</a>
+<a href="#1882" id="1882">1882</a>
+<a href="#1883" id="1883">1883</a>
+<a href="#1884" id="1884">1884</a>
+<a href="#1885" id="1885">1885</a>
+<a href="#1886" id="1886">1886</a>
+<a href="#1887" id="1887">1887</a>
+<a href="#1888" id="1888">1888</a>
+<a href="#1889" id="1889">1889</a>
+<a href="#1890" id="1890">1890</a>
+<a href="#1891" id="1891">1891</a>
+<a href="#1892" id="1892">1892</a>
+<a href="#1893" id="1893">1893</a>
+<a href="#1894" id="1894">1894</a>
+<a href="#1895" id="1895">1895</a>
+<a href="#1896" id="1896">1896</a>
+<a href="#1897" id="1897">1897</a>
+<a href="#1898" id="1898">1898</a>
+<a href="#1899" id="1899">1899</a>
+<a href="#1900" id="1900">1900</a>
+<a href="#1901" id="1901">1901</a>
+<a href="#1902" id="1902">1902</a>
+<a href="#1903" id="1903">1903</a>
+<a href="#1904" id="1904">1904</a>
+<a href="#1905" id="1905">1905</a>
+<a href="#1906" id="1906">1906</a>
+<a href="#1907" id="1907">1907</a>
+<a href="#1908" id="1908">1908</a>
+<a href="#1909" id="1909">1909</a>
+<a href="#1910" id="1910">1910</a>
+<a href="#1911" id="1911">1911</a>
+<a href="#1912" id="1912">1912</a>
+<a href="#1913" id="1913">1913</a>
+<a href="#1914" id="1914">1914</a>
+<a href="#1915" id="1915">1915</a>
+<a href="#1916" id="1916">1916</a>
+<a href="#1917" id="1917">1917</a>
+<a href="#1918" id="1918">1918</a>
+<a href="#1919" id="1919">1919</a>
+<a href="#1920" id="1920">1920</a>
+<a href="#1921" id="1921">1921</a>
+<a href="#1922" id="1922">1922</a>
+<a href="#1923" id="1923">1923</a>
+<a href="#1924" id="1924">1924</a>
+<a href="#1925" id="1925">1925</a>
+<a href="#1926" id="1926">1926</a>
+<a href="#1927" id="1927">1927</a>
+<a href="#1928" id="1928">1928</a>
+<a href="#1929" id="1929">1929</a>
+<a href="#1930" id="1930">1930</a>
+<a href="#1931" id="1931">1931</a>
+<a href="#1932" id="1932">1932</a>
+<a href="#1933" id="1933">1933</a>
+<a href="#1934" id="1934">1934</a>
+<a href="#1935" id="1935">1935</a>
+<a href="#1936" id="1936">1936</a>
+<a href="#1937" id="1937">1937</a>
+<a href="#1938" id="1938">1938</a>
+<a href="#1939" id="1939">1939</a>
+<a href="#1940" id="1940">1940</a>
+<a href="#1941" id="1941">1941</a>
+<a href="#1942" id="1942">1942</a>
+<a href="#1943" id="1943">1943</a>
+<a href="#1944" id="1944">1944</a>
+<a href="#1945" id="1945">1945</a>
+<a href="#1946" id="1946">1946</a>
+<a href="#1947" id="1947">1947</a>
+<a href="#1948" id="1948">1948</a>
+<a href="#1949" id="1949">1949</a>
+<a href="#1950" id="1950">1950</a>
+<a href="#1951" id="1951">1951</a>
+<a href="#1952" id="1952">1952</a>
+<a href="#1953" id="1953">1953</a>
+<a href="#1954" id="1954">1954</a>
+<a href="#1955" id="1955">1955</a>
+<a href="#1956" id="1956">1956</a>
+<a href="#1957" id="1957">1957</a>
+<a href="#1958" id="1958">1958</a>
+<a href="#1959" id="1959">1959</a>
+<a href="#1960" id="1960">1960</a>
+<a href="#1961" id="1961">1961</a>
+<a href="#1962" id="1962">1962</a>
+<a href="#1963" id="1963">1963</a>
+<a href="#1964" id="1964">1964</a>
+<a href="#1965" id="1965">1965</a>
+<a href="#1966" id="1966">1966</a>
+<a href="#1967" id="1967">1967</a>
+<a href="#1968" id="1968">1968</a>
+<a href="#1969" id="1969">1969</a>
+<a href="#1970" id="1970">1970</a>
+<a href="#1971" id="1971">1971</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{
     cmp, env,
     ffi::CString,
-    mem::{<span class="self">self</span>, replace, MaybeUninit},
+    mem::replace,
     os::raw::<span class="kw-2">*</span>,
     path::Path,
-    ptr, slice,
     sync::{Arc, Mutex, MutexGuard},
 };
 
-<span class="kw">use </span>libc;
-<span class="kw">use </span>raw_window_handle::{RawDisplayHandle, RawWindowHandle, XlibDisplayHandle, XlibWindowHandle};
-<span class="kw">use </span>x11_dl::xlib::{TrueColor, XID};
+<span class="kw">use </span>x11rb::{
+    connection::Connection,
+    properties::{WmHints, WmSizeHints, WmSizeHintsSpecification},
+    protocol::{
+        randr,
+        shape::SK,
+        xfixes::{ConnectionExt, RegionWrapper},
+        xinput,
+        xproto::{<span class="self">self</span>, ConnectionExt <span class="kw">as _</span>, Rectangle},
+    },
+};
 
 <span class="kw">use crate</span>::{
     dpi::{PhysicalPosition, PhysicalSize, Position, Size},
     error::{ExternalError, NotSupportedError, OsError <span class="kw">as </span>RootOsError},
+    event::{Event, InnerSizeWriter, WindowEvent},
+    event_loop::AsyncRequestSerial,
     platform_impl::{
-        x11::{ime::ImeContextCreationError, MonitorHandle <span class="kw">as </span>X11MonitorHandle},
-        Fullscreen, MonitorHandle <span class="kw">as </span>PlatformMonitorHandle, OsError,
+        x11::{
+            atoms::<span class="kw-2">*</span>, xinput_fp1616_to_float, MonitorHandle <span class="kw">as </span>X11MonitorHandle, WakeSender,
+            X11Error,
+        },
+        Fullscreen, MonitorHandle <span class="kw">as </span>PlatformMonitorHandle, OsError, PlatformIcon,
         PlatformSpecificWindowBuilderAttributes, VideoMode <span class="kw">as </span>PlatformVideoMode,
     },
     window::{
-        CursorGrabMode, CursorIcon, Icon, ImePurpose, ResizeDirection, Theme, UserAttentionType,
+        CursorGrabMode, CursorIcon, ImePurpose, ResizeDirection, Theme, UserAttentionType,
         WindowAttributes, WindowButtons, WindowLevel,
     },
 };
 
 <span class="kw">use super</span>::{
-    ffi, util, EventLoopWindowTarget, ImeRequest, ImeSender, WakeSender, WindowId, XConnection,
-    XError,
+    ffi, util, CookieResultExt, EventLoopWindowTarget, ImeRequest, ImeSender, VoidCookie, WindowId,
+    XConnection,
 };
 
 <span class="attr">#[derive(Debug)]
@@ -1682,7 +2033,7 @@
     <span class="comment">// Used to restore position after exiting fullscreen
     </span><span class="kw">pub </span>restore_position: <span class="prelude-ty">Option</span>&lt;(i32, i32)&gt;,
     <span class="comment">// Used to restore video mode after exiting fullscreen
-    </span><span class="kw">pub </span>desktop_video_mode: <span class="prelude-ty">Option</span>&lt;(ffi::RRCrtc, ffi::RRMode)&gt;,
+    </span><span class="kw">pub </span>desktop_video_mode: <span class="prelude-ty">Option</span>&lt;(randr::Crtc, randr::Mode)&gt;,
     <span class="kw">pub </span>frame_extents: <span class="prelude-ty">Option</span>&lt;util::FrameExtentsHeuristic&gt;,
     <span class="kw">pub </span>min_inner_size: <span class="prelude-ty">Option</span>&lt;Size&gt;,
     <span class="kw">pub </span>max_inner_size: <span class="prelude-ty">Option</span>&lt;Size&gt;,
@@ -1690,6 +2041,8 @@
     <span class="kw">pub </span>base_size: <span class="prelude-ty">Option</span>&lt;Size&gt;,
     <span class="kw">pub </span>visibility: Visibility,
     <span class="kw">pub </span>has_focus: bool,
+    <span class="comment">// Use `Option` to not apply hittest logic when it was never requested.
+    </span><span class="kw">pub </span>cursor_hittest: <span class="prelude-ty">Option</span>&lt;bool&gt;,
 }
 
 <span class="attr">#[derive(Copy, Clone, Debug, Eq, PartialEq)]
@@ -1730,6 +2083,7 @@
             resize_increments: <span class="prelude-val">None</span>,
             base_size: <span class="prelude-val">None</span>,
             has_focus: <span class="bool-val">false</span>,
+            cursor_hittest: <span class="prelude-val">None</span>,
         })
     }
 }
@@ -1737,11 +2091,14 @@
 <span class="kw">unsafe impl </span>Send <span class="kw">for </span>UnownedWindow {}
 <span class="kw">unsafe impl </span>Sync <span class="kw">for </span>UnownedWindow {}
 
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>UnownedWindow {
+<span class="kw">pub struct </span>UnownedWindow {
     <span class="kw">pub</span>(<span class="kw">crate</span>) xconn: Arc&lt;XConnection&gt;, <span class="comment">// never changes
-    </span>xwindow: ffi::Window,               <span class="comment">// never changes
-    </span>root: ffi::Window,                  <span class="comment">// never changes
-    </span>screen_id: i32,                     <span class="comment">// never changes
+    </span>xwindow: xproto::Window,            <span class="comment">// never changes
+    </span><span class="attr">#[allow(dead_code)]
+    </span>visual: u32, <span class="comment">// never changes
+    </span>root: xproto::Window,               <span class="comment">// never changes
+    </span><span class="attr">#[allow(dead_code)]
+    </span>screen_id: i32, <span class="comment">// never changes
     </span>cursor: Mutex&lt;CursorIcon&gt;,
     cursor_grabbed_mode: Mutex&lt;CursorGrabMode&gt;,
     <span class="attr">#[allow(clippy::mutex_atomic)]
@@ -1749,23 +2106,38 @@
     ime_sender: Mutex&lt;ImeSender&gt;,
     <span class="kw">pub </span>shared_state: Mutex&lt;SharedState&gt;,
     redraw_sender: WakeSender&lt;WindowId&gt;,
+    activation_sender: WakeSender&lt;<span class="kw">super</span>::ActivationToken&gt;,
+}
+
+<span class="macro">macro_rules! </span>leap {
+    (<span class="macro-nonterminal">$e</span>:expr) =&gt; {
+        <span class="kw">match </span><span class="macro-nonterminal">$e </span>{
+            <span class="prelude-val">Ok</span>(x) =&gt; x,
+            <span class="prelude-val">Err</span>(err) =&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">os_error!</span>(OsError::XError(X11Error::from(err).into()))),
+        }
+    };
 }
 
 <span class="kw">impl </span>UnownedWindow {
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>new&lt;T&gt;(
+    <span class="attr">#[allow(clippy::unnecessary_cast)]
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>new&lt;T&gt;(
         event_loop: <span class="kw-2">&amp;</span>EventLoopWindowTarget&lt;T&gt;,
         window_attrs: WindowAttributes,
         pl_attribs: PlatformSpecificWindowBuilderAttributes,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;UnownedWindow, RootOsError&gt; {
         <span class="kw">let </span>xconn = <span class="kw-2">&amp;</span>event_loop.xconn;
-        <span class="kw">let </span>root = <span class="kw">match </span>window_attrs.parent_window {
-            <span class="prelude-val">Some</span>(RawWindowHandle::Xlib(handle)) =&gt; handle.window,
-            <span class="prelude-val">Some</span>(RawWindowHandle::Xcb(handle)) =&gt; handle.window <span class="kw">as </span>XID,
+        <span class="kw">let </span>atoms = xconn.atoms();
+        <span class="attr">#[cfg(feature = <span class="string">"rwh_06"</span>)]
+        </span><span class="kw">let </span>root = <span class="kw">match </span>window_attrs.parent_window.<span class="number">0 </span>{
+            <span class="prelude-val">Some</span>(rwh_06::RawWindowHandle::Xlib(handle)) =&gt; handle.window <span class="kw">as </span>xproto::Window,
+            <span class="prelude-val">Some</span>(rwh_06::RawWindowHandle::Xcb(handle)) =&gt; handle.window.get(),
             <span class="prelude-val">Some</span>(raw) =&gt; <span class="macro">unreachable!</span>(<span class="string">"Invalid raw window handle {raw:?} on X11"</span>),
             <span class="prelude-val">None </span>=&gt; event_loop.root,
         };
+        <span class="attr">#[cfg(not(feature = <span class="string">"rwh_06"</span>))]
+        </span><span class="kw">let </span>root = event_loop.root;
 
-        <span class="kw">let </span><span class="kw-2">mut </span>monitors = xconn.available_monitors();
+        <span class="kw">let </span><span class="kw-2">mut </span>monitors = <span class="macro">leap!</span>(xconn.available_monitors());
         <span class="kw">let </span>guessed_monitor = <span class="kw">if </span>monitors.is_empty() {
             X11MonitorHandle::dummy()
         } <span class="kw">else </span>{
@@ -1824,99 +2196,136 @@
             dimensions
         };
 
-        <span class="kw">let </span>screen_id = <span class="kw">match </span>pl_attribs.screen_id {
+        <span class="kw">let </span>screen_id = <span class="kw">match </span>pl_attribs.x11.screen_id {
             <span class="prelude-val">Some</span>(id) =&gt; id,
-            <span class="prelude-val">None </span>=&gt; <span class="kw">unsafe </span>{ (xconn.xlib.XDefaultScreen)(xconn.display) },
+            <span class="prelude-val">None </span>=&gt; xconn.default_screen_index() <span class="kw">as </span>c_int,
         };
+
+        <span class="comment">// An iterator over all of the visuals combined with their depths.
+        </span><span class="kw">let </span><span class="kw-2">mut </span>all_visuals = xconn
+            .xcb_connection()
+            .setup()
+            .roots
+            .iter()
+            .flat_map(|root| <span class="kw-2">&amp;</span>root.allowed_depths)
+            .flat_map(|depth| {
+                depth
+                    .visuals
+                    .iter()
+                    .map(<span class="kw">move </span>|visual| (visual, depth.depth))
+            });
 
         <span class="comment">// creating
-        </span><span class="kw">let </span>(visual, depth, require_colormap) = <span class="kw">match </span>pl_attribs.visual_infos {
-            <span class="prelude-val">Some</span>(vi) =&gt; (vi.visual, vi.depth, <span class="bool-val">false</span>),
-            <span class="prelude-val">None </span><span class="kw">if </span>window_attrs.transparent =&gt; {
-                <span class="comment">// Find a suitable visual
-                </span><span class="kw">let </span><span class="kw-2">mut </span>vinfo = MaybeUninit::uninit();
-                <span class="kw">let </span>vinfo_initialized = <span class="kw">unsafe </span>{
-                    (xconn.xlib.XMatchVisualInfo)(
-                        xconn.display,
-                        screen_id,
-                        <span class="number">32</span>,
-                        TrueColor,
-                        vinfo.as_mut_ptr(),
-                    ) != <span class="number">0
-                </span>};
-                <span class="kw">if </span>vinfo_initialized {
-                    <span class="kw">let </span>vinfo = <span class="kw">unsafe </span>{ vinfo.assume_init() };
-                    (vinfo.visual, vinfo.depth, <span class="bool-val">true</span>)
-                } <span class="kw">else </span>{
-                    <span class="macro">debug!</span>(<span class="string">"Could not set transparency, because XMatchVisualInfo returned zero for the required parameters"</span>);
-                    (
-                        ffi::CopyFromParent <span class="kw">as </span><span class="kw-2">*mut </span>ffi::Visual,
-                        ffi::CopyFromParent,
-                        <span class="bool-val">false</span>,
-                    )
-                }
+        </span><span class="kw">let </span>(visualtype, depth, require_colormap) = <span class="kw">match </span>pl_attribs.x11.visual_id {
+            <span class="prelude-val">Some</span>(vi) =&gt; {
+                <span class="comment">// Find this specific visual.
+                </span><span class="kw">let </span>(visualtype, depth) = all_visuals
+                    .find(|(visual, <span class="kw">_</span>)| visual.visual_id == vi)
+                    .ok_or_else(|| <span class="macro">os_error!</span>(OsError::XError(X11Error::NoSuchVisual(vi).into())))<span class="question-mark">?</span>;
+
+                (<span class="prelude-val">Some</span>(visualtype), depth, <span class="bool-val">true</span>)
             }
-            <span class="kw">_ </span>=&gt; (
-                ffi::CopyFromParent <span class="kw">as </span><span class="kw-2">*mut </span>ffi::Visual,
-                ffi::CopyFromParent,
-                <span class="bool-val">false</span>,
-            ),
+            <span class="prelude-val">None </span><span class="kw">if </span>window_attrs.transparent =&gt; {
+                <span class="comment">// Find a suitable visual, true color with 32 bits of depth.
+                </span>all_visuals
+                    .find_map(|(visual, depth)| {
+                        (depth == <span class="number">32 </span>&amp;&amp; visual.class == xproto::VisualClass::TRUE_COLOR)
+                            .then_some((<span class="prelude-val">Some</span>(visual), depth, <span class="bool-val">true</span>))
+                    })
+                    .unwrap_or_else(|| {
+                        <span class="macro">debug!</span>(<span class="string">"Could not set transparency, because XMatchVisualInfo returned zero for the required parameters"</span>);
+                        (<span class="prelude-val">None </span><span class="kw">as _</span>, x11rb::COPY_FROM_PARENT <span class="kw">as _</span>, <span class="bool-val">false</span>)
+                    })
+            }
+            <span class="kw">_ </span>=&gt; (<span class="prelude-val">None</span>, x11rb::COPY_FROM_PARENT <span class="kw">as _</span>, <span class="bool-val">false</span>),
         };
+        <span class="kw">let </span><span class="kw-2">mut </span>visual = visualtype.map_or(x11rb::COPY_FROM_PARENT, |v| v.visual_id);
 
-        <span class="kw">let </span><span class="kw-2">mut </span>set_win_attr = {
-            <span class="kw">let </span><span class="kw-2">mut </span>swa: ffi::XSetWindowAttributes = <span class="kw">unsafe </span>{ mem::zeroed() };
-            swa.colormap = <span class="kw">if let </span><span class="prelude-val">Some</span>(vi) = pl_attribs.visual_infos {
-                <span class="kw">unsafe </span>{
-                    <span class="kw">let </span>visual = vi.visual;
-                    (xconn.xlib.XCreateColormap)(xconn.display, root, visual, ffi::AllocNone)
-                }
-            } <span class="kw">else if </span>require_colormap {
-                <span class="kw">unsafe </span>{ (xconn.xlib.XCreateColormap)(xconn.display, root, visual, ffi::AllocNone) }
+        <span class="kw">let </span>window_attributes = {
+            <span class="kw">use </span>xproto::EventMask;
+
+            <span class="kw">let </span><span class="kw-2">mut </span>aux = xproto::CreateWindowAux::new();
+            <span class="kw">let </span>event_mask = EventMask::EXPOSURE
+                | EventMask::STRUCTURE_NOTIFY
+                | EventMask::VISIBILITY_CHANGE
+                | EventMask::KEY_PRESS
+                | EventMask::KEY_RELEASE
+                | EventMask::KEYMAP_STATE
+                | EventMask::BUTTON_PRESS
+                | EventMask::BUTTON_RELEASE
+                | EventMask::POINTER_MOTION
+                | EventMask::PROPERTY_CHANGE;
+
+            aux = aux.event_mask(event_mask).border_pixel(<span class="number">0</span>);
+
+            <span class="kw">if </span>pl_attribs.x11.override_redirect {
+                aux = aux.override_redirect(<span class="bool-val">true </span><span class="kw">as </span>u32);
+            }
+
+            <span class="comment">// Add a colormap if needed.
+            </span><span class="kw">let </span>colormap_visual = <span class="kw">match </span>pl_attribs.x11.visual_id {
+                <span class="prelude-val">Some</span>(vi) =&gt; <span class="prelude-val">Some</span>(vi),
+                <span class="prelude-val">None </span><span class="kw">if </span>require_colormap =&gt; <span class="prelude-val">Some</span>(visual),
+                <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
+            };
+
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(visual) = colormap_visual {
+                <span class="kw">let </span>colormap = <span class="macro">leap!</span>(xconn.xcb_connection().generate_id());
+                <span class="macro">leap!</span>(xconn.xcb_connection().create_colormap(
+                    xproto::ColormapAlloc::NONE,
+                    colormap,
+                    root,
+                    visual,
+                ));
+                aux = aux.colormap(colormap);
             } <span class="kw">else </span>{
-                <span class="number">0
-            </span>};
-            swa.event_mask = ffi::ExposureMask
-                | ffi::StructureNotifyMask
-                | ffi::VisibilityChangeMask
-                | ffi::KeyPressMask
-                | ffi::KeyReleaseMask
-                | ffi::KeymapStateMask
-                | ffi::ButtonPressMask
-                | ffi::ButtonReleaseMask
-                | ffi::PointerMotionMask;
-            swa.border_pixel = <span class="number">0</span>;
-            swa.override_redirect = pl_attribs.override_redirect <span class="kw">as </span>c_int;
-            swa
+                aux = aux.colormap(<span class="number">0</span>);
+            }
+
+            aux
         };
 
-        <span class="kw">let </span><span class="kw-2">mut </span>window_attributes = ffi::CWBorderPixel | ffi::CWColormap | ffi::CWEventMask;
-
-        <span class="kw">if </span>pl_attribs.override_redirect {
-            window_attributes |= ffi::CWOverrideRedirect;
-        }
+        <span class="comment">// Figure out the window's parent.
+        </span><span class="kw">let </span>parent = pl_attribs.x11.embed_window.unwrap_or(root);
 
         <span class="comment">// finally creating the window
-        </span><span class="kw">let </span>xwindow = <span class="kw">unsafe </span>{
-            (xconn.xlib.XCreateWindow)(
-                xconn.display,
-                root,
-                position.map_or(<span class="number">0</span>, |p: PhysicalPosition&lt;i32&gt;| p.x <span class="kw">as </span>c_int),
-                position.map_or(<span class="number">0</span>, |p: PhysicalPosition&lt;i32&gt;| p.y <span class="kw">as </span>c_int),
-                dimensions.<span class="number">0 </span><span class="kw">as </span>c_uint,
-                dimensions.<span class="number">1 </span><span class="kw">as </span>c_uint,
-                <span class="number">0</span>,
+        </span><span class="kw">let </span>xwindow = {
+            <span class="kw">let </span>(x, y) = position.map_or((<span class="number">0</span>, <span class="number">0</span>), Into::into);
+            <span class="kw">let </span>wid = <span class="macro">leap!</span>(xconn.xcb_connection().generate_id());
+            <span class="kw">let </span>result = xconn.xcb_connection().create_window(
                 depth,
-                ffi::InputOutput <span class="kw">as </span>c_uint,
+                wid,
+                parent,
+                x,
+                y,
+                dimensions.<span class="number">0</span>.try_into().unwrap(),
+                dimensions.<span class="number">1</span>.try_into().unwrap(),
+                <span class="number">0</span>,
+                xproto::WindowClass::INPUT_OUTPUT,
                 visual,
-                window_attributes,
-                <span class="kw-2">&amp;mut </span>set_win_attr,
-            )
+                <span class="kw-2">&amp;</span>window_attributes,
+            );
+            <span class="macro">leap!</span>(<span class="macro">leap!</span>(result).check());
+
+            wid
         };
+
+        <span class="comment">// The COPY_FROM_PARENT is a special value for the visual used to copy
+        // the visual from the parent window, thus we have to query the visual
+        // we've got when we built the window above.
+        </span><span class="kw">if </span>visual == x11rb::COPY_FROM_PARENT {
+            visual = <span class="macro">leap!</span>(<span class="macro">leap!</span>(xconn
+                .xcb_connection()
+                .get_window_attributes(xwindow <span class="kw">as </span>xproto::Window))
+            .reply())
+            .visual;
+        }
 
         <span class="attr">#[allow(clippy::mutex_atomic)]
         </span><span class="kw">let </span><span class="kw-2">mut </span>window = UnownedWindow {
             xconn: Arc::clone(xconn),
-            xwindow,
+            xwindow: xwindow <span class="kw">as </span>xproto::Window,
+            visual,
             root,
             screen_id,
             cursor: Default::default(),
@@ -1924,146 +2333,157 @@
             cursor_visible: Mutex::new(<span class="bool-val">true</span>),
             ime_sender: Mutex::new(event_loop.ime_sender.clone()),
             shared_state: SharedState::new(guessed_monitor, <span class="kw-2">&amp;</span>window_attrs),
-            redraw_sender: WakeSender {
-                waker: event_loop.redraw_sender.waker.clone(),
-                sender: event_loop.redraw_sender.sender.clone(),
-            },
+            redraw_sender: event_loop.redraw_sender.clone(),
+            activation_sender: event_loop.activation_sender.clone(),
         };
 
         <span class="comment">// Title must be set before mapping. Some tiling window managers (i.e. i3) use the window
         // title to determine placement/etc., so doing this after mapping would cause the WM to
         // act on the wrong title state.
-        </span>window.set_title_inner(<span class="kw-2">&amp;</span>window_attrs.title).queue();
-        window
-            .set_decorations_inner(window_attrs.decorations)
-            .queue();
+        </span><span class="macro">leap!</span>(window.set_title_inner(<span class="kw-2">&amp;</span>window_attrs.title)).ignore_error();
+        <span class="macro">leap!</span>(window.set_decorations_inner(window_attrs.decorations)).ignore_error();
 
         <span class="kw">if let </span><span class="prelude-val">Some</span>(theme) = window_attrs.preferred_theme {
-            window.set_theme_inner(<span class="prelude-val">Some</span>(theme)).queue();
+            <span class="macro">leap!</span>(window.set_theme_inner(<span class="prelude-val">Some</span>(theme))).ignore_error();
+        }
+
+        <span class="comment">// Embed the window if needed.
+        </span><span class="kw">if </span>pl_attribs.x11.embed_window.is_some() {
+            window.embed_window()<span class="question-mark">?</span>;
         }
 
         {
             <span class="comment">// Enable drag and drop (TODO: extend API to make this toggleable)
-            </span><span class="kw">unsafe </span>{
-                <span class="kw">let </span>dnd_aware_atom = xconn.get_atom_unchecked(<span class="string">b"XdndAware\0"</span>);
-                <span class="kw">let </span>version = <span class="kw-2">&amp;</span>[<span class="number">5 </span><span class="kw">as </span>c_ulong]; <span class="comment">// Latest version; hasn't changed since 2002
-                </span>xconn.change_property(
+            </span>{
+                <span class="kw">let </span>dnd_aware_atom = atoms[XdndAware];
+                <span class="kw">let </span>version = <span class="kw-2">&amp;</span>[<span class="number">5u32</span>]; <span class="comment">// Latest version; hasn't changed since 2002
+                </span><span class="macro">leap!</span>(xconn.change_property(
                     window.xwindow,
                     dnd_aware_atom,
-                    ffi::XA_ATOM,
-                    util::PropMode::Replace,
+                    u32::from(xproto::AtomEnum::ATOM),
+                    xproto::PropMode::REPLACE,
                     version,
-                )
+                ))
+                .ignore_error();
             }
-            .queue();
 
             <span class="comment">// WM_CLASS must be set *before* mapping the window, as per ICCCM!
             </span>{
-                <span class="kw">let </span>(class, instance) = <span class="kw">if let </span><span class="prelude-val">Some</span>(name) = pl_attribs.name {
-                    <span class="kw">let </span>instance = CString::new(name.instance.as_str())
-                        .expect(<span class="string">"`WM_CLASS` instance contained null byte"</span>);
-                    <span class="kw">let </span>class = CString::new(name.general.as_str())
-                        .expect(<span class="string">"`WM_CLASS` class contained null byte"</span>);
-                    (instance, class)
+                <span class="kw">let </span>(instance, class) = <span class="kw">if let </span><span class="prelude-val">Some</span>(name) = pl_attribs.name {
+                    (name.instance, name.general)
                 } <span class="kw">else </span>{
-                    <span class="kw">let </span>class = env::args()
+                    <span class="kw">let </span>class = env::args_os()
                         .next()
                         .as_ref()
                         <span class="comment">// Default to the name of the binary (via argv[0])
                         </span>.and_then(|path| Path::new(path).file_name())
                         .and_then(|bin_name| bin_name.to_str())
                         .map(|bin_name| bin_name.to_owned())
-                        .or_else(|| <span class="prelude-val">Some</span>(window_attrs.title.clone()))
-                        .and_then(|string| CString::new(string.as_str()).ok())
-                        .expect(<span class="string">"Default `WM_CLASS` class contained null byte"</span>);
+                        .unwrap_or_else(|| window_attrs.title.clone());
                     <span class="comment">// This environment variable is extraordinarily unlikely to actually be used...
                     </span><span class="kw">let </span>instance = env::var(<span class="string">"RESOURCE_NAME"</span>)
                         .ok()
-                        .and_then(|instance| CString::new(instance.as_str()).ok())
-                        .or_else(|| <span class="prelude-val">Some</span>(class.clone()))
-                        .expect(<span class="string">"Default `WM_CLASS` instance contained null byte"</span>);
+                        .unwrap_or_else(|| class.clone());
                     (instance, class)
                 };
 
-                <span class="kw">let </span><span class="kw-2">mut </span>class_hint = xconn.alloc_class_hint();
-                class_hint.res_name = class.as_ptr() <span class="kw">as </span><span class="kw-2">*mut </span>c_char;
-                class_hint.res_class = instance.as_ptr() <span class="kw">as </span><span class="kw-2">*mut </span>c_char;
-
-                <span class="kw">unsafe </span>{
-                    (xconn.xlib.XSetClassHint)(xconn.display, window.xwindow, class_hint.ptr);
-                } <span class="comment">//.queue();
-            </span>}
-
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(flusher) = window.set_pid() {
-                flusher.queue()
+                <span class="kw">let </span>class = <span class="macro">format!</span>(<span class="string">"{instance}\0{class}\0"</span>);
+                <span class="macro">leap!</span>(xconn.change_property(
+                    window.xwindow,
+                    xproto::Atom::from(xproto::AtomEnum::WM_CLASS),
+                    xproto::Atom::from(xproto::AtomEnum::STRING),
+                    xproto::PropMode::REPLACE,
+                    class.as_bytes(),
+                ))
+                .ignore_error();
             }
 
-            window.set_window_types(pl_attribs.x11_window_types).queue();
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(flusher) = <span class="macro">leap!</span>(window.set_pid()) {
+                flusher.ignore_error()
+            }
 
-            <span class="comment">// set size hints
-            </span>{
-                <span class="kw">let </span><span class="kw-2">mut </span>min_inner_size = window_attrs
-                    .min_inner_size
-                    .map(|size| size.to_physical::&lt;u32&gt;(scale_factor));
-                <span class="kw">let </span><span class="kw-2">mut </span>max_inner_size = window_attrs
-                    .max_inner_size
-                    .map(|size| size.to_physical::&lt;u32&gt;(scale_factor));
+            <span class="macro">leap!</span>(window.set_window_types(pl_attribs.x11.x11_window_types)).ignore_error();
 
-                <span class="kw">if </span>!window_attrs.resizable {
-                    <span class="kw">if </span>util::wm_name_is_one_of(<span class="kw-2">&amp;</span>[<span class="string">"Xfwm4"</span>]) {
-                        <span class="macro">warn!</span>(<span class="string">"To avoid a WM bug, disabling resizing has no effect on Xfwm4"</span>);
-                    } <span class="kw">else </span>{
-                        max_inner_size = <span class="prelude-val">Some</span>(dimensions.into());
-                        min_inner_size = <span class="prelude-val">Some</span>(dimensions.into());
-                    }
+            <span class="comment">// Set size hints.
+            </span><span class="kw">let </span><span class="kw-2">mut </span>min_inner_size = window_attrs
+                .min_inner_size
+                .map(|size| size.to_physical::&lt;u32&gt;(scale_factor));
+            <span class="kw">let </span><span class="kw-2">mut </span>max_inner_size = window_attrs
+                .max_inner_size
+                .map(|size| size.to_physical::&lt;u32&gt;(scale_factor));
+
+            <span class="kw">if </span>!window_attrs.resizable {
+                <span class="kw">if </span>util::wm_name_is_one_of(<span class="kw-2">&amp;</span>[<span class="string">"Xfwm4"</span>]) {
+                    <span class="macro">warn!</span>(<span class="string">"To avoid a WM bug, disabling resizing has no effect on Xfwm4"</span>);
+                } <span class="kw">else </span>{
+                    max_inner_size = <span class="prelude-val">Some</span>(dimensions.into());
+                    min_inner_size = <span class="prelude-val">Some</span>(dimensions.into());
                 }
-
-                <span class="kw">let </span>shared_state = window.shared_state.get_mut().unwrap();
-                shared_state.min_inner_size = min_inner_size.map(Into::into);
-                shared_state.max_inner_size = max_inner_size.map(Into::into);
-                shared_state.resize_increments = window_attrs.resize_increments;
-                shared_state.base_size = pl_attribs.base_size;
-
-                <span class="kw">let </span><span class="kw-2">mut </span>normal_hints = util::NormalHints::new(xconn);
-                normal_hints.set_position(position.map(|PhysicalPosition { x, y }| (x, y)));
-                normal_hints.set_size(<span class="prelude-val">Some</span>(dimensions));
-                normal_hints.set_min_size(min_inner_size.map(Into::into));
-                normal_hints.set_max_size(max_inner_size.map(Into::into));
-                normal_hints.set_resize_increments(
-                    window_attrs
-                        .resize_increments
-                        .map(|size| size.to_physical::&lt;u32&gt;(scale_factor).into()),
-                );
-                normal_hints.set_base_size(
-                    pl_attribs
-                        .base_size
-                        .map(|size| size.to_physical::&lt;u32&gt;(scale_factor).into()),
-                );
-                xconn.set_normal_hints(window.xwindow, normal_hints).queue();
             }
+
+            <span class="kw">let </span>shared_state = window.shared_state.get_mut().unwrap();
+            shared_state.min_inner_size = min_inner_size.map(Into::into);
+            shared_state.max_inner_size = max_inner_size.map(Into::into);
+            shared_state.resize_increments = window_attrs.resize_increments;
+            shared_state.base_size = pl_attribs.x11.base_size;
+
+            <span class="kw">let </span>normal_hints = WmSizeHints {
+                position: position.map(|PhysicalPosition { x, y }| {
+                    (WmSizeHintsSpecification::UserSpecified, x, y)
+                }),
+                size: <span class="prelude-val">Some</span>((
+                    WmSizeHintsSpecification::UserSpecified,
+                    cast_dimension_to_hint(dimensions.<span class="number">0</span>),
+                    cast_dimension_to_hint(dimensions.<span class="number">1</span>),
+                )),
+                max_size: max_inner_size.map(cast_physical_size_to_hint),
+                min_size: min_inner_size.map(cast_physical_size_to_hint),
+                size_increment: window_attrs
+                    .resize_increments
+                    .map(|size| cast_size_to_hint(size, scale_factor)),
+                base_size: pl_attribs
+                    .x11
+                    .base_size
+                    .map(|size| cast_size_to_hint(size, scale_factor)),
+                aspect: <span class="prelude-val">None</span>,
+                win_gravity: <span class="prelude-val">None</span>,
+            };
+            <span class="macro">leap!</span>(<span class="macro">leap!</span>(normal_hints.set(
+                xconn.xcb_connection(),
+                window.xwindow <span class="kw">as </span>xproto::Window,
+                xproto::AtomEnum::WM_NORMAL_HINTS,
+            ))
+            .check());
 
             <span class="comment">// Set window icons
             </span><span class="kw">if let </span><span class="prelude-val">Some</span>(icon) = window_attrs.window_icon {
-                window.set_icon_inner(icon).queue();
+                <span class="macro">leap!</span>(window.set_icon_inner(icon.inner)).ignore_error();
             }
 
             <span class="comment">// Opt into handling window close
-            </span><span class="kw">unsafe </span>{
-                (xconn.xlib.XSetWMProtocols)(
-                    xconn.display,
-                    window.xwindow,
-                    <span class="kw-2">&amp;</span>[event_loop.wm_delete_window, event_loop.net_wm_ping] <span class="kw">as </span><span class="kw-2">*const </span>ffi::Atom
-                        <span class="kw">as </span><span class="kw-2">*mut </span>ffi::Atom,
-                    <span class="number">2</span>,
-                );
-            } <span class="comment">//.queue();
+            </span><span class="kw">let </span>result = xconn.xcb_connection().change_property(
+                xproto::PropMode::REPLACE,
+                window.xwindow,
+                atoms[WM_PROTOCOLS],
+                xproto::AtomEnum::ATOM,
+                <span class="number">32</span>,
+                <span class="number">2</span>,
+                bytemuck::cast_slice::&lt;xproto::Atom, u8&gt;(<span class="kw-2">&amp;</span>[
+                    atoms[WM_DELETE_WINDOW],
+                    atoms[_NET_WM_PING],
+                ]),
+            );
+            <span class="macro">leap!</span>(result).ignore_error();
 
-            // Set visibility (map window)
+            <span class="comment">// Set visibility (map window)
             </span><span class="kw">if </span>window_attrs.visible {
-                <span class="kw">unsafe </span>{
-                    (xconn.xlib.XMapRaised)(xconn.display, window.xwindow);
-                } <span class="comment">//.queue();
-            </span>}
+                <span class="macro">leap!</span>(xconn.xcb_connection().map_window(window.xwindow)).ignore_error();
+                <span class="macro">leap!</span>(xconn.xcb_connection().configure_window(
+                    xwindow,
+                    <span class="kw-2">&amp;</span>xproto::ConfigureWindowAux::new().stack_mode(xproto::StackMode::ABOVE)
+                ))
+                .ignore_error();
+            }
 
             <span class="comment">// Attempt to make keyboard input repeat detectable
             </span><span class="kw">unsafe </span>{
@@ -2074,54 +2494,44 @@
                     <span class="kw-2">&amp;mut </span>supported_ptr,
                 );
                 <span class="kw">if </span>supported_ptr == ffi::False {
-                    <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">os_error!</span>(OsError::XMisc(
+                    <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">os_error!</span>(OsError::Misc(
                         <span class="string">"`XkbSetDetectableAutoRepeat` failed"
                     </span>)));
                 }
             }
 
             <span class="comment">// Select XInput2 events
-            </span><span class="kw">let </span>mask = ffi::XI_MotionMask
-                    | ffi::XI_ButtonPressMask
-                    | ffi::XI_ButtonReleaseMask
-                    <span class="comment">//| ffi::XI_KeyPressMask
-                    //| ffi::XI_KeyReleaseMask
-                    </span>| ffi::XI_EnterMask
-                    | ffi::XI_LeaveMask
-                    | ffi::XI_FocusInMask
-                    | ffi::XI_FocusOutMask
-                    | ffi::XI_TouchBeginMask
-                    | ffi::XI_TouchUpdateMask
-                    | ffi::XI_TouchEndMask;
-            xconn
-                .select_xinput_events(window.xwindow, ffi::XIAllMasterDevices, mask)
-                .queue();
+            </span><span class="kw">let </span>mask = xinput::XIEventMask::MOTION
+                | xinput::XIEventMask::BUTTON_PRESS
+                | xinput::XIEventMask::BUTTON_RELEASE
+                | xinput::XIEventMask::ENTER
+                | xinput::XIEventMask::LEAVE
+                | xinput::XIEventMask::FOCUS_IN
+                | xinput::XIEventMask::FOCUS_OUT
+                | xinput::XIEventMask::TOUCH_BEGIN
+                | xinput::XIEventMask::TOUCH_UPDATE
+                | xinput::XIEventMask::TOUCH_END;
+            <span class="macro">leap!</span>(xconn.select_xinput_events(window.xwindow, <span class="kw">super</span>::ALL_MASTER_DEVICES, mask))
+                .ignore_error();
 
-            {
-                <span class="kw">let </span>result = event_loop
-                    .ime
+            <span class="comment">// Try to create input context for the window.
+            </span><span class="kw">if let </span><span class="prelude-val">Some</span>(ime) = event_loop.ime.as_ref() {
+                <span class="kw">let </span>result = ime
                     .borrow_mut()
-                    .create_context(window.xwindow, <span class="bool-val">false</span>);
-                <span class="kw">if let </span><span class="prelude-val">Err</span>(err) = result {
-                    <span class="kw">let </span>e = <span class="kw">match </span>err {
-                        ImeContextCreationError::XError(err) =&gt; OsError::XError(err),
-                        ImeContextCreationError::Null =&gt; {
-                            OsError::XMisc(<span class="string">"IME Context creation failed"</span>)
-                        }
-                    };
-                    <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">os_error!</span>(e));
-                }
+                    .create_context(window.xwindow <span class="kw">as </span>ffi::Window, <span class="bool-val">false</span>);
+                <span class="macro">leap!</span>(result);
             }
 
             <span class="comment">// These properties must be set after mapping
             </span><span class="kw">if </span>window_attrs.maximized {
-                window.set_maximized_inner(window_attrs.maximized).queue();
+                <span class="macro">leap!</span>(window.set_maximized_inner(window_attrs.maximized)).ignore_error();
             }
-            <span class="kw">if </span>window_attrs.fullscreen.is_some() {
+            <span class="kw">if </span>window_attrs.fullscreen.<span class="number">0</span>.is_some() {
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(flusher) =
-                    window.set_fullscreen_inner(window_attrs.fullscreen.clone().map(Into::into))
+                    <span class="macro">leap!</span>(window
+                        .set_fullscreen_inner(window_attrs.fullscreen.<span class="number">0</span>.clone().map(Into::into)))
                 {
-                    flusher.queue()
+                    flusher.ignore_error()
                 }
 
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(PhysicalPosition { x, y }) = position {
@@ -2131,64 +2541,73 @@
                 }
             }
 
-            window
-                .set_window_level_inner(window_attrs.window_level)
-                .queue();
+            <span class="macro">leap!</span>(window.set_window_level_inner(window_attrs.window_level)).ignore_error();
+        }
+
+        <span class="comment">// Remove the startup notification if we have one.
+        </span><span class="kw">if let </span><span class="prelude-val">Some</span>(startup) = pl_attribs.activation_token.as_ref() {
+            <span class="macro">leap!</span>(xconn.remove_activation_token(xwindow, <span class="kw-2">&amp;</span>startup._token));
         }
 
         <span class="comment">// We never want to give the user a broken window, since by then, it's too late to handle.
-        </span>xconn
-            .sync_with_server()
-            .map(|<span class="kw">_</span>| window)
-            .map_err(|x_err| <span class="macro">os_error!</span>(OsError::XError(x_err)))
+        </span><span class="kw">let </span>window = <span class="macro">leap!</span>(xconn.sync_with_server().map(|<span class="kw">_</span>| window));
+
+        <span class="prelude-val">Ok</span>(window)
+    }
+
+    <span class="doccomment">/// Embed this window into a parent window.
+    </span><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>embed_window(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), RootOsError&gt; {
+        <span class="kw">let </span>atoms = <span class="self">self</span>.xconn.atoms();
+        <span class="macro">leap!</span>(<span class="macro">leap!</span>(<span class="self">self</span>.xconn.change_property(
+            <span class="self">self</span>.xwindow,
+            atoms[_XEMBED],
+            atoms[_XEMBED],
+            xproto::PropMode::REPLACE,
+            <span class="kw-2">&amp;</span>[<span class="number">0u32</span>, <span class="number">1u32</span>],
+        ))
+        .check());
+
+        <span class="prelude-val">Ok</span>(())
     }
 
     <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>shared_state_lock(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; MutexGuard&lt;<span class="lifetime">'_</span>, SharedState&gt; {
         <span class="self">self</span>.shared_state.lock().unwrap()
     }
 
-    <span class="kw">fn </span>set_pid(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;util::Flusher&lt;<span class="lifetime">'_</span>&gt;&gt; {
-        <span class="kw">let </span>pid_atom = <span class="kw">unsafe </span>{ <span class="self">self</span>.xconn.get_atom_unchecked(<span class="string">b"_NET_WM_PID\0"</span>) };
-        <span class="kw">let </span>client_machine_atom = <span class="kw">unsafe </span>{ <span class="self">self</span>.xconn.get_atom_unchecked(<span class="string">b"WM_CLIENT_MACHINE\0"</span>) };
-        <span class="kw">unsafe </span>{
-            <span class="comment">// 64 would suffice for Linux, but 256 will be enough everywhere (as per SUSv2). For instance, this is
-            // the limit defined by OpenBSD.
-            </span><span class="kw">const </span>MAXHOSTNAMELEN: usize = <span class="number">256</span>;
-            <span class="comment">// `assume_init` is safe here because the array consists of `MaybeUninit` values,
-            // which do not require initialization.
-            </span><span class="kw">let </span><span class="kw-2">mut </span>buffer: [MaybeUninit&lt;c_char&gt;; MAXHOSTNAMELEN] =
-                MaybeUninit::uninit().assume_init();
-            <span class="kw">let </span>status = libc::gethostname(buffer.as_mut_ptr() <span class="kw">as </span><span class="kw-2">*mut </span>c_char, buffer.len());
-            <span class="kw">if </span>status != <span class="number">0 </span>{
-                <span class="kw">return </span><span class="prelude-val">None</span>;
-            }
-            ptr::write(buffer[MAXHOSTNAMELEN - <span class="number">1</span>].as_mut_ptr() <span class="kw">as </span><span class="kw-2">*mut </span>u8, <span class="string">b'\0'</span>); <span class="comment">// a little extra safety
-            </span><span class="kw">let </span>hostname_length = libc::strlen(buffer.as_ptr() <span class="kw">as </span><span class="kw-2">*const </span>c_char);
+    <span class="kw">fn </span>set_pid(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;VoidCookie&lt;<span class="lifetime">'_</span>&gt;&gt;, X11Error&gt; {
+        <span class="kw">let </span>atoms = <span class="self">self</span>.xconn.atoms();
+        <span class="kw">let </span>pid_atom = atoms[_NET_WM_PID];
+        <span class="kw">let </span>client_machine_atom = atoms[WM_CLIENT_MACHINE];
 
-            <span class="kw">let </span>hostname = slice::from_raw_parts(buffer.as_ptr() <span class="kw">as </span><span class="kw-2">*const </span>c_char, hostname_length);
+        <span class="comment">// Get the hostname and the PID.
+        </span><span class="kw">let </span>uname = rustix::system::uname();
+        <span class="kw">let </span>pid = rustix::process::getpid();
 
-            <span class="self">self</span>.xconn
-                .change_property(
-                    <span class="self">self</span>.xwindow,
-                    pid_atom,
-                    ffi::XA_CARDINAL,
-                    util::PropMode::Replace,
-                    <span class="kw-2">&amp;</span>[libc::getpid() <span class="kw">as </span>util::Cardinal],
-                )
-                .queue();
-            <span class="kw">let </span>flusher = <span class="self">self</span>.xconn.change_property(
+        <span class="self">self</span>.xconn
+            .change_property(
                 <span class="self">self</span>.xwindow,
-                client_machine_atom,
-                ffi::XA_STRING,
-                util::PropMode::Replace,
-                <span class="kw-2">&amp;</span>hostname[<span class="number">0</span>..hostname_length],
-            );
-            <span class="prelude-val">Some</span>(flusher)
-        }
+                pid_atom,
+                xproto::Atom::from(xproto::AtomEnum::CARDINAL),
+                xproto::PropMode::REPLACE,
+                <span class="kw-2">&amp;</span>[pid.as_raw_nonzero().get() <span class="kw">as </span>util::Cardinal],
+            )<span class="question-mark">?
+            </span>.ignore_error();
+        <span class="kw">let </span>flusher = <span class="self">self</span>.xconn.change_property(
+            <span class="self">self</span>.xwindow,
+            client_machine_atom,
+            xproto::Atom::from(xproto::AtomEnum::STRING),
+            xproto::PropMode::REPLACE,
+            uname.nodename().to_bytes(),
+        );
+        flusher.map(<span class="prelude-val">Some</span>)
     }
 
-    <span class="kw">fn </span>set_window_types(<span class="kw-2">&amp;</span><span class="self">self</span>, window_types: Vec&lt;util::WindowType&gt;) -&gt; util::Flusher&lt;<span class="lifetime">'_</span>&gt; {
-        <span class="kw">let </span>hint_atom = <span class="kw">unsafe </span>{ <span class="self">self</span>.xconn.get_atom_unchecked(<span class="string">b"_NET_WM_WINDOW_TYPE\0"</span>) };
+    <span class="kw">fn </span>set_window_types(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        window_types: Vec&lt;util::WindowType&gt;,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;VoidCookie&lt;<span class="lifetime">'_</span>&gt;, X11Error&gt; {
+        <span class="kw">let </span>atoms = <span class="self">self</span>.xconn.atoms();
+        <span class="kw">let </span>hint_atom = atoms[_NET_WM_WINDOW_TYPE];
         <span class="kw">let </span>atoms: Vec&lt;<span class="kw">_</span>&gt; = window_types
             .iter()
             .map(|t| t.as_atom(<span class="kw-2">&amp;</span><span class="self">self</span>.xconn))
@@ -2197,15 +2616,16 @@
         <span class="self">self</span>.xconn.change_property(
             <span class="self">self</span>.xwindow,
             hint_atom,
-            ffi::XA_ATOM,
-            util::PropMode::Replace,
+            xproto::Atom::from(xproto::AtomEnum::ATOM),
+            xproto::PropMode::REPLACE,
             <span class="kw-2">&amp;</span>atoms,
         )
     }
 
-    <span class="kw">pub fn </span>set_theme_inner(<span class="kw-2">&amp;</span><span class="self">self</span>, theme: <span class="prelude-ty">Option</span>&lt;Theme&gt;) -&gt; util::Flusher&lt;<span class="lifetime">'_</span>&gt; {
-        <span class="kw">let </span>hint_atom = <span class="kw">unsafe </span>{ <span class="self">self</span>.xconn.get_atom_unchecked(<span class="string">b"_GTK_THEME_VARIANT\0"</span>) };
-        <span class="kw">let </span>utf8_atom = <span class="kw">unsafe </span>{ <span class="self">self</span>.xconn.get_atom_unchecked(<span class="string">b"UTF8_STRING\0"</span>) };
+    <span class="kw">pub fn </span>set_theme_inner(<span class="kw-2">&amp;</span><span class="self">self</span>, theme: <span class="prelude-ty">Option</span>&lt;Theme&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;VoidCookie&lt;<span class="lifetime">'_</span>&gt;, X11Error&gt; {
+        <span class="kw">let </span>atoms = <span class="self">self</span>.xconn.atoms();
+        <span class="kw">let </span>hint_atom = atoms[_GTK_THEME_VARIANT];
+        <span class="kw">let </span>utf8_atom = atoms[UTF8_STRING];
         <span class="kw">let </span>variant = <span class="kw">match </span>theme {
             <span class="prelude-val">Some</span>(Theme::Dark) =&gt; <span class="string">"dark"</span>,
             <span class="prelude-val">Some</span>(Theme::Light) =&gt; <span class="string">"light"</span>,
@@ -2216,7 +2636,7 @@
             <span class="self">self</span>.xwindow,
             hint_atom,
             utf8_atom,
-            util::PropMode::Replace,
+            xproto::PropMode::REPLACE,
             variant.as_bytes(),
         )
     }
@@ -2224,23 +2644,28 @@
     <span class="attr">#[inline]
     </span><span class="kw">pub fn </span>set_theme(<span class="kw-2">&amp;</span><span class="self">self</span>, theme: <span class="prelude-ty">Option</span>&lt;Theme&gt;) {
         <span class="self">self</span>.set_theme_inner(theme)
-            .flush()
             .expect(<span class="string">"Failed to change window theme"</span>)
+            .ignore_error();
+
+        <span class="self">self</span>.xconn
+            .flush_requests()
+            .expect(<span class="string">"Failed to change window theme"</span>);
     }
 
     <span class="kw">fn </span>set_netwm(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         operation: util::StateOperation,
-        properties: (c_long, c_long, c_long, c_long),
-    ) -&gt; util::Flusher&lt;<span class="lifetime">'_</span>&gt; {
-        <span class="kw">let </span>state_atom = <span class="kw">unsafe </span>{ <span class="self">self</span>.xconn.get_atom_unchecked(<span class="string">b"_NET_WM_STATE\0"</span>) };
+        properties: (u32, u32, u32, u32),
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;VoidCookie&lt;<span class="lifetime">'_</span>&gt;, X11Error&gt; {
+        <span class="kw">let </span>atoms = <span class="self">self</span>.xconn.atoms();
+        <span class="kw">let </span>state_atom = atoms[_NET_WM_STATE];
         <span class="self">self</span>.xconn.send_client_msg(
             <span class="self">self</span>.xwindow,
             <span class="self">self</span>.root,
             state_atom,
-            <span class="prelude-val">Some</span>(ffi::SubstructureRedirectMask | ffi::SubstructureNotifyMask),
+            <span class="prelude-val">Some</span>(xproto::EventMask::SUBSTRUCTURE_REDIRECT | xproto::EventMask::SUBSTRUCTURE_NOTIFY),
             [
-                operation <span class="kw">as </span>c_long,
+                operation <span class="kw">as </span>u32,
                 properties.<span class="number">0</span>,
                 properties.<span class="number">1</span>,
                 properties.<span class="number">2</span>,
@@ -2249,42 +2674,45 @@
         )
     }
 
-    <span class="kw">fn </span>set_fullscreen_hint(<span class="kw-2">&amp;</span><span class="self">self</span>, fullscreen: bool) -&gt; util::Flusher&lt;<span class="lifetime">'_</span>&gt; {
-        <span class="kw">let </span>fullscreen_atom =
-            <span class="kw">unsafe </span>{ <span class="self">self</span>.xconn.get_atom_unchecked(<span class="string">b"_NET_WM_STATE_FULLSCREEN\0"</span>) };
-        <span class="kw">let </span>flusher = <span class="self">self</span>.set_netwm(fullscreen.into(), (fullscreen_atom <span class="kw">as </span>c_long, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>));
+    <span class="kw">fn </span>set_fullscreen_hint(<span class="kw-2">&amp;</span><span class="self">self</span>, fullscreen: bool) -&gt; <span class="prelude-ty">Result</span>&lt;VoidCookie&lt;<span class="lifetime">'_</span>&gt;, X11Error&gt; {
+        <span class="kw">let </span>atoms = <span class="self">self</span>.xconn.atoms();
+        <span class="kw">let </span>fullscreen_atom = atoms[_NET_WM_STATE_FULLSCREEN];
+        <span class="kw">let </span>flusher = <span class="self">self</span>.set_netwm(fullscreen.into(), (fullscreen_atom, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>));
 
         <span class="kw">if </span>fullscreen {
             <span class="comment">// Ensure that the fullscreen window receives input focus to prevent
             // locking up the user's display.
-            </span><span class="kw">unsafe </span>{
-                (<span class="self">self</span>.xconn.xlib.XSetInputFocus)(
-                    <span class="self">self</span>.xconn.display,
+            </span><span class="self">self</span>.xconn
+                .xcb_connection()
+                .set_input_focus(
+                    xproto::InputFocus::PARENT,
                     <span class="self">self</span>.xwindow,
-                    ffi::RevertToParent,
-                    ffi::CurrentTime,
-                );
-            }
+                    x11rb::CURRENT_TIME,
+                )<span class="question-mark">?
+                </span>.ignore_error();
         }
 
         flusher
     }
 
-    <span class="kw">fn </span>set_fullscreen_inner(<span class="kw-2">&amp;</span><span class="self">self</span>, fullscreen: <span class="prelude-ty">Option</span>&lt;Fullscreen&gt;) -&gt; <span class="prelude-ty">Option</span>&lt;util::Flusher&lt;<span class="lifetime">'_</span>&gt;&gt; {
+    <span class="kw">fn </span>set_fullscreen_inner(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        fullscreen: <span class="prelude-ty">Option</span>&lt;Fullscreen&gt;,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;VoidCookie&lt;<span class="lifetime">'_</span>&gt;&gt;, X11Error&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>shared_state_lock = <span class="self">self</span>.shared_state_lock();
 
         <span class="kw">match </span>shared_state_lock.visibility {
             <span class="comment">// Setting fullscreen on a window that is not visible will generate an error.
             </span>Visibility::No | Visibility::YesWait =&gt; {
                 shared_state_lock.desired_fullscreen = <span class="prelude-val">Some</span>(fullscreen);
-                <span class="kw">return </span><span class="prelude-val">None</span>;
+                <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>);
             }
             Visibility::Yes =&gt; (),
         }
 
         <span class="kw">let </span>old_fullscreen = shared_state_lock.fullscreen.clone();
         <span class="kw">if </span>old_fullscreen == fullscreen {
-            <span class="kw">return </span><span class="prelude-val">None</span>;
+            <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>);
         }
         shared_state_lock.fullscreen = fullscreen.clone();
 
@@ -2299,8 +2727,12 @@
                 <span class="kw-2">&amp;</span><span class="prelude-val">Some</span>(Fullscreen::Exclusive(PlatformVideoMode::X(<span class="kw-2">ref </span>video_mode))),
             ) =&gt; {
                 <span class="kw">let </span>monitor = video_mode.monitor.as_ref().unwrap();
-                shared_state_lock.desktop_video_mode =
-                    <span class="prelude-val">Some</span>((monitor.id, <span class="self">self</span>.xconn.get_crtc_mode(monitor.id)));
+                shared_state_lock.desktop_video_mode = <span class="prelude-val">Some</span>((
+                    monitor.id,
+                    <span class="self">self</span>.xconn
+                        .get_crtc_mode(monitor.id)
+                        .expect(<span class="string">"Failed to get desktop video mode"</span>),
+                ));
             }
             <span class="comment">// Restore desktop video mode upon exiting exclusive fullscreen
             </span>(<span class="kw-2">&amp;</span><span class="prelude-val">Some</span>(Fullscreen::Exclusive(<span class="kw">_</span>)), <span class="kw-2">&amp;</span><span class="prelude-val">None</span>)
@@ -2321,9 +2753,10 @@
                 <span class="kw">let </span><span class="kw-2">mut </span>shared_state_lock = <span class="self">self</span>.shared_state_lock();
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(position) = shared_state_lock.restore_position.take() {
                     drop(shared_state_lock);
-                    <span class="self">self</span>.set_position_inner(position.<span class="number">0</span>, position.<span class="number">1</span>).queue();
+                    <span class="self">self</span>.set_position_inner(position.<span class="number">0</span>, position.<span class="number">1</span>)
+                        .expect_then_ignore_error(<span class="string">"Failed to restore window position"</span>);
                 }
-                <span class="prelude-val">Some</span>(flusher)
+                flusher.map(<span class="prelude-val">Some</span>)
             }
             <span class="prelude-val">Some</span>(fullscreen) =&gt; {
                 <span class="kw">let </span>(video_mode, monitor) = <span class="kw">match </span>fullscreen {
@@ -2333,14 +2766,16 @@
                     Fullscreen::Borderless(<span class="prelude-val">Some</span>(PlatformMonitorHandle::X(monitor))) =&gt; {
                         (<span class="prelude-val">None</span>, monitor)
                     }
-                    Fullscreen::Borderless(<span class="prelude-val">None</span>) =&gt; (<span class="prelude-val">None</span>, <span class="self">self</span>.current_monitor()),
+                    Fullscreen::Borderless(<span class="prelude-val">None</span>) =&gt; {
+                        (<span class="prelude-val">None</span>, <span class="self">self</span>.shared_state_lock().last_monitor.clone())
+                    }
                     <span class="attr">#[cfg(wayland_platform)]
                     </span><span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(),
                 };
 
                 <span class="comment">// Don't set fullscreen on an invalid dummy monitor handle
                 </span><span class="kw">if </span>monitor.is_dummy() {
-                    <span class="kw">return </span><span class="prelude-val">None</span>;
+                    <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>);
                 }
 
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(video_mode) = video_mode {
@@ -2378,8 +2813,8 @@
                 <span class="self">self</span>.shared_state_lock().restore_position = <span class="prelude-val">Some</span>(window_position);
                 <span class="kw">let </span>monitor_origin: (i32, i32) = monitor.position().into();
                 <span class="self">self</span>.set_position_inner(monitor_origin.<span class="number">0</span>, monitor_origin.<span class="number">1</span>)
-                    .queue();
-                <span class="prelude-val">Some</span>(<span class="self">self</span>.set_fullscreen_hint(<span class="bool-val">true</span>))
+                    .expect_then_ignore_error(<span class="string">"Failed to set window position"</span>);
+                <span class="self">self</span>.set_fullscreen_hint(<span class="bool-val">true</span>).map(<span class="prelude-val">Some</span>)
             }
         }
     }
@@ -2396,9 +2831,12 @@
 
     <span class="attr">#[inline]
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>set_fullscreen(<span class="kw-2">&amp;</span><span class="self">self</span>, fullscreen: <span class="prelude-ty">Option</span>&lt;Fullscreen&gt;) {
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(flusher) = <span class="self">self</span>.set_fullscreen_inner(fullscreen) {
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(flusher) = <span class="self">self
+            </span>.set_fullscreen_inner(fullscreen)
+            .expect(<span class="string">"Failed to change window fullscreen state"</span>)
+        {
             flusher
-                .sync()
+                .check()
                 .expect(<span class="string">"Failed to change window fullscreen state"</span>);
             <span class="self">self</span>.invalidate_cached_frame_extents();
         }
@@ -2409,9 +2847,11 @@
         <span class="kw">let </span><span class="kw-2">mut </span>shared_state = <span class="self">self</span>.shared_state_lock();
 
         <span class="kw">match </span>shared_state.visibility {
-            Visibility::No =&gt; <span class="kw">unsafe </span>{
-                (<span class="self">self</span>.xconn.xlib.XUnmapWindow)(<span class="self">self</span>.xconn.display, <span class="self">self</span>.xwindow);
-            },
+            Visibility::No =&gt; <span class="self">self
+                </span>.xconn
+                .xcb_connection()
+                .unmap_window(<span class="self">self</span>.xwindow)
+                .expect_then_ignore_error(<span class="string">"Failed to unmap window"</span>),
             Visibility::Yes =&gt; (),
             Visibility::YesWait =&gt; {
                 shared_state.visibility = Visibility::Yes;
@@ -2424,140 +2864,206 @@
         }
     }
 
-    <span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>current_monitor(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; X11MonitorHandle {
-        <span class="self">self</span>.shared_state_lock().last_monitor.clone()
+    <span class="kw">pub fn </span>current_monitor(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;X11MonitorHandle&gt; {
+        <span class="prelude-val">Some</span>(<span class="self">self</span>.shared_state_lock().last_monitor.clone())
     }
 
     <span class="kw">pub fn </span>available_monitors(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Vec&lt;X11MonitorHandle&gt; {
-        <span class="self">self</span>.xconn.available_monitors()
+        <span class="self">self</span>.xconn
+            .available_monitors()
+            .expect(<span class="string">"Failed to get available monitors"</span>)
     }
 
-    <span class="kw">pub fn </span>primary_monitor(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; X11MonitorHandle {
-        <span class="self">self</span>.xconn.primary_monitor()
+    <span class="kw">pub fn </span>primary_monitor(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;X11MonitorHandle&gt; {
+        <span class="prelude-val">Some</span>(
+            <span class="self">self</span>.xconn
+                .primary_monitor()
+                .expect(<span class="string">"Failed to get primary monitor"</span>),
+        )
     }
 
     <span class="attr">#[inline]
     </span><span class="kw">pub fn </span>is_minimized(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;bool&gt; {
-        <span class="kw">let </span>state_atom = <span class="kw">unsafe </span>{ <span class="self">self</span>.xconn.get_atom_unchecked(<span class="string">b"_NET_WM_STATE\0"</span>) };
-        <span class="kw">let </span>state = <span class="self">self
-            </span>.xconn
-            .get_property(<span class="self">self</span>.xwindow, state_atom, ffi::XA_ATOM);
-        <span class="kw">let </span>hidden_atom = <span class="kw">unsafe </span>{ <span class="self">self</span>.xconn.get_atom_unchecked(<span class="string">b"_NET_WM_STATE_HIDDEN\0"</span>) };
+        <span class="kw">let </span>atoms = <span class="self">self</span>.xconn.atoms();
+        <span class="kw">let </span>state_atom = atoms[_NET_WM_STATE];
+        <span class="kw">let </span>state = <span class="self">self</span>.xconn.get_property(
+            <span class="self">self</span>.xwindow,
+            state_atom,
+            xproto::Atom::from(xproto::AtomEnum::ATOM),
+        );
+        <span class="kw">let </span>hidden_atom = atoms[_NET_WM_STATE_HIDDEN];
 
         <span class="prelude-val">Some</span>(<span class="kw">match </span>state {
-            <span class="prelude-val">Ok</span>(atoms) =&gt; atoms.iter().any(|atom: <span class="kw-2">&amp;</span>ffi::Atom| <span class="kw-2">*</span>atom == hidden_atom),
+            <span class="prelude-val">Ok</span>(atoms) =&gt; atoms
+                .iter()
+                .any(|atom: <span class="kw-2">&amp;</span>xproto::Atom| <span class="kw-2">*</span>atom <span class="kw">as </span>xproto::Atom == hidden_atom),
             <span class="kw">_ </span>=&gt; <span class="bool-val">false</span>,
         })
     }
 
-    <span class="kw">fn </span>set_minimized_inner(<span class="kw-2">&amp;</span><span class="self">self</span>, minimized: bool) -&gt; util::Flusher&lt;<span class="lifetime">'_</span>&gt; {
-        <span class="kw">unsafe </span>{
-            <span class="kw">if </span>minimized {
-                <span class="kw">let </span>screen = (<span class="self">self</span>.xconn.xlib.XDefaultScreen)(<span class="self">self</span>.xconn.display);
+    <span class="doccomment">/// Refresh the API for the given monitor.
+    </span><span class="attr">#[inline]
+    </span><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>refresh_dpi_for_monitor&lt;T: <span class="lifetime">'static</span>&gt;(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        new_monitor: <span class="kw-2">&amp;</span>X11MonitorHandle,
+        maybe_prev_scale_factor: <span class="prelude-ty">Option</span>&lt;f64&gt;,
+        <span class="kw-2">mut </span>callback: <span class="kw">impl </span>FnMut(Event&lt;T&gt;),
+    ) {
+        <span class="comment">// Check if the self is on this monitor
+        </span><span class="kw">let </span>monitor = <span class="self">self</span>.shared_state_lock().last_monitor.clone();
+        <span class="kw">if </span>monitor.name == new_monitor.name {
+            <span class="kw">let </span>(width, height) = <span class="self">self</span>.inner_size_physical();
+            <span class="kw">let </span>(new_width, new_height) = <span class="self">self</span>.adjust_for_dpi(
+                <span class="comment">// If we couldn't determine the previous scale
+                // factor (e.g., because all monitors were closed
+                // before), just pick whatever the current monitor
+                // has set as a baseline.
+                </span>maybe_prev_scale_factor.unwrap_or(monitor.scale_factor),
+                new_monitor.scale_factor,
+                width,
+                height,
+                <span class="kw-2">&amp;</span><span class="self">self</span>.shared_state_lock(),
+            );
 
-                (<span class="self">self</span>.xconn.xlib.XIconifyWindow)(<span class="self">self</span>.xconn.display, <span class="self">self</span>.xwindow, screen);
+            <span class="kw">let </span>window_id = <span class="kw">crate</span>::window::WindowId(<span class="self">self</span>.id());
+            <span class="kw">let </span>old_inner_size = PhysicalSize::new(width, height);
+            <span class="kw">let </span>inner_size = Arc::new(Mutex::new(PhysicalSize::new(new_width, new_height)));
+            callback(Event::WindowEvent {
+                window_id,
+                event: WindowEvent::ScaleFactorChanged {
+                    scale_factor: new_monitor.scale_factor,
+                    inner_size_writer: InnerSizeWriter::new(Arc::downgrade(<span class="kw-2">&amp;</span>inner_size)),
+                },
+            });
 
-                util::Flusher::new(<span class="kw-2">&amp;</span><span class="self">self</span>.xconn)
-            } <span class="kw">else </span>{
-                <span class="kw">let </span>atom = <span class="self">self</span>.xconn.get_atom_unchecked(<span class="string">b"_NET_ACTIVE_WINDOW\0"</span>);
+            <span class="kw">let </span>new_inner_size = <span class="kw-2">*</span>inner_size.lock().unwrap();
+            drop(inner_size);
 
-                <span class="self">self</span>.xconn.send_client_msg(
-                    <span class="self">self</span>.xwindow,
-                    <span class="self">self</span>.root,
-                    atom,
-                    <span class="prelude-val">Some</span>(ffi::SubstructureRedirectMask | ffi::SubstructureNotifyMask),
-                    [<span class="number">1</span>, ffi::CurrentTime <span class="kw">as </span>c_long, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>],
-                )
+            <span class="kw">if </span>new_inner_size != old_inner_size {
+                <span class="kw">let </span>(new_width, new_height) = new_inner_size.into();
+                <span class="self">self</span>.request_inner_size_physical(new_width, new_height);
             }
+        }
+    }
+
+    <span class="kw">fn </span>set_minimized_inner(<span class="kw-2">&amp;</span><span class="self">self</span>, minimized: bool) -&gt; <span class="prelude-ty">Result</span>&lt;VoidCookie&lt;<span class="lifetime">'_</span>&gt;, X11Error&gt; {
+        <span class="kw">let </span>atoms = <span class="self">self</span>.xconn.atoms();
+
+        <span class="kw">if </span>minimized {
+            <span class="kw">let </span>root_window = <span class="self">self</span>.xconn.default_root().root;
+
+            <span class="self">self</span>.xconn.send_client_msg(
+                <span class="self">self</span>.xwindow,
+                root_window,
+                atoms[WM_CHANGE_STATE],
+                <span class="prelude-val">Some</span>(
+                    xproto::EventMask::SUBSTRUCTURE_REDIRECT
+                        | xproto::EventMask::SUBSTRUCTURE_NOTIFY,
+                ),
+                [<span class="number">3u32</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>],
+            )
+        } <span class="kw">else </span>{
+            <span class="self">self</span>.xconn.send_client_msg(
+                <span class="self">self</span>.xwindow,
+                <span class="self">self</span>.root,
+                atoms[_NET_ACTIVE_WINDOW],
+                <span class="prelude-val">Some</span>(
+                    xproto::EventMask::SUBSTRUCTURE_REDIRECT
+                        | xproto::EventMask::SUBSTRUCTURE_NOTIFY,
+                ),
+                [<span class="number">1</span>, x11rb::CURRENT_TIME, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>],
+            )
         }
     }
 
     <span class="attr">#[inline]
     </span><span class="kw">pub fn </span>set_minimized(<span class="kw-2">&amp;</span><span class="self">self</span>, minimized: bool) {
         <span class="self">self</span>.set_minimized_inner(minimized)
-            .flush()
+            .expect_then_ignore_error(<span class="string">"Failed to change window minimization"</span>);
+
+        <span class="self">self</span>.xconn
+            .flush_requests()
             .expect(<span class="string">"Failed to change window minimization"</span>);
     }
 
     <span class="attr">#[inline]
     </span><span class="kw">pub fn </span>is_maximized(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        <span class="kw">let </span>state_atom = <span class="kw">unsafe </span>{ <span class="self">self</span>.xconn.get_atom_unchecked(<span class="string">b"_NET_WM_STATE\0"</span>) };
-        <span class="kw">let </span>state = <span class="self">self
-            </span>.xconn
-            .get_property(<span class="self">self</span>.xwindow, state_atom, ffi::XA_ATOM);
-        <span class="kw">let </span>horz_atom = <span class="kw">unsafe </span>{
-            <span class="self">self</span>.xconn
-                .get_atom_unchecked(<span class="string">b"_NET_WM_STATE_MAXIMIZED_HORZ\0"</span>)
-        };
-        <span class="kw">let </span>vert_atom = <span class="kw">unsafe </span>{
-            <span class="self">self</span>.xconn
-                .get_atom_unchecked(<span class="string">b"_NET_WM_STATE_MAXIMIZED_VERT\0"</span>)
-        };
+        <span class="kw">let </span>atoms = <span class="self">self</span>.xconn.atoms();
+        <span class="kw">let </span>state_atom = atoms[_NET_WM_STATE];
+        <span class="kw">let </span>state = <span class="self">self</span>.xconn.get_property(
+            <span class="self">self</span>.xwindow,
+            state_atom,
+            xproto::Atom::from(xproto::AtomEnum::ATOM),
+        );
+        <span class="kw">let </span>horz_atom = atoms[_NET_WM_STATE_MAXIMIZED_HORZ];
+        <span class="kw">let </span>vert_atom = atoms[_NET_WM_STATE_MAXIMIZED_VERT];
         <span class="kw">match </span>state {
             <span class="prelude-val">Ok</span>(atoms) =&gt; {
-                <span class="kw">let </span>horz_maximized = atoms.iter().any(|atom: <span class="kw-2">&amp;</span>ffi::Atom| <span class="kw-2">*</span>atom == horz_atom);
-                <span class="kw">let </span>vert_maximized = atoms.iter().any(|atom: <span class="kw-2">&amp;</span>ffi::Atom| <span class="kw-2">*</span>atom == vert_atom);
+                <span class="kw">let </span>horz_maximized = atoms.iter().any(|atom: <span class="kw-2">&amp;</span>xproto::Atom| <span class="kw-2">*</span>atom == horz_atom);
+                <span class="kw">let </span>vert_maximized = atoms.iter().any(|atom: <span class="kw-2">&amp;</span>xproto::Atom| <span class="kw-2">*</span>atom == vert_atom);
                 horz_maximized &amp;&amp; vert_maximized
             }
             <span class="kw">_ </span>=&gt; <span class="bool-val">false</span>,
         }
     }
 
-    <span class="kw">fn </span>set_maximized_inner(<span class="kw-2">&amp;</span><span class="self">self</span>, maximized: bool) -&gt; util::Flusher&lt;<span class="lifetime">'_</span>&gt; {
-        <span class="kw">let </span>horz_atom = <span class="kw">unsafe </span>{
-            <span class="self">self</span>.xconn
-                .get_atom_unchecked(<span class="string">b"_NET_WM_STATE_MAXIMIZED_HORZ\0"</span>)
-        };
-        <span class="kw">let </span>vert_atom = <span class="kw">unsafe </span>{
-            <span class="self">self</span>.xconn
-                .get_atom_unchecked(<span class="string">b"_NET_WM_STATE_MAXIMIZED_VERT\0"</span>)
-        };
-        <span class="self">self</span>.set_netwm(
-            maximized.into(),
-            (horz_atom <span class="kw">as </span>c_long, vert_atom <span class="kw">as </span>c_long, <span class="number">0</span>, <span class="number">0</span>),
-        )
+    <span class="kw">fn </span>set_maximized_inner(<span class="kw-2">&amp;</span><span class="self">self</span>, maximized: bool) -&gt; <span class="prelude-ty">Result</span>&lt;VoidCookie&lt;<span class="lifetime">'_</span>&gt;, X11Error&gt; {
+        <span class="kw">let </span>atoms = <span class="self">self</span>.xconn.atoms();
+        <span class="kw">let </span>horz_atom = atoms[_NET_WM_STATE_MAXIMIZED_HORZ];
+        <span class="kw">let </span>vert_atom = atoms[_NET_WM_STATE_MAXIMIZED_VERT];
+
+        <span class="self">self</span>.set_netwm(maximized.into(), (horz_atom, vert_atom, <span class="number">0</span>, <span class="number">0</span>))
     }
 
     <span class="attr">#[inline]
     </span><span class="kw">pub fn </span>set_maximized(<span class="kw-2">&amp;</span><span class="self">self</span>, maximized: bool) {
         <span class="self">self</span>.set_maximized_inner(maximized)
-            .flush()
+            .expect_then_ignore_error(<span class="string">"Failed to change window maximization"</span>);
+        <span class="self">self</span>.xconn
+            .flush_requests()
             .expect(<span class="string">"Failed to change window maximization"</span>);
         <span class="self">self</span>.invalidate_cached_frame_extents();
     }
 
-    <span class="kw">fn </span>set_title_inner(<span class="kw-2">&amp;</span><span class="self">self</span>, title: <span class="kw-2">&amp;</span>str) -&gt; util::Flusher&lt;<span class="lifetime">'_</span>&gt; {
-        <span class="kw">let </span>wm_name_atom = <span class="kw">unsafe </span>{ <span class="self">self</span>.xconn.get_atom_unchecked(<span class="string">b"_NET_WM_NAME\0"</span>) };
-        <span class="kw">let </span>utf8_atom = <span class="kw">unsafe </span>{ <span class="self">self</span>.xconn.get_atom_unchecked(<span class="string">b"UTF8_STRING\0"</span>) };
+    <span class="kw">fn </span>set_title_inner(<span class="kw-2">&amp;</span><span class="self">self</span>, title: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;VoidCookie&lt;<span class="lifetime">'_</span>&gt;, X11Error&gt; {
+        <span class="kw">let </span>atoms = <span class="self">self</span>.xconn.atoms();
+
         <span class="kw">let </span>title = CString::new(title).expect(<span class="string">"Window title contained null byte"</span>);
-        <span class="kw">unsafe </span>{
-            (<span class="self">self</span>.xconn.xlib.XStoreName)(
-                <span class="self">self</span>.xconn.display,
+        <span class="self">self</span>.xconn
+            .change_property(
                 <span class="self">self</span>.xwindow,
-                title.as_ptr() <span class="kw">as </span><span class="kw-2">*const </span>c_char,
-            );
-            <span class="self">self</span>.xconn.change_property(
-                <span class="self">self</span>.xwindow,
-                wm_name_atom,
-                utf8_atom,
-                util::PropMode::Replace,
+                xproto::Atom::from(xproto::AtomEnum::WM_NAME),
+                xproto::Atom::from(xproto::AtomEnum::STRING),
+                xproto::PropMode::REPLACE,
                 title.as_bytes(),
-            )
-        }
+            )<span class="question-mark">?
+            </span>.ignore_error();
+        <span class="self">self</span>.xconn.change_property(
+            <span class="self">self</span>.xwindow,
+            atoms[_NET_WM_NAME],
+            atoms[UTF8_STRING],
+            xproto::PropMode::REPLACE,
+            title.as_bytes(),
+        )
     }
 
     <span class="attr">#[inline]
     </span><span class="kw">pub fn </span>set_title(<span class="kw-2">&amp;</span><span class="self">self</span>, title: <span class="kw-2">&amp;</span>str) {
         <span class="self">self</span>.set_title_inner(title)
-            .flush()
+            .expect_then_ignore_error(<span class="string">"Failed to set window title"</span>);
+
+        <span class="self">self</span>.xconn
+            .flush_requests()
             .expect(<span class="string">"Failed to set window title"</span>);
     }
 
     <span class="attr">#[inline]
     </span><span class="kw">pub fn </span>set_transparent(<span class="kw-2">&amp;</span><span class="self">self</span>, _transparent: bool) {}
 
-    <span class="kw">fn </span>set_decorations_inner(<span class="kw-2">&amp;</span><span class="self">self</span>, decorations: bool) -&gt; util::Flusher&lt;<span class="lifetime">'_</span>&gt; {
+    <span class="attr">#[inline]
+    </span><span class="kw">pub fn </span>set_blur(<span class="kw-2">&amp;</span><span class="self">self</span>, _blur: bool) {}
+
+    <span class="kw">fn </span>set_decorations_inner(<span class="kw-2">&amp;</span><span class="self">self</span>, decorations: bool) -&gt; <span class="prelude-ty">Result</span>&lt;VoidCookie&lt;<span class="lifetime">'_</span>&gt;, X11Error&gt; {
         <span class="self">self</span>.shared_state_lock().is_decorated = decorations;
         <span class="kw">let </span><span class="kw-2">mut </span>hints = <span class="self">self</span>.xconn.get_motif_hints(<span class="self">self</span>.xwindow);
 
@@ -2569,7 +3075,9 @@
     <span class="attr">#[inline]
     </span><span class="kw">pub fn </span>set_decorations(<span class="kw-2">&amp;</span><span class="self">self</span>, decorations: bool) {
         <span class="self">self</span>.set_decorations_inner(decorations)
-            .flush()
+            .expect_then_ignore_error(<span class="string">"Failed to set decoration state"</span>);
+        <span class="self">self</span>.xconn
+            .flush_requests()
             .expect(<span class="string">"Failed to set decoration state"</span>);
         <span class="self">self</span>.invalidate_cached_frame_extents();
     }
@@ -2579,7 +3087,7 @@
         <span class="self">self</span>.shared_state_lock().is_decorated
     }
 
-    <span class="kw">fn </span>set_maximizable_inner(<span class="kw-2">&amp;</span><span class="self">self</span>, maximizable: bool) -&gt; util::Flusher&lt;<span class="lifetime">'_</span>&gt; {
+    <span class="kw">fn </span>set_maximizable_inner(<span class="kw-2">&amp;</span><span class="self">self</span>, maximizable: bool) -&gt; <span class="prelude-ty">Result</span>&lt;VoidCookie&lt;<span class="lifetime">'_</span>&gt;, X11Error&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>hints = <span class="self">self</span>.xconn.get_motif_hints(<span class="self">self</span>.xwindow);
 
         hints.set_maximizable(maximizable);
@@ -2587,59 +3095,62 @@
         <span class="self">self</span>.xconn.set_motif_hints(<span class="self">self</span>.xwindow, <span class="kw-2">&amp;</span>hints)
     }
 
-    <span class="kw">fn </span>toggle_atom(<span class="kw-2">&amp;</span><span class="self">self</span>, atom_bytes: <span class="kw-2">&amp;</span>[u8], enable: bool) -&gt; util::Flusher&lt;<span class="lifetime">'_</span>&gt; {
-        <span class="kw">let </span>atom = <span class="kw">unsafe </span>{ <span class="self">self</span>.xconn.get_atom_unchecked(atom_bytes) };
-        <span class="self">self</span>.set_netwm(enable.into(), (atom <span class="kw">as </span>c_long, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>))
+    <span class="kw">fn </span>toggle_atom(<span class="kw-2">&amp;</span><span class="self">self</span>, atom_name: AtomName, enable: bool) -&gt; <span class="prelude-ty">Result</span>&lt;VoidCookie&lt;<span class="lifetime">'_</span>&gt;, X11Error&gt; {
+        <span class="kw">let </span>atoms = <span class="self">self</span>.xconn.atoms();
+        <span class="kw">let </span>atom = atoms[atom_name];
+        <span class="self">self</span>.set_netwm(enable.into(), (atom, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>))
     }
 
-    <span class="kw">fn </span>set_window_level_inner(<span class="kw-2">&amp;</span><span class="self">self</span>, level: WindowLevel) -&gt; util::Flusher&lt;<span class="lifetime">'_</span>&gt; {
-        <span class="self">self</span>.toggle_atom(<span class="string">b"_NET_WM_STATE_ABOVE\0"</span>, level == WindowLevel::AlwaysOnTop)
-            .queue();
-        <span class="self">self</span>.toggle_atom(
-            <span class="string">b"_NET_WM_STATE_BELOW\0"</span>,
-            level == WindowLevel::AlwaysOnBottom,
-        )
+    <span class="kw">fn </span>set_window_level_inner(<span class="kw-2">&amp;</span><span class="self">self</span>, level: WindowLevel) -&gt; <span class="prelude-ty">Result</span>&lt;VoidCookie&lt;<span class="lifetime">'_</span>&gt;, X11Error&gt; {
+        <span class="self">self</span>.toggle_atom(_NET_WM_STATE_ABOVE, level == WindowLevel::AlwaysOnTop)<span class="question-mark">?
+            </span>.ignore_error();
+        <span class="self">self</span>.toggle_atom(_NET_WM_STATE_BELOW, level == WindowLevel::AlwaysOnBottom)
     }
 
     <span class="attr">#[inline]
     </span><span class="kw">pub fn </span>set_window_level(<span class="kw-2">&amp;</span><span class="self">self</span>, level: WindowLevel) {
         <span class="self">self</span>.set_window_level_inner(level)
-            .flush()
+            .expect_then_ignore_error(<span class="string">"Failed to set window-level state"</span>);
+        <span class="self">self</span>.xconn
+            .flush_requests()
             .expect(<span class="string">"Failed to set window-level state"</span>);
     }
 
-    <span class="kw">fn </span>set_icon_inner(<span class="kw-2">&amp;</span><span class="self">self</span>, icon: Icon) -&gt; util::Flusher&lt;<span class="lifetime">'_</span>&gt; {
-        <span class="kw">let </span>icon_atom = <span class="kw">unsafe </span>{ <span class="self">self</span>.xconn.get_atom_unchecked(<span class="string">b"_NET_WM_ICON\0"</span>) };
+    <span class="kw">fn </span>set_icon_inner(<span class="kw-2">&amp;</span><span class="self">self</span>, icon: PlatformIcon) -&gt; <span class="prelude-ty">Result</span>&lt;VoidCookie&lt;<span class="lifetime">'_</span>&gt;, X11Error&gt; {
+        <span class="kw">let </span>atoms = <span class="self">self</span>.xconn.atoms();
+        <span class="kw">let </span>icon_atom = atoms[_NET_WM_ICON];
         <span class="kw">let </span>data = icon.to_cardinals();
         <span class="self">self</span>.xconn.change_property(
             <span class="self">self</span>.xwindow,
             icon_atom,
-            ffi::XA_CARDINAL,
-            util::PropMode::Replace,
+            xproto::Atom::from(xproto::AtomEnum::CARDINAL),
+            xproto::PropMode::REPLACE,
             data.as_slice(),
         )
     }
 
-    <span class="kw">fn </span>unset_icon_inner(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; util::Flusher&lt;<span class="lifetime">'_</span>&gt; {
-        <span class="kw">let </span>icon_atom = <span class="kw">unsafe </span>{ <span class="self">self</span>.xconn.get_atom_unchecked(<span class="string">b"_NET_WM_ICON\0"</span>) };
+    <span class="kw">fn </span>unset_icon_inner(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;VoidCookie&lt;<span class="lifetime">'_</span>&gt;, X11Error&gt; {
+        <span class="kw">let </span>atoms = <span class="self">self</span>.xconn.atoms();
+        <span class="kw">let </span>icon_atom = atoms[_NET_WM_ICON];
         <span class="kw">let </span>empty_data: [util::Cardinal; <span class="number">0</span>] = [];
         <span class="self">self</span>.xconn.change_property(
             <span class="self">self</span>.xwindow,
             icon_atom,
-            ffi::XA_CARDINAL,
-            util::PropMode::Replace,
+            xproto::Atom::from(xproto::AtomEnum::CARDINAL),
+            xproto::PropMode::REPLACE,
             <span class="kw-2">&amp;</span>empty_data,
         )
     }
 
     <span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>set_window_icon(<span class="kw-2">&amp;</span><span class="self">self</span>, icon: <span class="prelude-ty">Option</span>&lt;Icon&gt;) {
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>set_window_icon(<span class="kw-2">&amp;</span><span class="self">self</span>, icon: <span class="prelude-ty">Option</span>&lt;PlatformIcon&gt;) {
         <span class="kw">match </span>icon {
             <span class="prelude-val">Some</span>(icon) =&gt; <span class="self">self</span>.set_icon_inner(icon),
             <span class="prelude-val">None </span>=&gt; <span class="self">self</span>.unset_icon_inner(),
         }
-        .flush()
-        .expect(<span class="string">"Failed to set icons"</span>);
+        .expect_then_ignore_error(<span class="string">"Failed to set icons"</span>);
+
+        <span class="self">self</span>.xconn.flush_requests().expect(<span class="string">"Failed to set icons"</span>);
     }
 
     <span class="attr">#[inline]
@@ -2654,17 +3165,26 @@
         }
 
         <span class="kw">if </span>visible {
-            <span class="kw">unsafe </span>{
-                (<span class="self">self</span>.xconn.xlib.XMapRaised)(<span class="self">self</span>.xconn.display, <span class="self">self</span>.xwindow);
-            }
+            <span class="self">self</span>.xconn
+                .xcb_connection()
+                .map_window(<span class="self">self</span>.xwindow)
+                .expect_then_ignore_error(<span class="string">"Failed to call `xcb_map_window`"</span>);
+            <span class="self">self</span>.xconn
+                .xcb_connection()
+                .configure_window(
+                    <span class="self">self</span>.xwindow,
+                    <span class="kw-2">&amp;</span>xproto::ConfigureWindowAux::new().stack_mode(xproto::StackMode::ABOVE),
+                )
+                .expect_then_ignore_error(<span class="string">"Failed to call `xcb_configure_window`"</span>);
             <span class="self">self</span>.xconn
                 .flush_requests()
                 .expect(<span class="string">"Failed to call XMapRaised"</span>);
             shared_state.visibility = Visibility::YesWait;
         } <span class="kw">else </span>{
-            <span class="kw">unsafe </span>{
-                (<span class="self">self</span>.xconn.xlib.XUnmapWindow)(<span class="self">self</span>.xconn.display, <span class="self">self</span>.xwindow);
-            }
+            <span class="self">self</span>.xconn
+                .xcb_connection()
+                .unmap_window(<span class="self">self</span>.xwindow)
+                .expect_then_ignore_error(<span class="string">"Failed to call `xcb_unmap_window`"</span>);
             <span class="self">self</span>.xconn
                 .flush_requests()
                 .expect(<span class="string">"Failed to call XUnmapWindow"</span>);
@@ -2716,7 +3236,7 @@
         // is BadWindow, and if the window handle is bad we have bigger problems.
         </span><span class="self">self</span>.xconn
             .translate_coords(<span class="self">self</span>.xwindow, <span class="self">self</span>.root)
-            .map(|coords| (coords.x_rel_root, coords.y_rel_root))
+            .map(|coords| (coords.dst_x.into(), coords.dst_y.into()))
             .unwrap()
     }
 
@@ -2725,29 +3245,33 @@
         <span class="prelude-val">Ok</span>(<span class="self">self</span>.inner_position_physical().into())
     }
 
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>set_position_inner(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw-2">mut </span>x: i32, <span class="kw-2">mut </span>y: i32) -&gt; util::Flusher&lt;<span class="lifetime">'_</span>&gt; {
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>set_position_inner(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        <span class="kw-2">mut </span>x: i32,
+        <span class="kw-2">mut </span>y: i32,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;VoidCookie&lt;<span class="lifetime">'_</span>&gt;, X11Error&gt; {
         <span class="comment">// There are a few WMs that set client area position rather than window position, so
         // we'll translate for consistency.
         </span><span class="kw">if </span>util::wm_name_is_one_of(<span class="kw-2">&amp;</span>[<span class="string">"Enlightenment"</span>, <span class="string">"FVWM"</span>]) {
             <span class="kw">let </span>extents = <span class="self">self</span>.shared_state_lock().frame_extents.clone();
             <span class="kw">if let </span><span class="prelude-val">Some</span>(extents) = extents {
-                x += extents.frame_extents.left <span class="kw">as </span>i32;
-                y += extents.frame_extents.top <span class="kw">as </span>i32;
+                x += cast_dimension_to_hint(extents.frame_extents.left);
+                y += cast_dimension_to_hint(extents.frame_extents.top);
             } <span class="kw">else </span>{
                 <span class="self">self</span>.update_cached_frame_extents();
                 <span class="kw">return </span><span class="self">self</span>.set_position_inner(x, y);
             }
         }
-        <span class="kw">unsafe </span>{
-            (<span class="self">self</span>.xconn.xlib.XMoveWindow)(<span class="self">self</span>.xconn.display, <span class="self">self</span>.xwindow, x <span class="kw">as </span>c_int, y <span class="kw">as </span>c_int);
-        }
-        util::Flusher::new(<span class="kw-2">&amp;</span><span class="self">self</span>.xconn)
+
+        <span class="self">self</span>.xconn
+            .xcb_connection()
+            .configure_window(<span class="self">self</span>.xwindow, <span class="kw-2">&amp;</span>xproto::ConfigureWindowAux::new().x(x).y(y))
+            .map_err(Into::into)
     }
 
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>set_position_physical(<span class="kw-2">&amp;</span><span class="self">self</span>, x: i32, y: i32) {
         <span class="self">self</span>.set_position_inner(x, y)
-            .flush()
-            .expect(<span class="string">"Failed to call `XMoveWindow`"</span>);
+            .expect_then_ignore_error(<span class="string">"Failed to call `XMoveWindow`"</span>);
     }
 
     <span class="attr">#[inline]
@@ -2761,7 +3285,7 @@
         // is BadWindow, and if the window handle is bad we have bigger problems.
         </span><span class="self">self</span>.xconn
             .get_geometry(<span class="self">self</span>.xwindow)
-            .map(|geo| (geo.width, geo.height))
+            .map(|geo| (geo.width.into(), geo.height.into()))
             .unwrap()
     }
 
@@ -2782,47 +3306,69 @@
         }
     }
 
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>set_inner_size_physical(<span class="kw-2">&amp;</span><span class="self">self</span>, width: u32, height: u32) {
-        <span class="kw">unsafe </span>{
-            (<span class="self">self</span>.xconn.xlib.XResizeWindow)(
-                <span class="self">self</span>.xconn.display,
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>request_inner_size_physical(<span class="kw-2">&amp;</span><span class="self">self</span>, width: u32, height: u32) {
+        <span class="self">self</span>.xconn
+            .xcb_connection()
+            .configure_window(
                 <span class="self">self</span>.xwindow,
-                width <span class="kw">as </span>c_uint,
-                height <span class="kw">as </span>c_uint,
-            );
-            <span class="self">self</span>.xconn.flush_requests()
+                <span class="kw-2">&amp;</span>xproto::ConfigureWindowAux::new()
+                    .width(width)
+                    .height(height),
+            )
+            .expect_then_ignore_error(<span class="string">"Failed to call `xcb_configure_window`"</span>);
+        <span class="self">self</span>.xconn
+            .flush_requests()
+            .expect(<span class="string">"Failed to call XResizeWindow"</span>);
+        <span class="comment">// cursor_hittest needs to be reapplied after each window resize.
+        </span><span class="kw">if </span><span class="self">self</span>.shared_state_lock().cursor_hittest.unwrap_or(<span class="bool-val">false</span>) {
+            <span class="kw">let _ </span>= <span class="self">self</span>.set_cursor_hittest(<span class="bool-val">true</span>);
         }
-        .expect(<span class="string">"Failed to call `XResizeWindow`"</span>);
     }
 
     <span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>set_inner_size(<span class="kw-2">&amp;</span><span class="self">self</span>, size: Size) {
+    </span><span class="kw">pub fn </span>request_inner_size(<span class="kw-2">&amp;</span><span class="self">self</span>, size: Size) -&gt; <span class="prelude-ty">Option</span>&lt;PhysicalSize&lt;u32&gt;&gt; {
         <span class="kw">let </span>scale_factor = <span class="self">self</span>.scale_factor();
         <span class="kw">let </span>size = size.to_physical::&lt;u32&gt;(scale_factor).into();
         <span class="kw">if </span>!<span class="self">self</span>.shared_state_lock().is_resizable {
             <span class="self">self</span>.update_normal_hints(|normal_hints| {
-                normal_hints.set_min_size(<span class="prelude-val">Some</span>(size));
-                normal_hints.set_max_size(<span class="prelude-val">Some</span>(size));
+                normal_hints.min_size = <span class="prelude-val">Some</span>(size);
+                normal_hints.max_size = <span class="prelude-val">Some</span>(size);
             })
             .expect(<span class="string">"Failed to call `XSetWMNormalHints`"</span>);
         }
-        <span class="self">self</span>.set_inner_size_physical(size.<span class="number">0</span>, size.<span class="number">1</span>);
-    }
+        <span class="self">self</span>.request_inner_size_physical(size.<span class="number">0 </span><span class="kw">as </span>u32, size.<span class="number">1 </span><span class="kw">as </span>u32);
 
-    <span class="kw">fn </span>update_normal_hints&lt;F&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, callback: F) -&gt; <span class="prelude-ty">Result</span>&lt;(), XError&gt;
+        <span class="prelude-val">None
+    </span>}
+
+    <span class="kw">fn </span>update_normal_hints&lt;F&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, callback: F) -&gt; <span class="prelude-ty">Result</span>&lt;(), X11Error&gt;
     <span class="kw">where
-        </span>F: FnOnce(<span class="kw-2">&amp;mut </span>util::NormalHints&lt;<span class="lifetime">'_</span>&gt;),
+        </span>F: FnOnce(<span class="kw-2">&amp;mut </span>WmSizeHints),
     {
-        <span class="kw">let </span><span class="kw-2">mut </span>normal_hints = <span class="self">self</span>.xconn.get_normal_hints(<span class="self">self</span>.xwindow)<span class="question-mark">?</span>;
+        <span class="kw">let </span><span class="kw-2">mut </span>normal_hints = WmSizeHints::get(
+            <span class="self">self</span>.xconn.xcb_connection(),
+            <span class="self">self</span>.xwindow <span class="kw">as </span>xproto::Window,
+            xproto::AtomEnum::WM_NORMAL_HINTS,
+        )<span class="question-mark">?
+        </span>.reply()<span class="question-mark">?
+        </span>.unwrap_or_default();
         callback(<span class="kw-2">&amp;mut </span>normal_hints);
-        <span class="self">self</span>.xconn
-            .set_normal_hints(<span class="self">self</span>.xwindow, normal_hints)
-            .flush()
+        normal_hints
+            .set(
+                <span class="self">self</span>.xconn.xcb_connection(),
+                <span class="self">self</span>.xwindow <span class="kw">as </span>xproto::Window,
+                xproto::AtomEnum::WM_NORMAL_HINTS,
+            )<span class="question-mark">?
+            </span>.ignore_error();
+        <span class="prelude-val">Ok</span>(())
     }
 
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>set_min_inner_size_physical(<span class="kw-2">&amp;</span><span class="self">self</span>, dimensions: <span class="prelude-ty">Option</span>&lt;(u32, u32)&gt;) {
-        <span class="self">self</span>.update_normal_hints(|normal_hints| normal_hints.set_min_size(dimensions))
-            .expect(<span class="string">"Failed to call `XSetWMNormalHints`"</span>);
+        <span class="self">self</span>.update_normal_hints(|normal_hints| {
+            normal_hints.min_size =
+                dimensions.map(|(w, h)| (cast_dimension_to_hint(w), cast_dimension_to_hint(h)))
+        })
+        .expect(<span class="string">"Failed to call `XSetWMNormalHints`"</span>);
     }
 
     <span class="attr">#[inline]
@@ -2834,8 +3380,11 @@
     }
 
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>set_max_inner_size_physical(<span class="kw-2">&amp;</span><span class="self">self</span>, dimensions: <span class="prelude-ty">Option</span>&lt;(u32, u32)&gt;) {
-        <span class="self">self</span>.update_normal_hints(|normal_hints| normal_hints.set_max_size(dimensions))
-            .expect(<span class="string">"Failed to call `XSetWMNormalHints`"</span>);
+        <span class="self">self</span>.update_normal_hints(|normal_hints| {
+            normal_hints.max_size =
+                dimensions.map(|(w, h)| (cast_dimension_to_hint(w), cast_dimension_to_hint(h)))
+        })
+        .expect(<span class="string">"Failed to call `XSetWMNormalHints`"</span>);
     }
 
     <span class="attr">#[inline]
@@ -2848,19 +3397,24 @@
 
     <span class="attr">#[inline]
     </span><span class="kw">pub fn </span>resize_increments(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;PhysicalSize&lt;u32&gt;&gt; {
-        <span class="self">self</span>.xconn
-            .get_normal_hints(<span class="self">self</span>.xwindow)
-            .ok()
-            .and_then(|hints| hints.get_resize_increments())
-            .map(Into::into)
+        WmSizeHints::get(
+            <span class="self">self</span>.xconn.xcb_connection(),
+            <span class="self">self</span>.xwindow <span class="kw">as </span>xproto::Window,
+            xproto::AtomEnum::WM_NORMAL_HINTS,
+        )
+        .ok()
+        .and_then(|cookie| cookie.reply().ok())
+        .flatten()
+        .and_then(|hints| hints.size_increment)
+        .map(|(width, height)| (width <span class="kw">as </span>u32, height <span class="kw">as </span>u32).into())
     }
 
     <span class="attr">#[inline]
     </span><span class="kw">pub fn </span>set_resize_increments(<span class="kw-2">&amp;</span><span class="self">self</span>, increments: <span class="prelude-ty">Option</span>&lt;Size&gt;) {
         <span class="self">self</span>.shared_state_lock().resize_increments = increments;
         <span class="kw">let </span>physical_increments =
-            increments.map(|increments| increments.to_physical::&lt;u32&gt;(<span class="self">self</span>.scale_factor()).into());
-        <span class="self">self</span>.update_normal_hints(|hints| hints.set_resize_increments(physical_increments))
+            increments.map(|increments| cast_size_to_hint(increments, <span class="self">self</span>.scale_factor()));
+        <span class="self">self</span>.update_normal_hints(|hints| hints.size_increment = physical_increments)
             .expect(<span class="string">"Failed to call `XSetWMNormalHints`"</span>);
     }
 
@@ -2874,16 +3428,16 @@
     ) -&gt; (u32, u32) {
         <span class="kw">let </span>scale_factor = new_scale_factor / old_scale_factor;
         <span class="self">self</span>.update_normal_hints(|normal_hints| {
-            <span class="kw">let </span>dpi_adjuster =
-                |size: Size| -&gt; (u32, u32) { size.to_physical::&lt;u32&gt;(new_scale_factor).into() };
+            <span class="kw">let </span>dpi_adjuster = |size: Size| -&gt; (i32, i32) { cast_size_to_hint(size, scale_factor) };
             <span class="kw">let </span>max_size = shared_state.max_inner_size.map(dpi_adjuster);
             <span class="kw">let </span>min_size = shared_state.min_inner_size.map(dpi_adjuster);
             <span class="kw">let </span>resize_increments = shared_state.resize_increments.map(dpi_adjuster);
             <span class="kw">let </span>base_size = shared_state.base_size.map(dpi_adjuster);
-            normal_hints.set_max_size(max_size);
-            normal_hints.set_min_size(min_size);
-            normal_hints.set_resize_increments(resize_increments);
-            normal_hints.set_base_size(base_size);
+
+            normal_hints.max_size = max_size;
+            normal_hints.min_size = min_size;
+            normal_hints.size_increment = resize_increments;
+            normal_hints.base_size = base_size;
         })
         .expect(<span class="string">"Failed to update normal hints"</span>);
 
@@ -2914,18 +3468,15 @@
         };
         <span class="self">self</span>.shared_state_lock().is_resizable = resizable;
 
-        <span class="self">self</span>.set_maximizable_inner(resizable).queue();
+        <span class="self">self</span>.set_maximizable_inner(resizable)
+            .expect_then_ignore_error(<span class="string">"Failed to call `XSetWMNormalHints`"</span>);
 
         <span class="kw">let </span>scale_factor = <span class="self">self</span>.scale_factor();
-        <span class="kw">let </span>min_inner_size = min_size
-            .map(|size| size.to_physical::&lt;u32&gt;(scale_factor))
-            .map(Into::into);
-        <span class="kw">let </span>max_inner_size = max_size
-            .map(|size| size.to_physical::&lt;u32&gt;(scale_factor))
-            .map(Into::into);
+        <span class="kw">let </span>min_inner_size = min_size.map(|size| cast_size_to_hint(size, scale_factor));
+        <span class="kw">let </span>max_inner_size = max_size.map(|size| cast_size_to_hint(size, scale_factor));
         <span class="self">self</span>.update_normal_hints(|normal_hints| {
-            normal_hints.set_min_size(min_inner_size);
-            normal_hints.set_max_size(max_inner_size);
+            normal_hints.min_size = min_inner_size;
+            normal_hints.max_size = max_inner_size;
         })
         .expect(<span class="string">"Failed to call `XSetWMNormalHints`"</span>);
     }
@@ -2943,24 +3494,16 @@
         WindowButtons::all()
     }
 
-    <span class="attr">#[inline]
+    <span class="attr">#[allow(dead_code)]
+    #[inline]
     </span><span class="kw">pub fn </span>xlib_display(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">*mut </span>c_void {
         <span class="self">self</span>.xconn.display <span class="kw">as _
     </span>}
 
-    <span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>xlib_screen_id(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; c_int {
-        <span class="self">self</span>.screen_id
-    }
-
-    <span class="attr">#[inline]
+    <span class="attr">#[allow(dead_code)]
+    #[inline]
     </span><span class="kw">pub fn </span>xlib_window(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; c_ulong {
-        <span class="self">self</span>.xwindow
-    }
-
-    <span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>xcb_connection(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">*mut </span>c_void {
-        <span class="kw">unsafe </span>{ (<span class="self">self</span>.xconn.xlib_xcb.XGetXCBConnection)(<span class="self">self</span>.xconn.display) <span class="kw">as </span><span class="kw-2">*mut </span><span class="kw">_ </span>}
+        <span class="self">self</span>.xwindow <span class="kw">as </span>ffi::Window
     }
 
     <span class="attr">#[inline]
@@ -2979,59 +3522,64 @@
             <span class="kw">return </span><span class="prelude-val">Ok</span>(());
         }
 
-        <span class="kw">unsafe </span>{
-            <span class="comment">// We ungrab before grabbing to prevent passive grabs from causing `AlreadyGrabbed`.
-            // Therefore, this is common to both codepaths.
-            </span>(<span class="self">self</span>.xconn.xlib.XUngrabPointer)(<span class="self">self</span>.xconn.display, ffi::CurrentTime);
-        }
+        <span class="comment">// We ungrab before grabbing to prevent passive grabs from causing `AlreadyGrabbed`.
+        // Therefore, this is common to both codepaths.
+        </span><span class="self">self</span>.xconn
+            .xcb_connection()
+            .ungrab_pointer(x11rb::CURRENT_TIME)
+            .expect_then_ignore_error(<span class="string">"Failed to call `xcb_ungrab_pointer`"</span>);
 
         <span class="kw">let </span>result = <span class="kw">match </span>mode {
-            CursorGrabMode::None =&gt; <span class="self">self
-                </span>.xconn
-                .flush_requests()
-                .map_err(|err| ExternalError::Os(<span class="macro">os_error!</span>(OsError::XError(err)))),
+            CursorGrabMode::None =&gt; <span class="self">self</span>.xconn.flush_requests().map_err(|err| {
+                ExternalError::Os(<span class="macro">os_error!</span>(OsError::XError(X11Error::Xlib(err).into())))
+            }),
             CursorGrabMode::Confined =&gt; {
-                <span class="kw">let </span>result = <span class="kw">unsafe </span>{
-                    (<span class="self">self</span>.xconn.xlib.XGrabPointer)(
-                        <span class="self">self</span>.xconn.display,
-                        <span class="self">self</span>.xwindow,
-                        ffi::True,
-                        (ffi::ButtonPressMask
-                            | ffi::ButtonReleaseMask
-                            | ffi::EnterWindowMask
-                            | ffi::LeaveWindowMask
-                            | ffi::PointerMotionMask
-                            | ffi::PointerMotionHintMask
-                            | ffi::Button1MotionMask
-                            | ffi::Button2MotionMask
-                            | ffi::Button3MotionMask
-                            | ffi::Button4MotionMask
-                            | ffi::Button5MotionMask
-                            | ffi::ButtonMotionMask
-                            | ffi::KeymapStateMask) <span class="kw">as </span>c_uint,
-                        ffi::GrabModeAsync,
-                        ffi::GrabModeAsync,
-                        <span class="self">self</span>.xwindow,
-                        <span class="number">0</span>,
-                        ffi::CurrentTime,
-                    )
+                <span class="kw">let </span>result = {
+                    <span class="self">self</span>.xconn
+                        .xcb_connection()
+                        .grab_pointer(
+                            <span class="bool-val">true </span><span class="kw">as _</span>,
+                            <span class="self">self</span>.xwindow,
+                            xproto::EventMask::BUTTON_PRESS
+                                | xproto::EventMask::BUTTON_RELEASE
+                                | xproto::EventMask::ENTER_WINDOW
+                                | xproto::EventMask::LEAVE_WINDOW
+                                | xproto::EventMask::POINTER_MOTION
+                                | xproto::EventMask::POINTER_MOTION_HINT
+                                | xproto::EventMask::BUTTON1_MOTION
+                                | xproto::EventMask::BUTTON2_MOTION
+                                | xproto::EventMask::BUTTON3_MOTION
+                                | xproto::EventMask::BUTTON4_MOTION
+                                | xproto::EventMask::BUTTON5_MOTION
+                                | xproto::EventMask::KEYMAP_STATE,
+                            xproto::GrabMode::ASYNC,
+                            xproto::GrabMode::ASYNC,
+                            <span class="self">self</span>.xwindow,
+                            <span class="number">0u32</span>,
+                            x11rb::CURRENT_TIME,
+                        )
+                        .expect(<span class="string">"Failed to call `grab_pointer`"</span>)
+                        .reply()
+                        .expect(<span class="string">"Failed to receive reply from `grab_pointer`"</span>)
                 };
 
-                <span class="kw">match </span>result {
-                    ffi::GrabSuccess =&gt; <span class="prelude-val">Ok</span>(()),
-                    ffi::AlreadyGrabbed =&gt; {
+                <span class="kw">match </span>result.status {
+                    xproto::GrabStatus::SUCCESS =&gt; <span class="prelude-val">Ok</span>(()),
+                    xproto::GrabStatus::ALREADY_GRABBED =&gt; {
                         <span class="prelude-val">Err</span>(<span class="string">"Cursor could not be confined: already confined by another client"</span>)
                     }
-                    ffi::GrabInvalidTime =&gt; <span class="prelude-val">Err</span>(<span class="string">"Cursor could not be confined: invalid time"</span>),
-                    ffi::GrabNotViewable =&gt; {
+                    xproto::GrabStatus::INVALID_TIME =&gt; {
+                        <span class="prelude-val">Err</span>(<span class="string">"Cursor could not be confined: invalid time"</span>)
+                    }
+                    xproto::GrabStatus::NOT_VIEWABLE =&gt; {
                         <span class="prelude-val">Err</span>(<span class="string">"Cursor could not be confined: confine location not viewable"</span>)
                     }
-                    ffi::GrabFrozen =&gt; {
+                    xproto::GrabStatus::FROZEN =&gt; {
                         <span class="prelude-val">Err</span>(<span class="string">"Cursor could not be confined: frozen by another client"</span>)
                     }
                     <span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(),
                 }
-                .map_err(|err| ExternalError::Os(<span class="macro">os_error!</span>(OsError::XMisc(err))))
+                .map_err(|err| ExternalError::Os(<span class="macro">os_error!</span>(OsError::Misc(err))))
             }
             CursorGrabMode::Locked =&gt; {
                 <span class="kw">return </span><span class="prelude-val">Err</span>(ExternalError::NotSupported(NotSupportedError::new()));
@@ -3064,15 +3612,20 @@
 
     <span class="attr">#[inline]
     </span><span class="kw">pub fn </span>scale_factor(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; f64 {
-        <span class="self">self</span>.current_monitor().scale_factor
+        <span class="self">self</span>.shared_state_lock().last_monitor.scale_factor
     }
 
     <span class="kw">pub fn </span>set_cursor_position_physical(<span class="kw-2">&amp;</span><span class="self">self</span>, x: i32, y: i32) -&gt; <span class="prelude-ty">Result</span>&lt;(), ExternalError&gt; {
-        <span class="kw">unsafe </span>{
-            (<span class="self">self</span>.xconn.xlib.XWarpPointer)(<span class="self">self</span>.xconn.display, <span class="number">0</span>, <span class="self">self</span>.xwindow, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, x, y);
+        {
             <span class="self">self</span>.xconn
-                .flush_requests()
-                .map_err(|e| ExternalError::Os(<span class="macro">os_error!</span>(OsError::XError(e))))
+                .xcb_connection()
+                .warp_pointer(x11rb::NONE, <span class="self">self</span>.xwindow, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, x <span class="kw">as _</span>, y <span class="kw">as _</span>)
+                .map_err(|e| {
+                    ExternalError::Os(<span class="macro">os_error!</span>(OsError::XError(X11Error::from(e).into())))
+                })<span class="question-mark">?</span>;
+            <span class="self">self</span>.xconn.flush_requests().map_err(|e| {
+                ExternalError::Os(<span class="macro">os_error!</span>(OsError::XError(X11Error::Xlib(e).into())))
+            })
         }
     }
 
@@ -3083,14 +3636,34 @@
     }
 
     <span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>set_cursor_hittest(<span class="kw-2">&amp;</span><span class="self">self</span>, _hittest: bool) -&gt; <span class="prelude-ty">Result</span>&lt;(), ExternalError&gt; {
-        <span class="prelude-val">Err</span>(ExternalError::NotSupported(NotSupportedError::new()))
+    </span><span class="kw">pub fn </span>set_cursor_hittest(<span class="kw-2">&amp;</span><span class="self">self</span>, hittest: bool) -&gt; <span class="prelude-ty">Result</span>&lt;(), ExternalError&gt; {
+        <span class="kw">let </span><span class="kw-2">mut </span>rectangles: Vec&lt;Rectangle&gt; = Vec::new();
+        <span class="kw">if </span>hittest {
+            <span class="kw">let </span>size = <span class="self">self</span>.inner_size();
+            rectangles.push(Rectangle {
+                x: <span class="number">0</span>,
+                y: <span class="number">0</span>,
+                width: size.width <span class="kw">as </span>u16,
+                height: size.height <span class="kw">as </span>u16,
+            })
+        }
+        <span class="kw">let </span>region = RegionWrapper::create_region(<span class="self">self</span>.xconn.xcb_connection(), <span class="kw-2">&amp;</span>rectangles)
+            .map_err(|_e| ExternalError::Ignored)<span class="question-mark">?</span>;
+        <span class="self">self</span>.xconn
+            .xcb_connection()
+            .xfixes_set_window_shape_region(<span class="self">self</span>.xwindow, SK::INPUT, <span class="number">0</span>, <span class="number">0</span>, region.region())
+            .map_err(|_e| ExternalError::Ignored)<span class="question-mark">?</span>;
+        <span class="self">self</span>.shared_state_lock().cursor_hittest = <span class="prelude-val">Some</span>(hittest);
+        <span class="prelude-val">Ok</span>(())
     }
 
     <span class="doccomment">/// Moves the window while it is being dragged.
     </span><span class="kw">pub fn </span>drag_window(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), ExternalError&gt; {
         <span class="self">self</span>.drag_initiate(util::MOVERESIZE_MOVE)
     }
+
+    <span class="attr">#[inline]
+    </span><span class="kw">pub fn </span>show_window_menu(<span class="kw-2">&amp;</span><span class="self">self</span>, _position: Position) {}
 
     <span class="doccomment">/// Resizes the window while it is being dragged.
     </span><span class="kw">pub fn </span>drag_resize_window(<span class="kw-2">&amp;</span><span class="self">self</span>, direction: ResizeDirection) -&gt; <span class="prelude-ty">Result</span>&lt;(), ExternalError&gt; {
@@ -3111,21 +3684,26 @@
         <span class="kw">let </span>pointer = <span class="self">self
             </span>.xconn
             .query_pointer(<span class="self">self</span>.xwindow, util::VIRTUAL_CORE_POINTER)
-            .map_err(|err| ExternalError::Os(<span class="macro">os_error!</span>(OsError::XError(err))))<span class="question-mark">?</span>;
+            .map_err(|err| ExternalError::Os(<span class="macro">os_error!</span>(OsError::XError(err.into()))))<span class="question-mark">?</span>;
 
         <span class="kw">let </span>window = <span class="self">self</span>.inner_position().map_err(ExternalError::NotSupported)<span class="question-mark">?</span>;
 
-        <span class="kw">let </span>message = <span class="kw">unsafe </span>{ <span class="self">self</span>.xconn.get_atom_unchecked(<span class="string">b"_NET_WM_MOVERESIZE\0"</span>) };
+        <span class="kw">let </span>atoms = <span class="self">self</span>.xconn.atoms();
+        <span class="kw">let </span>message = atoms[_NET_WM_MOVERESIZE];
 
         <span class="comment">// we can't use `set_cursor_grab(false)` here because it doesn't run `XUngrabPointer`
         // if the cursor isn't currently grabbed
         </span><span class="kw">let </span><span class="kw-2">mut </span>grabbed_lock = <span class="self">self</span>.cursor_grabbed_mode.lock().unwrap();
-        <span class="kw">unsafe </span>{
-            (<span class="self">self</span>.xconn.xlib.XUngrabPointer)(<span class="self">self</span>.xconn.display, ffi::CurrentTime);
-        }
         <span class="self">self</span>.xconn
-            .flush_requests()
-            .map_err(|err| ExternalError::Os(<span class="macro">os_error!</span>(OsError::XError(err))))<span class="question-mark">?</span>;
+            .xcb_connection()
+            .ungrab_pointer(x11rb::CURRENT_TIME)
+            .map_err(|err| {
+                ExternalError::Os(<span class="macro">os_error!</span>(OsError::XError(X11Error::from(err).into())))
+            })<span class="question-mark">?
+            </span>.ignore_error();
+        <span class="self">self</span>.xconn.flush_requests().map_err(|err| {
+            ExternalError::Os(<span class="macro">os_error!</span>(OsError::XError(X11Error::Xlib(err).into())))
+        })<span class="question-mark">?</span>;
         <span class="kw-2">*</span>grabbed_lock = CursorGrabMode::None;
 
         <span class="comment">// we keep the lock until we are done
@@ -3134,27 +3712,33 @@
                 <span class="self">self</span>.xwindow,
                 <span class="self">self</span>.root,
                 message,
-                <span class="prelude-val">Some</span>(ffi::SubstructureRedirectMask | ffi::SubstructureNotifyMask),
+                <span class="prelude-val">Some</span>(
+                    xproto::EventMask::SUBSTRUCTURE_REDIRECT
+                        | xproto::EventMask::SUBSTRUCTURE_NOTIFY,
+                ),
                 [
-                    (window.x <span class="kw">as </span>c_long + pointer.win_x <span class="kw">as </span>c_long),
-                    (window.y <span class="kw">as </span>c_long + pointer.win_y <span class="kw">as </span>c_long),
+                    (window.x <span class="kw">as </span>u32 + xinput_fp1616_to_float(pointer.win_x) <span class="kw">as </span>u32),
+                    (window.y <span class="kw">as </span>u32 + xinput_fp1616_to_float(pointer.win_y) <span class="kw">as </span>u32),
                     action.try_into().unwrap(),
-                    ffi::Button1 <span class="kw">as </span>c_long,
-                    <span class="number">1</span>,
+                    <span class="number">1</span>, <span class="comment">// Button 1
+                    </span><span class="number">1</span>,
                 ],
             )
-            .flush()
-            .map_err(|err| ExternalError::Os(<span class="macro">os_error!</span>(OsError::XError(err))))
+            .map_err(|err| ExternalError::Os(<span class="macro">os_error!</span>(OsError::XError(err.into()))))<span class="question-mark">?</span>;
+
+        <span class="self">self</span>.xconn.flush_requests().map_err(|err| {
+            ExternalError::Os(<span class="macro">os_error!</span>(OsError::XError(X11Error::Xlib(err).into())))
+        })
     }
 
     <span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>set_ime_position(<span class="kw-2">&amp;</span><span class="self">self</span>, spot: Position) {
+    </span><span class="kw">pub fn </span>set_ime_cursor_area(<span class="kw-2">&amp;</span><span class="self">self</span>, spot: Position, _size: Size) {
         <span class="kw">let </span>(x, y) = spot.to_physical::&lt;i32&gt;(<span class="self">self</span>.scale_factor()).into();
-        <span class="kw">let _ </span>= <span class="self">self
-            </span>.ime_sender
-            .lock()
-            .unwrap()
-            .send(ImeRequest::Position(<span class="self">self</span>.xwindow, x, y));
+        <span class="kw">let _ </span>= <span class="self">self</span>.ime_sender.lock().unwrap().send(ImeRequest::Position(
+            <span class="self">self</span>.xwindow <span class="kw">as </span>ffi::Window,
+            x,
+            y,
+        ));
     }
 
     <span class="attr">#[inline]
@@ -3163,7 +3747,7 @@
             </span>.ime_sender
             .lock()
             .unwrap()
-            .send(ImeRequest::Allow(<span class="self">self</span>.xwindow, allowed));
+            .send(ImeRequest::Allow(<span class="self">self</span>.xwindow <span class="kw">as </span>ffi::Window, allowed));
     }
 
     <span class="attr">#[inline]
@@ -3171,13 +3755,14 @@
 
     <span class="attr">#[inline]
     </span><span class="kw">pub fn </span>focus_window(<span class="kw-2">&amp;</span><span class="self">self</span>) {
-        <span class="kw">let </span>state_atom = <span class="kw">unsafe </span>{ <span class="self">self</span>.xconn.get_atom_unchecked(<span class="string">b"WM_STATE\0"</span>) };
-        <span class="kw">let </span>state_type_atom = <span class="kw">unsafe </span>{ <span class="self">self</span>.xconn.get_atom_unchecked(<span class="string">b"CARD32\0"</span>) };
+        <span class="kw">let </span>atoms = <span class="self">self</span>.xconn.atoms();
+        <span class="kw">let </span>state_atom = atoms[WM_STATE];
+        <span class="kw">let </span>state_type_atom = atoms[CARD32];
         <span class="kw">let </span>is_minimized = <span class="kw">if let </span><span class="prelude-val">Ok</span>(state) =
             <span class="self">self</span>.xconn
-                .get_property(<span class="self">self</span>.xwindow, state_atom, state_type_atom)
+                .get_property::&lt;u32&gt;(<span class="self">self</span>.xwindow, state_atom, state_type_atom)
         {
-            state.contains(<span class="kw-2">&amp;</span>(ffi::IconicState <span class="kw">as </span>c_ulong))
+            state.contains(<span class="kw-2">&amp;</span><span class="kw">super</span>::ICONIC_STATE)
         } <span class="kw">else </span>{
             <span class="bool-val">false
         </span>};
@@ -3187,15 +3772,19 @@
         };
 
         <span class="kw">if </span>is_visible &amp;&amp; !is_minimized {
-            <span class="kw">let </span>atom = <span class="kw">unsafe </span>{ <span class="self">self</span>.xconn.get_atom_unchecked(<span class="string">b"_NET_ACTIVE_WINDOW\0"</span>) };
-            <span class="kw">let </span>flusher = <span class="self">self</span>.xconn.send_client_msg(
-                <span class="self">self</span>.xwindow,
-                <span class="self">self</span>.root,
-                atom,
-                <span class="prelude-val">Some</span>(ffi::SubstructureRedirectMask | ffi::SubstructureNotifyMask),
-                [<span class="number">1</span>, ffi::CurrentTime <span class="kw">as </span>c_long, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>],
-            );
-            <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = flusher.flush() {
+            <span class="self">self</span>.xconn
+                .send_client_msg(
+                    <span class="self">self</span>.xwindow,
+                    <span class="self">self</span>.root,
+                    atoms[_NET_ACTIVE_WINDOW],
+                    <span class="prelude-val">Some</span>(
+                        xproto::EventMask::SUBSTRUCTURE_REDIRECT
+                            | xproto::EventMask::SUBSTRUCTURE_NOTIFY,
+                    ),
+                    [<span class="number">1</span>, x11rb::CURRENT_TIME, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>],
+                )
+                .expect_then_ignore_error(<span class="string">"Failed to send client message"</span>);
+            <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = <span class="self">self</span>.xconn.flush_requests() {
                 <span class="macro">log::error!</span>(
                     <span class="string">"`flush` returned an error when focusing the window. Error was: {}"</span>,
                     e
@@ -3206,19 +3795,45 @@
 
     <span class="attr">#[inline]
     </span><span class="kw">pub fn </span>request_user_attention(<span class="kw-2">&amp;</span><span class="self">self</span>, request_type: <span class="prelude-ty">Option</span>&lt;UserAttentionType&gt;) {
-        <span class="kw">let </span><span class="kw-2">mut </span>wm_hints = <span class="self">self
-            </span>.xconn
-            .get_wm_hints(<span class="self">self</span>.xwindow)
-            .expect(<span class="string">"`XGetWMHints` failed"</span>);
-        <span class="kw">if </span>request_type.is_some() {
-            wm_hints.flags |= ffi::XUrgencyHint;
-        } <span class="kw">else </span>{
-            wm_hints.flags &amp;= !ffi::XUrgencyHint;
-        }
-        <span class="self">self</span>.xconn
-            .set_wm_hints(<span class="self">self</span>.xwindow, wm_hints)
-            .flush()
-            .expect(<span class="string">"Failed to set urgency hint"</span>);
+        <span class="kw">let </span><span class="kw-2">mut </span>wm_hints =
+            WmHints::get(<span class="self">self</span>.xconn.xcb_connection(), <span class="self">self</span>.xwindow <span class="kw">as </span>xproto::Window)
+                .ok()
+                .and_then(|cookie| cookie.reply().ok())
+                .flatten()
+                .unwrap_or_default();
+
+        wm_hints.urgent = request_type.is_some();
+        wm_hints
+            .set(<span class="self">self</span>.xconn.xcb_connection(), <span class="self">self</span>.xwindow <span class="kw">as </span>xproto::Window)
+            .expect_then_ignore_error(<span class="string">"Failed to set WM hints"</span>);
+    }
+
+    <span class="attr">#[inline]
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>generate_activation_token(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;String, X11Error&gt; {
+        <span class="comment">// Get the title from the WM_NAME property.
+        </span><span class="kw">let </span>atoms = <span class="self">self</span>.xconn.atoms();
+        <span class="kw">let </span>title = {
+            <span class="kw">let </span>title_bytes = <span class="self">self
+                </span>.xconn
+                .get_property(<span class="self">self</span>.xwindow, atoms[_NET_WM_NAME], atoms[UTF8_STRING])
+                .expect(<span class="string">"Failed to get title"</span>);
+
+            String::from_utf8(title_bytes).expect(<span class="string">"Bad title"</span>)
+        };
+
+        <span class="comment">// Get the activation token and then put it in the event queue.
+        </span><span class="kw">let </span>token = <span class="self">self</span>.xconn.request_activation_token(<span class="kw-2">&amp;</span>title)<span class="question-mark">?</span>;
+
+        <span class="prelude-val">Ok</span>(token)
+    }
+
+    <span class="attr">#[inline]
+    </span><span class="kw">pub fn </span>request_activation_token(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;AsyncRequestSerial, NotSupportedError&gt; {
+        <span class="kw">let </span>serial = AsyncRequestSerial::get();
+        <span class="self">self</span>.activation_sender
+            .send((<span class="self">self</span>.id(), serial))
+            .expect(<span class="string">"activation token channel should never be closed"</span>);
+        <span class="prelude-val">Ok</span>(serial)
     }
 
     <span class="attr">#[inline]
@@ -3229,31 +3844,72 @@
     <span class="attr">#[inline]
     </span><span class="kw">pub fn </span>request_redraw(<span class="kw-2">&amp;</span><span class="self">self</span>) {
         <span class="self">self</span>.redraw_sender
-            .sender
             .send(WindowId(<span class="self">self</span>.xwindow <span class="kw">as _</span>))
             .unwrap();
-        <span class="self">self</span>.redraw_sender.waker.wake().unwrap();
     }
 
     <span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>raw_window_handle(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; RawWindowHandle {
-        <span class="kw">let </span><span class="kw-2">mut </span>window_handle = XlibWindowHandle::empty();
+    </span><span class="kw">pub fn </span>pre_present_notify(<span class="kw-2">&amp;</span><span class="self">self</span>) {
+        <span class="comment">// TODO timer
+    </span>}
+
+    <span class="attr">#[cfg(feature = <span class="string">"rwh_04"</span>)]
+    #[inline]
+    </span><span class="kw">pub fn </span>raw_window_handle_rwh_04(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; rwh_04::RawWindowHandle {
+        <span class="kw">let </span><span class="kw-2">mut </span>window_handle = rwh_04::XlibHandle::empty();
+        window_handle.display = <span class="self">self</span>.xlib_display();
         window_handle.window = <span class="self">self</span>.xlib_window();
-        RawWindowHandle::Xlib(window_handle)
+        window_handle.visual_id = <span class="self">self</span>.visual <span class="kw">as </span>c_ulong;
+        rwh_04::RawWindowHandle::Xlib(window_handle)
     }
 
-    <span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>raw_display_handle(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; RawDisplayHandle {
-        <span class="kw">let </span><span class="kw-2">mut </span>display_handle = XlibDisplayHandle::empty();
+    <span class="attr">#[cfg(feature = <span class="string">"rwh_05"</span>)]
+    #[inline]
+    </span><span class="kw">pub fn </span>raw_window_handle_rwh_05(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; rwh_05::RawWindowHandle {
+        <span class="kw">let </span><span class="kw-2">mut </span>window_handle = rwh_05::XlibWindowHandle::empty();
+        window_handle.window = <span class="self">self</span>.xlib_window();
+        window_handle.visual_id = <span class="self">self</span>.visual <span class="kw">as </span>c_ulong;
+        window_handle.into()
+    }
+
+    <span class="attr">#[cfg(feature = <span class="string">"rwh_05"</span>)]
+    #[inline]
+    </span><span class="kw">pub fn </span>raw_display_handle_rwh_05(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; rwh_05::RawDisplayHandle {
+        <span class="kw">let </span><span class="kw-2">mut </span>display_handle = rwh_05::XlibDisplayHandle::empty();
         display_handle.display = <span class="self">self</span>.xlib_display();
         display_handle.screen = <span class="self">self</span>.screen_id;
-        RawDisplayHandle::Xlib(display_handle)
+        display_handle.into()
+    }
+
+    <span class="attr">#[cfg(feature = <span class="string">"rwh_06"</span>)]
+    #[inline]
+    </span><span class="kw">pub fn </span>raw_window_handle_rwh_06(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;rwh_06::RawWindowHandle, rwh_06::HandleError&gt; {
+        <span class="kw">let </span><span class="kw-2">mut </span>window_handle = rwh_06::XlibWindowHandle::new(<span class="self">self</span>.xlib_window());
+        window_handle.visual_id = <span class="self">self</span>.visual <span class="kw">as </span>c_ulong;
+        <span class="prelude-val">Ok</span>(window_handle.into())
+    }
+
+    <span class="attr">#[cfg(feature = <span class="string">"rwh_06"</span>)]
+    #[inline]
+    </span><span class="kw">pub fn </span>raw_display_handle_rwh_06(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;rwh_06::RawDisplayHandle, rwh_06::HandleError&gt; {
+        <span class="prelude-val">Ok</span>(rwh_06::XlibDisplayHandle::new(
+            <span class="prelude-val">Some</span>(
+                std::ptr::NonNull::new(<span class="self">self</span>.xlib_display())
+                    .expect(<span class="string">"display pointer should never be null"</span>),
+            ),
+            <span class="self">self</span>.screen_id,
+        )
+        .into())
     }
 
     <span class="attr">#[inline]
     </span><span class="kw">pub fn </span>theme(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Theme&gt; {
         <span class="prelude-val">None
     </span>}
+
+    <span class="kw">pub fn </span>set_content_protected(<span class="kw-2">&amp;</span><span class="self">self</span>, _protected: bool) {}
 
     <span class="attr">#[inline]
     </span><span class="kw">pub fn </span>has_focus(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
@@ -3262,6 +3918,28 @@
 
     <span class="kw">pub fn </span>title(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; String {
         String::new()
+    }
+}
+
+<span class="doccomment">/// Cast a dimension value into a hinted dimension for `WmSizeHints`, clamping if too large.
+</span><span class="kw">fn </span>cast_dimension_to_hint(val: u32) -&gt; i32 {
+    val.try_into().unwrap_or(i32::MAX)
+}
+
+<span class="doccomment">/// Use the above strategy to cast a physical size into a hinted size.
+</span><span class="kw">fn </span>cast_physical_size_to_hint(size: PhysicalSize&lt;u32&gt;) -&gt; (i32, i32) {
+    <span class="kw">let </span>PhysicalSize { width, height } = size;
+    (
+        cast_dimension_to_hint(width),
+        cast_dimension_to_hint(height),
+    )
+}
+
+<span class="doccomment">/// Use the above strategy to cast a size into a hinted size.
+</span><span class="kw">fn </span>cast_size_to_hint(size: Size, scale_factor: f64) -&gt; (i32, i32) {
+    <span class="kw">match </span>size {
+        Size::Physical(size) =&gt; cast_physical_size_to_hint(size),
+        Size::Logical(size) =&gt; size.to_physical::&lt;i32&gt;(scale_factor).into(),
     }
 }
 </code></pre></div></section></main></body></html>

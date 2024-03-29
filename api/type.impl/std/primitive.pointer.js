@@ -3,6 +3,7 @@
 "ash":[],
 "khronos_egl":[],
 "renderdoc_sys":[],
+"wgpu":[],
 "wgpu_core":[],
 "winit":[],
 "x11_dl":[]

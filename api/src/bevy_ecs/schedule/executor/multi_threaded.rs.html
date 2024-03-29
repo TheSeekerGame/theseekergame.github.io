@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy-3e956806168b8470/b5b6ea3/crates/bevy_ecs/src/schedule/executor/multi_threaded.rs`."><title>multi_threaded.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="bevy_ecs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.0 (aedd173a2 2024-03-17)" data-channel="1.77.0" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_ecs-0.13.1/src/schedule/executor/multi_threaded.rs`."><title>multi_threaded.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="bevy_ecs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.1 (7cf61ebde 2024-03-27)" data-channel="1.77.1" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
             <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
     <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../../bevy_ecs/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
@@ -740,12 +740,41 @@
 <a href="#738" id="738">738</a>
 <a href="#739" id="739">739</a>
 <a href="#740" id="740">740</a>
+<a href="#741" id="741">741</a>
+<a href="#742" id="742">742</a>
+<a href="#743" id="743">743</a>
+<a href="#744" id="744">744</a>
+<a href="#745" id="745">745</a>
+<a href="#746" id="746">746</a>
+<a href="#747" id="747">747</a>
+<a href="#748" id="748">748</a>
+<a href="#749" id="749">749</a>
+<a href="#750" id="750">750</a>
+<a href="#751" id="751">751</a>
+<a href="#752" id="752">752</a>
+<a href="#753" id="753">753</a>
+<a href="#754" id="754">754</a>
+<a href="#755" id="755">755</a>
+<a href="#756" id="756">756</a>
+<a href="#757" id="757">757</a>
+<a href="#758" id="758">758</a>
+<a href="#759" id="759">759</a>
+<a href="#760" id="760">760</a>
+<a href="#761" id="761">761</a>
+<a href="#762" id="762">762</a>
+<a href="#763" id="763">763</a>
+<a href="#764" id="764">764</a>
+<a href="#765" id="765">765</a>
+<a href="#766" id="766">766</a>
+<a href="#767" id="767">767</a>
+<a href="#768" id="768">768</a>
+<a href="#769" id="769">769</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{
     any::Any,
     sync::{Arc, Mutex},
 };
 
-<span class="kw">use </span>bevy_tasks::{ComputeTaskPool, Scope, TaskPool, ThreadExecutor};
+<span class="kw">use </span>bevy_tasks::{block_on, poll_once, ComputeTaskPool, Scope, TaskPool, ThreadExecutor};
 <span class="kw">use </span>bevy_utils::default;
 <span class="kw">use </span>bevy_utils::syncunsafecell::SyncUnsafeCell;
 <span class="attr">#[cfg(feature = <span class="string">"trace"</span>)]
@@ -870,10 +899,6 @@
         ExecutorKind::MultiThreaded
     }
 
-    <span class="kw">fn </span>set_apply_final_deferred(<span class="kw-2">&amp;mut </span><span class="self">self</span>, value: bool) {
-        <span class="self">self</span>.apply_final_deferred = value;
-    }
-
     <span class="kw">fn </span>init(<span class="kw-2">&amp;mut </span><span class="self">self</span>, schedule: <span class="kw-2">&amp;</span>SystemSchedule) {
         <span class="comment">// pre-allocate space
         </span><span class="kw">let </span>sys_count = schedule.system_ids.len();
@@ -909,7 +934,12 @@
         <span class="self">self</span>.num_dependencies_remaining = Vec::with_capacity(sys_count);
     }
 
-    <span class="kw">fn </span>run(<span class="kw-2">&amp;mut </span><span class="self">self</span>, schedule: <span class="kw-2">&amp;mut </span>SystemSchedule, world: <span class="kw-2">&amp;mut </span>World) {
+    <span class="kw">fn </span>run(
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+        schedule: <span class="kw-2">&amp;mut </span>SystemSchedule,
+        world: <span class="kw-2">&amp;mut </span>World,
+        _skip_systems: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>FixedBitSet&gt;,
+    ) {
         <span class="comment">// reset counts
         </span><span class="self">self</span>.num_systems = schedule.systems.len();
         <span class="kw">if </span><span class="self">self</span>.num_systems == <span class="number">0 </span>{
@@ -924,6 +954,23 @@
         <span class="kw">for </span>(system_index, dependencies) <span class="kw">in </span><span class="self">self</span>.num_dependencies_remaining.iter_mut().enumerate() {
             <span class="kw">if </span><span class="kw-2">*</span>dependencies == <span class="number">0 </span>{
                 <span class="self">self</span>.ready_systems.insert(system_index);
+            }
+        }
+
+        <span class="comment">// If stepping is enabled, make sure we skip those systems that should
+        // not be run.
+        </span><span class="attr">#[cfg(feature = <span class="string">"bevy_debug_stepping"</span>)]
+        </span><span class="kw">if let </span><span class="prelude-val">Some</span>(skipped_systems) = _skip_systems {
+            <span class="macro">debug_assert_eq!</span>(skipped_systems.len(), <span class="self">self</span>.completed_systems.len());
+            <span class="comment">// mark skipped systems as completed
+            </span><span class="self">self</span>.completed_systems |= skipped_systems;
+            <span class="self">self</span>.num_completed_systems = <span class="self">self</span>.completed_systems.count_ones(..);
+
+            <span class="comment">// signal the dependencies for each of the skipped systems, as
+            // though they had run
+            </span><span class="kw">for </span>system_index <span class="kw">in </span>skipped_systems.ones() {
+                <span class="self">self</span>.signal_dependents(system_index);
+                <span class="self">self</span>.ready_systems.set(system_index, <span class="bool-val">false</span>);
             }
         }
 
@@ -943,7 +990,8 @@
             |scope| {
                 <span class="comment">// the executor itself is a `Send` future so that it can run
                 // alongside systems that claim the local thread
-                </span><span class="kw">let </span>executor = <span class="kw">async </span>{
+                </span><span class="attr">#[allow(unused_mut)]
+                </span><span class="kw">let </span><span class="kw-2">mut </span>executor = Box::pin(<span class="kw">async </span>{
                     <span class="kw">let </span>world_cell = world.as_unsafe_world_cell();
                     <span class="kw">while </span><span class="self">self</span>.num_completed_systems &lt; <span class="self">self</span>.num_systems {
                         <span class="comment">// SAFETY:
@@ -968,13 +1016,19 @@
                             <span class="self">self</span>.rebuild_active_access();
                         }
                     }
-                };
+                });
 
                 <span class="attr">#[cfg(feature = <span class="string">"trace"</span>)]
                 </span><span class="kw">let </span>executor_span = <span class="macro">info_span!</span>(<span class="string">"multithreaded executor"</span>);
                 <span class="attr">#[cfg(feature = <span class="string">"trace"</span>)]
-                </span><span class="kw">let </span>executor = executor.instrument(executor_span);
-                scope.spawn(executor);
+                </span><span class="kw">let </span><span class="kw-2">mut </span>executor = executor.instrument(executor_span);
+
+                <span class="comment">// Immediately poll the task once to avoid the overhead of the executor
+                // and thread wake-up. Only spawn the task if the executor does not immediately
+                // terminate.
+                </span><span class="kw">if </span>block_on(poll_once(<span class="kw-2">&amp;mut </span>executor)).is_none() {
+                    scope.spawn(executor);
+                }
             },
         );
 
@@ -1002,6 +1056,10 @@
         <span class="self">self</span>.evaluated_sets.clear();
         <span class="self">self</span>.skipped_systems.clear();
         <span class="self">self</span>.completed_systems.clear();
+    }
+
+    <span class="kw">fn </span>set_apply_final_deferred(<span class="kw-2">&amp;mut </span><span class="self">self</span>, value: bool) {
+        <span class="self">self</span>.apply_final_deferred = value;
     }
 }
 
@@ -1425,7 +1483,7 @@
     unapplied_systems: <span class="kw-2">&amp;</span>FixedBitSet,
     systems: <span class="kw-2">&amp;</span>[SyncUnsafeCell&lt;BoxedSystem&gt;],
     world: <span class="kw-2">&amp;mut </span>World,
-) -&gt; <span class="prelude-ty">Result</span>&lt;(), Box&lt;<span class="kw">dyn </span>std::any::Any + Send&gt;&gt; {
+) -&gt; <span class="prelude-ty">Result</span>&lt;(), Box&lt;<span class="kw">dyn </span>Any + Send&gt;&gt; {
     <span class="kw">for </span>system_index <span class="kw">in </span>unapplied_systems.ones() {
         <span class="comment">// SAFETY: none of these systems are running, no other references exist
         </span><span class="kw">let </span>system = <span class="kw">unsafe </span>{ <span class="kw-2">&amp;mut *</span>systems[system_index].get() };

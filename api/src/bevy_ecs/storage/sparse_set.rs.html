@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy-3e956806168b8470/b5b6ea3/crates/bevy_ecs/src/storage/sparse_set.rs`."><title>sparse_set.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_ecs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.0 (aedd173a2 2024-03-17)" data-channel="1.77.0" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_ecs-0.13.1/src/storage/sparse_set.rs`."><title>sparse_set.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_ecs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.1 (7cf61ebde 2024-03-27)" data-channel="1.77.1" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
             <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
     <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../bevy_ecs/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
@@ -719,20 +719,6 @@
 <a href="#717" id="717">717</a>
 <a href="#718" id="718">718</a>
 <a href="#719" id="719">719</a>
-<a href="#720" id="720">720</a>
-<a href="#721" id="721">721</a>
-<a href="#722" id="722">722</a>
-<a href="#723" id="723">723</a>
-<a href="#724" id="724">724</a>
-<a href="#725" id="725">725</a>
-<a href="#726" id="726">726</a>
-<a href="#727" id="727">727</a>
-<a href="#728" id="728">728</a>
-<a href="#729" id="729">729</a>
-<a href="#730" id="730">730</a>
-<a href="#731" id="731">731</a>
-<a href="#732" id="732">732</a>
-<a href="#733" id="733">733</a>
 </pre></div><pre class="rust"><code><span class="kw">use crate</span>::{
     component::{ComponentId, ComponentInfo, ComponentTicks, Tick, TickCells},
     entity::Entity,
@@ -859,7 +845,7 @@
     </span>entities: Vec&lt;EntityIndex&gt;,
     <span class="attr">#[cfg(debug_assertions)]
     </span>entities: Vec&lt;Entity&gt;,
-    sparse: SparseArray&lt;EntityIndex, u32&gt;,
+    sparse: SparseArray&lt;EntityIndex, TableRow&gt;,
 }
 
 <span class="kw">impl </span>ComponentSparseSet {
@@ -906,13 +892,13 @@
     ) {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>dense_index) = <span class="self">self</span>.sparse.get(entity.index()) {
             <span class="attr">#[cfg(debug_assertions)]
-            </span><span class="macro">assert_eq!</span>(entity, <span class="self">self</span>.entities[dense_index <span class="kw">as </span>usize]);
-            <span class="self">self</span>.dense
-                .replace(TableRow::new(dense_index <span class="kw">as </span>usize), value, change_tick);
+            </span><span class="macro">assert_eq!</span>(entity, <span class="self">self</span>.entities[dense_index.as_usize()]);
+            <span class="self">self</span>.dense.replace(dense_index, value, change_tick);
         } <span class="kw">else </span>{
             <span class="kw">let </span>dense_index = <span class="self">self</span>.dense.len();
             <span class="self">self</span>.dense.push(value, ComponentTicks::new(change_tick));
-            <span class="self">self</span>.sparse.insert(entity.index(), dense_index <span class="kw">as </span>u32);
+            <span class="self">self</span>.sparse
+                .insert(entity.index(), TableRow::from_usize(dense_index));
             <span class="attr">#[cfg(debug_assertions)]
             </span><span class="macro">assert_eq!</span>(<span class="self">self</span>.entities.len(), dense_index);
             <span class="attr">#[cfg(not(debug_assertions))]
@@ -929,7 +915,7 @@
         </span>{
             <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>dense_index) = <span class="self">self</span>.sparse.get(entity.index()) {
                 <span class="attr">#[cfg(debug_assertions)]
-                </span><span class="macro">assert_eq!</span>(entity, <span class="self">self</span>.entities[dense_index <span class="kw">as </span>usize]);
+                </span><span class="macro">assert_eq!</span>(entity, <span class="self">self</span>.entities[dense_index.as_usize()]);
                 <span class="bool-val">true
             </span>} <span class="kw">else </span>{
                 <span class="bool-val">false
@@ -944,12 +930,11 @@
     /// Returns `None` if `entity` does not have a component in the sparse set.
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>get(<span class="kw-2">&amp;</span><span class="self">self</span>, entity: Entity) -&gt; <span class="prelude-ty">Option</span>&lt;Ptr&lt;<span class="lifetime">'_</span>&gt;&gt; {
-        <span class="self">self</span>.sparse.get(entity.index()).map(|dense_index| {
-            <span class="kw">let </span>dense_index = (<span class="kw-2">*</span>dense_index) <span class="kw">as </span>usize;
+        <span class="self">self</span>.sparse.get(entity.index()).map(|<span class="kw-2">&amp;</span>dense_index| {
             <span class="attr">#[cfg(debug_assertions)]
-            </span><span class="macro">assert_eq!</span>(entity, <span class="self">self</span>.entities[dense_index]);
+            </span><span class="macro">assert_eq!</span>(entity, <span class="self">self</span>.entities[dense_index.as_usize()]);
             <span class="comment">// SAFETY: if the sparse index points to something in the dense vec, it exists
-            </span><span class="kw">unsafe </span>{ <span class="self">self</span>.dense.get_data_unchecked(TableRow::new(dense_index)) }
+            </span><span class="kw">unsafe </span>{ <span class="self">self</span>.dense.get_data_unchecked(dense_index) }
         })
     }
 
@@ -958,9 +943,9 @@
     /// Returns `None` if `entity` does not have a component in the sparse set.
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>get_with_ticks(<span class="kw-2">&amp;</span><span class="self">self</span>, entity: Entity) -&gt; <span class="prelude-ty">Option</span>&lt;(Ptr&lt;<span class="lifetime">'_</span>&gt;, TickCells&lt;<span class="lifetime">'_</span>&gt;)&gt; {
-        <span class="kw">let </span>dense_index = TableRow::new(<span class="kw-2">*</span><span class="self">self</span>.sparse.get(entity.index())<span class="question-mark">? </span><span class="kw">as </span>usize);
+        <span class="kw">let </span>dense_index = <span class="kw-2">*</span><span class="self">self</span>.sparse.get(entity.index())<span class="question-mark">?</span>;
         <span class="attr">#[cfg(debug_assertions)]
-        </span><span class="macro">assert_eq!</span>(entity, <span class="self">self</span>.entities[dense_index.index()]);
+        </span><span class="macro">assert_eq!</span>(entity, <span class="self">self</span>.entities[dense_index.as_usize()]);
         <span class="comment">// SAFETY: if the sparse index points to something in the dense vec, it exists
         </span><span class="kw">unsafe </span>{
             <span class="prelude-val">Some</span>((
@@ -978,16 +963,11 @@
     /// Returns `None` if `entity` does not have a component in the sparse set.
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>get_added_tick(<span class="kw-2">&amp;</span><span class="self">self</span>, entity: Entity) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>UnsafeCell&lt;Tick&gt;&gt; {
-        <span class="kw">let </span>dense_index = <span class="kw-2">*</span><span class="self">self</span>.sparse.get(entity.index())<span class="question-mark">? </span><span class="kw">as </span>usize;
+        <span class="kw">let </span>dense_index = <span class="kw-2">*</span><span class="self">self</span>.sparse.get(entity.index())<span class="question-mark">?</span>;
         <span class="attr">#[cfg(debug_assertions)]
-        </span><span class="macro">assert_eq!</span>(entity, <span class="self">self</span>.entities[dense_index]);
+        </span><span class="macro">assert_eq!</span>(entity, <span class="self">self</span>.entities[dense_index.as_usize()]);
         <span class="comment">// SAFETY: if the sparse index points to something in the dense vec, it exists
-        </span><span class="kw">unsafe </span>{
-            <span class="prelude-val">Some</span>(
-                <span class="self">self</span>.dense
-                    .get_added_tick_unchecked(TableRow::new(dense_index)),
-            )
-        }
+        </span><span class="kw">unsafe </span>{ <span class="prelude-val">Some</span>(<span class="self">self</span>.dense.get_added_tick_unchecked(dense_index)) }
     }
 
     <span class="doccomment">/// Returns a reference to the "changed" tick of the entity's component value.
@@ -995,16 +975,11 @@
     /// Returns `None` if `entity` does not have a component in the sparse set.
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>get_changed_tick(<span class="kw-2">&amp;</span><span class="self">self</span>, entity: Entity) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>UnsafeCell&lt;Tick&gt;&gt; {
-        <span class="kw">let </span>dense_index = <span class="kw-2">*</span><span class="self">self</span>.sparse.get(entity.index())<span class="question-mark">? </span><span class="kw">as </span>usize;
+        <span class="kw">let </span>dense_index = <span class="kw-2">*</span><span class="self">self</span>.sparse.get(entity.index())<span class="question-mark">?</span>;
         <span class="attr">#[cfg(debug_assertions)]
-        </span><span class="macro">assert_eq!</span>(entity, <span class="self">self</span>.entities[dense_index]);
+        </span><span class="macro">assert_eq!</span>(entity, <span class="self">self</span>.entities[dense_index.as_usize()]);
         <span class="comment">// SAFETY: if the sparse index points to something in the dense vec, it exists
-        </span><span class="kw">unsafe </span>{
-            <span class="prelude-val">Some</span>(
-                <span class="self">self</span>.dense
-                    .get_changed_tick_unchecked(TableRow::new(dense_index)),
-            )
-        }
+        </span><span class="kw">unsafe </span>{ <span class="prelude-val">Some</span>(<span class="self">self</span>.dense.get_changed_tick_unchecked(dense_index)) }
     }
 
     <span class="doccomment">/// Returns a reference to the "added" and "changed" ticks of the entity's component value.
@@ -1012,11 +987,11 @@
     /// Returns `None` if `entity` does not have a component in the sparse set.
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>get_ticks(<span class="kw-2">&amp;</span><span class="self">self</span>, entity: Entity) -&gt; <span class="prelude-ty">Option</span>&lt;ComponentTicks&gt; {
-        <span class="kw">let </span>dense_index = <span class="kw-2">*</span><span class="self">self</span>.sparse.get(entity.index())<span class="question-mark">? </span><span class="kw">as </span>usize;
+        <span class="kw">let </span>dense_index = <span class="kw-2">*</span><span class="self">self</span>.sparse.get(entity.index())<span class="question-mark">?</span>;
         <span class="attr">#[cfg(debug_assertions)]
-        </span><span class="macro">assert_eq!</span>(entity, <span class="self">self</span>.entities[dense_index]);
+        </span><span class="macro">assert_eq!</span>(entity, <span class="self">self</span>.entities[dense_index.as_usize()]);
         <span class="comment">// SAFETY: if the sparse index points to something in the dense vec, it exists
-        </span><span class="kw">unsafe </span>{ <span class="prelude-val">Some</span>(<span class="self">self</span>.dense.get_ticks_unchecked(TableRow::new(dense_index))) }
+        </span><span class="kw">unsafe </span>{ <span class="prelude-val">Some</span>(<span class="self">self</span>.dense.get_ticks_unchecked(dense_index)) }
     }
 
     <span class="doccomment">/// Removes the `entity` from this sparse set and returns a pointer to the associated value (if
@@ -1024,23 +999,19 @@
     </span><span class="attr">#[must_use = <span class="string">"The returned pointer must be used to drop the removed component."</span>]
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>remove_and_forget(<span class="kw-2">&amp;mut </span><span class="self">self</span>, entity: Entity) -&gt; <span class="prelude-ty">Option</span>&lt;OwningPtr&lt;<span class="lifetime">'_</span>&gt;&gt; {
         <span class="self">self</span>.sparse.remove(entity.index()).map(|dense_index| {
-            <span class="kw">let </span>dense_index = dense_index <span class="kw">as </span>usize;
             <span class="attr">#[cfg(debug_assertions)]
-            </span><span class="macro">assert_eq!</span>(entity, <span class="self">self</span>.entities[dense_index]);
-            <span class="self">self</span>.entities.swap_remove(dense_index);
-            <span class="kw">let </span>is_last = dense_index == <span class="self">self</span>.dense.len() - <span class="number">1</span>;
+            </span><span class="macro">assert_eq!</span>(entity, <span class="self">self</span>.entities[dense_index.as_usize()]);
+            <span class="self">self</span>.entities.swap_remove(dense_index.as_usize());
+            <span class="kw">let </span>is_last = dense_index.as_usize() == <span class="self">self</span>.dense.len() - <span class="number">1</span>;
             <span class="comment">// SAFETY: dense_index was just removed from `sparse`, which ensures that it is valid
-            </span><span class="kw">let </span>(value, <span class="kw">_</span>) = <span class="kw">unsafe </span>{
-                <span class="self">self</span>.dense
-                    .swap_remove_and_forget_unchecked(TableRow::new(dense_index))
-            };
+            </span><span class="kw">let </span>(value, <span class="kw">_</span>) = <span class="kw">unsafe </span>{ <span class="self">self</span>.dense.swap_remove_and_forget_unchecked(dense_index) };
             <span class="kw">if </span>!is_last {
-                <span class="kw">let </span>swapped_entity = <span class="self">self</span>.entities[dense_index];
+                <span class="kw">let </span>swapped_entity = <span class="self">self</span>.entities[dense_index.as_usize()];
                 <span class="attr">#[cfg(not(debug_assertions))]
                 </span><span class="kw">let </span>index = swapped_entity;
                 <span class="attr">#[cfg(debug_assertions)]
                 </span><span class="kw">let </span>index = swapped_entity.index();
-                <span class="kw-2">*</span><span class="self">self</span>.sparse.get_mut(index).unwrap() = dense_index <span class="kw">as </span>u32;
+                <span class="kw-2">*</span><span class="self">self</span>.sparse.get_mut(index).unwrap() = dense_index;
             }
             value
         })
@@ -1051,20 +1022,21 @@
     /// Returns `true` if `entity` had a component value in the sparse set.
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>remove(<span class="kw-2">&amp;mut </span><span class="self">self</span>, entity: Entity) -&gt; bool {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(dense_index) = <span class="self">self</span>.sparse.remove(entity.index()) {
-            <span class="kw">let </span>dense_index = dense_index <span class="kw">as </span>usize;
             <span class="attr">#[cfg(debug_assertions)]
-            </span><span class="macro">assert_eq!</span>(entity, <span class="self">self</span>.entities[dense_index]);
-            <span class="self">self</span>.entities.swap_remove(dense_index);
-            <span class="kw">let </span>is_last = dense_index == <span class="self">self</span>.dense.len() - <span class="number">1</span>;
+            </span><span class="macro">assert_eq!</span>(entity, <span class="self">self</span>.entities[dense_index.as_usize()]);
+            <span class="self">self</span>.entities.swap_remove(dense_index.as_usize());
+            <span class="kw">let </span>is_last = dense_index.as_usize() == <span class="self">self</span>.dense.len() - <span class="number">1</span>;
             <span class="comment">// SAFETY: if the sparse index points to something in the dense vec, it exists
-            </span><span class="kw">unsafe </span>{ <span class="self">self</span>.dense.swap_remove_unchecked(TableRow::new(dense_index)) }
+            </span><span class="kw">unsafe </span>{
+                <span class="self">self</span>.dense.swap_remove_unchecked(dense_index);
+            }
             <span class="kw">if </span>!is_last {
-                <span class="kw">let </span>swapped_entity = <span class="self">self</span>.entities[dense_index];
+                <span class="kw">let </span>swapped_entity = <span class="self">self</span>.entities[dense_index.as_usize()];
                 <span class="attr">#[cfg(not(debug_assertions))]
                 </span><span class="kw">let </span>index = swapped_entity;
                 <span class="attr">#[cfg(debug_assertions)]
                 </span><span class="kw">let </span>index = swapped_entity.index();
-                <span class="kw-2">*</span><span class="self">self</span>.sparse.get_mut(index).unwrap() = dense_index <span class="kw">as </span>u32;
+                <span class="kw-2">*</span><span class="self">self</span>.sparse.get_mut(index).unwrap() = dense_index;
             }
             <span class="bool-val">true
         </span>} <span class="kw">else </span>{

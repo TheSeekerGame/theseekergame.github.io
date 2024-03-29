@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/gilrs-core-0.5.10/src/platform/linux/gamepad.rs`."><title>gamepad.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="gilrs_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.0 (aedd173a2 2024-03-17)" data-channel="1.77.0" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/gilrs-core-0.5.11/src/platform/linux/gamepad.rs`."><title>gamepad.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="gilrs_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.1 (7cf61ebde 2024-03-27)" data-channel="1.77.1" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
             <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
     <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../../gilrs_core/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
@@ -1347,6 +1347,12 @@
 <a href="#1345" id="1345">1345</a>
 <a href="#1346" id="1346">1346</a>
 <a href="#1347" id="1347">1347</a>
+<a href="#1348" id="1348">1348</a>
+<a href="#1349" id="1349">1349</a>
+<a href="#1350" id="1350">1350</a>
+<a href="#1351" id="1351">1351</a>
+<a href="#1352" id="1352">1352</a>
+<a href="#1353" id="1353">1353</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright 2016-2018 Mateusz Sieczko and other GilRs Developers
 //
 // Licensed under the Apache License, Version 2.0, &lt;LICENSE-APACHE or
@@ -1368,21 +1374,19 @@
 
 <span class="kw">use </span>inotify::{EventMask, Inotify, WatchMask};
 <span class="kw">use </span>nix::errno::Errno;
-<span class="kw">use </span>nix::sys::epoll::{Epoll, EpollCreateFlags, EpollEvent, EpollFlags};
-<span class="kw">use </span>nix::sys::eventfd;
-<span class="kw">use </span>nix::sys::eventfd::EfdFlags;
+<span class="kw">use </span>nix::sys::epoll::{Epoll, EpollCreateFlags, EpollEvent, EpollFlags, EpollTimeout};
+<span class="kw">use </span>nix::sys::eventfd::{EfdFlags, EventFd};
 <span class="kw">use </span>std::collections::VecDeque;
 <span class="kw">use </span>std::error;
 <span class="kw">use </span>std::ffi::OsStr;
 <span class="kw">use </span>std::ffi::{CStr, CString};
 <span class="kw">use </span>std::fmt::{Display, Formatter, <span class="prelude-ty">Result </span><span class="kw">as </span>FmtResult};
 <span class="kw">use </span>std::fs::File;
-<span class="kw">use </span>std::io::Write;
 <span class="kw">use </span>std::mem::{<span class="self">self</span>, MaybeUninit};
 <span class="kw">use </span>std::ops::Index;
 <span class="kw">use </span>std::os::raw::c_char;
 <span class="kw">use </span>std::os::unix::ffi::OsStrExt;
-<span class="kw">use </span>std::os::unix::io::{BorrowedFd, OwnedFd, RawFd};
+<span class="kw">use </span>std::os::unix::io::{BorrowedFd, RawFd};
 <span class="kw">use </span>std::path::{Path, PathBuf};
 <span class="kw">use </span>std::str;
 <span class="kw">use </span>std::sync::mpsc;
@@ -1414,7 +1418,7 @@
         <span class="kw">let </span>epoll = Epoll::new(EpollCreateFlags::empty())
             .map_err(|e| errno_to_platform_error(e, <span class="string">"creating epoll fd"</span>))<span class="question-mark">?</span>;
 
-        <span class="kw">let </span>hotplug_event = eventfd::eventfd(<span class="number">1</span>, EfdFlags::EFD_NONBLOCK)
+        <span class="kw">let </span><span class="kw-2">mut </span>hotplug_event = EventFd::from_value_and_flags(<span class="number">1</span>, EfdFlags::EFD_NONBLOCK)
             .map_err(|e| errno_to_platform_error(e, <span class="string">"creating eventfd"</span>))<span class="question-mark">?</span>;
         epoll
             .add(
@@ -1465,7 +1469,6 @@
                 .spawn(<span class="kw">move </span>|| {
                     <span class="kw">let </span><span class="kw-2">mut </span>buffer = [<span class="number">0u8</span>; <span class="number">1024</span>];
                     <span class="macro">debug!</span>(<span class="string">"Started gilrs inotify thread"</span>);
-                    <span class="kw">let </span><span class="kw-2">mut </span>event_fd = File::from(hotplug_event);
                     <span class="kw">loop </span>{
                         <span class="kw">let </span>events = <span class="kw">match </span>inotify.read_events_blocking(<span class="kw-2">&amp;mut </span>buffer) {
                             <span class="prelude-val">Ok</span>(events) =&gt; events,
@@ -1475,7 +1478,7 @@
                             }
                         };
                         <span class="kw">for </span>event <span class="kw">in </span>events {
-                            <span class="kw">if </span>!handle_inotify(<span class="kw-2">&amp;</span>hotplug_tx, event, <span class="kw-2">&amp;mut </span>event_fd) {
+                            <span class="kw">if </span>!handle_inotify(<span class="kw-2">&amp;</span>hotplug_tx, event, <span class="kw-2">&amp;mut </span>hotplug_event) {
                                 <span class="kw">return</span>;
                             }
                         }
@@ -1571,10 +1574,10 @@
         <span class="kw">if </span><span class="self">self</span>.to_check.is_empty() {
             <span class="kw">let </span><span class="kw-2">mut </span>events = [EpollEvent::new(EpollFlags::empty(), <span class="number">0</span>); <span class="number">16</span>];
             <span class="kw">let </span>timeout = <span class="kw">if let </span><span class="prelude-val">Some</span>(timeout) = timeout {
-                timeout.as_millis().try_into().expect(<span class="string">"timeout too large"</span>)
+                EpollTimeout::try_from(timeout).expect(<span class="string">"timeout too large"</span>)
             } <span class="kw">else </span>{
-                -<span class="number">1
-            </span>};
+                EpollTimeout::NONE
+            };
 
             <span class="kw">let </span>n = <span class="kw">match </span><span class="self">self</span>.epoll.wait(<span class="kw-2">&amp;mut </span>events, timeout) {
                 <span class="prelude-val">Ok</span>(n) =&gt; n,
@@ -1714,7 +1717,7 @@
 <span class="kw">fn </span>handle_inotify(
     sender: <span class="kw-2">&amp;</span>Sender&lt;HotplugEvent&gt;,
     event: inotify::Event&lt;<span class="kw-2">&amp;</span>std::ffi::OsStr&gt;,
-    event_fd: <span class="kw-2">&amp;mut </span>File,
+    event_fd: <span class="kw-2">&amp;mut </span>EventFd,
 ) -&gt; bool {
     <span class="kw">let </span>name = <span class="kw">match </span>event.name.and_then(|name| name.to_str()) {
         <span class="prelude-val">Some</span>(name) =&gt; name,
@@ -1752,7 +1755,7 @@
         sent = <span class="bool-val">true</span>;
     }
     <span class="kw">if </span>sent {
-        <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = event_fd.write(<span class="kw-2">&amp;</span><span class="number">0u64</span>.to_ne_bytes()) {
+        <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = event_fd.write(<span class="number">0u64</span>) {
             <span class="macro">error!</span>(
                 <span class="string">"Failed to notify other thread about new hotplug events: {}"</span>,
                 e
@@ -1780,9 +1783,7 @@
     <span class="prelude-val">Some</span>((gamepad_path, syspath))
 }
 
-<span class="kw">fn </span>handle_hotplug(sender: Sender&lt;HotplugEvent&gt;, monitor: Monitor, event: OwnedFd) {
-    <span class="kw">let </span><span class="kw-2">mut </span>event = File::from(event);
-
+<span class="kw">fn </span>handle_hotplug(sender: Sender&lt;HotplugEvent&gt;, monitor: Monitor, event: EventFd) {
     <span class="kw">loop </span>{
         <span class="kw">if </span>!monitor.wait_hotplug_available() {
             <span class="kw">continue</span>;
@@ -1836,7 +1837,7 @@
             }
 
             <span class="kw">if </span>sent {
-                <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = event.write(<span class="kw-2">&amp;</span><span class="number">0u64</span>.to_ne_bytes()) {
+                <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = event.write(<span class="number">0</span>) {
                     <span class="macro">error!</span>(
                         <span class="string">"Failed to notify other thread about new hotplug events: {}"</span>,
                         e
@@ -1899,6 +1900,8 @@
     devpath: String,
     name: String,
     uuid: Uuid,
+    vendor_id: u16,
+    product_id: u16,
     bt_capacity_fd: RawFd,
     bt_status_fd: RawFd,
     axes_values: VecMap&lt;i32&gt;,
@@ -1929,8 +1932,8 @@
             <span class="kw">return </span><span class="prelude-val">None</span>;
         }
 
-        <span class="kw">let </span>uuid = <span class="kw">match </span><span class="self">Self</span>::create_uuid(fd) {
-            <span class="prelude-val">Some</span>(uuid) =&gt; uuid,
+        <span class="kw">let </span>input_id = <span class="kw">match </span><span class="self">Self</span>::get_input_id(fd) {
+            <span class="prelude-val">Some</span>(input_id) =&gt; input_id,
             <span class="prelude-val">None </span>=&gt; {
                 <span class="macro">error!</span>(<span class="string">"Failed to get id of device {:?}"</span>, path);
                 <span class="kw">unsafe </span>{
@@ -1941,7 +1944,7 @@
         };
 
         <span class="kw">let </span>name = <span class="self">Self</span>::get_name(fd).unwrap_or_else(|| {
-            <span class="macro">error!</span>(<span class="string">"Failed to get name od device {:?}"</span>, path);
+            <span class="macro">error!</span>(<span class="string">"Failed to get name of device {:?}"</span>, path);
             <span class="string">"Unknown"</span>.into()
         });
 
@@ -1955,7 +1958,9 @@
             ff_supported,
             devpath: path.to_string_lossy().into_owned(),
             name,
-            uuid,
+            uuid: create_uuid(input_id),
+            vendor_id: input_id.vendor,
+            product_id: input_id.product,
             bt_capacity_fd: cap,
             bt_status_fd: status,
             axes_values: VecMap::new(),
@@ -2037,6 +2042,17 @@
         }
     }
 
+    <span class="kw">fn </span>get_input_id(fd: i32) -&gt; <span class="prelude-ty">Option</span>&lt;ioctl::input_id&gt; {
+        <span class="kw">unsafe </span>{
+            <span class="kw">let </span><span class="kw-2">mut </span>iid = MaybeUninit::&lt;ioctl::input_id&gt;::uninit();
+            <span class="kw">if </span>ioctl::eviocgid(fd, iid.as_mut_ptr()).is_err() {
+                <span class="kw">return </span><span class="prelude-val">None</span>;
+            }
+
+            <span class="prelude-val">Some</span>(iid.assume_init())
+        }
+    }
+
     <span class="kw">fn </span>test_ff(fd: i32) -&gt; bool {
         <span class="kw">unsafe </span>{
             <span class="kw">let </span><span class="kw-2">mut </span>ff_bits = [<span class="number">0u8</span>; (FF_MAX / <span class="number">8</span>) <span class="kw">as </span>usize + <span class="number">1</span>];
@@ -2061,18 +2077,6 @@
         <span class="comment">// TODO: improve it (for example check for buttons in range)
         </span>!<span class="self">self</span>.buttons.is_empty() &amp;&amp; <span class="self">self</span>.axes.len() &gt;= <span class="number">2
     </span>}
-
-    <span class="kw">fn </span>create_uuid(fd: i32) -&gt; <span class="prelude-ty">Option</span>&lt;Uuid&gt; {
-        <span class="kw">let </span>iid = <span class="kw">unsafe </span>{
-            <span class="kw">let </span><span class="kw-2">mut </span>iid = MaybeUninit::&lt;ioctl::input_id&gt;::uninit();
-            <span class="kw">if </span>ioctl::eviocgid(fd, iid.as_mut_ptr()).is_err() {
-                <span class="kw">return </span><span class="prelude-val">None</span>;
-            }
-
-            iid.assume_init()
-        };
-        <span class="prelude-val">Some</span>(create_uuid(iid))
-    }
 
     <span class="kw">fn </span>find_buttons(key_bits: <span class="kw-2">&amp;</span>[u8], only_gamepad_btns: bool) -&gt; Vec&lt;EvCode&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>buttons = Vec::with_capacity(<span class="number">16</span>);
@@ -2345,6 +2349,14 @@
 
     <span class="kw">pub fn </span>uuid(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Uuid {
         <span class="self">self</span>.uuid
+    }
+
+    <span class="kw">pub fn </span>vendor_id(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;u16&gt; {
+        <span class="prelude-val">Some</span>(<span class="self">self</span>.vendor_id)
+    }
+
+    <span class="kw">pub fn </span>product_id(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;u16&gt; {
+        <span class="prelude-val">Some</span>(<span class="self">self</span>.product_id)
     }
 
     <span class="kw">pub fn </span>ff_device(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;FfDevice&gt; {

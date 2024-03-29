@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy-3e956806168b8470/b5b6ea3/crates/bevy_audio/src/audio_output.rs`."><title>audio_output.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bevy_audio" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.0 (aedd173a2 2024-03-17)" data-channel="1.77.0" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_audio-0.13.1/src/audio_output.rs`."><title>audio_output.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bevy_audio" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.1 (7cf61ebde 2024-03-27)" data-channel="1.77.1" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
             <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
     <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../bevy_audio/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
@@ -321,9 +321,17 @@
 <a href="#319" id="319">319</a>
 <a href="#320" id="320">320</a>
 <a href="#321" id="321">321</a>
+<a href="#322" id="322">322</a>
+<a href="#323" id="323">323</a>
+<a href="#324" id="324">324</a>
+<a href="#325" id="325">325</a>
+<a href="#326" id="326">326</a>
+<a href="#327" id="327">327</a>
+<a href="#328" id="328">328</a>
+<a href="#329" id="329">329</a>
 </pre></div><pre class="rust"><code><span class="kw">use crate</span>::{
-    AudioSourceBundle, Decodable, GlobalVolume, PlaybackMode, PlaybackSettings, SpatialAudioSink,
-    SpatialListener, SpatialScale, Volume,
+    AudioSourceBundle, Decodable, DefaultSpatialScale, GlobalVolume, PlaybackMode,
+    PlaybackSettings, SpatialAudioSink, SpatialListener,
 };
 <span class="kw">use </span>bevy_asset::{Asset, Assets, Handle};
 <span class="kw">use </span>bevy_ecs::{prelude::<span class="kw-2">*</span>, system::SystemParam};
@@ -338,7 +346,7 @@
 ///
 /// ## Note
 ///
-/// Initializing this resource will leak [`rodio::OutputStream`]
+/// Initializing this resource will leak [`OutputStream`]
 /// using [`std::mem::forget`].
 /// This is done to avoid storing this in the struct (and making this `!Send`)
 /// while preventing it from dropping (to avoid halting of audio).
@@ -379,10 +387,9 @@
 <span class="attr">#[derive(SystemParam)]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>EarPositions&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>&gt; {
     <span class="kw">pub</span>(<span class="kw">crate</span>) query: Query&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, (Entity, <span class="kw-2">&amp;</span><span class="lifetime">'static </span>GlobalTransform, <span class="kw-2">&amp;</span><span class="lifetime">'static </span>SpatialListener)&gt;,
-    <span class="kw">pub</span>(<span class="kw">crate</span>) scale: Res&lt;<span class="lifetime">'w</span>, SpatialScale&gt;,
 }
 <span class="kw">impl</span>&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>&gt; EarPositions&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>&gt; {
-    <span class="doccomment">/// Gets a set of transformed and scaled ear positions.
+    <span class="doccomment">/// Gets a set of transformed ear positions.
     ///
     /// If there are no listeners, use the default values. If a user has added multiple
     /// listeners for whatever reason, we will return the first value.
@@ -393,16 +400,13 @@
             .next()
             .map(|(<span class="kw">_</span>, transform, settings)| {
                 (
-                    transform.transform_point(settings.left_ear_offset) * <span class="self">self</span>.scale.<span class="number">0</span>,
-                    transform.transform_point(settings.right_ear_offset) * <span class="self">self</span>.scale.<span class="number">0</span>,
+                    transform.transform_point(settings.left_ear_offset),
+                    transform.transform_point(settings.right_ear_offset),
                 )
             })
             .unwrap_or_else(|| {
                 <span class="kw">let </span>settings = SpatialListener::default();
-                (
-                    (settings.left_ear_offset * <span class="self">self</span>.scale.<span class="number">0</span>),
-                    (settings.right_ear_offset * <span class="self">self</span>.scale.<span class="number">0</span>),
-                )
+                (settings.left_ear_offset, settings.right_ear_offset)
             });
 
         (left_ear, right_ear)
@@ -435,6 +439,7 @@
         (Without&lt;AudioSink&gt;, Without&lt;SpatialAudioSink&gt;),
     &gt;,
     ear_positions: EarPositions,
+    default_spatial_scale: Res&lt;DefaultSpatialScale&gt;,
     <span class="kw-2">mut </span>commands: Commands,
 ) <span class="kw">where
     </span>f32: rodio::cpal::FromSample&lt;Source::DecoderItem&gt;,
@@ -445,116 +450,115 @@
     };
 
     <span class="kw">for </span>(entity, source_handle, settings, maybe_emitter_transform) <span class="kw">in </span><span class="kw-2">&amp;</span>query_nonplaying {
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(audio_source) = audio_sources.get(source_handle) {
-            <span class="comment">// audio data is available (has loaded), begin playback and insert sink component
-            </span><span class="kw">if </span>settings.spatial {
-                <span class="kw">let </span>(left_ear, right_ear) = ear_positions.get();
+        <span class="kw">let </span><span class="prelude-val">Some</span>(audio_source) = audio_sources.get(source_handle) <span class="kw">else </span>{
+            <span class="kw">continue</span>;
+        };
+        <span class="comment">// audio data is available (has loaded), begin playback and insert sink component
+        </span><span class="kw">if </span>settings.spatial {
+            <span class="kw">let </span>(left_ear, right_ear) = ear_positions.get();
 
-                <span class="comment">// We can only use one `SpatialListener`. If there are more than that, then
-                // the user may have made a mistake.
-                </span><span class="kw">if </span>ear_positions.multiple_listeners() {
-                    <span class="macro">warn!</span>(
-                        <span class="string">"Multiple SpatialListeners found. Using {:?}."</span>,
-                        ear_positions.query.iter().next().unwrap().<span class="number">0
-                    </span>);
-                }
-
-                <span class="kw">let </span>emitter_translation = maybe_emitter_transform
-                    .map(|t| (t.translation() * ear_positions.scale.<span class="number">0</span>).into())
-                    .unwrap_or_else(|| {
-                        <span class="macro">warn!</span>(<span class="string">"Spatial AudioBundle with no GlobalTransform component. Using zero."</span>);
-                        Vec3::ZERO.into()
-                    });
-
-                <span class="kw">match </span>SpatialSink::try_new(
-                    stream_handle,
-                    emitter_translation,
-                    left_ear.into(),
-                    right_ear.into(),
-                ) {
-                    <span class="prelude-val">Ok</span>(sink) =&gt; {
-                        sink.set_speed(settings.speed);
-                        <span class="kw">match </span>settings.volume {
-                            Volume::Relative(vol) =&gt; {
-                                sink.set_volume(vol.<span class="number">0 </span>* global_volume.volume.<span class="number">0</span>);
-                            }
-                            Volume::Absolute(vol) =&gt; sink.set_volume(vol.<span class="number">0</span>),
-                        }
-                        <span class="kw">if </span>settings.paused {
-                            sink.pause();
-                        }
-                        <span class="kw">match </span>settings.mode {
-                            PlaybackMode::Loop =&gt; {
-                                sink.append(audio_source.decoder().repeat_infinite());
-                                commands.entity(entity).insert(SpatialAudioSink { sink });
-                            }
-                            PlaybackMode::Once =&gt; {
-                                sink.append(audio_source.decoder());
-                                commands.entity(entity).insert(SpatialAudioSink { sink });
-                            }
-                            PlaybackMode::Despawn =&gt; {
-                                sink.append(audio_source.decoder());
-                                commands
-                                    .entity(entity)
-                                    <span class="comment">// PERF: insert as bundle to reduce archetype moves
-                                    </span>.insert((SpatialAudioSink { sink }, PlaybackDespawnMarker));
-                            }
-                            PlaybackMode::Remove =&gt; {
-                                sink.append(audio_source.decoder());
-                                commands
-                                    .entity(entity)
-                                    <span class="comment">// PERF: insert as bundle to reduce archetype moves
-                                    </span>.insert((SpatialAudioSink { sink }, PlaybackRemoveMarker));
-                            }
-                        };
-                    }
-                    <span class="prelude-val">Err</span>(err) =&gt; {
-                        <span class="macro">warn!</span>(<span class="string">"Error playing spatial sound: {err:?}"</span>);
-                    }
-                }
-            } <span class="kw">else </span>{
-                <span class="kw">match </span>Sink::try_new(stream_handle) {
-                    <span class="prelude-val">Ok</span>(sink) =&gt; {
-                        sink.set_speed(settings.speed);
-                        <span class="kw">match </span>settings.volume {
-                            Volume::Relative(vol) =&gt; {
-                                sink.set_volume(vol.<span class="number">0 </span>* global_volume.volume.<span class="number">0</span>);
-                            }
-                            Volume::Absolute(vol) =&gt; sink.set_volume(vol.<span class="number">0</span>),
-                        }
-                        <span class="kw">if </span>settings.paused {
-                            sink.pause();
-                        }
-                        <span class="kw">match </span>settings.mode {
-                            PlaybackMode::Loop =&gt; {
-                                sink.append(audio_source.decoder().repeat_infinite());
-                                commands.entity(entity).insert(AudioSink { sink });
-                            }
-                            PlaybackMode::Once =&gt; {
-                                sink.append(audio_source.decoder());
-                                commands.entity(entity).insert(AudioSink { sink });
-                            }
-                            PlaybackMode::Despawn =&gt; {
-                                sink.append(audio_source.decoder());
-                                commands
-                                    .entity(entity)
-                                    <span class="comment">// PERF: insert as bundle to reduce archetype moves
-                                    </span>.insert((AudioSink { sink }, PlaybackDespawnMarker));
-                            }
-                            PlaybackMode::Remove =&gt; {
-                                sink.append(audio_source.decoder());
-                                commands
-                                    .entity(entity)
-                                    <span class="comment">// PERF: insert as bundle to reduce archetype moves
-                                    </span>.insert((AudioSink { sink }, PlaybackRemoveMarker));
-                            }
-                        };
-                    }
-                    <span class="prelude-val">Err</span>(err) =&gt; {
-                        <span class="macro">warn!</span>(<span class="string">"Error playing sound: {err:?}"</span>);
-                    }
-                }
+            <span class="comment">// We can only use one `SpatialListener`. If there are more than that, then
+            // the user may have made a mistake.
+            </span><span class="kw">if </span>ear_positions.multiple_listeners() {
+                <span class="macro">warn!</span>(
+                    <span class="string">"Multiple SpatialListeners found. Using {:?}."</span>,
+                    ear_positions.query.iter().next().unwrap().<span class="number">0
+                </span>);
             }
+
+            <span class="kw">let </span>scale = settings.spatial_scale.unwrap_or(default_spatial_scale.<span class="number">0</span>).<span class="number">0</span>;
+
+            <span class="kw">let </span>emitter_translation = <span class="kw">if let </span><span class="prelude-val">Some</span>(emitter_transform) = maybe_emitter_transform {
+                (emitter_transform.translation() * scale).into()
+            } <span class="kw">else </span>{
+                <span class="macro">warn!</span>(<span class="string">"Spatial AudioBundle with no GlobalTransform component. Using zero."</span>);
+                Vec3::ZERO.into()
+            };
+
+            <span class="kw">let </span>sink = <span class="kw">match </span>SpatialSink::try_new(
+                stream_handle,
+                emitter_translation,
+                (left_ear * scale).into(),
+                (right_ear * scale).into(),
+            ) {
+                <span class="prelude-val">Ok</span>(sink) =&gt; sink,
+                <span class="prelude-val">Err</span>(err) =&gt; {
+                    <span class="macro">warn!</span>(<span class="string">"Error creating spatial sink: {err:?}"</span>);
+                    <span class="kw">continue</span>;
+                }
+            };
+
+            sink.set_speed(settings.speed);
+            sink.set_volume(settings.volume.<span class="number">0 </span>* global_volume.volume.<span class="number">0</span>);
+
+            <span class="kw">if </span>settings.paused {
+                sink.pause();
+            }
+
+            <span class="kw">match </span>settings.mode {
+                PlaybackMode::Loop =&gt; {
+                    sink.append(audio_source.decoder().repeat_infinite());
+                    commands.entity(entity).insert(SpatialAudioSink { sink });
+                }
+                PlaybackMode::Once =&gt; {
+                    sink.append(audio_source.decoder());
+                    commands.entity(entity).insert(SpatialAudioSink { sink });
+                }
+                PlaybackMode::Despawn =&gt; {
+                    sink.append(audio_source.decoder());
+                    commands
+                        .entity(entity)
+                        <span class="comment">// PERF: insert as bundle to reduce archetype moves
+                        </span>.insert((SpatialAudioSink { sink }, PlaybackDespawnMarker));
+                }
+                PlaybackMode::Remove =&gt; {
+                    sink.append(audio_source.decoder());
+                    commands
+                        .entity(entity)
+                        <span class="comment">// PERF: insert as bundle to reduce archetype moves
+                        </span>.insert((SpatialAudioSink { sink }, PlaybackRemoveMarker));
+                }
+            };
+        } <span class="kw">else </span>{
+            <span class="kw">let </span>sink = <span class="kw">match </span>Sink::try_new(stream_handle) {
+                <span class="prelude-val">Ok</span>(sink) =&gt; sink,
+                <span class="prelude-val">Err</span>(err) =&gt; {
+                    <span class="macro">warn!</span>(<span class="string">"Error creating sink: {err:?}"</span>);
+                    <span class="kw">continue</span>;
+                }
+            };
+
+            sink.set_speed(settings.speed);
+            sink.set_volume(settings.volume.<span class="number">0 </span>* global_volume.volume.<span class="number">0</span>);
+
+            <span class="kw">if </span>settings.paused {
+                sink.pause();
+            }
+
+            <span class="kw">match </span>settings.mode {
+                PlaybackMode::Loop =&gt; {
+                    sink.append(audio_source.decoder().repeat_infinite());
+                    commands.entity(entity).insert(AudioSink { sink });
+                }
+                PlaybackMode::Once =&gt; {
+                    sink.append(audio_source.decoder());
+                    commands.entity(entity).insert(AudioSink { sink });
+                }
+                PlaybackMode::Despawn =&gt; {
+                    sink.append(audio_source.decoder());
+                    commands
+                        .entity(entity)
+                        <span class="comment">// PERF: insert as bundle to reduce archetype moves
+                        </span>.insert((AudioSink { sink }, PlaybackDespawnMarker));
+                }
+                PlaybackMode::Remove =&gt; {
+                    sink.append(audio_source.decoder());
+                    commands
+                        .entity(entity)
+                        <span class="comment">// PERF: insert as bundle to reduce archetype moves
+                        </span>.insert((AudioSink { sink }, PlaybackRemoveMarker));
+                }
+            };
         }
     }
 }
@@ -611,35 +615,47 @@
 
 <span class="doccomment">/// Updates spatial audio sinks when emitter positions change.
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>update_emitter_positions(
-    <span class="kw-2">mut </span>emitters: Query&lt;(<span class="kw-2">&amp;mut </span>GlobalTransform, <span class="kw-2">&amp;</span>SpatialAudioSink), Changed&lt;GlobalTransform&gt;&gt;,
-    spatial_scale: Res&lt;SpatialScale&gt;,
+    <span class="kw-2">mut </span>emitters: Query&lt;
+        (<span class="kw-2">&amp;</span>GlobalTransform, <span class="kw-2">&amp;</span>SpatialAudioSink, <span class="kw-2">&amp;</span>PlaybackSettings),
+        Or&lt;(Changed&lt;GlobalTransform&gt;, Changed&lt;PlaybackSettings&gt;)&gt;,
+    &gt;,
+    default_spatial_scale: Res&lt;DefaultSpatialScale&gt;,
 ) {
-    <span class="kw">for </span>(transform, sink) <span class="kw">in </span>emitters.iter_mut() {
-        <span class="kw">let </span>translation = transform.translation() * spatial_scale.<span class="number">0</span>;
+    <span class="kw">for </span>(transform, sink, settings) <span class="kw">in </span>emitters.iter_mut() {
+        <span class="kw">let </span>scale = settings.spatial_scale.unwrap_or(default_spatial_scale.<span class="number">0</span>).<span class="number">0</span>;
+
+        <span class="kw">let </span>translation = transform.translation() * scale;
         sink.set_emitter_position(translation);
     }
 }
 
 <span class="doccomment">/// Updates spatial audio sink ear positions when spatial listeners change.
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>update_listener_positions(
-    <span class="kw-2">mut </span>emitters: Query&lt;<span class="kw-2">&amp;</span>SpatialAudioSink&gt;,
+    <span class="kw-2">mut </span>emitters: Query&lt;(<span class="kw-2">&amp;</span>SpatialAudioSink, <span class="kw-2">&amp;</span>PlaybackSettings)&gt;,
     changed_listener: Query&lt;
         (),
         (
-            Or&lt;(Changed&lt;SpatialListener&gt;, Changed&lt;GlobalTransform&gt;)&gt;,
+            Or&lt;(
+                Changed&lt;SpatialListener&gt;,
+                Changed&lt;GlobalTransform&gt;,
+                Changed&lt;PlaybackSettings&gt;,
+            )&gt;,
             With&lt;SpatialListener&gt;,
         ),
     &gt;,
     ear_positions: EarPositions,
+    default_spatial_scale: Res&lt;DefaultSpatialScale&gt;,
 ) {
-    <span class="kw">if </span>!ear_positions.scale.is_changed() &amp;&amp; changed_listener.is_empty() {
+    <span class="kw">if </span>!default_spatial_scale.is_changed() &amp;&amp; changed_listener.is_empty() {
         <span class="kw">return</span>;
     }
 
     <span class="kw">let </span>(left_ear, right_ear) = ear_positions.get();
 
-    <span class="kw">for </span>sink <span class="kw">in </span>emitters.iter_mut() {
-        sink.set_ears_position(left_ear, right_ear);
+    <span class="kw">for </span>(sink, settings) <span class="kw">in </span>emitters.iter_mut() {
+        <span class="kw">let </span>scale = settings.spatial_scale.unwrap_or(default_spatial_scale.<span class="number">0</span>).<span class="number">0</span>;
+
+        sink.set_ears_position(left_ear * scale, right_ear * scale);
     }
 }
 </code></pre></div></section></main></body></html>

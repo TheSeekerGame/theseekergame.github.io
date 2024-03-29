@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/winit-0.28.7/src/platform_impl/linux/x11/monitor.rs`."><title>monitor.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../../../" data-static-root-path="../../../../../static.files/" data-current-crate="winit" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.0 (aedd173a2 2024-03-17)" data-channel="1.77.0" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../../../src-files.js"></script><script defer src="../../../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/winit-0.29.15/src/platform_impl/linux/x11/monitor.rs`."><title>monitor.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../../../" data-static-root-path="../../../../../static.files/" data-current-crate="winit" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.1 (7cf61ebde 2024-03-27)" data-channel="1.77.1" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../../../src-files.js"></script><script defer src="../../../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
             <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
     <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../../../winit/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
@@ -341,32 +341,61 @@
 <a href="#339" id="339">339</a>
 <a href="#340" id="340">340</a>
 <a href="#341" id="341">341</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span>std::os::raw::<span class="kw-2">*</span>;
-<span class="kw">use </span>std::slice;
-<span class="kw">use </span>std::sync::Mutex;
-
-<span class="kw">use </span>once_cell::sync::Lazy;
-
-<span class="kw">use super</span>::{
-    ffi::{
-        RRCrtc, RRCrtcChangeNotifyMask, RRMode, RROutputPropertyNotifyMask,
-        RRScreenChangeNotifyMask, True, Window, XRRCrtcInfo, XRRModeInfo, XRRScreenResources,
-    },
-    util, XConnection, XError,
-};
+<a href="#342" id="342">342</a>
+<a href="#343" id="343">343</a>
+<a href="#344" id="344">344</a>
+<a href="#345" id="345">345</a>
+<a href="#346" id="346">346</a>
+<a href="#347" id="347">347</a>
+<a href="#348" id="348">348</a>
+<a href="#349" id="349">349</a>
+<a href="#350" id="350">350</a>
+<a href="#351" id="351">351</a>
+<a href="#352" id="352">352</a>
+<a href="#353" id="353">353</a>
+<a href="#354" id="354">354</a>
+<a href="#355" id="355">355</a>
+<a href="#356" id="356">356</a>
+<a href="#357" id="357">357</a>
+<a href="#358" id="358">358</a>
+<a href="#359" id="359">359</a>
+<a href="#360" id="360">360</a>
+<a href="#361" id="361">361</a>
+<a href="#362" id="362">362</a>
+<a href="#363" id="363">363</a>
+<a href="#364" id="364">364</a>
+<a href="#365" id="365">365</a>
+<a href="#366" id="366">366</a>
+<a href="#367" id="367">367</a>
+<a href="#368" id="368">368</a>
+<a href="#369" id="369">369</a>
+<a href="#370" id="370">370</a>
+<a href="#371" id="371">371</a>
+<a href="#372" id="372">372</a>
+<a href="#373" id="373">373</a>
+<a href="#374" id="374">374</a>
+<a href="#375" id="375">375</a>
+</pre></div><pre class="rust"><code><span class="kw">use super</span>::{util, X11Error, XConnection};
 <span class="kw">use crate</span>::{
     dpi::{PhysicalPosition, PhysicalSize},
-    platform_impl::{MonitorHandle <span class="kw">as </span>PlatformMonitorHandle, VideoMode <span class="kw">as </span>PlatformVideoMode},
+    platform_impl::VideoMode <span class="kw">as </span>PlatformVideoMode,
+};
+<span class="kw">use </span>x11rb::{
+    connection::RequestConnection,
+    protocol::{
+        randr::{<span class="self">self</span>, ConnectionExt <span class="kw">as _</span>},
+        xproto,
+    },
 };
 
 <span class="comment">// Used for testing. This should always be committed as false.
 </span><span class="kw">const </span>DISABLE_MONITOR_LIST_CACHING: bool = <span class="bool-val">false</span>;
 
-<span class="kw">static </span>MONITORS: Lazy&lt;Mutex&lt;<span class="prelude-ty">Option</span>&lt;Vec&lt;MonitorHandle&gt;&gt;&gt;&gt; = Lazy::new(Mutex::default);
-
-<span class="kw">pub fn </span>invalidate_cached_monitor_list() -&gt; <span class="prelude-ty">Option</span>&lt;Vec&lt;MonitorHandle&gt;&gt; {
-    <span class="comment">// We update this lazily.
-    </span>(<span class="kw-2">*</span>MONITORS.lock().unwrap()).take()
+<span class="kw">impl </span>XConnection {
+    <span class="kw">pub fn </span>invalidate_cached_monitor_list(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Vec&lt;MonitorHandle&gt;&gt; {
+        <span class="comment">// We update this lazily.
+        </span><span class="self">self</span>.monitor_handles.lock().unwrap().take()
+    }
 }
 
 <span class="attr">#[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -374,7 +403,7 @@
     <span class="kw">pub</span>(<span class="kw">crate</span>) size: (u32, u32),
     <span class="kw">pub</span>(<span class="kw">crate</span>) bit_depth: u16,
     <span class="kw">pub</span>(<span class="kw">crate</span>) refresh_rate_millihertz: u32,
-    <span class="kw">pub</span>(<span class="kw">crate</span>) native_mode: RRMode,
+    <span class="kw">pub</span>(<span class="kw">crate</span>) native_mode: randr::Mode,
     <span class="kw">pub</span>(<span class="kw">crate</span>) monitor: <span class="prelude-ty">Option</span>&lt;MonitorHandle&gt;,
 }
 
@@ -395,15 +424,15 @@
     }
 
     <span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>monitor(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; PlatformMonitorHandle {
-        PlatformMonitorHandle::X(<span class="self">self</span>.monitor.clone().unwrap())
+    </span><span class="kw">pub fn </span>monitor(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; MonitorHandle {
+        <span class="self">self</span>.monitor.clone().unwrap()
     }
 }
 
 <span class="attr">#[derive(Debug, Clone)]
 </span><span class="kw">pub struct </span>MonitorHandle {
     <span class="doccomment">/// The actual id
-    </span><span class="kw">pub</span>(<span class="kw">crate</span>) id: RRCrtc,
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) id: randr::Crtc,
     <span class="doccomment">/// The name of the monitor
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) name: String,
     <span class="doccomment">/// The size of the monitor
@@ -449,10 +478,10 @@
 }
 
 <span class="attr">#[inline]
-</span><span class="kw">pub fn </span>mode_refresh_rate_millihertz(mode: <span class="kw-2">&amp;</span>XRRModeInfo) -&gt; <span class="prelude-ty">Option</span>&lt;u32&gt; {
-    <span class="kw">if </span>mode.dotClock &gt; <span class="number">0 </span>&amp;&amp; mode.hTotal &gt; <span class="number">0 </span>&amp;&amp; mode.vTotal &gt; <span class="number">0 </span>{
+</span><span class="kw">pub fn </span>mode_refresh_rate_millihertz(mode: <span class="kw-2">&amp;</span>randr::ModeInfo) -&gt; <span class="prelude-ty">Option</span>&lt;u32&gt; {
+    <span class="kw">if </span>mode.dot_clock &gt; <span class="number">0 </span>&amp;&amp; mode.htotal &gt; <span class="number">0 </span>&amp;&amp; mode.vtotal &gt; <span class="number">0 </span>{
         <span class="attr">#[allow(clippy::unnecessary_cast)]
-        </span><span class="prelude-val">Some</span>((mode.dotClock <span class="kw">as </span>u64 * <span class="number">1000 </span>/ (mode.hTotal <span class="kw">as </span>u64 * mode.vTotal <span class="kw">as </span>u64)) <span class="kw">as </span>u32)
+        </span><span class="prelude-val">Some</span>((mode.dot_clock <span class="kw">as </span>u64 * <span class="number">1000 </span>/ (mode.htotal <span class="kw">as </span>u64 * mode.vtotal <span class="kw">as </span>u64)) <span class="kw">as </span>u32)
     } <span class="kw">else </span>{
         <span class="prelude-val">None
     </span>}
@@ -461,19 +490,18 @@
 <span class="kw">impl </span>MonitorHandle {
     <span class="kw">fn </span>new(
         xconn: <span class="kw-2">&amp;</span>XConnection,
-        resources: <span class="kw-2">*mut </span>XRRScreenResources,
-        id: RRCrtc,
-        crtc: <span class="kw-2">*mut </span>XRRCrtcInfo,
+        resources: <span class="kw-2">&amp;</span>ScreenResources,
+        id: randr::Crtc,
+        crtc: <span class="kw-2">&amp;</span>randr::GetCrtcInfoReply,
         primary: bool,
     ) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>&gt; {
-        <span class="kw">let </span>(name, scale_factor, video_modes) = <span class="kw">unsafe </span>{ xconn.get_output_info(resources, crtc)<span class="question-mark">? </span>};
-        <span class="kw">let </span>dimensions = <span class="kw">unsafe </span>{ ((<span class="kw-2">*</span>crtc).width, (<span class="kw-2">*</span>crtc).height) };
-        <span class="kw">let </span>position = <span class="kw">unsafe </span>{ ((<span class="kw-2">*</span>crtc).x, (<span class="kw-2">*</span>crtc).y) };
+        <span class="kw">let </span>(name, scale_factor, video_modes) = xconn.get_output_info(resources, crtc)<span class="question-mark">?</span>;
+        <span class="kw">let </span>dimensions = (crtc.width <span class="kw">as </span>u32, crtc.height <span class="kw">as </span>u32);
+        <span class="kw">let </span>position = (crtc.x <span class="kw">as </span>i32, crtc.y <span class="kw">as </span>i32);
 
         <span class="comment">// Get the refresh rate of the current video mode.
-        </span><span class="kw">let </span>current_mode = <span class="kw">unsafe </span>{ (<span class="kw-2">*</span>crtc).mode };
-        <span class="kw">let </span>screen_modes =
-            <span class="kw">unsafe </span>{ slice::from_raw_parts((<span class="kw-2">*</span>resources).modes, (<span class="kw-2">*</span>resources).nmode <span class="kw">as </span>usize) };
+        </span><span class="kw">let </span>current_mode = crtc.mode;
+        <span class="kw">let </span>screen_modes = resources.modes();
         <span class="kw">let </span>refresh_rate_millihertz = screen_modes
             .iter()
             .find(|mode| mode.id == current_mode)
@@ -550,19 +578,22 @@
 }
 
 <span class="kw">impl </span>XConnection {
-    <span class="kw">pub fn </span>get_monitor_for_window(<span class="kw-2">&amp;</span><span class="self">self</span>, window_rect: <span class="prelude-ty">Option</span>&lt;util::AaRect&gt;) -&gt; MonitorHandle {
-        <span class="kw">let </span>monitors = <span class="self">self</span>.available_monitors();
+    <span class="kw">pub fn </span>get_monitor_for_window(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        window_rect: <span class="prelude-ty">Option</span>&lt;util::AaRect&gt;,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;MonitorHandle, X11Error&gt; {
+        <span class="kw">let </span>monitors = <span class="self">self</span>.available_monitors()<span class="question-mark">?</span>;
 
         <span class="kw">if </span>monitors.is_empty() {
             <span class="comment">// Return a dummy monitor to avoid panicking
-            </span><span class="kw">return </span>MonitorHandle::dummy();
+            </span><span class="kw">return </span><span class="prelude-val">Ok</span>(MonitorHandle::dummy());
         }
 
-        <span class="kw">let </span>default = monitors.get(<span class="number">0</span>).unwrap();
+        <span class="kw">let </span>default = monitors.first().unwrap();
 
         <span class="kw">let </span>window_rect = <span class="kw">match </span>window_rect {
             <span class="prelude-val">Some</span>(rect) =&gt; rect,
-            <span class="prelude-val">None </span>=&gt; <span class="kw">return </span>default.to_owned(),
+            <span class="prelude-val">None </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(default.to_owned()),
         };
 
         <span class="kw">let </span><span class="kw-2">mut </span>largest_overlap = <span class="number">0</span>;
@@ -575,111 +606,148 @@
             }
         }
 
-        matched_monitor.to_owned()
+        <span class="prelude-val">Ok</span>(matched_monitor.to_owned())
     }
 
-    <span class="kw">fn </span>query_monitor_list(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Vec&lt;MonitorHandle&gt; {
-        <span class="kw">unsafe </span>{
-            <span class="kw">let </span><span class="kw-2">mut </span>major = <span class="number">0</span>;
-            <span class="kw">let </span><span class="kw-2">mut </span>minor = <span class="number">0</span>;
-            (<span class="self">self</span>.xrandr.XRRQueryVersion)(<span class="self">self</span>.display, <span class="kw-2">&amp;mut </span>major, <span class="kw-2">&amp;mut </span>minor);
+    <span class="kw">fn </span>query_monitor_list(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;MonitorHandle&gt;, X11Error&gt; {
+        <span class="kw">let </span>root = <span class="self">self</span>.default_root();
+        <span class="kw">let </span>resources =
+            ScreenResources::from_connection(<span class="self">self</span>.xcb_connection(), root, <span class="self">self</span>.randr_version())<span class="question-mark">?</span>;
 
-            <span class="kw">let </span>root = (<span class="self">self</span>.xlib.XDefaultRootWindow)(<span class="self">self</span>.display);
-            <span class="kw">let </span>resources = <span class="kw">if </span>(major == <span class="number">1 </span>&amp;&amp; minor &gt;= <span class="number">3</span>) || major &gt; <span class="number">1 </span>{
-                (<span class="self">self</span>.xrandr.XRRGetScreenResourcesCurrent)(<span class="self">self</span>.display, root)
-            } <span class="kw">else </span>{
-                <span class="comment">// WARNING: this function is supposedly very slow, on the order of hundreds of ms.
-                // Upon failure, `resources` will be null.
-                </span>(<span class="self">self</span>.xrandr.XRRGetScreenResources)(<span class="self">self</span>.display, root)
-            };
-
-            <span class="kw">if </span>resources.is_null() {
-                <span class="macro">panic!</span>(<span class="string">"[winit] `XRRGetScreenResources` returned NULL. That should only happen if the root window doesn't exist."</span>);
-            }
-
-            <span class="kw">let </span><span class="kw-2">mut </span>has_primary = <span class="bool-val">false</span>;
-
-            <span class="kw">let </span>primary = (<span class="self">self</span>.xrandr.XRRGetOutputPrimary)(<span class="self">self</span>.display, root);
-            <span class="kw">let </span><span class="kw-2">mut </span>available = Vec::with_capacity((<span class="kw-2">*</span>resources).ncrtc <span class="kw">as </span>usize);
-
-            <span class="kw">for </span>crtc_index <span class="kw">in </span><span class="number">0</span>..(<span class="kw-2">*</span>resources).ncrtc {
-                <span class="kw">let </span>crtc_id = <span class="kw-2">*</span>((<span class="kw-2">*</span>resources).crtcs.offset(crtc_index <span class="kw">as </span>isize));
-                <span class="kw">let </span>crtc = (<span class="self">self</span>.xrandr.XRRGetCrtcInfo)(<span class="self">self</span>.display, resources, crtc_id);
-                <span class="kw">let </span>is_active = (<span class="kw-2">*</span>crtc).width &gt; <span class="number">0 </span>&amp;&amp; (<span class="kw-2">*</span>crtc).height &gt; <span class="number">0 </span>&amp;&amp; (<span class="kw-2">*</span>crtc).noutput &gt; <span class="number">0</span>;
-                <span class="kw">if </span>is_active {
-                    <span class="kw">let </span>is_primary = <span class="kw-2">*</span>(<span class="kw-2">*</span>crtc).outputs.offset(<span class="number">0</span>) == primary;
-                    has_primary |= is_primary;
-                    <span class="kw">if let </span><span class="prelude-val">Some</span>(monitor_id) =
-                        MonitorHandle::new(<span class="self">self</span>, resources, crtc_id, crtc, is_primary)
-                    {
-                        available.push(monitor_id)
-                    }
-                }
-                (<span class="self">self</span>.xrandr.XRRFreeCrtcInfo)(crtc);
-            }
-
-            <span class="comment">// If no monitors were detected as being primary, we just pick one ourselves!
-            </span><span class="kw">if </span>!has_primary {
-                <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref mut </span>fallback) = available.first_mut() {
-                    <span class="comment">// Setting this here will come in handy if we ever add an `is_primary` method.
-                    </span>fallback.primary = <span class="bool-val">true</span>;
-                }
-            }
-
-            (<span class="self">self</span>.xrandr.XRRFreeScreenResources)(resources);
-            available
+        <span class="comment">// Pipeline all of the get-crtc requests.
+        </span><span class="kw">let </span><span class="kw-2">mut </span>crtc_cookies = Vec::with_capacity(resources.crtcs().len());
+        <span class="kw">for </span><span class="kw-2">&amp;</span>crtc <span class="kw">in </span>resources.crtcs() {
+            crtc_cookies.push(
+                <span class="self">self</span>.xcb_connection()
+                    .randr_get_crtc_info(crtc, x11rb::CURRENT_TIME)<span class="question-mark">?</span>,
+            );
         }
+
+        <span class="comment">// Do this here so we do all of our requests in one shot.
+        </span><span class="kw">let </span>primary = <span class="self">self
+            </span>.xcb_connection()
+            .randr_get_output_primary(root.root)<span class="question-mark">?
+            </span>.reply()<span class="question-mark">?
+            </span>.output;
+
+        <span class="kw">let </span><span class="kw-2">mut </span>crtc_infos = Vec::with_capacity(crtc_cookies.len());
+        <span class="kw">for </span>cookie <span class="kw">in </span>crtc_cookies {
+            <span class="kw">let </span>reply = cookie.reply()<span class="question-mark">?</span>;
+            crtc_infos.push(reply);
+        }
+
+        <span class="kw">let </span><span class="kw-2">mut </span>has_primary = <span class="bool-val">false</span>;
+        <span class="kw">let </span><span class="kw-2">mut </span>available_monitors = Vec::with_capacity(resources.crtcs().len());
+        <span class="kw">for </span>(crtc_id, crtc) <span class="kw">in </span>resources.crtcs().iter().zip(crtc_infos.iter()) {
+            <span class="kw">if </span>crtc.width == <span class="number">0 </span>|| crtc.height == <span class="number">0 </span>|| crtc.outputs.is_empty() {
+                <span class="kw">continue</span>;
+            }
+
+            <span class="kw">let </span>is_primary = crtc.outputs[<span class="number">0</span>] == primary;
+            has_primary |= is_primary;
+            <span class="kw">let </span>monitor = MonitorHandle::new(<span class="self">self</span>, <span class="kw-2">&amp;</span>resources, <span class="kw-2">*</span>crtc_id, crtc, is_primary);
+            available_monitors.extend(monitor);
+        }
+
+        <span class="comment">// If we don't have a primary monitor, just pick one ourselves!
+        </span><span class="kw">if </span>!has_primary {
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref mut </span>fallback) = available_monitors.first_mut() {
+                <span class="comment">// Setting this here will come in handy if we ever add an `is_primary` method.
+                </span>fallback.primary = <span class="bool-val">true</span>;
+            }
+        }
+
+        <span class="prelude-val">Ok</span>(available_monitors)
     }
 
-    <span class="kw">pub fn </span>available_monitors(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Vec&lt;MonitorHandle&gt; {
-        <span class="kw">let </span><span class="kw-2">mut </span>monitors_lock = MONITORS.lock().unwrap();
-        (<span class="kw-2">*</span>monitors_lock)
-            .as_ref()
-            .cloned()
-            .or_else(|| {
-                <span class="kw">let </span>monitors = <span class="prelude-val">Some</span>(<span class="self">self</span>.query_monitor_list());
+    <span class="kw">pub fn </span>available_monitors(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;MonitorHandle&gt;, X11Error&gt; {
+        <span class="kw">let </span><span class="kw-2">mut </span>monitors_lock = <span class="self">self</span>.monitor_handles.lock().unwrap();
+        <span class="kw">match </span><span class="kw-2">*</span>monitors_lock {
+            <span class="prelude-val">Some</span>(<span class="kw-2">ref </span>monitors) =&gt; <span class="prelude-val">Ok</span>(monitors.clone()),
+            <span class="prelude-val">None </span>=&gt; {
+                <span class="kw">let </span>monitors = <span class="self">self</span>.query_monitor_list()<span class="question-mark">?</span>;
                 <span class="kw">if </span>!DISABLE_MONITOR_LIST_CACHING {
-                    (<span class="kw-2">*</span>monitors_lock) = monitors.clone();
+                    <span class="kw-2">*</span>monitors_lock = <span class="prelude-val">Some</span>(monitors.clone());
                 }
-                monitors
-            })
-            .unwrap()
+                <span class="prelude-val">Ok</span>(monitors)
+            }
+        }
     }
 
     <span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>primary_monitor(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; MonitorHandle {
-        <span class="self">self</span>.available_monitors()
-            .into_iter()
+    </span><span class="kw">pub fn </span>primary_monitor(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;MonitorHandle, X11Error&gt; {
+        <span class="prelude-val">Ok</span>(<span class="self">self
+            </span>.available_monitors()<span class="question-mark">?
+            </span>.into_iter()
             .find(|monitor| monitor.primary)
-            .unwrap_or_else(MonitorHandle::dummy)
+            .unwrap_or_else(MonitorHandle::dummy))
     }
 
-    <span class="kw">pub fn </span>select_xrandr_input(<span class="kw-2">&amp;</span><span class="self">self</span>, root: Window) -&gt; <span class="prelude-ty">Result</span>&lt;c_int, XError&gt; {
-        <span class="kw">let </span>has_xrandr = <span class="kw">unsafe </span>{
-            <span class="kw">let </span><span class="kw-2">mut </span>major = <span class="number">0</span>;
-            <span class="kw">let </span><span class="kw-2">mut </span>minor = <span class="number">0</span>;
-            (<span class="self">self</span>.xrandr.XRRQueryVersion)(<span class="self">self</span>.display, <span class="kw-2">&amp;mut </span>major, <span class="kw-2">&amp;mut </span>minor)
-        };
-        <span class="macro">assert!</span>(
-            has_xrandr == True,
-            <span class="string">"[winit] XRandR extension not available."
-        </span>);
+    <span class="kw">pub fn </span>select_xrandr_input(<span class="kw-2">&amp;</span><span class="self">self</span>, root: xproto::Window) -&gt; <span class="prelude-ty">Result</span>&lt;u8, X11Error&gt; {
+        <span class="kw">use </span>randr::NotifyMask;
 
-        <span class="kw">let </span><span class="kw-2">mut </span>event_offset = <span class="number">0</span>;
-        <span class="kw">let </span><span class="kw-2">mut </span>error_offset = <span class="number">0</span>;
-        <span class="kw">let </span>status = <span class="kw">unsafe </span>{
-            (<span class="self">self</span>.xrandr.XRRQueryExtension)(<span class="self">self</span>.display, <span class="kw-2">&amp;mut </span>event_offset, <span class="kw-2">&amp;mut </span>error_offset)
-        };
+        <span class="comment">// Get extension info.
+        </span><span class="kw">let </span>info = <span class="self">self
+            </span>.xcb_connection()
+            .extension_information(randr::X11_EXTENSION_NAME)<span class="question-mark">?
+            </span>.ok_or_else(|| X11Error::MissingExtension(randr::X11_EXTENSION_NAME))<span class="question-mark">?</span>;
 
-        <span class="kw">if </span>status != True {
-            <span class="self">self</span>.check_errors()<span class="question-mark">?</span>;
-            <span class="macro">unreachable!</span>(<span class="string">"[winit] `XRRQueryExtension` failed but no error was received."</span>);
+        <span class="comment">// Select input data.
+        </span><span class="kw">let </span>event_mask =
+            NotifyMask::CRTC_CHANGE | NotifyMask::OUTPUT_PROPERTY | NotifyMask::SCREEN_CHANGE;
+        <span class="self">self</span>.xcb_connection().randr_select_input(root, event_mask)<span class="question-mark">?</span>;
+
+        <span class="prelude-val">Ok</span>(info.first_event)
+    }
+}
+
+<span class="kw">pub struct </span>ScreenResources {
+    <span class="doccomment">/// List of attached modes.
+    </span>modes: Vec&lt;randr::ModeInfo&gt;,
+
+    <span class="doccomment">/// List of attached CRTCs.
+    </span>crtcs: Vec&lt;randr::Crtc&gt;,
+}
+
+<span class="kw">impl </span>ScreenResources {
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>modes(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[randr::ModeInfo] {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.modes
+    }
+
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>crtcs(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[randr::Crtc] {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.crtcs
+    }
+
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>from_connection(
+        conn: <span class="kw-2">&amp;</span><span class="kw">impl </span>x11rb::connection::Connection,
+        root: <span class="kw-2">&amp;</span>x11rb::protocol::xproto::Screen,
+        (major_version, minor_version): (u32, u32),
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, X11Error&gt; {
+        <span class="kw">if </span>(major_version == <span class="number">1 </span>&amp;&amp; minor_version &gt;= <span class="number">3</span>) || major_version &gt; <span class="number">1 </span>{
+            <span class="kw">let </span>reply = conn
+                .randr_get_screen_resources_current(root.root)<span class="question-mark">?
+                </span>.reply()<span class="question-mark">?</span>;
+            <span class="prelude-val">Ok</span>(<span class="self">Self</span>::from_get_screen_resources_current_reply(reply))
+        } <span class="kw">else </span>{
+            <span class="kw">let </span>reply = conn.randr_get_screen_resources(root.root)<span class="question-mark">?</span>.reply()<span class="question-mark">?</span>;
+            <span class="prelude-val">Ok</span>(<span class="self">Self</span>::from_get_screen_resources_reply(reply))
         }
+    }
 
-        <span class="kw">let </span>mask = RRCrtcChangeNotifyMask | RROutputPropertyNotifyMask | RRScreenChangeNotifyMask;
-        <span class="kw">unsafe </span>{ (<span class="self">self</span>.xrandr.XRRSelectInput)(<span class="self">self</span>.display, root, mask) };
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>from_get_screen_resources_reply(reply: randr::GetScreenResourcesReply) -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{
+            modes: reply.modes,
+            crtcs: reply.crtcs,
+        }
+    }
 
-        <span class="prelude-val">Ok</span>(event_offset)
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>from_get_screen_resources_current_reply(
+        reply: randr::GetScreenResourcesCurrentReply,
+    ) -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{
+            modes: reply.modes,
+            crtcs: reply.crtcs,
+        }
     }
 }
 </code></pre></div></section></main></body></html>

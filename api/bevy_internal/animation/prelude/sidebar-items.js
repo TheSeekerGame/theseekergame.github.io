@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["Keyframes"],"struct":["AnimationClip","AnimationPlayer","AnimationPlugin","EntityPath","VariableCurve"]};
+window.SIDEBAR_ITEMS = {"enum":["Interpolation","Keyframes"],"struct":["AnimationClip","AnimationPlayer","AnimationPlugin","BlendInput","EntityPath","VariableCurve"],"trait":["Animatable"]};

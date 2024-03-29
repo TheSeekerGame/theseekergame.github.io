@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy-3e956806168b8470/b5b6ea3/crates/bevy_ecs/src/storage/blob_vec.rs`."><title>blob_vec.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_ecs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.0 (aedd173a2 2024-03-17)" data-channel="1.77.0" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_ecs-0.13.1/src/storage/blob_vec.rs`."><title>blob_vec.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_ecs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.1 (7cf61ebde 2024-03-27)" data-channel="1.77.1" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
             <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
     <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../bevy_ecs/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
@@ -636,6 +636,77 @@
 <a href="#634" id="634">634</a>
 <a href="#635" id="635">635</a>
 <a href="#636" id="636">636</a>
+<a href="#637" id="637">637</a>
+<a href="#638" id="638">638</a>
+<a href="#639" id="639">639</a>
+<a href="#640" id="640">640</a>
+<a href="#641" id="641">641</a>
+<a href="#642" id="642">642</a>
+<a href="#643" id="643">643</a>
+<a href="#644" id="644">644</a>
+<a href="#645" id="645">645</a>
+<a href="#646" id="646">646</a>
+<a href="#647" id="647">647</a>
+<a href="#648" id="648">648</a>
+<a href="#649" id="649">649</a>
+<a href="#650" id="650">650</a>
+<a href="#651" id="651">651</a>
+<a href="#652" id="652">652</a>
+<a href="#653" id="653">653</a>
+<a href="#654" id="654">654</a>
+<a href="#655" id="655">655</a>
+<a href="#656" id="656">656</a>
+<a href="#657" id="657">657</a>
+<a href="#658" id="658">658</a>
+<a href="#659" id="659">659</a>
+<a href="#660" id="660">660</a>
+<a href="#661" id="661">661</a>
+<a href="#662" id="662">662</a>
+<a href="#663" id="663">663</a>
+<a href="#664" id="664">664</a>
+<a href="#665" id="665">665</a>
+<a href="#666" id="666">666</a>
+<a href="#667" id="667">667</a>
+<a href="#668" id="668">668</a>
+<a href="#669" id="669">669</a>
+<a href="#670" id="670">670</a>
+<a href="#671" id="671">671</a>
+<a href="#672" id="672">672</a>
+<a href="#673" id="673">673</a>
+<a href="#674" id="674">674</a>
+<a href="#675" id="675">675</a>
+<a href="#676" id="676">676</a>
+<a href="#677" id="677">677</a>
+<a href="#678" id="678">678</a>
+<a href="#679" id="679">679</a>
+<a href="#680" id="680">680</a>
+<a href="#681" id="681">681</a>
+<a href="#682" id="682">682</a>
+<a href="#683" id="683">683</a>
+<a href="#684" id="684">684</a>
+<a href="#685" id="685">685</a>
+<a href="#686" id="686">686</a>
+<a href="#687" id="687">687</a>
+<a href="#688" id="688">688</a>
+<a href="#689" id="689">689</a>
+<a href="#690" id="690">690</a>
+<a href="#691" id="691">691</a>
+<a href="#692" id="692">692</a>
+<a href="#693" id="693">693</a>
+<a href="#694" id="694">694</a>
+<a href="#695" id="695">695</a>
+<a href="#696" id="696">696</a>
+<a href="#697" id="697">697</a>
+<a href="#698" id="698">698</a>
+<a href="#699" id="699">699</a>
+<a href="#700" id="700">700</a>
+<a href="#701" id="701">701</a>
+<a href="#702" id="702">702</a>
+<a href="#703" id="703">703</a>
+<a href="#704" id="704">704</a>
+<a href="#705" id="705">705</a>
+<a href="#706" id="706">706</a>
+<a href="#707" id="707">707</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{
     alloc::{handle_alloc_error, Layout},
     cell::UnsafeCell,
@@ -689,7 +760,6 @@
     /// If `drop` is `None`, the items will be leaked. This should generally be set as None based on [`needs_drop`].
     ///
     /// [`needs_drop`]: core::mem::needs_drop
-    /// [`Drop`]: core::ops::Drop
     </span><span class="kw">pub unsafe fn </span>new(
         item_layout: Layout,
         drop: <span class="prelude-ty">Option</span>&lt;<span class="kw">unsafe fn</span>(OwningPtr&lt;<span class="lifetime">'_</span>&gt;)&gt;,
@@ -700,7 +770,9 @@
         <span class="kw">if </span>item_layout.size() == <span class="number">0 </span>{
             BlobVec {
                 data,
-                capacity: usize::MAX,
+                <span class="comment">// ZST `BlobVec` max size is `usize::MAX`, and `reserve_exact` for ZST assumes
+                // the capacity is always `usize::MAX` and panics if it overflows.
+                </span>capacity: usize::MAX,
                 len: <span class="number">0</span>,
                 item_layout,
                 drop,
@@ -748,22 +820,48 @@
     ///
     /// Note that the allocator may give the collection more space than it requests. Therefore, capacity can not be relied upon
     /// to be precisely minimal.
+    ///
+    /// # Panics
+    ///
+    /// Panics if new capacity overflows `usize`.
     </span><span class="kw">pub fn </span>reserve_exact(<span class="kw-2">&amp;mut </span><span class="self">self</span>, additional: usize) {
         <span class="kw">let </span>available_space = <span class="self">self</span>.capacity - <span class="self">self</span>.len;
-        <span class="kw">if </span>available_space &lt; additional &amp;&amp; <span class="self">self</span>.item_layout.size() &gt; <span class="number">0 </span>{
+        <span class="kw">if </span>available_space &lt; additional {
             <span class="comment">// SAFETY: `available_space &lt; additional`, so `additional - available_space &gt; 0`
             </span><span class="kw">let </span>increment = <span class="kw">unsafe </span>{ NonZeroUsize::new_unchecked(additional - available_space) };
-            <span class="comment">// SAFETY: not called for ZSTs
-            </span><span class="kw">unsafe </span>{ <span class="self">self</span>.grow_exact(increment) };
+            <span class="self">self</span>.grow_exact(increment);
         }
     }
 
-    <span class="comment">// SAFETY: must not be called for a ZST item layout
-    </span><span class="attr">#[warn(unsafe_op_in_unsafe_fn)] </span><span class="comment">// to allow unsafe blocks in unsafe fn
-    </span><span class="kw">unsafe fn </span>grow_exact(<span class="kw-2">&amp;mut </span><span class="self">self</span>, increment: NonZeroUsize) {
-        <span class="macro">debug_assert!</span>(<span class="self">self</span>.item_layout.size() != <span class="number">0</span>);
+    <span class="doccomment">/// Reserves the minimum capacity for at least `additional` more elements to be inserted in the given `BlobVec`.
+    </span><span class="attr">#[inline]
+    </span><span class="kw">pub fn </span>reserve(<span class="kw-2">&amp;mut </span><span class="self">self</span>, additional: usize) {
+        <span class="doccomment">/// Similar to `reserve_exact`. This method ensures that the capacity will grow at least `self.capacity()` if there is no
+        /// enough space to hold `additional` more elements.
+        </span><span class="attr">#[cold]
+        </span><span class="kw">fn </span>do_reserve(slf: <span class="kw-2">&amp;mut </span>BlobVec, additional: usize) {
+            <span class="kw">let </span>increment = slf.capacity.max(additional - (slf.capacity - slf.len));
+            <span class="kw">let </span>increment = NonZeroUsize::new(increment).unwrap();
+            slf.grow_exact(increment);
+        }
 
-        <span class="kw">let </span>new_capacity = <span class="self">self</span>.capacity + increment.get();
+        <span class="kw">if </span><span class="self">self</span>.capacity - <span class="self">self</span>.len &lt; additional {
+            do_reserve(<span class="self">self</span>, additional);
+        }
+    }
+
+    <span class="doccomment">/// Grows the capacity by `increment` elements.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the new capacity overflows `usize`.
+    /// For ZST it panics unconditionally because ZST `BlobVec` capacity
+    /// is initialized to `usize::MAX` and always stays that way.
+    </span><span class="kw">fn </span>grow_exact(<span class="kw-2">&amp;mut </span><span class="self">self</span>, increment: NonZeroUsize) {
+        <span class="kw">let </span>new_capacity = <span class="self">self
+            </span>.capacity
+            .checked_add(increment.get())
+            .expect(<span class="string">"capacity overflow"</span>);
         <span class="kw">let </span>new_layout =
             array_layout(<span class="kw-2">&amp;</span><span class="self">self</span>.item_layout, new_capacity).expect(<span class="string">"array layout should be valid"</span>);
         <span class="kw">let </span>new_data = <span class="kw">if </span><span class="self">self</span>.capacity == <span class="number">0 </span>{
@@ -869,7 +967,7 @@
     /// The `value` must match the [`layout`](`BlobVec::layout`) of the elements in the [`BlobVec`].
     </span><span class="attr">#[inline]
     </span><span class="kw">pub unsafe fn </span>push(<span class="kw-2">&amp;mut </span><span class="self">self</span>, value: OwningPtr&lt;<span class="lifetime">'_</span>&gt;) {
-        <span class="self">self</span>.reserve_exact(<span class="number">1</span>);
+        <span class="self">self</span>.reserve(<span class="number">1</span>);
         <span class="kw">let </span>index = <span class="self">self</span>.len;
         <span class="self">self</span>.len += <span class="number">1</span>;
         <span class="self">self</span>.initialize_unchecked(index, value);
@@ -945,14 +1043,14 @@
     /// The removed element is replaced by the last element of the `BlobVec`.
     ///
     /// # Safety
-    /// It is the caller's responsibility to ensure that `index` is &lt; self.len()
+    /// It is the caller's responsibility to ensure that `index` is `&lt; self.len()`.
     </span><span class="attr">#[inline]
     </span><span class="kw">pub unsafe fn </span>swap_remove_and_drop_unchecked(<span class="kw-2">&amp;mut </span><span class="self">self</span>, index: usize) {
         <span class="macro">debug_assert!</span>(index &lt; <span class="self">self</span>.len());
         <span class="kw">let </span>drop = <span class="self">self</span>.drop;
         <span class="kw">let </span>value = <span class="self">self</span>.swap_remove_and_forget_unchecked(index);
         <span class="kw">if let </span><span class="prelude-val">Some</span>(drop) = drop {
-            (drop)(value);
+            drop(value);
         }
     }
 
@@ -1111,7 +1209,7 @@
     </span><span class="kw">use crate</span>::{component::Component, ptr::OwningPtr, world::World};
 
     <span class="kw">use </span><span class="kw">super</span>::BlobVec;
-    <span class="kw">use </span>std::{alloc::Layout, cell::RefCell, rc::Rc};
+    <span class="kw">use </span>std::{alloc::Layout, cell::RefCell, mem, rc::Rc};
 
     <span class="comment">// SAFETY: The pointer points to a valid value of type `T` and it is safe to drop this value.
     </span><span class="kw">unsafe fn </span>drop_ptr&lt;T&gt;(x: OwningPtr&lt;<span class="lifetime">'_</span>&gt;) {
@@ -1158,7 +1256,7 @@
         }
 
         <span class="macro">assert_eq!</span>(blob_vec.len(), <span class="number">1_000</span>);
-        <span class="macro">assert_eq!</span>(blob_vec.capacity(), <span class="number">1_000</span>);
+        <span class="macro">assert_eq!</span>(blob_vec.capacity(), <span class="number">1_024</span>);
     }
 
     <span class="attr">#[derive(Debug, Eq, PartialEq, Clone)]
@@ -1218,19 +1316,19 @@
 
                 push(<span class="kw-2">&amp;mut </span>blob_vec, foo3.clone());
                 <span class="macro">assert_eq!</span>(blob_vec.len(), <span class="number">3</span>);
-                <span class="macro">assert_eq!</span>(blob_vec.capacity(), <span class="number">3</span>);
+                <span class="macro">assert_eq!</span>(blob_vec.capacity(), <span class="number">4</span>);
 
                 <span class="kw">let </span>last_index = blob_vec.len() - <span class="number">1</span>;
                 <span class="kw">let </span>value = swap_remove::&lt;Foo&gt;(<span class="kw-2">&amp;mut </span>blob_vec, last_index);
                 <span class="macro">assert_eq!</span>(foo3, value);
 
                 <span class="macro">assert_eq!</span>(blob_vec.len(), <span class="number">2</span>);
-                <span class="macro">assert_eq!</span>(blob_vec.capacity(), <span class="number">3</span>);
+                <span class="macro">assert_eq!</span>(blob_vec.capacity(), <span class="number">4</span>);
 
                 <span class="kw">let </span>value = swap_remove::&lt;Foo&gt;(<span class="kw-2">&amp;mut </span>blob_vec, <span class="number">0</span>);
                 <span class="macro">assert_eq!</span>(foo1, value);
                 <span class="macro">assert_eq!</span>(blob_vec.len(), <span class="number">1</span>);
-                <span class="macro">assert_eq!</span>(blob_vec.capacity(), <span class="number">3</span>);
+                <span class="macro">assert_eq!</span>(blob_vec.capacity(), <span class="number">4</span>);
 
                 foo2.a = <span class="number">8</span>;
                 <span class="macro">assert_eq!</span>(get_mut::&lt;Foo&gt;(<span class="kw-2">&amp;mut </span>blob_vec, <span class="number">0</span>), <span class="kw-2">&amp;</span>foo2);
@@ -1246,6 +1344,48 @@
         <span class="kw">let </span>drop = drop_ptr::&lt;Foo&gt;;
         <span class="comment">// SAFETY: drop is able to drop a value of its `item_layout`
         </span><span class="kw">let _ </span>= <span class="kw">unsafe </span>{ BlobVec::new(item_layout, <span class="prelude-val">Some</span>(drop), <span class="number">0</span>) };
+    }
+
+    <span class="attr">#[test]
+    #[should_panic(expected = <span class="string">"capacity overflow"</span>)]
+    </span><span class="kw">fn </span>blob_vec_zst_size_overflow() {
+        <span class="comment">// SAFETY: no drop is correct drop for `()`.
+        </span><span class="kw">let </span><span class="kw-2">mut </span>blob_vec = <span class="kw">unsafe </span>{ BlobVec::new(Layout::new::&lt;()&gt;(), <span class="prelude-val">None</span>, <span class="number">0</span>) };
+
+        <span class="macro">assert_eq!</span>(usize::MAX, blob_vec.capacity(), <span class="string">"Self-check"</span>);
+
+        <span class="comment">// SAFETY: Because `()` is a ZST trivial drop type, and because `BlobVec` capacity
+        //   is always `usize::MAX` for ZSTs, we can arbitrarily set the length
+        //   and still be sound.
+        </span><span class="kw">unsafe </span>{
+            blob_vec.set_len(usize::MAX);
+        }
+
+        <span class="comment">// SAFETY: `BlobVec` was initialized for `()`, so it is safe to push `()` to it.
+        </span><span class="kw">unsafe </span>{
+            OwningPtr::make((), |ptr| {
+                <span class="comment">// This should panic because len is usize::MAX, remaining capacity is 0.
+                </span>blob_vec.push(ptr);
+            });
+        }
+    }
+
+    <span class="attr">#[test]
+    #[should_panic(expected = <span class="string">"capacity overflow"</span>)]
+    </span><span class="kw">fn </span>blob_vec_capacity_overflow() {
+        <span class="comment">// SAFETY: no drop is correct drop for `u32`.
+        </span><span class="kw">let </span><span class="kw-2">mut </span>blob_vec = <span class="kw">unsafe </span>{ BlobVec::new(Layout::new::&lt;u32&gt;(), <span class="prelude-val">None</span>, <span class="number">0</span>) };
+
+        <span class="macro">assert_eq!</span>(<span class="number">0</span>, blob_vec.capacity(), <span class="string">"Self-check"</span>);
+
+        OwningPtr::make(<span class="number">17u32</span>, |ptr| {
+            <span class="comment">// SAFETY: we push the value of correct type.
+            </span><span class="kw">unsafe </span>{
+                blob_vec.push(ptr);
+            }
+        });
+
+        blob_vec.reserve_exact(usize::MAX);
     }
 
     <span class="attr">#[test]
@@ -1265,7 +1405,9 @@
         <span class="kw">let </span><span class="kw-2">mut </span>count = <span class="number">0</span>;
 
         <span class="kw">let </span><span class="kw-2">mut </span>q = world.query::&lt;<span class="kw-2">&amp;</span>Zst&gt;();
-        <span class="kw">for </span><span class="kw-2">&amp;</span>Zst <span class="kw">in </span>q.iter(<span class="kw-2">&amp;</span>world) {
+        <span class="kw">for </span>zst <span class="kw">in </span>q.iter(<span class="kw-2">&amp;</span>world) {
+            <span class="comment">// Ensure that the references returned are properly aligned.
+            </span><span class="macro">assert_eq!</span>(zst <span class="kw">as </span><span class="kw-2">*const </span>Zst <span class="kw">as </span>usize % mem::align_of::&lt;Zst&gt;(), <span class="number">0</span>);
             count += <span class="number">1</span>;
         }
 

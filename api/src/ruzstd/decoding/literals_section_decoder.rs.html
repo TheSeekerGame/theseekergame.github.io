@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ruzstd-0.4.0/src/decoding/literals_section_decoder.rs`."><title>literals_section_decoder.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="ruzstd" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.0 (aedd173a2 2024-03-17)" data-channel="1.77.0" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ruzstd-0.5.0/src/decoding/literals_section_decoder.rs`."><title>literals_section_decoder.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="ruzstd" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.1 (7cf61ebde 2024-03-27)" data-channel="1.77.1" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
             <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
     <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../ruzstd/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
@@ -179,38 +179,54 @@
 <a href="#177" id="177">177</a>
 <a href="#178" id="178">178</a>
 <a href="#179" id="179">179</a>
+<a href="#180" id="180">180</a>
+<a href="#181" id="181">181</a>
+<a href="#182" id="182">182</a>
+<a href="#183" id="183">183</a>
+<a href="#184" id="184">184</a>
+<a href="#185" id="185">185</a>
+<a href="#186" id="186">186</a>
+<a href="#187" id="187">187</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::blocks::literals_section::{LiteralsSection, LiteralsSectionType};
 <span class="kw">use </span><span class="kw">super</span>::bit_reader_reverse::{BitReaderReversed, GetBitsError};
 <span class="kw">use </span><span class="kw">super</span>::scratch::HuffmanScratch;
 <span class="kw">use </span><span class="kw">crate</span>::huff0::{HuffmanDecoder, HuffmanDecoderError, HuffmanTableError};
 <span class="kw">use </span>alloc::vec::Vec;
 
-<span class="attr">#[derive(Debug, thiserror::Error)]
+<span class="attr">#[derive(Debug, derive_more::Display, derive_more::From)]
+#[cfg_attr(feature = <span class="string">"std"</span>, derive(derive_more::Error))]
 #[non_exhaustive]
 </span><span class="kw">pub enum </span>DecompressLiteralsError {
-    <span class="attr">#[error(
-        <span class="string">"compressed size was none even though it must be set to something for compressed literals"
+    <span class="attr">#[display(
+        fmt = <span class="string">"compressed size was none even though it must be set to something for compressed literals"
     </span>)]
     </span>MissingCompressedSize,
-    <span class="attr">#[error(<span class="string">"num_streams was none even though it must be set to something (1 or 4) for compressed literals"</span>)]
+    <span class="attr">#[display(
+        fmt = <span class="string">"num_streams was none even though it must be set to something (1 or 4) for compressed literals"
+    </span>)]
     </span>MissingNumStreams,
-    <span class="attr">#[error(transparent)]
-    </span>GetBitsError(<span class="attr">#[from] </span>GetBitsError),
-    <span class="attr">#[error(transparent)]
-    </span>HuffmanTableError(<span class="attr">#[from] </span>HuffmanTableError),
-    <span class="attr">#[error(transparent)]
-    </span>HuffmanDecoderError(<span class="attr">#[from] </span>HuffmanDecoderError),
-    <span class="attr">#[error(<span class="string">"Tried to reuse huffman table but it was never initialized"</span>)]
+    <span class="attr">#[display(fmt = <span class="string">"{_0:?}"</span>)]
+    #[from]
+    </span>GetBitsError(GetBitsError),
+    <span class="attr">#[display(fmt = <span class="string">"{_0:?}"</span>)]
+    #[from]
+    </span>HuffmanTableError(HuffmanTableError),
+    <span class="attr">#[display(fmt = <span class="string">"{_0:?}"</span>)]
+    #[from]
+    </span>HuffmanDecoderError(HuffmanDecoderError),
+    <span class="attr">#[display(fmt = <span class="string">"Tried to reuse huffman table but it was never initialized"</span>)]
     </span>UninitializedHuffmanTable,
-    <span class="attr">#[error(<span class="string">"Need 6 bytes to decode jump header, got {got} bytes"</span>)]
+    <span class="attr">#[display(fmt = <span class="string">"Need 6 bytes to decode jump header, got {got} bytes"</span>)]
     </span>MissingBytesForJumpHeader { got: usize },
-    <span class="attr">#[error(<span class="string">"Need at least {needed} bytes to decode literals. Have: {got} bytes"</span>)]
+    <span class="attr">#[display(fmt = <span class="string">"Need at least {needed} bytes to decode literals. Have: {got} bytes"</span>)]
     </span>MissingBytesForLiterals { got: usize, needed: usize },
-    <span class="attr">#[error(<span class="string">"Padding at the end of the sequence_section was more than a byte long: {skipped_bits} bits. Probably caused by data corruption"</span>)]
+    <span class="attr">#[display(
+        fmt = <span class="string">"Padding at the end of the sequence_section was more than a byte long: {skipped_bits} bits. Probably caused by data corruption"
+    </span>)]
     </span>ExtraPadding { skipped_bits: i32 },
-    <span class="attr">#[error(<span class="string">"Bitstream was read till: {read_til}, should have been: {expected}"</span>)]
+    <span class="attr">#[display(fmt = <span class="string">"Bitstream was read till: {read_til}, should have been: {expected}"</span>)]
     </span>BitstreamReadMismatch { read_til: isize, expected: isize },
-    <span class="attr">#[error(<span class="string">"Did not decode enough literals: {decoded}, Should have been: {expected}"</span>)]
+    <span class="attr">#[display(fmt = <span class="string">"Did not decode enough literals: {decoded}, Should have been: {expected}"</span>)]
     </span>DecodedLiteralCountMismatch { decoded: usize, expected: usize },
 }
 

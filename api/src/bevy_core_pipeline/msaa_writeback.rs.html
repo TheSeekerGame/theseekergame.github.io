@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy-3e956806168b8470/b5b6ea3/crates/bevy_core_pipeline/src/msaa_writeback.rs`."><title>msaa_writeback.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bevy_core_pipeline" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.0 (aedd173a2 2024-03-17)" data-channel="1.77.0" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_core_pipeline-0.13.1/src/msaa_writeback.rs`."><title>msaa_writeback.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bevy_core_pipeline" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.1 (7cf61ebde 2024-03-27)" data-channel="1.77.1" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
             <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
     <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../bevy_core_pipeline/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
@@ -146,15 +146,28 @@
 <a href="#144" id="144">144</a>
 <a href="#145" id="145">145</a>
 <a href="#146" id="146">146</a>
+<a href="#147" id="147">147</a>
+<a href="#148" id="148">148</a>
+<a href="#149" id="149">149</a>
+<a href="#150" id="150">150</a>
+<a href="#151" id="151">151</a>
+<a href="#152" id="152">152</a>
+<a href="#153" id="153">153</a>
+<a href="#154" id="154">154</a>
+<a href="#155" id="155">155</a>
+<a href="#156" id="156">156</a>
+<a href="#157" id="157">157</a>
+<a href="#158" id="158">158</a>
 </pre></div><pre class="rust"><code><span class="kw">use crate</span>::{
     blit::{BlitPipeline, BlitPipelineKey},
-    core_2d::{<span class="self">self</span>, CORE_2D},
-    core_3d::{<span class="self">self</span>, CORE_3D},
+    core_2d::graph::{Core2d, Node2d},
+    core_3d::graph::{Core3d, Node3d},
 };
 <span class="kw">use </span>bevy_app::{App, Plugin};
 <span class="kw">use </span>bevy_ecs::prelude::<span class="kw-2">*</span>;
 <span class="kw">use </span>bevy_render::{
     camera::ExtractedCamera,
+    color::Color,
     render_graph::{Node, NodeRunError, RenderGraphApp, RenderGraphContext},
     render_resource::BindGroupEntries,
     renderer::RenderContext,
@@ -178,16 +191,14 @@
             prepare_msaa_writeback_pipelines.in_set(RenderSet::Prepare),
         );
         {
-            <span class="kw">use </span>core_2d::graph::node::<span class="kw-2">*</span>;
             render_app
-                .add_render_graph_node::&lt;MsaaWritebackNode&gt;(CORE_2D, MSAA_WRITEBACK)
-                .add_render_graph_edge(CORE_2D, MSAA_WRITEBACK, MAIN_PASS);
+                .add_render_graph_node::&lt;MsaaWritebackNode&gt;(Core2d, Node2d::MsaaWriteback)
+                .add_render_graph_edge(Core2d, Node2d::MsaaWriteback, Node2d::MainPass);
         }
         {
-            <span class="kw">use </span>core_3d::graph::node::<span class="kw-2">*</span>;
             render_app
-                .add_render_graph_node::&lt;MsaaWritebackNode&gt;(CORE_3D, MSAA_WRITEBACK)
-                .add_render_graph_edge(CORE_3D, MSAA_WRITEBACK, START_MAIN_PASS);
+                .add_render_graph_node::&lt;MsaaWritebackNode&gt;(Core3d, Node3d::MsaaWriteback)
+                .add_render_graph_edge(Core3d, Node3d::MsaaWriteback, Node3d::StartMainPass);
         }
     }
 }
@@ -208,19 +219,24 @@
     <span class="kw">fn </span>update(<span class="kw-2">&amp;mut </span><span class="self">self</span>, world: <span class="kw-2">&amp;mut </span>World) {
         <span class="self">self</span>.cameras.update_archetypes(world);
     }
+
     <span class="kw">fn </span>run(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         graph: <span class="kw-2">&amp;mut </span>RenderGraphContext,
         render_context: <span class="kw-2">&amp;mut </span>RenderContext,
         world: <span class="kw-2">&amp;</span>World,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(), NodeRunError&gt; {
+        <span class="kw">if </span><span class="kw-2">*</span>world.resource::&lt;Msaa&gt;() == Msaa::Off {
+            <span class="kw">return </span><span class="prelude-val">Ok</span>(());
+        }
+
         <span class="kw">let </span>view_entity = graph.view_entity();
         <span class="kw">if let </span><span class="prelude-val">Ok</span>((target, blit_pipeline_id)) = <span class="self">self</span>.cameras.get_manual(world, view_entity) {
             <span class="kw">let </span>blit_pipeline = world.resource::&lt;BlitPipeline&gt;();
             <span class="kw">let </span>pipeline_cache = world.resource::&lt;PipelineCache&gt;();
-            <span class="kw">let </span>pipeline = pipeline_cache
-                .get_render_pipeline(blit_pipeline_id.<span class="number">0</span>)
-                .unwrap();
+            <span class="kw">let </span><span class="prelude-val">Some</span>(pipeline) = pipeline_cache.get_render_pipeline(blit_pipeline_id.<span class="number">0</span>) <span class="kw">else </span>{
+                <span class="kw">return </span><span class="prelude-val">Ok</span>(());
+            };
 
             <span class="comment">// The current "main texture" needs to be bound as an input resource, and we need the "other"
             // unused target to be the "resolve target" for the MSAA write. Therefore this is the same
@@ -229,14 +245,21 @@
 
             <span class="kw">let </span>pass_descriptor = RenderPassDescriptor {
                 label: <span class="prelude-val">Some</span>(<span class="string">"msaa_writeback"</span>),
-                <span class="comment">// The target's "resolve target" is the "destination" in post_process
+                <span class="comment">// The target's "resolve target" is the "destination" in post_process.
                 // We will indirectly write the results to the "destination" using
                 // the MSAA resolve step.
-                </span>color_attachments: <span class="kw-2">&amp;</span>[<span class="prelude-val">Some</span>(target.get_color_attachment(Operations {
-                    load: LoadOp::Clear(Default::default()),
-                    store: <span class="bool-val">true</span>,
-                }))],
+                </span>color_attachments: <span class="kw-2">&amp;</span>[<span class="prelude-val">Some</span>(RenderPassColorAttachment {
+                    <span class="comment">// If MSAA is enabled, then the sampled texture will always exist
+                    </span>view: target.sampled_main_texture_view().unwrap(),
+                    resolve_target: <span class="prelude-val">Some</span>(post_process.destination),
+                    ops: Operations {
+                        load: LoadOp::Clear(Color::BLACK.into()),
+                        store: StoreOp::Store,
+                    },
+                })],
                 depth_stencil_attachment: <span class="prelude-val">None</span>,
+                timestamp_writes: <span class="prelude-val">None</span>,
+                occlusion_query_set: <span class="prelude-val">None</span>,
             };
 
             <span class="kw">let </span>bind_group = render_context.render_device().create_bind_group(
@@ -253,6 +276,7 @@
             render_pass.set_bind_group(<span class="number">0</span>, <span class="kw-2">&amp;</span>bind_group, <span class="kw-2">&amp;</span>[]);
             render_pass.draw(<span class="number">0</span>..<span class="number">3</span>, <span class="number">0</span>..<span class="number">1</span>);
         }
+
         <span class="prelude-val">Ok</span>(())
     }
 }

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ruzstd-0.4.0/src/frame_decoder.rs`."><title>frame_decoder.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="ruzstd" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.0 (aedd173a2 2024-03-17)" data-channel="1.77.0" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ruzstd-0.5.0/src/frame_decoder.rs`."><title>frame_decoder.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="ruzstd" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.1 (7cf61ebde 2024-03-27)" data-channel="1.77.1" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
             <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
     <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../ruzstd/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
@@ -532,6 +532,17 @@
 <a href="#530" id="530">530</a>
 <a href="#531" id="531">531</a>
 <a href="#532" id="532">532</a>
+<a href="#533" id="533">533</a>
+<a href="#534" id="534">534</a>
+<a href="#535" id="535">535</a>
+<a href="#536" id="536">536</a>
+<a href="#537" id="537">537</a>
+<a href="#538" id="538">538</a>
+<a href="#539" id="539">539</a>
+<a href="#540" id="540">540</a>
+<a href="#541" id="541">541</a>
+<a href="#542" id="542">542</a>
+<a href="#543" id="543">543</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::frame;
 <span class="kw">use </span><span class="kw">crate</span>::decoding::dictionary::Dictionary;
 <span class="kw">use </span><span class="kw">crate</span>::decoding::scratch::DecoderScratch;
@@ -614,32 +625,43 @@
     UptoBytes(usize),
 }
 
-<span class="attr">#[derive(Debug, thiserror::Error)]
+<span class="attr">#[derive(Debug, derive_more::Display, derive_more::From)]
+#[cfg_attr(feature = <span class="string">"std"</span>, derive(derive_more::Error))]
 #[non_exhaustive]
 </span><span class="kw">pub enum </span>FrameDecoderError {
-    <span class="attr">#[error(transparent)]
-    </span>ReadFrameHeaderError(<span class="attr">#[from] </span>frame::ReadFrameHeaderError),
-    <span class="attr">#[error(transparent)]
-    </span>FrameHeaderError(<span class="attr">#[from] </span>frame::FrameHeaderError),
-    <span class="attr">#[error(<span class="string">"Specified window_size is too big; Requested: {requested}, Max: {MAX_WINDOW_SIZE}"</span>)]
+    <span class="attr">#[display(fmt = <span class="string">"{_0:?}"</span>)]
+    #[from]
+    </span>ReadFrameHeaderError(frame::ReadFrameHeaderError),
+    <span class="attr">#[display(fmt = <span class="string">"{_0:?}"</span>)]
+    #[from]
+    </span>FrameHeaderError(frame::FrameHeaderError),
+    <span class="attr">#[display(
+        fmt = <span class="string">"Specified window_size is too big; Requested: {requested}, Max: {MAX_WINDOW_SIZE}"
+    </span>)]
     </span>WindowSizeTooBig { requested: u64 },
-    <span class="attr">#[error(transparent)]
-    </span>DictionaryDecodeError(<span class="attr">#[from] </span>dictionary::DictionaryDecodeError),
-    <span class="attr">#[error(<span class="string">"Failed to parse/decode block body: {0}"</span>)]
-    </span>FailedToReadBlockHeader(<span class="attr">#[from] </span>decoding::block_decoder::BlockHeaderReadError),
-    <span class="attr">#[error(<span class="string">"Failed to parse block header: {0}"</span>)]
+    <span class="attr">#[display(fmt = <span class="string">"{_0:?}"</span>)]
+    #[from]
+    </span>DictionaryDecodeError(dictionary::DictionaryDecodeError),
+    <span class="attr">#[display(fmt = <span class="string">"Failed to parse/decode block body: {_0}"</span>)]
+    #[from]
+    </span>FailedToReadBlockHeader(decoding::block_decoder::BlockHeaderReadError),
+    <span class="attr">#[display(fmt = <span class="string">"Failed to parse block header: {_0}"</span>)]
     </span>FailedToReadBlockBody(decoding::block_decoder::DecodeBlockContentError),
-    <span class="attr">#[error(<span class="string">"Failed to read checksum: {0}"</span>)]
-    </span>FailedToReadChecksum(<span class="attr">#[source] </span>Error),
-    <span class="attr">#[error(<span class="string">"Decoder must initialized or reset before using it"</span>)]
+    <span class="attr">#[display(fmt = <span class="string">"Failed to read checksum: {_0}"</span>)]
+    </span>FailedToReadChecksum(Error),
+    <span class="attr">#[display(fmt = <span class="string">"Decoder must initialized or reset before using it"</span>)]
     </span>NotYetInitialized,
-    <span class="attr">#[error(<span class="string">"Decoder encountered error while initializing: {0}"</span>)]
+    <span class="attr">#[display(fmt = <span class="string">"Decoder encountered error while initializing: {_0}"</span>)]
     </span>FailedToInitialize(frame::FrameHeaderError),
-    <span class="attr">#[error(<span class="string">"Decoder encountered error while draining the decodebuffer: {0}"</span>)]
-    </span>FailedToDrainDecodebuffer(<span class="attr">#[source] </span>Error),
-    <span class="attr">#[error(<span class="string">"Target must have at least as many bytes as the contentsize of the frame reports"</span>)]
+    <span class="attr">#[display(fmt = <span class="string">"Decoder encountered error while draining the decodebuffer: {_0}"</span>)]
+    </span>FailedToDrainDecodebuffer(Error),
+    <span class="attr">#[display(
+        fmt = <span class="string">"Target must have at least as many bytes as the contentsize of the frame reports"
+    </span>)]
     </span>TargetTooSmall,
-    <span class="attr">#[error(<span class="string">"Frame header specified dictionary id 0x{dict_id:X} that wasnt provided by add_dict() or reset_with_dict()"</span>)]
+    <span class="attr">#[display(
+        fmt = <span class="string">"Frame header specified dictionary id 0x{dict_id:X} that wasnt provided by add_dict() or reset_with_dict()"
+    </span>)]
     </span>DictNotProvided { dict_id: u32 },
 }
 
@@ -976,7 +998,7 @@
 
             <span class="comment">//pseudo block to scope "state" so we can borrow self again after the block
             </span>{
-                <span class="kw">let </span><span class="kw-2">mut </span>state = <span class="kw">match </span><span class="kw-2">&amp;mut </span><span class="self">self</span>.state {
+                <span class="kw">let </span>state = <span class="kw">match </span><span class="kw-2">&amp;mut </span><span class="self">self</span>.state {
                     <span class="prelude-val">Some</span>(s) =&gt; s,
                     <span class="prelude-val">None </span>=&gt; <span class="macro">panic!</span>(<span class="string">"Bug in library"</span>),
                 };

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"constant":["NAME"],"mod":["input","node"]};
+window.SIDEBAR_ITEMS = {"enum":["Node2d"],"mod":["input"],"struct":["Core2d"]};

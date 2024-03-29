@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy-3e956806168b8470/b5b6ea3/crates/bevy_ui/src/render/ui_material_pipeline.rs`."><title>ui_material_pipeline.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_ui" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.0 (aedd173a2 2024-03-17)" data-channel="1.77.0" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_ui-0.13.1/src/render/ui_material_pipeline.rs`."><title>ui_material_pipeline.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_ui" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.1 (7cf61ebde 2024-03-27)" data-channel="1.77.1" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
             <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
     <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../bevy_ui/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
@@ -762,6 +762,22 @@
 <a href="#760" id="760">760</a>
 <a href="#761" id="761">761</a>
 <a href="#762" id="762">762</a>
+<a href="#763" id="763">763</a>
+<a href="#764" id="764">764</a>
+<a href="#765" id="765">765</a>
+<a href="#766" id="766">766</a>
+<a href="#767" id="767">767</a>
+<a href="#768" id="768">768</a>
+<a href="#769" id="769">769</a>
+<a href="#770" id="770">770</a>
+<a href="#771" id="771">771</a>
+<a href="#772" id="772">772</a>
+<a href="#773" id="773">773</a>
+<a href="#774" id="774">774</a>
+<a href="#775" id="775">775</a>
+<a href="#776" id="776">776</a>
+<a href="#777" id="777">777</a>
+<a href="#778" id="778">778</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{hash::Hash, marker::PhantomData, ops::Range};
 
 <span class="kw">use </span>bevy_app::{App, Plugin};
@@ -779,9 +795,10 @@
 <span class="kw">use </span>bevy_math::{Mat4, Rect, Vec2, Vec4Swizzles};
 <span class="kw">use </span>bevy_render::{
     extract_component::ExtractComponentPlugin,
+    globals::{GlobalsBuffer, GlobalsUniform},
     render_asset::RenderAssets,
     render_phase::<span class="kw-2">*</span>,
-    render_resource::<span class="kw-2">*</span>,
+    render_resource::{binding_types::uniform_buffer, <span class="kw-2">*</span>},
     renderer::{RenderDevice, RenderQueue},
     texture::{BevyDefault, FallbackImage, Image},
     view::<span class="kw-2">*</span>,
@@ -812,7 +829,7 @@
 <span class="kw">where
     </span>M::Data: PartialEq + Eq + Hash + Clone,
 {
-    <span class="kw">fn </span>build(<span class="kw-2">&amp;</span><span class="self">self</span>, app: <span class="kw-2">&amp;mut </span>bevy_app::App) {
+    <span class="kw">fn </span>build(<span class="kw-2">&amp;</span><span class="self">self</span>, app: <span class="kw-2">&amp;mut </span>App) {
         <span class="macro">load_internal_asset!</span>(
             app,
             UI_VERTEX_OUTPUT_SHADER_HANDLE,
@@ -883,6 +900,7 @@
 </span><span class="kw">pub struct </span>UiMaterialVertex {
     <span class="kw">pub </span>position: [f32; <span class="number">3</span>],
     <span class="kw">pub </span>uv: [f32; <span class="number">2</span>],
+    <span class="kw">pub </span>size: [f32; <span class="number">2</span>],
     <span class="kw">pub </span>border_widths: [f32; <span class="number">4</span>],
 }
 
@@ -918,6 +936,8 @@
                 <span class="comment">// position
                 </span>VertexFormat::Float32x3,
                 <span class="comment">// uv
+                </span>VertexFormat::Float32x2,
+                <span class="comment">// size
                 </span>VertexFormat::Float32x2,
                 <span class="comment">// border_widths
                 </span>VertexFormat::Float32x4,
@@ -987,19 +1007,17 @@
         <span class="kw">let </span>render_device = world.resource::&lt;RenderDevice&gt;();
         <span class="kw">let </span>ui_layout = M::bind_group_layout(render_device);
 
-        <span class="kw">let </span>view_layout = render_device.create_bind_group_layout(<span class="kw-2">&amp;</span>BindGroupLayoutDescriptor {
-            entries: <span class="kw-2">&amp;</span>[BindGroupLayoutEntry {
-                binding: <span class="number">0</span>,
-                visibility: ShaderStages::VERTEX | ShaderStages::FRAGMENT,
-                ty: BindingType::Buffer {
-                    ty: BufferBindingType::Uniform,
-                    has_dynamic_offset: <span class="bool-val">true</span>,
-                    min_binding_size: <span class="prelude-val">Some</span>(ViewUniform::min_size()),
-                },
-                count: <span class="prelude-val">None</span>,
-            }],
-            label: <span class="prelude-val">Some</span>(<span class="string">"ui_view_layout"</span>),
-        });
+        <span class="kw">let </span>view_layout = render_device.create_bind_group_layout(
+            <span class="string">"ui_view_layout"</span>,
+            <span class="kw-2">&amp;</span>BindGroupLayoutEntries::sequential(
+                ShaderStages::VERTEX_FRAGMENT,
+                (
+                    uniform_buffer::&lt;ViewUniform&gt;(<span class="bool-val">true</span>),
+                    uniform_buffer::&lt;GlobalsUniform&gt;(<span class="bool-val">false</span>),
+                ),
+            ),
+        );
+
         UiMaterialPipeline {
             ui_layout,
             view_layout,
@@ -1028,13 +1046,13 @@
 <span class="kw">pub struct </span>SetMatUiViewBindGroup&lt;M: UiMaterial, <span class="kw">const </span>I: usize&gt;(PhantomData&lt;M&gt;);
 <span class="kw">impl</span>&lt;P: PhaseItem, M: UiMaterial, <span class="kw">const </span>I: usize&gt; RenderCommand&lt;P&gt; <span class="kw">for </span>SetMatUiViewBindGroup&lt;M, I&gt; {
     <span class="kw">type </span>Param = SRes&lt;UiMaterialMeta&lt;M&gt;&gt;;
-    <span class="kw">type </span>ViewWorldQuery = Read&lt;ViewUniformOffset&gt;;
-    <span class="kw">type </span>ItemWorldQuery = ();
+    <span class="kw">type </span>ViewQuery = Read&lt;ViewUniformOffset&gt;;
+    <span class="kw">type </span>ItemQuery = ();
 
     <span class="kw">fn </span>render&lt;<span class="lifetime">'w</span>&gt;(
         _item: <span class="kw-2">&amp;</span>P,
         view_uniform: <span class="kw-2">&amp;</span><span class="lifetime">'w </span>ViewUniformOffset,
-        _entity: (),
+        _entity: <span class="prelude-ty">Option</span>&lt;()&gt;,
         ui_meta: SystemParamItem&lt;<span class="lifetime">'w</span>, <span class="lifetime">'_</span>, <span class="self">Self</span>::Param&gt;,
         pass: <span class="kw-2">&amp;mut </span>TrackedRenderPass&lt;<span class="lifetime">'w</span>&gt;,
     ) -&gt; RenderCommandResult {
@@ -1052,16 +1070,19 @@
     <span class="kw">for </span>SetUiMaterialBindGroup&lt;M, I&gt;
 {
     <span class="kw">type </span>Param = SRes&lt;RenderUiMaterials&lt;M&gt;&gt;;
-    <span class="kw">type </span>ViewWorldQuery = ();
-    <span class="kw">type </span>ItemWorldQuery = Read&lt;UiMaterialBatch&lt;M&gt;&gt;;
+    <span class="kw">type </span>ViewQuery = ();
+    <span class="kw">type </span>ItemQuery = Read&lt;UiMaterialBatch&lt;M&gt;&gt;;
 
     <span class="kw">fn </span>render&lt;<span class="lifetime">'w</span>&gt;(
         _item: <span class="kw-2">&amp;</span>P,
         _view: (),
-        material_handle: ROQueryItem&lt;<span class="lifetime">'_</span>, <span class="self">Self</span>::ItemWorldQuery&gt;,
+        material_handle: <span class="prelude-ty">Option</span>&lt;ROQueryItem&lt;<span class="lifetime">'_</span>, <span class="self">Self</span>::ItemQuery&gt;&gt;,
         materials: SystemParamItem&lt;<span class="lifetime">'w</span>, <span class="lifetime">'_</span>, <span class="self">Self</span>::Param&gt;,
         pass: <span class="kw-2">&amp;mut </span>TrackedRenderPass&lt;<span class="lifetime">'w</span>&gt;,
     ) -&gt; RenderCommandResult {
+        <span class="kw">let </span><span class="prelude-val">Some</span>(material_handle) = material_handle <span class="kw">else </span>{
+            <span class="kw">return </span>RenderCommandResult::Failure;
+        };
         <span class="kw">let </span><span class="prelude-val">Some</span>(material) = materials.into_inner().get(<span class="kw-2">&amp;</span>material_handle.material) <span class="kw">else </span>{
             <span class="kw">return </span>RenderCommandResult::Failure;
         };
@@ -1073,17 +1094,21 @@
 <span class="kw">pub struct </span>DrawUiMaterialNode&lt;M&gt;(PhantomData&lt;M&gt;);
 <span class="kw">impl</span>&lt;P: PhaseItem, M: UiMaterial&gt; RenderCommand&lt;P&gt; <span class="kw">for </span>DrawUiMaterialNode&lt;M&gt; {
     <span class="kw">type </span>Param = SRes&lt;UiMaterialMeta&lt;M&gt;&gt;;
-    <span class="kw">type </span>ViewWorldQuery = ();
-    <span class="kw">type </span>ItemWorldQuery = Read&lt;UiMaterialBatch&lt;M&gt;&gt;;
+    <span class="kw">type </span>ViewQuery = ();
+    <span class="kw">type </span>ItemQuery = Read&lt;UiMaterialBatch&lt;M&gt;&gt;;
 
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>render&lt;<span class="lifetime">'w</span>&gt;(
         _item: <span class="kw-2">&amp;</span>P,
         _view: (),
-        batch: <span class="kw-2">&amp;</span><span class="lifetime">'w </span>UiMaterialBatch&lt;M&gt;,
+        batch: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'w </span>UiMaterialBatch&lt;M&gt;&gt;,
         ui_meta: SystemParamItem&lt;<span class="lifetime">'w</span>, <span class="lifetime">'_</span>, <span class="self">Self</span>::Param&gt;,
         pass: <span class="kw-2">&amp;mut </span>TrackedRenderPass&lt;<span class="lifetime">'w</span>&gt;,
     ) -&gt; RenderCommandResult {
+        <span class="kw">let </span><span class="prelude-val">Some</span>(batch) = batch <span class="kw">else </span>{
+            <span class="kw">return </span>RenderCommandResult::Failure;
+        };
+
         pass.set_vertex_buffer(<span class="number">0</span>, ui_meta.into_inner().vertices.buffer().unwrap().slice(..));
         pass.draw(batch.range.clone(), <span class="number">0</span>..<span class="number">1</span>);
         RenderCommandResult::Success
@@ -1139,7 +1164,7 @@
         .unwrap_or(Vec2::ZERO)
         <span class="comment">// The logical window resolution returned by `Window` only takes into account the window scale factor and not `UiScale`,
         // so we have to divide by `UiScale` to get the size of the UI viewport.
-        </span>/ ui_scale.<span class="number">0 </span><span class="kw">as </span>f32;
+        </span>/ ui_scale.<span class="number">0</span>;
     <span class="kw">for </span>(stack_index, entity) <span class="kw">in </span>ui_stack.uinodes.iter().enumerate() {
         <span class="kw">if let </span><span class="prelude-val">Ok</span>((entity, uinode, style, transform, handle, view_visibility, clip)) =
             uinode_query.get(<span class="kw-2">*</span>entity)
@@ -1200,18 +1225,22 @@
     <span class="kw-2">mut </span>ui_meta: ResMut&lt;UiMaterialMeta&lt;M&gt;&gt;,
     <span class="kw-2">mut </span>extracted_uinodes: ResMut&lt;ExtractedUiMaterialNodes&lt;M&gt;&gt;,
     view_uniforms: Res&lt;ViewUniforms&gt;,
+    globals_buffer: Res&lt;GlobalsBuffer&gt;,
     ui_material_pipeline: Res&lt;UiMaterialPipeline&lt;M&gt;&gt;,
     <span class="kw-2">mut </span>phases: Query&lt;<span class="kw-2">&amp;mut </span>RenderPhase&lt;TransparentUi&gt;&gt;,
     <span class="kw-2">mut </span>previous_len: Local&lt;usize&gt;,
 ) {
-    <span class="kw">if let </span><span class="prelude-val">Some</span>(view_binding) = view_uniforms.uniforms.binding() {
+    <span class="kw">if let </span>(<span class="prelude-val">Some</span>(view_binding), <span class="prelude-val">Some</span>(globals_binding)) = (
+        view_uniforms.uniforms.binding(),
+        globals_buffer.buffer.binding(),
+    ) {
         <span class="kw">let </span><span class="kw-2">mut </span>batches: Vec&lt;(Entity, UiMaterialBatch&lt;M&gt;)&gt; = Vec::with_capacity(<span class="kw-2">*</span>previous_len);
 
         ui_meta.vertices.clear();
         ui_meta.view_bind_group = <span class="prelude-val">Some</span>(render_device.create_bind_group(
             <span class="string">"ui_material_view_bind_group"</span>,
             <span class="kw-2">&amp;</span>ui_material_pipeline.view_layout,
-            <span class="kw-2">&amp;</span>BindGroupEntries::single(view_binding),
+            <span class="kw-2">&amp;</span>BindGroupEntries::sequential((view_binding, globals_binding)),
         ));
         <span class="kw">let </span><span class="kw-2">mut </span>index = <span class="number">0</span>;
 
@@ -1319,6 +1348,7 @@
                         ui_meta.vertices.push(UiMaterialVertex {
                             position: positions_clipped[i].into(),
                             uv: uvs[i].into(),
+                            size: extracted_uinode.rect.size().into(),
                             border_widths: extracted_uinode.border,
                         });
                     }
@@ -1376,7 +1406,8 @@
     <span class="kw">let </span><span class="kw-2">mut </span>changed_assets = HashSet::default();
     <span class="kw">let </span><span class="kw-2">mut </span>removed = Vec::new();
     <span class="kw">for </span>event <span class="kw">in </span>events.read() {
-        <span class="kw">match </span>event {
+        <span class="attr">#[allow(clippy::match_same_arms)]
+        </span><span class="kw">match </span>event {
             AssetEvent::Added { id } | AssetEvent::Modified { id } =&gt; {
                 changed_assets.insert(<span class="kw-2">*</span>id);
             }
@@ -1384,8 +1415,9 @@
                 changed_assets.remove(id);
                 removed.push(<span class="kw-2">*</span>id);
             }
+            AssetEvent::Unused { .. } =&gt; {}
             AssetEvent::LoadedWithDependencies { .. } =&gt; {
-                <span class="comment">// not implemented
+                <span class="comment">// TODO: handle this
             </span>}
         }
     }

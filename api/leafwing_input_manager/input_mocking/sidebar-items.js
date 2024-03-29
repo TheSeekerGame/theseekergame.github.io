@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"trait":["MockInput"]};
+window.SIDEBAR_ITEMS = {"trait":["MockInput","MockUIInteraction","QueryInput"]};

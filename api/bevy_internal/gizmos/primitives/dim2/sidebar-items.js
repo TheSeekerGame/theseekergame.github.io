@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["Line2dBuilder","Segment2dBuilder"],"trait":["GizmoPrimitive2d"]};

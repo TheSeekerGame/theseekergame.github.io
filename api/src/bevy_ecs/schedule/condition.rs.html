@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy-3e956806168b8470/b5b6ea3/crates/bevy_ecs/src/schedule/condition.rs`."><title>condition.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_ecs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.0 (aedd173a2 2024-03-17)" data-channel="1.77.0" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_ecs-0.13.1/src/schedule/condition.rs`."><title>condition.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_ecs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.1 (7cf61ebde 2024-03-27)" data-channel="1.77.1" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
             <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
     <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../bevy_ecs/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
@@ -1200,6 +1200,37 @@
 <a href="#1198" id="1198">1198</a>
 <a href="#1199" id="1199">1199</a>
 <a href="#1200" id="1200">1200</a>
+<a href="#1201" id="1201">1201</a>
+<a href="#1202" id="1202">1202</a>
+<a href="#1203" id="1203">1203</a>
+<a href="#1204" id="1204">1204</a>
+<a href="#1205" id="1205">1205</a>
+<a href="#1206" id="1206">1206</a>
+<a href="#1207" id="1207">1207</a>
+<a href="#1208" id="1208">1208</a>
+<a href="#1209" id="1209">1209</a>
+<a href="#1210" id="1210">1210</a>
+<a href="#1211" id="1211">1211</a>
+<a href="#1212" id="1212">1212</a>
+<a href="#1213" id="1213">1213</a>
+<a href="#1214" id="1214">1214</a>
+<a href="#1215" id="1215">1215</a>
+<a href="#1216" id="1216">1216</a>
+<a href="#1217" id="1217">1217</a>
+<a href="#1218" id="1218">1218</a>
+<a href="#1219" id="1219">1219</a>
+<a href="#1220" id="1220">1220</a>
+<a href="#1221" id="1221">1221</a>
+<a href="#1222" id="1222">1222</a>
+<a href="#1223" id="1223">1223</a>
+<a href="#1224" id="1224">1224</a>
+<a href="#1225" id="1225">1225</a>
+<a href="#1226" id="1226">1226</a>
+<a href="#1227" id="1227">1227</a>
+<a href="#1228" id="1228">1228</a>
+<a href="#1229" id="1229">1229</a>
+<a href="#1230" id="1230">1230</a>
+<a href="#1231" id="1231">1231</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::borrow::Cow;
 <span class="kw">use </span>std::ops::Not;
 
@@ -1212,8 +1243,24 @@
 
 <span class="doccomment">/// A system that determines if one or more scheduled systems should run.
 ///
-/// Implemented for functions and closures that convert into [`System&lt;Out=bool&gt;`](crate::system::System)
+/// Implemented for functions and closures that convert into [`System&lt;Out=bool&gt;`](System)
 /// with [read-only](crate::system::ReadOnlySystemParam) parameters.
+///
+/// # Marker type parameter
+///
+/// `Condition` trait has `Marker` type parameter, which has no special meaning,
+/// but exists to work around the limitation of Rust's trait system.
+///
+/// Type parameter in return type can be set to `&lt;()&gt;` by calling [`IntoSystem::into_system`],
+/// but usually have to be specified when passing a condition to a function.
+///
+/// ```
+/// # use bevy_ecs::schedule::Condition;
+/// # use bevy_ecs::system::IntoSystem;
+/// fn not_condition&lt;Marker&gt;(a: impl Condition&lt;Marker&gt;) -&gt; impl Condition&lt;()&gt; {
+///    IntoSystem::into_system(a.map(|x| !x))
+/// }
+/// ```
 ///
 /// # Examples
 /// A condition that returns true every other time it's called.
@@ -1293,7 +1340,7 @@
     /// # fn my_system() {}
     /// app.add_systems(
     ///     // `resource_equals` will only get run if the resource `R` exists.
-    ///     my_system.run_if(resource_exists::&lt;R&gt;().and_then(resource_equals(R(0)))),
+    ///     my_system.run_if(resource_exists::&lt;R&gt;.and_then(resource_equals(R(0)))),
     /// );
     /// # app.run(&amp;mut world);
     /// ```
@@ -1331,7 +1378,7 @@
     /// # fn my_system(mut c: ResMut&lt;C&gt;) { c.0 = true; }
     /// app.add_systems(
     ///     // Only run the system if either `A` or `B` exist.
-    ///     my_system.run_if(resource_exists::&lt;A&gt;().or_else(resource_exists::&lt;B&gt;())),
+    ///     my_system.run_if(resource_exists::&lt;A&gt;.or_else(resource_exists::&lt;B&gt;)),
     /// );
     /// #
     /// # world.insert_resource(C(false));
@@ -1380,6 +1427,8 @@
 
 <span class="doccomment">/// A collection of [run conditions](Condition) that may be useful in any bevy app.
 </span><span class="kw">pub mod </span>common_conditions {
+    <span class="kw">use </span>bevy_utils::warn_once;
+
     <span class="kw">use </span><span class="kw">super</span>::NotSystem;
     <span class="kw">use crate</span>::{
         change_detection::DetectChanges,
@@ -1431,7 +1480,7 @@
         }
     }
 
-    <span class="doccomment">/// Generates a [`Condition`](super::Condition)-satisfying closure that returns `true`
+    <span class="doccomment">/// A [`Condition`](super::Condition)-satisfying system that returns `true`
     /// if the resource exists.
     ///
     /// # Example
@@ -1444,7 +1493,7 @@
     /// # let mut world = World::new();
     /// app.add_systems(
     ///     // `resource_exists` will only return true if the given resource exists in the world
-    ///     my_system.run_if(resource_exists::&lt;Counter&gt;()),
+    ///     my_system.run_if(resource_exists::&lt;Counter&gt;),
     /// );
     ///
     /// fn my_system(mut counter: ResMut&lt;Counter&gt;) {
@@ -1459,11 +1508,11 @@
     /// app.run(&amp;mut world);
     /// assert_eq!(world.resource::&lt;Counter&gt;().0, 1);
     /// ```
-    </span><span class="kw">pub fn </span>resource_exists&lt;T&gt;() -&gt; <span class="kw">impl </span>FnMut(<span class="prelude-ty">Option</span>&lt;Res&lt;T&gt;&gt;) -&gt; bool + Clone
+    </span><span class="kw">pub fn </span>resource_exists&lt;T&gt;(res: <span class="prelude-ty">Option</span>&lt;Res&lt;T&gt;&gt;) -&gt; bool
     <span class="kw">where
         </span>T: Resource,
     {
-        <span class="kw">move </span>|res: <span class="prelude-ty">Option</span>&lt;Res&lt;T&gt;&gt;| res.is_some()
+        res.is_some()
     }
 
     <span class="doccomment">/// Generates a [`Condition`](super::Condition)-satisfying closure that returns `true`
@@ -1551,7 +1600,7 @@
         }
     }
 
-    <span class="doccomment">/// Generates a [`Condition`](super::Condition)-satisfying closure that returns `true`
+    <span class="doccomment">/// A [`Condition`](super::Condition)-satisfying system that returns `true`
     /// if the resource of the given type has been added since the condition was last checked.
     ///
     /// # Example
@@ -1565,7 +1614,7 @@
     /// app.add_systems(
     ///     // `resource_added` will only return true if the
     ///     // given resource was just added
-    ///     my_system.run_if(resource_added::&lt;Counter&gt;()),
+    ///     my_system.run_if(resource_added::&lt;Counter&gt;),
     /// );
     ///
     /// fn my_system(mut counter: ResMut&lt;Counter&gt;) {
@@ -1582,17 +1631,17 @@
     /// app.run(&amp;mut world);
     /// assert_eq!(world.resource::&lt;Counter&gt;().0, 1);
     /// ```
-    </span><span class="kw">pub fn </span>resource_added&lt;T&gt;() -&gt; <span class="kw">impl </span>FnMut(<span class="prelude-ty">Option</span>&lt;Res&lt;T&gt;&gt;) -&gt; bool + Clone
+    </span><span class="kw">pub fn </span>resource_added&lt;T&gt;(res: <span class="prelude-ty">Option</span>&lt;Res&lt;T&gt;&gt;) -&gt; bool
     <span class="kw">where
         </span>T: Resource,
     {
-        <span class="kw">move </span>|res: <span class="prelude-ty">Option</span>&lt;Res&lt;T&gt;&gt;| <span class="kw">match </span>res {
+        <span class="kw">match </span>res {
             <span class="prelude-val">Some</span>(res) =&gt; res.is_added(),
             <span class="prelude-val">None </span>=&gt; <span class="bool-val">false</span>,
         }
     }
 
-    <span class="doccomment">/// Generates a [`Condition`](super::Condition)-satisfying closure that returns `true`
+    <span class="doccomment">/// A [`Condition`](super::Condition)-satisfying system that returns `true`
     /// if the resource of the given type has had its value changed since the condition
     /// was last checked.
     ///
@@ -1617,11 +1666,11 @@
     ///     // `resource_changed` will only return true if the
     ///     // given resource was just changed (or added)
     ///     my_system.run_if(
-    ///         resource_changed::&lt;Counter&gt;()
+    ///         resource_changed::&lt;Counter&gt;
     ///         // By default detecting changes will also trigger if the resource was
     ///         // just added, this won't work with my example so I will add a second
     ///         // condition to make sure the resource wasn't just added
-    ///         .and_then(not(resource_added::&lt;Counter&gt;()))
+    ///         .and_then(not(resource_added::&lt;Counter&gt;))
     ///     ),
     /// );
     ///
@@ -1639,14 +1688,14 @@
     /// app.run(&amp;mut world);
     /// assert_eq!(world.resource::&lt;Counter&gt;().0, 51);
     /// ```
-    </span><span class="kw">pub fn </span>resource_changed&lt;T&gt;() -&gt; <span class="kw">impl </span>FnMut(Res&lt;T&gt;) -&gt; bool + Clone
+    </span><span class="kw">pub fn </span>resource_changed&lt;T&gt;(res: Res&lt;T&gt;) -&gt; bool
     <span class="kw">where
         </span>T: Resource,
     {
-        <span class="kw">move </span>|res: Res&lt;T&gt;| res.is_changed()
+        res.is_changed()
     }
 
-    <span class="doccomment">/// Generates a [`Condition`](super::Condition)-satisfying closure that returns `true`
+    <span class="doccomment">/// A [`Condition`](super::Condition)-satisfying system that returns `true`
     /// if the resource of the given type has had its value changed since the condition
     /// was last checked.
     ///
@@ -1670,11 +1719,11 @@
     ///     // `resource_exists_and_changed` will only return true if the
     ///     // given resource exists and was just changed (or added)
     ///     my_system.run_if(
-    ///         resource_exists_and_changed::&lt;Counter&gt;()
+    ///         resource_exists_and_changed::&lt;Counter&gt;
     ///         // By default detecting changes will also trigger if the resource was
     ///         // just added, this won't work with my example so I will add a second
     ///         // condition to make sure the resource wasn't just added
-    ///         .and_then(not(resource_added::&lt;Counter&gt;()))
+    ///         .and_then(not(resource_added::&lt;Counter&gt;))
     ///     ),
     /// );
     ///
@@ -1696,11 +1745,11 @@
     /// app.run(&amp;mut world);
     /// assert_eq!(world.resource::&lt;Counter&gt;().0, 51);
     /// ```
-    </span><span class="kw">pub fn </span>resource_exists_and_changed&lt;T&gt;() -&gt; <span class="kw">impl </span>FnMut(<span class="prelude-ty">Option</span>&lt;Res&lt;T&gt;&gt;) -&gt; bool + Clone
+    </span><span class="kw">pub fn </span>resource_exists_and_changed&lt;T&gt;(res: <span class="prelude-ty">Option</span>&lt;Res&lt;T&gt;&gt;) -&gt; bool
     <span class="kw">where
         </span>T: Resource,
     {
-        <span class="kw">move </span>|res: <span class="prelude-ty">Option</span>&lt;Res&lt;T&gt;&gt;| <span class="kw">match </span>res {
+        <span class="kw">match </span>res {
             <span class="prelude-val">Some</span>(res) =&gt; res.is_changed(),
             <span class="prelude-val">None </span>=&gt; <span class="bool-val">false</span>,
         }
@@ -1736,7 +1785,7 @@
     ///         // By default detecting changes will also trigger if the resource was
     ///         // just added, this won't work with my example so I will add a second
     ///         // condition to make sure the resource wasn't just added
-    ///         .and_then(not(resource_added::&lt;Counter&gt;()))
+    ///         .and_then(not(resource_added::&lt;Counter&gt;))
     ///     ),
     /// );
     ///
@@ -1841,7 +1890,7 @@
         }
     }
 
-    <span class="doccomment">/// Generates a [`Condition`](super::Condition)-satisfying closure that returns `true`
+    <span class="doccomment">/// A [`Condition`](super::Condition)-satisfying system that returns `true`
     /// if the state machine exists.
     ///
     /// # Example
@@ -1863,7 +1912,7 @@
     /// app.add_systems(
     ///     // `state_exists` will only return true if the
     ///     // given state exists
-    ///     my_system.run_if(state_exists::&lt;GameState&gt;()),
+    ///     my_system.run_if(state_exists::&lt;GameState&gt;),
     /// );
     ///
     /// fn my_system(mut counter: ResMut&lt;Counter&gt;) {
@@ -1880,16 +1929,14 @@
     /// app.run(&amp;mut world);
     /// assert_eq!(world.resource::&lt;Counter&gt;().0, 1);
     /// ```
-    </span><span class="kw">pub fn </span>state_exists&lt;S: States&gt;() -&gt; <span class="kw">impl </span>FnMut(<span class="prelude-ty">Option</span>&lt;Res&lt;State&lt;S&gt;&gt;&gt;) -&gt; bool + Clone {
-        <span class="kw">move </span>|current_state: <span class="prelude-ty">Option</span>&lt;Res&lt;State&lt;S&gt;&gt;&gt;| current_state.is_some()
+    </span><span class="kw">pub fn </span>state_exists&lt;S: States&gt;(current_state: <span class="prelude-ty">Option</span>&lt;Res&lt;State&lt;S&gt;&gt;&gt;) -&gt; bool {
+        current_state.is_some()
     }
 
     <span class="doccomment">/// Generates a [`Condition`](super::Condition)-satisfying closure that returns `true`
     /// if the state machine is currently in `state`.
     ///
-    /// # Panics
-    ///
-    /// The condition will panic if the resource does not exist.
+    /// Will return `false` if the state does not exist or if not in `state`.
     ///
     /// # Example
     ///
@@ -1934,11 +1981,27 @@
     /// app.run(&amp;mut world);
     /// assert_eq!(world.resource::&lt;Counter&gt;().0, 0);
     /// ```
-    </span><span class="kw">pub fn </span>in_state&lt;S: States&gt;(state: S) -&gt; <span class="kw">impl </span>FnMut(Res&lt;State&lt;S&gt;&gt;) -&gt; bool + Clone {
-        <span class="kw">move </span>|current_state: Res&lt;State&lt;S&gt;&gt;| <span class="kw-2">*</span>current_state == state
+    </span><span class="kw">pub fn </span>in_state&lt;S: States&gt;(state: S) -&gt; <span class="kw">impl </span>FnMut(<span class="prelude-ty">Option</span>&lt;Res&lt;State&lt;S&gt;&gt;&gt;) -&gt; bool + Clone {
+        <span class="kw">move </span>|current_state: <span class="prelude-ty">Option</span>&lt;Res&lt;State&lt;S&gt;&gt;&gt;| <span class="kw">match </span>current_state {
+            <span class="prelude-val">Some</span>(current_state) =&gt; <span class="kw-2">*</span>current_state == state,
+            <span class="prelude-val">None </span>=&gt; {
+                <span class="macro">warn_once!</span>(<span class="string">"No state matching the type for {} exists - did you forget to `add_state` when initializing the app?"</span>, {
+                        <span class="kw">let </span>debug_state = <span class="macro">format!</span>(<span class="string">"{state:?}"</span>);
+                        <span class="kw">let </span>result = debug_state
+                            .split(<span class="string">"::"</span>)
+                            .next()
+                            .unwrap_or(<span class="string">"Unknown State Type"</span>);
+                        result.to_string()
+                    });
+
+                <span class="bool-val">false
+            </span>}
+        }
     }
 
-    <span class="doccomment">/// Generates a [`Condition`](super::Condition)-satisfying closure that returns `true`
+    <span class="doccomment">/// Identical to [`in_state`] - use that instead.
+    ///
+    /// Generates a [`Condition`](super::Condition)-satisfying closure that returns `true`
     /// if the state machine exists and is currently in `state`.
     ///
     /// The condition will return `false` if the state does not exist.
@@ -1990,24 +2053,20 @@
     /// app.run(&amp;mut world);
     /// assert_eq!(world.resource::&lt;Counter&gt;().0, 0);
     /// ```
+    </span><span class="attr">#[deprecated(since = <span class="string">"0.13.0"</span>, note = <span class="string">"use `in_state` instead."</span>)]
     </span><span class="kw">pub fn </span>state_exists_and_equals&lt;S: States&gt;(
         state: S,
     ) -&gt; <span class="kw">impl </span>FnMut(<span class="prelude-ty">Option</span>&lt;Res&lt;State&lt;S&gt;&gt;&gt;) -&gt; bool + Clone {
-        <span class="kw">move </span>|current_state: <span class="prelude-ty">Option</span>&lt;Res&lt;State&lt;S&gt;&gt;&gt;| <span class="kw">match </span>current_state {
-            <span class="prelude-val">Some</span>(current_state) =&gt; <span class="kw-2">*</span>current_state == state,
-            <span class="prelude-val">None </span>=&gt; <span class="bool-val">false</span>,
-        }
+        in_state(state)
     }
 
-    <span class="doccomment">/// Generates a [`Condition`](super::Condition)-satisfying closure that returns `true`
+    <span class="doccomment">/// A [`Condition`](super::Condition)-satisfying system that returns `true`
     /// if the state machine changed state.
     ///
     /// To do things on transitions to/from specific states, use their respective OnEnter/OnExit
     /// schedules. Use this run condition if you want to detect any change, regardless of the value.
     ///
-    /// # Panics
-    ///
-    /// The condition will panic if the resource does not exist.
+    /// Returns false if the state does not exist or the state has not changed.
     ///
     /// # Example
     ///
@@ -2031,7 +2090,7 @@
     ///     // `state_changed` will only return true if the
     ///     // given states value has just been updated or
     ///     // the state has just been added
-    ///     my_system.run_if(state_changed::&lt;GameState&gt;()),
+    ///     my_system.run_if(state_changed::&lt;GameState&gt;),
     /// );
     ///
     /// fn my_system(mut counter: ResMut&lt;Counter&gt;) {
@@ -2052,8 +2111,11 @@
     /// app.run(&amp;mut world);
     /// assert_eq!(world.resource::&lt;Counter&gt;().0, 2);
     /// ```
-    </span><span class="kw">pub fn </span>state_changed&lt;S: States&gt;() -&gt; <span class="kw">impl </span>FnMut(Res&lt;State&lt;S&gt;&gt;) -&gt; bool + Clone {
-        <span class="kw">move </span>|current_state: Res&lt;State&lt;S&gt;&gt;| current_state.is_changed()
+    </span><span class="kw">pub fn </span>state_changed&lt;S: States&gt;(current_state: <span class="prelude-ty">Option</span>&lt;Res&lt;State&lt;S&gt;&gt;&gt;) -&gt; bool {
+        <span class="kw">let </span><span class="prelude-val">Some</span>(current_state) = current_state <span class="kw">else </span>{
+            <span class="kw">return </span><span class="bool-val">false</span>;
+        };
+        current_state.is_changed()
     }
 
     <span class="doccomment">/// Generates a [`Condition`](super::Condition)-satisfying closure that returns `true`
@@ -2100,7 +2162,7 @@
         </span><span class="kw">move </span>|<span class="kw-2">mut </span>reader: EventReader&lt;T&gt;| reader.read().count() &gt; <span class="number">0
     </span>}
 
-    <span class="doccomment">/// Generates a [`Condition`](super::Condition)-satisfying closure that returns `true`
+    <span class="doccomment">/// A [`Condition`](super::Condition)-satisfying system that returns `true`
     /// if there are any entities with the given component type.
     ///
     /// # Example
@@ -2113,7 +2175,7 @@
     /// # let mut world = World::new();
     /// # world.init_resource::&lt;Counter&gt;();
     /// app.add_systems(
-    ///     my_system.run_if(any_with_component::&lt;MyComponent&gt;()),
+    ///     my_system.run_if(any_with_component::&lt;MyComponent&gt;),
     /// );
     ///
     /// #[derive(Component)]
@@ -2133,8 +2195,8 @@
     /// app.run(&amp;mut world);
     /// assert_eq!(world.resource::&lt;Counter&gt;().0, 1);
     /// ```
-    </span><span class="kw">pub fn </span>any_with_component&lt;T: Component&gt;() -&gt; <span class="kw">impl </span>FnMut(Query&lt;(), With&lt;T&gt;&gt;) -&gt; bool + Clone {
-        <span class="kw">move </span>|query: Query&lt;(), With&lt;T&gt;&gt;| !query.is_empty()
+    </span><span class="kw">pub fn </span>any_with_component&lt;T: Component&gt;(query: Query&lt;(), With&lt;T&gt;&gt;) -&gt; bool {
+        !query.is_empty()
     }
 
     <span class="doccomment">/// Generates a [`Condition`](super::Condition)-satisfying closure that returns `true`
@@ -2385,17 +2447,17 @@
         Schedule::default().add_systems(
             (test_system, test_system)
                 .distributive_run_if(run_once())
-                .distributive_run_if(resource_exists::&lt;State&lt;TestState&gt;&gt;())
-                .distributive_run_if(resource_added::&lt;State&lt;TestState&gt;&gt;())
-                .distributive_run_if(resource_changed::&lt;State&lt;TestState&gt;&gt;())
-                .distributive_run_if(resource_exists_and_changed::&lt;State&lt;TestState&gt;&gt;())
+                .distributive_run_if(resource_exists::&lt;State&lt;TestState&gt;&gt;)
+                .distributive_run_if(resource_added::&lt;State&lt;TestState&gt;&gt;)
+                .distributive_run_if(resource_changed::&lt;State&lt;TestState&gt;&gt;)
+                .distributive_run_if(resource_exists_and_changed::&lt;State&lt;TestState&gt;&gt;)
                 .distributive_run_if(resource_changed_or_removed::&lt;State&lt;TestState&gt;&gt;())
                 .distributive_run_if(resource_removed::&lt;State&lt;TestState&gt;&gt;())
-                .distributive_run_if(state_exists::&lt;TestState&gt;())
+                .distributive_run_if(state_exists::&lt;TestState&gt;)
                 .distributive_run_if(in_state(TestState::A).or_else(in_state(TestState::B)))
-                .distributive_run_if(state_changed::&lt;TestState&gt;())
+                .distributive_run_if(state_changed::&lt;TestState&gt;)
                 .distributive_run_if(on_event::&lt;TestEvent&gt;())
-                .distributive_run_if(any_with_component::&lt;TestComponent&gt;())
+                .distributive_run_if(any_with_component::&lt;TestComponent&gt;)
                 .distributive_run_if(not(run_once())),
         );
     }

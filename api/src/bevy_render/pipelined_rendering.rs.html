@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy-3e956806168b8470/b5b6ea3/crates/bevy_render/src/pipelined_rendering.rs`."><title>pipelined_rendering.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bevy_render" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.0 (aedd173a2 2024-03-17)" data-channel="1.77.0" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_render-0.13.1/src/pipelined_rendering.rs`."><title>pipelined_rendering.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bevy_render" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.1 (7cf61ebde 2024-03-27)" data-channel="1.77.1" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
             <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
     <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../bevy_render/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
@@ -156,6 +156,45 @@
 <a href="#154" id="154">154</a>
 <a href="#155" id="155">155</a>
 <a href="#156" id="156">156</a>
+<a href="#157" id="157">157</a>
+<a href="#158" id="158">158</a>
+<a href="#159" id="159">159</a>
+<a href="#160" id="160">160</a>
+<a href="#161" id="161">161</a>
+<a href="#162" id="162">162</a>
+<a href="#163" id="163">163</a>
+<a href="#164" id="164">164</a>
+<a href="#165" id="165">165</a>
+<a href="#166" id="166">166</a>
+<a href="#167" id="167">167</a>
+<a href="#168" id="168">168</a>
+<a href="#169" id="169">169</a>
+<a href="#170" id="170">170</a>
+<a href="#171" id="171">171</a>
+<a href="#172" id="172">172</a>
+<a href="#173" id="173">173</a>
+<a href="#174" id="174">174</a>
+<a href="#175" id="175">175</a>
+<a href="#176" id="176">176</a>
+<a href="#177" id="177">177</a>
+<a href="#178" id="178">178</a>
+<a href="#179" id="179">179</a>
+<a href="#180" id="180">180</a>
+<a href="#181" id="181">181</a>
+<a href="#182" id="182">182</a>
+<a href="#183" id="183">183</a>
+<a href="#184" id="184">184</a>
+<a href="#185" id="185">185</a>
+<a href="#186" id="186">186</a>
+<a href="#187" id="187">187</a>
+<a href="#188" id="188">188</a>
+<a href="#189" id="189">189</a>
+<a href="#190" id="190">190</a>
+<a href="#191" id="191">191</a>
+<a href="#192" id="192">192</a>
+<a href="#193" id="193">193</a>
+<a href="#194" id="194">194</a>
+<a href="#195" id="195">195</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>async_channel::{Receiver, Sender};
 
 <span class="kw">use </span>bevy_app::{App, AppLabel, Main, Plugin, SubApp};
@@ -175,13 +214,52 @@
 </span><span class="attr">#[derive(Debug, Clone, Copy, Hash, PartialEq, Eq, AppLabel)]
 </span><span class="kw">pub struct </span>RenderExtractApp;
 
-<span class="doccomment">/// Channel to send the render app from the main thread to the rendering thread
+<span class="doccomment">/// Channels used by the main app to send and receive the render app.
 </span><span class="attr">#[derive(Resource)]
-</span><span class="kw">pub struct </span>MainToRenderAppSender(<span class="kw">pub </span>Sender&lt;SubApp&gt;);
+</span><span class="kw">pub struct </span>RenderAppChannels {
+    app_to_render_sender: Sender&lt;SubApp&gt;,
+    render_to_app_receiver: Receiver&lt;SubApp&gt;,
+    render_app_in_render_thread: bool,
+}
 
-<span class="doccomment">/// Channel to send the render app from the render thread to the main thread
-</span><span class="attr">#[derive(Resource)]
-</span><span class="kw">pub struct </span>RenderToMainAppReceiver(<span class="kw">pub </span>Receiver&lt;SubApp&gt;);
+<span class="kw">impl </span>RenderAppChannels {
+    <span class="doccomment">/// Create a `RenderAppChannels` from a [`async_channel::Receiver`] and [`async_channel::Sender`]
+    </span><span class="kw">pub fn </span>new(
+        app_to_render_sender: Sender&lt;SubApp&gt;,
+        render_to_app_receiver: Receiver&lt;SubApp&gt;,
+    ) -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{
+            app_to_render_sender,
+            render_to_app_receiver,
+            render_app_in_render_thread: <span class="bool-val">false</span>,
+        }
+    }
+
+    <span class="doccomment">/// Send the `render_app` to the rendering thread.
+    </span><span class="kw">pub fn </span>send_blocking(<span class="kw-2">&amp;mut </span><span class="self">self</span>, render_app: SubApp) {
+        <span class="self">self</span>.app_to_render_sender.send_blocking(render_app).unwrap();
+        <span class="self">self</span>.render_app_in_render_thread = <span class="bool-val">true</span>;
+    }
+
+    <span class="doccomment">/// Receive the `render_app` from the rendering thread.
+    </span><span class="kw">pub async fn </span>recv(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; SubApp {
+        <span class="kw">let </span>render_app = <span class="self">self</span>.render_to_app_receiver.recv().<span class="kw">await</span>.unwrap();
+        <span class="self">self</span>.render_app_in_render_thread = <span class="bool-val">false</span>;
+        render_app
+    }
+}
+
+<span class="kw">impl </span>Drop <span class="kw">for </span>RenderAppChannels {
+    <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+        <span class="kw">if </span><span class="self">self</span>.render_app_in_render_thread {
+            <span class="comment">// Any non-send data in the render world was initialized on the main thread.
+            // So on dropping the main world and ending the app, we block and wait for
+            // the render world to return to drop it. Which allows the non-send data
+            // drop methods to run on the correct thread.
+            </span><span class="self">self</span>.render_to_app_receiver.recv_blocking().ok();
+        }
+    }
+}
 
 <span class="doccomment">/// The [`PipelinedRenderingPlugin`] can be added to your application to enable pipelined rendering.
 /// This moves rendering into a different thread, so that the Nth frame's rendering can
@@ -195,7 +273,7 @@
 /// |--------------------|--------------------|--------------------|--------------------|
 /// ```
 ///
-/// The plugin is dependent on the [`crate::RenderApp`] added by [`crate::RenderPlugin`] and so must
+/// The plugin is dependent on the [`RenderApp`] added by [`crate::RenderPlugin`] and so must
 /// be added after that plugin. If it is not added after, the plugin will do nothing.
 ///
 /// A single frame of execution looks something like below    
@@ -254,8 +332,10 @@
 
         render_to_app_sender.send_blocking(render_app).unwrap();
 
-        app.insert_resource(MainToRenderAppSender(app_to_render_sender));
-        app.insert_resource(RenderToMainAppReceiver(render_to_app_receiver));
+        app.insert_resource(RenderAppChannels::new(
+            app_to_render_sender,
+            render_to_app_receiver,
+        ));
 
         std::thread::spawn(<span class="kw">move </span>|| {
             <span class="attr">#[cfg(feature = <span class="string">"trace"</span>)]
@@ -294,22 +374,20 @@
 // runs extract, and then sends the rendering world back to the render thread.
 </span><span class="kw">fn </span>update_rendering(app_world: <span class="kw-2">&amp;mut </span>World, _sub_app: <span class="kw-2">&amp;mut </span>App) {
     app_world.resource_scope(|world, main_thread_executor: Mut&lt;MainThreadExecutor&gt;| {
-        <span class="comment">// we use a scope here to run any main thread tasks that the render world still needs to run
-        // while we wait for the render world to be received.
-        </span><span class="kw">let </span><span class="kw-2">mut </span>render_app = ComputeTaskPool::get()
-            .scope_with_executor(<span class="bool-val">true</span>, <span class="prelude-val">Some</span>(<span class="kw-2">&amp;*</span>main_thread_executor.<span class="number">0</span>), |s| {
-                s.spawn(<span class="kw">async </span>{
-                    <span class="kw">let </span>receiver = world.get_resource::&lt;RenderToMainAppReceiver&gt;().unwrap();
-                    receiver.<span class="number">0</span>.recv().<span class="kw">await</span>.unwrap()
-                });
-            })
-            .pop()
-            .unwrap();
+        world.resource_scope(|world, <span class="kw-2">mut </span>render_channels: Mut&lt;RenderAppChannels&gt;| {
+            <span class="comment">// we use a scope here to run any main thread tasks that the render world still needs to run
+            // while we wait for the render world to be received.
+            </span><span class="kw">let </span><span class="kw-2">mut </span>render_app = ComputeTaskPool::get()
+                .scope_with_executor(<span class="bool-val">true</span>, <span class="prelude-val">Some</span>(<span class="kw-2">&amp;*</span>main_thread_executor.<span class="number">0</span>), |s| {
+                    s.spawn(<span class="kw">async </span>{ render_channels.recv().<span class="kw">await </span>});
+                })
+                .pop()
+                .unwrap();
 
-        render_app.extract(world);
+            render_app.extract(world);
 
-        <span class="kw">let </span>sender = world.resource::&lt;MainToRenderAppSender&gt;();
-        sender.<span class="number">0</span>.send_blocking(render_app).unwrap();
+            render_channels.send_blocking(render_app);
+        });
     });
 }
 </code></pre></div></section></main></body></html>

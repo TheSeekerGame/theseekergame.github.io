@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy-3e956806168b8470/b5b6ea3/crates/bevy_ui/src/render/render_pass.rs`."><title>render_pass.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_ui" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.0 (aedd173a2 2024-03-17)" data-channel="1.77.0" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_ui-0.13.1/src/render/render_pass.rs`."><title>render_pass.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_ui" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.1 (7cf61ebde 2024-03-27)" data-channel="1.77.1" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
             <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
     <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../bevy_ui/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
@@ -215,18 +215,25 @@
 <a href="#213" id="213">213</a>
 <a href="#214" id="214">214</a>
 <a href="#215" id="215">215</a>
+<a href="#216" id="216">216</a>
+<a href="#217" id="217">217</a>
+<a href="#218" id="218">218</a>
+<a href="#219" id="219">219</a>
+<a href="#220" id="220">220</a>
+<a href="#221" id="221">221</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::ops::Range;
 
 <span class="kw">use super</span>::{UiBatch, UiImageBindGroups, UiMeta};
-<span class="kw">use crate</span>::{prelude::UiCameraConfig, DefaultCameraView};
+<span class="kw">use </span><span class="kw">crate</span>::DefaultCameraView;
 <span class="kw">use </span>bevy_ecs::{
     prelude::<span class="kw-2">*</span>,
     system::{lifetimeless::<span class="kw-2">*</span>, SystemParamItem},
 };
 <span class="kw">use </span>bevy_render::{
+    camera::ExtractedCamera,
     render_graph::<span class="kw-2">*</span>,
     render_phase::<span class="kw-2">*</span>,
-    render_resource::{CachedRenderPipelineId, LoadOp, Operations, RenderPassDescriptor},
+    render_resource::{CachedRenderPipelineId, RenderPassDescriptor},
     renderer::<span class="kw-2">*</span>,
     view::<span class="kw-2">*</span>,
 };
@@ -237,7 +244,7 @@
         (
             <span class="kw-2">&amp;</span><span class="lifetime">'static </span>RenderPhase&lt;TransparentUi&gt;,
             <span class="kw-2">&amp;</span><span class="lifetime">'static </span>ViewTarget,
-            <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'static </span>UiCameraConfig&gt;,
+            <span class="kw-2">&amp;</span><span class="lifetime">'static </span>ExtractedCamera,
         ),
         With&lt;ExtractedView&gt;,
     &gt;,
@@ -267,16 +274,12 @@
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(), NodeRunError&gt; {
         <span class="kw">let </span>input_view_entity = graph.view_entity();
 
-        <span class="kw">let </span><span class="prelude-val">Ok</span>((transparent_phase, target, camera_ui)) =
+        <span class="kw">let </span><span class="prelude-val">Ok</span>((transparent_phase, target, camera)) =
             <span class="self">self</span>.ui_view_query.get_manual(world, input_view_entity)
         <span class="kw">else </span>{
             <span class="kw">return </span><span class="prelude-val">Ok</span>(());
         };
         <span class="kw">if </span>transparent_phase.items.is_empty() {
-            <span class="kw">return </span><span class="prelude-val">Ok</span>(());
-        }
-        <span class="comment">// Don't render UI for cameras where it is explicitly disabled
-        </span><span class="kw">if </span><span class="macro">matches!</span>(camera_ui, <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>UiCameraConfig { show_ui: <span class="bool-val">false </span>})) {
             <span class="kw">return </span><span class="prelude-val">Ok</span>(());
         }
 
@@ -291,13 +294,14 @@
         };
         <span class="kw">let </span><span class="kw-2">mut </span>render_pass = render_context.begin_tracked_render_pass(RenderPassDescriptor {
             label: <span class="prelude-val">Some</span>(<span class="string">"ui_pass"</span>),
-            color_attachments: <span class="kw-2">&amp;</span>[<span class="prelude-val">Some</span>(target.get_unsampled_color_attachment(Operations {
-                load: LoadOp::Load,
-                store: <span class="bool-val">true</span>,
-            }))],
+            color_attachments: <span class="kw-2">&amp;</span>[<span class="prelude-val">Some</span>(target.get_unsampled_color_attachment())],
             depth_stencil_attachment: <span class="prelude-val">None</span>,
+            timestamp_writes: <span class="prelude-val">None</span>,
+            occlusion_query_set: <span class="prelude-val">None</span>,
         });
-
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(viewport) = camera.viewport.as_ref() {
+            render_pass.set_camera_viewport(viewport);
+        }
         transparent_phase.render(<span class="kw-2">&amp;mut </span>render_pass, world, view_entity);
 
         <span class="prelude-val">Ok</span>(())
@@ -374,13 +378,13 @@
 <span class="kw">pub struct </span>SetUiViewBindGroup&lt;<span class="kw">const </span>I: usize&gt;;
 <span class="kw">impl</span>&lt;P: PhaseItem, <span class="kw">const </span>I: usize&gt; RenderCommand&lt;P&gt; <span class="kw">for </span>SetUiViewBindGroup&lt;I&gt; {
     <span class="kw">type </span>Param = SRes&lt;UiMeta&gt;;
-    <span class="kw">type </span>ViewWorldQuery = Read&lt;ViewUniformOffset&gt;;
-    <span class="kw">type </span>ItemWorldQuery = ();
+    <span class="kw">type </span>ViewQuery = Read&lt;ViewUniformOffset&gt;;
+    <span class="kw">type </span>ItemQuery = ();
 
     <span class="kw">fn </span>render&lt;<span class="lifetime">'w</span>&gt;(
         _item: <span class="kw-2">&amp;</span>P,
         view_uniform: <span class="kw-2">&amp;</span><span class="lifetime">'w </span>ViewUniformOffset,
-        _entity: (),
+        _entity: <span class="prelude-ty">Option</span>&lt;()&gt;,
         ui_meta: SystemParamItem&lt;<span class="lifetime">'w</span>, <span class="lifetime">'_</span>, <span class="self">Self</span>::Param&gt;,
         pass: <span class="kw-2">&amp;mut </span>TrackedRenderPass&lt;<span class="lifetime">'w</span>&gt;,
     ) -&gt; RenderCommandResult {
@@ -395,18 +399,22 @@
 <span class="kw">pub struct </span>SetUiTextureBindGroup&lt;<span class="kw">const </span>I: usize&gt;;
 <span class="kw">impl</span>&lt;P: PhaseItem, <span class="kw">const </span>I: usize&gt; RenderCommand&lt;P&gt; <span class="kw">for </span>SetUiTextureBindGroup&lt;I&gt; {
     <span class="kw">type </span>Param = SRes&lt;UiImageBindGroups&gt;;
-    <span class="kw">type </span>ViewWorldQuery = ();
-    <span class="kw">type </span>ItemWorldQuery = Read&lt;UiBatch&gt;;
+    <span class="kw">type </span>ViewQuery = ();
+    <span class="kw">type </span>ItemQuery = Read&lt;UiBatch&gt;;
 
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>render&lt;<span class="lifetime">'w</span>&gt;(
         _item: <span class="kw-2">&amp;</span>P,
         _view: (),
-        batch: <span class="kw-2">&amp;</span><span class="lifetime">'w </span>UiBatch,
+        batch: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'w </span>UiBatch&gt;,
         image_bind_groups: SystemParamItem&lt;<span class="lifetime">'w</span>, <span class="lifetime">'_</span>, <span class="self">Self</span>::Param&gt;,
         pass: <span class="kw-2">&amp;mut </span>TrackedRenderPass&lt;<span class="lifetime">'w</span>&gt;,
     ) -&gt; RenderCommandResult {
         <span class="kw">let </span>image_bind_groups = image_bind_groups.into_inner();
+        <span class="kw">let </span><span class="prelude-val">Some</span>(batch) = batch <span class="kw">else </span>{
+            <span class="kw">return </span>RenderCommandResult::Failure;
+        };
+
         pass.set_bind_group(I, image_bind_groups.values.get(<span class="kw-2">&amp;</span>batch.image).unwrap(), <span class="kw-2">&amp;</span>[]);
         RenderCommandResult::Success
     }
@@ -414,17 +422,21 @@
 <span class="kw">pub struct </span>DrawUiNode;
 <span class="kw">impl</span>&lt;P: PhaseItem&gt; RenderCommand&lt;P&gt; <span class="kw">for </span>DrawUiNode {
     <span class="kw">type </span>Param = SRes&lt;UiMeta&gt;;
-    <span class="kw">type </span>ViewWorldQuery = ();
-    <span class="kw">type </span>ItemWorldQuery = Read&lt;UiBatch&gt;;
+    <span class="kw">type </span>ViewQuery = ();
+    <span class="kw">type </span>ItemQuery = Read&lt;UiBatch&gt;;
 
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>render&lt;<span class="lifetime">'w</span>&gt;(
         _item: <span class="kw-2">&amp;</span>P,
         _view: (),
-        batch: <span class="kw-2">&amp;</span><span class="lifetime">'w </span>UiBatch,
+        batch: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'w </span>UiBatch&gt;,
         ui_meta: SystemParamItem&lt;<span class="lifetime">'w</span>, <span class="lifetime">'_</span>, <span class="self">Self</span>::Param&gt;,
         pass: <span class="kw-2">&amp;mut </span>TrackedRenderPass&lt;<span class="lifetime">'w</span>&gt;,
     ) -&gt; RenderCommandResult {
+        <span class="kw">let </span><span class="prelude-val">Some</span>(batch) = batch <span class="kw">else </span>{
+            <span class="kw">return </span>RenderCommandResult::Failure;
+        };
+
         pass.set_vertex_buffer(<span class="number">0</span>, ui_meta.into_inner().vertices.buffer().unwrap().slice(..));
         pass.draw(batch.range.clone(), <span class="number">0</span>..<span class="number">1</span>);
         RenderCommandResult::Success

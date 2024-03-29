@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["ExternalError"],"struct":["NotSupportedError","OsError"]};
+window.SIDEBAR_ITEMS = {"enum":["EventLoopError","ExternalError"],"struct":["NotSupportedError","OsError"]};

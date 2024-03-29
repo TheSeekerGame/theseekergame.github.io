@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy-3e956806168b8470/b5b6ea3/crates/bevy_render/src/render_graph/graph.rs`."><title>graph.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_render" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.0 (aedd173a2 2024-03-17)" data-channel="1.77.0" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_render-0.13.1/src/render_graph/graph.rs`."><title>graph.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_render" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.1 (7cf61ebde 2024-03-27)" data-channel="1.77.1" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
             <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
     <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../bevy_render/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
@@ -900,18 +900,44 @@
 <a href="#898" id="898">898</a>
 <a href="#899" id="899">899</a>
 <a href="#900" id="900">900</a>
+<a href="#901" id="901">901</a>
+<a href="#902" id="902">902</a>
+<a href="#903" id="903">903</a>
+<a href="#904" id="904">904</a>
+<a href="#905" id="905">905</a>
+<a href="#906" id="906">906</a>
+<a href="#907" id="907">907</a>
+<a href="#908" id="908">908</a>
+<a href="#909" id="909">909</a>
+<a href="#910" id="910">910</a>
+<a href="#911" id="911">911</a>
+<a href="#912" id="912">912</a>
+<a href="#913" id="913">913</a>
+<a href="#914" id="914">914</a>
+<a href="#915" id="915">915</a>
 </pre></div><pre class="rust"><code><span class="kw">use crate</span>::{
     render_graph::{
-        Edge, Node, NodeId, NodeLabel, NodeRunError, NodeState, RenderGraphContext,
-        RenderGraphError, SlotInfo, SlotLabel,
+        Edge, Node, NodeRunError, NodeState, RenderGraphContext, RenderGraphError, RenderLabel,
+        SlotInfo, SlotLabel,
     },
     renderer::RenderContext,
 };
 <span class="kw">use </span>bevy_ecs::{prelude::World, system::Resource};
-<span class="kw">use </span>bevy_utils::HashMap;
-<span class="kw">use </span>std::{borrow::Cow, fmt::Debug};
+<span class="kw">use </span>bevy_utils::{define_label, intern::Interned, HashMap};
+<span class="kw">use </span>std::fmt::Debug;
 
-<span class="kw">use </span><span class="kw">super</span>::EdgeExistence;
+<span class="kw">use super</span>::{EdgeExistence, InternedRenderLabel, IntoRenderNodeArray};
+
+<span class="kw">pub use </span>bevy_render_macros::RenderSubGraph;
+
+<span class="macro">define_label!</span>(
+    <span class="doccomment">/// A strongly-typed class of labels used to identify a [`SubGraph`] in a render graph.
+    </span>RenderSubGraph,
+    RENDER_SUB_GRAPH_INTERNER
+);
+
+<span class="doccomment">/// A shorthand for `Interned&lt;dyn RenderSubGraph&gt;`.
+</span><span class="kw">pub type </span>InternedRenderSubGraph = Interned&lt;<span class="kw">dyn </span>RenderSubGraph&gt;;
 
 <span class="doccomment">/// The render graph configures the modular, parallel and re-usable render logic.
 /// It is a retained and stateless (nodes themselves may have their own internal state) structure,
@@ -931,12 +957,19 @@
 ///
 /// ## Example
 /// Here is a simple render graph example with two nodes connected by a node edge.
-/// ```
+/// ```ignore
+/// # TODO: Remove when #10645 is fixed
 /// # use bevy_app::prelude::*;
 /// # use bevy_ecs::prelude::World;
-/// # use bevy_render::render_graph::{RenderGraph, Node, RenderGraphContext, NodeRunError};
+/// # use bevy_render::render_graph::{RenderGraph, RenderLabel, Node, RenderGraphContext, NodeRunError};
 /// # use bevy_render::renderer::RenderContext;
 /// #
+/// #[derive(RenderLabel)]
+/// enum Labels {
+///     A,
+///     B,
+/// }
+///
 /// # struct MyNode;
 /// #
 /// # impl Node for MyNode {
@@ -946,22 +979,21 @@
 /// # }
 /// #
 /// let mut graph = RenderGraph::default();
-/// graph.add_node("input_node", MyNode);
-/// graph.add_node("output_node", MyNode);
-/// graph.add_node_edge("output_node", "input_node");
+/// graph.add_node(Labels::A, MyNode);
+/// graph.add_node(Labels::B, MyNode);
+/// graph.add_node_edge(Labels::B, Labels::A);
 /// ```
 </span><span class="attr">#[derive(Resource, Default)]
 </span><span class="kw">pub struct </span>RenderGraph {
-    nodes: HashMap&lt;NodeId, NodeState&gt;,
-    node_names: HashMap&lt;Cow&lt;<span class="lifetime">'static</span>, str&gt;, NodeId&gt;,
-    sub_graphs: HashMap&lt;Cow&lt;<span class="lifetime">'static</span>, str&gt;, RenderGraph&gt;,
-    input_node: <span class="prelude-ty">Option</span>&lt;NodeId&gt;,
+    nodes: HashMap&lt;InternedRenderLabel, NodeState&gt;,
+    sub_graphs: HashMap&lt;InternedRenderSubGraph, RenderGraph&gt;,
 }
 
-<span class="kw">impl </span>RenderGraph {
-    <span class="doccomment">/// The name of the [`GraphInputNode`] of this graph. Used to connect other nodes to it.
-    </span><span class="kw">pub const </span>INPUT_NODE_NAME: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str = <span class="string">"GraphInputNode"</span>;
+<span class="doccomment">/// The label for the input node of a graph. Used to connect other nodes to it.
+</span><span class="attr">#[derive(Debug, Hash, PartialEq, Eq, Clone, RenderLabel)]
+</span><span class="kw">pub struct </span>GraphInput;
 
+<span class="kw">impl </span>RenderGraph {
     <span class="doccomment">/// Updates all nodes and sub graphs of the render graph. Should be called before executing it.
     </span><span class="kw">pub fn </span>update(<span class="kw-2">&amp;mut </span><span class="self">self</span>, world: <span class="kw-2">&amp;mut </span>World) {
         <span class="kw">for </span>node <span class="kw">in </span><span class="self">self</span>.nodes.values_mut() {
@@ -974,12 +1006,16 @@
     }
 
     <span class="doccomment">/// Creates an [`GraphInputNode`] with the specified slots if not already present.
-    </span><span class="kw">pub fn </span>set_input(<span class="kw-2">&amp;mut </span><span class="self">self</span>, inputs: Vec&lt;SlotInfo&gt;) -&gt; NodeId {
-        <span class="macro">assert!</span>(<span class="self">self</span>.input_node.is_none(), <span class="string">"Graph already has an input node"</span>);
+    </span><span class="kw">pub fn </span>set_input(<span class="kw-2">&amp;mut </span><span class="self">self</span>, inputs: Vec&lt;SlotInfo&gt;) {
+        <span class="macro">assert!</span>(
+            <span class="macro">matches!</span>(
+                <span class="self">self</span>.get_node_state(GraphInput),
+                <span class="prelude-val">Err</span>(RenderGraphError::InvalidNode(<span class="kw">_</span>))
+            ),
+            <span class="string">"Graph already has an input node"
+        </span>);
 
-        <span class="kw">let </span>id = <span class="self">self</span>.add_node(<span class="string">"GraphInputNode"</span>, GraphInputNode { inputs });
-        <span class="self">self</span>.input_node = <span class="prelude-val">Some</span>(id);
-        id
+        <span class="self">self</span>.add_node(GraphInput, GraphInputNode { inputs });
     }
 
     <span class="doccomment">/// Returns the [`NodeState`] of the input node of this graph.
@@ -989,7 +1025,7 @@
     /// - [`input_node`](Self::input_node) for an unchecked version.
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>get_input_node(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>NodeState&gt; {
-        <span class="self">self</span>.input_node.and_then(|id| <span class="self">self</span>.get_node_state(id).ok())
+        <span class="self">self</span>.get_node_state(GraphInput).ok()
     }
 
     <span class="doccomment">/// Returns the [`NodeState`] of the input node of this graph.
@@ -1006,27 +1042,23 @@
         <span class="self">self</span>.get_input_node().unwrap()
     }
 
-    <span class="doccomment">/// Adds the `node` with the `name` to the graph.
-    /// If the name is already present replaces it instead.
-    </span><span class="kw">pub fn </span>add_node&lt;T&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, name: <span class="kw">impl </span>Into&lt;Cow&lt;<span class="lifetime">'static</span>, str&gt;&gt;, node: T) -&gt; NodeId
+    <span class="doccomment">/// Adds the `node` with the `label` to the graph.
+    /// If the label is already present replaces it instead.
+    </span><span class="kw">pub fn </span>add_node&lt;T&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, label: <span class="kw">impl </span>RenderLabel, node: T)
     <span class="kw">where
         </span>T: Node,
     {
-        <span class="kw">let </span>id = NodeId::new();
-        <span class="kw">let </span>name = name.into();
-        <span class="kw">let </span><span class="kw-2">mut </span>node_state = NodeState::new(id, node);
-        node_state.name = <span class="prelude-val">Some</span>(name.clone());
-        <span class="self">self</span>.nodes.insert(id, node_state);
-        <span class="self">self</span>.node_names.insert(name, id);
-        id
+        <span class="kw">let </span>label = label.intern();
+        <span class="kw">let </span>node_state = NodeState::new(label, node);
+        <span class="self">self</span>.nodes.insert(label, node_state);
     }
 
     <span class="doccomment">/// Add `node_edge`s based on the order of the given `edges` array.
     ///
     /// Defining an edge that already exists is not considered an error with this api.
     /// It simply won't create a new edge.
-    </span><span class="kw">pub fn </span>add_node_edges(<span class="kw-2">&amp;mut </span><span class="self">self</span>, edges: <span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span><span class="lifetime">'static </span>str]) {
-        <span class="kw">for </span>window <span class="kw">in </span>edges.windows(<span class="number">2</span>) {
+    </span><span class="kw">pub fn </span>add_node_edges&lt;<span class="kw">const </span>N: usize&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, edges: <span class="kw">impl </span>IntoRenderNodeArray&lt;N&gt;) {
+        <span class="kw">for </span>window <span class="kw">in </span>edges.into_array().windows(<span class="number">2</span>) {
             <span class="kw">let </span>[a, b] = window <span class="kw">else </span>{
                 <span class="kw">break</span>;
             };
@@ -1041,47 +1073,42 @@
         }
     }
 
-    <span class="doccomment">/// Removes the `node` with the `name` from the graph.
-    /// If the name is does not exist, nothing happens.
-    </span><span class="kw">pub fn </span>remove_node(
-        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        name: <span class="kw">impl </span>Into&lt;Cow&lt;<span class="lifetime">'static</span>, str&gt;&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;(), RenderGraphError&gt; {
-        <span class="kw">let </span>name = name.into();
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(id) = <span class="self">self</span>.node_names.remove(<span class="kw-2">&amp;</span>name) {
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(node_state) = <span class="self">self</span>.nodes.remove(<span class="kw-2">&amp;</span>id) {
-                <span class="comment">// Remove all edges from other nodes to this one. Note that as we're removing this
-                // node, we don't need to remove its input edges
-                </span><span class="kw">for </span>input_edge <span class="kw">in </span>node_state.edges.input_edges() {
-                    <span class="kw">match </span>input_edge {
-                        Edge::SlotEdge { output_node, .. }
-                        | Edge::NodeEdge {
-                            input_node: <span class="kw">_</span>,
-                            output_node,
-                        } =&gt; {
-                            <span class="kw">if let </span><span class="prelude-val">Ok</span>(output_node) = <span class="self">self</span>.get_node_state_mut(<span class="kw-2">*</span>output_node) {
-                                output_node.edges.remove_output_edge(input_edge.clone())<span class="question-mark">?</span>;
-                            }
+    <span class="doccomment">/// Removes the `node` with the `label` from the graph.
+    /// If the label does not exist, nothing happens.
+    </span><span class="kw">pub fn </span>remove_node(<span class="kw-2">&amp;mut </span><span class="self">self</span>, label: <span class="kw">impl </span>RenderLabel) -&gt; <span class="prelude-ty">Result</span>&lt;(), RenderGraphError&gt; {
+        <span class="kw">let </span>label = label.intern();
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(node_state) = <span class="self">self</span>.nodes.remove(<span class="kw-2">&amp;</span>label) {
+            <span class="comment">// Remove all edges from other nodes to this one. Note that as we're removing this
+            // node, we don't need to remove its input edges
+            </span><span class="kw">for </span>input_edge <span class="kw">in </span>node_state.edges.input_edges() {
+                <span class="kw">match </span>input_edge {
+                    Edge::SlotEdge { output_node, .. }
+                    | Edge::NodeEdge {
+                        input_node: <span class="kw">_</span>,
+                        output_node,
+                    } =&gt; {
+                        <span class="kw">if let </span><span class="prelude-val">Ok</span>(output_node) = <span class="self">self</span>.get_node_state_mut(<span class="kw-2">*</span>output_node) {
+                            output_node.edges.remove_output_edge(input_edge.clone())<span class="question-mark">?</span>;
                         }
                     }
                 }
-                <span class="comment">// Remove all edges from this node to other nodes. Note that as we're removing this
-                // node, we don't need to remove its output edges
-                </span><span class="kw">for </span>output_edge <span class="kw">in </span>node_state.edges.output_edges() {
-                    <span class="kw">match </span>output_edge {
-                        Edge::SlotEdge {
-                            output_node: <span class="kw">_</span>,
-                            output_index: <span class="kw">_</span>,
-                            input_node,
-                            input_index: <span class="kw">_</span>,
-                        }
-                        | Edge::NodeEdge {
-                            output_node: <span class="kw">_</span>,
-                            input_node,
-                        } =&gt; {
-                            <span class="kw">if let </span><span class="prelude-val">Ok</span>(input_node) = <span class="self">self</span>.get_node_state_mut(<span class="kw-2">*</span>input_node) {
-                                input_node.edges.remove_input_edge(output_edge.clone())<span class="question-mark">?</span>;
-                            }
+            }
+            <span class="comment">// Remove all edges from this node to other nodes. Note that as we're removing this
+            // node, we don't need to remove its output edges
+            </span><span class="kw">for </span>output_edge <span class="kw">in </span>node_state.edges.output_edges() {
+                <span class="kw">match </span>output_edge {
+                    Edge::SlotEdge {
+                        output_node: <span class="kw">_</span>,
+                        output_index: <span class="kw">_</span>,
+                        input_node,
+                        input_index: <span class="kw">_</span>,
+                    }
+                    | Edge::NodeEdge {
+                        output_node: <span class="kw">_</span>,
+                        input_node,
+                    } =&gt; {
+                        <span class="kw">if let </span><span class="prelude-val">Ok</span>(input_node) = <span class="self">self</span>.get_node_state_mut(<span class="kw-2">*</span>input_node) {
+                            input_node.edges.remove_input_edge(output_edge.clone())<span class="question-mark">?</span>;
                         }
                     }
                 }
@@ -1092,44 +1119,26 @@
     }
 
     <span class="doccomment">/// Retrieves the [`NodeState`] referenced by the `label`.
-    </span><span class="kw">pub fn </span>get_node_state(
-        <span class="kw-2">&amp;</span><span class="self">self</span>,
-        label: <span class="kw">impl </span>Into&lt;NodeLabel&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span>NodeState, RenderGraphError&gt; {
-        <span class="kw">let </span>label = label.into();
-        <span class="kw">let </span>node_id = <span class="self">self</span>.get_node_id(<span class="kw-2">&amp;</span>label)<span class="question-mark">?</span>;
+    </span><span class="kw">pub fn </span>get_node_state(<span class="kw-2">&amp;</span><span class="self">self</span>, label: <span class="kw">impl </span>RenderLabel) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span>NodeState, RenderGraphError&gt; {
+        <span class="kw">let </span>label = label.intern();
         <span class="self">self</span>.nodes
-            .get(<span class="kw-2">&amp;</span>node_id)
+            .get(<span class="kw-2">&amp;</span>label)
             .ok_or(RenderGraphError::InvalidNode(label))
     }
 
     <span class="doccomment">/// Retrieves the [`NodeState`] referenced by the `label` mutably.
     </span><span class="kw">pub fn </span>get_node_state_mut(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        label: <span class="kw">impl </span>Into&lt;NodeLabel&gt;,
+        label: <span class="kw">impl </span>RenderLabel,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;mut </span>NodeState, RenderGraphError&gt; {
-        <span class="kw">let </span>label = label.into();
-        <span class="kw">let </span>node_id = <span class="self">self</span>.get_node_id(<span class="kw-2">&amp;</span>label)<span class="question-mark">?</span>;
+        <span class="kw">let </span>label = label.intern();
         <span class="self">self</span>.nodes
-            .get_mut(<span class="kw-2">&amp;</span>node_id)
+            .get_mut(<span class="kw-2">&amp;</span>label)
             .ok_or(RenderGraphError::InvalidNode(label))
     }
 
-    <span class="doccomment">/// Retrieves the [`NodeId`] referenced by the `label`.
-    </span><span class="kw">pub fn </span>get_node_id(<span class="kw-2">&amp;</span><span class="self">self</span>, label: <span class="kw">impl </span>Into&lt;NodeLabel&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;NodeId, RenderGraphError&gt; {
-        <span class="kw">let </span>label = label.into();
-        <span class="kw">match </span>label {
-            NodeLabel::Id(id) =&gt; <span class="prelude-val">Ok</span>(id),
-            NodeLabel::Name(<span class="kw-2">ref </span>name) =&gt; <span class="self">self
-                </span>.node_names
-                .get(name)
-                .cloned()
-                .ok_or(RenderGraphError::InvalidNode(label)),
-        }
-    }
-
     <span class="doccomment">/// Retrieves the [`Node`] referenced by the `label`.
-    </span><span class="kw">pub fn </span>get_node&lt;T&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, label: <span class="kw">impl </span>Into&lt;NodeLabel&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span>T, RenderGraphError&gt;
+    </span><span class="kw">pub fn </span>get_node&lt;T&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, label: <span class="kw">impl </span>RenderLabel) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span>T, RenderGraphError&gt;
     <span class="kw">where
         </span>T: Node,
     {
@@ -1137,10 +1146,7 @@
     }
 
     <span class="doccomment">/// Retrieves the [`Node`] referenced by the `label` mutably.
-    </span><span class="kw">pub fn </span>get_node_mut&lt;T&gt;(
-        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        label: <span class="kw">impl </span>Into&lt;NodeLabel&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;mut </span>T, RenderGraphError&gt;
+    </span><span class="kw">pub fn </span>get_node_mut&lt;T&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, label: <span class="kw">impl </span>RenderLabel) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;mut </span>T, RenderGraphError&gt;
     <span class="kw">where
         </span>T: Node,
     {
@@ -1150,48 +1156,49 @@
     <span class="doccomment">/// Adds the [`Edge::SlotEdge`] to the graph. This guarantees that the `output_node`
     /// is run before the `input_node` and also connects the `output_slot` to the `input_slot`.
     ///
-    /// Fails if any invalid [`NodeLabel`]s or [`SlotLabel`]s are given.
+    /// Fails if any invalid [`RenderLabel`]s or [`SlotLabel`]s are given.
     ///
     /// # See also
     ///
     /// - [`add_slot_edge`](Self::add_slot_edge) for an infallible version.
     </span><span class="kw">pub fn </span>try_add_slot_edge(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        output_node: <span class="kw">impl </span>Into&lt;NodeLabel&gt;,
+        output_node: <span class="kw">impl </span>RenderLabel,
         output_slot: <span class="kw">impl </span>Into&lt;SlotLabel&gt;,
-        input_node: <span class="kw">impl </span>Into&lt;NodeLabel&gt;,
+        input_node: <span class="kw">impl </span>RenderLabel,
         input_slot: <span class="kw">impl </span>Into&lt;SlotLabel&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(), RenderGraphError&gt; {
         <span class="kw">let </span>output_slot = output_slot.into();
         <span class="kw">let </span>input_slot = input_slot.into();
-        <span class="kw">let </span>output_node_id = <span class="self">self</span>.get_node_id(output_node)<span class="question-mark">?</span>;
-        <span class="kw">let </span>input_node_id = <span class="self">self</span>.get_node_id(input_node)<span class="question-mark">?</span>;
+
+        <span class="kw">let </span>output_node = output_node.intern();
+        <span class="kw">let </span>input_node = input_node.intern();
 
         <span class="kw">let </span>output_index = <span class="self">self
-            </span>.get_node_state(output_node_id)<span class="question-mark">?
+            </span>.get_node_state(output_node)<span class="question-mark">?
             </span>.output_slots
             .get_slot_index(output_slot.clone())
             .ok_or(RenderGraphError::InvalidOutputNodeSlot(output_slot))<span class="question-mark">?</span>;
         <span class="kw">let </span>input_index = <span class="self">self
-            </span>.get_node_state(input_node_id)<span class="question-mark">?
+            </span>.get_node_state(input_node)<span class="question-mark">?
             </span>.input_slots
             .get_slot_index(input_slot.clone())
             .ok_or(RenderGraphError::InvalidInputNodeSlot(input_slot))<span class="question-mark">?</span>;
 
         <span class="kw">let </span>edge = Edge::SlotEdge {
-            output_node: output_node_id,
+            output_node,
             output_index,
-            input_node: input_node_id,
+            input_node,
             input_index,
         };
 
         <span class="self">self</span>.validate_edge(<span class="kw-2">&amp;</span>edge, EdgeExistence::DoesNotExist)<span class="question-mark">?</span>;
 
         {
-            <span class="kw">let </span>output_node = <span class="self">self</span>.get_node_state_mut(output_node_id)<span class="question-mark">?</span>;
+            <span class="kw">let </span>output_node = <span class="self">self</span>.get_node_state_mut(output_node)<span class="question-mark">?</span>;
             output_node.edges.add_output_edge(edge.clone())<span class="question-mark">?</span>;
         }
-        <span class="kw">let </span>input_node = <span class="self">self</span>.get_node_state_mut(input_node_id)<span class="question-mark">?</span>;
+        <span class="kw">let </span>input_node = <span class="self">self</span>.get_node_state_mut(input_node)<span class="question-mark">?</span>;
         input_node.edges.add_input_edge(edge)<span class="question-mark">?</span>;
 
         <span class="prelude-val">Ok</span>(())
@@ -1202,16 +1209,16 @@
     ///
     /// # Panics
     ///
-    /// Any invalid [`NodeLabel`]s or [`SlotLabel`]s are given.
+    /// Any invalid [`RenderLabel`]s or [`SlotLabel`]s are given.
     ///
     /// # See also
     ///
     /// - [`try_add_slot_edge`](Self::try_add_slot_edge) for a fallible version.
     </span><span class="kw">pub fn </span>add_slot_edge(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        output_node: <span class="kw">impl </span>Into&lt;NodeLabel&gt;,
+        output_node: <span class="kw">impl </span>RenderLabel,
         output_slot: <span class="kw">impl </span>Into&lt;SlotLabel&gt;,
-        input_node: <span class="kw">impl </span>Into&lt;NodeLabel&gt;,
+        input_node: <span class="kw">impl </span>RenderLabel,
         input_slot: <span class="kw">impl </span>Into&lt;SlotLabel&gt;,
     ) {
         <span class="self">self</span>.try_add_slot_edge(output_node, output_slot, input_node, input_slot)
@@ -1222,41 +1229,42 @@
     /// nothing happens.
     </span><span class="kw">pub fn </span>remove_slot_edge(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        output_node: <span class="kw">impl </span>Into&lt;NodeLabel&gt;,
+        output_node: <span class="kw">impl </span>RenderLabel,
         output_slot: <span class="kw">impl </span>Into&lt;SlotLabel&gt;,
-        input_node: <span class="kw">impl </span>Into&lt;NodeLabel&gt;,
+        input_node: <span class="kw">impl </span>RenderLabel,
         input_slot: <span class="kw">impl </span>Into&lt;SlotLabel&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(), RenderGraphError&gt; {
         <span class="kw">let </span>output_slot = output_slot.into();
         <span class="kw">let </span>input_slot = input_slot.into();
-        <span class="kw">let </span>output_node_id = <span class="self">self</span>.get_node_id(output_node)<span class="question-mark">?</span>;
-        <span class="kw">let </span>input_node_id = <span class="self">self</span>.get_node_id(input_node)<span class="question-mark">?</span>;
+
+        <span class="kw">let </span>output_node = output_node.intern();
+        <span class="kw">let </span>input_node = input_node.intern();
 
         <span class="kw">let </span>output_index = <span class="self">self
-            </span>.get_node_state(output_node_id)<span class="question-mark">?
+            </span>.get_node_state(output_node)<span class="question-mark">?
             </span>.output_slots
             .get_slot_index(output_slot.clone())
             .ok_or(RenderGraphError::InvalidOutputNodeSlot(output_slot))<span class="question-mark">?</span>;
         <span class="kw">let </span>input_index = <span class="self">self
-            </span>.get_node_state(input_node_id)<span class="question-mark">?
+            </span>.get_node_state(input_node)<span class="question-mark">?
             </span>.input_slots
             .get_slot_index(input_slot.clone())
             .ok_or(RenderGraphError::InvalidInputNodeSlot(input_slot))<span class="question-mark">?</span>;
 
         <span class="kw">let </span>edge = Edge::SlotEdge {
-            output_node: output_node_id,
+            output_node,
             output_index,
-            input_node: input_node_id,
+            input_node,
             input_index,
         };
 
         <span class="self">self</span>.validate_edge(<span class="kw-2">&amp;</span>edge, EdgeExistence::Exists)<span class="question-mark">?</span>;
 
         {
-            <span class="kw">let </span>output_node = <span class="self">self</span>.get_node_state_mut(output_node_id)<span class="question-mark">?</span>;
+            <span class="kw">let </span>output_node = <span class="self">self</span>.get_node_state_mut(output_node)<span class="question-mark">?</span>;
             output_node.edges.remove_output_edge(edge.clone())<span class="question-mark">?</span>;
         }
-        <span class="kw">let </span>input_node = <span class="self">self</span>.get_node_state_mut(input_node_id)<span class="question-mark">?</span>;
+        <span class="kw">let </span>input_node = <span class="self">self</span>.get_node_state_mut(input_node)<span class="question-mark">?</span>;
         input_node.edges.remove_input_edge(edge)<span class="question-mark">?</span>;
 
         <span class="prelude-val">Ok</span>(())
@@ -1265,31 +1273,31 @@
     <span class="doccomment">/// Adds the [`Edge::NodeEdge`] to the graph. This guarantees that the `output_node`
     /// is run before the `input_node`.
     ///
-    /// Fails if any invalid [`NodeLabel`] is given.
+    /// Fails if any invalid [`RenderLabel`] is given.
     ///
     /// # See also
     ///
     /// - [`add_node_edge`](Self::add_node_edge) for an infallible version.
     </span><span class="kw">pub fn </span>try_add_node_edge(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        output_node: <span class="kw">impl </span>Into&lt;NodeLabel&gt;,
-        input_node: <span class="kw">impl </span>Into&lt;NodeLabel&gt;,
+        output_node: <span class="kw">impl </span>RenderLabel,
+        input_node: <span class="kw">impl </span>RenderLabel,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(), RenderGraphError&gt; {
-        <span class="kw">let </span>output_node_id = <span class="self">self</span>.get_node_id(output_node)<span class="question-mark">?</span>;
-        <span class="kw">let </span>input_node_id = <span class="self">self</span>.get_node_id(input_node)<span class="question-mark">?</span>;
+        <span class="kw">let </span>output_node = output_node.intern();
+        <span class="kw">let </span>input_node = input_node.intern();
 
         <span class="kw">let </span>edge = Edge::NodeEdge {
-            output_node: output_node_id,
-            input_node: input_node_id,
+            output_node,
+            input_node,
         };
 
         <span class="self">self</span>.validate_edge(<span class="kw-2">&amp;</span>edge, EdgeExistence::DoesNotExist)<span class="question-mark">?</span>;
 
         {
-            <span class="kw">let </span>output_node = <span class="self">self</span>.get_node_state_mut(output_node_id)<span class="question-mark">?</span>;
+            <span class="kw">let </span>output_node = <span class="self">self</span>.get_node_state_mut(output_node)<span class="question-mark">?</span>;
             output_node.edges.add_output_edge(edge.clone())<span class="question-mark">?</span>;
         }
-        <span class="kw">let </span>input_node = <span class="self">self</span>.get_node_state_mut(input_node_id)<span class="question-mark">?</span>;
+        <span class="kw">let </span>input_node = <span class="self">self</span>.get_node_state_mut(input_node)<span class="question-mark">?</span>;
         input_node.edges.add_input_edge(edge)<span class="question-mark">?</span>;
 
         <span class="prelude-val">Ok</span>(())
@@ -1300,16 +1308,12 @@
     ///
     /// # Panics
     ///
-    /// Panics if any invalid [`NodeLabel`] is given.
+    /// Panics if any invalid [`RenderLabel`] is given.
     ///
     /// # See also
     ///
     /// - [`try_add_node_edge`](Self::try_add_node_edge) for a fallible version.
-    </span><span class="kw">pub fn </span>add_node_edge(
-        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        output_node: <span class="kw">impl </span>Into&lt;NodeLabel&gt;,
-        input_node: <span class="kw">impl </span>Into&lt;NodeLabel&gt;,
-    ) {
+    </span><span class="kw">pub fn </span>add_node_edge(<span class="kw-2">&amp;mut </span><span class="self">self</span>, output_node: <span class="kw">impl </span>RenderLabel, input_node: <span class="kw">impl </span>RenderLabel) {
         <span class="self">self</span>.try_add_node_edge(output_node, input_node).unwrap();
     }
 
@@ -1317,24 +1321,24 @@
     /// happens.
     </span><span class="kw">pub fn </span>remove_node_edge(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        output_node: <span class="kw">impl </span>Into&lt;NodeLabel&gt;,
-        input_node: <span class="kw">impl </span>Into&lt;NodeLabel&gt;,
+        output_node: <span class="kw">impl </span>RenderLabel,
+        input_node: <span class="kw">impl </span>RenderLabel,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(), RenderGraphError&gt; {
-        <span class="kw">let </span>output_node_id = <span class="self">self</span>.get_node_id(output_node)<span class="question-mark">?</span>;
-        <span class="kw">let </span>input_node_id = <span class="self">self</span>.get_node_id(input_node)<span class="question-mark">?</span>;
+        <span class="kw">let </span>output_node = output_node.intern();
+        <span class="kw">let </span>input_node = input_node.intern();
 
         <span class="kw">let </span>edge = Edge::NodeEdge {
-            output_node: output_node_id,
-            input_node: input_node_id,
+            output_node,
+            input_node,
         };
 
         <span class="self">self</span>.validate_edge(<span class="kw-2">&amp;</span>edge, EdgeExistence::Exists)<span class="question-mark">?</span>;
 
         {
-            <span class="kw">let </span>output_node = <span class="self">self</span>.get_node_state_mut(output_node_id)<span class="question-mark">?</span>;
+            <span class="kw">let </span>output_node = <span class="self">self</span>.get_node_state_mut(output_node)<span class="question-mark">?</span>;
             output_node.edges.remove_output_edge(edge.clone())<span class="question-mark">?</span>;
         }
-        <span class="kw">let </span>input_node = <span class="self">self</span>.get_node_state_mut(input_node_id)<span class="question-mark">?</span>;
+        <span class="kw">let </span>input_node = <span class="self">self</span>.get_node_state_mut(input_node)<span class="question-mark">?</span>;
         input_node.edges.remove_input_edge(edge)<span class="question-mark">?</span>;
 
         <span class="prelude-val">Ok</span>(())
@@ -1439,24 +1443,24 @@
     }
 
     <span class="doccomment">/// Returns an iterator over the sub graphs.
-    </span><span class="kw">pub fn </span>iter_sub_graphs(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw">impl </span>Iterator&lt;Item = (<span class="kw-2">&amp;</span>str, <span class="kw-2">&amp;</span>RenderGraph)&gt; {
-        <span class="self">self</span>.sub_graphs
-            .iter()
-            .map(|(name, graph)| (name.as_ref(), graph))
+    </span><span class="kw">pub fn </span>iter_sub_graphs(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw">impl </span>Iterator&lt;Item = (InternedRenderSubGraph, <span class="kw-2">&amp;</span>RenderGraph)&gt; {
+        <span class="self">self</span>.sub_graphs.iter().map(|(name, graph)| (<span class="kw-2">*</span>name, graph))
     }
 
     <span class="doccomment">/// Returns an iterator over the sub graphs, that allows modifying each value.
-    </span><span class="kw">pub fn </span>iter_sub_graphs_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw">impl </span>Iterator&lt;Item = (<span class="kw-2">&amp;</span>str, <span class="kw-2">&amp;mut </span>RenderGraph)&gt; {
+    </span><span class="kw">pub fn </span>iter_sub_graphs_mut(
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+    ) -&gt; <span class="kw">impl </span>Iterator&lt;Item = (InternedRenderSubGraph, <span class="kw-2">&amp;mut </span>RenderGraph)&gt; {
         <span class="self">self</span>.sub_graphs
             .iter_mut()
-            .map(|(name, graph)| (name.as_ref(), graph))
+            .map(|(name, graph)| (<span class="kw-2">*</span>name, graph))
     }
 
     <span class="doccomment">/// Returns an iterator over a tuple of the input edges and the corresponding output nodes
     /// for the node referenced by the label.
     </span><span class="kw">pub fn </span>iter_node_inputs(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        label: <span class="kw">impl </span>Into&lt;NodeLabel&gt;,
+        label: <span class="kw">impl </span>RenderLabel,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw">impl </span>Iterator&lt;Item = (<span class="kw-2">&amp;</span>Edge, <span class="kw-2">&amp;</span>NodeState)&gt;, RenderGraphError&gt; {
         <span class="kw">let </span>node = <span class="self">self</span>.get_node_state(label)<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(node
@@ -1464,16 +1468,14 @@
             .input_edges()
             .iter()
             .map(|edge| (edge, edge.get_output_node()))
-            .map(<span class="kw">move </span>|(edge, output_node_id)| {
-                (edge, <span class="self">self</span>.get_node_state(output_node_id).unwrap())
-            }))
+            .map(<span class="kw">move </span>|(edge, output_node)| (edge, <span class="self">self</span>.get_node_state(output_node).unwrap())))
     }
 
     <span class="doccomment">/// Returns an iterator over a tuple of the output edges and the corresponding input nodes
     /// for the node referenced by the label.
     </span><span class="kw">pub fn </span>iter_node_outputs(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        label: <span class="kw">impl </span>Into&lt;NodeLabel&gt;,
+        label: <span class="kw">impl </span>RenderLabel,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw">impl </span>Iterator&lt;Item = (<span class="kw-2">&amp;</span>Edge, <span class="kw-2">&amp;</span>NodeState)&gt;, RenderGraphError&gt; {
         <span class="kw">let </span>node = <span class="self">self</span>.get_node_state(label)<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(node
@@ -1481,66 +1483,68 @@
             .output_edges()
             .iter()
             .map(|edge| (edge, edge.get_input_node()))
-            .map(<span class="kw">move </span>|(edge, input_node_id)| (edge, <span class="self">self</span>.get_node_state(input_node_id).unwrap())))
+            .map(<span class="kw">move </span>|(edge, input_node)| (edge, <span class="self">self</span>.get_node_state(input_node).unwrap())))
     }
 
-    <span class="doccomment">/// Adds the `sub_graph` with the `name` to the graph.
-    /// If the name is already present replaces it instead.
-    </span><span class="kw">pub fn </span>add_sub_graph(<span class="kw-2">&amp;mut </span><span class="self">self</span>, name: <span class="kw">impl </span>Into&lt;Cow&lt;<span class="lifetime">'static</span>, str&gt;&gt;, sub_graph: RenderGraph) {
-        <span class="self">self</span>.sub_graphs.insert(name.into(), sub_graph);
+    <span class="doccomment">/// Adds the `sub_graph` with the `label` to the graph.
+    /// If the label is already present replaces it instead.
+    </span><span class="kw">pub fn </span>add_sub_graph(<span class="kw-2">&amp;mut </span><span class="self">self</span>, label: <span class="kw">impl </span>RenderSubGraph, sub_graph: RenderGraph) {
+        <span class="self">self</span>.sub_graphs.insert(label.intern(), sub_graph);
     }
 
-    <span class="doccomment">/// Removes the `sub_graph` with the `name` from the graph.
-    /// If the name does not exist then nothing happens.
-    </span><span class="kw">pub fn </span>remove_sub_graph(<span class="kw-2">&amp;mut </span><span class="self">self</span>, name: <span class="kw">impl </span>Into&lt;Cow&lt;<span class="lifetime">'static</span>, str&gt;&gt;) {
-        <span class="self">self</span>.sub_graphs.remove(<span class="kw-2">&amp;</span>name.into());
+    <span class="doccomment">/// Removes the `sub_graph` with the `label` from the graph.
+    /// If the label does not exist then nothing happens.
+    </span><span class="kw">pub fn </span>remove_sub_graph(<span class="kw-2">&amp;mut </span><span class="self">self</span>, label: <span class="kw">impl </span>RenderSubGraph) {
+        <span class="self">self</span>.sub_graphs.remove(<span class="kw-2">&amp;</span>label.intern());
     }
 
-    <span class="doccomment">/// Retrieves the sub graph corresponding to the `name`.
-    </span><span class="kw">pub fn </span>get_sub_graph(<span class="kw-2">&amp;</span><span class="self">self</span>, name: <span class="kw">impl </span>AsRef&lt;str&gt;) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>RenderGraph&gt; {
-        <span class="self">self</span>.sub_graphs.get(name.as_ref())
+    <span class="doccomment">/// Retrieves the sub graph corresponding to the `label`.
+    </span><span class="kw">pub fn </span>get_sub_graph(<span class="kw-2">&amp;</span><span class="self">self</span>, label: <span class="kw">impl </span>RenderSubGraph) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>RenderGraph&gt; {
+        <span class="self">self</span>.sub_graphs.get(<span class="kw-2">&amp;</span>label.intern())
     }
 
-    <span class="doccomment">/// Retrieves the sub graph corresponding to the `name` mutably.
-    </span><span class="kw">pub fn </span>get_sub_graph_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>, name: <span class="kw">impl </span>AsRef&lt;str&gt;) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;mut </span>RenderGraph&gt; {
-        <span class="self">self</span>.sub_graphs.get_mut(name.as_ref())
+    <span class="doccomment">/// Retrieves the sub graph corresponding to the `label` mutably.
+    </span><span class="kw">pub fn </span>get_sub_graph_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>, label: <span class="kw">impl </span>RenderSubGraph) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;mut </span>RenderGraph&gt; {
+        <span class="self">self</span>.sub_graphs.get_mut(<span class="kw-2">&amp;</span>label.intern())
     }
 
-    <span class="doccomment">/// Retrieves the sub graph corresponding to the `name`.
+    <span class="doccomment">/// Retrieves the sub graph corresponding to the `label`.
     ///
     /// # Panics
     ///
-    /// Panics if any invalid node name is given.
+    /// Panics if any invalid subgraph label is given.
     ///
     /// # See also
     ///
     /// - [`get_sub_graph`](Self::get_sub_graph) for a fallible version.
-    </span><span class="kw">pub fn </span>sub_graph(<span class="kw-2">&amp;</span><span class="self">self</span>, name: <span class="kw">impl </span>AsRef&lt;str&gt;) -&gt; <span class="kw-2">&amp;</span>RenderGraph {
+    </span><span class="kw">pub fn </span>sub_graph(<span class="kw-2">&amp;</span><span class="self">self</span>, label: <span class="kw">impl </span>RenderSubGraph) -&gt; <span class="kw-2">&amp;</span>RenderGraph {
+        <span class="kw">let </span>label = label.intern();
         <span class="self">self</span>.sub_graphs
-            .get(name.as_ref())
-            .unwrap_or_else(|| <span class="macro">panic!</span>(<span class="string">"Node {} not found in sub_graph"</span>, name.as_ref()))
+            .get(<span class="kw-2">&amp;</span>label)
+            .unwrap_or_else(|| <span class="macro">panic!</span>(<span class="string">"Subgraph {label:?} not found"</span>))
     }
 
-    <span class="doccomment">/// Retrieves the sub graph corresponding to the `name` mutably.
+    <span class="doccomment">/// Retrieves the sub graph corresponding to the `label` mutably.
     ///
     /// # Panics
     ///
-    /// Panics if any invalid node name is given.
+    /// Panics if any invalid subgraph label is given.
     ///
     /// # See also
     ///
     /// - [`get_sub_graph_mut`](Self::get_sub_graph_mut) for a fallible version.
-    </span><span class="kw">pub fn </span>sub_graph_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>, name: <span class="kw">impl </span>AsRef&lt;str&gt;) -&gt; <span class="kw-2">&amp;mut </span>RenderGraph {
+    </span><span class="kw">pub fn </span>sub_graph_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>, label: <span class="kw">impl </span>RenderSubGraph) -&gt; <span class="kw-2">&amp;mut </span>RenderGraph {
+        <span class="kw">let </span>label = label.intern();
         <span class="self">self</span>.sub_graphs
-            .get_mut(name.as_ref())
-            .unwrap_or_else(|| <span class="macro">panic!</span>(<span class="string">"Node {} not found in sub_graph"</span>, name.as_ref()))
+            .get_mut(<span class="kw-2">&amp;</span>label)
+            .unwrap_or_else(|| <span class="macro">panic!</span>(<span class="string">"Subgraph {label:?} not found"</span>))
     }
 }
 
 <span class="kw">impl </span>Debug <span class="kw">for </span>RenderGraph {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>std::fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; std::fmt::Result {
         <span class="kw">for </span>node <span class="kw">in </span><span class="self">self</span>.iter_nodes() {
-            <span class="macro">writeln!</span>(f, <span class="string">"{:?}"</span>, node.id)<span class="question-mark">?</span>;
+            <span class="macro">writeln!</span>(f, <span class="string">"{:?}"</span>, node.label)<span class="question-mark">?</span>;
             <span class="macro">writeln!</span>(f, <span class="string">"  in: {:?}"</span>, node.input_slots)<span class="question-mark">?</span>;
             <span class="macro">writeln!</span>(f, <span class="string">"  out: {:?}"</span>, node.output_slots)<span class="question-mark">?</span>;
         }
@@ -1582,13 +1586,21 @@
 </span><span class="kw">mod </span>tests {
     <span class="kw">use crate</span>::{
         render_graph::{
-            Edge, Node, NodeId, NodeRunError, RenderGraph, RenderGraphContext, RenderGraphError,
-            SlotInfo, SlotType,
+            node::IntoRenderNodeArray, Edge, InternedRenderLabel, Node, NodeRunError, RenderGraph,
+            RenderGraphContext, RenderGraphError, RenderLabel, SlotInfo, SlotType,
         },
         renderer::RenderContext,
     };
     <span class="kw">use </span>bevy_ecs::world::{FromWorld, World};
     <span class="kw">use </span>bevy_utils::HashSet;
+
+    <span class="attr">#[derive(Debug, Hash, PartialEq, Eq, Clone, RenderLabel)]
+    </span><span class="kw">enum </span>TestLabel {
+        A,
+        B,
+        C,
+        D,
+    }
 
     <span class="attr">#[derive(Debug)]
     </span><span class="kw">struct </span>TestNode {
@@ -1628,60 +1640,74 @@
         }
     }
 
-    <span class="kw">fn </span>input_nodes(name: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str, graph: <span class="kw-2">&amp;</span>RenderGraph) -&gt; HashSet&lt;NodeId&gt; {
+    <span class="kw">fn </span>input_nodes(label: <span class="kw">impl </span>RenderLabel, graph: <span class="kw-2">&amp;</span>RenderGraph) -&gt; HashSet&lt;InternedRenderLabel&gt; {
         graph
-            .iter_node_inputs(name)
+            .iter_node_inputs(label)
             .unwrap()
-            .map(|(_edge, node)| node.id)
-            .collect::&lt;HashSet&lt;NodeId&gt;&gt;()
+            .map(|(_edge, node)| node.label)
+            .collect::&lt;HashSet&lt;InternedRenderLabel&gt;&gt;()
     }
 
-    <span class="kw">fn </span>output_nodes(name: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str, graph: <span class="kw-2">&amp;</span>RenderGraph) -&gt; HashSet&lt;NodeId&gt; {
+    <span class="kw">fn </span>output_nodes(label: <span class="kw">impl </span>RenderLabel, graph: <span class="kw-2">&amp;</span>RenderGraph) -&gt; HashSet&lt;InternedRenderLabel&gt; {
         graph
-            .iter_node_outputs(name)
+            .iter_node_outputs(label)
             .unwrap()
-            .map(|(_edge, node)| node.id)
-            .collect::&lt;HashSet&lt;NodeId&gt;&gt;()
+            .map(|(_edge, node)| node.label)
+            .collect::&lt;HashSet&lt;InternedRenderLabel&gt;&gt;()
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_graph_edges() {
         <span class="kw">let </span><span class="kw-2">mut </span>graph = RenderGraph::default();
-        <span class="kw">let </span>a_id = graph.add_node(<span class="string">"A"</span>, TestNode::new(<span class="number">0</span>, <span class="number">1</span>));
-        <span class="kw">let </span>b_id = graph.add_node(<span class="string">"B"</span>, TestNode::new(<span class="number">0</span>, <span class="number">1</span>));
-        <span class="kw">let </span>c_id = graph.add_node(<span class="string">"C"</span>, TestNode::new(<span class="number">1</span>, <span class="number">1</span>));
-        <span class="kw">let </span>d_id = graph.add_node(<span class="string">"D"</span>, TestNode::new(<span class="number">1</span>, <span class="number">0</span>));
+        graph.add_node(TestLabel::A, TestNode::new(<span class="number">0</span>, <span class="number">1</span>));
+        graph.add_node(TestLabel::B, TestNode::new(<span class="number">0</span>, <span class="number">1</span>));
+        graph.add_node(TestLabel::C, TestNode::new(<span class="number">1</span>, <span class="number">1</span>));
+        graph.add_node(TestLabel::D, TestNode::new(<span class="number">1</span>, <span class="number">0</span>));
 
-        graph.add_slot_edge(<span class="string">"A"</span>, <span class="string">"out_0"</span>, <span class="string">"C"</span>, <span class="string">"in_0"</span>);
-        graph.add_node_edge(<span class="string">"B"</span>, <span class="string">"C"</span>);
-        graph.add_slot_edge(<span class="string">"C"</span>, <span class="number">0</span>, <span class="string">"D"</span>, <span class="number">0</span>);
+        graph.add_slot_edge(TestLabel::A, <span class="string">"out_0"</span>, TestLabel::C, <span class="string">"in_0"</span>);
+        graph.add_node_edge(TestLabel::B, TestLabel::C);
+        graph.add_slot_edge(TestLabel::C, <span class="number">0</span>, TestLabel::D, <span class="number">0</span>);
 
-        <span class="macro">assert!</span>(input_nodes(<span class="string">"A"</span>, <span class="kw-2">&amp;</span>graph).is_empty(), <span class="string">"A has no inputs"</span>);
         <span class="macro">assert!</span>(
-            output_nodes(<span class="string">"A"</span>, <span class="kw-2">&amp;</span>graph) == HashSet::from_iter(<span class="macro">vec!</span>[c_id]),
+            input_nodes(TestLabel::A, <span class="kw-2">&amp;</span>graph).is_empty(),
+            <span class="string">"A has no inputs"
+        </span>);
+        <span class="macro">assert_eq!</span>(
+            output_nodes(TestLabel::A, <span class="kw-2">&amp;</span>graph),
+            HashSet::from_iter((TestLabel::C,).into_array()),
             <span class="string">"A outputs to C"
         </span>);
 
-        <span class="macro">assert!</span>(input_nodes(<span class="string">"B"</span>, <span class="kw-2">&amp;</span>graph).is_empty(), <span class="string">"B has no inputs"</span>);
         <span class="macro">assert!</span>(
-            output_nodes(<span class="string">"B"</span>, <span class="kw-2">&amp;</span>graph) == HashSet::from_iter(<span class="macro">vec!</span>[c_id]),
+            input_nodes(TestLabel::B, <span class="kw-2">&amp;</span>graph).is_empty(),
+            <span class="string">"B has no inputs"
+        </span>);
+        <span class="macro">assert_eq!</span>(
+            output_nodes(TestLabel::B, <span class="kw-2">&amp;</span>graph),
+            HashSet::from_iter((TestLabel::C,).into_array()),
             <span class="string">"B outputs to C"
         </span>);
 
-        <span class="macro">assert!</span>(
-            input_nodes(<span class="string">"C"</span>, <span class="kw-2">&amp;</span>graph) == HashSet::from_iter(<span class="macro">vec!</span>[a_id, b_id]),
+        <span class="macro">assert_eq!</span>(
+            input_nodes(TestLabel::C, <span class="kw-2">&amp;</span>graph),
+            HashSet::from_iter((TestLabel::A, TestLabel::B).into_array()),
             <span class="string">"A and B input to C"
         </span>);
-        <span class="macro">assert!</span>(
-            output_nodes(<span class="string">"C"</span>, <span class="kw-2">&amp;</span>graph) == HashSet::from_iter(<span class="macro">vec!</span>[d_id]),
+        <span class="macro">assert_eq!</span>(
+            output_nodes(TestLabel::C, <span class="kw-2">&amp;</span>graph),
+            HashSet::from_iter((TestLabel::D,).into_array()),
             <span class="string">"C outputs to D"
         </span>);
 
-        <span class="macro">assert!</span>(
-            input_nodes(<span class="string">"D"</span>, <span class="kw-2">&amp;</span>graph) == HashSet::from_iter(<span class="macro">vec!</span>[c_id]),
+        <span class="macro">assert_eq!</span>(
+            input_nodes(TestLabel::D, <span class="kw-2">&amp;</span>graph),
+            HashSet::from_iter((TestLabel::C,).into_array()),
             <span class="string">"C inputs to D"
         </span>);
-        <span class="macro">assert!</span>(output_nodes(<span class="string">"D"</span>, <span class="kw-2">&amp;</span>graph).is_empty(), <span class="string">"D has no outputs"</span>);
+        <span class="macro">assert!</span>(
+            output_nodes(TestLabel::D, <span class="kw-2">&amp;</span>graph).is_empty(),
+            <span class="string">"D has no outputs"
+        </span>);
     }
 
     <span class="attr">#[test]
@@ -1703,12 +1729,12 @@
 
         <span class="kw">let </span><span class="kw-2">mut </span>graph = RenderGraph::default();
 
-        graph.add_node(<span class="string">"A"</span>, MyNode { value: <span class="number">42 </span>});
+        graph.add_node(TestLabel::A, MyNode { value: <span class="number">42 </span>});
 
-        <span class="kw">let </span>node: <span class="kw-2">&amp;</span>MyNode = graph.get_node(<span class="string">"A"</span>).unwrap();
+        <span class="kw">let </span>node: <span class="kw-2">&amp;</span>MyNode = graph.get_node(TestLabel::A).unwrap();
         <span class="macro">assert_eq!</span>(node.value, <span class="number">42</span>, <span class="string">"node value matches"</span>);
 
-        <span class="kw">let </span>result: <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span>TestNode, RenderGraphError&gt; = graph.get_node(<span class="string">"A"</span>);
+        <span class="kw">let </span>result: <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span>TestNode, RenderGraphError&gt; = graph.get_node(TestLabel::A);
         <span class="macro">assert_eq!</span>(
             result.unwrap_err(),
             RenderGraphError::WrongNodeType,
@@ -1720,17 +1746,17 @@
     </span><span class="kw">fn </span>test_slot_already_occupied() {
         <span class="kw">let </span><span class="kw-2">mut </span>graph = RenderGraph::default();
 
-        graph.add_node(<span class="string">"A"</span>, TestNode::new(<span class="number">0</span>, <span class="number">1</span>));
-        graph.add_node(<span class="string">"B"</span>, TestNode::new(<span class="number">0</span>, <span class="number">1</span>));
-        graph.add_node(<span class="string">"C"</span>, TestNode::new(<span class="number">1</span>, <span class="number">1</span>));
+        graph.add_node(TestLabel::A, TestNode::new(<span class="number">0</span>, <span class="number">1</span>));
+        graph.add_node(TestLabel::B, TestNode::new(<span class="number">0</span>, <span class="number">1</span>));
+        graph.add_node(TestLabel::C, TestNode::new(<span class="number">1</span>, <span class="number">1</span>));
 
-        graph.add_slot_edge(<span class="string">"A"</span>, <span class="number">0</span>, <span class="string">"C"</span>, <span class="number">0</span>);
+        graph.add_slot_edge(TestLabel::A, <span class="number">0</span>, TestLabel::C, <span class="number">0</span>);
         <span class="macro">assert_eq!</span>(
-            graph.try_add_slot_edge(<span class="string">"B"</span>, <span class="number">0</span>, <span class="string">"C"</span>, <span class="number">0</span>),
+            graph.try_add_slot_edge(TestLabel::B, <span class="number">0</span>, TestLabel::C, <span class="number">0</span>),
             <span class="prelude-val">Err</span>(RenderGraphError::NodeInputSlotAlreadyOccupied {
-                node: graph.get_node_id(<span class="string">"C"</span>).unwrap(),
+                node: TestLabel::C.intern(),
                 input_slot: <span class="number">0</span>,
-                occupied_by_node: graph.get_node_id(<span class="string">"A"</span>).unwrap(),
+                occupied_by_node: TestLabel::A.intern(),
             }),
             <span class="string">"Adding to a slot that is already occupied should return an error"
         </span>);
@@ -1740,16 +1766,16 @@
     </span><span class="kw">fn </span>test_edge_already_exists() {
         <span class="kw">let </span><span class="kw-2">mut </span>graph = RenderGraph::default();
 
-        graph.add_node(<span class="string">"A"</span>, TestNode::new(<span class="number">0</span>, <span class="number">1</span>));
-        graph.add_node(<span class="string">"B"</span>, TestNode::new(<span class="number">1</span>, <span class="number">0</span>));
+        graph.add_node(TestLabel::A, TestNode::new(<span class="number">0</span>, <span class="number">1</span>));
+        graph.add_node(TestLabel::B, TestNode::new(<span class="number">1</span>, <span class="number">0</span>));
 
-        graph.add_slot_edge(<span class="string">"A"</span>, <span class="number">0</span>, <span class="string">"B"</span>, <span class="number">0</span>);
+        graph.add_slot_edge(TestLabel::A, <span class="number">0</span>, TestLabel::B, <span class="number">0</span>);
         <span class="macro">assert_eq!</span>(
-            graph.try_add_slot_edge(<span class="string">"A"</span>, <span class="number">0</span>, <span class="string">"B"</span>, <span class="number">0</span>),
+            graph.try_add_slot_edge(TestLabel::A, <span class="number">0</span>, TestLabel::B, <span class="number">0</span>),
             <span class="prelude-val">Err</span>(RenderGraphError::EdgeAlreadyExists(Edge::SlotEdge {
-                output_node: graph.get_node_id(<span class="string">"A"</span>).unwrap(),
+                output_node: TestLabel::A.intern(),
                 output_index: <span class="number">0</span>,
-                input_node: graph.get_node_id(<span class="string">"B"</span>).unwrap(),
+                input_node: TestLabel::B.intern(),
                 input_index: <span class="number">0</span>,
             })),
             <span class="string">"Adding to a duplicate edge should return an error"
@@ -1776,26 +1802,30 @@
         }
 
         <span class="kw">let </span><span class="kw-2">mut </span>graph = RenderGraph::default();
-        <span class="kw">let </span>a_id = graph.add_node(<span class="string">"A"</span>, SimpleNode);
-        <span class="kw">let </span>b_id = graph.add_node(<span class="string">"B"</span>, SimpleNode);
-        <span class="kw">let </span>c_id = graph.add_node(<span class="string">"C"</span>, SimpleNode);
+        graph.add_node(TestLabel::A, SimpleNode);
+        graph.add_node(TestLabel::B, SimpleNode);
+        graph.add_node(TestLabel::C, SimpleNode);
 
-        graph.add_node_edges(<span class="kw-2">&amp;</span>[<span class="string">"A"</span>, <span class="string">"B"</span>, <span class="string">"C"</span>]);
+        graph.add_node_edges((TestLabel::A, TestLabel::B, TestLabel::C));
 
-        <span class="macro">assert!</span>(
-            output_nodes(<span class="string">"A"</span>, <span class="kw-2">&amp;</span>graph) == HashSet::from_iter(<span class="macro">vec!</span>[b_id]),
+        <span class="macro">assert_eq!</span>(
+            output_nodes(TestLabel::A, <span class="kw-2">&amp;</span>graph),
+            HashSet::from_iter((TestLabel::B,).into_array()),
             <span class="string">"A -&gt; B"
         </span>);
-        <span class="macro">assert!</span>(
-            input_nodes(<span class="string">"B"</span>, <span class="kw-2">&amp;</span>graph) == HashSet::from_iter(<span class="macro">vec!</span>[a_id]),
+        <span class="macro">assert_eq!</span>(
+            input_nodes(TestLabel::B, <span class="kw-2">&amp;</span>graph),
+            HashSet::from_iter((TestLabel::A,).into_array()),
             <span class="string">"A -&gt; B"
         </span>);
-        <span class="macro">assert!</span>(
-            output_nodes(<span class="string">"B"</span>, <span class="kw-2">&amp;</span>graph) == HashSet::from_iter(<span class="macro">vec!</span>[c_id]),
+        <span class="macro">assert_eq!</span>(
+            output_nodes(TestLabel::B, <span class="kw-2">&amp;</span>graph),
+            HashSet::from_iter((TestLabel::C,).into_array()),
             <span class="string">"B -&gt; C"
         </span>);
-        <span class="macro">assert!</span>(
-            input_nodes(<span class="string">"C"</span>, <span class="kw-2">&amp;</span>graph) == HashSet::from_iter(<span class="macro">vec!</span>[b_id]),
+        <span class="macro">assert_eq!</span>(
+            input_nodes(TestLabel::C, <span class="kw-2">&amp;</span>graph),
+            HashSet::from_iter((TestLabel::B,).into_array()),
             <span class="string">"B -&gt; C"
         </span>);
     }

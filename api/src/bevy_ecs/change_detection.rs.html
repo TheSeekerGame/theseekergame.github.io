@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/bevy-3e956806168b8470/b5b6ea3/crates/bevy_ecs/src/change_detection.rs`."><title>change_detection.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bevy_ecs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.0 (aedd173a2 2024-03-17)" data-channel="1.77.0" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bevy_ecs-0.13.1/src/change_detection.rs`."><title>change_detection.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bevy_ecs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.1 (7cf61ebde 2024-03-27)" data-channel="1.77.1" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
             <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
     <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../bevy_ecs/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
@@ -1230,6 +1230,28 @@
 <a href="#1228" id="1228">1228</a>
 <a href="#1229" id="1229">1229</a>
 <a href="#1230" id="1230">1230</a>
+<a href="#1231" id="1231">1231</a>
+<a href="#1232" id="1232">1232</a>
+<a href="#1233" id="1233">1233</a>
+<a href="#1234" id="1234">1234</a>
+<a href="#1235" id="1235">1235</a>
+<a href="#1236" id="1236">1236</a>
+<a href="#1237" id="1237">1237</a>
+<a href="#1238" id="1238">1238</a>
+<a href="#1239" id="1239">1239</a>
+<a href="#1240" id="1240">1240</a>
+<a href="#1241" id="1241">1241</a>
+<a href="#1242" id="1242">1242</a>
+<a href="#1243" id="1243">1243</a>
+<a href="#1244" id="1244">1244</a>
+<a href="#1245" id="1245">1245</a>
+<a href="#1246" id="1246">1246</a>
+<a href="#1247" id="1247">1247</a>
+<a href="#1248" id="1248">1248</a>
+<a href="#1249" id="1249">1249</a>
+<a href="#1250" id="1250">1250</a>
+<a href="#1251" id="1251">1251</a>
+<a href="#1252" id="1252">1252</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! Types that detect when their internal data mutate.
 
 </span><span class="kw">use crate</span>::{
@@ -1378,7 +1400,7 @@
     /// }
     /// # let mut world = World::new();
     /// # world.insert_resource(Score(1));
-    /// # let mut score_changed = IntoSystem::into_system(resource_changed::&lt;Score&gt;());
+    /// # let mut score_changed = IntoSystem::into_system(resource_changed::&lt;Score&gt;);
     /// # score_changed.initialize(&amp;mut world);
     /// # score_changed.run((), &amp;mut world);
     /// #
@@ -1442,7 +1464,7 @@
     /// # let mut world = World::new();
     /// # world.insert_resource(Events::&lt;ScoreChanged&gt;::default());
     /// # world.insert_resource(Score(1));
-    /// # let mut score_changed = IntoSystem::into_system(resource_changed::&lt;Score&gt;());
+    /// # let mut score_changed = IntoSystem::into_system(resource_changed::&lt;Score&gt;);
     /// # score_changed.initialize(&amp;mut world);
     /// # score_changed.run((), &amp;mut world);
     /// #
@@ -1564,7 +1586,7 @@
             <span class="doccomment">/// Consume `self` and return a mutable reference to the
             /// contained value while marking `self` as "changed".
             </span><span class="attr">#[inline]
-            </span><span class="kw">pub fn </span>into_inner(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span><span class="macro-nonterminal">$target </span>{
+            </span><span class="kw">pub fn </span>into_inner(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'w </span><span class="kw-2">mut </span><span class="macro-nonterminal">$target </span>{
                 <span class="self">self</span>.set_changed();
                 <span class="self">self</span>.value
             }
@@ -1590,7 +1612,7 @@
             /// You should never modify the argument passed to the closure -- if you want to modify the data
             /// without flagging a change, consider using [`DetectChangesMut::bypass_change_detection`] to make your intent explicit.
             ///
-            /// ```rust
+            /// ```
             /// # use bevy_ecs::prelude::*;
             /// # #[derive(PartialEq)] pub struct Vec2;
             /// # impl Vec2 { pub const ZERO: Self = Self; }
@@ -1607,7 +1629,7 @@
             /// }
             /// # bevy_ecs::system::assert_is_system(reset_positions);
             /// ```
-            </span><span class="kw">pub fn </span>map_unchanged&lt;U: <span class="question-mark">?</span>Sized&gt;(<span class="self">self</span>, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span><span class="macro-nonterminal">$target</span>) -&gt; <span class="kw-2">&amp;mut </span>U) -&gt; Mut&lt;<span class="lifetime">'a</span>, U&gt; {
+            </span><span class="kw">pub fn </span>map_unchanged&lt;U: <span class="question-mark">?</span>Sized&gt;(<span class="self">self</span>, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span><span class="macro-nonterminal">$target</span>) -&gt; <span class="kw-2">&amp;mut </span>U) -&gt; Mut&lt;<span class="lifetime">'w</span>, U&gt; {
                 Mut {
                     value: f(<span class="self">self</span>.value),
                     ticks: <span class="self">self</span>.ticks,
@@ -1642,19 +1664,19 @@
 }
 
 <span class="attr">#[derive(Clone)]
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>Ticks&lt;<span class="lifetime">'a</span>&gt; {
-    <span class="kw">pub</span>(<span class="kw">crate</span>) added: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Tick,
-    <span class="kw">pub</span>(<span class="kw">crate</span>) changed: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Tick,
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>Ticks&lt;<span class="lifetime">'w</span>&gt; {
+    <span class="kw">pub</span>(<span class="kw">crate</span>) added: <span class="kw-2">&amp;</span><span class="lifetime">'w </span>Tick,
+    <span class="kw">pub</span>(<span class="kw">crate</span>) changed: <span class="kw-2">&amp;</span><span class="lifetime">'w </span>Tick,
     <span class="kw">pub</span>(<span class="kw">crate</span>) last_run: Tick,
     <span class="kw">pub</span>(<span class="kw">crate</span>) this_run: Tick,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; Ticks&lt;<span class="lifetime">'a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'w</span>&gt; Ticks&lt;<span class="lifetime">'w</span>&gt; {
     <span class="doccomment">/// # Safety
     /// This should never alias the underlying ticks with a mutable one such as `TicksMut`.
     </span><span class="attr">#[inline]
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>from_tick_cells(
-        cells: TickCells&lt;<span class="lifetime">'a</span>&gt;,
+        cells: TickCells&lt;<span class="lifetime">'w</span>&gt;,
         last_run: Tick,
         this_run: Tick,
     ) -&gt; <span class="self">Self </span>{
@@ -1667,19 +1689,19 @@
     }
 }
 
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>TicksMut&lt;<span class="lifetime">'a</span>&gt; {
-    <span class="kw">pub</span>(<span class="kw">crate</span>) added: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Tick,
-    <span class="kw">pub</span>(<span class="kw">crate</span>) changed: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Tick,
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>TicksMut&lt;<span class="lifetime">'w</span>&gt; {
+    <span class="kw">pub</span>(<span class="kw">crate</span>) added: <span class="kw-2">&amp;</span><span class="lifetime">'w </span><span class="kw-2">mut </span>Tick,
+    <span class="kw">pub</span>(<span class="kw">crate</span>) changed: <span class="kw-2">&amp;</span><span class="lifetime">'w </span><span class="kw-2">mut </span>Tick,
     <span class="kw">pub</span>(<span class="kw">crate</span>) last_run: Tick,
     <span class="kw">pub</span>(<span class="kw">crate</span>) this_run: Tick,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; TicksMut&lt;<span class="lifetime">'a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'w</span>&gt; TicksMut&lt;<span class="lifetime">'w</span>&gt; {
     <span class="doccomment">/// # Safety
     /// This should never alias the underlying ticks. All access must be unique.
     </span><span class="attr">#[inline]
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>from_tick_cells(
-        cells: TickCells&lt;<span class="lifetime">'a</span>&gt;,
+        cells: TickCells&lt;<span class="lifetime">'w</span>&gt;,
         last_run: Tick,
         this_run: Tick,
     ) -&gt; <span class="self">Self </span>{
@@ -1692,8 +1714,8 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; From&lt;TicksMut&lt;<span class="lifetime">'a</span>&gt;&gt; <span class="kw">for </span>Ticks&lt;<span class="lifetime">'a</span>&gt; {
-    <span class="kw">fn </span>from(ticks: TicksMut&lt;<span class="lifetime">'a</span>&gt;) -&gt; <span class="self">Self </span>{
+<span class="kw">impl</span>&lt;<span class="lifetime">'w</span>&gt; From&lt;TicksMut&lt;<span class="lifetime">'w</span>&gt;&gt; <span class="kw">for </span>Ticks&lt;<span class="lifetime">'w</span>&gt; {
+    <span class="kw">fn </span>from(ticks: TicksMut&lt;<span class="lifetime">'w</span>&gt;) -&gt; <span class="self">Self </span>{
         Ticks {
             added: ticks.added,
             changed: ticks.changed,
@@ -1774,9 +1796,9 @@
 /// Panics when used as a [`SystemParam`](crate::system::SystemParam) if the resource does not exist.
 ///
 /// Use `Option&lt;ResMut&lt;T&gt;&gt;` instead if the resource might not always exist.
-</span><span class="kw">pub struct </span>ResMut&lt;<span class="lifetime">'a</span>, T: <span class="question-mark">?</span>Sized + Resource&gt; {
-    <span class="kw">pub</span>(<span class="kw">crate</span>) value: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>T,
-    <span class="kw">pub</span>(<span class="kw">crate</span>) ticks: TicksMut&lt;<span class="lifetime">'a</span>&gt;,
+</span><span class="kw">pub struct </span>ResMut&lt;<span class="lifetime">'w</span>, T: <span class="question-mark">?</span>Sized + Resource&gt; {
+    <span class="kw">pub</span>(<span class="kw">crate</span>) value: <span class="kw-2">&amp;</span><span class="lifetime">'w </span><span class="kw-2">mut </span>T,
+    <span class="kw">pub</span>(<span class="kw">crate</span>) ticks: TicksMut&lt;<span class="lifetime">'w</span>&gt;,
 }
 
 <span class="kw">impl</span>&lt;<span class="lifetime">'w</span>, <span class="lifetime">'a</span>, T: Resource&gt; IntoIterator <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span>ResMut&lt;<span class="lifetime">'w</span>, T&gt;
@@ -1804,15 +1826,15 @@
     }
 }
 
-<span class="macro">change_detection_impl!</span>(ResMut&lt;<span class="lifetime">'a</span>, T&gt;, T, Resource);
-<span class="macro">change_detection_mut_impl!</span>(ResMut&lt;<span class="lifetime">'a</span>, T&gt;, T, Resource);
-<span class="macro">impl_methods!</span>(ResMut&lt;<span class="lifetime">'a</span>, T&gt;, T, Resource);
-<span class="macro">impl_debug!</span>(ResMut&lt;<span class="lifetime">'a</span>, T&gt;, Resource);
+<span class="macro">change_detection_impl!</span>(ResMut&lt;<span class="lifetime">'w</span>, T&gt;, T, Resource);
+<span class="macro">change_detection_mut_impl!</span>(ResMut&lt;<span class="lifetime">'w</span>, T&gt;, T, Resource);
+<span class="macro">impl_methods!</span>(ResMut&lt;<span class="lifetime">'w</span>, T&gt;, T, Resource);
+<span class="macro">impl_debug!</span>(ResMut&lt;<span class="lifetime">'w</span>, T&gt;, Resource);
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, T: Resource&gt; From&lt;ResMut&lt;<span class="lifetime">'a</span>, T&gt;&gt; <span class="kw">for </span>Mut&lt;<span class="lifetime">'a</span>, T&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'w</span>, T: Resource&gt; From&lt;ResMut&lt;<span class="lifetime">'w</span>, T&gt;&gt; <span class="kw">for </span>Mut&lt;<span class="lifetime">'w</span>, T&gt; {
     <span class="doccomment">/// Convert this `ResMut` into a `Mut`. This allows keeping the change-detection feature of `Mut`
     /// while losing the specificity of `ResMut` for resources.
-    </span><span class="kw">fn </span>from(other: ResMut&lt;<span class="lifetime">'a</span>, T&gt;) -&gt; Mut&lt;<span class="lifetime">'a</span>, T&gt; {
+    </span><span class="kw">fn </span>from(other: ResMut&lt;<span class="lifetime">'w</span>, T&gt;) -&gt; Mut&lt;<span class="lifetime">'w</span>, T&gt; {
         Mut {
             value: other.value,
             ticks: other.ticks,
@@ -1832,20 +1854,20 @@
 /// Panics when used as a `SystemParameter` if the resource does not exist.
 ///
 /// Use `Option&lt;NonSendMut&lt;T&gt;&gt;` instead if the resource might not always exist.
-</span><span class="kw">pub struct </span>NonSendMut&lt;<span class="lifetime">'a</span>, T: <span class="question-mark">?</span>Sized + <span class="lifetime">'static</span>&gt; {
-    <span class="kw">pub</span>(<span class="kw">crate</span>) value: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>T,
-    <span class="kw">pub</span>(<span class="kw">crate</span>) ticks: TicksMut&lt;<span class="lifetime">'a</span>&gt;,
+</span><span class="kw">pub struct </span>NonSendMut&lt;<span class="lifetime">'w</span>, T: <span class="question-mark">?</span>Sized + <span class="lifetime">'static</span>&gt; {
+    <span class="kw">pub</span>(<span class="kw">crate</span>) value: <span class="kw-2">&amp;</span><span class="lifetime">'w </span><span class="kw-2">mut </span>T,
+    <span class="kw">pub</span>(<span class="kw">crate</span>) ticks: TicksMut&lt;<span class="lifetime">'w</span>&gt;,
 }
 
-<span class="macro">change_detection_impl!</span>(NonSendMut&lt;<span class="lifetime">'a</span>, T&gt;, T,);
-<span class="macro">change_detection_mut_impl!</span>(NonSendMut&lt;<span class="lifetime">'a</span>, T&gt;, T,);
-<span class="macro">impl_methods!</span>(NonSendMut&lt;<span class="lifetime">'a</span>, T&gt;, T,);
-<span class="macro">impl_debug!</span>(NonSendMut&lt;<span class="lifetime">'a</span>, T&gt;,);
+<span class="macro">change_detection_impl!</span>(NonSendMut&lt;<span class="lifetime">'w</span>, T&gt;, T,);
+<span class="macro">change_detection_mut_impl!</span>(NonSendMut&lt;<span class="lifetime">'w</span>, T&gt;, T,);
+<span class="macro">impl_methods!</span>(NonSendMut&lt;<span class="lifetime">'w</span>, T&gt;, T,);
+<span class="macro">impl_debug!</span>(NonSendMut&lt;<span class="lifetime">'w</span>, T&gt;,);
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, T: <span class="lifetime">'static</span>&gt; From&lt;NonSendMut&lt;<span class="lifetime">'a</span>, T&gt;&gt; <span class="kw">for </span>Mut&lt;<span class="lifetime">'a</span>, T&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'w</span>, T: <span class="lifetime">'static</span>&gt; From&lt;NonSendMut&lt;<span class="lifetime">'w</span>, T&gt;&gt; <span class="kw">for </span>Mut&lt;<span class="lifetime">'w</span>, T&gt; {
     <span class="doccomment">/// Convert this `NonSendMut` into a `Mut`. This allows keeping the change-detection feature of `Mut`
     /// while losing the specificity of `NonSendMut`.
-    </span><span class="kw">fn </span>from(other: NonSendMut&lt;<span class="lifetime">'a</span>, T&gt;) -&gt; Mut&lt;<span class="lifetime">'a</span>, T&gt; {
+    </span><span class="kw">fn </span>from(other: NonSendMut&lt;<span class="lifetime">'w</span>, T&gt;) -&gt; Mut&lt;<span class="lifetime">'w</span>, T&gt; {
         Mut {
             value: other.value,
             ticks: other.ticks,
@@ -1855,14 +1877,36 @@
 
 <span class="doccomment">/// Shared borrow of an entity's component with access to change detection.
 /// Similar to [`Mut`] but is immutable and so doesn't require unique access.
-</span><span class="kw">pub struct </span>Ref&lt;<span class="lifetime">'a</span>, T: <span class="question-mark">?</span>Sized&gt; {
-    <span class="kw">pub</span>(<span class="kw">crate</span>) value: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>T,
-    <span class="kw">pub</span>(<span class="kw">crate</span>) ticks: Ticks&lt;<span class="lifetime">'a</span>&gt;,
+///
+/// # Examples
+///
+/// These two systems produce the same output.
+///
+/// ```
+/// # use bevy_ecs::change_detection::DetectChanges;
+/// # use bevy_ecs::query::{Changed, With};
+/// # use bevy_ecs::system::Query;
+/// # use bevy_ecs::world::Ref;
+/// # use bevy_ecs_macros::Component;
+/// # #[derive(Component)]
+/// # struct MyComponent;
+///
+/// fn how_many_changed_1(query: Query&lt;(), Changed&lt;MyComponent&gt;&gt;) {
+///     println!("{} changed", query.iter().count());
+/// }
+///
+/// fn how_many_changed_2(query: Query&lt;Ref&lt;MyComponent&gt;&gt;) {
+///     println!("{} changed", query.iter().filter(|c| c.is_changed()).count());
+/// }
+/// ```
+</span><span class="kw">pub struct </span>Ref&lt;<span class="lifetime">'w</span>, T: <span class="question-mark">?</span>Sized&gt; {
+    <span class="kw">pub</span>(<span class="kw">crate</span>) value: <span class="kw-2">&amp;</span><span class="lifetime">'w </span>T,
+    <span class="kw">pub</span>(<span class="kw">crate</span>) ticks: Ticks&lt;<span class="lifetime">'w</span>&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, T: <span class="question-mark">?</span>Sized&gt; Ref&lt;<span class="lifetime">'a</span>, T&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'w</span>, T: <span class="question-mark">?</span>Sized&gt; Ref&lt;<span class="lifetime">'w</span>, T&gt; {
     <span class="doccomment">/// Returns the reference wrapped by this type. The reference is allowed to outlive `self`, which makes this method more flexible than simply borrowing `self`.
-    </span><span class="kw">pub fn </span>into_inner(<span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'a </span>T {
+    </span><span class="kw">pub fn </span>into_inner(<span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'w </span>T {
         <span class="self">self</span>.value
     }
 
@@ -1870,7 +1914,7 @@
     ///
     /// This doesn't do anything else than call `f` on the wrapped value.
     /// This is equivalent to [`Mut::map_unchanged`].
-    </span><span class="kw">pub fn </span>map&lt;U: <span class="question-mark">?</span>Sized&gt;(<span class="self">self</span>, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;</span>T) -&gt; <span class="kw-2">&amp;</span>U) -&gt; Ref&lt;<span class="lifetime">'a</span>, U&gt; {
+    </span><span class="kw">pub fn </span>map&lt;U: <span class="question-mark">?</span>Sized&gt;(<span class="self">self</span>, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;</span>T) -&gt; <span class="kw-2">&amp;</span>U) -&gt; Ref&lt;<span class="lifetime">'w</span>, U&gt; {
         Ref {
             value: f(<span class="self">self</span>.value),
             ticks: <span class="self">self</span>.ticks,
@@ -1889,12 +1933,12 @@
     ///    as a reference to determine whether the wrapped value is newly added or changed.
     /// - `this_run` - A [`Tick`] corresponding to the current point in time -- "now".
     </span><span class="kw">pub fn </span>new(
-        value: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>T,
-        added: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Tick,
-        changed: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Tick,
+        value: <span class="kw-2">&amp;</span><span class="lifetime">'w </span>T,
+        added: <span class="kw-2">&amp;</span><span class="lifetime">'w </span>Tick,
+        changed: <span class="kw-2">&amp;</span><span class="lifetime">'w </span>Tick,
         last_run: Tick,
         this_run: Tick,
-    ) -&gt; Ref&lt;<span class="lifetime">'a</span>, T&gt; {
+    ) -&gt; Ref&lt;<span class="lifetime">'w</span>, T&gt; {
         Ref {
             value,
             ticks: Ticks {
@@ -1918,16 +1962,16 @@
         <span class="self">self</span>.value.into_iter()
     }
 }
-<span class="macro">change_detection_impl!</span>(Ref&lt;<span class="lifetime">'a</span>, T&gt;, T,);
-<span class="macro">impl_debug!</span>(Ref&lt;<span class="lifetime">'a</span>, T&gt;,);
+<span class="macro">change_detection_impl!</span>(Ref&lt;<span class="lifetime">'w</span>, T&gt;, T,);
+<span class="macro">impl_debug!</span>(Ref&lt;<span class="lifetime">'w</span>, T&gt;,);
 
-<span class="doccomment">/// Unique mutable borrow of an entity's component
-</span><span class="kw">pub struct </span>Mut&lt;<span class="lifetime">'a</span>, T: <span class="question-mark">?</span>Sized&gt; {
-    <span class="kw">pub</span>(<span class="kw">crate</span>) value: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>T,
-    <span class="kw">pub</span>(<span class="kw">crate</span>) ticks: TicksMut&lt;<span class="lifetime">'a</span>&gt;,
+<span class="doccomment">/// Unique mutable borrow of an entity's component or of a resource.
+</span><span class="kw">pub struct </span>Mut&lt;<span class="lifetime">'w</span>, T: <span class="question-mark">?</span>Sized&gt; {
+    <span class="kw">pub</span>(<span class="kw">crate</span>) value: <span class="kw-2">&amp;</span><span class="lifetime">'w </span><span class="kw-2">mut </span>T,
+    <span class="kw">pub</span>(<span class="kw">crate</span>) ticks: TicksMut&lt;<span class="lifetime">'w</span>&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, T: <span class="question-mark">?</span>Sized&gt; Mut&lt;<span class="lifetime">'a</span>, T&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'w</span>, T: <span class="question-mark">?</span>Sized&gt; Mut&lt;<span class="lifetime">'w</span>, T&gt; {
     <span class="doccomment">/// Creates a new change-detection enabled smart pointer.
     /// In almost all cases you do not need to call this method manually,
     /// as instances of `Mut` will be created by engine-internal code.
@@ -1944,9 +1988,9 @@
     ///   as a reference to determine whether the wrapped value is newly added or changed.
     /// - `this_run` - A [`Tick`] corresponding to the current point in time -- "now".
     </span><span class="kw">pub fn </span>new(
-        value: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>T,
-        added: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Tick,
-        last_changed: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Tick,
+        value: <span class="kw-2">&amp;</span><span class="lifetime">'w </span><span class="kw-2">mut </span>T,
+        added: <span class="kw-2">&amp;</span><span class="lifetime">'w </span><span class="kw-2">mut </span>Tick,
+        last_changed: <span class="kw-2">&amp;</span><span class="lifetime">'w </span><span class="kw-2">mut </span>Tick,
         last_run: Tick,
         this_run: Tick,
     ) -&gt; <span class="self">Self </span>{
@@ -1962,8 +2006,8 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, T: <span class="question-mark">?</span>Sized&gt; From&lt;Mut&lt;<span class="lifetime">'a</span>, T&gt;&gt; <span class="kw">for </span>Ref&lt;<span class="lifetime">'a</span>, T&gt; {
-    <span class="kw">fn </span>from(mut_ref: Mut&lt;<span class="lifetime">'a</span>, T&gt;) -&gt; <span class="self">Self </span>{
+<span class="kw">impl</span>&lt;<span class="lifetime">'w</span>, T: <span class="question-mark">?</span>Sized&gt; From&lt;Mut&lt;<span class="lifetime">'w</span>, T&gt;&gt; <span class="kw">for </span>Ref&lt;<span class="lifetime">'w</span>, T&gt; {
+    <span class="kw">fn </span>from(mut_ref: Mut&lt;<span class="lifetime">'w</span>, T&gt;) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             value: mut_ref.value,
             ticks: mut_ref.ticks.into(),
@@ -1996,10 +2040,10 @@
     }
 }
 
-<span class="macro">change_detection_impl!</span>(Mut&lt;<span class="lifetime">'a</span>, T&gt;, T,);
-<span class="macro">change_detection_mut_impl!</span>(Mut&lt;<span class="lifetime">'a</span>, T&gt;, T,);
-<span class="macro">impl_methods!</span>(Mut&lt;<span class="lifetime">'a</span>, T&gt;, T,);
-<span class="macro">impl_debug!</span>(Mut&lt;<span class="lifetime">'a</span>, T&gt;,);
+<span class="macro">change_detection_impl!</span>(Mut&lt;<span class="lifetime">'w</span>, T&gt;, T,);
+<span class="macro">change_detection_mut_impl!</span>(Mut&lt;<span class="lifetime">'w</span>, T&gt;, T,);
+<span class="macro">impl_methods!</span>(Mut&lt;<span class="lifetime">'w</span>, T&gt;, T,);
+<span class="macro">impl_debug!</span>(Mut&lt;<span class="lifetime">'w</span>, T&gt;,);
 
 <span class="doccomment">/// Unique mutable borrow of resources or an entity's component.
 ///
@@ -2009,17 +2053,17 @@
 /// Usually you don't need to use this and can instead use the APIs returning a
 /// [`Mut`], but in situations where the types are not known at compile time
 /// or are defined outside of rust this can be used.
-</span><span class="kw">pub struct </span>MutUntyped&lt;<span class="lifetime">'a</span>&gt; {
-    <span class="kw">pub</span>(<span class="kw">crate</span>) value: PtrMut&lt;<span class="lifetime">'a</span>&gt;,
-    <span class="kw">pub</span>(<span class="kw">crate</span>) ticks: TicksMut&lt;<span class="lifetime">'a</span>&gt;,
+</span><span class="kw">pub struct </span>MutUntyped&lt;<span class="lifetime">'w</span>&gt; {
+    <span class="kw">pub</span>(<span class="kw">crate</span>) value: PtrMut&lt;<span class="lifetime">'w</span>&gt;,
+    <span class="kw">pub</span>(<span class="kw">crate</span>) ticks: TicksMut&lt;<span class="lifetime">'w</span>&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; MutUntyped&lt;<span class="lifetime">'a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'w</span>&gt; MutUntyped&lt;<span class="lifetime">'w</span>&gt; {
     <span class="doccomment">/// Returns the pointer to the value, marking it as changed.
     ///
     /// In order to avoid marking the value as changed, you need to call [`bypass_change_detection`](DetectChangesMut::bypass_change_detection).
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>into_inner(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; PtrMut&lt;<span class="lifetime">'a</span>&gt; {
+    </span><span class="kw">pub fn </span>into_inner(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; PtrMut&lt;<span class="lifetime">'w</span>&gt; {
         <span class="self">self</span>.set_changed();
         <span class="self">self</span>.value
     }
@@ -2076,7 +2120,7 @@
     /// // SAFETY: from the context it is known that `ReflectFromPtr` was made for the type of the `MutUntyped`
     /// mut_untyped.map_unchanged(|ptr| unsafe { reflect_from_ptr.as_reflect_mut(ptr) });
     /// ```
-    </span><span class="kw">pub fn </span>map_unchanged&lt;T: <span class="question-mark">?</span>Sized&gt;(<span class="self">self</span>, f: <span class="kw">impl </span>FnOnce(PtrMut&lt;<span class="lifetime">'a</span>&gt;) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>T) -&gt; Mut&lt;<span class="lifetime">'a</span>, T&gt; {
+    </span><span class="kw">pub fn </span>map_unchanged&lt;T: <span class="question-mark">?</span>Sized&gt;(<span class="self">self</span>, f: <span class="kw">impl </span>FnOnce(PtrMut&lt;<span class="lifetime">'w</span>&gt;) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'w </span><span class="kw-2">mut </span>T) -&gt; Mut&lt;<span class="lifetime">'w</span>, T&gt; {
         Mut {
             value: f(<span class="self">self</span>.value),
             ticks: <span class="self">self</span>.ticks,
@@ -2087,7 +2131,7 @@
     ///
     /// # Safety
     /// - `T` must be the erased pointee type for this [`MutUntyped`].
-    </span><span class="kw">pub unsafe fn </span>with_type&lt;T&gt;(<span class="self">self</span>) -&gt; Mut&lt;<span class="lifetime">'a</span>, T&gt; {
+    </span><span class="kw">pub unsafe fn </span>with_type&lt;T&gt;(<span class="self">self</span>) -&gt; Mut&lt;<span class="lifetime">'w</span>, T&gt; {
         Mut {
             value: <span class="self">self</span>.value.deref_mut(),
             ticks: <span class="self">self</span>.ticks,
@@ -2095,7 +2139,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; DetectChanges <span class="kw">for </span>MutUntyped&lt;<span class="lifetime">'a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'w</span>&gt; DetectChanges <span class="kw">for </span>MutUntyped&lt;<span class="lifetime">'w</span>&gt; {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>is_added(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
         <span class="self">self</span>.ticks
@@ -2116,8 +2160,8 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; DetectChangesMut <span class="kw">for </span>MutUntyped&lt;<span class="lifetime">'a</span>&gt; {
-    <span class="kw">type </span>Inner = PtrMut&lt;<span class="lifetime">'a</span>&gt;;
+<span class="kw">impl</span>&lt;<span class="lifetime">'w</span>&gt; DetectChangesMut <span class="kw">for </span>MutUntyped&lt;<span class="lifetime">'w</span>&gt; {
+    <span class="kw">type </span>Inner = PtrMut&lt;<span class="lifetime">'w</span>&gt;;
 
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>set_changed(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
@@ -2261,8 +2305,8 @@
         <span class="kw">for </span>tracker <span class="kw">in </span>query.iter(<span class="kw-2">&amp;</span>world) {
             <span class="kw">let </span>ticks_since_insert = change_tick.relative_to(<span class="kw-2">*</span>tracker.ticks.added).get();
             <span class="kw">let </span>ticks_since_change = change_tick.relative_to(<span class="kw-2">*</span>tracker.ticks.changed).get();
-            <span class="macro">assert!</span>(ticks_since_insert == MAX_CHANGE_AGE);
-            <span class="macro">assert!</span>(ticks_since_change == MAX_CHANGE_AGE);
+            <span class="macro">assert_eq!</span>(ticks_since_insert, MAX_CHANGE_AGE);
+            <span class="macro">assert_eq!</span>(ticks_since_change, MAX_CHANGE_AGE);
         }
     }
 
