@@ -1357,25 +1357,32 @@ it should be played.</p>
 that scripts can do + additional features tailored for animation use cases.</p>
 <p><a href="tech/./anim-ref.html">See here for a reference on the syntax/format.</a></p>
 <h2 id="art-assets"><a class="header" href="#art-assets">Art Assets</a></h2>
-<p>An animation file requires a "texture atlas". That is the file (typically PNG
-format) which provides the actual image data / frames to be displayed.</p>
-<p>Please don't confuse the two. They are separate things, two separate files:</p>
+<p>An animation consists of 3 parts:</p>
 <ul>
-<li>The Texture Atlas, containing the image data.
-All the frames that can be displayed by an animation, in a grid layout.
-One such file can be used by multiple Animations.</li>
-<li>The Animation Asset (what this page is about): the script that tells the game how to actually play the animation.</li>
+<li>The "spritesheet image" (typically PNG format), which provides the actual
+image data / frames to be displayed.</li>
+<li>The "texture atlas layout": the metadata describing the dimensions of each
+frame and the number of rows and columns in the spritesheet image.</li>
+<li>The "animation script", which allows our animation system to play the animation
+and allows extra features and Rust integrations to be hooked up to it.</li>
 </ul>
-<p>You should create an animation asset for every piece/clip of animation that
-we want to be able to play in the game.</p>
-<p>The texture atlases can be reused or split as convenient. Usually there will
-be one atlas per animation, but sometimes it might make sense to have one atlas
-shared between multiple animations:</p>
-<ul>
-<li>If different animations need to display some of the same frames.</li>
-<li>If you have multiple variants of an animation, like <code>Run</code> and <code>RunWithDamage</code> (which adds a blinking effect),
-or left/right flipped variants.</li>
-</ul>
+<p>Normally, when you want to add a new animation to the game, you should declare
+the above three things in <code>animations.assets.ron</code>. Example:</p>
+<pre><code class="language-ron">    "anim.player.FallForward": File (
+        path: "animations/player/movement/FallForward.anim.toml",
+    ),
+    "anim.player.FallForward.image": File (
+        path: "animations/player/movement/FallForward.png",
+    ),
+    "anim.player.FallForward.atlas": TextureAtlasLayout (
+        tile_size_x: 96.,
+        tile_size_y: 96.,
+        rows: 1,
+        columns: 4,
+    ),
+</code></pre>
+<p>The convention is to append <code>.image</code> and <code>.atlas</code> for the asset keys of
+the spritesheet image and texture atlas layout, respectively.</p>
 <h2 id="testing"><a class="header" href="#testing">Testing</a></h2>
 <p>To see how an animation looks in-game, you can test it using the <a href="tech/./cli.html">dev
 console</a>. Use the <a href="tech/./cli-ref.html#spawn_anim"><code>spawn_anim</code></a> command:</p>
@@ -1384,11 +1391,6 @@ console</a>. Use the <a href="tech/./cli-ref.html#spawn_anim"><code>spawn_anim</
 <p>Or optionally with X/Y coordinates where to display it:</p>
 <pre><code>spawn_anim anim.asset.key 100 200
 </code></pre>
-<h2 id="playing-animations-from-rust-code"><a class="header" href="#playing-animations-from-rust-code">Playing animations from Rust code</a></h2>
-<p>// TODO</p>
-<p>I still need to figure out exactly how the Rust code for switching between
-different animations (say, as the player performs different actions on different
-inputs) is going to work. Coming soon.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="animation-format-reference"><a class="header" href="#animation-format-reference">Animation Format Reference</a></h1>
 <p>This page describes the syntax / file format for <a href="tech/./anim.html">Animation Assets</a>.</p>
 <p>The animation format is based on the <a href="tech/./script-ref.html">script format</a>, with some
@@ -1424,6 +1426,7 @@ is displayed.</p>
 <p>This is perfectly sufficient for a basic animation that does not require any
 additional behaviors (such as looping or scripts).</p>
 <p>You can have an animation without any <code>[[script]]</code> sections.</p>
+<h3 id="required-settings"><a class="header" href="#required-settings">Required Settings</a></h3>
 <p>The following properties must be specified:</p>
 <details>
   <summary>
@@ -1455,11 +1458,29 @@ automatically.</p>
 <p>The initial frame that will be displayed at tick 0 when the animation starts
 playing.</p>
 </details>
+<h3 id="optional-settings"><a class="header" href="#optional-settings">Optional Settings</a></h3>
+<p>The following additional properties may optionally be specified:</p>
+<details>
+  <summary>
+  <code>atlas_asset_key</code>
+  </summary>
+<p>Use a specific texture atlas layout, instead of the default. Provide the asset key string.</p>
+<p>The default is derived by appending <code>.atlas</code> to the asset key of this animation script
+asset file.</p>
+</details>
+<details>
+  <summary>
+  <code>image_asset_key</code>
+  </summary>
+<p>Use a specific spritesheet image, instead of the default. Provide the asset key string.</p>
+<p>The default is derived by appending <code>.image</code> to the asset key of this animation script
+asset file.</p>
+</details>
 <h2 id="actions-1"><a class="header" href="#actions-1">Actions</a></h2>
 <p>Just like a <a href="tech/./script-ref.html#actions">script file</a>, animations can contain any
 number of <em>actions</em> to be performed. The syntax is the same.</p>
 <p>All run conditions and actions available in scripts are also available in
-animations, but animations also offer extra animation-specific features.</p>
+animations, but animations also offer extra animation-specific ones.</p>
 <p>Example:</p>
 <pre><code class="language-toml">[[script]]
 run_at_tick = 24
