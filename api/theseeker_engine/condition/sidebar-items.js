@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["any_with_components"]};
+window.SIDEBAR_ITEMS = {"fn":["any_matching"]};
