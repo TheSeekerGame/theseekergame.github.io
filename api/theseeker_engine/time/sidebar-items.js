@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["GameTickSet"],"fn":["at_tick_multiples","run_gametickupdate_schedule","update_gametime"],"struct":["GameTickMidFlush","GameTickUpdate","GameTime","GameTimePlugin"]};
+window.SIDEBAR_ITEMS = {"enum":["GameTickSet"],"fn":["at_tick_multiples","run_gametickupdate_schedule","update_gametime"],"struct":["GameTickUpdate","GameTime","GameTimePlugin"]};
