@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"enum":["PhysicsSet","PhysicsStepSet","SubstepSet"],"externcrate":["parry"],"mod":["components","constraints","math","plugins","prelude","resources"],"struct":["PhysicsSchedule","PostProcessCollisions","SubstepSchedule"]};

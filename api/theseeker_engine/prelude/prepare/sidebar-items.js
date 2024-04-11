@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"enum":["PrepareSet"],"fn":["init_transforms","update_mass_properties"],"struct":["PrepareConfig","PreparePlugin"]};

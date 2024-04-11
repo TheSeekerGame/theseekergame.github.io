@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"enum":["ClosestPoints"],"fn":["closest_points","contact","contact_manifolds","distance","intersection_test","time_of_impact"],"struct":["TimeOfImpact"],"type":["TimeOfImpactStatus","UnsupportedShape"]};

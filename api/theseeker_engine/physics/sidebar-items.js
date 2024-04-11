@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["ENEMY","GROUND","PLAYER","SENSOR"],"fn":["debug_colliders","into_vec","into_vec2","update_query_pipeline"],"struct":["Collider","ColliderHandle","LinearVelocity","PhysicsPlugin","PhysicsWorld","ShapeCaster"]};

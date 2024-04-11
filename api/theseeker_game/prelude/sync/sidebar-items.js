@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"enum":["SyncSet"],"fn":["position_to_transform","transform_to_position","update_previous_global_transforms"],"struct":["PreviousGlobalTransform","SyncConfig","SyncPlugin"]};

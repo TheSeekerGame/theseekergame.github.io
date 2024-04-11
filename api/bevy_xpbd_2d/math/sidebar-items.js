@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"constant":["PI"],"trait":["AdjustPrecision","AsF32"],"type":["Matrix3","Quaternion","Scalar","Vector","Vector2","Vector3"]};

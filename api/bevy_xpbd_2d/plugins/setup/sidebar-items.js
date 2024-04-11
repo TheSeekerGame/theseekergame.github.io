@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"enum":["TimestepMode"],"struct":["Physics","PhysicsSetupPlugin","Substeps"],"trait":["PhysicsTime"]};

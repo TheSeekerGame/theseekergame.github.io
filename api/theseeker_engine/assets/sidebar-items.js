@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["AssetsSet"],"fn":["resolve_asset_keys"],"mod":["animation","script"],"struct":["AssetKey","AssetsPlugin","PreloadedAssets"]};
+window.SIDEBAR_ITEMS = {"enum":["AssetsSet"],"fn":["resolve_asset_keys"],"mod":["animation","config","script"],"struct":["AssetKey","AssetsPlugin","PreloadedAssets"]};

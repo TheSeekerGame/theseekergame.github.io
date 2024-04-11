@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"mod":["collision","debug","integrator","prepare","setup","sleeping","solver","spatial_query","sync"],"struct":["PhysicsPlugins"]};

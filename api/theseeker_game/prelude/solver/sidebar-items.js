@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"fn":["joint_damping","solve_constraint"],"struct":["PenetrationConstraints","SolverPlugin"]};

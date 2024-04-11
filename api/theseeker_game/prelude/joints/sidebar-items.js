@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"struct":["AngleLimit","DistanceJoint","DistanceLimit","FixedJoint","PrismaticJoint","RevoluteJoint","SphericalJoint"],"trait":["Joint"]};

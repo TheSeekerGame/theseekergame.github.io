@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"fn":["report_contacts"],"struct":["Collision","CollisionEnded","CollisionStarted","ContactReportingPlugin"]};

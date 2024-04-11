@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"struct":["PointProjection","RayCaster","RayHitData","RayHits","ShapeCaster","ShapeHitData","ShapeHits","SpatialQuery","SpatialQueryFilter","SpatialQueryPipeline","SpatialQueryPlugin"]};

@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"enum":["ContactGizmoScale"],"struct":["DebugRender","PhysicsDebugPlugin","PhysicsGizmos"],"trait":["PhysicsGizmoExt"]};

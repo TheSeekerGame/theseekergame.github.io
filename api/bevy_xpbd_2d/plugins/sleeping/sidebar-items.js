@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"fn":["mark_sleeping_bodies","wake_on_changed"],"struct":["SleepingPlugin"]};
