@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["DynamicConfigValue"],"struct":["DynamicConfig"]};
+window.SIDEBAR_ITEMS = {"enum":["DynamicConfigValue"],"fn":["update_field"],"struct":["DynamicConfig"]};
