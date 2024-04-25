@@ -275,6 +275,54 @@
 <a href="#273" id="273">273</a>
 <a href="#274" id="274">274</a>
 <a href="#275" id="275">275</a>
+<a href="#276" id="276">276</a>
+<a href="#277" id="277">277</a>
+<a href="#278" id="278">278</a>
+<a href="#279" id="279">279</a>
+<a href="#280" id="280">280</a>
+<a href="#281" id="281">281</a>
+<a href="#282" id="282">282</a>
+<a href="#283" id="283">283</a>
+<a href="#284" id="284">284</a>
+<a href="#285" id="285">285</a>
+<a href="#286" id="286">286</a>
+<a href="#287" id="287">287</a>
+<a href="#288" id="288">288</a>
+<a href="#289" id="289">289</a>
+<a href="#290" id="290">290</a>
+<a href="#291" id="291">291</a>
+<a href="#292" id="292">292</a>
+<a href="#293" id="293">293</a>
+<a href="#294" id="294">294</a>
+<a href="#295" id="295">295</a>
+<a href="#296" id="296">296</a>
+<a href="#297" id="297">297</a>
+<a href="#298" id="298">298</a>
+<a href="#299" id="299">299</a>
+<a href="#300" id="300">300</a>
+<a href="#301" id="301">301</a>
+<a href="#302" id="302">302</a>
+<a href="#303" id="303">303</a>
+<a href="#304" id="304">304</a>
+<a href="#305" id="305">305</a>
+<a href="#306" id="306">306</a>
+<a href="#307" id="307">307</a>
+<a href="#308" id="308">308</a>
+<a href="#309" id="309">309</a>
+<a href="#310" id="310">310</a>
+<a href="#311" id="311">311</a>
+<a href="#312" id="312">312</a>
+<a href="#313" id="313">313</a>
+<a href="#314" id="314">314</a>
+<a href="#315" id="315">315</a>
+<a href="#316" id="316">316</a>
+<a href="#317" id="317">317</a>
+<a href="#318" id="318">318</a>
+<a href="#319" id="319">319</a>
+<a href="#320" id="320">320</a>
+<a href="#321" id="321">321</a>
+<a href="#322" id="322">322</a>
+<a href="#323" id="323">323</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>bevy::ecs::system::lifetimeless::<span class="kw-2">*</span>;
 <span class="kw">use </span>bevy::ecs::system::SystemParam;
 
@@ -299,6 +347,7 @@
 
 <span class="attr">#[derive(Default)]
 </span><span class="kw">pub struct </span>SpriteAnimationTracker {
+    reversed: bool,
     next_frame: u32,
     ticks_per_frame: u32,
     ticks_remain: u32,
@@ -363,6 +412,32 @@
                 }
                 ScriptUpdateResult::NormalRun
             },
+            SpriteAnimationScriptAction::ReversePlayback { reversed } =&gt; {
+                <span class="kw">let </span>reversed = reversed.unwrap_or(!tracker.reversed);
+                <span class="comment">// On normal (contiguous) playback, adjust the next frame.
+                // Otherwise (say if the script wants to jump around
+                // using a SetFrameNext), do not touch it.
+                </span><span class="kw">match </span>(tracker.reversed, reversed) {
+                    (<span class="bool-val">false</span>, <span class="bool-val">true</span>) =&gt; {
+                        tracker.reversed = <span class="bool-val">true</span>;
+                        <span class="kw">if </span>tracker.next_frame <span class="kw">as </span>usize == atlas.index + <span class="number">1 </span>{
+                            <span class="comment">// prevent overflow
+                            </span><span class="kw">if </span>atlas.index == <span class="number">0 </span>{
+                                <span class="kw">return </span>ScriptUpdateResult::Finished;
+                            }
+                            tracker.next_frame -= <span class="number">2</span>;
+                        }
+                    }
+                    (<span class="bool-val">true</span>, <span class="bool-val">false</span>) =&gt; {
+                        tracker.reversed = <span class="bool-val">false</span>;
+                        <span class="kw">if </span>tracker.next_frame <span class="kw">as </span>usize + <span class="number">1 </span>== atlas.index {
+                            tracker.next_frame += <span class="number">2</span>;
+                        }
+                    }
+                    <span class="kw">_ </span>=&gt; {}
+                }
+                ScriptUpdateResult::NormalRun
+            },
             SpriteAnimationScriptAction::TransformMove { x, y, z } =&gt; {
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(x) = x {
                     xf.translation.x += f32::from(<span class="kw-2">*</span>x);
@@ -409,21 +484,26 @@
 }
 
 <span class="kw">impl </span>ScriptTracker <span class="kw">for </span>SpriteAnimationTracker {
-    <span class="kw">type </span>InitParam = ();
+    <span class="kw">type </span>InitParam = (SQuery&lt;<span class="kw-2">&amp;</span><span class="lifetime">'static </span><span class="kw-2">mut </span>TextureAtlas&gt;,);
     <span class="kw">type </span>RunIf = SpriteAnimationScriptRunIf;
     <span class="kw">type </span>Settings = SpriteAnimationSettings;
     <span class="kw">type </span>UpdateParam = (SQuery&lt;<span class="kw-2">&amp;</span><span class="lifetime">'static </span><span class="kw-2">mut </span>TextureAtlas&gt;,);
 
     <span class="kw">fn </span>init&lt;<span class="lifetime">'w</span>&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        _entity: Entity,
+        entity: Entity,
         settings: <span class="kw-2">&amp;</span><span class="self">Self</span>::Settings,
         _metadata: <span class="kw-2">&amp;</span>ScriptMetadata,
-        _param: <span class="kw-2">&amp;mut </span>&lt;<span class="self">Self</span>::InitParam <span class="kw">as </span>SystemParam&gt;::Item&lt;<span class="lifetime">'w</span>, <span class="lifetime">'_</span>&gt;,
+        (q,): <span class="kw-2">&amp;mut </span>&lt;<span class="self">Self</span>::InitParam <span class="kw">as </span>SystemParam&gt;::Item&lt;<span class="lifetime">'w</span>, <span class="lifetime">'_</span>&gt;,
     ) {
         <span class="self">self</span>.ticks_per_frame = settings.ticks_per_frame;
         <span class="self">self</span>.ticks_remain = <span class="number">0</span>;
         <span class="self">self</span>.next_frame = settings.frame_start;
+
+        <span class="kw">let </span><span class="kw-2">mut </span>atlas = q
+            .get_mut(entity)
+            .expect(<span class="string">"Animation entity must have TextureAtlasSprite component"</span>);
+        atlas.index = settings.frame_start <span class="kw">as </span>usize;
     }
 
     <span class="kw">fn </span>transfer_progress(<span class="kw-2">&amp;mut </span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="self">Self</span>) {
@@ -456,7 +536,15 @@
         <span class="comment">// if our sprite index was changed externally, respond to that by
         // running any frame actions and queueing up the next frame appropriately
         </span><span class="kw">if </span>atlas.is_changed() &amp;&amp; !atlas.is_added() {
-            <span class="self">self</span>.next_frame = atlas.index <span class="kw">as </span>u32 + <span class="number">1</span>;
+            <span class="kw">if </span><span class="self">self</span>.reversed {
+                <span class="comment">// prevent overflow
+                </span><span class="kw">if </span>atlas.index == <span class="number">0 </span>{
+                    <span class="kw">return </span>ScriptUpdateResult::Finished;
+                }
+                <span class="self">self</span>.next_frame = atlas.index <span class="kw">as </span>u32 - <span class="number">1</span>;
+            } <span class="kw">else </span>{
+                <span class="self">self</span>.next_frame = atlas.index <span class="kw">as </span>u32 + <span class="number">1</span>;
+            }
             <span class="kw">if let </span><span class="prelude-val">Some</span>(action_id) = <span class="self">self</span>.frame_actions.get(<span class="kw-2">&amp;</span>(atlas.index <span class="kw">as </span>u32)) {
                 queue.push(<span class="kw-2">*</span>action_id);
             }
@@ -471,8 +559,16 @@
                 queue.push(<span class="kw-2">*</span>action_id);
             }
             atlas.index = <span class="self">self</span>.next_frame <span class="kw">as </span>usize;
-            <span class="self">self</span>.next_frame += <span class="number">1</span>;
             <span class="self">self</span>.ticks_remain = <span class="self">self</span>.ticks_per_frame;
+            <span class="kw">if </span><span class="self">self</span>.reversed {
+                <span class="comment">// prevent overflow
+                </span><span class="kw">if </span><span class="self">self</span>.next_frame == <span class="number">0 </span>{
+                    <span class="kw">return </span>ScriptUpdateResult::Finished;
+                }
+                <span class="self">self</span>.next_frame -= <span class="number">1</span>;
+            } <span class="kw">else </span>{
+                <span class="self">self</span>.next_frame += <span class="number">1</span>;
+            }
         }
 
         <span class="self">self</span>.ticks_remain -= <span class="number">1</span>;

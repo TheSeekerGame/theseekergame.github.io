@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["WorldCursor","WorldCursorCamera","WorldCursorPlugin","WorldCursorSet"]};
+window.SIDEBAR_ITEMS = {"struct":["WorldCursor","WorldCursorCamera","WorldCursorPlugin","WorldCursorSS"]};

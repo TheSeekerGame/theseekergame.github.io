@@ -140,8 +140,8 @@
         Box::new(<span class="kw">move </span>|entity, commands| {
             commands
                 .entity(entity)
-                .insert(next)
-                .remove::&lt;<span class="self">Self</span>::Removals&gt;();
+                .remove::&lt;<span class="self">Self</span>::Removals&gt;()
+                .insert(next);
         })
     }
 }
@@ -172,7 +172,7 @@
     }
 }
 
-<span class="attr">#[derive(Component, Default)]
+<span class="attr">#[derive(Component, Debug, Default)]
 </span><span class="kw">pub enum </span>Facing {
     <span class="attr">#[default]
     </span>Right,
@@ -196,12 +196,12 @@
 /// from by a state
 </span><span class="kw">pub trait </span>GentState: Component&lt;Storage = SparseStorage&gt; {}
 
-<span class="doccomment">/// A GenericState has a blanket Transitionable impl for any GentState, 
+<span class="doccomment">/// A GenericState has a blanket Transitionable impl for any GentState,
 /// it will remove itsself on transition
 </span><span class="kw">pub trait </span>GenericState: Component&lt;Storage = SparseStorage&gt; {}
 
 <span class="kw">impl</span>&lt;T: GentState, N: GentState + GenericState&gt; Transitionable&lt;T&gt; <span class="kw">for </span>N {
-    <span class="kw">type </span>Removals = N;
+    <span class="kw">type </span>Removals = (N, Idle);
 }
 
 <span class="comment">//on leaving some states the state machine should ensure we are not also in other specific states,

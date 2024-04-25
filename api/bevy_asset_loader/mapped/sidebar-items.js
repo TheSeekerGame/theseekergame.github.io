@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["FileName","FileStem"],"trait":["MapKey"]};
+window.SIDEBAR_ITEMS = {"struct":["AssetFileName","AssetFileStem","AssetLabel"],"trait":["MapKey"]};

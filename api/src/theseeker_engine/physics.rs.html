@@ -382,6 +382,37 @@
 <a href="#380" id="380">380</a>
 <a href="#381" id="381">381</a>
 <a href="#382" id="382">382</a>
+<a href="#383" id="383">383</a>
+<a href="#384" id="384">384</a>
+<a href="#385" id="385">385</a>
+<a href="#386" id="386">386</a>
+<a href="#387" id="387">387</a>
+<a href="#388" id="388">388</a>
+<a href="#389" id="389">389</a>
+<a href="#390" id="390">390</a>
+<a href="#391" id="391">391</a>
+<a href="#392" id="392">392</a>
+<a href="#393" id="393">393</a>
+<a href="#394" id="394">394</a>
+<a href="#395" id="395">395</a>
+<a href="#396" id="396">396</a>
+<a href="#397" id="397">397</a>
+<a href="#398" id="398">398</a>
+<a href="#399" id="399">399</a>
+<a href="#400" id="400">400</a>
+<a href="#401" id="401">401</a>
+<a href="#402" id="402">402</a>
+<a href="#403" id="403">403</a>
+<a href="#404" id="404">404</a>
+<a href="#405" id="405">405</a>
+<a href="#406" id="406">406</a>
+<a href="#407" id="407">407</a>
+<a href="#408" id="408">408</a>
+<a href="#409" id="409">409</a>
+<a href="#410" id="410">410</a>
+<a href="#411" id="411">411</a>
+<a href="#412" id="412">412</a>
+<a href="#413" id="413">413</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::prelude::{GameTickUpdate, HashMap, HashSet};
 <span class="kw">use </span>bevy::prelude::<span class="kw-2">*</span>;
 <span class="kw">use </span>bevy::transform::TransformSystem::TransformPropagate;
@@ -394,11 +425,15 @@
 </span><span class="kw">pub const </span>PLAYER: Group = Group::from_bits_truncate(<span class="number">0b0001</span>);
 <span class="doccomment">/// The enemy collision group
 </span><span class="kw">pub const </span>ENEMY: Group = Group::from_bits_truncate(<span class="number">0b0010</span>);
+<span class="doccomment">/// The player attack collision group
+</span><span class="kw">pub const </span>PLAYER_ATTACK: Group = Group::from_bits_truncate(<span class="number">0b0100</span>);
+<span class="doccomment">/// The enemy attack collision group
+</span><span class="kw">pub const </span>ENEMY_ATTACK: Group = Group::from_bits_truncate(<span class="number">0b1000</span>);
 <span class="doccomment">/// The ground collision group
-</span><span class="kw">pub const </span>GROUND: Group = Group::from_bits_truncate(<span class="number">0b0100</span>);
+</span><span class="kw">pub const </span>GROUND: Group = Group::from_bits_truncate(<span class="number">0b10000</span>);
 <span class="doccomment">/// The for when the other two groups don't make sense,
 /// and you just want to detect something
-</span><span class="kw">pub const </span>SENSOR: Group = Group::from_bits_truncate(<span class="number">0b1000</span>);
+</span><span class="kw">pub const </span>SENSOR: Group = Group::from_bits_truncate(<span class="number">0b100000</span>);
 
 <span class="doccomment">/// Objects marked with this and a transform component will be updated in the
 /// collision scene. Parenting is not currently kept in sync; global transforms are used instead.
@@ -573,6 +608,33 @@
         intersections
     }
 
+    <span class="kw">pub fn </span>point_project(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        point: Vec2,
+        interaction: InteractionGroups,
+        <span class="comment">//TODO: might want to be able to exclude multiple entities?
+        </span>exclude: <span class="prelude-ty">Option</span>&lt;Entity&gt;,
+    ) -&gt; <span class="prelude-ty">Option</span>&lt;(Entity, parry::query::PointProjection)&gt; {
+        <span class="kw">let </span><span class="kw-2">mut </span>filter = QueryFilter::new().groups(interaction);
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(exclude) = exclude {
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(col_id) = <span class="self">self</span>.id_tracker.get(<span class="kw-2">&amp;</span>exclude) {
+                filter = filter.exclude_collider(<span class="kw-2">*</span>col_id)
+            }
+        }
+        <span class="kw">if let </span><span class="prelude-val">Some</span>((collider, point)) = <span class="self">self</span>.query_pipeline.project_point(
+            <span class="kw-2">&amp;</span><span class="self">self</span>.rb_set,
+            <span class="kw-2">&amp;</span><span class="self">self</span>.col_set,
+            <span class="kw-2">&amp;</span>into_vec(point).into(),
+            <span class="bool-val">true</span>,
+            filter,
+        ) {
+            <span class="kw">let </span>entity: Entity = <span class="self">self</span>.collider2entity(collider)<span class="question-mark">?</span>;
+            <span class="prelude-val">Some</span>((entity, point))
+        } <span class="kw">else </span>{
+            <span class="prelude-val">None
+        </span>}
+    }
+
     <span class="doccomment">/// Small utility function that gets the entity associated with the collider;
     /// panics if entity does not exist.
     </span><span class="kw">pub fn </span>collider2entity(<span class="kw-2">&amp;</span><span class="self">self</span>, handle: rapier2d::prelude::ColliderHandle) -&gt; <span class="prelude-ty">Option</span>&lt;Entity&gt; {
@@ -594,7 +656,7 @@
 }
 
 <span class="attr">#[derive(SystemSet, Debug, Clone, PartialEq, Eq, Hash)]
-</span><span class="kw">struct </span>PhysicsSet;
+</span><span class="kw">pub struct </span>PhysicsSet;
 
 <span class="doccomment">/// A manual implementation of rapier to only use the features required by our project
 ///
