@@ -309,20 +309,6 @@
 <a href="#307" id="307">307</a>
 <a href="#308" id="308">308</a>
 <a href="#309" id="309">309</a>
-<a href="#310" id="310">310</a>
-<a href="#311" id="311">311</a>
-<a href="#312" id="312">312</a>
-<a href="#313" id="313">313</a>
-<a href="#314" id="314">314</a>
-<a href="#315" id="315">315</a>
-<a href="#316" id="316">316</a>
-<a href="#317" id="317">317</a>
-<a href="#318" id="318">318</a>
-<a href="#319" id="319">319</a>
-<a href="#320" id="320">320</a>
-<a href="#321" id="321">321</a>
-<a href="#322" id="322">322</a>
-<a href="#323" id="323">323</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>bevy::ecs::system::lifetimeless::<span class="kw-2">*</span>;
 <span class="kw">use </span>bevy::ecs::system::SystemParam;
 
@@ -609,25 +595,11 @@
             .get_mut(entity)
             .expect(<span class="string">"Animation entity must have Texture Atlas components"</span>);
 
-        <span class="kw-2">*</span>image = <span class="kw">if let </span><span class="prelude-val">Some</span>(key) = <span class="kw-2">&amp;</span><span class="self">self</span>.settings.extended.image_asset_key {
-            preloaded.get_single_asset(key)
-        } <span class="kw">else if let </span><span class="prelude-val">Some</span>(key) = builder.asset_key() {
-            <span class="kw">let </span><span class="kw-2">mut </span>key = key.to_owned();
-            key.push_str(<span class="string">".image"</span>);
-            preloaded.get_single_asset(<span class="kw-2">&amp;</span>key)
-        } <span class="kw">else </span>{
-            <span class="macro">panic!</span>(<span class="string">"Unknown asset key for Animation Sprite Sheet Image"</span>)
-        }.expect(<span class="string">"Animation Sprite Sheet Image asset with specified key does not exist"</span>);
+        <span class="kw">let </span>(h_image, h_layout) = <span class="self">self</span>.resolve_image_atlas(<span class="kw-2">&amp;</span>preloaded, builder.asset_key())
+            .expect(<span class="string">"Cannot resolve Animation asset's Image and Layout assets."</span>);
 
-        atlas.layout = <span class="kw">if let </span><span class="prelude-val">Some</span>(key) = <span class="kw-2">&amp;</span><span class="self">self</span>.settings.extended.atlas_asset_key {
-            preloaded.get_single_asset(key)
-        } <span class="kw">else if let </span><span class="prelude-val">Some</span>(key) = builder.asset_key() {
-            <span class="kw">let </span><span class="kw-2">mut </span>key = key.to_owned();
-            key.push_str(<span class="string">".atlas"</span>);
-            preloaded.get_single_asset(<span class="kw-2">&amp;</span>key)
-        } <span class="kw">else </span>{
-            <span class="macro">panic!</span>(<span class="string">"Unknown asset key for Animation Texture Atlas Layout"</span>)
-        }.expect(<span class="string">"Animation Texture Atlas Layout asset with specified key does not exist"</span>);
+        <span class="kw-2">*</span>image = h_image;
+        atlas.layout = h_layout;
 
         atlas.index = <span class="self">self</span>.settings.extended.frame_start
             .min(<span class="self">self</span>.settings.extended.frame_max)

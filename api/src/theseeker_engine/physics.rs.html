@@ -413,13 +413,48 @@
 <a href="#411" id="411">411</a>
 <a href="#412" id="412">412</a>
 <a href="#413" id="413">413</a>
+<a href="#414" id="414">414</a>
+<a href="#415" id="415">415</a>
+<a href="#416" id="416">416</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::prelude::{GameTickUpdate, HashMap, HashSet};
 <span class="kw">use </span>bevy::prelude::<span class="kw-2">*</span>;
 <span class="kw">use </span>bevy::transform::TransformSystem::TransformPropagate;
 <span class="kw">use </span>rapier2d::na::{Unit, UnitComplex};
 <span class="kw">use </span>rapier2d::parry;
 <span class="kw">use </span>rapier2d::prelude::<span class="kw-2">*</span>;
+<span class="kw">use </span>rapier2d::prelude::Collider <span class="kw">as </span>RapierCollider;
 <span class="kw">use </span>std::f32::consts::PI;
+
+<span class="doccomment">/// A manual implementation of rapier to only use the features required by our project
+///
+/// It only supports setting colliders in the scene, and making shapecast queries on them.
+</span><span class="kw">pub struct </span>PhysicsPlugin;
+
+<span class="kw">impl </span>Plugin <span class="kw">for </span>PhysicsPlugin {
+    <span class="kw">fn </span>build(<span class="kw-2">&amp;</span><span class="self">self</span>, app: <span class="kw-2">&amp;mut </span>App) {
+        app.insert_resource(PhysicsWorld::default());
+        app.add_systems(Startup, init_physics_world);
+        app.configure_sets(
+            GameTickUpdate,
+            PhysicsSet.after(TransformPropagate),
+        );
+        app.add_systems(
+            GameTickUpdate,
+            (
+                update_query_pipeline.in_set(PhysicsSet),
+            ),
+        );
+        <span class="attr">#[cfg(feature = <span class="string">"dev"</span>)]
+        </span>app.init_gizmo_group::&lt;PhsyicsCollidersGizmos&gt;()
+            .add_systems(
+                GameTickUpdate,
+                debug_colliders.after(PhysicsSet),
+            );
+    }
+}
+
+<span class="attr">#[derive(SystemSet, Debug, Clone, PartialEq, Eq, Hash)]
+</span><span class="kw">pub struct </span>PhysicsSet;
 
 <span class="doccomment">/// The player collision group
 </span><span class="kw">pub const </span>PLAYER: Group = Group::from_bits_truncate(<span class="number">0b0001</span>);
@@ -441,14 +476,14 @@
 ///
 /// Only colliders that have an easy build wrapper are shown in the collider debug system.
 </span><span class="attr">#[derive(Component)]
-</span><span class="kw">pub struct </span>Collider(<span class="kw">pub </span>rapier2d::prelude::Collider);
+</span><span class="kw">pub struct </span>Collider(<span class="kw">pub </span>RapierCollider);
 
 <span class="kw">impl </span>Collider {
     <span class="kw">pub fn </span>cuboid(x_length: f32, y_length: f32, interaction: InteractionGroups) -&gt; <span class="self">Self </span>{
         <span class="comment">// Rapiers cuboid is subtely different from xpbd, as rapier is defined by its
         // half extents, and xpbd is by its extents.
         </span><span class="self">Self</span>(
-            rapier2d::prelude::ColliderBuilder::cuboid(x_length * <span class="number">0.5</span>, y_length * <span class="number">0.5</span>)
+            ColliderBuilder::cuboid(x_length * <span class="number">0.5</span>, y_length * <span class="number">0.5</span>)
                 .collision_groups(interaction)
                 .build(),
         )
@@ -652,35 +687,6 @@
         } <span class="kw">else </span>{
             <span class="prelude-val">None
         </span>}
-    }
-}
-
-<span class="attr">#[derive(SystemSet, Debug, Clone, PartialEq, Eq, Hash)]
-</span><span class="kw">pub struct </span>PhysicsSet;
-
-<span class="doccomment">/// A manual implementation of rapier to only use the features required by our project
-///
-/// It only supports setting colliders in the scene, and making shapecast queries on them.
-</span><span class="kw">pub struct </span>PhysicsPlugin;
-
-<span class="kw">impl </span>Plugin <span class="kw">for </span>PhysicsPlugin {
-    <span class="kw">fn </span>build(<span class="kw-2">&amp;</span><span class="self">self</span>, app: <span class="kw-2">&amp;mut </span>App) {
-        app.insert_resource(PhysicsWorld::default());
-        app.add_systems(Startup, init_physics_world);
-        app.configure_sets(
-            GameTickUpdate,
-            PhysicsSet.after(TransformPropagate),
-        );
-        app.add_systems(
-            GameTickUpdate,
-            update_query_pipeline.in_set(PhysicsSet),
-        );
-        <span class="attr">#[cfg(feature = <span class="string">"dev"</span>)]
-        </span>app.init_gizmo_group::&lt;PhsyicsCollidersGizmos&gt;()
-            .add_systems(
-                GameTickUpdate,
-                debug_colliders.after(PhysicsSet),
-            );
     }
 }
 
