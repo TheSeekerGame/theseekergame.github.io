@@ -1012,14 +1012,15 @@ fn manage_animation(mut q: Query&lt;&amp;mut ScriptPlayer&lt;SpriteAnimation&gt;
 <p>This page describes the syntax / file format for <a href="tech/./script.html">Script Assets</a>.</p>
 <h2 id="custom-configs"><a class="header" href="#custom-configs">Custom Configs</a></h2>
 <p>A script file can have an optional <code>[config]</code> section, where you can put any
-custom values (<code>f32</code> floats) you want to access from Rust while the script
-is running. This is useful if you want to make some custom gameplay code be
-configurable via the asset files, instead of hardcoding values in Rust.</p>
+custom values you want to access from Rust while the script is running. This
+is useful if you want to make some custom gameplay code be configurable via
+the asset files, instead of hardcoding values in Rust.</p>
 <p>Example:</p>
 <pre><code class="language-toml">[config]
 jump_height = 7.0
 collision_damage = 4.0
 </code></pre>
+<p>The values can be floats, integers, or strings.</p>
 <h2 id="settings"><a class="header" href="#settings">Settings</a></h2>
 <p>A script file can have an optional <code>[settings]</code> section, where you can put
 parameters that govern how the script is to be run by the game.</p>
@@ -1073,7 +1074,8 @@ cli = [ "dothing blah blah" ]
 <ul>
 <li>a <em>trigger condition</em> to determine <em>when</em> to perform the action</li>
 <li>an <code>action</code> field to specify the kind of action to perform</li>
-<li>any additional parameters as required by the action, depending on the action kind</li>
+<li>any additional optional parameters to modify/control how it runs</li>
+<li>any additional parameters as appropriate for the action to perform</li>
 </ul>
 <h2 id="slots"><a class="header" href="#slots">Slots</a></h2>
 <p>Slots are like global flags / boolean variables that can be used to control
@@ -1106,8 +1108,7 @@ action = "..."
 <p>The trigger condition is a mandatory part of every <code>[[script]]</code> section. It
 determines when to run the action.</p>
 <p>Multiple trigger conditions are currently not supported/allowed. There must be
-exactly one per <code>[[script]]</code> section. If you want to perform the same action
-at different times, just create multiple sections with the respective triggers.</p>
+exactly one per <code>[[script]]</code> section.</p>
 <p>The available trigger conditions are:</p>
 <details>
   <summary>
@@ -1159,8 +1160,12 @@ action = "..."
 <pre><code class="language-toml">[[script]]
 run_at_tick = 96
 action = "..."
+
+[[script]]
+run_at_tick = [12, 16, 18]
+action = "..."
 </code></pre>
-<p>Run the action once, on the given tick number.</p>
+<p>Run the action on the given tick number(s).</p>
 <p>Tick numbers count from the start of the script. May be affected by script settings.</p>
 </details>
 <details>
@@ -1192,8 +1197,13 @@ action = "..."
 <pre><code class="language-toml">[[script]]
 run_at_millis = 250
 action = "..."
+
+[[script]]
+run_at_millis = [100, 200, 300]
+action = "..."
 </code></pre>
-<p>Run the action once, after the given number of milliseconds have elapsed.</p>
+<p>Run the action when the given number of milliseconds have elapsed.</p>
+<p>If you specify multiple values, the action will be triggered at each one of them.</p>
 <p>Time is counted from the start of the script. Affected by the <code>time_base</code> setting.</p>
 </details>
 <details>
@@ -1204,8 +1214,13 @@ action = "..."
 <pre><code class="language-toml">[[script]]
 run_at_time = "1:13:17.315"
 action = "..."
+
+[[script]]
+run_at_time = ["1:00", "2:00", "7:00"]
+action = "..."
 </code></pre>
-<p>Run the action once, after the given amount of time has elapsed.</p>
+<p>Run the action when the given amount of time has elapsed.</p>
+<p>If you specify multiple values, the action will be triggered at each one of them.</p>
 <p>Time is counted from the start of the script. Affected by the <code>time_base</code> setting.</p>
 <p>The syntax for the time allows you to specify: hours, minutes, seconds, fraction
 of the second. Everything except for the seconds is optional. Minutes/seconds
@@ -1219,7 +1234,7 @@ over 60 are accepted. Leading zeros are optional.</p>
 <li><code>5:80</code>: 5 minutes + 80 seconds (effectively the same as <code>"6:20"</code>)</li>
 </ul>
 </details>
-<h2 id="common-parameters-modifiers"><a class="header" href="#common-parameters-modifiers">Common Parameters (Modifiers)</a></h2>
+<h2 id="common-parameters"><a class="header" href="#common-parameters">Common Parameters</a></h2>
 <p>These are additional parameters that can be specified regardless of the action.</p>
 <p>Whenever the trigger condition is met, these parameters will be evaluated. They
 can be used to modify how the action should run or if it should run at all.</p>
@@ -1333,6 +1348,79 @@ action = "..."
 <p>Checks the values of the specified slots and does not perform the action if
 any of them is <code>true</code>.</p>
 </details>
+<details>
+  <summary>
+  <code>if_runcount_lt</code>/<code>if_runcount_le</code>/<code>if_runcount_gt</code>/<code>if_runcount_ge</code>
+  </summary>
+<p>Example:</p>
+<pre><code class="language-toml"># Do something at the start when the script starts playing,
+# but only for the first 3 times it runs
+[[script]]
+run_on_playback_control = "Start"
+if_runcount_le = 3
+action = "..."
+
+# Do something every 5+1 ticks, but only
+# after the script has been run more than twice
+[[script]]
+run_every_n_ticks = "5+1"
+if_runcount_gt = 2
+action = "..."
+</code></pre>
+<p>Only run the action if the current runcount is:</p>
+<ul>
+<li>less than (lt)</li>
+<li>less than or equal to (le)</li>
+<li>greater than (gt)</li>
+<li>greater than or equal to (ge)</li>
+</ul>
+<p>the specified value.</p>
+</details>
+<details>
+  <summary>
+  <code>if_runcount_is</code>
+  </summary>
+<p>Example:</p>
+<pre><code class="language-toml"># Do something as soon as the "attack" slot is enabled,
+# but only if the script is run for the first time
+[[script]]
+run_on_slot_enable = "attack"
+if_runcount_is = 0
+action = "..."
+
+# Do something when the script starts, but
+# only on the third, seventh, and ninth time it runs.
+[[script]]
+run_on_playback_control = "Start"
+if_runcount_is = [ 3, 7, 9 ]
+action = "..."
+</code></pre>
+<p>Only run the action if the current runcount is equal to any of the specified
+values.</p>
+</details>
+<details>
+  <summary>
+  <code>if_runcount_quant</code>
+  </summary>
+<p>Example:</p>
+<pre><code class="language-toml"># Do something when the script starts,
+# but only every fifth run
+[[script]]
+run_on_playback_control = "Start"
+if_runcount_quant = "5"
+action = "..."
+
+# Do something as soon as the "attack" slot is enabled,
+# but only on runs 2, 7, 12, 17, ...
+[[script]]
+run_on_slot_enable = "attack"
+if_runcount_quant = "5+2"
+action = "..."
+</code></pre>
+<p>Only run the action if the current runcount matches a "quant" pattern
+(this is the same syntax as for <code>run_every_n_ticks</code>, etc.).</p>
+<p>This allows you to do things "every N runcounts".</p>
+</details>
 <h2 id="available-actions"><a class="header" href="#available-actions">Available Actions</a></h2>
 <p>The action kind is a mandatory part of every <code>[[script]]</code> section. There must be
 exactly one <code>action</code> field per section. If you want to perform more than one
@@ -1423,6 +1511,8 @@ asset_key = "script.asset.key"
 it should be played.</p>
 <p>Animations are actually based on <a href="tech/./script.html">scripts</a>. They support everything
 that scripts can do + additional features tailored for animation use cases.</p>
+<p>When using the Scriptable Animation System, <em>please do not</em> modify the Bevy
+Texture Atlas Index value directly from Rust, outside of it!</p>
 <p><a href="tech/./anim-ref.html">See here for a reference on the syntax/format.</a></p>
 <h2 id="art-assets"><a class="header" href="#art-assets">Art Assets</a></h2>
 <p>An animation consists of 3 parts:</p>
@@ -1471,11 +1561,95 @@ to do is configure the start frame index, the max frame index, and the speed.</p
 <p>If you need any more advanced control (such as to make animations that loop or
 skip frames), you can add <code>[[script]]</code> sections, using animation-specific
 <a href="tech/anim-ref.html#available-actions">actions</a>.</p>
-<h2 id="texture-atlas"><a class="header" href="#texture-atlas">Texture Atlas</a></h2>
-<p>At the top of the file, before any other sections, you must specify the asset key
-of the texture atlas to be used for the animation:</p>
-<pre><code class="language-toml">atlas_asset_key = "anim.myanimation.sprite"
+<p>When using the Scriptable Animation System, <em>please do not</em> modify the Bevy
+Texture Atlas Index value directly from Rust, outside of it!</p>
+<h2 id="sprite-sheet"><a class="header" href="#sprite-sheet">Sprite Sheet</a></h2>
+<p>Every animation (obviously) requires a sprite sheet (image and layout).</p>
+<p>Those can be specified via the <code>image_asset_key</code> and <code>atlas_asset_key</code>
+settings (see below). If omitted, they will be derived from the asset key
+of the animation file, by appending <code>.image</code> and <code>.atlas</code>.</p>
+<p>For example, if you have registered your animation asset with the key
+<code>"anim.Player.Idle"</code>, the default is to look for <code>"anim.Player.Idle.image"</code>
+and <code>"anim.Player.Idle.atlas"</code>.</p>
+<p>However, it is generally good practice to consolidate things into large
+sprite sheets, for example having one sprite sheet for all player animations.
+In that case, you can still have many animation assets that all share/use
+the same sprite sheet, by specifying it explicitly:</p>
+<pre><code class="language-toml">[settings]
+image_asset_key = "anim.Player.image"
+atlas_asset_key = "anim.Player.atlas"
 </code></pre>
+<h2 id="frame-bookmarks"><a class="header" href="#frame-bookmarks">Frame Bookmarks</a></h2>
+<p>To help keep things manageable with complex animations, especially when
+you have large consolidated sprite sheets, you can create "frame bookmarks".</p>
+<p>Frame bookmarks are names/labels for specific frame index numbers in your
+sprite sheet. You can then refer to them in your script actions, to make
+any frame numbers mentioned in that <code>[[script]]</code> section be relative to
+the bookmark.</p>
+<details>
+  <summary>
+  Example:
+  </summary>
+<pre><code class="language-toml">[frame_bookmarks]
+my_intro = 4 # say our intro is frames 4 to 7
+my_idle_loop = 10 # say our loop is frames 10 to 19
+
+[[script]]
+frame_bookmark = "my_idle_loop"
+run_at_frame = 9 # relative to `frame_bookmark`; so actually frame 19
+action = "SetFrameNext"
+frame_index = 0  # relative to `frame_bookmark`; so actually frame 10
+
+[[script]]
+frame_bookmark = "my_intro"
+run_on_playback_control = "Start"
+action = "SetFrameNow"
+frame_index = 0 # relative to "my_intro"
+
+[[script]]
+frame_bookmark = "my_intro"
+run_at_frame = 3 # our intro is 3 frames long
+action = "SetFrameNext"
+# you can use a different bookmark for the destination of
+# `SetFrameNext`/`SetFrameNow`, using `to_frame_bookmark`
+to_frame_bookmark = "my_idle_loop"
+frame_index = 0
+</code></pre>
+</details>
+<p>Using bookmarks can really help maintainabitily. In the future, if
+you want to reorganize your sprite sheets, you can just change
+the numbers in the bookmarks and your scripts will just work.</p>
+<p>In fact, to fully accomplish this, we can do better than the above
+example. We can define everything in bookmarks and not use any
+fixed numbers in our script sections.</p>
+<details>
+  <summary>
+  Example:
+  </summary>
+<pre><code class="language-toml">[frame_bookmarks]
+intro_start = 4
+intro_end = 7
+idle_loop_start = 10
+idle_loop_end = 19
+
+[[script]]
+# `run_at_frame` directly accepts bookmarks!
+run_at_frame = "idle_loop_end"
+action = "SetFrameNext"
+to_frame_bookmark = "idle_loop_start"
+# if omitted, `frame_index` defaults to 0
+
+[[script]]
+run_on_playback_control = "Start"
+action = "SetFrameNow"
+to_frame_bookmark = "intro_start"
+
+[[script]]
+run_at_frame = "intro_end"
+action = "SetFrameNext"
+to_frame_bookmark = "idle_loop"
+</code></pre>
+</details>
 <h2 id="settings-1"><a class="header" href="#settings-1">Settings</a></h2>
 <p>The <code>[settings]</code> section is <em>required</em> in animation files.</p>
 <p>The common parameters that are optional in <a href="tech/./script-ref.html#settings">scripts</a>
@@ -1500,6 +1674,11 @@ additional behaviors (such as looping or scripts).</p>
   <summary>
   <code>ticks_per_frame</code>
   </summary>
+<p>Example:</p>
+<pre><code class="language-toml">[settings]
+ticks_per_frame = 8
+# ...
+</code></pre>
 <p>Configures the rate/speed of animation playback. This is how many ticks each frame
 will be displayed for, before automatically transitioning to the next frame.</p>
 </details>
@@ -1507,6 +1686,11 @@ will be displayed for, before automatically transitioning to the next frame.</p>
   <summary>
   <code>frame_min</code>
   </summary>
+<p>Example:</p>
+<pre><code class="language-toml">[settings]
+frame_min = 0
+# ...
+</code></pre>
 <p>The lowest permitted frame index. Frames below this should never be displayed.
 Should the frame index ever be a value below this, the animation will stop
 automatically.</p>
@@ -1515,6 +1699,11 @@ automatically.</p>
   <summary>
   <code>frame_max</code>
   </summary>
+<p>Example:</p>
+<pre><code class="language-toml">[settings]
+frame_max = 20
+# ...
+</code></pre>
 <p>The highest permitted frame index. Frames above this should never be displayed.
 Should the frame index ever be a value above this, the animation will stop
 automatically.</p>
@@ -1523,6 +1712,11 @@ automatically.</p>
   <summary>
   <code>frame_start</code>
   </summary>
+<p>Example:</p>
+<pre><code class="language-toml">[settings]
+frame_start = 2
+# ...
+</code></pre>
 <p>The initial frame that will be displayed at tick 0 when the animation starts
 playing.</p>
 </details>
@@ -1530,25 +1724,52 @@ playing.</p>
 <p>The following additional properties may optionally be specified:</p>
 <details>
   <summary>
+  <code>play_reversed</code>
+  </summary>
+<p>Example:</p>
+<pre><code class="language-toml">[settings]
+play_reversed = true
+# ...
+</code></pre>
+<p>If set to <code>true</code> the animation playback will start reversed. That is,
+every <code>ticks_per_frame</code>, the frame index will be decreased by one
+instead of being increased by one.</p>
+<p>If you want to change this dynamically during playback, you can use
+the <code>ReversePlayback</code> script action.</p>
+</details>
+<details>
+  <summary>
   <code>atlas_asset_key</code>
   </summary>
+<p>Example:</p>
+<pre><code class="language-toml">[settings]
+atlas_asset_key = "anim.Player.atlas"
+# ...
+</code></pre>
 <p>Use a specific texture atlas layout, instead of the default. Provide the asset key string.</p>
 <p>The default is derived by appending <code>.atlas</code> to the asset key of this animation script
 asset file.</p>
+<p>If you specify this, be sure to also specify <code>image_asset_key</code>.</p>
 </details>
 <details>
   <summary>
   <code>image_asset_key</code>
   </summary>
+<p>Example:</p>
+<pre><code class="language-toml">[settings]
+image_asset_key = "anim.Player.image"
+# ...
+</code></pre>
 <p>Use a specific spritesheet image, instead of the default. Provide the asset key string.</p>
 <p>The default is derived by appending <code>.image</code> to the asset key of this animation script
 asset file.</p>
+<p>If you specify this, be sure to also specify <code>atlas_asset_key</code>.</p>
 </details>
 <h2 id="actions-1"><a class="header" href="#actions-1">Actions</a></h2>
 <p>Just like a <a href="tech/./script-ref.html#actions">script file</a>, animations can contain any
 number of <em>actions</em> to be performed. The syntax is the same.</p>
-<p>All run conditions and actions available in scripts are also available in
-animations, but animations also offer extra animation-specific ones.</p>
+<p>Everything available in scripts is also available in animations, but animations
+also offer extra animation-specific actions, trigger conditions, parameters, etc.</p>
 <p>Example:</p>
 <pre><code class="language-toml">[[script]]
 run_at_tick = 24
@@ -1560,21 +1781,193 @@ run_at_frame = 7
 action = "SetSpriteFlip"
 flip_x = true
 </code></pre>
-<h2 id="available-run-conditions"><a class="header" href="#available-run-conditions">Available Run Conditions</a></h2>
-<p>The following animation-specific run conditions are available, in addition to
-everything supported by <a href="tech/./script-ref.html#available-run-conditions">scripts</a>:</p>
+<h2 id="available-trigger-conditions-1"><a class="header" href="#available-trigger-conditions-1">Available Trigger Conditions</a></h2>
+<p>The following animation-specific trigger conditions are available, in addition
+to everything supported by <a href="tech/./script-ref.html#available-trigger-conditions">scripts</a>:</p>
 <details>
   <summary>
   <code>run_at_frame</code>
   </summary>
 <p>Example:</p>
-<pre><code class="language-toml">[[script]]
+<pre><code class="language-toml"># using a literal frame number
+[[script]]
 run_at_frame = 8
 action = "..."
+
+# using a bookmark
+[[script]]
+run_at_frame = "my_bookmark"
+action = "..."
+
+# equivalent, but the bookmark
+# also applies to any other frame numbers
+# in this `[[script]]` section
+[[script]]
+run_at_frame = 0
+frame_bookmark = "my_bookmark"
+action = "..."
+
+# you can specify multiple frames
+[[script]]
+run_at_frames = [ 0, 1, 2, 3, 5, 7, 11 ]
+frame_bookmark = "my_bookmark"
+action = "..."
+
+# or bookmarks
+[[script]]
+run_at_frames = [ "bookmark1", "bookmark2", "bookmark3" ]
+action = "..."
 </code></pre>
-<p>Run the action whenever the given frame index is displayed.</p>
-<p>Any time the animation switches to that frame (regardless of whether it was done
-automatically, using a script, or from Rust code), the action will be performed.</p>
+<p>Run the action whenever the given frame is displayed.</p>
+<p>Any time the animation switches to that frame (regardless of whether it was
+done automatically as part of normal playback, or jumped to using a script
+action), the action will be performed.</p>
+<p>The frame can be specified using a literal number or a bookmark.
+If a number is used and a bookmark is specified using the <code>frame_bookmark</code>
+<a href="tech/anim-ref.html#common-parameters">common parameter</a>, the number will be relative to that.</p>
+<p>You can specify multiple frames as an array. In that case, the action will
+trigger on any of them.</p>
+</details>
+<details>
+  <summary>
+  <code>run_every_n_frames</code>
+  </summary>
+<p>Example:</p>
+<pre><code class="language-toml"># frames 0, 8, 16, 24, 32, ...
+[[script]]
+run_every_n_frames = "8"
+action = "..."
+
+# frames 3, 11, 19, 27, 35, ...
+[[script]]
+run_every_n_frames = "8+3"
+action = "..."
+</code></pre>
+<p>Run the action if the frame number matches the pattern specified.</p>
+<p>Any time the animation switches to any of those frames (regardless of whether
+it was done automatically as part of normal playback, or jumped to using a
+script action), the action will be performed.</p>
+<p>If a bookmark is specified using the <code>frame_bookmark</code> <a href="tech/anim-ref.html#common-parameters">common
+parameter</a>, the numbers will be relative to that.</p>
+</details>
+<h2 id="common-parameters-1"><a class="header" href="#common-parameters-1">Common Parameters</a></h2>
+<p>These are additional parameters that can be specified regardless of the action.</p>
+<p>Whenever the trigger condition is met, these parameters will be evaluated. They
+can be used to modify how the action should run or if it should run at all.</p>
+<p>All the parameters from <a href="tech/./script-ref.html#common-parameters">scripts</a> are
+available for animations too, plus some additional ones:</p>
+<details>
+  <summary>
+  <code>frame_bookmark</code>
+  </summary>
+<p>Example:</p>
+<pre><code class="language-toml">[frame_bookmarks]
+my_bookmark = 10
+
+# Will actually run on frame 14 (affects `run_at_frame`)
+[[script]]
+run_at_frame = 4 # Relative to "my_bookmark"
+frame_bookmark = "my_bookmark"
+action = "..."
+
+# Will actually jump to frame 12 (affects `frame_index`)
+[[script]]
+run_at_tick = 16
+frame_bookmark = "my_bookmark"
+action "SetFrameNow"
+frame_index = 2
+</code></pre>
+<p>Makes all frame numbers mentioned in this <code>[[script]]</code> section be
+relative to the value of a <a href="tech/anim-ref.html#frame-bookmarks">frame bookmark</a>.</p>
+<p>This applies to Trigger Conditions like <code>run_at_tick</code> as well as
+to the parameters of Script Actions like <code>SetFrameNow</code>/<code>SetFrameNext</code>.</p>
+<p>Note: Script Actions like <code>SetFrameNow</code>/<code>SetFrameNext</code> also allow you
+to specify a bookmark for them to use, which can be different from
+the one set using this parameter, if any.</p>
+<p>If you specify a bookmark that does not exist, this parameter will
+have no effect, and the values will be treated as global/absolute.
+In dev builds, the game might print warnings to the log/console.</p>
+</details>
+<details>
+  <summary>
+  <code>if_frame_lt</code>/<code>if_frame_le</code>/<code>if_frame_gt</code>/<code>if_frame_ge</code>
+  </summary>
+<p>Example:</p>
+<pre><code class="language-toml"># Do something every 3 ticks, but only if we are currently
+# displaying a frame between 10 and 19
+[[script]]
+run_every_n_ticks = "3"
+if_frame_ge = 10
+if_frame_le = 19
+action = "..."
+
+# Do something every 5+1 ticks, but only if we haven't reached
+# the frame represented by "my_bookmark" yet
+[[script]]
+run_every_n_ticks = "5+1"
+if_frame_lt = "my_bookmark"
+action = "..."
+</code></pre>
+<p>Only run the action if the current frame index is:</p>
+<ul>
+<li>less than (lt)</li>
+<li>less than or equal to (le)</li>
+<li>greater than (gt)</li>
+<li>greater than or equal to (ge)</li>
+</ul>
+<p>the specified value.</p>
+<p>It can be specified as either a number or a frame bookmark. If specified
+as a number, it will be relative to <code>frame_bookmark</code>, if set.</p>
+</details>
+<details>
+  <summary>
+  <code>if_frame_is</code>
+  </summary>
+<p>Example:</p>
+<pre><code class="language-toml"># Do something as soon as the "attack" slot is enabled,
+# but only if we are currently displaying frame 6
+[[script]]
+run_on_slot_enable = "attack"
+if_frame_is = 6
+action = "..."
+
+# Do something every 3 ticks, but only if we are currently
+# displaying one of the special magic frames
+[[script]]
+run_every_n_ticks = "3"
+if_frame_is = [ 3, 7, 9 ]
+action = "..."
+</code></pre>
+<p>Only run the action if the current frame index is equal to any of
+the specified values.</p>
+<p>The values can be specified as either a number or a frame bookmark. If
+specified as a number, it will be relative to <code>frame_bookmark</code>, if set.</p>
+</details>
+<details>
+  <summary>
+  <code>if_playing_reversed</code>
+  </summary>
+<p>Example:</p>
+<pre><code class="language-toml"># This action will only run if the animation is playing backwards (reversed)
+[[script]]
+run_at_frame = 4
+if_playing_reversed = true
+action = "..."
+
+# This action will only run if the animation is playing forwards (normal)
+[[script]]
+run_at_frame = 4
+if_playing_reversed = false
+action = "..."
+</code></pre>
+<p>Makes it so that the action only runs if the animation is playing in
+the specified direction.</p>
+<ul>
+<li><code>true</code>: only run when playing backwards / reversed</li>
+<li><code>false</code>: only run when playing forwards / normally</li>
+</ul>
+<p>Neither value is the "default". If this parameter is unset, then the action
+runs regardless of the playback direction.</p>
 </details>
 <h2 id="available-actions-1"><a class="header" href="#available-actions-1">Available Actions</a></h2>
 <p>The following animation-specific actions are available, in addition to
@@ -1583,17 +1976,58 @@ everything supported by <a href="tech/./script-ref.html#available-actions">scrip
   <summary>
   <code>SetFrameNext</code>
   </summary>
-<p>Example:</p>
-<pre><code class="language-toml">[[script]]
+<p>Examples:</p>
+<pre><code class="language-toml"># After the current frame,
+# Jump to frame 100
+[[script]]
 action = "SetFrameNext"
 frame_index = 100
+
+# After the current frame,
+# Jump to the frame indicated by "my_bookmark"
+[[script]]
+action = "SetFrameNext"
+to_frame_bookmark = "my_bookmark"
+
+# After the current frame,
+# Jump to 2 frames after the frame indicated by "my_bookmark"
+[[script]]
+action = "SetFrameNext"
+to_frame_bookmark = "my_bookmark"
+frame_index = 2
+
+# After frame 10 relative to "my_bookmark",
+# continue to frame 5 relative to "my_bookmark"
+[[script]]
+frame_bookmark = "my_bookmark"
+run_at_frame = 10
+action = "SetFrameNext"
+frame_index = 5
+
+# After frame 8 relative to "my_bookmark",
+# continue to frame 4 relative to "my_other_bookmark"
+[[script]]
+frame_bookmark = "my_bookmark"
+run_at_frame = 8
+action = "SetFrameNext"
+to_frame_bookmark = "my_other_bookmark"
+frame_index = 4
 </code></pre>
-<p>Change the next automatic frame. Whatever frame is currently displayed will
-complete its <code>ticks_per_frame</code> duration, and then the animation will jump to the
-provided <code>frame_index</code>, instead of advancing by one.</p>
-<p>Subsequent playback will continue from this new index (will not jump back).</p>
-<p>This is useful to implement loops (by going back to a lower frame index) and
-skips (if you need to jump over a range of frames).</p>
+<p>Change the next automatic frame. Whatever frame is currently displayed
+will complete its <code>ticks_per_frame</code> duration, and then the animation will
+continue to the specified frame, instead of advancing by one. Subsequent
+playback will continue as normal from this new location.</p>
+<p>This is useful to skip around the sprite sheet, and to implement loops
+(by going back to a lower frame index).</p>
+<hr />
+<p><code>frame_index</code> can be used to specify a literal frame number. It defaults to
+<code>0</code> if unspecified.</p>
+<p>If <code>to_frame_bookmark</code> is specified, the <code>frame_index</code> will be interpreted
+relative to that.</p>
+<p>Otherwise, if <code>frame_bookmark</code> (the action-agnostic
+<a href="tech/anim-ref.html#common-parameters">parameter</a>) is specified, the <code>frame_index</code> will be
+interpreted relative to that.</p>
+<p>Otherwise, the <code>frame_index</code> will be global/absolute.</p>
 </details>
 <details>
   <summary>
@@ -1604,10 +2038,31 @@ skips (if you need to jump over a range of frames).</p>
 action = "SetFrameNow"
 frame_index = 100
 </code></pre>
-<p>Immediately display the provided <code>frame_index</code>.</p>
-<p>Does not affect the next automatic frame. The animation playback is otherwise unaffected.</p>
-<p>Useful for special effects where you have a special frame you want to "flash"
-in-between regular animation frames.</p>
+<p>Immediately go to the specified frame.</p>
+<p>This is useful if you do not want to wait until the next <code>ticks_per_frame</code>
+interval, such as in response to player inputs, etc.</p>
+<p>Whatever frame is currently displayed will be replaced by the specified
+frame immediately, and playback will continue as normal from there. The
+frame will wait out any remaining <code>ticks_per_frame</code> duration (as if this
+action wasn't run), before transitioning to the next frame.</p>
+<p>Any actions that are configured to trigger on the specified frame will run.</p>
+<hr />
+<p><code>frame_index</code> can be used to specify a literal frame number. It defaults to
+<code>0</code> if unspecified.</p>
+<p>If <code>to_frame_bookmark</code> is specified, the <code>frame_index</code> will be interpreted
+relative to that.</p>
+<p>Otherwise, if <code>frame_bookmark</code> (the action-agnostic
+<a href="tech/anim-ref.html#common-parameters">parameter</a>) is specified, the <code>frame_index</code> will be
+interpreted relative to that.</p>
+<p>Otherwise, the <code>frame_index</code> will be global/absolute.</p>
+<hr />
+<p>Note: <code>SetFrameNow</code> is should normally be used with non-frame-based trigger
+conditions. It is recommended that you avoid using <code>SetFrameNow</code> in combination
+with a <code>run_at_frame</code> (or similar) trigger condition. If you do that, the
+animation will technically first go through its original frame (and run
+any other actions for it) and then immediately replace it with the new one
+(and run its actions), which is often not what you want. Use <code>SetFrameNext</code>
+instead, to avoid processing a frame you do not intend to display.</p>
 </details>
 <details>
   <summary>

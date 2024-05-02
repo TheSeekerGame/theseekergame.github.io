@@ -177,14 +177,15 @@
 <p>This page describes the syntax / file format for <a href="./script.html">Script Assets</a>.</p>
 <h2 id="custom-configs"><a class="header" href="#custom-configs">Custom Configs</a></h2>
 <p>A script file can have an optional <code>[config]</code> section, where you can put any
-custom values (<code>f32</code> floats) you want to access from Rust while the script
-is running. This is useful if you want to make some custom gameplay code be
-configurable via the asset files, instead of hardcoding values in Rust.</p>
+custom values you want to access from Rust while the script is running. This
+is useful if you want to make some custom gameplay code be configurable via
+the asset files, instead of hardcoding values in Rust.</p>
 <p>Example:</p>
 <pre><code class="language-toml">[config]
 jump_height = 7.0
 collision_damage = 4.0
 </code></pre>
+<p>The values can be floats, integers, or strings.</p>
 <h2 id="settings"><a class="header" href="#settings">Settings</a></h2>
 <p>A script file can have an optional <code>[settings]</code> section, where you can put
 parameters that govern how the script is to be run by the game.</p>
@@ -238,7 +239,8 @@ cli = [ "dothing blah blah" ]
 <ul>
 <li>a <em>trigger condition</em> to determine <em>when</em> to perform the action</li>
 <li>an <code>action</code> field to specify the kind of action to perform</li>
-<li>any additional parameters as required by the action, depending on the action kind</li>
+<li>any additional optional parameters to modify/control how it runs</li>
+<li>any additional parameters as appropriate for the action to perform</li>
 </ul>
 <h2 id="slots"><a class="header" href="#slots">Slots</a></h2>
 <p>Slots are like global flags / boolean variables that can be used to control
@@ -271,8 +273,7 @@ action = "..."
 <p>The trigger condition is a mandatory part of every <code>[[script]]</code> section. It
 determines when to run the action.</p>
 <p>Multiple trigger conditions are currently not supported/allowed. There must be
-exactly one per <code>[[script]]</code> section. If you want to perform the same action
-at different times, just create multiple sections with the respective triggers.</p>
+exactly one per <code>[[script]]</code> section.</p>
 <p>The available trigger conditions are:</p>
 <details>
   <summary>
@@ -324,8 +325,12 @@ action = "..."
 <pre><code class="language-toml">[[script]]
 run_at_tick = 96
 action = "..."
+
+[[script]]
+run_at_tick = [12, 16, 18]
+action = "..."
 </code></pre>
-<p>Run the action once, on the given tick number.</p>
+<p>Run the action on the given tick number(s).</p>
 <p>Tick numbers count from the start of the script. May be affected by script settings.</p>
 </details>
 <details>
@@ -357,8 +362,13 @@ action = "..."
 <pre><code class="language-toml">[[script]]
 run_at_millis = 250
 action = "..."
+
+[[script]]
+run_at_millis = [100, 200, 300]
+action = "..."
 </code></pre>
-<p>Run the action once, after the given number of milliseconds have elapsed.</p>
+<p>Run the action when the given number of milliseconds have elapsed.</p>
+<p>If you specify multiple values, the action will be triggered at each one of them.</p>
 <p>Time is counted from the start of the script. Affected by the <code>time_base</code> setting.</p>
 </details>
 <details>
@@ -369,8 +379,13 @@ action = "..."
 <pre><code class="language-toml">[[script]]
 run_at_time = "1:13:17.315"
 action = "..."
+
+[[script]]
+run_at_time = ["1:00", "2:00", "7:00"]
+action = "..."
 </code></pre>
-<p>Run the action once, after the given amount of time has elapsed.</p>
+<p>Run the action when the given amount of time has elapsed.</p>
+<p>If you specify multiple values, the action will be triggered at each one of them.</p>
 <p>Time is counted from the start of the script. Affected by the <code>time_base</code> setting.</p>
 <p>The syntax for the time allows you to specify: hours, minutes, seconds, fraction
 of the second. Everything except for the seconds is optional. Minutes/seconds
@@ -384,7 +399,7 @@ over 60 are accepted. Leading zeros are optional.</p>
 <li><code>5:80</code>: 5 minutes + 80 seconds (effectively the same as <code>"6:20"</code>)</li>
 </ul>
 </details>
-<h2 id="common-parameters-modifiers"><a class="header" href="#common-parameters-modifiers">Common Parameters (Modifiers)</a></h2>
+<h2 id="common-parameters"><a class="header" href="#common-parameters">Common Parameters</a></h2>
 <p>These are additional parameters that can be specified regardless of the action.</p>
 <p>Whenever the trigger condition is met, these parameters will be evaluated. They
 can be used to modify how the action should run or if it should run at all.</p>
@@ -497,6 +512,79 @@ action = "..."
 </code></pre>
 <p>Checks the values of the specified slots and does not perform the action if
 any of them is <code>true</code>.</p>
+</details>
+<details>
+  <summary>
+  <code>if_runcount_lt</code>/<code>if_runcount_le</code>/<code>if_runcount_gt</code>/<code>if_runcount_ge</code>
+  </summary>
+<p>Example:</p>
+<pre><code class="language-toml"># Do something at the start when the script starts playing,
+# but only for the first 3 times it runs
+[[script]]
+run_on_playback_control = "Start"
+if_runcount_le = 3
+action = "..."
+
+# Do something every 5+1 ticks, but only
+# after the script has been run more than twice
+[[script]]
+run_every_n_ticks = "5+1"
+if_runcount_gt = 2
+action = "..."
+</code></pre>
+<p>Only run the action if the current runcount is:</p>
+<ul>
+<li>less than (lt)</li>
+<li>less than or equal to (le)</li>
+<li>greater than (gt)</li>
+<li>greater than or equal to (ge)</li>
+</ul>
+<p>the specified value.</p>
+</details>
+<details>
+  <summary>
+  <code>if_runcount_is</code>
+  </summary>
+<p>Example:</p>
+<pre><code class="language-toml"># Do something as soon as the "attack" slot is enabled,
+# but only if the script is run for the first time
+[[script]]
+run_on_slot_enable = "attack"
+if_runcount_is = 0
+action = "..."
+
+# Do something when the script starts, but
+# only on the third, seventh, and ninth time it runs.
+[[script]]
+run_on_playback_control = "Start"
+if_runcount_is = [ 3, 7, 9 ]
+action = "..."
+</code></pre>
+<p>Only run the action if the current runcount is equal to any of the specified
+values.</p>
+</details>
+<details>
+  <summary>
+  <code>if_runcount_quant</code>
+  </summary>
+<p>Example:</p>
+<pre><code class="language-toml"># Do something when the script starts,
+# but only every fifth run
+[[script]]
+run_on_playback_control = "Start"
+if_runcount_quant = "5"
+action = "..."
+
+# Do something as soon as the "attack" slot is enabled,
+# but only on runs 2, 7, 12, 17, ...
+[[script]]
+run_on_slot_enable = "attack"
+if_runcount_quant = "5+2"
+action = "..."
+</code></pre>
+<p>Only run the action if the current runcount matches a "quant" pattern
+(this is the same syntax as for <code>run_every_n_ticks</code>, etc.).</p>
+<p>This allows you to do things "every N runcounts".</p>
 </details>
 <h2 id="available-actions"><a class="header" href="#available-actions">Available Actions</a></h2>
 <p>The action kind is a mandatory part of every <code>[[script]]</code> section. There must be
