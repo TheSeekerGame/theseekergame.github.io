@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["hdr","jpeg","png"]};
+window.SIDEBAR_ITEMS = {"mod":["png"]};

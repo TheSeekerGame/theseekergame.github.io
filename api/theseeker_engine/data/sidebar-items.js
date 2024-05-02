@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["ColorRepr","ParseTimeSpecError"],"fn":["deserialize_color_rgbhex","serialize_color_rgbhex"],"struct":["Frac","TickQuant","TimeSpec"]};
+window.SIDEBAR_ITEMS = {"enum":["ColorRepr","OneOrMany","ParseTimeSpecError"],"fn":["deserialize_color_rgbhex","serialize_color_rgbhex"],"struct":["Frac","Quant","TimeSpec"]};

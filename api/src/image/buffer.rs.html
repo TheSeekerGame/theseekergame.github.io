@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/image-0.24.9/src/buffer.rs`."><title>buffer.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="image" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.2 (25ef9e3d8 2024-04-09)" data-channel="1.77.2" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/image-0.25.1/src/buffer.rs`."><title>buffer.rs - source</title><script> if (window.location.protocol !== "file:") document.write(`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2">`)</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-e935ef01ae1c1829.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="image" data-themes="" data-resource-suffix="" data-rustdoc-version="1.78.0 (9b00956e5 2024-04-29)" data-channel="1.78.0" data-search-js="search-42d8da7a6b9792c2.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-12cf3b4f4f9dc36d.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
             <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
     <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../image/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
@@ -1799,12 +1799,6 @@
 <a href="#1797" id="1797">1797</a>
 <a href="#1798" id="1798">1798</a>
 <a href="#1799" id="1799">1799</a>
-<a href="#1800" id="1800">1800</a>
-<a href="#1801" id="1801">1801</a>
-<a href="#1802" id="1802">1802</a>
-<a href="#1803" id="1803">1803</a>
-<a href="#1804" id="1804">1804</a>
-<a href="#1805" id="1805">1805</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! Contains the generic `ImageBuffer` struct.
 </span><span class="kw">use </span>num_traits::Zero;
 <span class="kw">use </span>std::fmt;
@@ -1817,7 +1811,7 @@
 <span class="kw">use </span><span class="kw">crate</span>::dynimage::{save_buffer, save_buffer_with_format, write_buffer_with_format};
 <span class="kw">use </span><span class="kw">crate</span>::error::ImageResult;
 <span class="kw">use </span><span class="kw">crate</span>::flat::{FlatSamples, SampleLayout};
-<span class="kw">use </span><span class="kw">crate</span>::image::{GenericImage, GenericImageView, ImageEncoder, ImageFormat, ImageOutputFormat};
+<span class="kw">use </span><span class="kw">crate</span>::image::{GenericImage, GenericImageView, ImageEncoder, ImageFormat};
 <span class="kw">use </span><span class="kw">crate</span>::math::Rect;
 <span class="kw">use </span><span class="kw">crate</span>::traits::{EncodableLayout, Pixel, PixelWithColorType};
 <span class="kw">use </span><span class="kw">crate</span>::utils::expand_packed;
@@ -2851,15 +2845,11 @@
 {
     <span class="doccomment">/// Writes the buffer to a writer in the specified format.
     ///
-    /// Assumes the writer is buffered. In most cases,
-    /// you should wrap your writer in a `BufWriter` for best performance.
-    ///
-    /// See [`ImageOutputFormat`](enum.ImageOutputFormat.html) for
-    /// supported types.
-    </span><span class="kw">pub fn </span>write_to&lt;W, F&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, writer: <span class="kw-2">&amp;mut </span>W, format: F) -&gt; ImageResult&lt;()&gt;
+    /// Assumes the writer is buffered. In most cases, you should wrap your writer in a `BufWriter`
+    /// for best performance.
+    </span><span class="kw">pub fn </span>write_to&lt;W&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, writer: <span class="kw-2">&amp;mut </span>W, format: ImageFormat) -&gt; ImageResult&lt;()&gt;
     <span class="kw">where
         </span>W: std::io::Write + std::io::Seek,
-        F: Into&lt;ImageOutputFormat&gt;,
         P: PixelWithColorType,
     {
         <span class="comment">// This is valid as the subpixel is u8.
@@ -2979,10 +2969,6 @@
 
     <span class="kw">fn </span>dimensions(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; (u32, u32) {
         <span class="self">self</span>.dimensions()
-    }
-
-    <span class="kw">fn </span>bounds(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; (u32, u32, u32, u32) {
-        (<span class="number">0</span>, <span class="number">0</span>, <span class="self">self</span>.width, <span class="self">self</span>.height)
     }
 
     <span class="kw">fn </span>get_pixel(<span class="kw-2">&amp;</span><span class="self">self</span>, x: u32, y: u32) -&gt; P {
@@ -3291,9 +3277,10 @@
 
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>test {
-    <span class="kw">use super</span>::{GrayImage, ImageBuffer, ImageOutputFormat, RgbImage};
+    <span class="kw">use super</span>::{GrayImage, ImageBuffer, RgbImage};
     <span class="kw">use </span><span class="kw">crate</span>::math::Rect;
     <span class="kw">use </span><span class="kw">crate</span>::GenericImage <span class="kw">as _</span>;
+    <span class="kw">use </span><span class="kw">crate</span>::ImageFormat;
     <span class="kw">use crate</span>::{color, Rgb};
 
     <span class="attr">#[test]
@@ -3483,9 +3470,10 @@
     #[cfg(feature = <span class="string">"png"</span>)]
     </span><span class="kw">fn </span>write_to_with_large_buffer() {
         <span class="comment">// A buffer of 1 pixel, padded to 4 bytes as would be common in, e.g. BMP.
+
         </span><span class="kw">let </span>img: GrayImage = ImageBuffer::from_raw(<span class="number">1</span>, <span class="number">1</span>, <span class="macro">vec!</span>[<span class="number">0u8</span>; <span class="number">4</span>]).unwrap();
         <span class="kw">let </span><span class="kw-2">mut </span>buffer = std::io::Cursor::new(<span class="macro">vec!</span>[]);
-        <span class="macro">assert!</span>(img.write_to(<span class="kw-2">&amp;mut </span>buffer, ImageOutputFormat::Png).is_ok());
+        <span class="macro">assert!</span>(img.write_to(<span class="kw-2">&amp;mut </span>buffer, ImageFormat::Png).is_ok());
     }
 
     <span class="attr">#[test]

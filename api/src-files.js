@@ -90,7 +90,6 @@ var srcIndex = new Map(JSON.parse('[\
 ["cfg_if",["",[],["lib.rs"]]],\
 ["claxon",["",[],["crc.rs","error.rs","frame.rs","input.rs","lib.rs","metadata.rs","subframe.rs"]]],\
 ["codespan_reporting",["",[["term",[],["config.rs","renderer.rs","views.rs"]]],["diagnostic.rs","files.rs","lib.rs","term.rs"]]],\
-["color_quant",["",[],["lib.rs","math.rs"]]],\
 ["concurrent_queue",["",[],["bounded.rs","lib.rs","single.rs","sync.rs","unbounded.rs"]]],\
 ["const_fnv1a_hash",["",[],["lib.rs"]]],\
 ["const_panic",["",[["fmt",[],["char_formatting.rs"]],["fmt_impls",[],["basic_fmt_impls.rs"]],["macros",[],["concat_assert.rs","unwrapping.rs"]]],["concat_panic_.rs","debug_str_fmt.rs","doc_macros.rs","fmt.rs","int_formatting.rs","lib.rs","macros.rs","panic_val.rs","utils.rs","wrapper.rs"]]],\
@@ -174,7 +173,7 @@ var srcIndex = new Map(JSON.parse('[\
 ["home",["",[],["env.rs","lib.rs"]]],\
 ["ident_case",["",[],["lib.rs"]]],\
 ["idna",["",[],["lib.rs","punycode.rs","uts46.rs"]]],\
-["image",["",[["codecs",[["hdr",[],["decoder.rs","encoder.rs","mod.rs"]],["jpeg",[],["decoder.rs","encoder.rs","entropy.rs","mod.rs","transform.rs"]]],["png.rs"]],["imageops",[],["affine.rs","colorops.rs","mod.rs","sample.rs"]],["io",[],["free_functions.rs","mod.rs","reader.rs"]],["math",[],["mod.rs","rect.rs","utils.rs"]],["utils",[],["mod.rs"]]],["animation.rs","buffer.rs","color.rs","dynimage.rs","error.rs","flat.rs","image.rs","lib.rs","traits.rs"]]],\
+["image",["",[["codecs",[],["png.rs"]],["imageops",[],["affine.rs","colorops.rs","mod.rs","sample.rs"]],["io",[],["free_functions.rs","mod.rs","reader.rs"]],["math",[],["mod.rs","rect.rs","utils.rs"]],["utils",[],["mod.rs"]]],["animation.rs","buffer.rs","color.rs","dynimage.rs","error.rs","flat.rs","image.rs","lib.rs","traits.rs"]]],\
 ["indexmap",["",[["map",[["core",[],["entry.rs","raw.rs","raw_entry_v1.rs"]]],["core.rs","iter.rs","mutable.rs","serde_seq.rs","slice.rs"]],["set",[],["iter.rs","mutable.rs","slice.rs"]]],["arbitrary.rs","lib.rs","macros.rs","map.rs","serde.rs","set.rs","util.rs"]]],\
 ["inflections",["",[],["case.rs","lib.rs"]]],\
 ["inotify",["",[],["events.rs","fd_guard.rs","inotify.rs","lib.rs","util.rs","watches.rs"]]],\
@@ -188,7 +187,6 @@ var srcIndex = new Map(JSON.parse('[\
 ["iyes_cli",["",[],["lib.rs"]]],\
 ["iyes_progress",["",[],["asset.rs","lib.rs"]]],\
 ["iyes_ui",["",[],["lib.rs","onclick.rs"]]],\
-["jpeg_decoder",["",[["arch",[],["mod.rs","neon.rs","ssse3.rs","wasm.rs"]],["decoder",[],["lossless.rs"]],["worker",[],["immediate.rs","mod.rs","multithreaded.rs"]]],["decoder.rs","error.rs","huffman.rs","idct.rs","lib.rs","marker.rs","parser.rs","upsampler.rs"]]],\
 ["khronos_egl",["",[],["lib.rs"]]],\
 ["ktx2",["",[],["enums.rs","error.rs","lib.rs"]]],\
 ["lazy_static",["",[],["inline_lazy.rs","lib.rs"]]],\
