@@ -1012,6 +1012,42 @@
 <a href="#1010" id="1010">1010</a>
 <a href="#1011" id="1011">1011</a>
 <a href="#1012" id="1012">1012</a>
+<a href="#1013" id="1013">1013</a>
+<a href="#1014" id="1014">1014</a>
+<a href="#1015" id="1015">1015</a>
+<a href="#1016" id="1016">1016</a>
+<a href="#1017" id="1017">1017</a>
+<a href="#1018" id="1018">1018</a>
+<a href="#1019" id="1019">1019</a>
+<a href="#1020" id="1020">1020</a>
+<a href="#1021" id="1021">1021</a>
+<a href="#1022" id="1022">1022</a>
+<a href="#1023" id="1023">1023</a>
+<a href="#1024" id="1024">1024</a>
+<a href="#1025" id="1025">1025</a>
+<a href="#1026" id="1026">1026</a>
+<a href="#1027" id="1027">1027</a>
+<a href="#1028" id="1028">1028</a>
+<a href="#1029" id="1029">1029</a>
+<a href="#1030" id="1030">1030</a>
+<a href="#1031" id="1031">1031</a>
+<a href="#1032" id="1032">1032</a>
+<a href="#1033" id="1033">1033</a>
+<a href="#1034" id="1034">1034</a>
+<a href="#1035" id="1035">1035</a>
+<a href="#1036" id="1036">1036</a>
+<a href="#1037" id="1037">1037</a>
+<a href="#1038" id="1038">1038</a>
+<a href="#1039" id="1039">1039</a>
+<a href="#1040" id="1040">1040</a>
+<a href="#1041" id="1041">1041</a>
+<a href="#1042" id="1042">1042</a>
+<a href="#1043" id="1043">1043</a>
+<a href="#1044" id="1044">1044</a>
+<a href="#1045" id="1045">1045</a>
+<a href="#1046" id="1046">1046</a>
+<a href="#1047" id="1047">1047</a>
+<a href="#1048" id="1048">1048</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>bevy::transform::TransformSystem::TransformPropagate;
 <span class="kw">use </span>leafwing_input_manager::{axislike::VirtualAxis, prelude::<span class="kw-2">*</span>};
 <span class="kw">use </span>rapier2d::geometry::{Group, InteractionGroups};
@@ -1230,11 +1266,18 @@
                 action_state: ActionState::default(),
                 input_map: InputMap::default()
                     .insert(PlayerAction::Jump, KeyCode::Space)
+                    .insert(PlayerAction::Jump, KeyCode::KeyW)
+                    .insert(PlayerAction::Jump, KeyCode::ArrowUp)
                     .insert(
                         PlayerAction::Move,
                         VirtualAxis::from_keys(KeyCode::KeyA, KeyCode::KeyD),
                     )
+                    .insert(
+                        PlayerAction::Move,
+                        VirtualAxis::from_keys(KeyCode::ArrowLeft, KeyCode::ArrowRight),
+                    )
                     .insert(PlayerAction::Attack, KeyCode::Enter)
+                    .insert(PlayerAction::Attack, KeyCode::KeyJ)
                     .build(),
             },
             Falling,
@@ -1575,6 +1618,17 @@
                 player.set_slot(<span class="string">"MovingVertically"</span>, <span class="bool-val">false</span>);
                 player.set_slot(<span class="string">"MovingHorizontally"</span>, <span class="bool-val">false</span>);
             }
+            
+            <span class="kw">if </span>velocity.y &gt; <span class="number">0.001 </span>{
+                player.set_slot(<span class="string">"MovingUp"</span>, <span class="bool-val">true</span>);
+            } <span class="kw">else </span>{
+                player.set_slot(<span class="string">"MovingUp"</span>, <span class="bool-val">false</span>);
+            }
+            <span class="kw">if </span>velocity.y &lt; -<span class="number">0.001 </span>{
+                player.set_slot(<span class="string">"MovingDown"</span>, <span class="bool-val">true</span>);
+            } <span class="kw">else </span>{
+                player.set_slot(<span class="string">"MovingDown"</span>, <span class="bool-val">false</span>);
+            }
         }
         <span class="kw">if </span>direction &gt; <span class="number">0.0 </span>{
             <span class="kw-2">*</span>facing = Facing::Right;
@@ -1831,6 +1885,9 @@
             }
         }
         <span class="kw">if </span>falling {
+            <span class="kw">if </span>velocity.y &gt; <span class="number">0.0 </span>{
+                velocity.y = velocity.y / <span class="number">1.2</span>;
+            }
             velocity.y -= fall_accel;
             velocity.y = velocity.y.clamp(
                 -config.max_fall_vel,
@@ -1988,15 +2045,17 @@
 }
 
 <span class="kw">fn </span>player_attacking_animation(
-    r_query: Query&lt;(<span class="kw-2">&amp;</span>Gent, Has&lt;Falling&gt;, Has&lt;Jumping&gt;), Added&lt;Attacking&gt;&gt;,
+    r_query: Query&lt;(<span class="kw-2">&amp;</span>Gent, Has&lt;Falling&gt;, Has&lt;Jumping&gt;, Has&lt;Running&gt;), Added&lt;Attacking&gt;&gt;,
     <span class="kw-2">mut </span>gfx_query: Query&lt;<span class="kw-2">&amp;mut </span>ScriptPlayer&lt;SpriteAnimation&gt;, With&lt;PlayerGfx&gt;&gt;,
 ) {
-    <span class="kw">for </span>(gent, is_falling, is_jumping) <span class="kw">in </span>r_query.iter() {
+    <span class="kw">for </span>(gent, is_falling, is_jumping, is_running) <span class="kw">in </span>r_query.iter() {
         <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="kw-2">mut </span>player) = gfx_query.get_mut(gent.e_gfx) {
             <span class="kw">if </span>is_falling || is_jumping {
-                player.play_key(<span class="string">"anim.player.SwordAirFrontA"</span>)
+                player.play_key(<span class="string">"anim.player.SwordBasicAir"</span>)
+            } <span class="kw">else if </span>is_running {
+                player.play_key(<span class="string">"anim.player.SwordBasicRun"</span>)
             } <span class="kw">else </span>{
-                player.play_key(<span class="string">"anim.player.SwordFrontA"</span>)
+                player.play_key(<span class="string">"anim.player.SwordBasicIdle"</span>)
             }
         }
     }
@@ -2007,20 +2066,33 @@
 <span class="kw">fn </span>sprite_flip(
     query: Query&lt;(<span class="kw-2">&amp;</span>Facing, <span class="kw-2">&amp;</span>Gent)&gt;,
     <span class="kw-2">mut </span>gfx_query: Query&lt;<span class="kw-2">&amp;mut </span>ScriptPlayer&lt;SpriteAnimation&gt;, With&lt;PlayerGfx&gt;&gt;,
+    <span class="kw-2">mut </span>current_direction: Local&lt;bool&gt;,
+    <span class="kw-2">mut </span>old_direction: Local&lt;bool&gt;,
 ) {
     <span class="kw">for </span>(facing, gent) <span class="kw">in </span>query.iter() {
         <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="kw-2">mut </span>player) = gfx_query.get_mut(gent.e_gfx) {
+            <span class="kw-2">*</span>old_direction = <span class="kw-2">*</span>current_direction;
             <span class="kw">match </span>facing {
                 Facing::Right =&gt; {
                     <span class="comment">//TODO: toggle facing script action
                     </span>player.set_slot(<span class="string">"DirectionRight"</span>, <span class="bool-val">true</span>);
                     player.set_slot(<span class="string">"DirectionLeft"</span>, <span class="bool-val">false</span>);
+                    <span class="kw-2">*</span>current_direction = <span class="bool-val">true</span>;   
                 },
                 Facing::Left =&gt; {
                     player.set_slot(<span class="string">"DirectionRight"</span>, <span class="bool-val">false</span>);
                     player.set_slot(<span class="string">"DirectionLeft"</span>, <span class="bool-val">true</span>);
+                    <span class="kw-2">*</span>current_direction = <span class="bool-val">false</span>;
                 },
             }
+            
+            <span class="comment">// lazy change detection cause I can't be asked to learn proper bevy way lel ~c12
+            </span><span class="kw">if </span><span class="kw-2">*</span>old_direction != <span class="kw-2">*</span>current_direction {
+                player.set_slot(<span class="string">"DirectionChanged"</span>, <span class="bool-val">true</span>);
+            } <span class="kw">else </span>{
+                player.set_slot(<span class="string">"DirectionChanged"</span>, <span class="bool-val">false</span>);
+            }
+        
         }
     }
 }
