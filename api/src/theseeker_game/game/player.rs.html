@@ -1149,6 +1149,19 @@
 <a href="#1147" id="1147">1147</a>
 <a href="#1148" id="1148">1148</a>
 <a href="#1149" id="1149">1149</a>
+<a href="#1150" id="1150">1150</a>
+<a href="#1151" id="1151">1151</a>
+<a href="#1152" id="1152">1152</a>
+<a href="#1153" id="1153">1153</a>
+<a href="#1154" id="1154">1154</a>
+<a href="#1155" id="1155">1155</a>
+<a href="#1156" id="1156">1156</a>
+<a href="#1157" id="1157">1157</a>
+<a href="#1158" id="1158">1158</a>
+<a href="#1159" id="1159">1159</a>
+<a href="#1160" id="1160">1160</a>
+<a href="#1161" id="1161">1161</a>
+<a href="#1162" id="1162">1162</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>bevy::transform::TransformSystem::TransformPropagate;
 <span class="kw">use </span>leafwing_input_manager::{axislike::VirtualAxis, prelude::<span class="kw-2">*</span>};
 <span class="kw">use </span>rapier2d::geometry::{Group, InteractionGroups};
@@ -1739,7 +1752,7 @@
                 player.set_slot(<span class="string">"MovingVertically"</span>, <span class="bool-val">false</span>);
                 player.set_slot(<span class="string">"MovingHorizontally"</span>, <span class="bool-val">false</span>);
             }
-            
+
             <span class="kw">if </span>velocity.y &gt; <span class="number">0.001 </span>{
                 player.set_slot(<span class="string">"MovingUp"</span>, <span class="bool-val">true</span>);
             } <span class="kw">else </span>{
@@ -2201,12 +2214,18 @@
         <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="kw-2">mut </span>player) = gfx_query.get_mut(gent.e_gfx) {
             <span class="kw">if let </span><span class="prelude-val">Some</span>(sliding) = sliding {
                 <span class="kw">if </span>sliding.sliding(<span class="kw-2">&amp;</span>config) {
-                    player.play_key(<span class="string">"anim.player.WallSlide"</span>);
+                    <span class="kw">if </span>player.current_key().unwrap_or(<span class="string">""</span>) != <span class="string">"anim.player.WallSlide" </span>{
+                        player.play_key(<span class="string">"anim.player.WallSlide"</span>);
+                    }
                 } <span class="kw">else </span>{
-                    player.play_key(<span class="string">"anim.player.Fall"</span>);
+                    <span class="kw">if </span>player.current_key().unwrap_or(<span class="string">""</span>) != <span class="string">"anim.player.Fall" </span>{
+                        player.play_key(<span class="string">"anim.player.Fall"</span>);
+                    }
                 }
             } <span class="kw">else </span>{
-                player.play_key(<span class="string">"anim.player.Fall"</span>);
+                <span class="kw">if </span>player.current_key().unwrap_or(<span class="string">""</span>) != <span class="string">"anim.player.Fall" </span>{
+                    player.play_key(<span class="string">"anim.player.Fall"</span>);
+                }
             }
         }
     }
@@ -2247,7 +2266,15 @@
 }
 
 <span class="kw">fn </span>player_attacking_animation(
-    r_query: Query&lt;(<span class="kw-2">&amp;</span>Gent, Has&lt;Falling&gt;, Has&lt;Jumping&gt;, Has&lt;Running&gt;), Added&lt;Attacking&gt;&gt;,
+    r_query: Query&lt;
+        (
+            <span class="kw-2">&amp;</span>Gent,
+            Has&lt;Falling&gt;,
+            Has&lt;Jumping&gt;,
+            Has&lt;Running&gt;,
+        ),
+        Added&lt;Attacking&gt;,
+    &gt;,
     <span class="kw-2">mut </span>gfx_query: Query&lt;<span class="kw-2">&amp;mut </span>ScriptPlayer&lt;SpriteAnimation&gt;, With&lt;PlayerGfx&gt;&gt;,
 ) {
     <span class="kw">for </span>(gent, is_falling, is_jumping, is_running) <span class="kw">in </span>r_query.iter() {
@@ -2279,7 +2306,7 @@
                     <span class="comment">//TODO: toggle facing script action
                     </span>player.set_slot(<span class="string">"DirectionRight"</span>, <span class="bool-val">true</span>);
                     player.set_slot(<span class="string">"DirectionLeft"</span>, <span class="bool-val">false</span>);
-                    <span class="kw-2">*</span>current_direction = <span class="bool-val">true</span>;   
+                    <span class="kw-2">*</span>current_direction = <span class="bool-val">true</span>;
                 },
                 Facing::Left =&gt; {
                     player.set_slot(<span class="string">"DirectionRight"</span>, <span class="bool-val">false</span>);
@@ -2287,14 +2314,13 @@
                     <span class="kw-2">*</span>current_direction = <span class="bool-val">false</span>;
                 },
             }
-            
+
             <span class="comment">// lazy change detection cause I can't be asked to learn proper bevy way lel ~c12
             </span><span class="kw">if </span><span class="kw-2">*</span>old_direction != <span class="kw-2">*</span>current_direction {
                 player.set_slot(<span class="string">"DirectionChanged"</span>, <span class="bool-val">true</span>);
             } <span class="kw">else </span>{
                 player.set_slot(<span class="string">"DirectionChanged"</span>, <span class="bool-val">false</span>);
             }
-        
         }
     }
 }
