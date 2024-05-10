@@ -252,10 +252,42 @@
 <a href="#250" id="250">250</a>
 <a href="#251" id="251">251</a>
 <a href="#252" id="252">252</a>
+<a href="#253" id="253">253</a>
+<a href="#254" id="254">254</a>
+<a href="#255" id="255">255</a>
+<a href="#256" id="256">256</a>
+<a href="#257" id="257">257</a>
+<a href="#258" id="258">258</a>
+<a href="#259" id="259">259</a>
+<a href="#260" id="260">260</a>
+<a href="#261" id="261">261</a>
+<a href="#262" id="262">262</a>
+<a href="#263" id="263">263</a>
+<a href="#264" id="264">264</a>
+<a href="#265" id="265">265</a>
+<a href="#266" id="266">266</a>
+<a href="#267" id="267">267</a>
+<a href="#268" id="268">268</a>
+<a href="#269" id="269">269</a>
+<a href="#270" id="270">270</a>
+<a href="#271" id="271">271</a>
+<a href="#272" id="272">272</a>
+<a href="#273" id="273">273</a>
+<a href="#274" id="274">274</a>
+<a href="#275" id="275">275</a>
+<a href="#276" id="276">276</a>
+<a href="#277" id="277">277</a>
+<a href="#278" id="278">278</a>
+<a href="#279" id="279">279</a>
+<a href="#280" id="280">280</a>
+<a href="#281" id="281">281</a>
+<a href="#282" id="282">282</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! Everything to do with the in-game camera(s)
 
 </span><span class="kw">use </span><span class="kw">crate</span>::game::player::Player;
 <span class="kw">use </span><span class="kw">crate</span>::graphics::darkness::DarknessSettings;
+<span class="kw">use </span><span class="kw">crate</span>::level::MainBackround;
+<span class="kw">use </span><span class="kw">crate</span>::parallax::Parallax;
 <span class="kw">use </span><span class="kw">crate</span>::prelude::<span class="kw-2">*</span>;
 <span class="kw">use </span>bevy::core_pipeline::bloom::BloomSettings;
 <span class="kw">use </span>bevy::core_pipeline::tonemapping::Tonemapping;
@@ -429,13 +461,17 @@
 }
 
 <span class="doccomment">/// Camera updates the camera position to smoothly interpolate to the
-/// rig location. also applies camera shake
+/// rig location. also applies camera shake, and limits camera within the level boundaries
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>update_camera_rig(
-    <span class="kw-2">mut </span>q_cam: Query&lt;<span class="kw-2">&amp;mut </span>Transform, With&lt;MainCamera&gt;&gt;,
+    <span class="kw-2">mut </span>q_cam: Query&lt;(<span class="kw-2">&amp;mut </span>Transform, <span class="kw-2">&amp;</span>OrthographicProjection), With&lt;MainCamera&gt;&gt;,
     <span class="kw-2">mut </span>rig: ResMut&lt;CameraRig&gt;,
+    backround_query: Query&lt;
+        (<span class="kw-2">&amp;</span>LayerMetadata, <span class="kw-2">&amp;</span>Transform),
+        (With&lt;MainBackround&gt;, Without&lt;MainCamera&gt;),
+    &gt;,
     time: Res&lt;Time&gt;,
 ) {
-    <span class="kw">let </span><span class="prelude-val">Ok</span>(<span class="kw-2">mut </span>cam_xform) = q_cam.get_single_mut() <span class="kw">else </span>{
+    <span class="kw">let </span><span class="prelude-val">Ok</span>((<span class="kw-2">mut </span>cam_xform, ortho_projection)) = q_cam.get_single_mut() <span class="kw">else </span>{
         <span class="kw">return</span>;
     };
 
@@ -455,6 +491,30 @@
     cam_xform.rotation.z = <span class="number">0.0 </span>+ angle;
     cam_xform.translation.x = rig.camera.x + offset_x;
     cam_xform.translation.y = rig.camera.y + offset_y;
+
+    <span class="kw">if let </span><span class="prelude-val">Some</span>((bg_layer, bg_transform)) = backround_query.iter().next() {
+        <span class="kw">let </span>bg_width = (bg_layer.c_wid * bg_layer.grid_size) <span class="kw">as </span>f32;
+        <span class="kw">let </span>bg_height = (bg_layer.c_hei * bg_layer.grid_size) <span class="kw">as </span>f32;
+
+        <span class="kw">let </span>cam_rect = ortho_projection.area;
+
+        <span class="comment">// The backround width and height actually have 3 pixels extra padding on the far
+        // right/upper sides. This accounts for that.
+        </span><span class="kw">let </span>bg_max = Vec2::new(bg_width - <span class="number">3.0</span>, bg_height - <span class="number">3.0</span>);
+
+        <span class="comment">// bottom left corner of the background is zero/minimum corner, because
+        // that's how LDtk imports it.
+        </span><span class="kw">let </span>limit_rect = Rect::from_corners(
+            bg_max + bg_transform.translation.xy(),
+            bg_transform.translation.xy(),
+        );
+
+        <span class="kw">let </span>xy = cam_xform.translation.xy().clamp(
+            limit_rect.min + cam_rect.half_size(),
+            limit_rect.max - cam_rect.half_size(),
+        );
+        cam_xform.translation = xy.extend(cam_xform.translation.z);
+    }
 }
 
 <span class="kw">fn </span>cli_camera_at(In(args): In&lt;Vec&lt;String&gt;&gt;, <span class="kw-2">mut </span>q_cam: Query&lt;<span class="kw-2">&amp;mut </span>Transform, With&lt;MainCamera&gt;&gt;) {

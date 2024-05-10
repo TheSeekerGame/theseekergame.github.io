@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["ast","parser","unicode"]};
+window.SIDEBAR_ITEMS = {"mod":["ast","parser","serializer","unicode"]};
