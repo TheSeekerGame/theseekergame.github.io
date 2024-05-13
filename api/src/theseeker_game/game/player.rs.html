@@ -1158,10 +1158,6 @@
 <a href="#1156" id="1156">1156</a>
 <a href="#1157" id="1157">1157</a>
 <a href="#1158" id="1158">1158</a>
-<a href="#1159" id="1159">1159</a>
-<a href="#1160" id="1160">1160</a>
-<a href="#1161" id="1161">1161</a>
-<a href="#1162" id="1162">1162</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>bevy::transform::TransformSystem::TransformPropagate;
 <span class="kw">use </span>leafwing_input_manager::{axislike::VirtualAxis, prelude::<span class="kw-2">*</span>};
 <span class="kw">use </span>rapier2d::geometry::{Group, InteractionGroups};
@@ -1169,8 +1165,8 @@
 <span class="kw">use </span>theseeker_engine::assets::config::{update_field, DynamicConfig};
 <span class="kw">use </span>theseeker_engine::gent::{Gent, GentPhysicsBundle};
 <span class="kw">use </span>theseeker_engine::physics::{
-    into_vec2, Collider, LinearVelocity, PhysicsWorld, ShapeCaster, ENEMY, GROUND, PLAYER,
-    PLAYER_ATTACK,
+    into_vec2, AnimationCollider, Collider, LinearVelocity, PhysicsWorld, ShapeCaster, ENEMY,
+    GROUND, PLAYER, PLAYER_ATTACK,
 };
 <span class="kw">use </span>theseeker_engine::{
     animation::SpriteAnimationBundle, assets::animation::SpriteAnimation,
@@ -2125,7 +2121,7 @@
     <span class="kw-2">mut </span>query: Query&lt;
         (
             Entity,
-            <span class="kw-2">&amp;</span>Facing,
+            <span class="kw-2">&amp;</span>Gent,
             <span class="kw-2">&amp;mut </span>Attacking,
             <span class="kw-2">&amp;mut </span>TransitionQueue,
         ),
@@ -2133,20 +2129,16 @@
     &gt;,
     <span class="kw-2">mut </span>commands: Commands,
 ) {
-    <span class="kw">for </span>(entity, facing, <span class="kw-2">mut </span>attacking, <span class="kw-2">mut </span>transitions) <span class="kw">in </span>query.iter_mut() {
+    <span class="kw">for </span>(entity, gent, <span class="kw-2">mut </span>attacking, <span class="kw-2">mut </span>transitions) <span class="kw">in </span>query.iter_mut() {
         <span class="kw">if </span>attacking.ticks == Attacking::STARTUP * <span class="number">8 </span>{
             commands
                 .spawn((
-                    TransformBundle::from_transform(Transform::from_xyz(
-                        <span class="number">10. </span>* facing.direction(),
-                        <span class="number">0.</span>,
-                        <span class="number">0.</span>,
+                    TransformBundle::from_transform(Transform::from_xyz(<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>)),
+                    AnimationCollider(gent.e_gfx),
+                    Collider::empty(InteractionGroups::new(
+                        PLAYER_ATTACK,
+                        ENEMY,
                     )),
-                    Collider::cuboid(
-                        <span class="number">10.</span>,
-                        <span class="number">10.</span>,
-                        InteractionGroups::new(PLAYER_ATTACK, ENEMY),
-                    ),
                     Attack::new(<span class="number">16</span>),
                 ))
                 .set_parent(entity);
