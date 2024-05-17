@@ -1563,6 +1563,11 @@ skip frames), you can add <code>[[script]]</code> sections, using animation-spec
 <a href="tech/anim-ref.html#available-actions">actions</a>.</p>
 <p>When using the Scriptable Animation System, <em>please do not</em> modify the Bevy
 Texture Atlas Index value directly from Rust, outside of it!</p>
+<h2 id="frame-indexing"><a class="header" href="#frame-indexing">Frame Indexing</a></h2>
+<p>All frame index values in animation asset files are 1-indexed!</p>
+<p>The first frame of an animation is 1.</p>
+<p>When using <a href="tech/anim-ref.html#frame-bookmarks">frame bookmarks</a>, this is automatically
+compensated for. Frame index 1 means the frame of the bookmark.</p>
 <h2 id="sprite-sheet"><a class="header" href="#sprite-sheet">Sprite Sheet</a></h2>
 <p>Every animation (obviously) requires a sprite sheet (image and layout).</p>
 <p>Those can be specified via the <code>image_asset_key</code> and <code>atlas_asset_key</code>
@@ -1591,20 +1596,20 @@ the bookmark.</p>
   Example:
   </summary>
 <pre><code class="language-toml">[frame_bookmarks]
-my_intro = 4 # say our intro is frames 4 to 7
-my_idle_loop = 10 # say our loop is frames 10 to 19
+my_intro = 4
+my_idle_loop = 10
 
 [[script]]
 frame_bookmark = "my_idle_loop"
-run_at_frame = 9 # relative to `frame_bookmark`; so actually frame 19
+run_at_frame = 10 # relative to `frame_bookmark`
 action = "SetFrameNext"
-frame_index = 0  # relative to `frame_bookmark`; so actually frame 10
+frame_index = 1  # relative to `frame_bookmark`
 
 [[script]]
 frame_bookmark = "my_intro"
 run_on_playback_control = "Start"
 action = "SetFrameNow"
-frame_index = 0 # relative to "my_intro"
+frame_index = 1 # This will be frame 4, as per "my_intro"
 
 [[script]]
 frame_bookmark = "my_intro"
@@ -1613,7 +1618,7 @@ action = "SetFrameNext"
 # you can use a different bookmark for the destination of
 # `SetFrameNext`/`SetFrameNow`, using `to_frame_bookmark`
 to_frame_bookmark = "my_idle_loop"
-frame_index = 0
+frame_index = 1
 </code></pre>
 </details>
 <p>Using bookmarks can really help maintainabitily. In the future, if
@@ -1637,7 +1642,7 @@ idle_loop_end = 19
 run_at_frame = "idle_loop_end"
 action = "SetFrameNext"
 to_frame_bookmark = "idle_loop_start"
-# if omitted, `frame_index` defaults to 0
+# if omitted, `frame_index` defaults to 1
 
 [[script]]
 run_on_playback_control = "Start"
@@ -1658,12 +1663,12 @@ that are required in every animation file.</p>
 <p>Example:</p>
 <pre><code class="language-toml">[settings]
 ticks_per_frame = 8
-frame_min = 0
-frame_max = 7
-frame_start = 0
+frame_min = 1
+frame_max = 8
+frame_start = 1
 </code></pre>
-<p>The above example will create an animation that starts from frame index 0,
-advances to the next frame automatically every 8 ticks, and ends after frame 7
+<p>The above example will create an animation that starts from frame index 1,
+advances to the next frame automatically every 8 ticks, and ends after frame 8
 is displayed.</p>
 <p>This is perfectly sufficient for a basic animation that does not require any
 additional behaviors (such as looping or scripts).</p>
@@ -1688,7 +1693,7 @@ will be displayed for, before automatically transitioning to the next frame.</p>
   </summary>
 <p>Example:</p>
 <pre><code class="language-toml">[settings]
-frame_min = 0
+frame_min = 1
 # ...
 </code></pre>
 <p>The lowest permitted frame index. Frames below this should never be displayed.
@@ -1777,7 +1782,7 @@ action = "SetFrameNext"
 frame_index = 20
 
 [[script]]
-run_at_frame = 7
+run_at_frame = 8
 action = "SetSpriteFlip"
 flip_x = true
 </code></pre>
@@ -1803,13 +1808,13 @@ action = "..."
 # also applies to any other frame numbers
 # in this `[[script]]` section
 [[script]]
-run_at_frame = 0
+run_at_frame = 1
 frame_bookmark = "my_bookmark"
 action = "..."
 
 # you can specify multiple frames
 [[script]]
-run_at_frames = [ 0, 1, 2, 3, 5, 7, 11 ]
+run_at_frames = [ 1, 2, 3, 5, 7, 11 ]
 frame_bookmark = "my_bookmark"
 action = "..."
 
@@ -1833,12 +1838,12 @@ trigger on any of them.</p>
   <code>run_every_n_frames</code>
   </summary>
 <p>Example:</p>
-<pre><code class="language-toml"># frames 0, 8, 16, 24, 32, ...
+<pre><code class="language-toml"># Every 8 frames, starting from the first
 [[script]]
 run_every_n_frames = "8"
 action = "..."
 
-# frames 3, 11, 19, 27, 35, ...
+# Every 8 frames, starting from the fourth
 [[script]]
 run_every_n_frames = "8+3"
 action = "..."
@@ -2021,7 +2026,7 @@ playback will continue as normal from this new location.</p>
 (by going back to a lower frame index).</p>
 <hr />
 <p><code>frame_index</code> can be used to specify a literal frame number. It defaults to
-<code>0</code> if unspecified.</p>
+<code>1</code> if unspecified.</p>
 <p>If <code>to_frame_bookmark</code> is specified, the <code>frame_index</code> will be interpreted
 relative to that.</p>
 <p>Otherwise, if <code>frame_bookmark</code> (the action-agnostic
@@ -2048,7 +2053,7 @@ action wasn't run), before transitioning to the next frame.</p>
 <p>Any actions that are configured to trigger on the specified frame will run.</p>
 <hr />
 <p><code>frame_index</code> can be used to specify a literal frame number. It defaults to
-<code>0</code> if unspecified.</p>
+<code>1</code> if unspecified.</p>
 <p>If <code>to_frame_bookmark</code> is specified, the <code>frame_index</code> will be interpreted
 relative to that.</p>
 <p>Otherwise, if <code>frame_bookmark</code> (the action-agnostic
