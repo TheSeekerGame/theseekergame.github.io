@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":["checkbox","column","container","context_menu","docking_zone","dropdown","floating_panel","foldable","icon","label","menu","menu_item","panel","prelude","radio_group","row","scroll_view","sized_zone","slider","submenu","tab_container","toggle_menu_item"],"struct":["WidgetLibraryUpdate","WidgetsPlugin"]};

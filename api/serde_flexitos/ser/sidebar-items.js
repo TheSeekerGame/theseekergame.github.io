@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["require_erased_serialize_impl"],"struct":["SerializeTraitObject"]};

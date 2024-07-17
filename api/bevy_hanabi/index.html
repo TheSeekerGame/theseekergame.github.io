@@ -1,0 +1,129 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="🎆 Hanabi – a GPU particle system plugin for the Bevy game engine."><title>bevy_hanabi - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../static.files/rustdoc-081576b923113409.css"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="bevy_hanabi" data-themes="" data-resource-suffix="" data-rustdoc-version="1.79.0 (129f3b996 2024-06-10)" data-channel="1.79.0" data-search-js="search-bf21c90c8c1d92b1.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../static.files/storage-e32f0c247825364d.js"></script><script defer src="../crates.js"></script><script defer src="../static.files/main-20a3ad099b048cf2.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-09095024cf37855e.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc mod crate"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../bevy_hanabi/index.html">bevy_hanabi</a><span class="version">0.11.0-dev</span></h2></div><div class="sidebar-elems"><ul class="block"><li><a id="all-types" href="all.html">All Items</a></li></ul><section><ul class="block"><li><a href="#modules">Modules</a></li><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li><li><a href="#traits">Traits</a></li><li><a href="#functions">Functions</a></li></ul></section></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../bevy_hanabi/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Type ‘S’ or ‘/’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../settings.html" title="settings">Settings</a></div></form></nav><section id="main-content" class="content"><div class="main-heading"><h1>Crate <a class="mod" href="#">bevy_hanabi</a><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><span class="out-of-band"><a class="src" href="../src/bevy_hanabi/lib.rs.html#1-2096">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>🎆 Hanabi – a GPU particle system plugin for the Bevy game engine.</p>
+<p>The 🎆 Hanabi particle system is a GPU-based particle system integrated with
+the built-in Bevy renderer. It allows creating complex visual effects with
+millions of particles simulated in real time, by leveraging the power of
+compute shaders and offloading most of the work of particle simulating to
+the GPU.</p>
+<p><em>Note: This library makes heavy use of compute shaders to offload work to
+the GPU in a performant way. Support for compute shaders on the <code>wasm</code>
+target (WebAssembly) via WebGPU is only available in Bevy in general since
+the newly-released Bevy v0.11, and is not yet available in this library.
+See <a href="https://github.com/djeedai/bevy_hanabi/issues/41">#41</a> for details on
+progress.</em></p>
+<h2 id="2d-vs-3d"><a class="doc-anchor" href="#2d-vs-3d">§</a>2D vs. 3D</h2>
+<p>🎆 Hanabi integrates both with the 2D and the 3D core pipelines of Bevy. The
+2D pipeline integration is controlled by the <code>2d</code> cargo feature, while the
+3D pipeline integration is controlled by the <code>3d</code> cargo feature. Both
+features are enabled by default for convenience. As an optimization, users
+can disable default features and re-enable only one of the two modes.</p>
+<div class="example-wrap"><pre class="language-toml"><code># Example: enable only 3D integration
+bevy_hanabi = { version = &quot;0.6&quot;, default-features = false, features = [&quot;3d&quot;] }
+</code></pre></div><h2 id="example"><a class="doc-anchor" href="#example">§</a>Example</h2>
+<p>Add the 🎆 Hanabi plugin to your app:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>bevy_hanabi::prelude::<span class="kw-2">*</span>;
+
+App::default()
+    .add_plugins(DefaultPlugins)
+    .add_plugins(HanabiPlugin)
+    .run();</code></pre></div>
+<p>Create an <a href="struct.EffectAsset.html" title="struct bevy_hanabi::EffectAsset"><code>EffectAsset</code></a> describing a visual effect:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">fn </span>setup(<span class="kw-2">mut </span>effects: ResMut&lt;Assets&lt;EffectAsset&gt;&gt;) {
+  <span class="comment">// Define a color gradient from red to transparent black
+  </span><span class="kw">let </span><span class="kw-2">mut </span>gradient = Gradient::new();
+  gradient.add_key(<span class="number">0.0</span>, Vec4::new(<span class="number">1.</span>, <span class="number">0.</span>, <span class="number">0.</span>, <span class="number">1.</span>));
+  gradient.add_key(<span class="number">1.0</span>, Vec4::splat(<span class="number">0.</span>));
+
+  <span class="comment">// Create a new expression module
+  </span><span class="kw">let </span><span class="kw-2">mut </span>module = Module::default();
+
+  <span class="comment">// On spawn, randomly initialize the position of the particle
+  // to be over the surface of a sphere of radius 2 units.
+  </span><span class="kw">let </span>init_pos = SetPositionSphereModifier {
+      center: module.lit(Vec3::ZERO),
+      radius: module.lit(<span class="number">0.05</span>),
+      dimension: ShapeDimension::Surface,
+  };
+
+  <span class="comment">// Also initialize a radial initial velocity to 6 units/sec
+  // away from the (same) sphere center.
+  </span><span class="kw">let </span>init_vel = SetVelocitySphereModifier {
+      center: module.lit(Vec3::ZERO),
+      speed: module.lit(<span class="number">6.</span>),
+  };
+
+  <span class="comment">// Initialize the total lifetime of the particle, that is
+  // the time for which it's simulated and rendered. This modifier
+  // is almost always required, otherwise the particles won't show.
+  </span><span class="kw">let </span>lifetime = module.lit(<span class="number">10.</span>); <span class="comment">// literal value "10.0"
+  </span><span class="kw">let </span>init_lifetime = SetAttributeModifier::new(
+      Attribute::LIFETIME, lifetime);
+
+  <span class="comment">// Every frame, add a gravity-like acceleration downward
+  </span><span class="kw">let </span>accel = module.lit(Vec3::new(<span class="number">0.</span>, -<span class="number">3.</span>, <span class="number">0.</span>));
+  <span class="kw">let </span>update_accel = AccelModifier::new(accel);
+
+  <span class="comment">// Create the effect asset
+  </span><span class="kw">let </span>effect = EffectAsset::new(
+    <span class="comment">// Maximum number of particles alive at a time
+    </span><span class="macro">vec!</span>[<span class="number">32768</span>],
+    <span class="comment">// Spawn at a rate of 5 particles per second
+    </span>Spawner::rate(<span class="number">5.0</span>.into()),
+    <span class="comment">// Move the expression module into the asset
+    </span>module
+  )
+  .with_name(<span class="string">"MyEffect"</span>)
+  .init(init_pos)
+  .init(init_vel)
+  .init(init_lifetime)
+  .update(update_accel)
+  <span class="comment">// Render the particles with a color gradient over their
+  // lifetime. This maps the gradient key 0 to the particle spawn
+  // time, and the gradient key 1 to the particle death (10s).
+  </span>.render(ColorOverLifetimeModifier { gradient });
+
+  <span class="comment">// Insert into the asset system
+  </span><span class="kw">let </span>effect_asset = effects.add(effect);
+}</code></pre></div>
+<p>Then add an instance of that effect to an entity by spawning a
+<a href="struct.ParticleEffect.html" title="struct bevy_hanabi::ParticleEffect"><code>ParticleEffect</code></a> component referencing the asset. The simplest way is
+to use the <a href="struct.ParticleEffectBundle.html" title="struct bevy_hanabi::ParticleEffectBundle"><code>ParticleEffectBundle</code></a> to ensure all required components are
+spawned together.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code>commands.spawn(
+    ParticleEffectBundle {
+        effect: ParticleEffect::new(effect_asset),
+        transform: Transform::from_translation(Vec3::Y),
+        ..Default::default()
+    },
+);</code></pre></div>
+<h2 id="workflow"><a class="doc-anchor" href="#workflow">§</a>Workflow</h2>
+<p>Authoring and using a particle effect follows this workflow:</p>
+<ol>
+<li>Create an <a href="struct.EffectAsset.html" title="struct bevy_hanabi::EffectAsset"><code>EffectAsset</code></a> representing the definition of the particle
+effect. This asset is a proper Bevy <a href="../bevy_asset/trait.Asset.html" title="trait bevy_asset::Asset"><code>Asset</code></a>, expected to be authored in
+advance, serialized, and shipped with your application. Creating an
+<a href="struct.EffectAsset.html" title="struct bevy_hanabi::EffectAsset"><code>EffectAsset</code></a> at runtime while the application is running is also
+supported, though. In any case however, the asset doesn’t do anything by
+itself.</li>
+<li>At runtime, when the application is running, create an actual particle
+effect instance by spawning a <a href="struct.ParticleEffect.html" title="struct bevy_hanabi::ParticleEffect"><code>ParticleEffect</code></a> component (or use the
+<a href="struct.ParticleEffectBundle.html" title="struct bevy_hanabi::ParticleEffectBundle"><code>ParticleEffectBundle</code></a> for simplicity). The component references the
+<a href="struct.EffectAsset.html" title="struct bevy_hanabi::EffectAsset"><code>EffectAsset</code></a> via its <code>handle</code> field. Multiple instances can reference
+the same asset at the same time, and some changes to the asset are
+reflected to its instances, although not all changes are supported. In
+general, avoid changing an <a href="struct.EffectAsset.html" title="struct bevy_hanabi::EffectAsset"><code>EffectAsset</code></a> while it’s in use by one or
+more <a href="struct.ParticleEffect.html" title="struct bevy_hanabi::ParticleEffect"><code>ParticleEffect</code></a>.</li>
+<li>Also spawn an <a href="properties/struct.EffectProperties.html" title="struct bevy_hanabi::properties::EffectProperties"><code>EffectProperties</code></a> component on the same entity. This is
+required even if the effect doesn’t use properties. See <a href="properties/index.html" title="mod bevy_hanabi::properties">properties</a> for
+more details.</li>
+<li>If actually using properties, update them through the
+<a href="properties/struct.EffectProperties.html" title="struct bevy_hanabi::properties::EffectProperties"><code>EffectProperties</code></a> at any time while the effect is active. This allows
+some moderate CPU-side control over the simulation and rendering of the
+effect, without having to destroy the effect and re-create a new one.</li>
+</ol>
+</div></details><h2 id="reexports" class="section-header">Re-exports<a href="#reexports" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><code>pub use <a class="mod" href="attributes/index.html" title="mod bevy_hanabi::attributes">attributes</a>::*;</code></div></li><li><div class="item-name"><code>pub use <a class="mod" href="graph/index.html" title="mod bevy_hanabi::graph">graph</a>::*;</code></div></li><li><div class="item-name"><code>pub use <a class="mod" href="modifier/index.html" title="mod bevy_hanabi::modifier">modifier</a>::*;</code></div></li><li><div class="item-name"><code>pub use <a class="mod" href="properties/index.html" title="mod bevy_hanabi::properties">properties</a>::*;</code></div></li></ul><h2 id="modules" class="section-header">Modules<a href="#modules" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="mod" href="attributes/index.html" title="mod bevy_hanabi::attributes">attributes</a></div><div class="desc docblock-short">Effect attributes, like the position or velocity of a particle.</div></li><li><div class="item-name"><a class="mod" href="graph/index.html" title="mod bevy_hanabi::graph">graph</a></div><div class="desc docblock-short">Effect graph and language definition.</div></li><li><div class="item-name"><a class="mod" href="modifier/index.html" title="mod bevy_hanabi::modifier">modifier</a></div><div class="desc docblock-short">Building blocks to create a visual effect.</div></li><li><div class="item-name"><a class="mod" href="prelude/index.html" title="mod bevy_hanabi::prelude">prelude</a></div></li><li><div class="item-name"><a class="mod" href="properties/index.html" title="mod bevy_hanabi::properties">properties</a></div><div class="desc docblock-short">Effect properties.</div></li></ul><h2 id="structs" class="section-header">Structs<a href="#structs" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="struct" href="struct.CompiledParticleEffect.html" title="struct bevy_hanabi::CompiledParticleEffect">CompiledParticleEffect</a></div><div class="desc docblock-short">Compiled data for a <a href="struct.ParticleEffect.html" title="struct bevy_hanabi::ParticleEffect"><code>ParticleEffect</code></a>.</div></li><li><div class="item-name"><a class="struct" href="struct.EffectAsset.html" title="struct bevy_hanabi::EffectAsset">EffectAsset</a></div><div class="desc docblock-short">Asset describing a visual effect.</div></li><li><div class="item-name"><a class="struct" href="struct.EffectSimulation.html" title="struct bevy_hanabi::EffectSimulation">EffectSimulation</a></div><div class="desc docblock-short">The effect simulation clock.</div></li><li><div class="item-name"><a class="struct" href="struct.EffectSpawner.html" title="struct bevy_hanabi::EffectSpawner">EffectSpawner</a></div><div class="desc docblock-short">Runtime component maintaining the state of the spawner for an effect.</div></li><li><div class="item-name"><a class="struct" href="struct.Gradient.html" title="struct bevy_hanabi::Gradient">Gradient</a></div><div class="desc docblock-short">A gradient curve made of keypoints and associated values.</div></li><li><div class="item-name"><a class="struct" href="struct.GradientKey.html" title="struct bevy_hanabi::GradientKey">GradientKey</a></div><div class="desc docblock-short">A single key point for a <a href="struct.Gradient.html" title="struct bevy_hanabi::Gradient"><code>Gradient</code></a>.</div></li><li><div class="item-name"><a class="struct" href="struct.HanabiPlugin.html" title="struct bevy_hanabi::HanabiPlugin">HanabiPlugin</a></div><div class="desc docblock-short">Plugin to add systems related to Hanabi.</div></li><li><div class="item-name"><a class="struct" href="struct.LayoutFlags.html" title="struct bevy_hanabi::LayoutFlags">LayoutFlags</a></div><div class="desc docblock-short">Effect flags.</div></li><li><div class="item-name"><a class="struct" href="struct.ParticleEffect.html" title="struct bevy_hanabi::ParticleEffect">ParticleEffect</a></div><div class="desc docblock-short">Visual effect made of particles.</div></li><li><div class="item-name"><a class="struct" href="struct.ParticleEffectBundle.html" title="struct bevy_hanabi::ParticleEffectBundle">ParticleEffectBundle</a></div><div class="desc docblock-short">A component bundle for a particle effect.</div></li><li><div class="item-name"><a class="struct" href="struct.PropertyValue.html" title="struct bevy_hanabi::PropertyValue">PropertyValue</a></div><div class="desc docblock-short">Value a user wants to assign to a property with
+<a href="properties/struct.EffectProperties.html#method.set" title="method bevy_hanabi::properties::EffectProperties::set"><code>EffectProperties::set()</code></a> before the instance had a chance
+to inspect its underlying asset and check the asset’s defined properties.</div></li><li><div class="item-name"><a class="struct" href="struct.Random.html" title="struct bevy_hanabi::Random">Random</a></div><div class="desc docblock-short">An RNG resource</div></li><li><div class="item-name"><a class="struct" href="struct.ShaderCache.html" title="struct bevy_hanabi::ShaderCache">ShaderCache</a></div><div class="desc docblock-short">Cache of baked shaders variants.</div></li><li><div class="item-name"><a class="struct" href="struct.Spawner.html" title="struct bevy_hanabi::Spawner">Spawner</a></div><div class="desc docblock-short">Spawner defining how new particles are emitted.</div></li></ul><h2 id="enums" class="section-header">Enums<a href="#enums" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="enum" href="enum.AlphaMode.html" title="enum bevy_hanabi::AlphaMode">AlphaMode</a></div><div class="desc docblock-short">Alpha mode for rendering an effect.</div></li><li><div class="item-name"><a class="enum" href="enum.CpuValue.html" title="enum bevy_hanabi::CpuValue">CpuValue</a></div><div class="desc docblock-short">A constant or random value evaluated on CPU.</div></li><li><div class="item-name"><a class="enum" href="enum.EffectSystems.html" title="enum bevy_hanabi::EffectSystems">EffectSystems</a></div><div class="desc docblock-short">Labels for the Hanabi systems.</div></li><li><div class="item-name"><a class="enum" href="enum.MotionIntegration.html" title="enum bevy_hanabi::MotionIntegration">MotionIntegration</a></div><div class="desc docblock-short">Type of motion integration applied to the particles of a system.</div></li><li><div class="item-name"><a class="enum" href="enum.SimulationCondition.html" title="enum bevy_hanabi::SimulationCondition">SimulationCondition</a></div><div class="desc docblock-short">Simulation condition for an effect.</div></li><li><div class="item-name"><a class="enum" href="enum.SimulationSpace.html" title="enum bevy_hanabi::SimulationSpace">SimulationSpace</a></div><div class="desc docblock-short">Simulation space for the particles of an effect.</div></li></ul><h2 id="traits" class="section-header">Traits<a href="#traits" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="trait" href="trait.EffectSimulationTime.html" title="trait bevy_hanabi::EffectSimulationTime">EffectSimulationTime</a></div><div class="desc docblock-short">All methods for the <a href="struct.EffectSimulation.html" title="struct bevy_hanabi::EffectSimulation"><code>Time&lt;EffectSimulation&gt;</code></a> clock.</div></li><li><div class="item-name"><a class="trait" href="trait.ToWgslString.html" title="trait bevy_hanabi::ToWgslString">ToWgslString</a></div><div class="desc docblock-short">Extension trait to convert an object to WGSL code.</div></li></ul><h2 id="functions" class="section-header">Functions<a href="#functions" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="fn" href="fn.tick_spawners.html" title="fn bevy_hanabi::tick_spawners">tick_spawners</a></div><div class="desc docblock-short">Tick all the <a href="struct.EffectSpawner.html" title="struct bevy_hanabi::EffectSpawner"><code>EffectSpawner</code></a> components of the simulated
+<a href="struct.ParticleEffect.html" title="struct bevy_hanabi::ParticleEffect"><code>ParticleEffect</code></a> components.</div></li></ul></section></div></main></body></html>

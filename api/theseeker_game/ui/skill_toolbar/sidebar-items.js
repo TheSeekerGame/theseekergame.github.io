@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["assign_hp_bar","despawn_toolbar","spawn_toolbar","update_attack_ability_ui","update_dash_ability_ui","update_focus_ability_ui","update_whirl_ability_ui"],"struct":["AttackAbilityUI","DashAbilityUI","FocusAbilityUI","PlayerHpUI","SkillToolbarPlugin","WhirlAbilityUI"]};

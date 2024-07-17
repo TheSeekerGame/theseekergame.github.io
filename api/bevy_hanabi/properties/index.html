@@ -1,0 +1,66 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Effect properties."><title>bevy_hanabi::properties - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-081576b923113409.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bevy_hanabi" data-themes="" data-resource-suffix="" data-rustdoc-version="1.79.0 (129f3b996 2024-06-10)" data-channel="1.79.0" data-search-js="search-bf21c90c8c1d92b1.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-e32f0c247825364d.js"></script><script defer src="../sidebar-items.js"></script><script defer src="../../static.files/main-20a3ad099b048cf2.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-09095024cf37855e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../bevy_hanabi/index.html">bevy_hanabi</a><span class="version">0.11.0-dev</span></h2></div><h2 class="location"><a href="#">Module properties</a></h2><div class="sidebar-elems"><section><ul class="block"><li><a href="#structs">Structs</a></li></ul></section><h2><a href="../index.html">In crate bevy_hanabi</a></h2></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../bevy_hanabi/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Type ‘S’ or ‘/’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings">Settings</a></div></form></nav><section id="main-content" class="content"><div class="main-heading"><h1>Module <a href="../index.html">bevy_hanabi</a>::<wbr><a class="mod" href="#">properties</a><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><span class="out-of-band"><a class="src" href="../../src/bevy_hanabi/properties.rs.html#1-1324">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Effect properties.</p>
+<p>An <em>effect property</em> is a named variable stored per effect, and mutable at
+runtime from the application (CPU). Unlike <a href="../attributes/index.html" title="mod bevy_hanabi::attributes">attributes</a>,
+all particles see the same property value while the effect simulates or
+renders. As such, properties are a much more compact way to represent
+time-varying quantities when there’s no per-particle variation.</p>
+<h2 id="definition"><a class="doc-anchor" href="#definition">§</a>Definition</h2>
+<p>An effect property is represented by the <a href="struct.Property.html" title="struct bevy_hanabi::properties::Property"><code>Property</code></a> type. Each
+<a href="../graph/expr/struct.Module.html" title="struct bevy_hanabi::graph::expr::Module"><code>Module</code></a> can have zero or more properties.</p>
+<p>The property has a name unique within the expression module; different
+effects can have a property with the same name, but a single effect cannot
+have multiple properties with a duplicate name (since each effect has a
+single expression module).</p>
+<p>The property is created with a default value used to initialize it. Like for
+attributes, this can be any <a href="../graph/enum.Value.html" title="enum bevy_hanabi::graph::Value"><code>Value</code></a>. The type of the default value also
+defines the type of the property itself, which is immutable. Assigning a new
+value to the property requires assigning a value of the same type as the
+default value passed to [<code>Module::add_property()</code>].</p>
+<h2 id="use-case"><a class="doc-anchor" href="#use-case">§</a>Use case</h2>
+<p>Use properties to ensure a value from an <a href="../graph/expr/index.html" title="mod bevy_hanabi::graph::expr">expression</a> can be
+mutated while the effect is instantiated, without having to destroy and
+re-create a new effect. Using properties is a bit more costly in terms of
+GPU processing than using a hard-coded constant, so avoid using properties
+if a value doesn’t need to change dynamically at runtime, or changes very
+infrequently.</p>
+<h2 id="layout-1"><a class="doc-anchor" href="#layout-1">§</a>Layout</h2>
+<p>Like attributes, particle properties are tightly packed to be efficiently
+uploaded from CPU to GPU when a change is detected. The <a href="struct.PropertyLayout.html" title="struct bevy_hanabi::properties::PropertyLayout"><code>PropertyLayout</code></a>
+defines this memory layout, with the same rules as attributes. See the
+<a href="../attributes/index.html#layout-1" title="mod bevy_hanabi::attributes">attribute layout</a> section for more details.</p>
+<h2 id="usage"><a class="doc-anchor" href="#usage">§</a>Usage</h2>
+<p>To use properties, create a new property using [<code>Module::add_property()</code>],
+giving it a unique name and a default value. The default value determines
+the type of the property.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">let </span><span class="kw-2">mut </span>module = Module::default();
+module.add_property(<span class="string">"my_color"</span>, Color::WHITE.as_rgba_u32().into());</code></pre></div>
+<p>Once the module is assigned to an <a href="../struct.EffectAsset.html" title="struct bevy_hanabi::EffectAsset"><code>EffectAsset</code></a>, any instance of that
+effect (that is, any <a href="../struct.ParticleEffect.html" title="struct bevy_hanabi::ParticleEffect"><code>ParticleEffect</code></a> component referencing that
+<a href="../struct.EffectAsset.html" title="struct bevy_hanabi::EffectAsset"><code>EffectAsset</code></a>) will have the defined a property.</p>
+<p>Property values are stored in the <a href="struct.EffectProperties.html" title="struct bevy_hanabi::properties::EffectProperties"><code>EffectProperties</code></a> component, attached
+to the same entity containing the <a href="../struct.ParticleEffect.html" title="struct bevy_hanabi::ParticleEffect"><code>ParticleEffect</code></a> component. This
+component can be mutated by a system you own to change the value of one or
+more properties; when doing so, the Bevy change detection mechanism will
+trigger a re-upload of the new property values from CPU to GPU. If the
+<a href="struct.EffectProperties.html" title="struct bevy_hanabi::properties::EffectProperties"><code>EffectProperties</code></a> component is missing, and the effect has properties
+defined in the <a href="../graph/expr/struct.Module.html" title="struct bevy_hanabi::graph::expr::Module"><code>Module</code></a> of its <a href="../struct.EffectAsset.html" title="struct bevy_hanabi::EffectAsset"><code>EffectAsset</code></a>, then 🎆 Hanabi will add
+the component automatically, using the default value of each property. One
+advantage of manually adding that component is that you can override the
+initial value of some or all of the properties. Note that the component is
+not automatically added if the <a href="../graph/expr/struct.Module.html" title="struct bevy_hanabi::graph::expr::Module"><code>Module</code></a> doesn’t declare any property.</p>
+<p>To change the value of a property, call <a href="struct.EffectProperties.html#method.set" title="method bevy_hanabi::properties::EffectProperties::set"><code>EffectProperties::set()</code></a> or
+<a href="struct.EffectProperties.html#method.set_if_changed" title="associated function bevy_hanabi::properties::EffectProperties::set_if_changed"><code>EffectProperties::set_if_changed()</code></a>. The former is easier to use but
+always triggers the change detection mechanism, even if the value assigned
+is the same as the previous one. <a href="struct.EffectProperties.html#method.set_if_changed" title="associated function bevy_hanabi::properties::EffectProperties::set_if_changed"><code>EffectProperties::set_if_changed()</code></a> on
+the other hand will compare the current value and only assign if different.
+This minimizes the need for a GPU re-upload.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">fn </span>change_property(<span class="kw-2">mut </span>query: Query&lt;<span class="kw-2">&amp;mut </span>EffectProperties&gt;) {
+  <span class="kw">let </span><span class="kw-2">mut </span>effect_properties = query.single_mut();
+  <span class="kw">let </span>color = Color::RED.as_rgba_u32();
+  <span class="comment">// If the current color is not already Color::RED, it will be updated, and
+  // the properties will be re-uploaded to the GPU.
+  </span>EffectProperties::set_if_changed(effect_properties, <span class="string">"my_color"</span>, color.into());
+}</code></pre></div>
+</div></details><h2 id="structs" class="section-header">Structs<a href="#structs" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="struct" href="struct.EffectProperties.html" title="struct bevy_hanabi::properties::EffectProperties">EffectProperties</a></div><div class="desc docblock-short">Runtime storage component for the properties of a <a href="../struct.ParticleEffect.html" title="struct bevy_hanabi::ParticleEffect"><code>ParticleEffect</code></a>.</div></li><li><div class="item-name"><a class="struct" href="struct.Property.html" title="struct bevy_hanabi::properties::Property">Property</a></div><div class="desc docblock-short">A single property of an <a href="../struct.EffectAsset.html" title="struct bevy_hanabi::EffectAsset"><code>EffectAsset</code></a>.</div></li><li><div class="item-name"><a class="struct" href="struct.PropertyLayout.html" title="struct bevy_hanabi::properties::PropertyLayout">PropertyLayout</a></div><div class="desc docblock-short">Layout of properties for an effect.</div></li></ul></section></div></main></body></html>

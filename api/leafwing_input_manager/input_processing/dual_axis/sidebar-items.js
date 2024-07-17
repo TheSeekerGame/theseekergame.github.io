@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["DualAxisProcessor"],"struct":["CircleBounds","CircleDeadZone","CircleExclusion","DualAxisBounds","DualAxisDeadZone","DualAxisExclusion","DualAxisInverted","DualAxisSensitivity"],"trait":["CustomDualAxisProcessor","RegisterDualAxisProcessorExt","WithDualAxisProcessingPipelineExt"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["FloatingPanel","FloatingPanelCloseButton","FloatingPanelConfig","FloatingPanelDragHandle","FloatingPanelFoldButton","FloatingPanelLayout","FloatingPanelPlugin","FloatingPanelResizeHandle","FloatingPanelTitle","FloatingPanelUpdate","UpdateFloatingPanelPanelId"],"trait":["UiFloatingPanelExt","UiFloatingPanelSubExt"]};

@@ -1,6 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spade-2.6.0/src/delaunay_triangulation.rs`."><title>delaunay_triangulation.rs - source</title><script> if (window.location.protocol !== "file:") document.write(`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2">`)</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-e935ef01ae1c1829.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="spade" data-themes="" data-resource-suffix="" data-rustdoc-version="1.78.0 (9b00956e5 2024-04-29)" data-channel="1.78.0" data-search-js="search-42d8da7a6b9792c2.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-12cf3b4f4f9dc36d.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
-            <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
-    <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../spade/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spade-2.9.0/src/delaunay_triangulation.rs`."><title>delaunay_triangulation.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-081576b923113409.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="spade" data-themes="" data-resource-suffix="" data-rustdoc-version="1.79.0 (129f3b996 2024-06-10)" data-channel="1.79.0" data-search-js="search-bf21c90c8c1d92b1.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-e32f0c247825364d.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-20a3ad099b048cf2.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-09095024cf37855e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../spade/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Type ‘S’ or ‘/’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings">Settings</a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -499,10 +497,14 @@
 <a href="#497" id="497">497</a>
 <a href="#498" id="498">498</a>
 <a href="#499" id="499">499</a>
+<a href="#500" id="500">500</a>
+<a href="#501" id="501">501</a>
+<a href="#502" id="502">502</a>
+<a href="#503" id="503">503</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::delaunay_core::Dcel;
 <span class="kw">use crate</span>::{
-    handles::VertexHandle, HasPosition, HintGenerator, InsertionError, LastUsedVertexHintGenerator,
-    NaturalNeighbor, Point2, Triangulation, TriangulationExt,
+    delaunay_core::bulk_load, handles::VertexHandle, HasPosition, HintGenerator, InsertionError,
+    LastUsedVertexHintGenerator, NaturalNeighbor, Point2, Triangulation, TriangulationExt,
 };
 
 <span class="kw">use </span>alloc::vec::Vec;
@@ -511,7 +513,7 @@
 <span class="attr">#[cfg(feature = <span class="string">"serde"</span>)]
 </span><span class="kw">use </span>serde::{Deserialize, Serialize};
 
-<span class="doccomment">/// A two dimensional [Delaunay triangulation](https://en.wikipedia.org/wiki/Delaunay_triangulation).
+<span class="doccomment">/// A two-dimensional [Delaunay triangulation](https://en.wikipedia.org/wiki/Delaunay_triangulation).
 ///
 /// A Delaunay triangulation  a triangulation that fulfills the *Delaunay Property*: No
 /// vertex of the triangulation is contained in the
@@ -529,7 +531,7 @@
 ///
 /// # Basic Usage
 /// Vertices need to implement the [HasPosition] trait. Spade bundles
-/// the [Point2](crate::Point2) struct for basic use cases.
+/// the [Point2] struct for basic use cases.
 ///
 /// ## Basic example
 ///  ```
@@ -550,15 +552,15 @@
 ///     Ok(())
 /// }
 /// ```
-/// ## Right handed and left handed coordinate systems
+/// ## Right handed and left-handed coordinate systems
 /// For simplicity, all method names and their documentation assume that the underlying coordinate system
-/// is right handed (e.g. x axis points to the right, y axis points upwards). If a left handed system
+/// is right-handed (e.g. x-axis points to the right, y-axis points upwards). If a left-handed system
 /// (lhs) is used, any term related to orientation needs to be reversed:
-///  - "left" becomes "right" (example: the face of a directed edge is on the right side for a lhs
+///  - "left" becomes "right" (example: the face of a directed edge is on the right side for a lhs)
 ///  - "counter clock wise" becomes "clockwise" (example: the vertices of a face are returned in clock wise order for a lhs)
 ///  
 /// &lt;table&gt;
-/// &lt;tr&gt;&lt;th&gt;left handed system&lt;/th&gt;&lt;th&gt;right handed system&lt;/th&gt;&lt;/tr&gt;
+/// &lt;tr&gt;&lt;th&gt;left-handed system&lt;/th&gt;&lt;th&gt;right-handed system&lt;/th&gt;&lt;/tr&gt;
 /// &lt;tr&gt;&lt;td&gt;
 </span><span class="attr">#[doc = <span class="macro">concat!</span>(<span class="macro">include_str!</span>(<span class="string">"../images/lhs.svg"</span>), <span class="string">"&lt;/td&gt;&lt;td&gt;"</span>,<span class="macro">include_str!</span>(<span class="string">"../images/rhs.svg"</span>), <span class="string">" &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;"</span>)]
 </span><span class="doccomment">/// # Extracting geometry information
@@ -738,7 +740,7 @@
 /// - For data sets with uniformly distributed vertices: Use [HierarchyHintGenerator](crate::HierarchyHintGenerator) if
 ///   bulk loading is not applicable.
 /// - For data sets where vertices are inserted in close local proximity (each vertex is not too far away from the
-///   previously inserted vertex): Consider using [LastUsedVertexHintGenerator](crate::LastUsedVertexHintGenerator).
+///   previously inserted vertex): Consider using [LastUsedVertexHintGenerator](LastUsedVertexHintGenerator).
 /// - Try to avoid large custom data types for edges, vertices and faces.
 /// - Using `f64` and `f32` as scalar type will usually end up roughly having the same run time performance.
 /// - Prefer using [bulk_load](Triangulation::bulk_load) over [insert](Triangulation::insert).
@@ -846,10 +848,13 @@
     /// # Ok(()) }
     /// ```
     </span><span class="kw">pub fn </span>bulk_load_stable(elements: Vec&lt;V&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, InsertionError&gt; {
-        <span class="kw">let </span>result: <span class="self">Self </span>=
-            <span class="kw">crate</span>::delaunay_core::bulk_load_stable::&lt;<span class="kw">_</span>, <span class="kw">_</span>, DelaunayTriangulation&lt;<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>&gt;&gt;(
-                elements,
-            )<span class="question-mark">?</span>;
+        <span class="kw">let </span><span class="kw-2">mut </span>result: <span class="self">Self </span>= <span class="kw">crate</span>::delaunay_core::bulk_load_stable::&lt;
+            <span class="kw">_</span>,
+            <span class="kw">_</span>,
+            DelaunayTriangulation&lt;<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>&gt;,
+            <span class="kw">_</span>,
+        &gt;(bulk_load, elements)<span class="question-mark">?</span>;
+        <span class="kw-2">*</span>result.hint_generator_mut() = L::initialize_from_triangulation(<span class="kw-2">&amp;</span>result);
         <span class="prelude-val">Ok</span>(result)
     }
 }
@@ -933,8 +938,9 @@
     ) -&gt; (
         Dcel&lt;<span class="self">Self</span>::Vertex, <span class="self">Self</span>::DirectedEdge, <span class="self">Self</span>::UndirectedEdge, <span class="self">Self</span>::Face&gt;,
         <span class="self">Self</span>::HintGenerator,
+        usize,
     ) {
-        (<span class="self">self</span>.dcel, <span class="self">self</span>.hint_generator)
+        (<span class="self">self</span>.dcel, <span class="self">self</span>.hint_generator, <span class="number">0</span>)
     }
 }
 
@@ -954,7 +960,7 @@
 
         <span class="kw">fn </span>requires_serde&lt;<span class="lifetime">'de</span>, T: Serialize + Deserialize&lt;<span class="lifetime">'de</span>&gt;&gt;() {}
 
-        <span class="kw">type </span>DT&lt;L&gt; = <span class="kw">super</span>::DelaunayTriangulation&lt;Point2&lt;f64&gt;, (), (), (), L&gt;;
+        <span class="kw">type </span>DT&lt;L&gt; = DelaunayTriangulation&lt;Point2&lt;f64&gt;, (), (), (), L&gt;;
 
         requires_serde::&lt;DT&lt;LastUsedVertexHintGenerator&gt;&gt;();
         requires_serde::&lt;DT&lt;HierarchyHintGenerator&lt;f64&gt;&gt;&gt;();

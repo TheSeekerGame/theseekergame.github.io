@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["SetPositionCircleModifier","SetPositionCone3dModifier","SetPositionSphereModifier"]};

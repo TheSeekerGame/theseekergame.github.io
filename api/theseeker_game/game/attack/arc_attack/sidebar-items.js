@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["arc_projectile"],"struct":["Projectile"]};

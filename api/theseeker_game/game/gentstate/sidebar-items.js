@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["Facing"],"fn":["add_states","transition"],"struct":["AddQueue","Hitstun","Idle","TransitionQueue"],"trait":["GenericState","GentState","Transitionable"]};
+window.SIDEBAR_ITEMS = {"enum":["Facing"],"fn":["add_states","transition"],"struct":["AddQueue","Dead","Idle","TransitionQueue"],"trait":["GenericState","GentState","Transitionable"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["ballistic_range","ballistic_speed","solve_ballistic_arc","solve_ballistic_arc_moving"]};

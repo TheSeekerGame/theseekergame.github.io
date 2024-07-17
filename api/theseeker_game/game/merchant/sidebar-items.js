@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["setup_merchant"],"struct":["MerchantBlueprint","MerchantBlueprintBundle","MerchantGfx","MerchantGfxBundle","MerchantPlugin"]};

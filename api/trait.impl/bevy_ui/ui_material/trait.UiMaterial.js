@@ -1,0 +1,3 @@
+(function() {var implementors = {
+"theseeker_game":[["impl <a class=\"trait\" href=\"theseeker_game/prelude/trait.UiMaterial.html\" title=\"trait theseeker_game::prelude::UiMaterial\">UiMaterial</a> for <a class=\"struct\" href=\"theseeker_game/graphics/hp_bar/struct.HpBarUiMaterial.html\" title=\"struct theseeker_game::graphics::hp_bar::HpBarUiMaterial\">HpBarUiMaterial</a>"]]
+};if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

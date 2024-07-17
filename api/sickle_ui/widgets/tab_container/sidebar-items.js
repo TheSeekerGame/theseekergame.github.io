@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["CloseTabContextMenu","PopoutTabContextMenu","Tab","TabBar","TabContainer","TabContainerPlugin","TabContainerUpdate","TabViewport"],"trait":["UiTabContainerExt","UiTabContainerSubExt"]};

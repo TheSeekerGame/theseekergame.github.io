@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["set_texture_to_copy_src"],"mod":["map","tiles"],"struct":["TilemapPlugin"]};

@@ -1,0 +1,1 @@
+searchState.loadedDescShard("typetag", 0, "github crates-io docs-rs")

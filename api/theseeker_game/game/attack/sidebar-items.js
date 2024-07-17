@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["attack_cleanup","attack_damage","attack_tick","damage_flash","despawn_dead"],"struct":["Attack","AttackBundle","AttackPlugin","DamageFlash","Dead","Health","Pushback"]};
+window.SIDEBAR_ITEMS = {"fn":["attack_cleanup","attack_damage","attack_tick","damage_flash","knockback"],"mod":["arc_attack","particles"],"struct":["Attack","AttackBundle","AttackPlugin","Crits","DamageFlash","DamageInfo","Health","KillCount","Knockback","Pushback"]};

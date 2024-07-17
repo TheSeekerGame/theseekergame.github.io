@@ -1,0 +1,86 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Expression API"><title>bevy_hanabi::graph::expr - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-081576b923113409.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_hanabi" data-themes="" data-resource-suffix="" data-rustdoc-version="1.79.0 (129f3b996 2024-06-10)" data-channel="1.79.0" data-search-js="search-bf21c90c8c1d92b1.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-e32f0c247825364d.js"></script><script defer src="../sidebar-items.js"></script><script defer src="../../../static.files/main-20a3ad099b048cf2.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-09095024cf37855e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../../bevy_hanabi/index.html">bevy_hanabi</a><span class="version">0.11.0-dev</span></h2></div><h2 class="location"><a href="#">Module expr</a></h2><div class="sidebar-elems"><section><ul class="block"><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li><li><a href="#traits">Traits</a></li></ul></section><h2><a href="../index.html">In bevy_hanabi::graph</a></h2></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../bevy_hanabi/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Type ‘S’ or ‘/’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings">Settings</a></div></form></nav><section id="main-content" class="content"><div class="main-heading"><h1>Module <a href="../../index.html">bevy_hanabi</a>::<wbr><a href="../index.html">graph</a>::<wbr><a class="mod" href="#">expr</a><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><span class="out-of-band"><a class="src" href="../../../src/bevy_hanabi/graph/expr.rs.html#1-4048">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Expression API</p>
+<p>This module contains the low-level <em>Expression API</em>, designed to produce
+highly customizable modifier behaviors through a code-first API focused on
+runtime and serialization. For asset editing, the higher-level <a href="../node/index.html" title="mod bevy_hanabi::graph::node">Node API</a>
+offers an easier-to-use abstraction built on top of the Expression API.</p>
+<h2 id="modules-and-expressions"><a class="doc-anchor" href="#modules-and-expressions">§</a>Modules and expressions</h2>
+<p>A particle effect is composed of a series <a href="../../modifier/trait.Modifier.html" title="trait bevy_hanabi::modifier::Modifier"><code>Modifier</code></a>s decribing how to
+initialize and update (simulate) the particles of the effect. Choosing which
+modifier to add to an effect provides the user some limited level of
+customizing. However modifiers alone cannot provide enough customizing to
+build visual effects. For this reason, modifier inputs can be further
+customized with <em>expressions</em>. An expression produces a value which is
+assigned to the input. That value can be constant, in which case it will be
+hard-coded into the generated WGSL shader, for performance reasons.
+Alternatively, that value can vary based on other quantities, like an effect
+property, a particle attribute, or some built-in simulation variable like
+the simulation time.</p>
+<p>An expression is represented by the <a href="enum.Expr.html" title="enum bevy_hanabi::graph::expr::Expr"><code>Expr</code></a> enum. Expressions can be
+combined together to form more complex expression; for example, the Add
+expression computes the sum between two other expressions. <a href="enum.Expr.html" title="enum bevy_hanabi::graph::expr::Expr"><code>Expr</code></a>
+represents a form of abstraction over the actual WGSL shader code, and is
+generally closely related to the actual expressions of the WGSL language
+itself.</p>
+<p>An expression often refers to other expressions. However, <a href="enum.Expr.html" title="enum bevy_hanabi::graph::expr::Expr"><code>Expr</code></a> as an
+enum cannot directly contain other <a href="enum.Expr.html" title="enum bevy_hanabi::graph::expr::Expr"><code>Expr</code></a>, otherwise the type would become
+infinitely recursive. Instead, each expression is stored into a <a href="struct.Module.html" title="struct bevy_hanabi::graph::expr::Module"><code>Module</code></a>
+and indexed by an <a href="struct.ExprHandle.html" title="struct bevy_hanabi::graph::expr::ExprHandle"><code>ExprHandle</code></a>, a non-zero index referencing the
+expression inside the module. This indirection avoids the recursion issue.
+This means all expressions are implicitly associated with a unique module,
+and care must be taken to not mix exressions from different modules.</p>
+<p>Each <a href="../../struct.EffectAsset.html" title="struct bevy_hanabi::EffectAsset"><code>EffectAsset</code></a> contains a single <a href="struct.Module.html" title="struct bevy_hanabi::graph::expr::Module"><code>Module</code></a> storing all the <a href="enum.Expr.html" title="enum bevy_hanabi::graph::expr::Expr"><code>Expr</code></a>
+used in all its modifiers.</p>
+<h2 id="kinds-of-expressions"><a class="doc-anchor" href="#kinds-of-expressions">§</a>Kinds of expressions</h2>
+<p>Expressions can be grouped into various kinds, for the sake of
+comprehension:</p>
+<ul>
+<li>Literal expressions represent a constant, which will be hard-coded into
+the final WGSL shader code. Expressions like <code>1.42</code> or <code>vec3&lt;f32&gt;(0.)</code> are
+literal expressions in WGSL, and are represented by a <a href="struct.LiteralExpr.html" title="struct bevy_hanabi::graph::expr::LiteralExpr"><code>LiteralExpr</code></a>.</li>
+<li>Built-in expressions represent specific built-in values provided by the
+simulation context. For example, the current simulation time is a built-in
+expression accessible from the shader code of any visual effect to animate
+it. A built-in expression is represented by a <a href="struct.BuiltInExpr.html" title="struct bevy_hanabi::graph::expr::BuiltInExpr"><code>BuiltInExpr</code></a>.</li>
+<li>Attribute expressions represent the value of an attribute of a particle. A
+typical example is the particle position, represented by
+<a href="../../attributes/struct.Attribute.html#associatedconstant.POSITION" title="associated constant bevy_hanabi::attributes::Attribute::POSITION"><code>Attribute::POSITION</code></a>, which can be obtained as an expression through an
+<a href="struct.AttributeExpr.html" title="struct bevy_hanabi::graph::expr::AttributeExpr"><code>AttributeExpr</code></a>.</li>
+<li>Property expressions represent the value of a visual effect property, a
+quantity assigned by the user on the CPU side and uploaded each frame into
+the GPU for precise per-frame control over an effect. It’s represented by
+a <a href="struct.PropertyExpr.html" title="struct bevy_hanabi::graph::expr::PropertyExpr"><code>PropertyExpr</code></a>.</li>
+<li>Unary and binary operations are expressions taking one or two operand
+expressions and transforming them. A typical example is the Add operator,
+which takes two operand expressions and produces their sum.</li>
+</ul>
+<h2 id="building-expressions"><a class="doc-anchor" href="#building-expressions">§</a>Building expressions</h2>
+<p>The fundamental way to build expressions is to directly write them into a
+<a href="struct.Module.html" title="struct bevy_hanabi::graph::expr::Module"><code>Module</code></a> itself. The <a href="struct.Module.html" title="struct bevy_hanabi::graph::expr::Module"><code>Module</code></a> type contains various methods to create
+new expressions and immediately write them.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">let </span><span class="kw-2">mut </span>module = Module::default();
+
+<span class="comment">// Build and write a literal expression into the module.
+</span><span class="kw">let </span>expr = module.lit(<span class="number">3.42</span>);</code></pre></div>
+<p>Due to the code-first nature of the Expression API however, that approach
+can be very verbose. Instead, users are encouraged to use an <a href="struct.ExprWriter.html" title="struct bevy_hanabi::graph::expr::ExprWriter"><code>ExprWriter</code></a>,
+a simple utility to build expressions with a shortened syntax. Once an
+expression is built, it can be written into the underlying <a href="struct.Module.html" title="struct bevy_hanabi::graph::expr::Module"><code>Module</code></a>. This
+approach generally makes the code more readable, and is therefore highly
+encouraged, but is not mandatory.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="comment">// Create a writer owning a new Module
+</span><span class="kw">let </span><span class="kw-2">mut </span>w = ExprWriter::new();
+
+<span class="comment">// Build a complex expression: max(3.42, properties.my_prop)
+</span><span class="kw">let </span>prop = w.add_property(<span class="string">"my_property"</span>, <span class="number">3.0</span>.into());
+<span class="kw">let </span>expr = w.lit(<span class="number">3.42</span>).max(w.prop(prop));
+
+<span class="comment">// Finalize the expression and write it into the Module. The returned handle can
+// be assign to a modifier input.
+</span><span class="kw">let </span>handle = expr.expr();
+
+<span class="comment">// Finish using the writer and recover the Module with all written expressions
+</span><span class="kw">let </span>module = w.finish();</code></pre></div>
+</div></details><h2 id="structs" class="section-header">Structs<a href="#structs" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="struct" href="struct.AttributeExpr.html" title="struct bevy_hanabi::graph::expr::AttributeExpr">AttributeExpr</a></div><div class="desc docblock-short">Expression representing the value of an attribute of a particle.</div></li><li><div class="item-name"><a class="struct" href="struct.BuiltInExpr.html" title="struct bevy_hanabi::graph::expr::BuiltInExpr">BuiltInExpr</a></div><div class="desc docblock-short">Expression for getting built-in quantities related to the effect system.</div></li><li><div class="item-name"><a class="struct" href="struct.CastExpr.html" title="struct bevy_hanabi::graph::expr::CastExpr">CastExpr</a></div><div class="desc docblock-short">Expression to cast an expression to another type.</div></li><li><div class="item-name"><a class="struct" href="struct.ExprHandle.html" title="struct bevy_hanabi::graph::expr::ExprHandle">ExprHandle</a></div><div class="desc docblock-short">Handle of an expression inside a given <a href="struct.Module.html" title="struct bevy_hanabi::graph::expr::Module"><code>Module</code></a>.</div></li><li><div class="item-name"><a class="struct" href="struct.ExprWriter.html" title="struct bevy_hanabi::graph::expr::ExprWriter">ExprWriter</a></div><div class="desc docblock-short">Expression writer.</div></li><li><div class="item-name"><a class="struct" href="struct.LiteralExpr.html" title="struct bevy_hanabi::graph::expr::LiteralExpr">LiteralExpr</a></div><div class="desc docblock-short">A literal constant expression like <code>3.0</code> or <code>vec3&lt;f32&gt;(1.0, 2.0, 3.0)</code>.</div></li><li><div class="item-name"><a class="struct" href="struct.Module.html" title="struct bevy_hanabi::graph::expr::Module">Module</a></div><div class="desc docblock-short">Container for expressions.</div></li><li><div class="item-name"><a class="struct" href="struct.PropertyExpr.html" title="struct bevy_hanabi::graph::expr::PropertyExpr">PropertyExpr</a></div><div class="desc docblock-short">Expression representing the value of a property of an effect.</div></li><li><div class="item-name"><a class="struct" href="struct.PropertyHandle.html" title="struct bevy_hanabi::graph::expr::PropertyHandle">PropertyHandle</a></div><div class="desc docblock-short">Handle of a property inside a given <a href="struct.Module.html" title="struct bevy_hanabi::graph::expr::Module"><code>Module</code></a>.</div></li><li><div class="item-name"><a class="struct" href="struct.WriterExpr.html" title="struct bevy_hanabi::graph::expr::WriterExpr">WriterExpr</a></div><div class="desc docblock-short">Intermediate expression from an <a href="struct.ExprWriter.html" title="struct bevy_hanabi::graph::expr::ExprWriter"><code>ExprWriter</code></a>.</div></li></ul><h2 id="enums" class="section-header">Enums<a href="#enums" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="enum" href="enum.BinaryOperator.html" title="enum bevy_hanabi::graph::expr::BinaryOperator">BinaryOperator</a></div><div class="desc docblock-short">Binary operator.</div></li><li><div class="item-name"><a class="enum" href="enum.BuiltInOperator.html" title="enum bevy_hanabi::graph::expr::BuiltInOperator">BuiltInOperator</a></div><div class="desc docblock-short">Built-in operators.</div></li><li><div class="item-name"><a class="enum" href="enum.Expr.html" title="enum bevy_hanabi::graph::expr::Expr">Expr</a></div><div class="desc docblock-short">Language expression producing a value.</div></li><li><div class="item-name"><a class="enum" href="enum.ExprError.html" title="enum bevy_hanabi::graph::expr::ExprError">ExprError</a></div><div class="desc docblock-short">Errors raised when manipulating expressions <a href="enum.Expr.html" title="enum bevy_hanabi::graph::expr::Expr"><code>Expr</code></a> and node graphs
+<a href="../node/struct.Graph.html" title="struct bevy_hanabi::graph::node::Graph"><code>Graph</code></a>.</div></li><li><div class="item-name"><a class="enum" href="enum.TernaryOperator.html" title="enum bevy_hanabi::graph::expr::TernaryOperator">TernaryOperator</a></div><div class="desc docblock-short">Ternary operator.</div></li><li><div class="item-name"><a class="enum" href="enum.UnaryOperator.html" title="enum bevy_hanabi::graph::expr::UnaryOperator">UnaryOperator</a></div><div class="desc docblock-short">Unary operator.</div></li></ul><h2 id="traits" class="section-header">Traits<a href="#traits" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="trait" href="trait.EvalContext.html" title="trait bevy_hanabi::graph::expr::EvalContext">EvalContext</a></div><div class="desc docblock-short">Evaluation context for transforming expressions into WGSL code.</div></li></ul></section></div></main></body></html>

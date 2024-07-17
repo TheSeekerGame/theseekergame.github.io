@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"derive":["Actionlike","DynActionMarker"]};
+window.SIDEBAR_ITEMS = {"attr":["serde_typetag"],"derive":["Actionlike"]};

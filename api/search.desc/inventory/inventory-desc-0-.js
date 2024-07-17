@@ -1,0 +1,1 @@
+searchState.loadedDescShard("inventory", 0, "github crates-io docs-rs\nTrait bound corresponding to types that can be iterated by …\nAssociate a plugin registry with the specified type.\nAn iterator over plugins registered of a given type.\nEnter an element into the plugin registry corresponding to …")

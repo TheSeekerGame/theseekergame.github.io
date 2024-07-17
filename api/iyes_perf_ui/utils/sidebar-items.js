@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["format_pretty_float","format_pretty_int","format_pretty_time","format_pretty_time_hms","next_sort_key","width_hint_pretty_float","width_hint_pretty_int","width_hint_pretty_time"],"struct":["ColorGradient"]};

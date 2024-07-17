@@ -1,0 +1,57 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="github crates-io docs-rs"><title>inventory - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../static.files/rustdoc-081576b923113409.css"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="inventory" data-themes="" data-resource-suffix="" data-rustdoc-version="1.79.0 (129f3b996 2024-06-10)" data-channel="1.79.0" data-search-js="search-bf21c90c8c1d92b1.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../static.files/storage-e32f0c247825364d.js"></script><script defer src="../crates.js"></script><script defer src="../static.files/main-20a3ad099b048cf2.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-09095024cf37855e.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc mod crate"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../inventory/index.html">inventory</a><span class="version">0.3.15</span></h2></div><div class="sidebar-elems"><ul class="block"><li><a id="all-types" href="all.html">All Items</a></li></ul><section><ul class="block"><li><a href="#macros">Macros</a></li><li><a href="#traits">Traits</a></li><li><a href="#types">Type Aliases</a></li></ul></section></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../inventory/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Type ‘S’ or ‘/’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../settings.html" title="settings">Settings</a></div></form></nav><section id="main-content" class="content"><div class="main-heading"><h1>Crate <a class="mod" href="#">inventory</a><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><span class="out-of-band"><a class="src" href="../src/inventory/lib.rs.html#1-476">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p><a href="https://github.com/dtolnay/inventory"><img src="https://img.shields.io/badge/github-8da0cb?style=for-the-badge&amp;labelColor=555555&amp;logo=github" alt="github" /></a> <a href="https://crates.io/crates/inventory"><img src="https://img.shields.io/badge/crates.io-fc8d62?style=for-the-badge&amp;labelColor=555555&amp;logo=rust" alt="crates-io" /></a> <a href="https://docs.rs/inventory"><img src="https://img.shields.io/badge/docs.rs-66c2a5?style=for-the-badge&amp;labelColor=555555&amp;logo=docs.rs" alt="docs-rs" /></a></p>
+<br>
+<p><strong>Typed distributed plugin registration.</strong></p>
+<p>This crate provides a way to set up a plugin registry into which plugins
+can be registered from any source file linked into your application. There
+does not need to be a central list of all the plugins.</p>
+<h2 id="examples"><a class="doc-anchor" href="#examples">§</a>Examples</h2>
+<p>Suppose we are writing a command line flags library and want to allow any
+source file in the application to register command line flags that are
+relevant to it.</p>
+<p>This is the flag registration style used by <a href="https://gflags.github.io/gflags/">gflags</a> and is better suited
+for large scale development than maintaining a single central list of flags,
+as the central list would become an endless source of merge conflicts in an
+application developed simultaneously by thousands of developers.</p>
+<h3 id="instantiating-the-plugin-registry"><a class="doc-anchor" href="#instantiating-the-plugin-registry">§</a>Instantiating the plugin registry</h3>
+<p>Let’s use a <code>struct Flag</code> as the plugin type, which will contain the short
+name of the flag like <code>-v</code>, the full name like <code>--verbose</code>, and maybe other
+information like argument type and help text. We instantiate a plugin
+registry with an invocation of <code>inventory::collect!</code>.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">pub struct </span>Flag {
+    short: char,
+    name: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str,
+    <span class="comment">/* ... */
+</span>}
+
+<span class="kw">impl </span>Flag {
+    <span class="kw">pub const fn </span>new(short: char, name: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str) -&gt; <span class="self">Self </span>{
+        Flag { short, name }
+    }
+}
+
+<span class="macro">inventory::collect!</span>(Flag);</code></pre></div>
+<p>This <code>collect!</code> call must be in the same crate that defines the plugin type.
+This macro does not “run” anything so place it outside of any function body.</p>
+<h3 id="registering-plugins"><a class="doc-anchor" href="#registering-plugins">§</a>Registering plugins</h3>
+<p>Now any crate with access to the <code>Flag</code> type can register flags as a plugin.
+Plugins can be registered by the same crate that declares the plugin type,
+or by any downstream crate.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="macro">inventory::submit!</span> {
+    Flag::new(<span class="string">'v'</span>, <span class="string">"verbose"</span>)
+}</code></pre></div>
+<p>The <code>submit!</code> macro does not “run” anything so place it outside of any
+function body. In particular, note that all <code>submit!</code> invocations across all
+source files linked into your application all take effect simultaneously. A
+<code>submit!</code> invocation is not a statement that needs to be called from <code>main</code>
+in order to execute.</p>
+<h3 id="iterating-over-plugins"><a class="doc-anchor" href="#iterating-over-plugins">§</a>Iterating over plugins</h3>
+<p>The value <code>inventory::iter::&lt;T&gt;</code> is an iterator with element type <code>&amp;'static T</code> that iterates over all plugins registered of type <code>T</code>.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">for </span>flag <span class="kw">in </span>inventory::iter::&lt;Flag&gt; {
+    <span class="macro">println!</span>(<span class="string">"-{}, --{}"</span>, flag.short, flag.name);
+}</code></pre></div>
+<p>There is no guarantee about the order that plugins of the same type are
+visited by the iterator. They may be visited in any order.</p>
+</div></details><h2 id="macros" class="section-header">Macros<a href="#macros" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="macro" href="macro.collect.html" title="macro inventory::collect">collect</a></div><div class="desc docblock-short">Associate a plugin registry with the specified type.</div></li><li><div class="item-name"><a class="macro" href="macro.submit.html" title="macro inventory::submit">submit</a></div><div class="desc docblock-short">Enter an element into the plugin registry corresponding to its type.</div></li></ul><h2 id="traits" class="section-header">Traits<a href="#traits" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="trait" href="trait.Collect.html" title="trait inventory::Collect">Collect</a></div><div class="desc docblock-short">Trait bound corresponding to types that can be iterated by inventory::iter.</div></li></ul><h2 id="types" class="section-header">Type Aliases<a href="#types" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="type" href="type.iter.html" title="type inventory::iter">iter</a></div><div class="desc docblock-short">An iterator over plugins registered of a given type.</div></li></ul></section></div></main></body></html>

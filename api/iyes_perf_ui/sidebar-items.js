@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["PerfUiPosition","PerfUiSet"],"fn":["update_perf_ui_entry"],"mod":["diagnostics","prelude","time","utils","window"],"struct":["PerfUiCompleteBundle","PerfUiPlugin","PerfUiRoot"],"trait":["PerfUiAppExt","PerfUiEntry"]};

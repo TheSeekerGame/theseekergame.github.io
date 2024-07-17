@@ -1,0 +1,1 @@
+searchState.loadedDescShard("dyn_eq", 0, "github crates.io license passively-maintained\nThis trait is implemented by any type that implements <code>Eq</code>.\nImplement <code>PartialEq</code> and <code>Eq</code> for a trait object that has …")

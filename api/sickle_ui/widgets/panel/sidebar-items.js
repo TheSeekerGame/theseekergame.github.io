@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["Panel"],"trait":["UiPanelExt"]};

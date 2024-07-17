@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["ShapeDimension"],"mod":["accel","attr","clone","force","kill","output","position","ribbon","velocity"],"struct":["GroupedModifier","ModifierContext","ParticleGroupSet","RenderContext","ShaderWriter"],"trait":["Modifier","RenderModifier"],"type":["BoxedModifier"]};

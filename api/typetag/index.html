@@ -1,0 +1,166 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="github crates-io docs-rs"><title>typetag - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../static.files/rustdoc-081576b923113409.css"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="typetag" data-themes="" data-resource-suffix="" data-rustdoc-version="1.79.0 (129f3b996 2024-06-10)" data-channel="1.79.0" data-search-js="search-bf21c90c8c1d92b1.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../static.files/storage-e32f0c247825364d.js"></script><script defer src="../crates.js"></script><script defer src="../static.files/main-20a3ad099b048cf2.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-09095024cf37855e.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc mod crate"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../typetag/index.html">typetag</a><span class="version">0.2.16</span></h2></div><div class="sidebar-elems"><ul class="block"><li><a id="all-types" href="all.html">All Items</a></li></ul><section><ul class="block"><li><a href="#attributes">Attribute Macros</a></li></ul></section></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../typetag/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Type ‘S’ or ‘/’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../settings.html" title="settings">Settings</a></div></form></nav><section id="main-content" class="content"><div class="main-heading"><h1>Crate <a class="mod" href="#">typetag</a><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><span class="out-of-band"><a class="src" href="../src/typetag/lib.rs.html#1-399">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p><a href="https://github.com/dtolnay/typetag"><img src="https://img.shields.io/badge/github-8da0cb?style=for-the-badge&amp;labelColor=555555&amp;logo=github" alt="github" /></a> <a href="https://crates.io/crates/typetag"><img src="https://img.shields.io/badge/crates.io-fc8d62?style=for-the-badge&amp;labelColor=555555&amp;logo=rust" alt="crates-io" /></a> <a href="https://docs.rs/typetag"><img src="https://img.shields.io/badge/docs.rs-66c2a5?style=for-the-badge&amp;labelColor=555555&amp;logo=docs.rs" alt="docs-rs" /></a></p>
+<br>
+<p><strong>Serde serializable and deserializable trait objects.</strong></p>
+<p>This crate provides a macro for painless serialization of <code>&amp;dyn Trait</code> trait
+objects and serialization + deserialization of <code>Box&lt;dyn Trait&gt;</code> trait
+objects.</p>
+<p>Let’s dive into the example and I’ll explain some more below.</p>
+<br>
+<h2 id="example"><a class="doc-anchor" href="#example">§</a>Example</h2>
+<p>Suppose I have a trait <code>WebEvent</code> and I require that every implementation of
+the trait be serializable and deserializable so that I can send them to my
+ad-serving AI. Here are just the types and trait impls to start with:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">trait </span>WebEvent {
+    <span class="kw">fn </span>inspect(<span class="kw-2">&amp;</span><span class="self">self</span>);
+}
+
+<span class="attr">#[derive(Serialize, Deserialize)]
+</span><span class="kw">struct </span>PageLoad;
+
+<span class="kw">impl </span>WebEvent <span class="kw">for </span>PageLoad {
+    <span class="kw">fn </span>inspect(<span class="kw-2">&amp;</span><span class="self">self</span>) {
+        <span class="macro">println!</span>(<span class="string">"200 milliseconds or bust"</span>);
+    }
+}
+
+<span class="attr">#[derive(Serialize, Deserialize)]
+</span><span class="kw">struct </span>Click {
+    x: i32,
+    y: i32,
+}
+
+<span class="kw">impl </span>WebEvent <span class="kw">for </span>Click {
+    <span class="kw">fn </span>inspect(<span class="kw-2">&amp;</span><span class="self">self</span>) {
+        <span class="macro">println!</span>(<span class="string">"negative space between the ads: x={} y={}"</span>, <span class="self">self</span>.x, <span class="self">self</span>.y);
+    }
+}</code></pre></div>
+<p>We’ll need to be able to send an arbitrary web event as JSON to the AI:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">fn </span>send_event_to_money_factory(event: <span class="kw-2">&amp;</span><span class="kw">dyn </span>WebEvent) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
+    <span class="kw">let </span>json = serde_json::to_string(event)<span class="question-mark">?</span>;
+    somehow_send_json(json)<span class="question-mark">?</span>;
+    <span class="prelude-val">Ok</span>(())
+}</code></pre></div>
+<p>and receive an arbitrary web event as JSON on the server side:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">fn </span>process_event_from_clickfarm(json: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
+    <span class="kw">let </span>event: Box&lt;<span class="kw">dyn </span>WebEvent&gt; = serde_json::from_str(json)<span class="question-mark">?</span>;
+    overanalyze(event)<span class="question-mark">?</span>;
+    <span class="prelude-val">Ok</span>(())
+}</code></pre></div>
+<p>The introduction claimed that this would be painless but I’ll let you be the
+judge.</p>
+<p>First stick an attribute on top of the trait.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="attr">#[typetag::serde(tag = <span class="string">"type"</span>)]
+</span><span class="kw">trait </span>WebEvent {
+    <span class="kw">fn </span>inspect(<span class="kw-2">&amp;</span><span class="self">self</span>);
+}</code></pre></div>
+<p>Then stick a similar attribute on all those impl blocks too.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="attr">#[typetag::serde]
+</span><span class="kw">impl </span>WebEvent <span class="kw">for </span>PageLoad {
+    <span class="kw">fn </span>inspect(<span class="kw-2">&amp;</span><span class="self">self</span>) {
+        <span class="macro">println!</span>(<span class="string">"200 milliseconds or bust"</span>);
+    }
+}
+
+<span class="attr">#[typetag::serde]
+</span><span class="kw">impl </span>WebEvent <span class="kw">for </span>Click {
+    <span class="kw">fn </span>inspect(<span class="kw-2">&amp;</span><span class="self">self</span>) {
+        <span class="macro">println!</span>(<span class="string">"negative space between the ads: x={} y={}"</span>, <span class="self">self</span>.x, <span class="self">self</span>.y);
+    }
+}</code></pre></div>
+<p>And now it works as described. All in all, three lines were added!</p>
+<br>
+<h2 id="what"><a class="doc-anchor" href="#what">§</a>What?</h2>
+<p>Trait objects are serialized by this library like Serde enums. Every impl of
+the trait (anywhere in the program) looks like one variant of the enum.</p>
+<p>All three of Serde’s tagged <a href="https://serde.rs/enum-representations.html">enum representations</a> are supported. The one
+shown above is the “internally tagged” style so our two event types would be
+represented in JSON as:</p>
+<div class="example-wrap"><pre class="language-json"><code>{&quot;type&quot;:&quot;PageLoad&quot;}
+{&quot;type&quot;:&quot;Click&quot;,&quot;x&quot;:10,&quot;y&quot;:10}
+</code></pre></div>
+<p>The choice of enum representation is controlled by the attribute that goes
+on the trait definition. Let’s check out the “adjacently tagged” style:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="attr">#[typetag::serde(tag = <span class="string">"type"</span>, content = <span class="string">"value"</span>)]
+</span><span class="kw">trait </span>WebEvent {
+    <span class="kw">fn </span>inspect(<span class="kw-2">&amp;</span><span class="self">self</span>);
+}</code></pre></div>
+<div class="example-wrap"><pre class="language-json"><code>{&quot;type&quot;:&quot;PageLoad&quot;,&quot;value&quot;:null}
+{&quot;type&quot;:&quot;Click&quot;,&quot;value&quot;:{&quot;x&quot;:10,&quot;y&quot;:10}}
+</code></pre></div>
+<p>and the “externally tagged” style, which is Serde’s default for enums:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="attr">#[typetag::serde]
+</span><span class="kw">trait </span>WebEvent {
+    <span class="kw">fn </span>inspect(<span class="kw-2">&amp;</span><span class="self">self</span>);
+}</code></pre></div>
+<div class="example-wrap"><pre class="language-json"><code>{&quot;PageLoad&quot;:null}
+{&quot;Click&quot;:{&quot;x&quot;:10,&quot;y&quot;:10}}
+</code></pre></div>
+<p>Separately, the value of the tag for a given trait impl may be defined as
+part of the attribute that goes on the trait impl. By default the tag will
+be the type name when no name is specified explicitly.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="attr">#[typetag::serde(name = <span class="string">"mouse_button_down"</span>)]
+</span><span class="kw">impl </span>WebEvent <span class="kw">for </span>Click {
+    <span class="kw">fn </span>inspect(<span class="kw-2">&amp;</span><span class="self">self</span>) {
+        <span class="macro">println!</span>(<span class="string">"negative space between the ads: ({}, {})"</span>, <span class="self">self</span>.x, <span class="self">self</span>.y);
+    }
+}</code></pre></div>
+<div class="example-wrap"><pre class="language-json"><code>{&quot;type&quot;:&quot;mouse_button_down&quot;,&quot;x&quot;:10,&quot;y&quot;:10}
+</code></pre></div>
+<p>Conceptually all you’re getting with this crate is that we build for you an
+enum in which every impl of the trait in your program is automatically
+registered as an enum variant. The behavior is the same as if you had
+written the enum yourself and implemented Serialize and Deserialize for the
+dyn Trait object in terms of the enum.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="comment">// generated (conceptually)
+</span><span class="attr">#[derive(Serialize, Deserialize)]
+</span><span class="kw">enum </span>WebEvent {
+    PageLoad(PageLoad),
+    Click(Click),
+    <span class="comment">/* ... */
+</span>}</code></pre></div>
+<br>
+<h2 id="so-many-questions"><a class="doc-anchor" href="#so-many-questions">§</a>So many questions</h2>
+<ul>
+<li>
+<p><em>Does it work if the trait impls are spread across different crates?</em>
+<strong>Yes</strong></p>
+<p>Serialization and deserialization both support every single impl of the
+trait across the dependency graph of the final program binary.</p>
+</li>
+<li>
+<p><em>Does it work in non-self-describing data formats like Bincode?</em> <strong>Yes</strong></p>
+<p>All three choices of enum representation will round-trip correctly through
+compact binary formats including Bincode.</p>
+</li>
+<li>
+<p><em>Does it support non-struct types?</em> <strong>Yes</strong></p>
+<p>The implementations of the trait can be structs, enums, primitives, or
+anything else supported by Serde. The Serialize and Deserialize impls may
+be derived or handwritten.</p>
+</li>
+<li>
+<p><em>Didn’t someone explain to me why this wasn’t possible?</em> <strong>Yes</strong></p>
+<p>It might have been me.</p>
+</li>
+<li>
+<p><em>Then how does it work?</em></p>
+<p>We use the <a href="https://github.com/dtolnay/inventory"><code>inventory</code></a> crate to produce a registry of impls of your
+trait, which is built on the <a href="https://github.com/mmastrac/rust-ctor"><code>ctor</code></a> crate to hook up initialization
+functions that insert into the registry. The first <code>Box&lt;dyn Trait&gt;</code>
+deserialization will perform the work of iterating the registry and
+building a map of tags to deserialization functions. Subsequent
+deserializations find the right deserialization function in that map. The
+<a href="https://github.com/dtolnay/erased-serde"><code>erased-serde</code></a> crate is also involved, to do this all in a way that does
+not break object safety.</p>
+</li>
+</ul>
+</div></details><h2 id="attributes" class="section-header">Attribute Macros<a href="#attributes" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="attr" href="attr.deserialize.html" title="attr typetag::deserialize">deserialize</a></div></li><li><div class="item-name"><a class="attr" href="attr.serde.html" title="attr typetag::serde">serde</a></div></li><li><div class="item-name"><a class="attr" href="attr.serialize.html" title="attr typetag::serialize">serialize</a></div></li></ul></section></div></main></body></html>

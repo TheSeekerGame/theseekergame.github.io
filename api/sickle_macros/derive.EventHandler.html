@@ -1,0 +1,80 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Macro to derive an EntityCommand to register and store one-shot systems."><title>EventHandler in sickle_macros - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../static.files/rustdoc-081576b923113409.css"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="sickle_macros" data-themes="" data-resource-suffix="" data-rustdoc-version="1.79.0 (129f3b996 2024-06-10)" data-channel="1.79.0" data-search-js="search-bf21c90c8c1d92b1.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../static.files/storage-e32f0c247825364d.js"></script><script defer src="sidebar-items.js"></script><script defer src="../static.files/main-20a3ad099b048cf2.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-09095024cf37855e.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc derive"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../sickle_macros/index.html">sickle_macros</a><span class="version">0.1.0</span></h2></div><div class="sidebar-elems"></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../sickle_macros/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Type ‘S’ or ‘/’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../settings.html" title="settings">Settings</a></div></form></nav><section id="main-content" class="content"><div class="main-heading"><h1>Derive Macro <a href="index.html">sickle_macros</a>::<wbr><a class="derive" href="#">EventHandler</a><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><span class="out-of-band"><a class="src" href="../src/sickle_macros/lib.rs.html#97-100">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><pre class="rust item-decl"><code>#[derive(EventHandler)]</code></pre><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Macro to derive an EntityCommand to register and store one-shot systems.</p>
+<h2 id="dependencies"><a class="doc-anchor" href="#dependencies">§</a>Dependencies</h2>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code>[lib]
+proc-<span class="kw">macro </span>= <span class="bool-val">true
+
+</span>[dependencies]
+syn = <span class="string">"1.0"
+</span>quote = <span class="string">"1.0"
+</span>proc-macro2 = <span class="string">"1.0"</span></code></pre></div>
+<p>See: https://doc.rust-lang.org/book/ch19-06-macros.html#procedural-macros-for-generating-code-from-attributes</p>
+<h2 id="usage"><a class="doc-anchor" href="#usage">§</a>Usage</h2>
+<p>See it in action: https://youtu.be/s1lQD-R_kqg</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="attr">#[derive(Component, EventHandler)]
+</span><span class="kw">pub struct </span>OnSomething {
+  system_id: SystemId,
+  <span class="kw">pub </span>active: bool,
+}
+
+<span class="kw">impl </span>Plugin <span class="kw">for </span>SomethingPlugin {
+  <span class="kw">fn </span>build(<span class="kw-2">&amp;</span><span class="self">self</span>, app: <span class="kw-2">&amp;mut </span>App) {
+      app.add_systems(Update, handle_pressed);
+  }
+}
+
+<span class="comment">// Call this system when you need to do something
+</span><span class="kw">fn </span>handle_pressed(
+    <span class="kw-2">mut </span>interaction_query: Query&lt;(Entity, <span class="kw-2">&amp;</span>Interaction), (Changed&lt;Interaction&gt;, With&lt;OnSomething&gt;)&gt;,
+    <span class="kw-2">mut </span>handler_query: Query&lt;<span class="kw-2">&amp;mut </span>OnSomething&gt;,
+    <span class="kw-2">mut </span>commands: Commands,
+) {
+    <span class="kw">for </span>(entity, interaction) <span class="kw">in </span><span class="kw-2">&amp;mut </span>interaction_query {
+        <span class="kw">let </span>handler = handler_query.get_mut(entity).unwrap().into_inner();
+        <span class="kw">if </span><span class="kw-2">*</span>interaction == Interaction::Pressed {
+            <span class="kw">let </span><span class="kw-2">mut </span>active_handler = handler.clone();
+            active_handler.active = <span class="bool-val">true</span>;
+            commands.entity(entity).insert(active_handler);
+            commands.run_system(handler.system_id);
+            commands.entity(entity).insert(handler.clone());
+        }
+    }
+}
+
+<span class="comment">// Spawn a UI button from e.g. a Startup system. `MainMenuRootNode` would be a marker component
+// somewhere in the app, used to mark a container.
+</span><span class="kw">fn </span>spawn_something_button(<span class="kw-2">mut </span>commands: Commands, root_node: Query&lt;Entity, With&lt;MainMenuRootNode&gt;&gt;) {
+    commands.entity(root_node.single()).with_children(|parent| {
+        parent
+            .spawn(ButtonBundle {
+                style: Style {
+                    width: Val::Px(<span class="number">200.</span>),
+                    border: UiRect::all(Val::Px(<span class="number">2.</span>)),
+                    ..default()
+                },
+                background_color: Color::rgb(<span class="number">0.35</span>, <span class="number">0.35</span>, <span class="number">0.35</span>).into(),
+                ..default()
+            })
+            <span class="comment">// A component can only be added once, but the handler can be any system
+            //.add(OnSomethingHandler::from(||println!("Button pressed")))
+            //.add(OnSomethingHandler::from(do_the_something_general))
+            </span>.add(OnSomethingHandler::from(do_the_something_with_the_button));
+    });
+}
+
+<span class="kw">fn </span>do_the_something_general(){
+    <span class="comment">// Do something without caring which button is pressed
+</span>}
+
+<span class="comment">// Do something for the exact button being pressed
+</span><span class="kw">fn </span>do_the_something_with_the_button(
+  <span class="kw-2">mut </span>pressed_query: Query&lt;(Entity, <span class="kw-2">&amp;</span>OnSomething), With&lt;OnSomething&gt;&gt;,
+) {
+  <span class="kw">for </span>(entity, on_something) <span class="kw">in </span><span class="kw-2">&amp;mut </span>pressed_query {
+    <span class="kw">if </span>on_something.active {
+      <span class="comment">// Do something!
+    </span>}
+  }
+}
+</code></pre></div>
+</div></details></section></div></main></body></html>

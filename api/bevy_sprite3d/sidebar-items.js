@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["AtlasSprite3dBundle","MatKey","Sprite3d","Sprite3dBundle","Sprite3dComponent","Sprite3dParams","Sprite3dPlugin","Sprite3dRes","TextureAtlas3dData"]};

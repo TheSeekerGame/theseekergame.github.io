@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["RotationDirection"],"struct":["Direction","Rotation"],"trait":["Orientation"]};
+window.SIDEBAR_ITEMS = {"enum":["RotationDirection"],"struct":["Rotation"],"trait":["Orientation"]};

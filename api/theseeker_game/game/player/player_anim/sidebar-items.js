@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["player_attacking_animation","player_dashing_animation","player_falling_animation","player_idle_animation","player_jumping_animation","player_running_animation","sprite_flip"],"struct":["PlayerAnimationPlugin"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["Menu","MenuConfig","MenuItemSeparator","MenuPlugin","MenuSeparator","MenuUpdate"],"trait":["UiMenuExt","UiMenuItemSeparatorExt","UiMenuSeparatorExt"]};

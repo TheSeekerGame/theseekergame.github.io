@@ -1,6 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `engine/src/animation.rs`."><title>animation.rs - source</title><script> if (window.location.protocol !== "file:") document.write(`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2">`)</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-e935ef01ae1c1829.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="theseeker_engine" data-themes="" data-resource-suffix="" data-rustdoc-version="1.78.0 (9b00956e5 2024-04-29)" data-channel="1.78.0" data-search-js="search-42d8da7a6b9792c2.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-12cf3b4f4f9dc36d.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
-            <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
-    <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../theseeker_engine/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `engine/src/animation.rs`."><title>animation.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-081576b923113409.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="theseeker_engine" data-themes="" data-resource-suffix="" data-rustdoc-version="1.79.0 (129f3b996 2024-06-10)" data-channel="1.79.0" data-search-js="search-bf21c90c8c1d92b1.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-e32f0c247825364d.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-20a3ad099b048cf2.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-09095024cf37855e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../theseeker_engine/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Type ‘S’ or ‘/’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings">Settings</a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -453,21 +451,21 @@
 
 <span class="attr">#[derive(Default)]
 </span><span class="kw">pub struct </span>SpriteAnimationTracker {
-    frame_actions: HashMap&lt;u32, Vec&lt;ActionId&gt;&gt;,
+    frame_actions: HashMap&lt;FrameId, Vec&lt;ActionId&gt;&gt;,
     framequant_actions: Vec&lt;(Quant, ActionId)&gt;,
     reversed: bool,
-    next_frame: <span class="prelude-ty">Option</span>&lt;u32&gt;,
-    frame_min: u32,
-    frame_max: u32,
+    next_frame: <span class="prelude-ty">Option</span>&lt;FrameId&gt;,
+    frame_min: FrameId,
+    frame_max: FrameId,
     ticks_per_frame: u32,
     ticks_remain: u32,
-    bookmarks: HashMap&lt;String, u32&gt;,
+    bookmarks: HashMap&lt;String, FrameId&gt;,
 }
 
 <span class="kw">impl </span>SpriteAnimationTracker {
-    <span class="kw">fn </span>resolve_bookmark(<span class="kw-2">&amp;</span><span class="self">self</span>, bm: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>String&gt;) -&gt; u32 {
+    <span class="kw">fn </span>resolve_bookmark(<span class="kw-2">&amp;</span><span class="self">self</span>, bm: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>String&gt;) -&gt; FrameId {
         <span class="kw">let </span><span class="prelude-val">Some</span>(bm) = bm <span class="kw">else </span>{
-            <span class="kw">return </span><span class="number">0</span>;
+            <span class="kw">return </span>default();
         };
         <span class="kw">if let </span><span class="prelude-val">Some</span>(i) = <span class="self">self</span>.bookmarks.get(bm) {
             <span class="kw-2">*</span>i
@@ -475,24 +473,24 @@
             <span class="kw">if </span><span class="macro">cfg!</span>(feature = <span class="string">"dev"</span>) {
                 <span class="macro">warn!</span>(<span class="string">"Script bookmark {:?} is undefined!"</span>, bm);
             }
-            <span class="number">0
-        </span>}
+            default()
+        }
     }
-    <span class="kw">fn </span>resolve_frame(<span class="kw-2">&amp;</span><span class="self">self</span>, bm: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>String&gt;, frame: <span class="kw-2">&amp;</span>FrameIndexOrBookmark) -&gt; u32 {
+    <span class="kw">fn </span>resolve_frame(<span class="kw-2">&amp;</span><span class="self">self</span>, bm: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>String&gt;, frame: <span class="kw-2">&amp;</span>FrameIndexOrBookmark) -&gt; FrameId {
         <span class="kw">let </span>bm_offset = <span class="self">self</span>.resolve_bookmark(bm);
         <span class="kw">match </span>frame {
             FrameIndexOrBookmark::Index(i) =&gt; <span class="kw-2">*</span>i + bm_offset,
             FrameIndexOrBookmark::Bookmark(bm) =&gt; <span class="self">self</span>.resolve_bookmark(<span class="prelude-val">Some</span>(bm)),
         }
     }
-    <span class="kw">fn </span>set_next_frame(<span class="kw-2">&amp;mut </span><span class="self">self</span>, index: u32) {
+    <span class="kw">fn </span>set_next_frame(<span class="kw-2">&amp;mut </span><span class="self">self</span>, index: FrameId) {
         <span class="kw">if </span>index &lt; <span class="self">self</span>.frame_min || index &gt; <span class="self">self</span>.frame_max {
             <span class="self">self</span>.next_frame = <span class="prelude-val">None</span>;
         } <span class="kw">else </span>{
             <span class="self">self</span>.next_frame = <span class="prelude-val">Some</span>(index);
         }
     }
-    <span class="kw">fn </span>set_auto_next_frame(<span class="kw-2">&amp;mut </span><span class="self">self</span>, current: u32) {
+    <span class="kw">fn </span>set_auto_next_frame(<span class="kw-2">&amp;mut </span><span class="self">self</span>, current: FrameId) {
         <span class="self">self</span>.next_frame = <span class="kw">if </span><span class="self">self</span>.reversed {
             <span class="kw">if </span>current &gt; <span class="self">self</span>.frame_min {
                 <span class="prelude-val">Some</span>(current - <span class="number">1</span>)
@@ -524,7 +522,7 @@
         _action_id: ActionId,
         (q_self,): <span class="kw-2">&amp;mut </span>&lt;<span class="self">Self</span>::ShouldRunParam <span class="kw">as </span>SystemParam&gt;::Item&lt;<span class="lifetime">'w</span>, <span class="lifetime">'_</span>&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(), ScriptUpdateResult&gt; {
-        <span class="kw">let </span>current_index = q_self.get(entity).unwrap().<span class="number">0</span>.index <span class="kw">as </span>u32;
+        <span class="kw">let </span>current_index = FrameId::from_sprite_index(q_self.get(entity).unwrap().<span class="number">0</span>.index);
         <span class="kw">if let </span><span class="prelude-val">Some</span>(lt) = <span class="kw-2">&amp;</span><span class="self">self</span>.if_frame_lt {
             <span class="kw">if </span>!(current_index &lt; tracker.resolve_frame(<span class="self">self</span>.frame_bookmark.as_ref(), lt)) {
                 <span class="kw">return </span><span class="prelude-val">Err</span>(ScriptUpdateResult::NormalRun);
@@ -598,7 +596,7 @@
                     to_frame_bookmark.as_ref()
                         .or(actionparams.frame_bookmark.as_ref())
                 );
-                tracker.set_next_frame(frame_index.unwrap_or(<span class="number">0</span>) + bm_offset);
+                tracker.set_next_frame(frame_index.unwrap_or_default() + bm_offset);
                 ScriptUpdateResult::NormalRun
             },
             SpriteAnimationScriptAction::SetFrameNow { to_frame_bookmark, frame_index } =&gt; {
@@ -606,8 +604,8 @@
                     to_frame_bookmark.as_ref()
                         .or(actionparams.frame_bookmark.as_ref())
                 );
-                <span class="kw">let </span>index = frame_index.unwrap_or(<span class="number">0</span>) + bm_offset;
-                atlas.index = index <span class="kw">as </span>usize;
+                <span class="kw">let </span>index = frame_index.unwrap_or_default() + bm_offset;
+                atlas.index = index.as_sprite_index();
                 tracker.set_auto_next_frame(index);
                 ScriptUpdateResult::Loop
             },
@@ -637,11 +635,11 @@
                 </span><span class="kw">match </span>(tracker.reversed, reversed) {
                     (<span class="bool-val">false</span>, <span class="bool-val">true</span>) =&gt; {
                         tracker.reversed = <span class="bool-val">true</span>;
-                        tracker.set_auto_next_frame(atlas.index <span class="kw">as </span>u32);
+                        tracker.set_auto_next_frame(FrameId::from_sprite_index(atlas.index));
                     }
                     (<span class="bool-val">true</span>, <span class="bool-val">false</span>) =&gt; {
                         tracker.reversed = <span class="bool-val">false</span>;
-                        tracker.set_auto_next_frame(atlas.index <span class="kw">as </span>u32);
+                        tracker.set_auto_next_frame(FrameId::from_sprite_index(atlas.index));
                     }
                     <span class="kw">_ </span>=&gt; {}
                 }
@@ -716,7 +714,7 @@
         <span class="kw">let </span><span class="kw-2">mut </span>atlas = q
             .get_mut(entity)
             .expect(<span class="string">"Animation entity must have TextureAtlasSprite component"</span>);
-        atlas.index = settings.frame_start <span class="kw">as </span>usize;
+        atlas.index = settings.frame_start.as_sprite_index();
     }
 
     <span class="kw">fn </span>transfer_progress(<span class="kw-2">&amp;mut </span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="self">Self</span>) {
@@ -760,7 +758,7 @@
                 <span class="comment">// adjust based on bookmark
                 </span><span class="kw">let </span>bm_offset = <span class="self">self</span>.resolve_bookmark(bm);
                 <span class="kw">let </span><span class="kw-2">mut </span>quant = <span class="kw-2">*</span>quant;
-                quant.offset += bm_offset <span class="kw">as </span>i64;
+                quant.offset += bm_offset.as_sprite_index() <span class="kw">as </span>i64;
                 <span class="self">self</span>.framequant_actions.push((quant, action_id));
             }
         }
@@ -785,11 +783,11 @@
                 queue.extend_from_slice(<span class="kw-2">&amp;</span>actions);
             }
             <span class="kw">for </span>(quant, action_id) <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.framequant_actions {
-                <span class="kw">if </span>quant.check(next_frame <span class="kw">as </span>i64) {
+                <span class="kw">if </span>quant.check(next_frame.as_sprite_index() <span class="kw">as </span>i64) {
                     queue.push(<span class="kw-2">*</span>action_id);
                 }
             }
-            atlas.index = next_frame <span class="kw">as </span>usize;
+            atlas.index = next_frame.as_sprite_index();
             <span class="self">self</span>.ticks_remain = <span class="self">self</span>.ticks_per_frame;
             <span class="self">self</span>.set_auto_next_frame(next_frame);
         }
@@ -841,7 +839,7 @@
         atlas.index = <span class="self">self</span>.settings.extended.frame_start
             .min(<span class="self">self</span>.settings.extended.frame_max)
             .max(<span class="self">self</span>.settings.extended.frame_min)
-            <span class="kw">as </span>usize;
+            .as_sprite_index();
 
         builder.replace_config(<span class="kw-2">&amp;</span><span class="self">self</span>.config);
         builder.tracker_mut().extended.bookmarks = <span class="self">self</span>.frame_bookmarks.clone();

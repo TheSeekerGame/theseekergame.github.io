@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["SetVelocityCircleModifier","SetVelocitySphereModifier","SetVelocityTangentModifier"]};

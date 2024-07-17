@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["AbilityWidget","AbilityWidgetConfig","SetFactor"],"trait":["AbilityWidgetCommands","UiAbilityWidgetExt"]};

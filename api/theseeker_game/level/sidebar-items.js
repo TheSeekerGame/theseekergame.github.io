@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["attach_parallax","game_level_init"],"struct":["LevelManagerPlugin","MainBackround"]};
+window.SIDEBAR_ITEMS = {"fn":["attach_parallax","game_level_init","hide_level_0"],"struct":["LevelManagerPlugin","MainBackround","OtherBackround"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["AxisProcessor"],"struct":["AxisBounds","AxisDeadZone","AxisExclusion"],"trait":["CustomAxisProcessor","RegisterCustomAxisProcessorExt","WithAxisProcessingPipelineExt"]};

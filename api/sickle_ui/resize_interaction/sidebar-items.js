@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["ResizeDirection"],"struct":["ResizeHandle","ResizeHandlePlugin"]};

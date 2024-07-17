@@ -1,0 +1,1 @@
+searchState.loadedDescShard("dyn_hash", 0, "github crates-io docs-rs\nThis trait is implemented for any type that implements …\nImplement the standard library <code>Hash</code> for a trait object …")

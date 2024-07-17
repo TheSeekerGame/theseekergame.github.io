@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["instance","update_number"],"struct":["DmgNumber","DmgNumbersPlugin"]};

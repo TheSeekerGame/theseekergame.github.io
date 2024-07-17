@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"attr":["deserialize","serde","serialize"]};

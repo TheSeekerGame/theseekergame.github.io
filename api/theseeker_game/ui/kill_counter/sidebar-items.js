@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["spawn_killcounter","update_counter"],"struct":["KillCounterPlugin","KillCounterUi"]};

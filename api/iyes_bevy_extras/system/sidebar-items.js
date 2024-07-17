@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["any_added_component","any_changed_component","any_filter"],"struct":["ChainOptionalSystem","ChainResultSystem"],"trait":["IntoChainOptionalSystem","IntoChainResultSystem"]};
+window.SIDEBAR_ITEMS = {"fn":["any_added_component","any_changed_component","any_filter","none_filter"],"struct":["ChainOptionalSystem","ChainResultSystem"],"trait":["IntoChainOptionalSystem","IntoChainResultSystem"]};

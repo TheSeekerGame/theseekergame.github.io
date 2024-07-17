@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["AxisType","DeadZoneShape","MouseMotionAxisType","MouseWheelAxisType"],"struct":["AxisConversionError","DualAxis","DualAxisData","SingleAxis","VirtualAxis","VirtualDPad"]};
+window.SIDEBAR_ITEMS = {"enum":["AxisDirection","AxisType","DualAxisDirection","DualAxisType","MouseMotionAxisType","MouseWheelAxisType"],"struct":["AxisConversionError","DualAxis","DualAxisData","SingleAxis","VirtualAxis","VirtualDPad"]};

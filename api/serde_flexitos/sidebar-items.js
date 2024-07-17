@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["GetError"],"fn":["serialize_trait_object"],"mod":["de","ser"],"struct":["MapRegistry"],"trait":["Registry"],"type":["DeserializeFn"]};

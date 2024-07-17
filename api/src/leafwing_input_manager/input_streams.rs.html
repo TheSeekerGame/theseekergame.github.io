@@ -1,6 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/leafwing-input-manager-0.13.3/src/input_streams.rs`."><title>input_streams.rs - source</title><script> if (window.location.protocol !== "file:") document.write(`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2">`)</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-e935ef01ae1c1829.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="leafwing_input_manager" data-themes="" data-resource-suffix="" data-rustdoc-version="1.78.0 (9b00956e5 2024-04-29)" data-channel="1.78.0" data-search-js="search-42d8da7a6b9792c2.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-12cf3b4f4f9dc36d.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
-            <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
-    <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../leafwing_input_manager/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/leafwing-input-manager-b497c70f583edadd/21fd76d/src/input_streams.rs`."><title>input_streams.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-081576b923113409.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="leafwing_input_manager" data-themes="" data-resource-suffix="" data-rustdoc-version="1.79.0 (129f3b996 2024-06-10)" data-channel="1.79.0" data-search-js="search-bf21c90c8c1d92b1.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-e32f0c247825364d.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-20a3ad099b048cf2.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-09095024cf37855e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../leafwing_input_manager/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Type ‘S’ or ‘/’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings">Settings</a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -509,23 +507,6 @@
 <a href="#507" id="507">507</a>
 <a href="#508" id="508">508</a>
 <a href="#509" id="509">509</a>
-<a href="#510" id="510">510</a>
-<a href="#511" id="511">511</a>
-<a href="#512" id="512">512</a>
-<a href="#513" id="513">513</a>
-<a href="#514" id="514">514</a>
-<a href="#515" id="515">515</a>
-<a href="#516" id="516">516</a>
-<a href="#517" id="517">517</a>
-<a href="#518" id="518">518</a>
-<a href="#519" id="519">519</a>
-<a href="#520" id="520">520</a>
-<a href="#521" id="521">521</a>
-<a href="#522" id="522">522</a>
-<a href="#523" id="523">523</a>
-<a href="#524" id="524">524</a>
-<a href="#525" id="525">525</a>
-<a href="#526" id="526">526</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! Unified input streams for working with [`bevy::input`] data.
 
 </span><span class="kw">use </span>bevy::ecs::prelude::{Event, Events, ResMut, World};
@@ -540,8 +521,7 @@
 <span class="kw">use </span>bevy::utils::HashSet;
 
 <span class="kw">use </span><span class="kw">crate</span>::axislike::{
-    deadzone_axis_value, AxisType, DualAxisData, MouseMotionAxisType, MouseWheelAxisType,
-    SingleAxis,
+    AxisType, DualAxisData, MouseMotionAxisType, MouseWheelAxisType, SingleAxis,
 };
 <span class="kw">use </span><span class="kw">crate</span>::buttonlike::{MouseMotionDirection, MouseWheelDirection};
 <span class="kw">use </span><span class="kw">crate</span>::prelude::DualAxis;
@@ -608,7 +588,7 @@
     </span><span class="kw">pub fn </span>input_pressed(<span class="kw-2">&amp;</span><span class="self">self</span>, input: <span class="kw-2">&amp;</span>UserInput) -&gt; bool {
         <span class="kw">match </span>input {
             UserInput::Chord(buttons) =&gt; <span class="self">self</span>.all_buttons_pressed(buttons),
-            <span class="kw">_ </span>=&gt; input.iter().any(|button| <span class="self">self</span>.button_pressed(button)),
+            <span class="kw">_ </span>=&gt; input.iter().any(|button| <span class="self">self</span>.button_pressed(<span class="kw-2">&amp;</span>button)),
         }
     }
 
@@ -620,28 +600,30 @@
 
     <span class="doccomment">/// Is the `button` pressed?
     </span><span class="attr">#[must_use]
-    </span><span class="kw">pub fn </span>button_pressed(<span class="kw-2">&amp;</span><span class="self">self</span>, button: InputKind) -&gt; bool {
+    </span><span class="kw">pub fn </span>button_pressed(<span class="kw-2">&amp;</span><span class="self">self</span>, button: <span class="kw-2">&amp;</span>InputKind) -&gt; bool {
         <span class="kw">match </span>button {
             InputKind::DualAxis(axis) =&gt; <span class="self">self
-                </span>.extract_dual_axis_data(<span class="kw-2">&amp;</span>axis)
+                </span>.extract_dual_axis_data(axis)
                 .is_some_and(|data| data.xy() != Vec2::ZERO),
-            InputKind::SingleAxis(axis) =&gt; {
-                <span class="kw">let </span>value = <span class="self">self</span>.input_value(<span class="kw-2">&amp;</span>button.into(), <span class="bool-val">false</span>);
-
-                value &lt; axis.negative_low || value &gt; axis.positive_low
-            }
-            InputKind::GamepadButton(button_type) =&gt; <span class="self">self
-                </span>.associated_gamepad
-                .into_iter()
-                .chain(<span class="self">self</span>.gamepads.iter())
-                .any(|gamepad| {
+            InputKind::SingleAxis(<span class="kw">_</span>) =&gt; {
+                <span class="kw">let </span>input: UserInput = button.clone().into();
+                <span class="self">self</span>.input_value(<span class="kw-2">&amp;</span>input) != <span class="number">0.0
+            </span>}
+            InputKind::GamepadButton(button_type) =&gt; {
+                <span class="kw">let </span>button_pressed = |gamepad: Gamepad| -&gt; bool {
                     <span class="self">self</span>.gamepad_buttons.pressed(GamepadButton {
                         gamepad,
-                        button_type,
+                        button_type: <span class="kw-2">*</span>button_type,
                     })
-                }),
+                };
+                <span class="kw">if let </span><span class="prelude-val">Some</span>(gamepad) = <span class="self">self</span>.associated_gamepad {
+                    button_pressed(gamepad)
+                } <span class="kw">else </span>{
+                    <span class="self">self</span>.gamepads.iter().any(button_pressed)
+                }
+            }
             InputKind::PhysicalKey(keycode) =&gt; {
-                <span class="macro">matches!</span>(<span class="self">self</span>.keycodes, <span class="prelude-val">Some</span>(keycodes) <span class="kw">if </span>keycodes.pressed(keycode))
+                <span class="macro">matches!</span>(<span class="self">self</span>.keycodes, <span class="prelude-val">Some</span>(keycodes) <span class="kw">if </span>keycodes.pressed(<span class="kw-2">*</span>keycode))
             }
             InputKind::Modifier(modifier) =&gt; {
                 <span class="kw">let </span>key_codes = modifier.key_codes();
@@ -649,7 +631,7 @@
                 </span><span class="macro">matches!</span>(<span class="self">self</span>.keycodes, <span class="prelude-val">Some</span>(keycodes) <span class="kw">if </span>keycodes.pressed(key_codes[<span class="number">0</span>]) | keycodes.pressed(key_codes[<span class="number">1</span>]))
             }
             InputKind::Mouse(mouse_button) =&gt; {
-                <span class="macro">matches!</span>(<span class="self">self</span>.mouse_buttons, <span class="prelude-val">Some</span>(mouse_buttons) <span class="kw">if </span>mouse_buttons.pressed(mouse_button))
+                <span class="macro">matches!</span>(<span class="self">self</span>.mouse_buttons, <span class="prelude-val">Some</span>(mouse_buttons) <span class="kw">if </span>mouse_buttons.pressed(<span class="kw-2">*</span>mouse_button))
             }
             InputKind::MouseWheel(mouse_wheel_direction) =&gt; {
                 <span class="kw">let </span><span class="prelude-val">Some</span>(mouse_wheel) = <span class="kw-2">&amp;</span><span class="self">self</span>.mouse_wheel <span class="kw">else </span>{
@@ -688,7 +670,7 @@
     <span class="doccomment">/// Are all the `buttons` pressed?
     </span><span class="attr">#[must_use]
     </span><span class="kw">pub fn </span>all_buttons_pressed(<span class="kw-2">&amp;</span><span class="self">self</span>, buttons: <span class="kw-2">&amp;</span>[InputKind]) -&gt; bool {
-        buttons.iter().all(|button| <span class="self">self</span>.button_pressed(<span class="kw-2">*</span>button))
+        buttons.iter().all(|button| <span class="self">self</span>.button_pressed(button))
     }
 
     <span class="doccomment">/// Get the "value" of the input.
@@ -703,30 +685,8 @@
     ///
     /// If you need to ensure that this value is always in the range `[-1., 1.]`,
     /// be sure to clamp the returned data.
-    </span><span class="kw">pub fn </span>input_value(<span class="kw-2">&amp;</span><span class="self">self</span>, input: <span class="kw-2">&amp;</span>UserInput, include_deadzone: bool) -&gt; f32 {
+    </span><span class="kw">pub fn </span>input_value(<span class="kw-2">&amp;</span><span class="self">self</span>, input: <span class="kw-2">&amp;</span>UserInput) -&gt; f32 {
         <span class="kw">let </span>use_button_value = || -&gt; f32 { f32::from(<span class="self">self</span>.input_pressed(input)) };
-
-        <span class="comment">// Helper that takes the value returned by an axis and returns 0.0 if it is not within the
-        // triggering range.
-        </span><span class="kw">let </span>value_in_axis_range = |axis: <span class="kw-2">&amp;</span>SingleAxis, <span class="kw-2">mut </span>value: f32| -&gt; f32 {
-            <span class="kw">if </span>include_deadzone {
-                <span class="kw">if </span>value &gt;= axis.negative_low &amp;&amp; value &lt;= axis.positive_low {
-                    <span class="kw">return </span><span class="number">0.0</span>;
-                }
-
-                <span class="kw">let </span>deadzone = <span class="kw">if </span>value.is_sign_positive() {
-                    axis.positive_low.abs()
-                } <span class="kw">else </span>{
-                    axis.negative_low.abs()
-                };
-                value = deadzone_axis_value(value, deadzone);
-            }
-            <span class="kw">if </span>axis.inverted {
-                value <span class="kw-2">*</span>= -<span class="number">1.0</span>;
-            }
-
-            value * axis.sensitivity
-        };
 
         <span class="kw">match </span>input {
             UserInput::Single(InputKind::SingleAxis(single_axis)) =&gt; {
@@ -739,13 +699,13 @@
                         };
                         <span class="kw">if let </span><span class="prelude-val">Some</span>(gamepad) = <span class="self">self</span>.associated_gamepad {
                             <span class="kw">let </span>value = get_gamepad_value(gamepad);
-                            value_in_axis_range(single_axis, value)
+                            single_axis.input_value(value)
                         } <span class="kw">else </span>{
                             <span class="self">self</span>.gamepads
                                 .iter()
                                 .map(get_gamepad_value)
                                 .find(|value| <span class="kw-2">*</span>value != <span class="number">0.0</span>)
-                                .map_or(<span class="number">0.0</span>, |value| value_in_axis_range(single_axis, value))
+                                .map_or(<span class="number">0.0</span>, |value| single_axis.input_value(value))
                         }
                     }
                     AxisType::MouseWheel(axis_type) =&gt; {
@@ -762,7 +722,7 @@
                             MouseWheelAxisType::X =&gt; x,
                             MouseWheelAxisType::Y =&gt; y,
                         };
-                        value_in_axis_range(single_axis, movement)
+                        single_axis.input_value(movement)
                     }
                     AxisType::MouseMotion(axis_type) =&gt; {
                         <span class="comment">// The compiler will compile this into a direct f64 accumulation when opt-level &gt;= 1.
@@ -771,12 +731,13 @@
                             MouseMotionAxisType::X =&gt; x,
                             MouseMotionAxisType::Y =&gt; y,
                         };
-                        value_in_axis_range(single_axis, movement)
+                        single_axis.input_value(movement)
                     }
                 }
             }
             UserInput::VirtualAxis(axis) =&gt; {
-                <span class="self">self</span>.extract_single_axis_data(<span class="kw-2">&amp;</span>axis.positive, <span class="kw-2">&amp;</span>axis.negative)
+                <span class="kw">let </span>data = <span class="self">self</span>.extract_single_axis_data(<span class="kw-2">&amp;</span>axis.positive, <span class="kw-2">&amp;</span>axis.negative);
+                axis.input_value(data)
             }
             UserInput::Single(InputKind::DualAxis(<span class="kw">_</span>)) =&gt; {
                 <span class="self">self</span>.input_axis_pair(input).unwrap_or_default().length()
@@ -793,15 +754,15 @@
                     value += <span class="kw">match </span>input {
                         InputKind::SingleAxis(axis) =&gt; {
                             has_axis = <span class="bool-val">true</span>;
-                            <span class="self">self</span>.input_value(<span class="kw-2">&amp;</span>InputKind::SingleAxis(<span class="kw-2">*</span>axis).into(), <span class="bool-val">true</span>)
+                            <span class="self">self</span>.input_value(<span class="kw-2">&amp;</span>InputKind::SingleAxis(axis.clone()).into())
                         }
                         InputKind::MouseWheel(axis) =&gt; {
                             has_axis = <span class="bool-val">true</span>;
-                            <span class="self">self</span>.input_value(<span class="kw-2">&amp;</span>InputKind::MouseWheel(<span class="kw-2">*</span>axis).into(), <span class="bool-val">true</span>)
+                            <span class="self">self</span>.input_value(<span class="kw-2">&amp;</span>InputKind::MouseWheel(<span class="kw-2">*</span>axis).into())
                         }
                         InputKind::MouseMotion(axis) =&gt; {
                             has_axis = <span class="bool-val">true</span>;
-                            <span class="self">self</span>.input_value(<span class="kw-2">&amp;</span>InputKind::MouseMotion(<span class="kw-2">*</span>axis).into(), <span class="bool-val">true</span>)
+                            <span class="self">self</span>.input_value(<span class="kw-2">&amp;</span>InputKind::MouseMotion(<span class="kw-2">*</span>axis).into())
                         }
                         <span class="kw">_ </span>=&gt; <span class="number">0.0</span>,
                     }
@@ -866,24 +827,27 @@
             UserInput::VirtualDPad(dpad) =&gt; {
                 <span class="kw">let </span>x = <span class="self">self</span>.extract_single_axis_data(<span class="kw-2">&amp;</span>dpad.right, <span class="kw-2">&amp;</span>dpad.left);
                 <span class="kw">let </span>y = <span class="self">self</span>.extract_single_axis_data(<span class="kw-2">&amp;</span>dpad.up, <span class="kw-2">&amp;</span>dpad.down);
-                <span class="prelude-val">Some</span>(DualAxisData::new(x, y))
+
+                <span class="kw">let </span>data = dpad.input_value(Vec2::new(x, y));
+                <span class="prelude-val">Some</span>(DualAxisData::from_xy(data))
             }
             <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
         }
     }
 
     <span class="kw">fn </span>extract_single_axis_data(<span class="kw-2">&amp;</span><span class="self">self</span>, positive: <span class="kw-2">&amp;</span>InputKind, negative: <span class="kw-2">&amp;</span>InputKind) -&gt; f32 {
-        <span class="kw">let </span>positive = <span class="self">self</span>.input_value(<span class="kw-2">&amp;</span>UserInput::Single(<span class="kw-2">*</span>positive), <span class="bool-val">true</span>);
-        <span class="kw">let </span>negative = <span class="self">self</span>.input_value(<span class="kw-2">&amp;</span>UserInput::Single(<span class="kw-2">*</span>negative), <span class="bool-val">true</span>);
+        <span class="kw">let </span>positive = <span class="self">self</span>.input_value(<span class="kw-2">&amp;</span>UserInput::Single(positive.clone()));
+        <span class="kw">let </span>negative = <span class="self">self</span>.input_value(<span class="kw-2">&amp;</span>UserInput::Single(negative.clone()));
 
         positive.abs() - negative.abs()
     }
 
     <span class="kw">fn </span>extract_dual_axis_data(<span class="kw-2">&amp;</span><span class="self">self</span>, dual_axis: <span class="kw-2">&amp;</span>DualAxis) -&gt; <span class="prelude-ty">Option</span>&lt;DualAxisData&gt; {
-        <span class="kw">let </span>x = <span class="self">self</span>.input_value(<span class="kw-2">&amp;</span>dual_axis.x.into(), <span class="bool-val">false</span>);
-        <span class="kw">let </span>y = <span class="self">self</span>.input_value(<span class="kw-2">&amp;</span>dual_axis.y.into(), <span class="bool-val">false</span>);
+        <span class="kw">let </span>x = <span class="self">self</span>.input_value(<span class="kw-2">&amp;</span>SingleAxis::new(dual_axis.x_axis_type).into());
+        <span class="kw">let </span>y = <span class="self">self</span>.input_value(<span class="kw-2">&amp;</span>SingleAxis::new(dual_axis.y_axis_type).into());
 
-        dual_axis.deadzone.deadzone_input_value(x, y)
+        <span class="kw">let </span>data = dual_axis.input_value(Vec2::new(x, y));
+        <span class="prelude-val">Some</span>(DualAxisData::from_xy(data))
     }
 }
 
@@ -1033,7 +997,7 @@
         <span class="kw">let </span><span class="kw-2">mut </span>input_streams = MutableInputStreams::from_world(<span class="kw-2">&amp;mut </span>app.world, <span class="prelude-val">None</span>);
         <span class="macro">assert!</span>(!InputStreams::from(<span class="kw-2">&amp;</span>input_streams).pressed(Modifier::Control));
 
-        input_streams.send_input(KeyCode::ControlLeft);
+        input_streams.press_input(KeyCode::ControlLeft);
         app.update();
 
         <span class="kw">let </span><span class="kw-2">mut </span>input_streams = MutableInputStreams::from_world(<span class="kw-2">&amp;mut </span>app.world, <span class="prelude-val">None</span>);
@@ -1045,7 +1009,7 @@
         <span class="kw">let </span><span class="kw-2">mut </span>input_streams = MutableInputStreams::from_world(<span class="kw-2">&amp;mut </span>app.world, <span class="prelude-val">None</span>);
         <span class="macro">assert!</span>(!InputStreams::from(<span class="kw-2">&amp;</span>input_streams).pressed(Modifier::Control));
 
-        input_streams.send_input(KeyCode::ControlRight);
+        input_streams.press_input(KeyCode::ControlRight);
         app.update();
 
         <span class="kw">let </span>input_streams = MutableInputStreams::from_world(<span class="kw-2">&amp;mut </span>app.world, <span class="prelude-val">None</span>);

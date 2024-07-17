@@ -1,0 +1,1 @@
+searchState.loadedDescShard("leafwing_input_manager_macros", 0, "Derives the <code>Actionlike</code> trait This derive macro was …")

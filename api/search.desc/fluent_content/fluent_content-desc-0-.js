@@ -1,0 +1,1 @@
+searchState.loadedDescShard("fluent_content", 0, "Fluent content\nContent\nMessage content request\nRequest message content\nReturns the argument unchanged.\nCalls <code>U::from(self)</code>.\n<code>use fluent_content::prelude::*;</code> to import common traits\nContent\nRequest message content")

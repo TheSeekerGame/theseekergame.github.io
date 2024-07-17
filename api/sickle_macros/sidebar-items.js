@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"attr":["simple_interaction_for"],"derive":["EventHandler","StyleCommand"]};

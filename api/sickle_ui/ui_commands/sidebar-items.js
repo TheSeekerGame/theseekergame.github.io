@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["ResetChildrenInUiSurface"],"trait":["EntityCommandsNamedExt","LogHierarchyExt","SetCursorExt","SetTextExt","SetTextSectionsExt"]};

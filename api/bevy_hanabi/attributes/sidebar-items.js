@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["ScalarType","ValueType"],"struct":["Attribute","MatrixType","ParticleLayout","ParticleLayoutBuilder","VectorType"]};

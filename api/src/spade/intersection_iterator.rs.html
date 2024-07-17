@@ -1,6 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spade-2.6.0/src/intersection_iterator.rs`."><title>intersection_iterator.rs - source</title><script> if (window.location.protocol !== "file:") document.write(`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2">`)</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-e935ef01ae1c1829.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="spade" data-themes="" data-resource-suffix="" data-rustdoc-version="1.78.0 (9b00956e5 2024-04-29)" data-channel="1.78.0" data-search-js="search-42d8da7a6b9792c2.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-12cf3b4f4f9dc36d.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
-            <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
-    <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../spade/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spade-2.9.0/src/intersection_iterator.rs`."><title>intersection_iterator.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-081576b923113409.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="spade" data-themes="" data-resource-suffix="" data-rustdoc-version="1.79.0 (129f3b996 2024-06-10)" data-channel="1.79.0" data-search-js="search-bf21c90c8c1d92b1.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-e32f0c247825364d.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-20a3ad099b048cf2.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-09095024cf37855e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../spade/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Type ‘S’ or ‘/’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings">Settings</a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -716,11 +714,179 @@
 <a href="#714" id="714">714</a>
 <a href="#715" id="715">715</a>
 <a href="#716" id="716">716</a>
+<a href="#717" id="717">717</a>
+<a href="#718" id="718">718</a>
+<a href="#719" id="719">719</a>
+<a href="#720" id="720">720</a>
+<a href="#721" id="721">721</a>
+<a href="#722" id="722">722</a>
+<a href="#723" id="723">723</a>
+<a href="#724" id="724">724</a>
+<a href="#725" id="725">725</a>
+<a href="#726" id="726">726</a>
+<a href="#727" id="727">727</a>
+<a href="#728" id="728">728</a>
+<a href="#729" id="729">729</a>
+<a href="#730" id="730">730</a>
+<a href="#731" id="731">731</a>
+<a href="#732" id="732">732</a>
+<a href="#733" id="733">733</a>
+<a href="#734" id="734">734</a>
+<a href="#735" id="735">735</a>
+<a href="#736" id="736">736</a>
+<a href="#737" id="737">737</a>
+<a href="#738" id="738">738</a>
+<a href="#739" id="739">739</a>
+<a href="#740" id="740">740</a>
+<a href="#741" id="741">741</a>
+<a href="#742" id="742">742</a>
+<a href="#743" id="743">743</a>
+<a href="#744" id="744">744</a>
+<a href="#745" id="745">745</a>
+<a href="#746" id="746">746</a>
+<a href="#747" id="747">747</a>
+<a href="#748" id="748">748</a>
+<a href="#749" id="749">749</a>
+<a href="#750" id="750">750</a>
+<a href="#751" id="751">751</a>
+<a href="#752" id="752">752</a>
+<a href="#753" id="753">753</a>
+<a href="#754" id="754">754</a>
+<a href="#755" id="755">755</a>
+<a href="#756" id="756">756</a>
+<a href="#757" id="757">757</a>
+<a href="#758" id="758">758</a>
+<a href="#759" id="759">759</a>
+<a href="#760" id="760">760</a>
+<a href="#761" id="761">761</a>
+<a href="#762" id="762">762</a>
+<a href="#763" id="763">763</a>
+<a href="#764" id="764">764</a>
+<a href="#765" id="765">765</a>
+<a href="#766" id="766">766</a>
+<a href="#767" id="767">767</a>
+<a href="#768" id="768">768</a>
+<a href="#769" id="769">769</a>
+<a href="#770" id="770">770</a>
+<a href="#771" id="771">771</a>
+<a href="#772" id="772">772</a>
+<a href="#773" id="773">773</a>
+<a href="#774" id="774">774</a>
+<a href="#775" id="775">775</a>
+<a href="#776" id="776">776</a>
+<a href="#777" id="777">777</a>
+<a href="#778" id="778">778</a>
+<a href="#779" id="779">779</a>
+<a href="#780" id="780">780</a>
+<a href="#781" id="781">781</a>
+<a href="#782" id="782">782</a>
+<a href="#783" id="783">783</a>
+<a href="#784" id="784">784</a>
+<a href="#785" id="785">785</a>
+<a href="#786" id="786">786</a>
+<a href="#787" id="787">787</a>
+<a href="#788" id="788">788</a>
+<a href="#789" id="789">789</a>
+<a href="#790" id="790">790</a>
+<a href="#791" id="791">791</a>
+<a href="#792" id="792">792</a>
+<a href="#793" id="793">793</a>
+<a href="#794" id="794">794</a>
+<a href="#795" id="795">795</a>
+<a href="#796" id="796">796</a>
+<a href="#797" id="797">797</a>
+<a href="#798" id="798">798</a>
+<a href="#799" id="799">799</a>
+<a href="#800" id="800">800</a>
+<a href="#801" id="801">801</a>
+<a href="#802" id="802">802</a>
+<a href="#803" id="803">803</a>
+<a href="#804" id="804">804</a>
+<a href="#805" id="805">805</a>
+<a href="#806" id="806">806</a>
+<a href="#807" id="807">807</a>
+<a href="#808" id="808">808</a>
+<a href="#809" id="809">809</a>
+<a href="#810" id="810">810</a>
+<a href="#811" id="811">811</a>
+<a href="#812" id="812">812</a>
+<a href="#813" id="813">813</a>
+<a href="#814" id="814">814</a>
+<a href="#815" id="815">815</a>
+<a href="#816" id="816">816</a>
+<a href="#817" id="817">817</a>
+<a href="#818" id="818">818</a>
+<a href="#819" id="819">819</a>
+<a href="#820" id="820">820</a>
+<a href="#821" id="821">821</a>
+<a href="#822" id="822">822</a>
+<a href="#823" id="823">823</a>
+<a href="#824" id="824">824</a>
+<a href="#825" id="825">825</a>
+<a href="#826" id="826">826</a>
+<a href="#827" id="827">827</a>
+<a href="#828" id="828">828</a>
+<a href="#829" id="829">829</a>
+<a href="#830" id="830">830</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::delaunay_core::math;
 <span class="kw">use </span><span class="kw">crate</span>::handles::{DirectedEdgeHandle, FixedVertexHandle, VertexHandle};
 <span class="kw">use crate</span>::{HasPosition, Point2, Triangulation, TriangulationExt};
 
-<span class="kw">pub struct </span>LineIntersectionIterator&lt;<span class="lifetime">'a</span>, V, DE, UE, F&gt;
+<span class="doccomment">/// An iterator over all intersections of a straight line across the triangulation.
+///
+/// This iterator can, for example, be used to detect which edges prevent the insertion
+/// of a new constraint edge.
+///
+/// Three different intersection kinds are possible:
+///  - The line crosses a different edge
+///  - The line goes through a vertex
+///  - The line overlaps with an existing edge
+///
+/// These intersections are defined by the [Intersection] enum. Intersections are always returned in the same
+/// order as the line, i.e. the closest intersection to the starting point is returned first.
+///
+/// # Example
+///
+/// This triangulation is created by the code below:
+///
+</span><span class="attr">#[doc = <span class="macro">include_str!</span>(<span class="string">"../images/line_intersection_iterator_scenario.svg"</span>)]
+</span><span class="doccomment">///
+/// The line (s -&gt; e) generates 5 intersections (labeled with `0..=4`): two edge intersections,
+/// a vertex intersection, an edge overlap and  a final vertex intersection.
+///
+/// ```
+/// use spade::{LineIntersectionIterator, Point2, DelaunayTriangulation};
+/// # use spade::InsertionError;
+/// # fn main() -&gt; Result&lt;(), InsertionError&gt; {
+/// let vertices = vec![
+///     Point2::new(-30.0, 20.0),  // v0
+///     Point2::new(0.0, -20.0),   // v1
+///     Point2::new(0.0, 20.0),    // v2
+///     Point2::new(14.0, 0.0),    // v3
+///     Point2::new(30.0, 0.0),    // v4
+/// ];
+///
+/// let triangulation = DelaunayTriangulation::&lt;_&gt;::bulk_load_stable(vertices)?;
+/// for intersection in LineIntersectionIterator::new(
+///     &amp;triangulation,
+///     Point2::new(-30.0, 0.0),
+///     Point2::new(40.0, 0.0),
+/// ) {
+///     println!("{:?}", intersection);
+/// }
+/// # Ok(())
+/// # }
+/// ```
+///
+/// Output (simplified):
+/// ```text
+/// EdgeIntersection(DirectedEdgeHandle v0 -&gt; v1)
+/// EdgeIntersection(DirectedEdgeHandle v2 -&gt; v1)
+/// VertexIntersection(VertexHandle(3))
+/// EdgeOverlap(DirectedEdgeHandle v3 -&gt; v4)
+/// VertexIntersection(VertexHandle(4))
+/// ```
+</span><span class="kw">pub struct </span>LineIntersectionIterator&lt;<span class="lifetime">'a</span>, V, DE, UE, F&gt;
 <span class="kw">where
     </span>V: HasPosition,
     DE: Default,
@@ -732,21 +898,32 @@
     line_to: Point2&lt;V::Scalar&gt;,
 }
 
-<span class="attr">#[allow(clippy::enum_variant_names)]
+<span class="doccomment">/// An intersection that can occur when moving through a triangulation along a straight line.
+///
+/// This is used as return type for [LineIntersectionIterator].
+</span><span class="attr">#[allow(clippy::enum_variant_names)]
 </span><span class="kw">pub enum </span>Intersection&lt;<span class="lifetime">'a</span>, V, DE, UE, F&gt;
 <span class="kw">where
     </span>V: HasPosition,
 {
-    EdgeIntersection(DirectedEdgeHandle&lt;<span class="lifetime">'a</span>, V, DE, UE, F&gt;),
-    VertexIntersection(VertexHandle&lt;<span class="lifetime">'a</span>, V, DE, UE, F&gt;),
-    EdgeOverlap(DirectedEdgeHandle&lt;<span class="lifetime">'a</span>, V, DE, UE, F&gt;),
+    <span class="doccomment">/// Indicates that the line is either crossing or touching an existing edge.
+    /// The line's destination will always be either on the edge or on its left side (in a right-handed coordinate system).
+    </span>EdgeIntersection(DirectedEdgeHandle&lt;<span class="lifetime">'a</span>, V, DE, UE, F&gt;),
+    <span class="doccomment">/// Indicates that the line is touching a vertex.
+    /// A line beginning or starting on a vertex also generates this intersection. A "line" beginning and starting on the same
+    /// vertex will also return this intersection.
+    </span>VertexIntersection(VertexHandle&lt;<span class="lifetime">'a</span>, V, DE, UE, F&gt;),
+    <span class="doccomment">/// Indicates that a line is (partially) overlapping an existing edge.
+    ///
+    /// This implies that the line points in the same direction as the edge and that they share a common line segment.
+    </span>EdgeOverlap(DirectedEdgeHandle&lt;<span class="lifetime">'a</span>, V, DE, UE, F&gt;),
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, V, DE, UE, F&gt; ::core::fmt::Debug <span class="kw">for </span>Intersection&lt;<span class="lifetime">'a</span>, V, DE, UE, F&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, V, DE, UE, F&gt; core::fmt::Debug <span class="kw">for </span>Intersection&lt;<span class="lifetime">'a</span>, V, DE, UE, F&gt;
 <span class="kw">where
     </span>V: HasPosition,
 {
-    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>::core::fmt::Formatter) -&gt; ::core::fmt::Result {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>core::fmt::Formatter) -&gt; core::fmt::Result {
         <span class="kw">use </span><span class="self">self</span>::Intersection::<span class="kw-2">*</span>;
         <span class="kw">match </span><span class="self">self </span>{
             EdgeIntersection(handle) =&gt; <span class="macro">write!</span>(f, <span class="string">"EdgeIntersection({:?})"</span>, handle),
@@ -782,6 +959,19 @@
     </span>}
 }
 
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, V, DE, UE, F&gt; Intersection&lt;<span class="lifetime">'a</span>, V, DE, UE, F&gt;
+<span class="kw">where
+    </span>V: HasPosition,
+{
+    <span class="doccomment">/// Returns the intersected edge if this is an edge intersection or `None` otherwise.
+    </span><span class="kw">pub fn </span>as_edge_intersection(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;DirectedEdgeHandle&lt;<span class="lifetime">'a</span>, V, DE, UE, F&gt;&gt; {
+        <span class="kw">match </span><span class="self">self </span>{
+            Intersection::EdgeIntersection(<span class="kw-2">ref </span>edge) =&gt; <span class="prelude-val">Some</span>(<span class="kw-2">*</span>edge),
+            <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
+        }
+    }
+}
+
 <span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, V, DE, UE, F&gt; LineIntersectionIterator&lt;<span class="lifetime">'a</span>, V, DE, UE, F&gt;
 <span class="kw">where
     </span>V: HasPosition,
@@ -789,7 +979,9 @@
     UE: Default,
     F: Default,
 {
-    <span class="kw">pub fn </span>new&lt;T&gt;(
+    <span class="doccomment">/// Creates a new `LineIntersectionIterator` covering an arbitrary line.
+    /// See [LineIntersectionIterator] for more information.
+    </span><span class="kw">pub fn </span>new&lt;T&gt;(
         delaunay: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>T,
         line_from: Point2&lt;V::Scalar&gt;,
         line_to: Point2&lt;V::Scalar&gt;,
@@ -805,7 +997,33 @@
         }
     }
 
-    <span class="kw">pub fn </span>new_from_handles&lt;T&gt;(
+    <span class="doccomment">/// Creates a new line iterator covering the line spanned by two existing vertices.
+    ///
+    /// Both start and end vertex are part of the iteration result.
+    ///
+    /// # Example
+    /// ```
+    /// use spade::{DelaunayTriangulation, Intersection, LineIntersectionIterator, Point2, Triangulation};
+    /// # use spade::InsertionError;
+    /// # fn main() -&gt; Result&lt;(), InsertionError&gt; {
+    ///     let mut triangulation = DelaunayTriangulation::&lt;Point2&lt;f64&gt;&gt;::new();
+    ///     let v0 = triangulation.insert(Point2::new(0.0, 0.0))?;
+    ///     let v1 = triangulation.insert(Point2::new(1.0, 1.0))?;
+    ///
+    ///     let expected_edge_overlap = triangulation.get_edge_from_neighbors(v0, v1).unwrap();
+    ///     let all_intersections = LineIntersectionIterator::new_from_handles(&amp;triangulation, v0, v1).collect::&lt;Vec&lt;_&gt;&gt;();
+    ///     
+    ///     let v0 = triangulation.vertex(v0);
+    ///     let v1 = triangulation.vertex(v1);
+    ///     assert_eq!(all_intersections, vec![
+    ///         Intersection::VertexIntersection(v0),
+    ///         Intersection::EdgeOverlap(expected_edge_overlap),
+    ///         Intersection::VertexIntersection(v1),
+    ///     ]);
+    /// # Ok(())
+    /// # }
+    /// ```
+    </span><span class="kw">pub fn </span>new_from_handles&lt;T&gt;(
         delaunay: <span class="kw-2">&amp;</span>T,
         from: FixedVertexHandle,
         to: FixedVertexHandle,
@@ -948,15 +1166,13 @@
                 </span>} <span class="kw">else </span>{
                     <span class="kw">match </span>trace_direction_out_of_vertex(vertex, <span class="self">self</span>.line_to) {
                         VertexOutDirection::ConvexHull =&gt; <span class="prelude-val">None</span>,
-                        VertexOutDirection::EdgeOverlap(edge) =&gt; {
-                            <span class="prelude-val">Some</span>(Intersection::EdgeOverlap(edge))
-                        }
+                        VertexOutDirection::EdgeOverlap(edge) =&gt; <span class="prelude-val">Some</span>(EdgeOverlap(edge)),
                         VertexOutDirection::EdgeIntersection(edge) =&gt; {
                             <span class="kw">if </span>edge.side_query(<span class="self">self</span>.line_to).is_on_right_side() {
                                 <span class="comment">// The target point was skipped over - the iteration can finish
                                 </span><span class="prelude-val">None
                             </span>} <span class="kw">else </span>{
-                                <span class="prelude-val">Some</span>(Intersection::EdgeIntersection(edge))
+                                <span class="prelude-val">Some</span>(EdgeIntersection(edge))
                             }
                         }
                     }
@@ -1208,6 +1424,10 @@
         <span class="macro">assert!</span>(LineIntersectionIterator::new(<span class="kw-2">&amp;</span>delaunay, from, to)
             .next()
             .is_none());
+
+        <span class="macro">assert!</span>(LineIntersectionIterator::new(<span class="kw-2">&amp;</span>delaunay, from, from)
+            .next()
+            .is_none());
         <span class="prelude-val">Ok</span>(())
     }
 
@@ -1356,11 +1576,13 @@
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_intersecting_single_vertex() -&gt; <span class="prelude-ty">Result</span>&lt;(), InsertionError&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>delaunay = Triangulation::new();
-        <span class="kw">let </span>v0 = delaunay.insert(Point2::new(<span class="number">0.5</span>, <span class="number">0.5</span>))<span class="question-mark">?</span>;
+        <span class="kw">let </span>pos = Point2::new(<span class="number">0.5</span>, <span class="number">0.5</span>);
+        <span class="kw">let </span>v0 = delaunay.insert(pos)<span class="question-mark">?</span>;
         <span class="kw">let </span>v0 = delaunay.vertex(v0);
         <span class="kw">let </span>from = Point2::new(<span class="number">1.0</span>, <span class="number">0.0</span>);
         <span class="kw">let </span>to = Point2::new(<span class="number">0.0</span>, <span class="number">1.0</span>);
         check(<span class="kw-2">&amp;</span>delaunay, from, to, <span class="macro">vec!</span>[VertexIntersection(v0)]);
+        check(<span class="kw-2">&amp;</span>delaunay, pos, pos, <span class="macro">vec!</span>[VertexIntersection(v0)]);
         <span class="kw">let </span>to = Point2::new(<span class="number">1.234</span>, <span class="number">42.0</span>);
         check(<span class="kw-2">&amp;</span>delaunay, from, to, <span class="macro">vec!</span>[]);
         <span class="prelude-val">Ok</span>(())
@@ -1406,6 +1628,10 @@
         <span class="kw">let </span>from = Point2::new(<span class="number">0.5</span>, -<span class="number">0.5</span>);
         <span class="kw">let </span>to = Point2::new(-<span class="number">0.5</span>, <span class="number">0.5</span>);
         check(<span class="kw-2">&amp;</span>d, from, to, <span class="macro">vec!</span>[v2]);
+
+        <span class="kw">let </span>single_vertex = Point2::new(-<span class="number">2.0</span>, -<span class="number">2.0</span>);
+        check(<span class="kw-2">&amp;</span>d, single_vertex, single_vertex, <span class="macro">vec!</span>[v1]);
+
         <span class="prelude-val">Ok</span>(())
     }
 

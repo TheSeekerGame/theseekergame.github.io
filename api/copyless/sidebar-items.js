@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["VecEntry"],"struct":["BoxAllocation","VecAllocation"],"trait":["BoxHelper","VecHelper"]};

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["attack","enemy","gentstate","player","wall"],"struct":["GameplayPlugin"]};
+window.SIDEBAR_ITEMS = {"mod":["attack","enemy","gentstate","merchant","player","wall","yak"],"struct":["GameplayPlugin"]};

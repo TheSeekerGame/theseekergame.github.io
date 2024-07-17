@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["generate_action_diffs","release_on_disable","release_on_input_map_removed","run_if_enabled","tick_action_state","update_action_state","update_action_state_from_interaction"]};
+window.SIDEBAR_ITEMS = {"fn":["generate_action_diffs","release_on_input_map_removed","swap_to_fixed_update","swap_to_update","tick_action_state","update_action_state","update_action_state_from_interaction"]};

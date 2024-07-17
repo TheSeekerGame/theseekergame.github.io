@@ -1,0 +1,99 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Effect attributes, like the position or velocity of a particle."><title>bevy_hanabi::attributes - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-081576b923113409.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bevy_hanabi" data-themes="" data-resource-suffix="" data-rustdoc-version="1.79.0 (129f3b996 2024-06-10)" data-channel="1.79.0" data-search-js="search-bf21c90c8c1d92b1.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-e32f0c247825364d.js"></script><script defer src="../sidebar-items.js"></script><script defer src="../../static.files/main-20a3ad099b048cf2.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-09095024cf37855e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../bevy_hanabi/index.html">bevy_hanabi</a><span class="version">0.11.0-dev</span></h2></div><h2 class="location"><a href="#">Module attributes</a></h2><div class="sidebar-elems"><section><ul class="block"><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li></ul></section><h2><a href="../index.html">In crate bevy_hanabi</a></h2></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../bevy_hanabi/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Type ‘S’ or ‘/’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings">Settings</a></div></form></nav><section id="main-content" class="content"><div class="main-heading"><h1>Module <a href="../index.html">bevy_hanabi</a>::<wbr><a class="mod" href="#">attributes</a><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><span class="out-of-band"><a class="src" href="../../src/bevy_hanabi/attributes.rs.html#1-2128">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Effect attributes, like the position or velocity of a particle.</p>
+<p>An <em>effect attribute</em> is a quantity stored per particle for all particles.
+Unlike <a href="../properties/index.html" title="mod bevy_hanabi::properties">properties</a>, each particle can have a different
+value for each attribute. Examples of particle attributes include the
+particle’s own position and its velocity. Attributes are represented by the
+<a href="struct.Attribute.html" title="struct bevy_hanabi::attributes::Attribute"><code>Attribute</code></a> type.</p>
+<p>Attributes are indirectly added to an effect by adding <a href="../modifier/index.html" title="mod bevy_hanabi::modifier">modifiers</a> requiring
+them. Each modifier documents its required attributes. You can force a
+single attribute by adding the <a href="../modifier/attr/struct.SetAttributeModifier.html" title="struct bevy_hanabi::modifier::attr::SetAttributeModifier"><code>SetAttributeModifier</code></a>.</p>
+<p>Note that 🎆 Hanabi provides a number of associated <a href="struct.Attribute.html" title="struct bevy_hanabi::attributes::Attribute"><code>Attribute</code></a> constants,
+like <a href="struct.Attribute.html#associatedconstant.POSITION" title="associated constant bevy_hanabi::attributes::Attribute::POSITION"><code>Attribute::POSITION</code></a>. You cannot build your own <a href="struct.Attribute.html" title="struct bevy_hanabi::attributes::Attribute"><code>Attribute</code></a>
+instance. See <a href="#built-in-attributes">Built-in attributes</a> and <a href="#custom-attributes">Custom
+attributes</a> for all available attributes.</p>
+<h2 id="definition"><a class="doc-anchor" href="#definition">§</a>Definition</h2>
+<p><a href="struct.Attribute.html" title="struct bevy_hanabi::attributes::Attribute"><code>Attribute</code></a> defines the attribute’s unique name, the type of its value,
+and a default value used to initialize the attribute if not otherwise
+explicitly initialized.</p>
+<p>The attribute name is a string used to identify the attribute, and also as
+the associated variable name in any WGSL shader code using that attribute.
+Because it’s unique, attributes can be compared by their name alone.</p>
+<p>The attribute type encodes the type of data stored in the attribute,
+including the number of components for a vector or matrix type. It’s stored
+together with the default value for the attribute into a <a href="../graph/enum.Value.html" title="enum bevy_hanabi::graph::Value"><code>Value</code></a> field.</p>
+<h2 id="layout-1"><a class="doc-anchor" href="#layout-1">§</a>Layout</h2>
+<p>Each particle effect contains one or more attributes. The set of all
+attributes makes a particle. Attributes are organized in memory into a
+<em>layout</em>, which optimizes GPU RAM usage and access by packing types
+together, and avoid any padding gaps. However this layout needs to follow
+the rules of WGSL structs, therefore might introduce some gaps (wasted
+space) nonetheless, depending on each attribute’s required type alignment.</p>
+<p>Here’s an example for the default particle attribute set, containing the
+particle’s position and velocity vectors (<code>vec3&lt;f32&gt;</code>), and its age and
+lifetime (<code>f32</code>), packed into a 32 bytes struct:</p>
+<div><table><thead><tr><th>Bytes</th><th>0..4</th><th>4..8</th><th>8..12</th><th>12..16</th></tr></thead><tbody>
+<tr><td>0..16</td><td><a href="struct.Attribute.html#associatedconstant.POSITION" title="associated constant bevy_hanabi::attributes::Attribute::POSITION"><code>POSITION</code></a>.X</td><td><a href="struct.Attribute.html#associatedconstant.POSITION" title="associated constant bevy_hanabi::attributes::Attribute::POSITION"><code>POSITION</code></a>.Y</td><td><a href="struct.Attribute.html#associatedconstant.POSITION" title="associated constant bevy_hanabi::attributes::Attribute::POSITION"><code>POSITION</code></a>.Z</td><td><a href="struct.Attribute.html#associatedconstant.AGE" title="associated constant bevy_hanabi::attributes::Attribute::AGE"><code>AGE</code></a></td></tr>
+<tr><td>16..32</td><td><a href="struct.Attribute.html#associatedconstant.VELOCITY" title="associated constant bevy_hanabi::attributes::Attribute::VELOCITY"><code>VELOCITY</code></a>.X</td><td><a href="struct.Attribute.html#associatedconstant.VELOCITY" title="associated constant bevy_hanabi::attributes::Attribute::VELOCITY"><code>VELOCITY</code></a>.Y</td><td><a href="struct.Attribute.html#associatedconstant.VELOCITY" title="associated constant bevy_hanabi::attributes::Attribute::VELOCITY"><code>VELOCITY</code></a>.Z</td><td><a href="struct.Attribute.html#associatedconstant.LIFETIME" title="associated constant bevy_hanabi::attributes::Attribute::LIFETIME"><code>LIFETIME</code></a></td></tr>
+</tbody></table>
+</div>
+<p>In WGSL code, this is represented by:</p>
+<div class="example-wrap"><pre class="language-wgsl"><code>struct Particle {
+  position: vec3&lt;f32&gt;,
+  age: f32,
+  velocity: vec3&lt;f32&gt;,
+  lifetime: f32,
+}
+</code></pre></div>
+<p>The layout of a particle effect is represented by the <a href="struct.ParticleLayout.html" title="struct bevy_hanabi::attributes::ParticleLayout"><code>ParticleLayout</code></a>
+type, and built from a set of attributes via the <a href="struct.ParticleLayoutBuilder.html" title="struct bevy_hanabi::attributes::ParticleLayoutBuilder"><code>ParticleLayoutBuilder</code></a>
+helper. This is done internally by 🎆 Hanabi for each effect, so in general
+you don’t have to use those types directly.</p>
+<h2 id="built-in-attributes"><a class="doc-anchor" href="#built-in-attributes">§</a>Built-in attributes</h2>
+<p>🎆 Hanabi provides a number of built-in attributes with a specified meaning.
+Those attributes are interpreted by some built-in library systems in a way
+specific to the attribute. For example, the <a href="struct.Attribute.html#associatedconstant.POSITION" title="associated constant bevy_hanabi::attributes::Attribute::POSITION"><code>Attribute::POSITION</code></a>
+represents the particle’s own position, and will be used as the position
+where to render the particle.</p>
+<p>In general those attributes can be read and written by the user, for example
+via the <a href="../modifier/attr/struct.SetAttributeModifier.html" title="struct bevy_hanabi::modifier::attr::SetAttributeModifier"><code>SetAttributeModifier</code></a>, but are also read and/or modified by 🎆
+Hanabi itself.</p>
+<div><table><thead><tr><th>Attribute</th><th>Meaning</th></tr></thead><tbody>
+<tr><td><a href="struct.Attribute.html#associatedconstant.POSITION" title="associated constant bevy_hanabi::attributes::Attribute::POSITION"><code>Attribute::POSITION</code></a></td><td>The particle’s position in <a href="../enum.SimulationSpace.html" title="enum bevy_hanabi::SimulationSpace">simulation space</a>.</td></tr>
+<tr><td><a href="struct.Attribute.html#associatedconstant.VELOCITY" title="associated constant bevy_hanabi::attributes::Attribute::VELOCITY"><code>Attribute::VELOCITY</code></a></td><td>The particle’s velocity in <a href="../enum.SimulationSpace.html" title="enum bevy_hanabi::SimulationSpace">simulation space</a>.</td></tr>
+<tr><td><a href="struct.Attribute.html#associatedconstant.AGE" title="associated constant bevy_hanabi::attributes::Attribute::AGE"><code>Attribute::AGE</code></a></td><td>The particle’s age, in seconds.</td></tr>
+<tr><td><a href="struct.Attribute.html#associatedconstant.LIFETIME" title="associated constant bevy_hanabi::attributes::Attribute::LIFETIME"><code>Attribute::LIFETIME</code></a></td><td>The particle’s total lifetime, in seconds.</td></tr>
+<tr><td><a href="struct.Attribute.html#associatedconstant.COLOR" title="associated constant bevy_hanabi::attributes::Attribute::COLOR"><code>Attribute::COLOR</code></a></td><td>The particle’s LDR color as <code>u32</code>.</td></tr>
+<tr><td><a href="struct.Attribute.html#associatedconstant.HDR_COLOR" title="associated constant bevy_hanabi::attributes::Attribute::HDR_COLOR"><code>Attribute::HDR_COLOR</code></a></td><td>The particle’s HDR color as <code>vec4&lt;f32&gt;</code>.</td></tr>
+<tr><td><a href="struct.Attribute.html#associatedconstant.ALPHA" title="associated constant bevy_hanabi::attributes::Attribute::ALPHA"><code>Attribute::ALPHA</code></a></td><td>The particle’s opacity.</td></tr>
+<tr><td><a href="struct.Attribute.html#associatedconstant.SIZE" title="associated constant bevy_hanabi::attributes::Attribute::SIZE"><code>Attribute::SIZE</code></a></td><td>The particle’s uniform size.</td></tr>
+<tr><td><a href="struct.Attribute.html#associatedconstant.SIZE2" title="associated constant bevy_hanabi::attributes::Attribute::SIZE2"><code>Attribute::SIZE2</code></a></td><td>The particle’s non-uniform size.</td></tr>
+<tr><td><a href="struct.Attribute.html#associatedconstant.AXIS_X" title="associated constant bevy_hanabi::attributes::Attribute::AXIS_X"><code>Attribute::AXIS_X</code></a></td><td>X axis of the particle frame.</td></tr>
+<tr><td><a href="struct.Attribute.html#associatedconstant.AXIS_Y" title="associated constant bevy_hanabi::attributes::Attribute::AXIS_Y"><code>Attribute::AXIS_Y</code></a></td><td>Y axis of the particle frame.</td></tr>
+<tr><td><a href="struct.Attribute.html#associatedconstant.AXIS_Z" title="associated constant bevy_hanabi::attributes::Attribute::AXIS_Z"><code>Attribute::AXIS_Z</code></a></td><td>Z axis of the particle frame.</td></tr>
+<tr><td><a href="struct.Attribute.html#associatedconstant.SPRITE_INDEX" title="associated constant bevy_hanabi::attributes::Attribute::SPRITE_INDEX"><code>Attribute::SPRITE_INDEX</code></a></td><td>Index of the current sprite for flipbook animation.</td></tr>
+</tbody></table>
+</div><h2 id="custom-attributes"><a class="doc-anchor" href="#custom-attributes">§</a>Custom attributes</h2>
+<p>In additon of the built-in attributes, 🎆 Hanabi provides a number of
+<em>custom attributes</em>, which are attributes with a specified type but no
+particular internal meaning. Users are free to use those attributes to store
+any quantity they like, noting that each new attribute increases the
+per-particle size and therefor the total RAM usage of the particle effect.</p>
+<div><table><thead><tr><th>Attribute</th><th>Meaning</th></tr></thead><tbody>
+<tr><td><a href="struct.Attribute.html#associatedconstant.F32_0" title="associated constant bevy_hanabi::attributes::Attribute::F32_0"><code>Attribute::F32_0</code></a></td><td>A custom <code>f32</code> attribute.</td></tr>
+<tr><td><a href="struct.Attribute.html#associatedconstant.F32_1" title="associated constant bevy_hanabi::attributes::Attribute::F32_1"><code>Attribute::F32_1</code></a></td><td>A custom <code>f32</code> attribute.</td></tr>
+<tr><td><a href="struct.Attribute.html#associatedconstant.F32_2" title="associated constant bevy_hanabi::attributes::Attribute::F32_2"><code>Attribute::F32_2</code></a></td><td>A custom <code>f32</code> attribute.</td></tr>
+<tr><td><a href="struct.Attribute.html#associatedconstant.F32_3" title="associated constant bevy_hanabi::attributes::Attribute::F32_3"><code>Attribute::F32_3</code></a></td><td>A custom <code>f32</code> attribute.</td></tr>
+<tr><td><a href="struct.Attribute.html#associatedconstant.F32X2_0" title="associated constant bevy_hanabi::attributes::Attribute::F32X2_0"><code>Attribute::F32X2_0</code></a></td><td>A custom <code>vec2&lt;f32&gt;</code> attribute.</td></tr>
+<tr><td><a href="struct.Attribute.html#associatedconstant.F32X2_1" title="associated constant bevy_hanabi::attributes::Attribute::F32X2_1"><code>Attribute::F32X2_1</code></a></td><td>A custom <code>vec2&lt;f32&gt;</code> attribute.</td></tr>
+<tr><td><a href="struct.Attribute.html#associatedconstant.F32X2_2" title="associated constant bevy_hanabi::attributes::Attribute::F32X2_2"><code>Attribute::F32X2_2</code></a></td><td>A custom <code>vec2&lt;f32&gt;</code> attribute.</td></tr>
+<tr><td><a href="struct.Attribute.html#associatedconstant.F32X2_3" title="associated constant bevy_hanabi::attributes::Attribute::F32X2_3"><code>Attribute::F32X2_3</code></a></td><td>A custom <code>vec2&lt;f32&gt;</code> attribute.</td></tr>
+<tr><td><a href="struct.Attribute.html#associatedconstant.F32X3_0" title="associated constant bevy_hanabi::attributes::Attribute::F32X3_0"><code>Attribute::F32X3_0</code></a></td><td>A custom <code>vec3&lt;f32&gt;</code> attribute.</td></tr>
+<tr><td><a href="struct.Attribute.html#associatedconstant.F32X3_1" title="associated constant bevy_hanabi::attributes::Attribute::F32X3_1"><code>Attribute::F32X3_1</code></a></td><td>A custom <code>vec3&lt;f32&gt;</code> attribute.</td></tr>
+<tr><td><a href="struct.Attribute.html#associatedconstant.F32X3_2" title="associated constant bevy_hanabi::attributes::Attribute::F32X3_2"><code>Attribute::F32X3_2</code></a></td><td>A custom <code>vec3&lt;f32&gt;</code> attribute.</td></tr>
+<tr><td><a href="struct.Attribute.html#associatedconstant.F32X3_3" title="associated constant bevy_hanabi::attributes::Attribute::F32X3_3"><code>Attribute::F32X3_3</code></a></td><td>A custom <code>vec3&lt;f32&gt;</code> attribute.</td></tr>
+<tr><td><a href="struct.Attribute.html#associatedconstant.F32X4_0" title="associated constant bevy_hanabi::attributes::Attribute::F32X4_0"><code>Attribute::F32X4_0</code></a></td><td>A custom <code>vec4&lt;f32&gt;</code> attribute.</td></tr>
+<tr><td><a href="struct.Attribute.html#associatedconstant.F32X4_1" title="associated constant bevy_hanabi::attributes::Attribute::F32X4_1"><code>Attribute::F32X4_1</code></a></td><td>A custom <code>vec4&lt;f32&gt;</code> attribute.</td></tr>
+<tr><td><a href="struct.Attribute.html#associatedconstant.F32X4_2" title="associated constant bevy_hanabi::attributes::Attribute::F32X4_2"><code>Attribute::F32X4_2</code></a></td><td>A custom <code>vec4&lt;f32&gt;</code> attribute.</td></tr>
+<tr><td><a href="struct.Attribute.html#associatedconstant.F32X4_3" title="associated constant bevy_hanabi::attributes::Attribute::F32X4_3"><code>Attribute::F32X4_3</code></a></td><td>A custom <code>vec4&lt;f32&gt;</code> attribute.</td></tr>
+</tbody></table>
+</div></div></details><h2 id="structs" class="section-header">Structs<a href="#structs" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="struct" href="struct.Attribute.html" title="struct bevy_hanabi::attributes::Attribute">Attribute</a></div><div class="desc docblock-short">An attribute of a particle simulated for an effect.</div></li><li><div class="item-name"><a class="struct" href="struct.MatrixType.html" title="struct bevy_hanabi::attributes::MatrixType">MatrixType</a></div><div class="desc docblock-short">Floating-point matrix type (<code>matCxR&lt;f32&gt;</code>).</div></li><li><div class="item-name"><a class="struct" href="struct.ParticleLayout.html" title="struct bevy_hanabi::attributes::ParticleLayout">ParticleLayout</a></div><div class="desc docblock-short">Particle layout of an effect.</div></li><li><div class="item-name"><a class="struct" href="struct.ParticleLayoutBuilder.html" title="struct bevy_hanabi::attributes::ParticleLayoutBuilder">ParticleLayoutBuilder</a></div><div class="desc docblock-short">Builder helper to create a new <a href="struct.ParticleLayout.html" title="struct bevy_hanabi::attributes::ParticleLayout"><code>ParticleLayout</code></a>.</div></li><li><div class="item-name"><a class="struct" href="struct.VectorType.html" title="struct bevy_hanabi::attributes::VectorType">VectorType</a></div><div class="desc docblock-short">Vector type (<code>vecN&lt;T&gt;</code>).</div></li></ul><h2 id="enums" class="section-header">Enums<a href="#enums" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="enum" href="enum.ScalarType.html" title="enum bevy_hanabi::attributes::ScalarType">ScalarType</a></div><div class="desc docblock-short">Scalar types.</div></li><li><div class="item-name"><a class="enum" href="enum.ValueType.html" title="enum bevy_hanabi::attributes::ValueType">ValueType</a></div><div class="desc docblock-short">Type of an <a href="struct.Attribute.html" title="struct bevy_hanabi::attributes::Attribute"><code>Attribute</code></a>’s value.</div></li></ul></section></div></main></body></html>
