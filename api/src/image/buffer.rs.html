@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/image-0.25.1/src/buffer.rs`."><title>buffer.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-081576b923113409.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="image" data-themes="" data-resource-suffix="" data-rustdoc-version="1.79.0 (129f3b996 2024-06-10)" data-channel="1.79.0" data-search-js="search-bf21c90c8c1d92b1.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-e32f0c247825364d.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-20a3ad099b048cf2.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-09095024cf37855e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../image/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Type ‘S’ or ‘/’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings">Settings</a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/image-0.25.2/src/buffer.rs`."><title>buffer.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-081576b923113409.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="image" data-themes="" data-resource-suffix="" data-rustdoc-version="1.79.0 (129f3b996 2024-06-10)" data-channel="1.79.0" data-search-js="search-bf21c90c8c1d92b1.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-e32f0c247825364d.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-20a3ad099b048cf2.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-09095024cf37855e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../image/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Type ‘S’ or ‘/’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings">Settings</a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1797,6 +1797,44 @@
 <a href="#1797" id="1797">1797</a>
 <a href="#1798" id="1798">1798</a>
 <a href="#1799" id="1799">1799</a>
+<a href="#1800" id="1800">1800</a>
+<a href="#1801" id="1801">1801</a>
+<a href="#1802" id="1802">1802</a>
+<a href="#1803" id="1803">1803</a>
+<a href="#1804" id="1804">1804</a>
+<a href="#1805" id="1805">1805</a>
+<a href="#1806" id="1806">1806</a>
+<a href="#1807" id="1807">1807</a>
+<a href="#1808" id="1808">1808</a>
+<a href="#1809" id="1809">1809</a>
+<a href="#1810" id="1810">1810</a>
+<a href="#1811" id="1811">1811</a>
+<a href="#1812" id="1812">1812</a>
+<a href="#1813" id="1813">1813</a>
+<a href="#1814" id="1814">1814</a>
+<a href="#1815" id="1815">1815</a>
+<a href="#1816" id="1816">1816</a>
+<a href="#1817" id="1817">1817</a>
+<a href="#1818" id="1818">1818</a>
+<a href="#1819" id="1819">1819</a>
+<a href="#1820" id="1820">1820</a>
+<a href="#1821" id="1821">1821</a>
+<a href="#1822" id="1822">1822</a>
+<a href="#1823" id="1823">1823</a>
+<a href="#1824" id="1824">1824</a>
+<a href="#1825" id="1825">1825</a>
+<a href="#1826" id="1826">1826</a>
+<a href="#1827" id="1827">1827</a>
+<a href="#1828" id="1828">1828</a>
+<a href="#1829" id="1829">1829</a>
+<a href="#1830" id="1830">1830</a>
+<a href="#1831" id="1831">1831</a>
+<a href="#1832" id="1832">1832</a>
+<a href="#1833" id="1833">1833</a>
+<a href="#1834" id="1834">1834</a>
+<a href="#1835" id="1835">1835</a>
+<a href="#1836" id="1836">1836</a>
+<a href="#1837" id="1837">1837</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! Contains the generic `ImageBuffer` struct.
 </span><span class="kw">use </span>num_traits::Zero;
 <span class="kw">use </span>std::fmt;
@@ -2443,7 +2481,7 @@
 /// image::imageops::overlay(&amp;mut img, &amp;on_top, 128, 128);
 /// ```
 ///
-/// Convert an RgbaImage to a GrayImage.
+/// Convert an `RgbaImage` to a `GrayImage`.
 ///
 /// ```no_run
 /// use image::{open, DynamicImage};
@@ -2600,7 +2638,7 @@
     /// the bounds will not overflow.
     </span><span class="kw">fn </span>check_image_fits(width: u32, height: u32, len: usize) -&gt; bool {
         <span class="kw">let </span>checked_len = <span class="self">Self</span>::image_buffer_len(width, height);
-        checked_len.map(|min_len| min_len &lt;= len).unwrap_or(<span class="bool-val">false</span>)
+        checked_len.map_or(<span class="bool-val">false</span>, |min_len| min_len &lt;= len)
     }
 
     <span class="kw">fn </span>image_buffer_len(width: u32, height: u32) -&gt; <span class="prelude-ty">Option</span>&lt;usize&gt; {
@@ -2779,7 +2817,7 @@
     </span><span class="attr">#[inline]
     #[track_caller]
     </span><span class="kw">pub fn </span>put_pixel(<span class="kw-2">&amp;mut </span><span class="self">self</span>, x: u32, y: u32, pixel: P) {
-        <span class="kw-2">*</span><span class="self">self</span>.get_pixel_mut(x, y) = pixel
+        <span class="kw-2">*</span><span class="self">self</span>.get_pixel_mut(x, y) = pixel;
     }
 }
 
@@ -2956,6 +2994,12 @@
             _phantom: PhantomData,
         }
     }
+
+    <span class="kw">fn </span>clone_from(<span class="kw-2">&amp;mut </span><span class="self">self</span>, source: <span class="kw-2">&amp;</span><span class="self">Self</span>) {
+        <span class="self">self</span>.data.clone_from(<span class="kw-2">&amp;</span>source.data);
+        <span class="self">self</span>.width = source.width;
+        <span class="self">self</span>.height = source.height;
+    }
 }
 
 <span class="kw">impl</span>&lt;P, Container&gt; GenericImageView <span class="kw">for </span>ImageBuffer&lt;P, Container&gt;
@@ -2991,7 +3035,7 @@
     }
 
     <span class="kw">fn </span>put_pixel(<span class="kw-2">&amp;mut </span><span class="self">self</span>, x: u32, y: u32, pixel: P) {
-        <span class="kw-2">*</span><span class="self">self</span>.get_pixel_mut(x, y) = pixel
+        <span class="kw-2">*</span><span class="self">self</span>.get_pixel_mut(x, y) = pixel;
     }
 
     <span class="doccomment">/// Puts a pixel at location (x, y), ignoring bounds checking.
@@ -2999,14 +3043,14 @@
     </span><span class="kw">unsafe fn </span>unsafe_put_pixel(<span class="kw-2">&amp;mut </span><span class="self">self</span>, x: u32, y: u32, pixel: P) {
         <span class="kw">let </span>indices = <span class="self">self</span>.pixel_indices_unchecked(x, y);
         <span class="kw">let </span>p = &lt;P <span class="kw">as </span>Pixel&gt;::from_slice_mut(<span class="self">self</span>.data.get_unchecked_mut(indices));
-        <span class="kw-2">*</span>p = pixel
+        <span class="kw-2">*</span>p = pixel;
     }
 
     <span class="doccomment">/// Put a pixel at location (x, y), taking into account alpha channels
     ///
     /// DEPRECATED: This method will be removed. Blend the pixel directly instead.
     </span><span class="kw">fn </span>blend_pixel(<span class="kw-2">&amp;mut </span><span class="self">self</span>, x: u32, y: u32, p: P) {
-        <span class="self">self</span>.get_pixel_mut(x, y).blend(<span class="kw-2">&amp;</span>p)
+        <span class="self">self</span>.get_pixel_mut(x, y).blend(<span class="kw-2">&amp;</span>p);
     }
 
     <span class="kw">fn </span>copy_within(<span class="kw-2">&amp;mut </span><span class="self">self</span>, source: Rect, x: u32, y: u32) -&gt; bool {
@@ -3056,9 +3100,12 @@
 </span><span class="kw">impl</span>&lt;P: Pixel&gt; ImageBuffer&lt;P, Vec&lt;P::Subpixel&gt;&gt; {
     <span class="doccomment">/// Creates a new image buffer based on a `Vec&lt;P::Subpixel&gt;`.
     ///
+    /// all the pixels of this image have a value of zero, regardless of the data type or number of channels.
+    ///
     /// # Panics
     ///
     /// Panics when the resulting image is larger than the maximum size of a vector.
+    </span><span class="attr">#[must_use]
     </span><span class="kw">pub fn </span>new(width: u32, height: u32) -&gt; ImageBuffer&lt;P, Vec&lt;P::Subpixel&gt;&gt; {
         <span class="kw">let </span>size = <span class="self">Self</span>::image_buffer_len(width, height)
             .expect(<span class="string">"Buffer length in `ImageBuffer::new` overflows usize"</span>);
@@ -3070,7 +3117,7 @@
         }
     }
 
-    <span class="doccomment">/// Constructs a new ImageBuffer by copying a pixel
+    <span class="doccomment">/// Constructs a new `ImageBuffer` by copying a pixel
     ///
     /// # Panics
     ///
@@ -3078,12 +3125,12 @@
     </span><span class="kw">pub fn </span>from_pixel(width: u32, height: u32, pixel: P) -&gt; ImageBuffer&lt;P, Vec&lt;P::Subpixel&gt;&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>buf = ImageBuffer::new(width, height);
         <span class="kw">for </span>p <span class="kw">in </span>buf.pixels_mut() {
-            <span class="kw-2">*</span>p = pixel
+            <span class="kw-2">*</span>p = pixel;
         }
         buf
     }
 
-    <span class="doccomment">/// Constructs a new ImageBuffer by repeated application of the supplied function.
+    <span class="doccomment">/// Constructs a new `ImageBuffer` by repeated application of the supplied function.
     ///
     /// The arguments to the function are the pixel's x and y coordinates.
     ///
@@ -3096,13 +3143,14 @@
     {
         <span class="kw">let </span><span class="kw-2">mut </span>buf = ImageBuffer::new(width, height);
         <span class="kw">for </span>(x, y, p) <span class="kw">in </span>buf.enumerate_pixels_mut() {
-            <span class="kw-2">*</span>p = f(x, y)
+            <span class="kw-2">*</span>p = f(x, y);
         }
         buf
     }
 
     <span class="doccomment">/// Creates an image buffer out of an existing buffer.
     /// Returns None if the buffer is not big enough.
+    </span><span class="attr">#[must_use]
     </span><span class="kw">pub fn </span>from_vec(
         width: u32,
         height: u32,
@@ -3113,6 +3161,7 @@
 
     <span class="doccomment">/// Consumes the image buffer and returns the underlying data
     /// as an owned buffer
+    </span><span class="attr">#[must_use]
     </span><span class="kw">pub fn </span>into_vec(<span class="self">self</span>) -&gt; Vec&lt;P::Subpixel&gt; {
         <span class="self">self</span>.into_raw()
     }
@@ -3132,6 +3181,7 @@
     <span class="doccomment">/// Expands a color palette by re-using the existing buffer.
     /// Assumes 8 bit per pixel. Uses an optionally transparent index to
     /// adjust it's alpha value accordingly.
+    </span><span class="attr">#[must_use]
     </span><span class="kw">pub fn </span>expand_palette(
         <span class="self">self</span>,
         palette: <span class="kw-2">&amp;</span>[(u8, u8, u8)],
@@ -3188,7 +3238,7 @@
         <span class="kw">let </span><span class="kw-2">mut </span>buffer: ImageBuffer&lt;ToType, Vec&lt;ToType::Subpixel&gt;&gt; =
             ImageBuffer::new(<span class="self">self</span>.width, <span class="self">self</span>.height);
         <span class="kw">for </span>(to, from) <span class="kw">in </span>buffer.pixels_mut().zip(<span class="self">self</span>.pixels()) {
-            to.from_color(from)
+            to.from_color(from);
         }
         buffer
     }
@@ -3279,15 +3329,41 @@
     <span class="kw">use </span><span class="kw">crate</span>::math::Rect;
     <span class="kw">use </span><span class="kw">crate</span>::GenericImage <span class="kw">as _</span>;
     <span class="kw">use </span><span class="kw">crate</span>::ImageFormat;
-    <span class="kw">use crate</span>::{color, Rgb};
+    <span class="kw">use crate</span>::{Luma, LumaA, Pixel, Rgb, Rgba};
+    <span class="kw">use </span>num_traits::Zero;
 
     <span class="attr">#[test]
     </span><span class="doccomment">/// Tests if image buffers from slices work
     </span><span class="kw">fn </span>slice_buffer() {
         <span class="kw">let </span>data = [<span class="number">0</span>; <span class="number">9</span>];
-        <span class="kw">let </span>buf: ImageBuffer&lt;color::Luma&lt;u8&gt;, <span class="kw">_</span>&gt; = ImageBuffer::from_raw(<span class="number">3</span>, <span class="number">3</span>, <span class="kw-2">&amp;</span>data[..]).unwrap();
+        <span class="kw">let </span>buf: ImageBuffer&lt;Luma&lt;u8&gt;, <span class="kw">_</span>&gt; = ImageBuffer::from_raw(<span class="number">3</span>, <span class="number">3</span>, <span class="kw-2">&amp;</span>data[..]).unwrap();
         <span class="macro">assert_eq!</span>(<span class="kw-2">&amp;*</span>buf, <span class="kw-2">&amp;</span>data[..])
     }
+
+    <span class="macro">macro_rules!</span> new_buffer_zero_test {
+        (<span class="macro-nonterminal">$test_name</span>:ident, <span class="macro-nonterminal">$pxt</span>:ty) =&gt; {
+            <span class="attr">#[test]
+            </span><span class="kw">fn </span><span class="macro-nonterminal">$test_name</span>() {
+                <span class="kw">let </span>buffer = ImageBuffer::&lt;<span class="macro-nonterminal">$pxt</span>, Vec&lt;&lt;<span class="macro-nonterminal">$pxt </span><span class="kw">as </span>Pixel&gt;::Subpixel&gt;&gt;::new(<span class="number">2</span>, <span class="number">2</span>);
+                <span class="macro">assert!</span>(buffer
+                    .iter()
+                    .all(|p| <span class="kw-2">*</span>p == &lt;<span class="macro-nonterminal">$pxt </span><span class="kw">as </span>Pixel&gt;::Subpixel::zero()));
+            }
+        };
+    }
+
+    <span class="macro">new_buffer_zero_test!</span>(luma_u8_zero_test, Luma&lt;u8&gt;);
+    <span class="macro">new_buffer_zero_test!</span>(luma_u16_zero_test, Luma&lt;u16&gt;);
+    <span class="macro">new_buffer_zero_test!</span>(luma_f32_zero_test, Luma&lt;f32&gt;);
+    <span class="macro">new_buffer_zero_test!</span>(luma_a_u8_zero_test, LumaA&lt;u8&gt;);
+    <span class="macro">new_buffer_zero_test!</span>(luma_a_u16_zero_test, LumaA&lt;u16&gt;);
+    <span class="macro">new_buffer_zero_test!</span>(luma_a_f32_zero_test, LumaA&lt;f32&gt;);
+    <span class="macro">new_buffer_zero_test!</span>(rgb_u8_zero_test, Rgb&lt;u8&gt;);
+    <span class="macro">new_buffer_zero_test!</span>(rgb_u16_zero_test, Rgb&lt;u16&gt;);
+    <span class="macro">new_buffer_zero_test!</span>(rgb_f32_zero_test, Rgb&lt;f32&gt;);
+    <span class="macro">new_buffer_zero_test!</span>(rgb_a_u8_zero_test, Rgba&lt;u8&gt;);
+    <span class="macro">new_buffer_zero_test!</span>(rgb_a_u16_zero_test, Rgba&lt;u16&gt;);
+    <span class="macro">new_buffer_zero_test!</span>(rgb_a_f32_zero_test, Rgba&lt;f32&gt;);
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>get_pixel() {

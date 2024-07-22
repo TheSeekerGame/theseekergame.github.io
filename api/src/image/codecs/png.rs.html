@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/image-0.25.1/src/codecs/png.rs`."><title>png.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-081576b923113409.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="image" data-themes="" data-resource-suffix="" data-rustdoc-version="1.79.0 (129f3b996 2024-06-10)" data-channel="1.79.0" data-search-js="search-bf21c90c8c1d92b1.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-e32f0c247825364d.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-20a3ad099b048cf2.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-09095024cf37855e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../image/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Type ‘S’ or ‘/’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings">Settings</a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/image-0.25.2/src/codecs/png.rs`."><title>png.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-081576b923113409.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="image" data-themes="" data-resource-suffix="" data-rustdoc-version="1.79.0 (129f3b996 2024-06-10)" data-channel="1.79.0" data-search-js="search-bf21c90c8c1d92b1.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-e32f0c247825364d.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-20a3ad099b048cf2.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-09095024cf37855e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../image/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Type ‘S’ or ‘/’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings">Settings</a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -735,8 +735,6 @@
 <a href="#735" id="735">735</a>
 <a href="#736" id="736">736</a>
 <a href="#737" id="737">737</a>
-<a href="#738" id="738">738</a>
-<a href="#739" id="739">739</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! Decoding and Encoding of PNG Images
 //!
 //! PNG (Portable Network Graphics) is an image format that supports lossless compression.
@@ -757,7 +755,7 @@
     ParameterError, ParameterErrorKind, UnsupportedError, UnsupportedErrorKind,
 };
 <span class="kw">use </span><span class="kw">crate</span>::image::{AnimationDecoder, ImageDecoder, ImageEncoder, ImageFormat};
-<span class="kw">use </span><span class="kw">crate</span>::io::Limits;
+<span class="kw">use </span><span class="kw">crate</span>::Limits;
 <span class="kw">use crate</span>::{DynamicImage, GenericImage, ImageBuffer, Luma, LumaA, Rgb, Rgba, RgbaImage};
 
 <span class="comment">// http://www.w3.org/TR/PNG-Structure.html
@@ -779,7 +777,7 @@
 
     <span class="doccomment">/// Creates a new decoder that decodes from the stream ```r``` with the given limits.
     </span><span class="kw">pub fn </span>with_limits(r: R, limits: Limits) -&gt; ImageResult&lt;PngDecoder&lt;R&gt;&gt; {
-        limits.check_support(<span class="kw-2">&amp;</span><span class="kw">crate</span>::io::LimitSupport::default())<span class="question-mark">?</span>;
+        limits.check_support(<span class="kw-2">&amp;</span><span class="kw">crate</span>::LimitSupport::default())<span class="question-mark">?</span>;
 
         <span class="kw">let </span>max_bytes = usize::try_from(limits.max_alloc.unwrap_or(u64::MAX)).unwrap_or(usize::MAX);
         <span class="kw">let </span><span class="kw-2">mut </span>decoder = png::Decoder::new_with_limits(r, png::Limits { bytes: max_bytes });
@@ -868,7 +866,7 @@
             </span>.reader
             .info()
             .source_gamma
-            .map(|x| x.into_scaled() <span class="kw">as </span>f64 / <span class="number">100000.0</span>))
+            .map(|x| f64::from(x.into_scaled()) / <span class="number">100_000.0</span>))
     }
 
     <span class="doccomment">/// Turn this into an iterator over the animation frames.
@@ -917,7 +915,7 @@
     }
 
     <span class="kw">fn </span>read_image(<span class="kw-2">mut </span><span class="self">self</span>, buf: <span class="kw-2">&amp;mut </span>[u8]) -&gt; ImageResult&lt;()&gt; {
-        <span class="kw">use </span>byteorder::{BigEndian, ByteOrder, NativeEndian};
+        <span class="kw">use </span>byteorder_lite::{BigEndian, ByteOrder, NativeEndian};
 
         <span class="macro">assert_eq!</span>(u64::try_from(buf.len()), <span class="prelude-val">Ok</span>(<span class="self">self</span>.total_bytes()));
         <span class="self">self</span>.reader.next_frame(buf).map_err(ImageError::from_png)<span class="question-mark">?</span>;
@@ -931,7 +929,7 @@
             <span class="number">1 </span>=&gt; (), <span class="comment">// No reodering necessary for u8
             </span><span class="number">2 </span>=&gt; buf.chunks_exact_mut(<span class="number">2</span>).for_each(|c| {
                 <span class="kw">let </span>v = BigEndian::read_u16(c);
-                NativeEndian::write_u16(c, v)
+                NativeEndian::write_u16(c, v);
             }),
             <span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(),
         }
@@ -943,7 +941,7 @@
     }
 
     <span class="kw">fn </span>set_limits(<span class="kw-2">&amp;mut </span><span class="self">self</span>, limits: Limits) -&gt; ImageResult&lt;()&gt; {
-        limits.check_support(<span class="kw-2">&amp;</span><span class="kw">crate</span>::io::LimitSupport::default())<span class="question-mark">?</span>;
+        limits.check_support(<span class="kw-2">&amp;</span><span class="kw">crate</span>::LimitSupport::default())<span class="question-mark">?</span>;
         <span class="kw">let </span>info = <span class="self">self</span>.reader.info();
         limits.check_dimensions(info.width, info.height)<span class="question-mark">?</span>;
         <span class="self">self</span>.limits = limits;
@@ -1336,7 +1334,7 @@
     <span class="doccomment">/// Write a PNG image with the specified width, height, and color type.
     ///
     /// For color types with 16-bit per channel or larger, the contents of `buf` should be in
-    /// native endian. PngEncoder will automatically convert to big endian as required by the
+    /// native endian. `PngEncoder` will automatically convert to big endian as required by the
     /// underlying PNG format.
     </span><span class="attr">#[track_caller]
     </span><span class="kw">fn </span>write_image(
@@ -1346,7 +1344,7 @@
         height: u32,
         color_type: ExtendedColorType,
     ) -&gt; ImageResult&lt;()&gt; {
-        <span class="kw">use </span>byteorder::{BigEndian, ByteOrder, NativeEndian};
+        <span class="kw">use </span>byteorder_lite::{BigEndian, ByteOrder, NativeEndian};
         <span class="kw">use </span>ExtendedColorType::<span class="kw-2">*</span>;
 
         <span class="kw">let </span>expected_buffer_len = color_type.buffer_size(width, height);
@@ -1410,11 +1408,9 @@
 <span class="kw">impl </span>fmt::Display <span class="kw">for </span>BadPngRepresentation {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter) -&gt; fmt::Result {
         <span class="kw">match </span><span class="self">self </span>{
-            <span class="self">Self</span>::ColorType(color_type) =&gt; <span class="macro">write!</span>(
-                f,
-                <span class="string">"The color {:?} can not be represented in PNG."</span>,
-                color_type
-            ),
+            <span class="self">Self</span>::ColorType(color_type) =&gt; {
+                <span class="macro">write!</span>(f, <span class="string">"The color {color_type:?} can not be represented in PNG."</span>)
+            }
         }
     }
 }

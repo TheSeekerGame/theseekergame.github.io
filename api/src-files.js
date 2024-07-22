@@ -85,6 +85,7 @@ var srcIndex = new Map(JSON.parse('[\
 ["bytemuck",["",[],["allocation.rs","anybitpattern.rs","checked.rs","contiguous.rs","internal.rs","lib.rs","no_uninit.rs","offset_of.rs","pod.rs","pod_in_option.rs","transparent.rs","zeroable.rs","zeroable_in_option.rs"]]],\
 ["bytemuck_derive",["",[],["lib.rs","traits.rs"]]],\
 ["byteorder",["",[],["io.rs","lib.rs"]]],\
+["byteorder_lite",["",[],["io.rs","lib.rs"]]],\
 ["calloop",["",[["sources",[["ping",[],["eventfd.rs"]]],["channel.rs","generic.rs","mod.rs","ping.rs","timer.rs","transient.rs"]]],["error.rs","io.rs","lib.rs","list.rs","loop_logic.rs","macros.rs","sys.rs","token.rs"]]],\
 ["calloop_wayland_source",["",[],["lib.rs"]]],\
 ["cfg_if",["",[],["lib.rs"]]],\
@@ -177,7 +178,7 @@ var srcIndex = new Map(JSON.parse('[\
 ["home",["",[],["env.rs","lib.rs"]]],\
 ["ident_case",["",[],["lib.rs"]]],\
 ["idna",["",[],["lib.rs","punycode.rs","uts46.rs"]]],\
-["image",["",[["codecs",[],["png.rs"]],["imageops",[],["affine.rs","colorops.rs","mod.rs","sample.rs"]],["io",[],["free_functions.rs","mod.rs","reader.rs"]],["math",[],["mod.rs","rect.rs","utils.rs"]],["utils",[],["mod.rs"]]],["animation.rs","buffer.rs","color.rs","dynimage.rs","error.rs","flat.rs","image.rs","lib.rs","traits.rs"]]],\
+["image",["",[["codecs",[],["png.rs"]],["image_reader",[],["free_functions.rs","image_reader_type.rs","mod.rs"]],["imageops",[],["affine.rs","colorops.rs","mod.rs","sample.rs"]],["math",[],["mod.rs","rect.rs","utils.rs"]],["utils",[],["mod.rs"]]],["animation.rs","buffer.rs","color.rs","dynimage.rs","error.rs","flat.rs","image.rs","lib.rs","traits.rs"]]],\
 ["indexmap",["",[["map",[["core",[],["entry.rs","raw.rs","raw_entry_v1.rs"]]],["core.rs","iter.rs","mutable.rs","serde_seq.rs","slice.rs"]],["set",[],["iter.rs","mutable.rs","slice.rs"]]],["arbitrary.rs","lib.rs","macros.rs","map.rs","serde.rs","set.rs","util.rs"]]],\
 ["inflections",["",[],["case.rs","lib.rs"]]],\
 ["inotify",["",[],["events.rs","fd_guard.rs","inotify.rs","lib.rs","util.rs","watches.rs"]]],\
