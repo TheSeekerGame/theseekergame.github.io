@@ -1436,6 +1436,16 @@
 <a href="#1436" id="1436">1436</a>
 <a href="#1437" id="1437">1437</a>
 <a href="#1438" id="1438">1438</a>
+<a href="#1439" id="1439">1439</a>
+<a href="#1440" id="1440">1440</a>
+<a href="#1441" id="1441">1441</a>
+<a href="#1442" id="1442">1442</a>
+<a href="#1443" id="1443">1443</a>
+<a href="#1444" id="1444">1444</a>
+<a href="#1445" id="1445">1445</a>
+<a href="#1446" id="1446">1446</a>
+<a href="#1447" id="1447">1447</a>
+<a href="#1448" id="1448">1448</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>bevy_hanabi::{ParticleEffect, ParticleEffectBundle};
 <span class="attr">#[cfg(feature = <span class="string">"dev"</span>)]
 </span><span class="kw">use </span>bevy_inspector_egui::quick::FilterQueryInspectorPlugin;
@@ -1626,7 +1636,7 @@
                         .spawn((
                             EnemyBlueprintBundle {
                                 marker: EnemyBlueprint {
-                                    bonus_hp: <span class="number">20 </span>* killed.<span class="number">0 </span><span class="kw">as </span>u32
+                                    bonus_hp: <span class="number">20 </span>* killed.<span class="number">0 </span><span class="kw">as </span>u32,
                                 },
                             },
                             TransformBundle::from_transform(<span class="kw-2">*</span>transform),
@@ -1641,11 +1651,17 @@
 }
 
 <span class="kw">fn </span>setup_enemy(
-    <span class="kw-2">mut </span>q: Query&lt;(<span class="kw-2">&amp;mut </span>Transform, Entity, Ref&lt;EnemyBlueprint&gt;)&gt;,
+    <span class="kw-2">mut </span>q: Query&lt;(
+        <span class="kw-2">&amp;mut </span>Transform,
+        Entity,
+        Ref&lt;EnemyBlueprint&gt;,
+    )&gt;,
     <span class="kw-2">mut </span>commands: Commands,
 ) {
     <span class="kw">for </span>(<span class="kw-2">mut </span>xf_gent, e_gent, bp) <span class="kw">in </span>q.iter_mut() {
-        <span class="kw">if </span>!bp.is_added() { <span class="kw">continue</span>; }
+        <span class="kw">if </span>!bp.is_added() {
+            <span class="kw">continue</span>;
+        }
         <span class="comment">//TODO: ensure propper z order
         </span>xf_gent.translation.z = <span class="number">14.0 </span>* <span class="number">0.000001</span>;
         <span class="kw">let </span>e_gfx = commands.spawn(()).id();
@@ -1692,19 +1708,23 @@
             Waiting::new(<span class="number">12</span>),
             AddQueue::default(),
             TransitionQueue::default(), <span class="comment">// },
-        </span>));
-        commands.entity(e_gfx).insert((EnemyGfxBundle {
-            marker: EnemyGfx { e_gent },
-            gent2gfx: TransformGfxFromGent {
-                pixel_aligned: <span class="bool-val">false</span>,
-                gent: e_gent,
+            </span>StateDespawnMarker,
+        ));
+        commands.entity(e_gfx).insert((
+            EnemyGfxBundle {
+                marker: EnemyGfx { e_gent },
+                gent2gfx: TransformGfxFromGent {
+                    pixel_aligned: <span class="bool-val">false</span>,
+                    gent: e_gent,
+                },
+                sprite: SpriteSheetBundle {
+                    transform: <span class="kw-2">*</span>xf_gent,
+                    ..Default::default()
+                },
+                animation: Default::default(),
             },
-            sprite: SpriteSheetBundle {
-                transform: <span class="kw-2">*</span>xf_gent,
-                ..Default::default()
-            },
-            animation: Default::default(),
-        },));
+            StateDespawnMarker,
+        ));
         commands.entity(e_gfx).remove::&lt;EnemyBlueprint&gt;();
     }
 }

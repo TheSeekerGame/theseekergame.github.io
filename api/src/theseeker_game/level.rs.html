@@ -131,6 +131,51 @@
 <a href="#131" id="131">131</a>
 <a href="#132" id="132">132</a>
 <a href="#133" id="133">133</a>
+<a href="#134" id="134">134</a>
+<a href="#135" id="135">135</a>
+<a href="#136" id="136">136</a>
+<a href="#137" id="137">137</a>
+<a href="#138" id="138">138</a>
+<a href="#139" id="139">139</a>
+<a href="#140" id="140">140</a>
+<a href="#141" id="141">141</a>
+<a href="#142" id="142">142</a>
+<a href="#143" id="143">143</a>
+<a href="#144" id="144">144</a>
+<a href="#145" id="145">145</a>
+<a href="#146" id="146">146</a>
+<a href="#147" id="147">147</a>
+<a href="#148" id="148">148</a>
+<a href="#149" id="149">149</a>
+<a href="#150" id="150">150</a>
+<a href="#151" id="151">151</a>
+<a href="#152" id="152">152</a>
+<a href="#153" id="153">153</a>
+<a href="#154" id="154">154</a>
+<a href="#155" id="155">155</a>
+<a href="#156" id="156">156</a>
+<a href="#157" id="157">157</a>
+<a href="#158" id="158">158</a>
+<a href="#159" id="159">159</a>
+<a href="#160" id="160">160</a>
+<a href="#161" id="161">161</a>
+<a href="#162" id="162">162</a>
+<a href="#163" id="163">163</a>
+<a href="#164" id="164">164</a>
+<a href="#165" id="165">165</a>
+<a href="#166" id="166">166</a>
+<a href="#167" id="167">167</a>
+<a href="#168" id="168">168</a>
+<a href="#169" id="169">169</a>
+<a href="#170" id="170">170</a>
+<a href="#171" id="171">171</a>
+<a href="#172" id="172">172</a>
+<a href="#173" id="173">173</a>
+<a href="#174" id="174">174</a>
+<a href="#175" id="175">175</a>
+<a href="#176" id="176">176</a>
+<a href="#177" id="177">177</a>
+<a href="#178" id="178">178</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! Level Management
 //!
 //! This is where we manage everything related to managing the map /
@@ -148,6 +193,8 @@
 
 </span><span class="kw">use </span><span class="kw">crate</span>::parallax::{Parallax, ParallaxOffset};
 <span class="kw">use </span><span class="kw">crate</span>::prelude::<span class="kw-2">*</span>;
+<span class="kw">use </span>seek_ecs_tilemap::map::TilemapChunks;
+<span class="kw">use </span>seek_ecs_tilemap::tiles::TilePos;
 
 <span class="kw">pub struct </span>LevelManagerPlugin;
 
@@ -162,6 +209,10 @@
         );
         app.add_systems(Update, attach_parallax);
         app.add_systems(Update, hide_level_0);
+        app.add_systems(
+            Update,
+            add_despawn_marker_to_entity::&lt;TilePos&gt;,
+        );
     }
 }
 
@@ -170,17 +221,18 @@
     <span class="comment">// TODO: per-level asset management instead of preloaded assets
     // TODO: when we have save files, use that to choose the level to init at
 
-    //#[cfg(not(feature = "dev"))]
     </span>commands.spawn((
-        StateDespawnMarker,
         LdtkWorldBundle {
             ldtk_handle: preloaded
                 .get_single_asset(<span class="string">"level.01"</span>)
                 .expect(<span class="string">"Expected asset key 'level.01'"</span>),
             ..Default::default()
         },
+        StateDespawnMarker,
     ));
-    <span class="comment">/*#[cfg(feature = "dev")]
+
+    <span class="comment">//#[cfg(not(feature = "dev"))]
+    /*#[cfg(feature = "dev")]
     commands.spawn((
         StateDespawnMarker,
         LdtkWorldBundle {
@@ -192,14 +244,43 @@
     ));*/
 </span>}
 
+<span class="doccomment">/// when a specific entity is spawned on level load
+</span><span class="kw">fn </span>add_despawn_marker_to_entity&lt;T: Component&gt;(
+    <span class="kw-2">mut </span>commands: Commands,
+    query: Query&lt;Entity, Added&lt;T&gt;&gt;,
+    state: Res&lt;State&lt;AppState&gt;&gt;,
+    <span class="kw-2">mut </span>ran: Local&lt;bool&gt;,
+) {
+    <span class="comment">// Ensures we only iterate over all the items once
+    </span><span class="kw">if </span>state.is_changed() &amp;&amp; <span class="kw-2">*</span>state.get() == AppState::InGame {
+        <span class="kw-2">*</span>ran = <span class="bool-val">false</span>;
+    }
+    <span class="kw">if </span><span class="kw-2">*</span>ran {
+        <span class="kw">return</span>;
+    }
+    <span class="kw">if </span>query.iter().next().is_some() {
+        <span class="kw-2">*</span>ran = <span class="bool-val">true</span>;
+    }
+
+    <span class="kw">for </span>e <span class="kw">in </span>query.iter() {
+        commands.entity(e).insert(StateDespawnMarker);
+    }
+}
+
 <span class="doccomment">/// level_0 is a giant grey object that blocks all our backgrounds, so we hide it.
 </span><span class="kw">fn </span>hide_level_0(
     <span class="kw-2">mut </span>commands: Commands,
-    <span class="kw-2">mut </span>query: Query&lt;(<span class="kw-2">&amp;</span>Name, <span class="kw-2">&amp;mut </span>Visibility)&gt;,
+    <span class="kw-2">mut </span>query: Query&lt;(Entity, <span class="kw-2">&amp;</span>Name, <span class="kw-2">&amp;mut </span>Visibility)&gt;,
+    state: Res&lt;State&lt;AppState&gt;&gt;,
     <span class="kw-2">mut </span>ran: Local&lt;bool&gt;,
 ) {
-    <span class="kw">if </span><span class="kw-2">*</span>ran { <span class="kw">return</span>; }
-    <span class="kw">for </span>(name, <span class="kw-2">mut </span>visbility) <span class="kw">in </span>query.iter_mut() {
+    <span class="kw">if </span>state.is_changed() &amp;&amp; <span class="kw-2">*</span>state.get() == AppState::InGame {
+        <span class="kw-2">*</span>ran = <span class="bool-val">false</span>;
+    }
+    <span class="kw">if </span><span class="kw-2">*</span>ran {
+        <span class="kw">return</span>;
+    }
+    <span class="kw">for </span>(entity, name, <span class="kw-2">mut </span>visbility) <span class="kw">in </span>query.iter_mut() {
         <span class="kw">if </span>name.as_str() == <span class="string">"Level_0" </span>{
             <span class="kw-2">*</span>visbility = Visibility::Hidden;
             <span class="macro">println!</span>(<span class="string">"Made 'level_0' invisible"</span>);
@@ -222,7 +303,11 @@
     <span class="kw-2">mut </span>commands: Commands,
     <span class="kw-2">mut </span>query: Query&lt;
         (Entity, <span class="kw-2">&amp;</span>LayerMetadata, <span class="kw-2">&amp;mut </span>Transform),
-        (Without&lt;Parallax&gt;, Without&lt;OtherBackround&gt;, Without&lt;MainBackround&gt;)
+        (
+            Without&lt;Parallax&gt;,
+            Without&lt;OtherBackround&gt;,
+            Without&lt;MainBackround&gt;,
+        ),
     &gt;,
 ) {
     <span class="kw">for </span>(entity, layer_metadata, <span class="kw-2">mut </span>transform) <span class="kw">in </span>query.iter_mut() {
@@ -238,8 +323,9 @@
                 -transform.translation.z * <span class="number">0.000001
             </span>},
             <span class="string">"Entities" </span>=&gt; {
-                <span class="kw">continue
-            </span>}
+                commands.entity(entity).try_insert(StateDespawnMarker);
+                <span class="kw">continue</span>;
+            },
             <span class="kw">_ </span>=&gt; {
                 commands.entity(entity).insert(OtherBackround);
                 use_parallax = <span class="bool-val">false</span>;
@@ -247,7 +333,11 @@
             </span>},
         };
 
-        <span class="macro">println!</span>(<span class="string">"{:?}: {amount}"</span>, layer_metadata.identifier);
+        <span class="macro">println!</span>(
+            <span class="string">"{:?}: {amount}"</span>,
+            layer_metadata.identifier
+        );
+        commands.entity(entity).try_insert(StateDespawnMarker);
 
         transform.translation.z = <span class="number">0.0 </span>- amount;
 

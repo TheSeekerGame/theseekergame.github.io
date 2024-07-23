@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["attach_parallax","game_level_init","hide_level_0"],"struct":["LevelManagerPlugin","MainBackround","OtherBackround"]};
+window.SIDEBAR_ITEMS = {"fn":["add_despawn_marker_to_entity","attach_parallax","game_level_init","hide_level_0"],"struct":["LevelManagerPlugin","MainBackround","OtherBackround"]};
