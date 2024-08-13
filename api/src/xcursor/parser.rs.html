@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/xcursor-0.3.6/src/parser.rs`."><title>parser.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-081576b923113409.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="xcursor" data-themes="" data-resource-suffix="" data-rustdoc-version="1.79.0 (129f3b996 2024-06-10)" data-channel="1.79.0" data-search-js="search-bf21c90c8c1d92b1.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-e32f0c247825364d.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-20a3ad099b048cf2.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-09095024cf37855e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../xcursor/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Type ‘S’ or ‘/’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings">Settings</a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/xcursor-0.3.8/src/parser.rs`."><title>parser.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-dd39b87e5fcfba68.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="xcursor" data-themes="" data-resource-suffix="" data-rustdoc-version="1.80.1 (3f5fd8dd4 2024-08-06)" data-channel="1.80.1" data-search-js="search-d52510db62a78183.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-20a3ad099b048cf2.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-df360f571f6edeae.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -249,11 +249,82 @@
 <a href="#249" id="249">249</a>
 <a href="#250" id="250">250</a>
 <a href="#251" id="251">251</a>
+<a href="#252" id="252">252</a>
+<a href="#253" id="253">253</a>
+<a href="#254" id="254">254</a>
+<a href="#255" id="255">255</a>
+<a href="#256" id="256">256</a>
+<a href="#257" id="257">257</a>
+<a href="#258" id="258">258</a>
+<a href="#259" id="259">259</a>
+<a href="#260" id="260">260</a>
+<a href="#261" id="261">261</a>
+<a href="#262" id="262">262</a>
+<a href="#263" id="263">263</a>
+<a href="#264" id="264">264</a>
+<a href="#265" id="265">265</a>
+<a href="#266" id="266">266</a>
+<a href="#267" id="267">267</a>
+<a href="#268" id="268">268</a>
+<a href="#269" id="269">269</a>
+<a href="#270" id="270">270</a>
+<a href="#271" id="271">271</a>
+<a href="#272" id="272">272</a>
+<a href="#273" id="273">273</a>
+<a href="#274" id="274">274</a>
+<a href="#275" id="275">275</a>
+<a href="#276" id="276">276</a>
+<a href="#277" id="277">277</a>
+<a href="#278" id="278">278</a>
+<a href="#279" id="279">279</a>
+<a href="#280" id="280">280</a>
+<a href="#281" id="281">281</a>
+<a href="#282" id="282">282</a>
+<a href="#283" id="283">283</a>
+<a href="#284" id="284">284</a>
+<a href="#285" id="285">285</a>
+<a href="#286" id="286">286</a>
+<a href="#287" id="287">287</a>
+<a href="#288" id="288">288</a>
+<a href="#289" id="289">289</a>
+<a href="#290" id="290">290</a>
+<a href="#291" id="291">291</a>
+<a href="#292" id="292">292</a>
+<a href="#293" id="293">293</a>
+<a href="#294" id="294">294</a>
+<a href="#295" id="295">295</a>
+<a href="#296" id="296">296</a>
+<a href="#297" id="297">297</a>
+<a href="#298" id="298">298</a>
+<a href="#299" id="299">299</a>
+<a href="#300" id="300">300</a>
+<a href="#301" id="301">301</a>
+<a href="#302" id="302">302</a>
+<a href="#303" id="303">303</a>
+<a href="#304" id="304">304</a>
+<a href="#305" id="305">305</a>
+<a href="#306" id="306">306</a>
+<a href="#307" id="307">307</a>
+<a href="#308" id="308">308</a>
+<a href="#309" id="309">309</a>
+<a href="#310" id="310">310</a>
+<a href="#311" id="311">311</a>
+<a href="#312" id="312">312</a>
+<a href="#313" id="313">313</a>
+<a href="#314" id="314">314</a>
+<a href="#315" id="315">315</a>
+<a href="#316" id="316">316</a>
+<a href="#317" id="317">317</a>
+<a href="#318" id="318">318</a>
+<a href="#319" id="319">319</a>
+<a href="#320" id="320">320</a>
+<a href="#321" id="321">321</a>
+<a href="#322" id="322">322</a>
+<a href="#323" id="323">323</a>
+<a href="#324" id="324">324</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{
-    convert::TryInto,
-    fmt,
-    fmt::{Debug, Formatter},
-    mem::size_of,
+    fmt::{<span class="self">self</span>, Debug, Formatter},
+    io::{Cursor, Error, ErrorKind, Read, <span class="prelude-ty">Result </span><span class="kw">as </span>IoResult, Seek, SeekFrom},
 };
 
 <span class="attr">#[derive(Debug, Clone, Eq, PartialEq)]
@@ -306,59 +377,66 @@
     }
 }
 
-<span class="kw">fn </span>parse_header(<span class="kw-2">mut </span>i: Stream&lt;<span class="lifetime">'_</span>&gt;) -&gt; <span class="prelude-ty">Option</span>&lt;(Stream&lt;<span class="lifetime">'_</span>&gt;, u32)&gt; {
-    i.tag(<span class="string">b"Xcur"</span>)<span class="question-mark">?</span>;
-    i.u32_le()<span class="question-mark">?</span>;
-    i.u32_le()<span class="question-mark">?</span>;
+<span class="kw">fn </span>parse_header(i: <span class="kw-2">&amp;mut </span><span class="kw">impl </span>Read) -&gt; IoResult&lt;(u32, u32)&gt; {
+    i.tag(<span class="kw-2">*</span><span class="string">b"Xcur"</span>)<span class="question-mark">?</span>;
+    <span class="kw">let </span>header = i.u32_le()<span class="question-mark">?</span>;
+    <span class="kw">let </span>_version = i.u32_le()<span class="question-mark">?</span>;
     <span class="kw">let </span>ntoc = i.u32_le()<span class="question-mark">?</span>;
 
-    <span class="prelude-val">Some</span>((i, ntoc))
+    <span class="prelude-val">Ok</span>((header, ntoc))
 }
 
-<span class="kw">fn </span>parse_toc(<span class="kw-2">mut </span>i: Stream&lt;<span class="lifetime">'_</span>&gt;) -&gt; <span class="prelude-ty">Option</span>&lt;(Stream&lt;<span class="lifetime">'_</span>&gt;, Toc)&gt; {
+<span class="kw">fn </span>parse_toc(i: <span class="kw-2">&amp;mut </span><span class="kw">impl </span>Read) -&gt; IoResult&lt;Toc&gt; {
     <span class="kw">let </span>toctype = i.u32_le()<span class="question-mark">?</span>; <span class="comment">// Type
     </span><span class="kw">let </span>subtype = i.u32_le()<span class="question-mark">?</span>; <span class="comment">// Subtype
     </span><span class="kw">let </span>pos = i.u32_le()<span class="question-mark">?</span>; <span class="comment">// Position
 
-    </span><span class="prelude-val">Some</span>((
-        i,
-        Toc {
-            toctype,
-            subtype,
-            pos,
-        },
-    ))
+    </span><span class="prelude-val">Ok</span>(Toc {
+        toctype,
+        subtype,
+        pos,
+    })
 }
 
-<span class="kw">fn </span>parse_img(<span class="kw-2">mut </span>i: Stream&lt;<span class="lifetime">'_</span>&gt;) -&gt; <span class="prelude-ty">Option</span>&lt;(Stream&lt;<span class="lifetime">'_</span>&gt;, Image)&gt; {
-    i.tag(<span class="kw-2">&amp;</span>[<span class="number">0x24</span>, <span class="number">0x00</span>, <span class="number">0x00</span>, <span class="number">0x00</span>])<span class="question-mark">?</span>; <span class="comment">// Header size
-    </span>i.tag(<span class="kw-2">&amp;</span>[<span class="number">0x02</span>, <span class="number">0x00</span>, <span class="number">0xfd</span>, <span class="number">0xff</span>])<span class="question-mark">?</span>; <span class="comment">// Type
+<span class="kw">fn </span>parse_img(i: <span class="kw-2">&amp;mut </span><span class="kw">impl </span>Read) -&gt; IoResult&lt;Image&gt; {
+    i.tag([<span class="number">0x24</span>, <span class="number">0x00</span>, <span class="number">0x00</span>, <span class="number">0x00</span>])<span class="question-mark">?</span>; <span class="comment">// Header size
+    </span>i.tag([<span class="number">0x02</span>, <span class="number">0x00</span>, <span class="number">0xfd</span>, <span class="number">0xff</span>])<span class="question-mark">?</span>; <span class="comment">// Type
     </span><span class="kw">let </span>size = i.u32_le()<span class="question-mark">?</span>;
-    i.tag(<span class="kw-2">&amp;</span>[<span class="number">0x01</span>, <span class="number">0x00</span>, <span class="number">0x00</span>, <span class="number">0x00</span>])<span class="question-mark">?</span>; <span class="comment">// Image version (1)
+    i.tag([<span class="number">0x01</span>, <span class="number">0x00</span>, <span class="number">0x00</span>, <span class="number">0x00</span>])<span class="question-mark">?</span>; <span class="comment">// Image version (1)
     </span><span class="kw">let </span>width = i.u32_le()<span class="question-mark">?</span>;
     <span class="kw">let </span>height = i.u32_le()<span class="question-mark">?</span>;
     <span class="kw">let </span>xhot = i.u32_le()<span class="question-mark">?</span>;
     <span class="kw">let </span>yhot = i.u32_le()<span class="question-mark">?</span>;
     <span class="kw">let </span>delay = i.u32_le()<span class="question-mark">?</span>;
 
-    <span class="kw">let </span>img_length: usize = (<span class="number">4 </span>* width * height) <span class="kw">as </span>usize;
-    <span class="kw">let </span>pixels_slice = i.take_bytes(img_length)<span class="question-mark">?</span>;
-    <span class="kw">let </span>pixels_argb = rgba_to_argb(pixels_slice);
-    <span class="kw">let </span>pixels_rgba = Vec::from(pixels_slice);
+    <span class="comment">// Check image is well-formed. Taken from https://gitlab.freedesktop.org/xorg/lib/libxcursor/-/blob/09617bcc9a0f1b5072212da5f8fede92ab85d157/src/file.c#L456-463
+    </span><span class="kw">if </span>width &gt; <span class="number">0x7fff </span>|| height &gt; <span class="number">0x7fff </span>{
+        <span class="kw">return </span><span class="prelude-val">Err</span>(Error::new(ErrorKind::Other, <span class="string">"Image too large"</span>));
+    }
+    <span class="kw">if </span>width == <span class="number">0 </span>|| height == <span class="number">0 </span>{
+        <span class="kw">return </span><span class="prelude-val">Err</span>(Error::new(
+            ErrorKind::Other,
+            <span class="string">"Image with zero width or height"</span>,
+        ));
+    }
+    <span class="kw">if </span>xhot &gt; width || yhot &gt; height {
+        <span class="kw">return </span><span class="prelude-val">Err</span>(Error::new(ErrorKind::Other, <span class="string">"Hotspot outside image"</span>));
+    }
 
-    <span class="prelude-val">Some</span>((
-        i,
-        Image {
-            size,
-            width,
-            height,
-            xhot,
-            yhot,
-            delay,
-            pixels_argb,
-            pixels_rgba,
-        },
-    ))
+    <span class="kw">let </span>img_length: usize = (<span class="number">4 </span>* width * height) <span class="kw">as </span>usize;
+    <span class="kw">let </span>pixels_rgba = i.take_bytes(img_length)<span class="question-mark">?</span>;
+    <span class="kw">let </span>pixels_argb = rgba_to_argb(<span class="kw-2">&amp;</span>pixels_rgba);
+
+    <span class="prelude-val">Ok</span>(Image {
+        size,
+        width,
+        height,
+        xhot,
+        yhot,
+        delay,
+        pixels_argb,
+        pixels_rgba,
+    })
 }
 
 <span class="doccomment">/// Converts a RGBA slice into an ARGB vec
@@ -368,11 +446,7 @@
 </span><span class="kw">fn </span>rgba_to_argb(i: <span class="kw-2">&amp;</span>[u8]) -&gt; Vec&lt;u8&gt; {
     <span class="kw">let </span><span class="kw-2">mut </span>res = Vec::with_capacity(i.len());
 
-    <span class="kw">for </span>rgba <span class="kw">in </span>i.chunks(<span class="number">4</span>) {
-        <span class="kw">if </span>rgba.len() &lt; <span class="number">4 </span>{
-            <span class="kw">break</span>;
-        }
-
+    <span class="kw">for </span>rgba <span class="kw">in </span>i.chunks_exact(<span class="number">4</span>) {
         res.push(rgba[<span class="number">3</span>]);
         res.push(rgba[<span class="number">0</span>]);
         res.push(rgba[<span class="number">1</span>]);
@@ -384,65 +458,71 @@
 
 <span class="doccomment">/// Parse an XCursor file into its images.
 </span><span class="kw">pub fn </span>parse_xcursor(content: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="prelude-ty">Option</span>&lt;Vec&lt;Image&gt;&gt; {
-    <span class="kw">let </span>(<span class="kw-2">mut </span>i, ntoc) = parse_header(content)<span class="question-mark">?</span>;
-    <span class="kw">let </span><span class="kw-2">mut </span>imgs = Vec::with_capacity(ntoc <span class="kw">as </span>usize);
+    parse_xcursor_stream(<span class="kw-2">&amp;mut </span>Cursor::new(content)).ok()
+}
 
+<span class="doccomment">/// Parse an XCursor file into its images.
+</span><span class="kw">pub fn </span>parse_xcursor_stream&lt;R: Read + Seek&gt;(input: <span class="kw-2">&amp;mut </span>R) -&gt; IoResult&lt;Vec&lt;Image&gt;&gt; {
+    <span class="kw">let </span>(header, ntoc) = parse_header(input)<span class="question-mark">?</span>;
+    input.seek(SeekFrom::Start(header <span class="kw">as </span>u64))<span class="question-mark">?</span>;
+
+    <span class="kw">let </span><span class="kw-2">mut </span>img_indices = Vec::new();
     <span class="kw">for _ in </span><span class="number">0</span>..ntoc {
-        <span class="kw">let </span>(j, toc) = parse_toc(i)<span class="question-mark">?</span>;
-        i = j;
+        <span class="kw">let </span>toc = parse_toc(input)<span class="question-mark">?</span>;
 
         <span class="kw">if </span>toc.toctype == <span class="number">0xfffd_0002 </span>{
-            <span class="kw">let </span>index = toc.pos <span class="kw">as </span>usize..;
-            <span class="kw">let </span>(<span class="kw">_</span>, img) = parse_img(<span class="kw-2">&amp;</span>content[index])<span class="question-mark">?</span>;
-            imgs.push(img);
+            img_indices.push(toc.pos);
         }
     }
 
-    <span class="prelude-val">Some</span>(imgs)
+    <span class="kw">let </span><span class="kw-2">mut </span>imgs = Vec::with_capacity(ntoc <span class="kw">as </span>usize);
+    <span class="kw">for </span>index <span class="kw">in </span>img_indices {
+        input.seek(SeekFrom::Start(index.into()))<span class="question-mark">?</span>;
+        imgs.push(parse_img(input)<span class="question-mark">?</span>);
+    }
+
+    <span class="prelude-val">Ok</span>(imgs)
 }
 
-<span class="kw">type </span>Stream&lt;<span class="lifetime">'a</span>&gt; = <span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8];
-
-<span class="kw">trait </span>StreamExt&lt;<span class="lifetime">'a</span>&gt;: <span class="lifetime">'a </span>{
+<span class="kw">trait </span>StreamExt {
     <span class="doccomment">/// Parse a series of bytes, returning `None` if it doesn't exist.
-    </span><span class="kw">fn </span>tag(<span class="kw-2">&amp;mut </span><span class="self">self</span>, tag: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="prelude-ty">Option</span>&lt;()&gt;;
+    </span><span class="kw">fn </span>tag(<span class="kw-2">&amp;mut </span><span class="self">self</span>, tag: [u8; <span class="number">4</span>]) -&gt; IoResult&lt;()&gt;;
 
     <span class="doccomment">/// Take a slice of bytes.
-    </span><span class="kw">fn </span>take_bytes(<span class="kw-2">&amp;mut </span><span class="self">self</span>, len: usize) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8]&gt;;
+    </span><span class="kw">fn </span>take_bytes(<span class="kw-2">&amp;mut </span><span class="self">self</span>, len: usize) -&gt; IoResult&lt;Vec&lt;u8&gt;&gt;;
 
     <span class="doccomment">/// Parse a 32-bit little endian number.
-    </span><span class="kw">fn </span>u32_le(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;u32&gt;;
+    </span><span class="kw">fn </span>u32_le(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; IoResult&lt;u32&gt;;
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; StreamExt&lt;<span class="lifetime">'a</span>&gt; <span class="kw">for </span>Stream&lt;<span class="lifetime">'a</span>&gt; {
-    <span class="kw">fn </span>tag(<span class="kw-2">&amp;mut </span><span class="self">self</span>, tag: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="prelude-ty">Option</span>&lt;()&gt; {
-        <span class="kw">if </span><span class="self">self</span>.len() &lt; tag.len() || <span class="self">self</span>[..tag.len()] != <span class="kw-2">*</span>tag {
-            <span class="prelude-val">None
-        </span>} <span class="kw">else </span>{
-            <span class="kw-2">*</span><span class="self">self </span>= <span class="kw-2">&amp;</span><span class="self">self</span>[tag.len()..];
-            <span class="prelude-val">Some</span>(())
+<span class="kw">impl</span>&lt;R: Read&gt; StreamExt <span class="kw">for </span>R {
+    <span class="kw">fn </span>tag(<span class="kw-2">&amp;mut </span><span class="self">self</span>, tag: [u8; <span class="number">4</span>]) -&gt; IoResult&lt;()&gt; {
+        <span class="kw">let </span><span class="kw-2">mut </span>data = [<span class="number">0u8</span>; <span class="number">4</span>];
+        <span class="self">self</span>.read_exact(<span class="kw-2">&amp;mut </span>data)<span class="question-mark">?</span>;
+        <span class="kw">if </span>data != tag {
+            <span class="prelude-val">Err</span>(Error::new(ErrorKind::Other, <span class="string">"Tag mismatch"</span>))
+        } <span class="kw">else </span>{
+            <span class="prelude-val">Ok</span>(())
         }
     }
 
-    <span class="kw">fn </span>take_bytes(<span class="kw-2">&amp;mut </span><span class="self">self</span>, len: usize) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8]&gt; {
-        <span class="kw">if </span><span class="self">self</span>.len() &lt; len {
-            <span class="prelude-val">None
-        </span>} <span class="kw">else </span>{
-            <span class="kw">let </span>(value, tail) = <span class="self">self</span>.split_at(len);
-            <span class="kw-2">*</span><span class="self">self </span>= tail;
-            <span class="prelude-val">Some</span>(value)
-        }
+    <span class="kw">fn </span>take_bytes(<span class="kw-2">&amp;mut </span><span class="self">self</span>, len: usize) -&gt; IoResult&lt;Vec&lt;u8&gt;&gt; {
+        <span class="kw">let </span><span class="kw-2">mut </span>data = <span class="macro">vec!</span>[<span class="number">0</span>; len];
+        <span class="self">self</span>.read_exact(<span class="kw-2">&amp;mut </span>data)<span class="question-mark">?</span>;
+        <span class="prelude-val">Ok</span>(data)
     }
 
-    <span class="kw">fn </span>u32_le(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;u32&gt; {
-        <span class="self">self</span>.take_bytes(size_of::&lt;u32&gt;())
-            .map(|bytes| u32::from_le_bytes(bytes.try_into().unwrap()))
+    <span class="kw">fn </span>u32_le(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; IoResult&lt;u32&gt; {
+        <span class="kw">let </span><span class="kw-2">mut </span>data = [<span class="number">0u8</span>; <span class="number">4</span>];
+        <span class="self">self</span>.read_exact(<span class="kw-2">&amp;mut </span>data)<span class="question-mark">?</span>;
+        <span class="prelude-val">Ok</span>(u32::from_le_bytes(data))
     }
 }
 
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>tests {
-    <span class="kw">use super</span>::{parse_header, parse_toc, rgba_to_argb, Toc};
+    <span class="kw">use super</span>::{parse_header, parse_toc, parse_xcursor, rgba_to_argb, Image, Toc};
+    <span class="kw">use </span>std::io::Cursor;
 
     <span class="comment">// A sample (and simple) XCursor file generated with xcursorgen.
     // Contains a single 4x4 image.
@@ -460,10 +540,9 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_parse_header() {
-        <span class="macro">assert_eq!</span>(
-            parse_header(<span class="kw-2">&amp;</span>FILE_CONTENTS).unwrap(),
-            (<span class="kw-2">&amp;</span>FILE_CONTENTS[<span class="number">16</span>..], <span class="number">1</span>)
-        )
+        <span class="kw">let </span><span class="kw-2">mut </span>cursor = Cursor::new(<span class="kw-2">&amp;</span>FILE_CONTENTS[..]);
+        <span class="macro">assert_eq!</span>(parse_header(<span class="kw-2">&amp;mut </span>cursor).unwrap(), (<span class="number">16</span>, <span class="number">1</span>));
+        <span class="macro">assert_eq!</span>(cursor.position(), <span class="number">16</span>);
     }
 
     <span class="attr">#[test]
@@ -473,10 +552,77 @@
             subtype: <span class="number">4</span>,
             pos: <span class="number">0x1c</span>,
         };
+        <span class="kw">let </span><span class="kw-2">mut </span>cursor = Cursor::new(<span class="kw-2">&amp;</span>FILE_CONTENTS[<span class="number">16</span>..]);
+        <span class="macro">assert_eq!</span>(parse_toc(<span class="kw-2">&amp;mut </span>cursor).unwrap(), toc);
+        <span class="macro">assert_eq!</span>(cursor.position(), <span class="number">28 </span>- <span class="number">16</span>);
+    }
+
+    <span class="attr">#[test]
+    </span><span class="kw">fn </span>test_parse_image() {
+        <span class="comment">// The image always repeats the same pixels across its 4 x 4 pixels
+        </span><span class="kw">let </span>make_pixels = |pixel: [u8; <span class="number">4</span>]| {
+            <span class="comment">// This is just "pixels.repeat(4 * 4)", but working in Rust 1.34
+            </span>std::iter::repeat(pixel)
+                .take(<span class="number">4 </span>* <span class="number">4</span>)
+                .flat_map(|p| p.iter().cloned().collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;())
+                .collect()
+        };
+        <span class="kw">let </span>expected = Image {
+            size: <span class="number">4</span>,
+            width: <span class="number">4</span>,
+            height: <span class="number">4</span>,
+            xhot: <span class="number">1</span>,
+            yhot: <span class="number">1</span>,
+            delay: <span class="number">1</span>,
+            pixels_rgba: make_pixels([<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">128</span>]),
+            pixels_argb: make_pixels([<span class="number">128</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>]),
+        };
+        <span class="macro">assert_eq!</span>(<span class="prelude-val">Some</span>(<span class="macro">vec!</span>[expected]), parse_xcursor(<span class="kw-2">&amp;</span>FILE_CONTENTS));
+    }
+
+    <span class="attr">#[test]
+    </span><span class="kw">fn </span>test_one_image_three_times() {
+        <span class="kw">let </span>data = [
+            <span class="string">b'X'</span>, <span class="string">b'c'</span>, <span class="string">b'u'</span>, <span class="string">b'r'</span>, <span class="comment">// magic
+            </span><span class="number">0x10</span>, <span class="number">0x00</span>, <span class="number">0x00</span>, <span class="number">0x00</span>, <span class="comment">// header file offset (16)
+            </span><span class="number">0x00</span>, <span class="number">0x00</span>, <span class="number">0x00</span>, <span class="number">0x00</span>, <span class="comment">// version
+            </span><span class="number">0x03</span>, <span class="number">0x00</span>, <span class="number">0x00</span>, <span class="number">0x00</span>, <span class="comment">// num TOC entries, 3
+            // TOC
+            </span><span class="number">0x02</span>, <span class="number">0x00</span>, <span class="number">0xfd</span>, <span class="number">0xff</span>, <span class="comment">// IMAGE_TYPE
+            </span><span class="number">0x04</span>, <span class="number">0x00</span>, <span class="number">0x00</span>, <span class="number">0x00</span>, <span class="comment">// size 4
+            </span><span class="number">0x34</span>, <span class="number">0x00</span>, <span class="number">0x00</span>, <span class="number">0x00</span>, <span class="comment">// image offset (52)
+            </span><span class="number">0x02</span>, <span class="number">0x00</span>, <span class="number">0xfd</span>, <span class="number">0xff</span>, <span class="comment">// IMAGE_TYPE
+            </span><span class="number">0x03</span>, <span class="number">0x00</span>, <span class="number">0x00</span>, <span class="number">0x00</span>, <span class="comment">// size 3
+            </span><span class="number">0x34</span>, <span class="number">0x00</span>, <span class="number">0x00</span>, <span class="number">0x00</span>, <span class="comment">// image offset (52)
+            </span><span class="number">0x02</span>, <span class="number">0x00</span>, <span class="number">0xfd</span>, <span class="number">0xff</span>, <span class="comment">// IMAGE_TYPE
+            </span><span class="number">0x04</span>, <span class="number">0x00</span>, <span class="number">0x00</span>, <span class="number">0x00</span>, <span class="comment">// size 4
+            </span><span class="number">0x34</span>, <span class="number">0x00</span>, <span class="number">0x00</span>, <span class="number">0x00</span>, <span class="comment">// image offset (52)
+            // image
+            </span><span class="number">0x24</span>, <span class="number">0x00</span>, <span class="number">0x00</span>, <span class="number">0x00</span>, <span class="comment">// header
+            </span><span class="number">0x02</span>, <span class="number">0x00</span>, <span class="number">0xfd</span>, <span class="number">0xff</span>, <span class="comment">// IMAGE_TYPE
+            </span><span class="number">0x04</span>, <span class="number">0x00</span>, <span class="number">0x00</span>, <span class="number">0x00</span>, <span class="comment">// size 4
+            </span><span class="number">0x01</span>, <span class="number">0x00</span>, <span class="number">0x00</span>, <span class="number">0x00</span>, <span class="comment">// version
+            </span><span class="number">0x01</span>, <span class="number">0x00</span>, <span class="number">0x00</span>, <span class="number">0x00</span>, <span class="comment">// width 1
+            </span><span class="number">0x01</span>, <span class="number">0x00</span>, <span class="number">0x00</span>, <span class="number">0x00</span>, <span class="comment">// height 1
+            </span><span class="number">0x00</span>, <span class="number">0x00</span>, <span class="number">0x00</span>, <span class="number">0x00</span>, <span class="comment">// x_hot 0
+            </span><span class="number">0x00</span>, <span class="number">0x00</span>, <span class="number">0x00</span>, <span class="number">0x00</span>, <span class="comment">// y_hot 0
+            </span><span class="number">0x00</span>, <span class="number">0x00</span>, <span class="number">0x00</span>, <span class="number">0x00</span>, <span class="comment">// delay 0
+            </span><span class="number">0x12</span>, <span class="number">0x34</span>, <span class="number">0x56</span>, <span class="number">0x78</span>, <span class="comment">// pixel
+        </span>];
+        <span class="kw">let </span>expected = Image {
+            size: <span class="number">4</span>,
+            width: <span class="number">1</span>,
+            height: <span class="number">1</span>,
+            xhot: <span class="number">0</span>,
+            yhot: <span class="number">0</span>,
+            delay: <span class="number">0</span>,
+            pixels_rgba: <span class="macro">vec!</span>[<span class="number">0x12</span>, <span class="number">0x34</span>, <span class="number">0x56</span>, <span class="number">0x78</span>],
+            pixels_argb: <span class="macro">vec!</span>[<span class="number">0x78</span>, <span class="number">0x12</span>, <span class="number">0x34</span>, <span class="number">0x56</span>],
+        };
         <span class="macro">assert_eq!</span>(
-            parse_toc(<span class="kw-2">&amp;</span>FILE_CONTENTS[<span class="number">16</span>..]).unwrap(),
-            (<span class="kw-2">&amp;</span>FILE_CONTENTS[<span class="number">28</span>..], toc)
-        )
+            <span class="prelude-val">Some</span>(<span class="macro">vec!</span>[expected.clone(), expected.clone(), expected.clone()]),
+            parse_xcursor(<span class="kw-2">&amp;</span>data)
+        );
     }
 
     <span class="attr">#[test]

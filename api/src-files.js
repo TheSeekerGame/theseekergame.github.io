@@ -131,6 +131,7 @@ var srcIndex = new Map(JSON.parse('[\
 ["encase",["",[["core",[],["alignment_value.rs","buffers.rs","mod.rs","rw.rs","size_value.rs","traits.rs"]],["impls",[],["glam.rs","mod.rs"]],["types",[],["array.rs","matrix.rs","mod.rs","runtime_sized_array.rs","scalar.rs","struct.rs","vector.rs","wrapper.rs"]]],["lib.rs","utils.rs"]]],\
 ["encase_derive",["",[],["lib.rs"]]],\
 ["encase_derive_impl",["",[],["lib.rs"]]],\
+["encoding_rs",["",[],["ascii.rs","big5.rs","data.rs","euc_jp.rs","euc_kr.rs","gb18030.rs","handles.rs","iso_2022_jp.rs","lib.rs","macros.rs","mem.rs","replacement.rs","shift_jis.rs","single_byte.rs","utf_16.rs","utf_8.rs","variant.rs","x_user_defined.rs"]]],\
 ["enum_iterator",["",[],["lib.rs"]]],\
 ["enum_iterator_derive",["",[],["lib.rs"]]],\
 ["enum_map",["",[],["enum_map_impls.rs","internal.rs","iter.rs","lib.rs"]]],\
@@ -176,6 +177,7 @@ var srcIndex = new Map(JSON.parse('[\
 ["hexasphere",["",[],["interpolation.rs","lib.rs","shapes.rs","slice.rs"]]],\
 ["hexf_parse",["",[],["lib.rs"]]],\
 ["home",["",[],["env.rs","lib.rs"]]],\
+["hound",["",[],["lib.rs","read.rs","write.rs"]]],\
 ["ident_case",["",[],["lib.rs"]]],\
 ["idna",["",[],["lib.rs","punycode.rs","uts46.rs"]]],\
 ["image",["",[["codecs",[],["png.rs"]],["image_reader",[],["free_functions.rs","image_reader_type.rs","mod.rs"]],["imageops",[],["affine.rs","colorops.rs","mod.rs","sample.rs"]],["math",[],["mod.rs","rect.rs","utils.rs"]],["utils",[],["mod.rs"]]],["animation.rs","buffer.rs","color.rs","dynimage.rs","error.rs","flat.rs","image.rs","lib.rs","traits.rs"]]],\
@@ -265,7 +267,7 @@ var srcIndex = new Map(JSON.parse('[\
 ["regex_syntax",["",[["ast",[],["mod.rs","parse.rs","print.rs","visitor.rs"]],["hir",[],["interval.rs","literal.rs","mod.rs","print.rs","translate.rs","visitor.rs"]],["unicode_tables",[],["age.rs","case_folding_simple.rs","general_category.rs","grapheme_cluster_break.rs","mod.rs","perl_word.rs","property_bool.rs","property_names.rs","property_values.rs","script.rs","script_extension.rs","sentence_break.rs","word_break.rs"]]],["debug.rs","either.rs","error.rs","lib.rs","parser.rs","rank.rs","unicode.rs","utf8.rs"]]],\
 ["renderdoc_sys",["",[],["bindings.rs","lib.rs"]]],\
 ["robust",["",[],["lib.rs"]]],\
-["rodio",["",[["conversions",[],["channels.rs","mod.rs","sample.rs","sample_rate.rs"]],["decoder",[],["flac.rs","mod.rs","vorbis.rs"]],["source",[],["amplify.rs","blt.rs","buffered.rs","channel_volume.rs","crossfade.rs","delay.rs","done.rs","empty.rs","empty_callback.rs","fadein.rs","from_factory.rs","from_iter.rs","mix.rs","mod.rs","pausable.rs","periodic.rs","repeat.rs","samples_converter.rs","sine.rs","skip.rs","skippable.rs","spatial.rs","speed.rs","stoppable.rs","take.rs","uniform.rs","zero.rs"]]],["buffer.rs","dynamic_mixer.rs","lib.rs","queue.rs","sink.rs","spatial_sink.rs","static_buffer.rs","stream.rs"]]],\
+["rodio",["",[["conversions",[],["channels.rs","mod.rs","sample.rs","sample_rate.rs"]],["decoder",[],["flac.rs","mod.rs","read_seek_source.rs","symphonia.rs","vorbis.rs","wav.rs"]],["source",[],["amplify.rs","blt.rs","buffered.rs","channel_volume.rs","crossfade.rs","delay.rs","done.rs","empty.rs","empty_callback.rs","fadein.rs","from_factory.rs","from_iter.rs","mix.rs","mod.rs","pausable.rs","periodic.rs","repeat.rs","samples_converter.rs","sine.rs","skip.rs","skippable.rs","spatial.rs","speed.rs","stoppable.rs","take.rs","uniform.rs","zero.rs"]]],["buffer.rs","dynamic_mixer.rs","lib.rs","queue.rs","sink.rs","spatial_sink.rs","static_buffer.rs","stream.rs"]]],\
 ["ron",["",[["de",[],["id.rs","mod.rs","tag.rs","value.rs"]],["ser",[],["mod.rs","value.rs"]]],["error.rs","extensions.rs","lib.rs","options.rs","parse.rs","value.rs"]]],\
 ["rustc_hash",["",[],["lib.rs"]]],\
 ["rustix",["",[["backend",[["linux_raw",[["arch",[],["mod.rs","x86_64.rs"]],["event",[],["epoll.rs","mod.rs","poll_fd.rs","syscalls.rs","types.rs"]],["fs",[],["dir.rs","inotify.rs","makedev.rs","mod.rs","syscalls.rs","types.rs"]],["io",[],["errno.rs","mod.rs","syscalls.rs","types.rs"]],["mount",[],["mod.rs","syscalls.rs","types.rs"]],["net",[],["addr.rs","mod.rs","msghdr.rs","netdevice.rs","read_sockaddr.rs","send_recv.rs","sockopt.rs","syscalls.rs","write_sockaddr.rs"]],["param",[],["libc_auxv.rs","mod.rs"]],["pid",[],["mod.rs","syscalls.rs"]],["pipe",[],["mod.rs","syscalls.rs","types.rs"]],["prctl",[],["mod.rs","syscalls.rs"]],["process",[],["cpu_set.rs","mod.rs","syscalls.rs","types.rs","wait.rs"]],["shm",[],["mod.rs","syscalls.rs","types.rs"]],["system",[],["mod.rs","syscalls.rs","types.rs"]],["thread",[],["futex.rs","mod.rs","syscalls.rs"]],["time",[],["mod.rs","syscalls.rs","types.rs"]],["ugid",[],["mod.rs","syscalls.rs"]]],["c.rs","conv.rs","mod.rs","reg.rs","vdso.rs","vdso_wrappers.rs"]]]],["event",[],["eventfd.rs","mod.rs","pause.rs","poll.rs"]],["fs",[],["abs.rs","at.rs","constants.rs","copy_file_range.rs","cwd.rs","dir.rs","fadvise.rs","fcntl.rs","fd.rs","id.rs","ioctl.rs","makedev.rs","memfd_create.rs","mod.rs","mount.rs","openat2.rs","raw_dir.rs","seek_from.rs","sendfile.rs","statx.rs","sync.rs","xattr.rs"]],["io",[],["close.rs","dup.rs","errno.rs","fcntl.rs","ioctl.rs","is_read_write.rs","mod.rs","read_write.rs"]],["ioctl",[],["linux.rs","mod.rs","patterns.rs"]],["maybe_polyfill",[["std",[],["mod.rs"]]]],["mount",[],["mod.rs","mount_unmount.rs","types.rs"]],["net",[["send_recv",[],["mod.rs","msg.rs"]]],["mod.rs","netdevice.rs","socket.rs","socket_addr_any.rs","socketpair.rs","sockopt.rs","types.rs"]],["path",[],["arg.rs","mod.rs"]],["process",[],["chdir.rs","chroot.rs","exit.rs","id.rs","ioctl.rs","kill.rs","membarrier.rs","mod.rs","pidfd.rs","pidfd_getfd.rs","prctl.rs","priority.rs","rlimit.rs","sched.rs","sched_yield.rs","umask.rs","wait.rs"]],["thread",[],["clock.rs","futex.rs","id.rs","libcap.rs","mod.rs","prctl.rs","setns.rs"]],["time",[],["clock.rs","mod.rs","timerfd.rs"]]],["bitcast.rs","buffer.rs","clockid.rs","cstr.rs","ffi.rs","lib.rs","pid.rs","pipe.rs","prctl.rs","shm.rs","signal.rs","system.rs","timespec.rs","ugid.rs","utils.rs","weak.rs"]]],\
@@ -302,11 +304,15 @@ var srcIndex = new Map(JSON.parse('[\
 ["strict_num",["",[],["lib.rs"]]],\
 ["strsim",["",[],["lib.rs"]]],\
 ["svg_fmt",["",[],["layout.rs","lib.rs","svg.rs"]]],\
+["symphonia",["",[],["lib.rs"]]],\
+["symphonia_bundle_mp3",["",[["layer3",[],["bitstream.rs","codebooks.rs","common.rs","hybrid_synthesis.rs","mod.rs","requantize.rs","stereo.rs"]]],["common.rs","decoder.rs","demuxer.rs","header.rs","lib.rs","synthesis.rs"]]],\
+["symphonia_core",["",[["checksum",[],["crc16.rs","crc32.rs","crc8.rs","md5.rs","mod.rs"]],["dsp",[["mdct",[],["mod.rs","no_simd.rs"]]],["complex.rs","fft.rs","mod.rs"]],["io",[],["bit.rs","buf_reader.rs","media_source_stream.rs","mod.rs","monitor_stream.rs","scoped_stream.rs"]]],["audio.rs","codecs.rs","conv.rs","errors.rs","formats.rs","lib.rs","meta.rs","probe.rs","sample.rs","units.rs","util.rs"]]],\
+["symphonia_metadata",["",[["id3v2",[],["frames.rs","mod.rs","unsync.rs"]]],["flac.rs","id3v1.rs","itunes.rs","lib.rs","riff.rs","vorbis.rs"]]],\
 ["sysinfo",["",[["unix",[["linux",[],["component.rs","cpu.rs","disk.rs","mod.rs","network.rs","process.rs","system.rs","utils.rs"]]],["groups.rs","mod.rs","network_helper.rs","users.rs","utils.rs"]]],["common.rs","debug.rs","lib.rs","macros.rs","network.rs","utils.rs"]]],\
 ["taffy",["",[["compute",[["common",[],["alignment.rs","mod.rs"]],["grid",[["types",[],["cell_occupancy.rs","coordinates.rs","grid_item.rs","grid_track.rs","grid_track_counts.rs","mod.rs"]],["util",[],["mod.rs"]]],["alignment.rs","explicit_grid.rs","implicit_grid.rs","mod.rs","placement.rs","track_sizing.rs"]]],["flexbox.rs","leaf.rs","mod.rs"]],["style",[],["alignment.rs","dimension.rs","flex.rs","grid.rs","mod.rs"]]],["axis.rs","data.rs","debug.rs","error.rs","geometry.rs","layout.rs","lib.rs","math.rs","node.rs","prelude.rs","resolve.rs","style_helpers.rs","sys.rs","tree.rs"]]],\
 ["termcolor",["",[],["lib.rs"]]],\
-["theseeker_engine",["",[["assets",[],["animation.rs","config.rs","script.rs"]],["script",[],["common.rs","label.rs"]]],["animation.rs","assets.rs","ballistics_math.rs","condition.rs","data.rs","gent.rs","input.rs","lib.rs","physics.rs","script.rs","time.rs"]]],\
-["theseeker_game",["",[["game",[["attack",[],["arc_attack.rs","mod.rs","particles.rs"]],["player",[],["mod.rs","player_anim.rs","player_behaviour.rs"]]],["enemy.rs","game_over.rs","gentstate.rs","merchant.rs","wall.rs","yak.rs"]],["graphics",[["dof",[],["mod.rs"]]],["darkness.rs","dmg_numbers.rs","fog.rs","hp_bar.rs","mod.rs","particles_util.rs"]],["screens",[],["loading.rs"]],["ui",[],["ability_widget.rs","console.rs","kill_counter.rs","mainmenu.rs","skill_toolbar.rs"]]],["appstate.rs","assets.rs","camera.rs","cli.rs","dev.rs","game.rs","gamestate.rs","level.rs","locale.rs","main.rs","parallax.rs","stepping_egui.rs","ui.rs"]]],\
+["theseeker_engine",["",[["assets",[],["animation.rs","config.rs","script.rs"]],["audio",[],["mixer.rs"]],["script",[],["common.rs","label.rs"]]],["animation.rs","assets.rs","audio.rs","ballistics_math.rs","condition.rs","data.rs","gent.rs","input.rs","lib.rs","physics.rs","script.rs","time.rs"]]],\
+["theseeker_game",["",[["game",[["attack",[],["arc_attack.rs","mod.rs","particles.rs"]],["player",[],["mod.rs","player_anim.rs","player_behaviour.rs"]]],["enemy.rs","game_over.rs","gentstate.rs","merchant.rs","wall.rs","yak.rs"]],["graphics",[["dof",[],["mod.rs"]]],["darkness.rs","dmg_numbers.rs","fog.rs","hp_bar.rs","mod.rs","particles_util.rs"]],["screens",[],["loading.rs"]],["ui",[],["ability_widget.rs","console.rs","kill_counter.rs","mainmenu.rs","skill_toolbar.rs"]]],["appstate.rs","assets.rs","audio.rs","camera.rs","cli.rs","dev.rs","game.rs","gamestate.rs","level.rs","locale.rs","main.rs","parallax.rs","stepping_egui.rs","ui.rs"]]],\
 ["thiserror",["",[],["aserror.rs","display.rs","lib.rs"]]],\
 ["thiserror_impl",["",[],["ast.rs","attr.rs","expand.rs","fmt.rs","generics.rs","lib.rs","prop.rs","span.rs","valid.rs"]]],\
 ["thread_local",["",[],["cached.rs","lib.rs","thread_id.rs","unreachable.rs"]]],\
@@ -328,7 +334,7 @@ var srcIndex = new Map(JSON.parse('[\
 ["type_map",["",[],["lib.rs"]]],\
 ["typeid",["",[],["lib.rs"]]],\
 ["typenum",["",[],["array.rs","bit.rs","int.rs","lib.rs","marker_traits.rs","operator_aliases.rs","private.rs","type_operators.rs","uint.rs"]]],\
-["typetag",["",[],["adjacently.rs","content.rs","de.rs","externally.rs","internally.rs","lib.rs","ser.rs"]]],\
+["typetag",["",[],["adjacently.rs","content.rs","de.rs","externally.rs","internally.rs","is_serialize_str.rs","lib.rs","ser.rs"]]],\
 ["typetag_impl",["",[],["lib.rs","parse.rs","tagged_impl.rs","tagged_trait.rs"]]],\
 ["unic_langid",["",[],["lib.rs"]]],\
 ["unic_langid_impl",["",[["parser",[],["errors.rs","mod.rs"]],["subtags",[],["language.rs","mod.rs","region.rs","script.rs","variant.rs"]]],["errors.rs","layout_table.rs","lib.rs","serde.rs"]]],\
@@ -366,6 +372,7 @@ var srcIndex = new Map(JSON.parse('[\
 ["xi_unicode",["",[],["lib.rs","tables.rs"]]],\
 ["xkbcommon_dl",["",[],["lib.rs","x11.rs"]]],\
 ["xkeysym",["",[],["automatically_generated.rs","lib.rs"]]],\
-["zerocopy",["",[["third_party",[["rust",[],["layout.rs"]]]]],["lib.rs","macro_util.rs","macros.rs","post_monomorphization_compile_fail_tests.rs","util.rs","wrappers.rs"]]]\
+["zerocopy",["",[["third_party",[["rust",[],["layout.rs"]]]]],["byteorder.rs","lib.rs","macro_util.rs","macros.rs","post_monomorphization_compile_fail_tests.rs","util.rs","wrappers.rs"]]],\
+["zerocopy_derive",["",[],["ext.rs","lib.rs","repr.rs"]]]\
 ]'));
 createSrcSidebar();
