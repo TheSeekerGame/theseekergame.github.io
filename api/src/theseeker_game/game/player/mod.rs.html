@@ -608,6 +608,23 @@
 <a href="#608" id="608">608</a>
 <a href="#609" id="609">609</a>
 <a href="#610" id="610">610</a>
+<a href="#611" id="611">611</a>
+<a href="#612" id="612">612</a>
+<a href="#613" id="613">613</a>
+<a href="#614" id="614">614</a>
+<a href="#615" id="615">615</a>
+<a href="#616" id="616">616</a>
+<a href="#617" id="617">617</a>
+<a href="#618" id="618">618</a>
+<a href="#619" id="619">619</a>
+<a href="#620" id="620">620</a>
+<a href="#621" id="621">621</a>
+<a href="#622" id="622">622</a>
+<a href="#623" id="623">623</a>
+<a href="#624" id="624">624</a>
+<a href="#625" id="625">625</a>
+<a href="#626" id="626">626</a>
+<a href="#627" id="627">627</a>
 </pre></div><pre class="rust"><code><span class="kw">mod </span>player_anim;
 <span class="kw">mod </span>player_behaviour;
 <span class="kw">use </span>leafwing_input_manager::axislike::VirtualAxis;
@@ -719,7 +736,7 @@
     Attack,
     Dash,
     Whirl,
-    Focus,
+    Stealth,
 }
 
 <span class="kw">fn </span>debug_player_states(
@@ -799,6 +816,7 @@
 <span class="kw">fn </span>setup_player(
     <span class="kw-2">mut </span>q: Query&lt;(<span class="kw-2">&amp;mut </span>Transform, Entity), Added&lt;PlayerBlueprint&gt;&gt;,
     <span class="kw-2">mut </span>commands: Commands,
+    config: Res&lt;PlayerConfig&gt;,
 ) {
     <span class="kw">for </span>(<span class="kw-2">mut </span>xf_gent, e_gent) <span class="kw">in </span>q.iter_mut() {
         <span class="comment">//TODO: proper way of ensuring z is correct
@@ -839,8 +857,8 @@
             },
             Facing::Right,
             Health {
-                current: <span class="number">1600</span>,
-                max: <span class="number">1600</span>,
+                current: config.max_health,
+                max: config.max_health,
             },
             <span class="comment">//have to use builder here *i think* because of different types between keycode and
             //axis
@@ -862,10 +880,13 @@
                     .with(PlayerAction::Attack, KeyCode::KeyJ)
                     .with(PlayerAction::Dash, KeyCode::KeyK)
                     .with(PlayerAction::Whirl, KeyCode::KeyL)
-                    .with(PlayerAction::Focus, KeyCode::KeyI),
+                    .with(PlayerAction::Stealth, KeyCode::KeyI),
             },
             Falling,
             CanDash {
+                remaining_cooldown: <span class="number">0.0</span>,
+            },
+            CanStealth {
                 remaining_cooldown: <span class="number">0.0</span>,
             },
             WallSlideTime(f32::MAX),
@@ -877,7 +898,6 @@
                 attack_entity: <span class="prelude-val">None</span>,
             },
             Crits::new(<span class="number">2.0</span>),
-            FocusAbility::default(),
             TransitionQueue::default(),
             StateDespawnMarker,
         ));
@@ -1028,6 +1048,33 @@
     );
 }
 
+<span class="attr">#[derive(Component, Debug, Default)]
+#[component(storage = <span class="string">"SparseSet"</span>)]
+</span><span class="kw">pub struct </span>Stealthing {
+    duration: f32,
+}
+
+<span class="kw">impl </span>GentState <span class="kw">for </span>Stealthing {}
+<span class="kw">impl </span>Transitionable&lt;CanStealth&gt; <span class="kw">for </span>Stealthing {
+    <span class="kw">type </span>Removals = (Stealthing);
+}
+<span class="attr">#[derive(Component, Debug)]
+#[component(storage = <span class="string">"SparseSet"</span>)]
+</span><span class="kw">pub struct </span>CanStealth {
+    <span class="kw">pub </span>remaining_cooldown: f32,
+}
+<span class="kw">impl </span>CanStealth {
+    <span class="kw">pub fn </span>new(config: <span class="kw-2">&amp;</span>PlayerConfig) -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{
+            remaining_cooldown: config.stealth_cooldown,
+        }
+    }
+}
+<span class="kw">impl </span>GentState <span class="kw">for </span>CanStealth {}
+<span class="kw">impl </span>Transitionable&lt;Stealthing&gt; <span class="kw">for </span>CanStealth {
+    <span class="kw">type </span>Removals = (CanStealth,);
+}
+
 <span class="comment">// Pseudo-States
 // Not quite the same as states, these components enable certain behaviours when attached,
 // and provide storage for that behaviours state
@@ -1058,31 +1105,6 @@
     active_ticks: u32,
     <span class="kw">pub </span>energy: f32,
     attack_entity: <span class="prelude-ty">Option</span>&lt;Entity&gt;,
-}
-
-<span class="attr">#[derive(Component, Debug)]
-</span><span class="kw">pub struct </span>FocusAbility {
-    <span class="doccomment">/// Will the next attack apply double damage?
-    </span><span class="kw">pub</span>(<span class="kw">crate</span>) state: FocusState,
-    <span class="doccomment">/// Once this reaches 10, ability can activate again.
-    </span><span class="kw">pub</span>(<span class="kw">crate</span>) recharge: f32,
-}
-
-<span class="kw">impl </span>Default <span class="kw">for </span>FocusAbility {
-    <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{
-            state: Default::default(),
-            recharge: <span class="number">10.0</span>,
-        }
-    }
-}
-
-<span class="attr">#[derive(Default, Debug, PartialEq)]
-</span><span class="kw">pub enum </span>FocusState {
-    Active,
-    Applied,
-    <span class="attr">#[default]
-    </span>InActive,
 }
 
 <span class="attr">#[derive(Resource, Debug, Default)]
@@ -1137,6 +1159,12 @@
     <span class="doccomment">/// How many seconds does our character dash for?
     </span>dash_duration: f32,
 
+    <span class="doccomment">/// How many seconds does our character stealth for?
+    </span>stealth_duration: f32,
+
+    <span class="doccomment">/// How many seconds does our character stealth for?
+    </span><span class="kw">pub </span>stealth_cooldown: f32,
+
     <span class="doccomment">/// How many pixels/s do they dash with?
     </span>dash_velocity: f32,
 
@@ -1150,6 +1178,9 @@
 
     <span class="doccomment">/// Spends this much energy per second when not using whirl
     </span>whirl_regen: f32,
+
+    <span class="doccomment">/// How much max health the player has
+    </span><span class="kw">pub </span>max_health: u32,
 }
 
 <span class="kw">fn </span>load_player_config(
@@ -1210,9 +1241,12 @@
     update_field(<span class="kw-2">&amp;mut </span>errors, <span class="kw-2">&amp;</span>cfg.<span class="number">0</span>, <span class="string">"dash_duration"</span>, |val| config.dash_duration = val);
     update_field(<span class="kw-2">&amp;mut </span>errors, <span class="kw-2">&amp;</span>cfg.<span class="number">0</span>, <span class="string">"dash_velocity"</span>, |val| config.dash_velocity = val);
     update_field(<span class="kw-2">&amp;mut </span>errors, <span class="kw-2">&amp;</span>cfg.<span class="number">0</span>, <span class="string">"dash_cooldown_duration"</span>, |val| config.dash_cooldown_duration = val);
+    update_field(<span class="kw-2">&amp;mut </span>errors, <span class="kw-2">&amp;</span>cfg.<span class="number">0</span>, <span class="string">"stealth_duration"</span>, |val| config.stealth_duration = val);
+    update_field(<span class="kw-2">&amp;mut </span>errors, <span class="kw-2">&amp;</span>cfg.<span class="number">0</span>, <span class="string">"stealth_cooldown"</span>, |val| config.stealth_cooldown = val);
     update_field(<span class="kw-2">&amp;mut </span>errors, <span class="kw-2">&amp;</span>cfg.<span class="number">0</span>, <span class="string">"max_whirl_energy"</span>, |val| config.max_whirl_energy = val);
     update_field(<span class="kw-2">&amp;mut </span>errors, <span class="kw-2">&amp;</span>cfg.<span class="number">0</span>, <span class="string">"whirl_cost"</span>, |val| config.whirl_cost = val);
     update_field(<span class="kw-2">&amp;mut </span>errors, <span class="kw-2">&amp;</span>cfg.<span class="number">0</span>, <span class="string">"whirl_regen"</span>, |val| config.whirl_regen = val);
+    update_field(<span class="kw-2">&amp;mut </span>errors, <span class="kw-2">&amp;</span>cfg.<span class="number">0</span>, <span class="string">"max_health"</span>, |val| config.max_health = val <span class="kw">as </span>u32);
 
    <span class="kw">for </span>error <span class="kw">in </span>errors{
        <span class="macro">warn!</span>(<span class="string">"failed to load player cfg value: {}"</span>, error);

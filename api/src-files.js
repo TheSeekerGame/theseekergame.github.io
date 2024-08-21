@@ -3,7 +3,7 @@ var srcIndex = new Map(JSON.parse('[\
 ["ab_glyph_rasterizer",["",[],["geometry.rs","lib.rs","raster.rs"]]],\
 ["accesskit",["",[],["geometry.rs","lib.rs"]]],\
 ["accesskit_winit",["",[["platform_impl",[],["mod.rs","null.rs"]]],["lib.rs"]]],\
-["adler",["",[],["algo.rs","lib.rs"]]],\
+["adler2",["",[],["algo.rs","lib.rs"]]],\
 ["ahash",["",[],["convert.rs","fallback_hash.rs","hash_map.rs","hash_set.rs","lib.rs","operations.rs","random_state.rs","specialize.rs"]]],\
 ["aho_corasick",["",[["nfa",[],["contiguous.rs","mod.rs","noncontiguous.rs"]],["packed",[["teddy",[],["builder.rs","generic.rs","mod.rs"]]],["api.rs","ext.rs","mod.rs","pattern.rs","rabinkarp.rs","vector.rs"]],["util",[],["alphabet.rs","buffer.rs","byte_frequencies.rs","debug.rs","error.rs","int.rs","mod.rs","prefilter.rs","primitives.rs","remapper.rs","search.rs","special.rs"]]],["ahocorasick.rs","automaton.rs","dfa.rs","lib.rs","macros.rs"]]],\
 ["allocator_api2",["",[["stable",[["alloc",[],["global.rs","mod.rs"]],["vec",[],["drain.rs","into_iter.rs","mod.rs","partial_eq.rs","set_len_on_drop.rs","splice.rs"]]],["boxed.rs","macros.rs","mod.rs","raw_vec.rs","slice.rs"]]],["lib.rs"]]],\
@@ -252,7 +252,7 @@ var srcIndex = new Map(JSON.parse('[\
 ["profiling",["",[],["empty_impl.rs","lib.rs"]]],\
 ["quick_xml",["",[["events",[],["attributes.rs","mod.rs"]],["reader",[],["buffered_reader.rs","element.rs","mod.rs","ns_reader.rs","pi.rs","slice_reader.rs","state.rs"]]],["encoding.rs","errors.rs","escape.rs","lib.rs","name.rs","utils.rs","writer.rs"]]],\
 ["quote",["",[],["ext.rs","format.rs","ident_fragment.rs","lib.rs","runtime.rs","spanned.rs","to_tokens.rs"]]],\
-["radsort",["",[],["lib.rs","scalar.rs","sort.rs"]]],\
+["radsort",["",[],["double_buffer.rs","lib.rs","scalar.rs","sort.rs"]]],\
 ["ran",["",[],["error.rs","lib.rs"]]],\
 ["rand",["",[["distributions",[],["bernoulli.rs","distribution.rs","float.rs","integer.rs","mod.rs","other.rs","slice.rs","uniform.rs","utils.rs","weighted.rs","weighted_index.rs"]],["rngs",[["adapter",[],["mod.rs","read.rs","reseeding.rs"]]],["mock.rs","mod.rs","std.rs","thread.rs"]],["seq",[],["index.rs","mod.rs"]]],["lib.rs","prelude.rs","rng.rs"]]],\
 ["rand_chacha",["",[],["chacha.rs","guts.rs","lib.rs"]]],\

@@ -295,10 +295,11 @@
 <a href="#295" id="295">295</a>
 <a href="#296" id="296">296</a>
 <a href="#297" id="297">297</a>
+<a href="#298" id="298">298</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::appstate::AppState;
 <span class="kw">use </span><span class="kw">crate</span>::camera::MainCamera;
 <span class="kw">use </span><span class="kw">crate</span>::game::player::{
-    Attacking, CanAttack, CanDash, FocusAbility, FocusState, Player, PlayerConfig, WhirlAbility,
+    Attacking, CanAttack, CanDash, CanStealth, Player, PlayerConfig, WhirlAbility,
 };
 <span class="kw">use </span><span class="kw">crate</span>::graphics::hp_bar::{HpBackground, HpBar, HpBarUiMaterial};
 <span class="kw">use </span><span class="kw">crate</span>::prelude::<span class="kw-2">*</span>;
@@ -321,7 +322,7 @@
         app.add_systems(Update, update_attack_ability_ui);
         app.add_systems(Update, update_dash_ability_ui);
         app.add_systems(Update, update_whirl_ability_ui);
-        app.add_systems(Update, update_focus_ability_ui);
+        app.add_systems(Update, update_stealth_ability_ui);
         app.add_systems(
             OnExit(AppState::InGame),
             despawn_toolbar,
@@ -435,8 +436,8 @@
                 <span class="bool-val">false</span>,
             ));
             row.ability_widget(AbilityWidgetConfig::from(
-                <span class="string">"ui/game/FocusSkillIcon.png"</span>,
-                FocusAbilityUI,
+                <span class="string">"ui/game/StealthSkillIcon.png"</span>,
+                StealthAbilityUI,
                 <span class="bool-val">true</span>,
             ));
         });
@@ -503,7 +504,7 @@
 <span class="attr">#[derive(Component, Clone)]
 </span><span class="kw">pub struct </span>WhirlAbilityUI;
 <span class="attr">#[derive(Component, Clone)]
-</span><span class="kw">pub struct </span>FocusAbilityUI;
+</span><span class="kw">pub struct </span>StealthAbilityUI;
 
 <span class="kw">fn </span>update_attack_ability_ui(
     player: Query&lt;(<span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Attacking&gt;, Has&lt;CanAttack&gt;), With&lt;Player&gt;&gt;,
@@ -573,22 +574,23 @@
     }
 }
 
-<span class="kw">fn </span>update_focus_ability_ui(
-    player: Query&lt;<span class="kw-2">&amp;</span>FocusAbility, With&lt;Player&gt;&gt;,
-    focus_ui: Query&lt;
+<span class="kw">fn </span>update_stealth_ability_ui(
+    player: Query&lt;<span class="kw-2">&amp;</span>CanStealth, With&lt;Player&gt;&gt;,
+    stealth_ui: Query&lt;
         Entity,
         (
-            With&lt;FocusAbilityUI&gt;,
+            With&lt;StealthAbilityUI&gt;,
             Without&lt;AbilityWidget&gt;,
         ),
     &gt;,
     <span class="kw-2">mut </span>commands: Commands,
+    config: Res&lt;PlayerConfig&gt;,
 ) {
-    <span class="kw">let </span><span class="prelude-val">Some</span>(focus) = player.iter().next() <span class="kw">else </span>{
+    <span class="kw">let </span><span class="prelude-val">Some</span>(stealth) = player.iter().next() <span class="kw">else </span>{
         <span class="kw">return</span>;
     };
-    <span class="kw">for </span>entity <span class="kw">in </span>focus_ui.iter() {
-        <span class="kw">let </span>factor = <span class="number">1.0 </span>- focus.recharge / <span class="number">10.0</span>;
+    <span class="kw">for </span>entity <span class="kw">in </span>stealth_ui.iter() {
+        <span class="kw">let </span>factor = stealth.remaining_cooldown / config.stealth_cooldown;
         commands.entity(entity).factor(factor);
     }
 }

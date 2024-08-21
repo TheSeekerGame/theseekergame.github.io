@@ -406,19 +406,36 @@
 <a href="#406" id="406">406</a>
 <a href="#407" id="407">407</a>
 <a href="#408" id="408">408</a>
+<a href="#409" id="409">409</a>
+<a href="#410" id="410">410</a>
+<a href="#411" id="411">411</a>
+<a href="#412" id="412">412</a>
+<a href="#413" id="413">413</a>
+<a href="#414" id="414">414</a>
+<a href="#415" id="415">415</a>
+<a href="#416" id="416">416</a>
+<a href="#417" id="417">417</a>
+<a href="#418" id="418">418</a>
+<a href="#419" id="419">419</a>
+<a href="#420" id="420">420</a>
+<a href="#421" id="421">421</a>
+<a href="#422" id="422">422</a>
+<a href="#423" id="423">423</a>
+<a href="#424" id="424">424</a>
+<a href="#425" id="425">425</a>
+<a href="#426" id="426">426</a>
+<a href="#427" id="427">427</a>
 </pre></div><pre class="rust"><code><span class="kw">pub mod </span>arc_attack;
 <span class="kw">pub mod </span>particles;
 
-<span class="kw">use </span>theseeker_engine::assets::animation::SpriteAnimation;
 <span class="kw">use </span>theseeker_engine::gent::Gent;
 <span class="kw">use </span>theseeker_engine::physics::{
-    update_sprite_colliders, Collider, LinearVelocity, PhysicsSet, PhysicsWorld, GROUND,
+    update_sprite_colliders, Collider, LinearVelocity, PhysicsWorld, GROUND,
 };
-<span class="kw">use </span>theseeker_engine::script::ScriptPlayer;
 
 <span class="kw">use </span><span class="kw">super</span>::enemy::EnemyGfx;
 <span class="kw">use </span><span class="kw">super</span>::player::PlayerGfx;
-<span class="kw">use </span><span class="kw">super</span>::player::{FocusAbility, FocusState};
+<span class="kw">use </span><span class="kw">super</span>::player::{CanDash, CanStealth, Player, PlayerConfig, WhirlAbility};
 <span class="kw">use </span><span class="kw">crate</span>::game::enemy::{Defense, Enemy, EnemyStateSet};
 <span class="kw">use </span><span class="kw">crate</span>::game::player::PlayerStateSet;
 <span class="kw">use </span><span class="kw">crate</span>::game::{attack::particles::AttackParticlesPlugin, gentstate::Dead};
@@ -493,6 +510,7 @@
     </span><span class="kw">pub </span>damaged_set: HashSet&lt;Entity&gt;,
     <span class="doccomment">/// used to track if multiple hits are in the same attack or not
     </span><span class="kw">pub </span>new_group: bool,
+    <span class="kw">pub </span>stealthed: bool,
 }
 <span class="kw">impl </span>Attack {
     <span class="doccomment">/// Lifetime is in game ticks
@@ -507,6 +525,7 @@
             collided: Default::default(),
             damaged_set: Default::default(),
             new_group: <span class="bool-val">false</span>,
+            stealthed: <span class="bool-val">false</span>,
         }
     }
 }
@@ -558,9 +577,9 @@
         <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Pushback&gt;,
         <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Projectile&gt;,
     )&gt;,
+    <span class="kw-2">mut </span>health_query: Query&lt;<span class="kw-2">&amp;mut </span>Health&gt;,
     <span class="kw-2">mut </span>damageable_query: Query&lt;(
         Entity,
-        <span class="kw-2">&amp;mut </span>Health,
         <span class="kw-2">&amp;</span>Collider,
         <span class="kw-2">&amp;</span>Gent,
         <span class="kw-2">&amp;</span>GlobalTransform,
@@ -568,13 +587,21 @@
         Has&lt;Enemy&gt;,
     )&gt;,
     <span class="kw-2">mut </span>crits: Query&lt;(<span class="kw-2">&amp;mut </span>Crits), Without&lt;Attack&gt;&gt;,
-    <span class="kw-2">mut </span>focus: Query&lt;(<span class="kw-2">&amp;mut </span>FocusAbility), Without&lt;Attack&gt;&gt;,
+    <span class="kw-2">mut </span>player_skills: Query&lt;
+        (
+            <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;mut </span>CanDash&gt;,
+            <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;mut </span>WhirlAbility&gt;,
+            <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;mut </span>CanStealth&gt;,
+        ),
+        With&lt;Player&gt;,
+    &gt;,
     <span class="kw-2">mut </span>gfx_query: Query&lt;Entity, Or&lt;(With&lt;PlayerGfx&gt;, With&lt;EnemyGfx&gt;)&gt;&gt;,
     <span class="kw-2">mut </span>commands: Commands,
     <span class="kw-2">mut </span>rig: ResMut&lt;CameraRig&gt;,
     time: Res&lt;GameTime&gt;,
+    config: Res&lt;PlayerConfig&gt;,
 ) {
-    <span class="kw">for </span>(entity, pos, <span class="kw-2">mut </span>attack, attack_collider, maybe_pushback, maybe_projectile) <span class="kw">in
+    <span class="kw">for </span>(attacker_entity, pos, <span class="kw-2">mut </span>attack, attack_collider, maybe_pushback, maybe_projectile) <span class="kw">in
         </span>query.iter_mut()
     {
         <span class="kw">let </span><span class="kw-2">mut </span>newly_collided: HashSet&lt;Entity&gt; = HashSet::default();
@@ -585,15 +612,15 @@
                 .<span class="number">0
                 </span>.collision_groups()
                 .with_filter(attack_collider.<span class="number">0</span>.collision_groups().filter | GROUND),
-            <span class="prelude-val">Some</span>(entity),
+            <span class="prelude-val">Some</span>(attacker_entity),
         );
         <span class="kw">let </span>intersections_empty = intersections.is_empty();
         <span class="kw">let </span><span class="kw-2">mut </span>targets = intersections
             .into_iter()
             <span class="comment">// Filters out everything that's not damageable or one of the nearest max_targets entities to attack
             </span>.filter_map(|colliding_entity| {
-                <span class="kw">if let </span><span class="prelude-val">Ok</span>((<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>, dmgbl_pos, <span class="kw">_</span>, <span class="kw">_</span>)) = damageable_query.get(colliding_entity) {
-                    newly_collided.insert(entity);
+                <span class="kw">if let </span><span class="prelude-val">Ok</span>((<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>, dmgbl_pos, <span class="kw">_</span>, <span class="kw">_</span>)) = damageable_query.get(colliding_entity) {
+                    newly_collided.insert(attacker_entity);
                     <span class="kw">let </span>dist = dmgbl_pos
                         .translation()
                         .xy()
@@ -618,14 +645,13 @@
                 <span class="kw">continue</span>;
             };
 
-            <span class="kw">let </span><span class="prelude-val">Ok</span>((entity, <span class="kw-2">mut </span>health, collider, gent, dmgbl_trnsfrm, is_defending, is_enemy)) =
+            <span class="kw">let </span><span class="prelude-val">Ok</span>((damaged_entity, <span class="kw">_</span>, gent, <span class="kw">_</span>, is_defending, is_enemy)) =
                 damageable_query.get_mut(<span class="kw-2">*</span>entity)
             <span class="kw">else </span>{
                 <span class="kw">continue</span>;
             };
 
-            attack.damaged_set.insert(entity);
-
+            attack.damaged_set.insert(damaged_entity);
             <span class="kw">let </span><span class="kw-2">mut </span>damage_dealt = <span class="kw">if </span>is_defending {
                 attack.damage / <span class="number">4
             </span>} <span class="kw">else </span>{
@@ -633,6 +659,7 @@
             };
 
             <span class="kw">let </span><span class="kw-2">mut </span>was_critical = <span class="bool-val">false</span>;
+            <span class="kw">let </span>was_stealthed = attack.stealthed;
             <span class="kw">if let </span><span class="prelude-val">Ok</span>((<span class="kw-2">mut </span>crit)) = crits.get_mut(attack.attacker) {
                 <span class="kw">if </span>crit.next_hit_is_critical {
                     damage_dealt = (damage_dealt <span class="kw">as </span>f32 * crit.crit_damage_multiplier) <span class="kw">as </span>u32;
@@ -644,16 +671,40 @@
                     <span class="macro">println!</span>(<span class="string">"crit_counter: {}"</span>, crit.counter);
                 }
             }
-            <span class="kw">if let </span><span class="prelude-val">Ok</span>((<span class="kw-2">mut </span>focus)) = focus.get_mut(attack.attacker) {
-                <span class="kw">if </span>focus.state != FocusState::InActive {
-                    damage_dealt = damage_dealt * <span class="number">2</span>;
-                    focus.state = FocusState::Applied
+            <span class="comment">// Stealth Effects
+            </span><span class="kw">let </span>stealth_lifesteal = <span class="kw">if </span>was_critical { <span class="number">1. </span>} <span class="kw">else </span>{ <span class="number">0.2 </span>};
+            <span class="kw">if </span>was_stealthed {
+                <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="kw-2">mut </span>attacker_health) = health_query.get_mut(attack.attacker) {
+                    attacker_health.current = u32::min(
+                        attacker_health
+                            .current
+                            .saturating_add((damage_dealt <span class="kw">as </span>f32 * stealth_lifesteal) <span class="kw">as </span>u32),
+                        config.max_health,
+                    );
                 }
             }
+            <span class="kw">if </span>was_stealthed &amp;&amp; was_critical {
+                <span class="kw">if let </span><span class="prelude-val">Ok</span>((<span class="kw-2">mut </span>maybe_can_dash, <span class="kw-2">mut </span>maybe_whirl_ability, <span class="kw-2">mut </span>maybe_can_stealth)) =
+                    player_skills.get_single_mut()
+                {
+                    <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref mut </span>can_dash) = maybe_can_dash {
+                        can_dash.remaining_cooldown = <span class="number">0.</span>;
+                    }
+                    <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref mut </span>whirl_ability) = maybe_whirl_ability {
+                        whirl_ability.energy = config.max_whirl_energy;
+                    }
+                    <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref mut </span>can_stealth) = maybe_can_stealth {
+                        can_stealth.remaining_cooldown = <span class="number">0.</span>;
+                    }
+                }
+            }
+            <span class="kw">let </span><span class="kw-2">mut </span>damaged_health = health_query
+                .get_mut(damaged_entity)
+                .expect(<span class="string">"damaged have health"</span>);
 
-            health.current = health.current.saturating_sub(damage_dealt);
+            damaged_health.current = damaged_health.current.saturating_sub(damage_dealt);
             attack.damaged.push(DamageInfo {
-                entity,
+                entity: damaged_entity,
                 tick: time.tick(),
                 amount: damage_dealt,
                 crit: was_critical,
@@ -665,8 +716,8 @@
                     max_ticks: <span class="number">8</span>,
                 });
             }
-            <span class="kw">if </span>health.current == <span class="number">0 </span>{
-                commands.entity(entity).insert(Dead::default());
+            <span class="kw">if </span>damaged_health.current == <span class="number">0 </span>{
+                commands.entity(damaged_entity).insert(Dead::default());
                 <span class="comment">//apply more screenshake if an enemies health becomes depleted by this attack
                 </span><span class="kw">if </span>is_enemy {
                     rig.trauma = <span class="number">0.4</span>;
@@ -676,7 +727,7 @@
                 </span>rig.trauma = <span class="number">0.3
             </span>}
             <span class="kw">if let </span><span class="prelude-val">Some</span>(pushback) = maybe_pushback {
-                commands.entity(entity).insert(Knockback::new(
+                commands.entity(damaged_entity).insert(Knockback::new(
                     pushback.direction,
                     pushback.strength,
                     <span class="number">16</span>,
@@ -705,19 +756,6 @@
             <span class="kw">if </span>attack.new_group == <span class="bool-val">false </span>{
                 attack.new_group = <span class="bool-val">true</span>;
 
-                <span class="kw">if let </span><span class="prelude-val">Ok</span>((<span class="kw-2">mut </span>focus)) = focus.get_mut(attack.attacker) {
-                    <span class="kw">if </span>focus.state == FocusState::Applied {
-                        focus.state = FocusState::InActive;
-                        <span class="kw">if let </span><span class="prelude-val">Ok</span>((crit)) = crits.get(attack.attacker) {
-                            <span class="comment">// If the hit *was* critical (since this runs before the
-                            // code that resets the critical hit indicator)
-                            </span><span class="kw">if </span>crit.next_hit_is_critical {
-                                focus.recharge = <span class="number">10.0</span>;
-                            }
-                        }
-                    }
-                }
-
                 <span class="kw">if let </span><span class="prelude-val">Ok</span>((<span class="kw-2">mut </span>crit)) = crits.get_mut(attack.attacker) {
                     <span class="kw">let </span>next_hit_counter = crit.counter + <span class="number">1</span>;
                     <span class="kw">if </span>next_hit_counter % <span class="number">17 </span>== <span class="number">0 </span>{
@@ -734,7 +772,7 @@
         <span class="kw">if </span>maybe_projectile.is_some() &amp;&amp; !intersections_empty &amp;&amp; attack.current_lifetime &gt; <span class="number">1 </span>{
             <span class="comment">// Note: purposefully does not despawn child entities, nor remove the
             // reference, so that child particle systems have the option of lingering
-            </span>commands.entity(entity).despawn();
+            </span>commands.entity(attacker_entity).despawn();
         }
     }
 }

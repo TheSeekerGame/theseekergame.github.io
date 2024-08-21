@@ -1446,6 +1446,18 @@
 <a href="#1446" id="1446">1446</a>
 <a href="#1447" id="1447">1447</a>
 <a href="#1448" id="1448">1448</a>
+<a href="#1449" id="1449">1449</a>
+<a href="#1450" id="1450">1450</a>
+<a href="#1451" id="1451">1451</a>
+<a href="#1452" id="1452">1452</a>
+<a href="#1453" id="1453">1453</a>
+<a href="#1454" id="1454">1454</a>
+<a href="#1455" id="1455">1455</a>
+<a href="#1456" id="1456">1456</a>
+<a href="#1457" id="1457">1457</a>
+<a href="#1458" id="1458">1458</a>
+<a href="#1459" id="1459">1459</a>
+<a href="#1460" id="1460">1460</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>bevy_hanabi::{ParticleEffect, ParticleEffectBundle};
 <span class="attr">#[cfg(feature = <span class="string">"dev"</span>)]
 </span><span class="kw">use </span>bevy_inspector_egui::quick::FilterQueryInspectorPlugin;
@@ -1463,7 +1475,7 @@
 <span class="kw">use </span>theseeker_engine::{animation::SpriteAnimationBundle, physics::ENEMY_INSIDE};
 <span class="kw">use </span>theseeker_engine::{assets::animation::SpriteAnimation, physics::ENEMY_HURT};
 
-<span class="kw">use </span><span class="kw">super</span>::player::{Player, PlayerConfig};
+<span class="kw">use </span><span class="kw">super</span>::player::{Player, PlayerConfig, Stealthing};
 <span class="kw">use </span><span class="kw">crate</span>::game::attack::arc_attack::Projectile;
 <span class="kw">use </span><span class="kw">crate</span>::game::attack::particles::ArcParticleEffectHandle;
 <span class="kw">use </span><span class="kw">crate</span>::game::attack::<span class="kw-2">*</span>;
@@ -1958,10 +1970,22 @@
         ),
         With&lt;Enemy&gt;,
     &gt;,
-    player_query: Query&lt;(Entity, <span class="kw-2">&amp;</span>GlobalTransform), (Without&lt;Enemy&gt;, With&lt;Player&gt;)&gt;,
+    player_query: Query&lt;
+        (
+            Entity,
+            <span class="kw-2">&amp;</span>GlobalTransform,
+            <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Stealthing&gt;,
+        ),
+        (Without&lt;Enemy&gt;, With&lt;Player&gt;),
+    &gt;,
 ) {
     <span class="kw">for </span>(<span class="kw-2">mut </span>range, <span class="kw-2">mut </span>target, <span class="kw-2">mut </span>facing, trans, is_aggroed, is_meleeing) <span class="kw">in </span>query.iter_mut() {
-        <span class="kw">if let </span><span class="prelude-val">Ok</span>((player_e, player_trans)) = player_query.get_single() {
+        <span class="kw">if let </span><span class="prelude-val">Ok</span>((player_e, player_trans, player_stealth)) = player_query.get_single() {
+            <span class="kw">if </span>player_stealth.is_some() {
+                <span class="kw-2">*</span>range = Range::Deaggro;
+                target.<span class="number">0 </span>= <span class="prelude-val">None</span>;
+                <span class="kw">continue</span>;
+            }
             <span class="kw">let </span>distance = trans
                 .translation()
                 .truncate()
