@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["reset_audio"],"struct":["AudioPlugin"]};
+window.SIDEBAR_ITEMS = {"fn":["manage_audio_delay"],"struct":["AudioPlugin","DelayManagerState"]};

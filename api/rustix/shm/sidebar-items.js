@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["shm_open","shm_unlink"],"struct":["Mode","ShmOFlags"]};
+window.SIDEBAR_ITEMS = {"fn":["open","unlink"],"struct":["Mode","OFlags"]};
