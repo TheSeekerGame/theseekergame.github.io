@@ -814,6 +814,100 @@
 <a href="#814" id="814">814</a>
 <a href="#815" id="815">815</a>
 <a href="#816" id="816">816</a>
+<a href="#817" id="817">817</a>
+<a href="#818" id="818">818</a>
+<a href="#819" id="819">819</a>
+<a href="#820" id="820">820</a>
+<a href="#821" id="821">821</a>
+<a href="#822" id="822">822</a>
+<a href="#823" id="823">823</a>
+<a href="#824" id="824">824</a>
+<a href="#825" id="825">825</a>
+<a href="#826" id="826">826</a>
+<a href="#827" id="827">827</a>
+<a href="#828" id="828">828</a>
+<a href="#829" id="829">829</a>
+<a href="#830" id="830">830</a>
+<a href="#831" id="831">831</a>
+<a href="#832" id="832">832</a>
+<a href="#833" id="833">833</a>
+<a href="#834" id="834">834</a>
+<a href="#835" id="835">835</a>
+<a href="#836" id="836">836</a>
+<a href="#837" id="837">837</a>
+<a href="#838" id="838">838</a>
+<a href="#839" id="839">839</a>
+<a href="#840" id="840">840</a>
+<a href="#841" id="841">841</a>
+<a href="#842" id="842">842</a>
+<a href="#843" id="843">843</a>
+<a href="#844" id="844">844</a>
+<a href="#845" id="845">845</a>
+<a href="#846" id="846">846</a>
+<a href="#847" id="847">847</a>
+<a href="#848" id="848">848</a>
+<a href="#849" id="849">849</a>
+<a href="#850" id="850">850</a>
+<a href="#851" id="851">851</a>
+<a href="#852" id="852">852</a>
+<a href="#853" id="853">853</a>
+<a href="#854" id="854">854</a>
+<a href="#855" id="855">855</a>
+<a href="#856" id="856">856</a>
+<a href="#857" id="857">857</a>
+<a href="#858" id="858">858</a>
+<a href="#859" id="859">859</a>
+<a href="#860" id="860">860</a>
+<a href="#861" id="861">861</a>
+<a href="#862" id="862">862</a>
+<a href="#863" id="863">863</a>
+<a href="#864" id="864">864</a>
+<a href="#865" id="865">865</a>
+<a href="#866" id="866">866</a>
+<a href="#867" id="867">867</a>
+<a href="#868" id="868">868</a>
+<a href="#869" id="869">869</a>
+<a href="#870" id="870">870</a>
+<a href="#871" id="871">871</a>
+<a href="#872" id="872">872</a>
+<a href="#873" id="873">873</a>
+<a href="#874" id="874">874</a>
+<a href="#875" id="875">875</a>
+<a href="#876" id="876">876</a>
+<a href="#877" id="877">877</a>
+<a href="#878" id="878">878</a>
+<a href="#879" id="879">879</a>
+<a href="#880" id="880">880</a>
+<a href="#881" id="881">881</a>
+<a href="#882" id="882">882</a>
+<a href="#883" id="883">883</a>
+<a href="#884" id="884">884</a>
+<a href="#885" id="885">885</a>
+<a href="#886" id="886">886</a>
+<a href="#887" id="887">887</a>
+<a href="#888" id="888">888</a>
+<a href="#889" id="889">889</a>
+<a href="#890" id="890">890</a>
+<a href="#891" id="891">891</a>
+<a href="#892" id="892">892</a>
+<a href="#893" id="893">893</a>
+<a href="#894" id="894">894</a>
+<a href="#895" id="895">895</a>
+<a href="#896" id="896">896</a>
+<a href="#897" id="897">897</a>
+<a href="#898" id="898">898</a>
+<a href="#899" id="899">899</a>
+<a href="#900" id="900">900</a>
+<a href="#901" id="901">901</a>
+<a href="#902" id="902">902</a>
+<a href="#903" id="903">903</a>
+<a href="#904" id="904">904</a>
+<a href="#905" id="905">905</a>
+<a href="#906" id="906">906</a>
+<a href="#907" id="907">907</a>
+<a href="#908" id="908">908</a>
+<a href="#909" id="909">909</a>
+<a href="#910" id="910">910</a>
 </pre></div><pre class="rust"><code><span class="kw">mod </span>player_anim;
 <span class="kw">mod </span>player_behaviour;
 <span class="kw">use </span>bevy::utils::hashbrown::HashMap;
@@ -845,13 +939,17 @@
 <span class="kw">impl </span>Plugin <span class="kw">for </span>PlayerPlugin {
     <span class="kw">fn </span>build(<span class="kw-2">&amp;</span><span class="self">self</span>, app: <span class="kw-2">&amp;mut </span>App) {
         app.insert_resource(PlayerConfig::default());
-        app.add_systems(GameTickUpdate, (
-            load_player_config,
-            load_player_stats
-                .before(PlayerStateSet::Behavior)
-                .after(load_player_config)
-                .run_if(resource_changed::&lt;PlayerConfig&gt;),
-        ));
+        app.add_systems(
+            GameTickUpdate,
+            (
+                load_player_config,
+                load_player_stats
+                    .before(PlayerStateSet::Behavior)
+                    .after(load_player_config)
+                    .run_if(resource_changed::&lt;PlayerConfig&gt;),
+            ),
+        );
+        app.add_systems(Startup, load_dash_asset);
         app.add_systems(
             GameTickUpdate,
             ((setup_player, despawn_dead_player).run_if(in_state(GameState::Playing)))
@@ -1294,7 +1392,7 @@
     <span class="kw">pub </span>ticks: u32,
     <span class="kw">pub </span>max_ticks: u32,
     <span class="kw">pub </span>x_direction: f32,
-<span class="comment">//    pub y_direction: f32,
+    <span class="comment">//    pub y_direction: f32,
     </span><span class="kw">pub </span>strength: Vec2,
 }
 
@@ -1409,13 +1507,13 @@
     <span class="doccomment">/// Pushback velocity on wall jumps
     </span>wall_pushback: f32,
 
-    <span class="doccomment">/// Ticks for wall pushback velocity; determines how long movement is locked for 
+    <span class="doccomment">/// Ticks for wall pushback velocity; determines how long movement is locked for
     </span>wall_pushback_ticks: u32,
 
     <span class="doccomment">/// Pushback velocity on basic melee hits
     </span>melee_pushback: f32,
-    
-    <span class="doccomment">/// Ticks for melee pushback velocity; determines how long movement is locked for 
+
+    <span class="doccomment">/// Ticks for melee pushback velocity; determines how long movement is locked for
     </span>melee_pushback_ticks: u32,
 }
 
@@ -1493,12 +1591,10 @@
    }
 }
 
-<span class="kw">fn </span>load_player_stats(
-    <span class="kw-2">mut </span>commands: Commands,
-    player_config: Res&lt;PlayerConfig&gt;
-) {
-    commands.insert_resource(PlayerStats::init_from_config(<span class="kw-2">&amp;</span>player_config));
-
+<span class="kw">fn </span>load_player_stats(<span class="kw-2">mut </span>commands: Commands, player_config: Res&lt;PlayerConfig&gt;) {
+    commands.insert_resource(PlayerStats::init_from_config(
+        <span class="kw-2">&amp;</span>player_config,
+    ));
 }
 
 <span class="doccomment">/// Extend with additional parameter Stats
@@ -1513,7 +1609,6 @@
 /// scalar and delta will use the same coefficient for all Stats if there is only one.
 </span><span class="attr">#[derive(Component, Clone)]
 </span><span class="kw">pub struct </span>StatusModifier {
-
     status_types: Vec&lt;StatType&gt;,
 
     <span class="doccomment">/// Multiplying Factor on Stat, e.g. 102.0 * 0.5 = 51.0
@@ -1535,10 +1630,10 @@
                 StatType::MoveAccelInit,
             ],
             scalar: <span class="macro">vec!</span>[<span class="number">0.5</span>],
-            delta: <span class="macro">vec!</span>[], 
-<span class="comment">//            effect_col: Color::hex("C2C9C9").unwrap(),
+            delta: <span class="macro">vec!</span>[],
+            <span class="comment">//            effect_col: Color::hex("C2C9C9").unwrap(),
             </span>effect_col: Color::hex(<span class="string">"0099CC"</span>).unwrap(), <span class="comment">// For More Visible Effect
-            </span>time_remaining: <span class="number">2.0</span>, 
+            </span>time_remaining: <span class="number">2.0</span>,
         }
     }
 }
@@ -1551,17 +1646,21 @@
 
 <span class="kw">impl </span>PlayerStats {
     <span class="kw">pub fn </span>init_from_config(config: <span class="kw-2">&amp;</span>PlayerConfig) -&gt; <span class="self">Self </span>{
-        <span class="kw">let </span>stats = HashMap::from_iter(
-            <span class="macro">vec!</span>[
-                (StatType::MoveVelMax, config.max_move_vel),
-                (StatType::MoveAccel, config.move_accel),
-                (StatType::MoveAccelInit, config.move_accel_init),
-            ]
-        );
+        <span class="kw">let </span>stats = HashMap::from_iter(<span class="macro">vec!</span>[
+            (
+                StatType::MoveVelMax,
+                config.max_move_vel,
+            ),
+            (StatType::MoveAccel, config.move_accel),
+            (
+                StatType::MoveAccelInit,
+                config.move_accel_init,
+            ),
+        ]);
 
         <span class="self">Self </span>{
             base_stats: stats.clone(),
-            effective_stats: stats, 
+            effective_stats: stats,
         }
     }
 
@@ -1574,44 +1673,41 @@
     }
 
     <span class="kw">pub fn </span>update_stats(<span class="kw-2">&amp;mut </span><span class="self">self</span>, modifier: <span class="kw-2">&amp;</span>StatusModifier) {
-
         <span class="self">self</span>.effective_stats.clear();
 
         <span class="kw">let </span>base_scalar = <span class="kw">match </span>modifier.scalar.len() {
-            <span class="number">0 </span>=&gt; {<span class="prelude-val">Some</span>(<span class="number">1.0</span>)}
-            <span class="number">1 </span>=&gt; {<span class="prelude-val">Some</span>(modifier.scalar[<span class="number">0</span>])}
-            <span class="kw">_ </span>=&gt; {<span class="prelude-val">None</span>}
+            <span class="number">0 </span>=&gt; <span class="prelude-val">Some</span>(<span class="number">1.0</span>),
+            <span class="number">1 </span>=&gt; <span class="prelude-val">Some</span>(modifier.scalar[<span class="number">0</span>]),
+            <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
         };
         <span class="kw">let </span>base_delta = <span class="kw">match </span>modifier.delta.len() {
-            <span class="number">0 </span>=&gt; {<span class="prelude-val">Some</span>(<span class="number">0.0</span>)}
-            <span class="number">1 </span>=&gt; {<span class="prelude-val">Some</span>(modifier.delta[<span class="number">0</span>])}
-            <span class="kw">_ </span>=&gt; {<span class="prelude-val">None</span>}
+            <span class="number">0 </span>=&gt; <span class="prelude-val">Some</span>(<span class="number">0.0</span>),
+            <span class="number">1 </span>=&gt; <span class="prelude-val">Some</span>(modifier.delta[<span class="number">0</span>]),
+            <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
         };
 
         <span class="kw">for </span>(i, stat) <span class="kw">in </span>modifier.status_types.iter().enumerate() {
-
-            <span class="kw">let </span>val = <span class="self">self</span>.base_stats[stat]
-            * base_scalar.unwrap_or_else(|| modifier.scalar[i])
-            + base_delta.unwrap_or_else(|| modifier.delta[i]);
+            <span class="kw">let </span>val = <span class="self">self</span>.base_stats[stat] * base_scalar.unwrap_or_else(|| modifier.scalar[i])
+                + base_delta.unwrap_or_else(|| modifier.delta[i]);
 
             <span class="self">self</span>.effective_stats.insert(<span class="kw-2">*</span>stat, val);
         }
 
-        <span class="macro">println!</span>(<span class="string">"{:?}"</span>,<span class="self">self</span>.effective_stats);
+        <span class="macro">println!</span>(<span class="string">"{:?}"</span>, <span class="self">self</span>.effective_stats);
     }
-
 }
 
-<span class="kw">fn </span>player_new_stats_mod (
+<span class="kw">fn </span>player_new_stats_mod(
     <span class="kw-2">mut </span>query: Query&lt;(Entity, <span class="kw-2">&amp;mut </span>StatusModifier)&gt;,
     <span class="kw-2">mut </span>gfx_query: Query&lt;(<span class="kw-2">&amp;</span>PlayerGfx, <span class="kw-2">&amp;mut </span>Sprite)&gt;,
     <span class="kw-2">mut </span>player_stats: ResMut&lt;PlayerStats&gt;,
     time: Res&lt;Time&lt;Virtual&gt;&gt;,
     <span class="kw-2">mut </span>commands: Commands,
 ) {
-
     <span class="kw">for </span>(p_gfx, <span class="kw-2">mut </span>sprite) <span class="kw">in </span>gfx_query.iter_mut() {
-        <span class="kw">let </span><span class="prelude-val">Ok</span>((entity, <span class="kw-2">mut </span>modifier)) = query.get_mut(p_gfx.e_gent) <span class="kw">else </span>{<span class="kw">return</span>};
+        <span class="kw">let </span><span class="prelude-val">Ok</span>((entity, <span class="kw-2">mut </span>modifier)) = query.get_mut(p_gfx.e_gent) <span class="kw">else </span>{
+            <span class="kw">return</span>;
+        };
 
         <span class="kw">if </span>modifier.is_changed() {
             player_stats.update_stats(<span class="kw-2">&amp;</span>modifier);
@@ -1627,7 +1723,99 @@
 
             sprite.color = Color::WHITE;
         }
-    } 
+    }
+}
+<span class="attr">#[derive(Component)]
+</span><span class="kw">pub struct </span>DashIcon {
+    time: f32,
+    init_a: f32,
+}
 
+<span class="attr">#[derive(Resource)]
+</span><span class="kw">pub struct </span>DashIconAssetHandle(Handle&lt;Image&gt;);
+
+<span class="kw">pub fn </span>load_dash_asset(assets: Res&lt;AssetServer&gt;, <span class="kw-2">mut </span>commands: Commands) {
+    <span class="kw">let </span>tex: Handle&lt;Image&gt; = assets.load(<span class="string">"animations/player/movement/Dash.png"</span>);
+
+    commands.insert_resource(DashIconAssetHandle(tex));
+}
+
+<span class="kw">pub fn </span>player_dash_fx(
+    <span class="kw-2">mut </span>query: Query&lt;
+        (
+            <span class="kw-2">&amp;</span>GlobalTransform,
+            <span class="kw-2">&amp;</span>Facing,
+            <span class="comment">//            &amp;LinearVelocity,
+            </span>Ref&lt;Dashing&gt;,
+            <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Stealthing&gt;,
+        ),
+        With&lt;Player&gt;,
+    &gt;,
+    config: Res&lt;PlayerConfig&gt;,
+    time: Res&lt;GameTime&gt;,
+    <span class="kw-2">mut </span>commands: Commands,
+    asset: Res&lt;DashIconAssetHandle&gt;,
+) {
+    <span class="kw">for </span>(global_tr, facing, dashing, stealthing_maybe) <span class="kw">in </span>query.iter() {
+        <span class="kw">let </span>pos = global_tr.translation();
+
+        <span class="comment">// Code for potentially interpolating position
+        // Not deemed necessary due to sufficient sprite overlap
+        //let dir = Vec3::new(
+        //    config.dash_velocity * facing.direction(),
+        //    0.0,
+        //    0.0,
+        //);
+        //let lpos = pos + dir * 0.5;
+        //if dashing.is_added() {
+        //
+        //} else
+        </span>{
+            <span class="comment">//let dir = Vec2::new(
+            //    config.dash_velocity * facing.direction(),
+            //    0.0,
+            //);
+
+            </span><span class="kw">let </span>tex: Handle&lt;Image&gt; = asset.<span class="number">0</span>.clone();
+            <span class="kw">let </span>t = time.time_in_seconds() <span class="kw">as </span>f32 + config.dash_duration;
+
+            <span class="kw">let </span>init_a = <span class="kw">match </span>stealthing_maybe {
+                <span class="prelude-val">Some</span>(<span class="kw">_</span>) =&gt; <span class="number">0.2</span>,
+                <span class="prelude-val">None </span>=&gt; <span class="number">0.5</span>,
+            };
+
+            commands.spawn((
+                SpriteBundle {
+                    sprite: Sprite {
+                        flip_x: facing.direction() &lt; <span class="number">0.</span>,
+                        ..default()
+                    },
+                    transform: Transform::from_translation(pos),
+                    texture: tex.clone(),
+                    ..default()
+                },
+                DashIcon { time: t, init_a },
+            ));
+        }
+    }
+}
+
+<span class="kw">pub fn </span>dash_icon_fx(
+    <span class="kw-2">mut </span>commands: Commands,
+    <span class="kw-2">mut </span>query: Query&lt;(Entity, <span class="kw-2">&amp;</span>DashIcon, <span class="kw-2">&amp;mut </span>Sprite)&gt;,
+    time: Res&lt;GameTime&gt;,
+    config: Res&lt;PlayerConfig&gt;,
+) {
+    <span class="kw">for </span>(entity, icon, <span class="kw-2">mut </span>sprite) <span class="kw">in </span>query.iter_mut() {
+        <span class="kw">let </span>d = time.time_in_seconds() <span class="kw">as </span>f32 - icon.time;
+
+        <span class="kw">let </span>r = d / config.dash_duration;
+
+        <span class="kw">if </span>r &gt;= <span class="number">1.0 </span>{
+            commands.entity(entity).despawn();
+        } <span class="kw">else </span>{
+            sprite.color.set_a((<span class="number">1.0 </span>- r) * icon.init_a);
+        }
+    }
 }
 </code></pre></div></section></main></body></html>
