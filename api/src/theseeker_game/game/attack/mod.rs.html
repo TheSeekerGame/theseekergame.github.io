@@ -451,6 +451,16 @@
 <a href="#451" id="451">451</a>
 <a href="#452" id="452">452</a>
 <a href="#453" id="453">453</a>
+<a href="#454" id="454">454</a>
+<a href="#455" id="455">455</a>
+<a href="#456" id="456">456</a>
+<a href="#457" id="457">457</a>
+<a href="#458" id="458">458</a>
+<a href="#459" id="459">459</a>
+<a href="#460" id="460">460</a>
+<a href="#461" id="461">461</a>
+<a href="#462" id="462">462</a>
+<a href="#463" id="463">463</a>
 </pre></div><pre class="rust"><code><span class="kw">pub mod </span>arc_attack;
 <span class="kw">pub mod </span>particles;
 
@@ -460,8 +470,8 @@
 };
 
 <span class="kw">use </span><span class="kw">super</span>::enemy::EnemyGfx;
-<span class="kw">use </span><span class="kw">super</span>::player::{PlayerGfx, PlayerPushback};
 <span class="kw">use </span><span class="kw">super</span>::player::{CanDash, CanStealth, Player, PlayerConfig, WhirlAbility};
+<span class="kw">use </span><span class="kw">super</span>::player::{PlayerGfx, PlayerPushback, StatusModifier};
 <span class="kw">use </span><span class="kw">crate</span>::game::enemy::{Defense, Enemy, EnemyStateSet};
 <span class="kw">use </span><span class="kw">crate</span>::game::player::PlayerStateSet;
 <span class="kw">use </span><span class="kw">crate</span>::game::{attack::particles::AttackParticlesPlugin, gentstate::Dead};
@@ -541,6 +551,7 @@
 
     <span class="kw">pub </span>pushback: <span class="prelude-ty">Option</span>&lt;PlayerPushback&gt;,
     <span class="kw">pub </span>pushback_applied: bool,
+    <span class="kw">pub </span>status_mod: <span class="prelude-ty">Option</span>&lt;StatusModifier&gt;,
 }
 <span class="kw">impl </span>Attack {
     <span class="doccomment">/// Lifetime is in game ticks
@@ -558,8 +569,14 @@
             stealthed: <span class="bool-val">false</span>,
             pushback: <span class="prelude-val">None</span>,
             pushback_applied: <span class="bool-val">false</span>,
+            status_mod: <span class="prelude-val">None</span>,
         }
     }
+
+    <span class="kw">pub fn </span>set_stat_mod(<span class="kw-2">mut </span><span class="self">self</span>, modif: StatusModifier) -&gt; <span class="self">Self </span>{
+        <span class="self">self</span>.status_mod = <span class="prelude-val">Some</span>(modif);
+        <span class="self">self
+    </span>}
 }
 
 <span class="kw">pub struct </span>DamageInfo {
@@ -682,6 +699,13 @@
             <span class="kw">else </span>{
                 <span class="kw">continue</span>;
             };
+
+            <span class="comment">// Apply Stat Modifier (if exists)
+            </span><span class="kw">if let </span><span class="prelude-val">Some</span>(stat_modifier) = <span class="kw-2">&amp;</span>attack.status_mod {
+                commands
+                    .entity(damaged_entity)
+                    .insert(stat_modifier.clone());
+            }
 
             attack.damaged_set.insert(damaged_entity);
             <span class="kw">let </span><span class="kw-2">mut </span>damage_dealt = <span class="kw">if </span>is_defending {
@@ -811,23 +835,19 @@
 
 <span class="kw">fn </span>on_hit_player_pushback(
     <span class="kw-2">mut </span>commands: Commands,
-    <span class="kw-2">mut </span>query: Query&lt;
-        (Entity, <span class="kw-2">&amp;mut </span>Attack), 
-        (Changed&lt;Attack&gt;)
-    &gt;,
+    <span class="kw-2">mut </span>query: Query&lt;(Entity, <span class="kw-2">&amp;mut </span>Attack), (Changed&lt;Attack&gt;)&gt;,
 ) {
     <span class="kw">for </span>(entity, <span class="kw-2">mut </span>attack) <span class="kw">in </span>query.iter_mut() {
-
         <span class="kw">if </span>!attack.pushback_applied &amp;&amp; attack.pushback.is_some() {
             <span class="kw">if </span>!attack.damaged.is_empty() {
-                commands.entity(attack.attacker).insert(attack.pushback.unwrap());
+                commands
+                    .entity(attack.attacker)
+                    .insert(attack.pushback.unwrap());
                 attack.pushback_applied = <span class="bool-val">true</span>;
             }
         }
-
     }
 }
-
 
 <span class="comment">//maybe should not modify velocity directly but add knockback, but this makes it behave differently
 //in states which dont set velocity every frame
