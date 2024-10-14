@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"macro":["finish_frame","register_thread","scope"]};
+window.SIDEBAR_ITEMS = {"macro":["finish_frame","function_scope","register_thread","scope"]};
