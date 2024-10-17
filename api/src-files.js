@@ -179,7 +179,7 @@ var srcIndex = new Map(JSON.parse('[\
 ["hound",["",[],["lib.rs","read.rs","write.rs"]]],\
 ["ident_case",["",[],["lib.rs"]]],\
 ["idna",["",[],["lib.rs","punycode.rs","uts46.rs"]]],\
-["image",["",[["codecs",[],["png.rs"]],["image_reader",[],["free_functions.rs","image_reader_type.rs","mod.rs"]],["imageops",[],["affine.rs","colorops.rs","mod.rs","sample.rs"]],["math",[],["mod.rs","rect.rs","utils.rs"]],["utils",[],["mod.rs"]]],["animation.rs","buffer.rs","color.rs","dynimage.rs","error.rs","flat.rs","image.rs","lib.rs","traits.rs"]]],\
+["image",["",[["codecs",[],["png.rs"]],["image_reader",[],["free_functions.rs","image_reader_type.rs","mod.rs"]],["imageops",[],["affine.rs","colorops.rs","fast_blur.rs","mod.rs","sample.rs"]],["math",[],["mod.rs","rect.rs","utils.rs"]],["utils",[],["mod.rs"]]],["animation.rs","buffer.rs","color.rs","dynimage.rs","error.rs","flat.rs","image.rs","lib.rs","metadata.rs","traits.rs"]]],\
 ["indexmap",["",[["map",[["core",[],["entry.rs","raw_entry_v1.rs"]]],["core.rs","iter.rs","mutable.rs","serde_seq.rs","slice.rs"]],["set",[],["iter.rs","mutable.rs","slice.rs"]]],["arbitrary.rs","lib.rs","macros.rs","map.rs","serde.rs","set.rs","util.rs"]]],\
 ["inflections",["",[],["case.rs","lib.rs"]]],\
 ["inotify",["",[],["events.rs","fd_guard.rs","inotify.rs","lib.rs","util.rs","watches.rs"]]],\
