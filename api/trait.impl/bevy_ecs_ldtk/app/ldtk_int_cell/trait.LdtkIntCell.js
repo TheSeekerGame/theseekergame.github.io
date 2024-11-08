@@ -1,3 +1,9 @@
-(function() {var implementors = {
-"theseeker_game":[["impl <a class=\"trait\" href=\"theseeker_game/prelude/trait.LdtkIntCell.html\" title=\"trait theseeker_game::prelude::LdtkIntCell\">LdtkIntCell</a> for <a class=\"struct\" href=\"theseeker_game/game/wall/struct.WallBundle.html\" title=\"struct theseeker_game::game::wall::WallBundle\">WallBundle</a>"]]
-};if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
+(function() {
+    var implementors = Object.fromEntries([["theseeker_game",[["impl <a class=\"trait\" href=\"theseeker_game/prelude/trait.LdtkIntCell.html\" title=\"trait theseeker_game::prelude::LdtkIntCell\">LdtkIntCell</a> for <a class=\"struct\" href=\"theseeker_game/game/wall/struct.WallBundle.html\" title=\"struct theseeker_game::game::wall::WallBundle\">WallBundle</a>"]]]]);
+    if (window.register_implementors) {
+        window.register_implementors(implementors);
+    } else {
+        window.pending_implementors = implementors;
+    }
+})()
+//{"start":57,"fragment_lengths":[324]}
