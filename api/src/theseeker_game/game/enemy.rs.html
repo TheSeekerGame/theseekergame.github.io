@@ -1457,6 +1457,76 @@
 <a href="#1457" id="1457">1457</a>
 <a href="#1458" id="1458">1458</a>
 <a href="#1459" id="1459">1459</a>
+<a href="#1460" id="1460">1460</a>
+<a href="#1461" id="1461">1461</a>
+<a href="#1462" id="1462">1462</a>
+<a href="#1463" id="1463">1463</a>
+<a href="#1464" id="1464">1464</a>
+<a href="#1465" id="1465">1465</a>
+<a href="#1466" id="1466">1466</a>
+<a href="#1467" id="1467">1467</a>
+<a href="#1468" id="1468">1468</a>
+<a href="#1469" id="1469">1469</a>
+<a href="#1470" id="1470">1470</a>
+<a href="#1471" id="1471">1471</a>
+<a href="#1472" id="1472">1472</a>
+<a href="#1473" id="1473">1473</a>
+<a href="#1474" id="1474">1474</a>
+<a href="#1475" id="1475">1475</a>
+<a href="#1476" id="1476">1476</a>
+<a href="#1477" id="1477">1477</a>
+<a href="#1478" id="1478">1478</a>
+<a href="#1479" id="1479">1479</a>
+<a href="#1480" id="1480">1480</a>
+<a href="#1481" id="1481">1481</a>
+<a href="#1482" id="1482">1482</a>
+<a href="#1483" id="1483">1483</a>
+<a href="#1484" id="1484">1484</a>
+<a href="#1485" id="1485">1485</a>
+<a href="#1486" id="1486">1486</a>
+<a href="#1487" id="1487">1487</a>
+<a href="#1488" id="1488">1488</a>
+<a href="#1489" id="1489">1489</a>
+<a href="#1490" id="1490">1490</a>
+<a href="#1491" id="1491">1491</a>
+<a href="#1492" id="1492">1492</a>
+<a href="#1493" id="1493">1493</a>
+<a href="#1494" id="1494">1494</a>
+<a href="#1495" id="1495">1495</a>
+<a href="#1496" id="1496">1496</a>
+<a href="#1497" id="1497">1497</a>
+<a href="#1498" id="1498">1498</a>
+<a href="#1499" id="1499">1499</a>
+<a href="#1500" id="1500">1500</a>
+<a href="#1501" id="1501">1501</a>
+<a href="#1502" id="1502">1502</a>
+<a href="#1503" id="1503">1503</a>
+<a href="#1504" id="1504">1504</a>
+<a href="#1505" id="1505">1505</a>
+<a href="#1506" id="1506">1506</a>
+<a href="#1507" id="1507">1507</a>
+<a href="#1508" id="1508">1508</a>
+<a href="#1509" id="1509">1509</a>
+<a href="#1510" id="1510">1510</a>
+<a href="#1511" id="1511">1511</a>
+<a href="#1512" id="1512">1512</a>
+<a href="#1513" id="1513">1513</a>
+<a href="#1514" id="1514">1514</a>
+<a href="#1515" id="1515">1515</a>
+<a href="#1516" id="1516">1516</a>
+<a href="#1517" id="1517">1517</a>
+<a href="#1518" id="1518">1518</a>
+<a href="#1519" id="1519">1519</a>
+<a href="#1520" id="1520">1520</a>
+<a href="#1521" id="1521">1521</a>
+<a href="#1522" id="1522">1522</a>
+<a href="#1523" id="1523">1523</a>
+<a href="#1524" id="1524">1524</a>
+<a href="#1525" id="1525">1525</a>
+<a href="#1526" id="1526">1526</a>
+<a href="#1527" id="1527">1527</a>
+<a href="#1528" id="1528">1528</a>
+<a href="#1529" id="1529">1529</a>
 </pre></div><pre class="rust"><code><span class="attr">#[cfg(feature = <span class="string">"dev"</span>)]
 </span><span class="kw">use </span>bevy_inspector_egui::quick::FilterQueryInspectorPlugin;
 <span class="kw">use </span>rand::distributions::Standard;
@@ -1583,8 +1653,20 @@
     animation: SpriteAnimationBundle,
 }
 
+<span class="attr">#[derive(Bundle)]
+</span><span class="kw">pub struct </span>EnemyEffectsGfxBundle {
+    marker: EnemyEffectGfx,
+    gent2gfx: TransformGfxFromGent,
+    sprite: SpriteSheetBundle,
+    animation: SpriteAnimationBundle,
+}
+
 <span class="attr">#[derive(Component)]
 </span><span class="kw">pub struct </span>EnemyGfx {
+    e_gent: Entity,
+}
+<span class="attr">#[derive(Component)]
+</span><span class="kw">pub struct </span>EnemyEffectGfx {
     e_gent: Entity,
 }
 
@@ -1676,11 +1758,15 @@
         <span class="comment">//TODO: ensure propper z order
         </span>xf_gent.translation.z = <span class="number">14.0 </span>* <span class="number">0.000001</span>;
         <span class="kw">let </span>e_gfx = commands.spawn(()).id();
+        <span class="kw">let </span>e_effects_gfx = commands.spawn(()).id();
         commands.entity(e_gent).insert((
             Name::new(<span class="string">"Enemy"</span>),
             EnemyGentBundle {
                 enemy: Enemy,
-                marker: Gent { e_gfx },
+                marker: Gent {
+                    e_gfx,
+                    e_effects_gfx,
+                },
                 phys: GentPhysicsBundle {
                     <span class="comment">//need to find a way to offset this one px toward back of enemys facing
                     //direction
@@ -1733,6 +1819,24 @@
                     ..Default::default()
                 },
                 animation: Default::default(),
+            },
+            StateDespawnMarker,
+        ));
+        <span class="kw">let </span><span class="kw-2">mut </span>animation: ScriptPlayer&lt;SpriteAnimation&gt; = ScriptPlayer::default();
+        animation.play_key(<span class="string">"anim.spider.Sparks"</span>);
+        animation.set_slot(<span class="string">"Start"</span>, <span class="bool-val">true</span>);
+        commands.entity(e_effects_gfx).insert((
+            EnemyEffectsGfxBundle {
+                marker: EnemyEffectGfx { e_gent },
+                gent2gfx: TransformGfxFromGent {
+                    pixel_aligned: <span class="bool-val">false</span>,
+                    gent: e_gent,
+                },
+                sprite: SpriteSheetBundle {
+                    transform: xf_gent.with_translation(Vec3::new(<span class="number">0.</span>, <span class="number">0.</span>, <span class="number">1.</span>)),
+                    ..Default::default()
+                },
+                animation: SpriteAnimationBundle { player: animation },
             },
             StateDespawnMarker,
         ));
@@ -1890,6 +1994,9 @@
 }
 <span class="kw">impl </span>GentState <span class="kw">for </span>Waiting {}
 <span class="kw">impl </span>GenericState <span class="kw">for </span>Waiting {}
+
+<span class="attr">#[derive(Component)]
+</span><span class="kw">pub struct </span>JustGotHitMarker;
 
 <span class="attr">#[derive(Component, Reflect)]
 </span><span class="kw">enum </span>Navigation {
@@ -2777,6 +2884,7 @@
                 enemy_pushback_attack_animation,
                 enemy_death_animation,
                 enemy_decay_animation,
+                enemy_sparks_on_hit_animation,
                 sprite_flip,
             )
                 .in_set(EnemyStateSet::Animation)
@@ -2793,6 +2901,38 @@
     <span class="kw">for </span>gent <span class="kw">in </span>i_query.iter() {
         <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="kw-2">mut </span>enemy) = gfx_query.get_mut(gent.e_gfx) {
             enemy.play_key(<span class="string">"anim.spider.Idle"</span>);
+        }
+    }
+}
+<span class="kw">fn </span>enemy_sparks_on_hit_animation(
+    i_query: Query&lt;(Entity, <span class="kw-2">&amp;</span>Gent), (Added&lt;JustGotHitMarker&gt;, With&lt;Enemy&gt;)&gt;,
+    <span class="kw-2">mut </span>gfx_query: Query&lt;<span class="kw-2">&amp;mut </span>ScriptPlayer&lt;SpriteAnimation&gt;, With&lt;EnemyEffectGfx&gt;&gt;,
+    <span class="kw-2">mut </span>commands: Commands,
+    player_facing_dir: Query&lt;<span class="kw-2">&amp;</span>Facing, With&lt;Player&gt;&gt;,
+) {
+    <span class="kw">for </span>(e, gent) <span class="kw">in </span>i_query.iter() {
+        <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="kw-2">mut </span>enemy) = gfx_query.get_mut(gent.e_effects_gfx) {
+            <span class="kw">let </span><span class="kw-2">mut </span>rng = thread_rng();
+            <span class="kw">let </span>picked_spark = rng.gen_range(<span class="number">1</span>..=<span class="number">6</span>);
+            enemy.play_key(<span class="string">"anim.spider.Sparks"</span>);
+            enemy.clear_slots();
+            enemy.set_slot(
+                <span class="macro">format!</span>(<span class="string">"Spark{picked_spark}"</span>).as_str(),
+                <span class="bool-val">true</span>,
+            );
+            <span class="kw">if let </span><span class="prelude-val">Ok</span>(direction) = player_facing_dir.get_single() {
+                <span class="kw">match </span>direction {
+                    Facing::Right =&gt; {
+                        enemy.set_slot(<span class="string">"DirectionRight"</span>, <span class="bool-val">true</span>);
+                        enemy.set_slot(<span class="string">"DirectionLeft"</span>, <span class="bool-val">false</span>);
+                    },
+                    Facing::Left =&gt; {
+                        enemy.set_slot(<span class="string">"DirectionRight"</span>, <span class="bool-val">false</span>);
+                        enemy.set_slot(<span class="string">"DirectionLeft"</span>, <span class="bool-val">true</span>);
+                    },
+                };
+            }
+            commands.entity(e).remove::&lt;JustGotHitMarker&gt;();
         }
     }
 }
