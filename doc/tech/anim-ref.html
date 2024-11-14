@@ -498,7 +498,7 @@ In dev builds, the game might print warnings to the log/console.</p>
 </details>
 <details>
   <summary>
-  <code>if_frame_lt</code>/<code>if_frame_le</code>/<code>if_frame_gt</code>/<code>if_frame_ge</code>
+  <code>if_frame_lt</code>/<code>if_frame_le</code>/<code>if_frame_gt</code>/<code>if_frame_ge</code>/<code>if_frame_is</code>/<code>if_frame_is_not</code>
   </summary>
 <p>Example:</p>
 <pre><code class="language-toml"># Do something every 3 ticks, but only if we are currently
@@ -515,41 +515,75 @@ action = "..."
 run_every_n_ticks = "5+1"
 if_frame_lt = "my_bookmark"
 action = "..."
-</code></pre>
-<p>Only run the action if the current frame index is:</p>
-<ul>
-<li>less than (lt)</li>
-<li>less than or equal to (le)</li>
-<li>greater than (gt)</li>
-<li>greater than or equal to (ge)</li>
-</ul>
-<p>the specified value.</p>
-<p>It can be specified as either a number or a frame bookmark. If specified
-as a number, it will be relative to <code>frame_bookmark</code>, if set.</p>
-</details>
-<details>
-  <summary>
-  <code>if_frame_is</code>
-  </summary>
-<p>Example:</p>
-<pre><code class="language-toml"># Do something as soon as the "attack" slot is enabled,
+
+# Do something as soon as the "attack" slot is enabled,
 # but only if we are currently displaying frame 6
 [[script]]
 run_on_slot_enable = "attack"
 if_frame_is = 6
 action = "..."
 
-# Do something every 3 ticks, but only if we are currently
+# Do something every 3 ticks, but only if we are not currently
 # displaying one of the special magic frames
 [[script]]
 run_every_n_ticks = "3"
-if_frame_is = [ 3, 7, 9 ]
+if_frame_is_not = [ 3, 7, 9 ]
 action = "..."
 </code></pre>
-<p>Only run the action if the current frame index is equal to any of
-the specified values.</p>
-<p>The values can be specified as either a number or a frame bookmark. If
-specified as a number, it will be relative to <code>frame_bookmark</code>, if set.</p>
+<p>Only run the action if the current frame index is:</p>
+<ul>
+<li>less than a given value (<code>lt</code>)</li>
+<li>less than or equal to a given value (<code>le</code>)</li>
+<li>greater than a given value (<code>gt</code>)</li>
+<li>greater than or equal to a given value (<code>ge</code>)</li>
+<li>equal to any of the specified values (<code>is</code>)</li>
+<li>not equal to any of the specified values (<code>is_not</code>)</li>
+</ul>
+<p>It can be specified as either a number or a frame bookmark. If specified
+as a number, it will be relative to <code>frame_bookmark</code>, if set.</p>
+</details>
+<details>
+  <summary>
+  <code>if_oldanim_frame_lt</code>/<code>if_oldanim_frame_le</code>/<code>if_oldanim_frame_gt</code>/<code>if_oldanim_frame_ge</code>/<code>if_oldanim_frame_was</code>/<code>if_oldanim_frame_was_not</code>
+  </summary>
+<p>Example:</p>
+<pre><code class="language-toml"># Do something when the animation starts,
+# but only if the previouly-playing animation
+# was "anim.Player.Attack"
+# and it had not yet reached frame 7
+[[script]]
+run_on_playback_control = "Start"
+if_previous_script_key = "anim.Player.Attack"
+if_oldanim_frame_lt = 7
+action = "..."
+
+# Do something on tick 3,
+# but only if the previously-playing animation
+# was "anim.Player.Run"
+# and it was on frame 15
+# (when the current animation was started)
+[[script]]
+run_at_tick = 3
+if_previous_script_key = "anim.Player.Run"
+if_oldanim_frame_was = 15
+action = "..."
+</code></pre>
+<p>These parameters let you perform actions depending on where the
+previously-playing animation (if any) left off. This allows you to implement
+special handling for specific transitions between animations.</p>
+<p>These parameters should be used together with <code>if_previous_script_key</code>.</p>
+<p>Only run the action if the frame index of the previously-playing animation
+(at the time of switching to the current animation) was:</p>
+<ul>
+<li>less than a given value (<code>lt</code>)</li>
+<li>less than or equal to a given value (<code>le</code>)</li>
+<li>greater than a given value (<code>gt</code>)</li>
+<li>greater than or equal to a given value (<code>ge</code>)</li>
+<li>equal to any of the specified values (<code>was</code>)</li>
+<li>not equal to any of the specified values (<code>was_not</code>)</li>
+</ul>
+<p>The provided values must be literal numbers. Since they refer to a different
+animation asset, bookmarks are not taken into account.</p>
 </details>
 <details>
   <summary>
