@@ -343,9 +343,46 @@
 <a href="#343" id="343">343</a>
 <a href="#344" id="344">344</a>
 <a href="#345" id="345">345</a>
+<a href="#346" id="346">346</a>
+<a href="#347" id="347">347</a>
+<a href="#348" id="348">348</a>
+<a href="#349" id="349">349</a>
+<a href="#350" id="350">350</a>
+<a href="#351" id="351">351</a>
+<a href="#352" id="352">352</a>
+<a href="#353" id="353">353</a>
+<a href="#354" id="354">354</a>
+<a href="#355" id="355">355</a>
+<a href="#356" id="356">356</a>
+<a href="#357" id="357">357</a>
+<a href="#358" id="358">358</a>
+<a href="#359" id="359">359</a>
+<a href="#360" id="360">360</a>
+<a href="#361" id="361">361</a>
+<a href="#362" id="362">362</a>
+<a href="#363" id="363">363</a>
+<a href="#364" id="364">364</a>
+<a href="#365" id="365">365</a>
+<a href="#366" id="366">366</a>
+<a href="#367" id="367">367</a>
+<a href="#368" id="368">368</a>
+<a href="#369" id="369">369</a>
+<a href="#370" id="370">370</a>
+<a href="#371" id="371">371</a>
+<a href="#372" id="372">372</a>
+<a href="#373" id="373">373</a>
+<a href="#374" id="374">374</a>
+<a href="#375" id="375">375</a>
+<a href="#376" id="376">376</a>
+<a href="#377" id="377">377</a>
+<a href="#378" id="378">378</a>
+<a href="#379" id="379">379</a>
+<a href="#380" id="380">380</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! Everything to do with the in-game camera(s)
 
-</span><span class="kw">use </span><span class="kw">crate</span>::game::player::Player;
+</span><span class="kw">use </span>std::f32::consts::PI;
+
+<span class="kw">use </span><span class="kw">crate</span>::game::player::Player;
 <span class="kw">use </span><span class="kw">crate</span>::graphics::darkness::DarknessSettings;
 <span class="kw">use </span><span class="kw">crate</span>::graphics::dof::{DepthOfFieldMode, DepthOfFieldSettings};
 <span class="kw">use </span><span class="kw">crate</span>::level::MainBackround;
@@ -355,7 +392,6 @@
 <span class="kw">use </span>bevy::core_pipeline::tonemapping::Tonemapping;
 <span class="kw">use </span>iyes_perf_ui::PerfUiCompleteBundle;
 <span class="kw">use </span>ran::ran_f64_range;
-<span class="kw">use </span>theseeker_engine::gent::Gent;
 
 <span class="kw">pub struct </span>CameraPlugin;
 
@@ -376,13 +412,14 @@
         </span>app.insert_resource(CameraRig {
             target: Default::default(),
             camera: Default::default(),
-            trauma: <span class="number">0.0</span>,
         });
         app.add_systems(GameTickUpdate, camera_rig_follow_player);
-        app.add_systems(GameTickUpdate, update_rig_trauma);
         app.add_systems(
             GameTickUpdate,
-            update_camera_rig.after(camera_rig_follow_player),
+            (
+                update_camera_rig.after(camera_rig_follow_player),
+                update_screen_shake.run_if(resource_exists::&lt;CameraShake&gt;),
+            )
         );
     }
 }
@@ -407,12 +444,6 @@
     </span>target: Vec2,
     <span class="doccomment">/// the "base" position of the camera before screen shake is applied
     </span>camera: Vec2,
-    <span class="doccomment">/// Applies screen shake based on this amount.
-    ///
-    /// value decreases over time. To use, add some amount based on impact intensity.
-    ///
-    /// 10.0 is a lot; death? 1.0 minor impact
-    </span><span class="kw">pub</span>(<span class="kw">crate</span>) trauma: f32,
 }
 
 <span class="doccomment">/// Limits to the viewable gameplay area.
@@ -438,7 +469,7 @@
         tonemapping: Tonemapping::None,
         ..default()
     };
-    camera.projection.scale = <span class="number">1.0 </span>/ <span class="number">6.0</span>;
+    camera.projection.scale = <span class="number">1.0 </span>/ <span class="number">5.0</span>;
 
     <span class="kw">let </span><span class="kw-2">mut </span>camera3d = Camera3dBundle {
         camera: Camera {
@@ -532,43 +563,6 @@
     </span>rig.target.y = player_xform.translation.y;
 }
 
-<span class="doccomment">/// Tiny system that just makes sure trauma is always going down linearly
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>update_rig_trauma(
-    <span class="kw-2">mut </span>rig: ResMut&lt;CameraRig&gt;,
-    time: Res&lt;Time&gt;,
-    keyboard_input: Res&lt;ButtonInput&lt;KeyCode&gt;&gt;,
-    <span class="kw-2">mut </span>commands: Commands,
-    player_q: Query&lt;Entity, (With&lt;Gent&gt;, With&lt;Player&gt;)&gt;,
-) {
-    rig.trauma = (rig.trauma - <span class="number">1.75 </span>* time.delta_seconds()).max(<span class="number">0.0</span>);
-    <span class="attr">#[cfg(feature = <span class="string">"dev"</span>)]
-    </span><span class="comment">// Tests different levels based on number key if in dev
-    </span>{
-        <span class="kw">let </span>number_keys = [
-            KeyCode::Digit1,
-            KeyCode::Digit2,
-            KeyCode::Digit3,
-            KeyCode::Digit4,
-            KeyCode::Digit5,
-            KeyCode::Digit6,
-            KeyCode::Digit7,
-            KeyCode::Digit8,
-            KeyCode::Digit9,
-            KeyCode::Digit0,
-        ];
-        <span class="kw">for </span>(i, key) <span class="kw">in </span>number_keys.iter().enumerate() {
-            <span class="kw">if </span>keyboard_input.pressed(<span class="kw-2">*</span>key) {
-                rig.trauma = (i <span class="kw">as </span>f32 + <span class="number">1.0</span>) * <span class="number">0.1</span>;
-            }
-        }
-        <span class="kw">if </span>keyboard_input.pressed(KeyCode::Delete) || keyboard_input.pressed(KeyCode::Backspace) {
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(e) = player_q.iter().next() {
-                commands.entity(e).try_insert(Dead::default());
-            }
-        }
-    }
-}
-
 <span class="doccomment">/// Camera updates the camera position to smoothly interpolate to the
 /// rig location. also applies camera shake, and limits camera within the level boundaries
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>update_camera_rig(
@@ -578,6 +572,7 @@
         (<span class="kw-2">&amp;</span>LayerMetadata, <span class="kw-2">&amp;</span>Transform),
         (With&lt;MainBackround&gt;, Without&lt;MainCamera&gt;),
     &gt;,
+    shake_op: <span class="prelude-ty">Option</span>&lt;Res&lt;CameraShake&gt;&gt;,
     time: Res&lt;Time&gt;,
 ) {
     <span class="kw">let </span><span class="prelude-val">Ok</span>((<span class="kw-2">mut </span>cam_xform, projection)) = q_cam.get_single_mut() <span class="kw">else </span>{
@@ -594,12 +589,15 @@
 
     rig.camera = new_xy;
 
-    <span class="kw">let </span>shake = rig.trauma.powi(<span class="number">3</span>);
-
+    
     <span class="comment">// screen shake amounts
-    </span><span class="kw">let </span>angle = <span class="number">2.5 </span>* (std::f32::consts::PI / <span class="number">180.0</span>) * shake * ran_f64_range(-<span class="number">1.0</span>..=<span class="number">1.0</span>) <span class="kw">as </span>f32;
-    <span class="kw">let </span>offset_x = <span class="number">20.0 </span>* shake * ran_f64_range(-<span class="number">1.0</span>..=<span class="number">1.0</span>) <span class="kw">as </span>f32;
-    <span class="kw">let </span>offset_y = <span class="number">20.0 </span>* shake * ran_f64_range(-<span class="number">1.0</span>..=<span class="number">1.0</span>) <span class="kw">as </span>f32;
+    </span><span class="kw">let </span>offset = <span class="kw">match </span>shake_op {
+        <span class="prelude-val">Some</span>(shake) =&gt; shake.c_offset,
+        <span class="prelude-val">None </span>=&gt; Vec2::ZERO,
+    };
+
+    <span class="kw">let </span>offset_x = offset.x;
+    <span class="kw">let </span>offset_y = offset.y;
 
     <span class="comment">// cam_xform.rotation.z = 0.0 + angle;
     </span>cam_xform.translation.x = rig.camera.x;
@@ -640,6 +638,78 @@
         cam_xform.translation = xy.extend(cam_xform.translation.z);
     }
 }
+
+<span class="attr">#[derive(Resource, Clone)]
+</span><span class="kw">pub struct </span>CameraShake {
+    strength: f32,
+    c_offset: Vec2,
+    freq: f32,
+    dir: Vec2,
+    timer: Timer,
+    sub_timer: Timer,
+}
+
+<span class="kw">impl </span>CameraShake {
+    <span class="kw">pub fn </span>new(strength: f32, t: f32, freq: f32) -&gt; <span class="self">Self </span>{
+        <span class="kw">let </span>rand_a = ran_f64_range(<span class="number">0.0</span>..=<span class="number">360.0</span>);
+        <span class="kw">let </span>dir = Vec2::from_angle(rand_a <span class="kw">as </span>f32 * PI * <span class="number">2.0</span>);
+
+        <span class="self">Self </span>{ 
+            strength, 
+            freq,
+            timer: Timer::from_seconds(t, TimerMode::Once), 
+            sub_timer: Timer::from_seconds(t / freq, TimerMode::Repeating), 
+            c_offset: Vec2::ZERO,
+            dir,
+        }
+    }
+}
+
+
+<span class="kw">pub fn </span>update_screen_shake(
+    <span class="kw-2">mut </span>commands: Commands,
+<span class="comment">//    mut cam_query: Query&lt;(Entity, &amp;mut CameraShake, &amp;mut Transform), (With&lt;PlayerCamera&gt;)&gt;,
+    </span>time: Res&lt;Time&lt;Virtual&gt;&gt;,
+    <span class="kw-2">mut </span>shake: ResMut&lt;CameraShake&gt;,
+) {
+
+    <span class="kw">let </span>freq = shake.freq;
+    <span class="kw">let </span>ratio = shake.timer.fraction();
+    <span class="kw">let </span>decay = <span class="number">1.0 </span>- ratio.powi(<span class="number">2</span>);
+
+    <span class="kw">let </span>t = freq * ratio * PI * <span class="number">2.0</span>;
+    <span class="kw">let </span>s = t.sin();
+
+    <span class="kw">const </span>TAN_FREQ_SCALE: f32 = <span class="number">2.</span>;
+    <span class="kw">const </span>TAN_AMP_SCALE: f32 = <span class="number">0.5</span>;
+
+    <span class="kw">let </span>tan_s = (TAN_FREQ_SCALE * t).sin();
+
+    <span class="kw">if </span>shake.sub_timer.finished() {
+        <span class="kw">let </span>rand_a = ran_f64_range(<span class="number">0.0</span>..=<span class="number">360.0</span>);
+        shake.dir = Vec2::from_angle(rand_a <span class="kw">as </span>f32 * PI * <span class="number">2.0</span>);
+    }
+
+    <span class="kw">let </span>val = s * decay;
+    <span class="kw">let </span>tan_val = tan_s * decay * TAN_AMP_SCALE;
+
+    <span class="kw">let </span>tan_dir = Vec3::Z.cross(shake.dir.extend(<span class="number">0.</span>)).truncate();
+    
+    <span class="kw">let </span>delta = shake.dir * val * shake.strength;
+    <span class="kw">let </span>tan_delta = tan_dir * tan_val * shake.strength;
+<span class="comment">//    let angle = val * shake.strength * 0.0001;
+
+    //println!("{}", delta);
+
+    </span>shake.c_offset = delta + tan_delta;
+
+    shake.timer.tick(time.delta());
+    shake.sub_timer.tick(time.delta());
+
+    <span class="kw">if </span>shake.timer.finished() {
+        commands.remove_resource::&lt;CameraShake&gt;();
+    }
+}   
 
 <span class="kw">fn </span>cli_camera_at(In(args): In&lt;Vec&lt;String&gt;&gt;, <span class="kw-2">mut </span>q_cam: Query&lt;<span class="kw-2">&amp;mut </span>Transform, With&lt;MainCamera&gt;&gt;) {
     <span class="kw">if </span>args.len() != <span class="number">2 </span>{

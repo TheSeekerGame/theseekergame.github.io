@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["SpriteAnimationBundle","SpriteAnimationPlugin","SpriteAnimationTracker"]};
+window.SIDEBAR_ITEMS = {"struct":["SpriteAnimationBundle","SpriteAnimationCarryover","SpriteAnimationPlugin","SpriteAnimationTracker"]};

@@ -786,6 +786,48 @@
 <a href="#786" id="786">786</a>
 <a href="#787" id="787">787</a>
 <a href="#788" id="788">788</a>
+<a href="#789" id="789">789</a>
+<a href="#790" id="790">790</a>
+<a href="#791" id="791">791</a>
+<a href="#792" id="792">792</a>
+<a href="#793" id="793">793</a>
+<a href="#794" id="794">794</a>
+<a href="#795" id="795">795</a>
+<a href="#796" id="796">796</a>
+<a href="#797" id="797">797</a>
+<a href="#798" id="798">798</a>
+<a href="#799" id="799">799</a>
+<a href="#800" id="800">800</a>
+<a href="#801" id="801">801</a>
+<a href="#802" id="802">802</a>
+<a href="#803" id="803">803</a>
+<a href="#804" id="804">804</a>
+<a href="#805" id="805">805</a>
+<a href="#806" id="806">806</a>
+<a href="#807" id="807">807</a>
+<a href="#808" id="808">808</a>
+<a href="#809" id="809">809</a>
+<a href="#810" id="810">810</a>
+<a href="#811" id="811">811</a>
+<a href="#812" id="812">812</a>
+<a href="#813" id="813">813</a>
+<a href="#814" id="814">814</a>
+<a href="#815" id="815">815</a>
+<a href="#816" id="816">816</a>
+<a href="#817" id="817">817</a>
+<a href="#818" id="818">818</a>
+<a href="#819" id="819">819</a>
+<a href="#820" id="820">820</a>
+<a href="#821" id="821">821</a>
+<a href="#822" id="822">822</a>
+<a href="#823" id="823">823</a>
+<a href="#824" id="824">824</a>
+<a href="#825" id="825">825</a>
+<a href="#826" id="826">826</a>
+<a href="#827" id="827">827</a>
+<a href="#828" id="828">828</a>
+<a href="#829" id="829">829</a>
+<a href="#830" id="830">830</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>bevy::ecs::system::lifetimeless::<span class="kw-2">*</span>;
 
 <span class="kw">use super</span>::<span class="kw-2">*</span>;
@@ -827,6 +869,9 @@
     runcount: u32,
 }
 
+<span class="attr">#[derive(Default)]
+</span><span class="kw">pub struct </span>CommonScriptCarryover;
+
 <span class="kw">impl </span>CommonScriptTracker {
     <span class="kw">pub fn </span>new_with_offset(start_tick: u64, start_time: Duration) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
@@ -849,13 +894,16 @@
     <span class="kw">type </span>Settings = CommonScriptSettings;
     <span class="kw">type </span>UpdateParam = (SRes&lt;Time&gt;, SRes&lt;GameTime&gt;);
     <span class="kw">type </span>ActionParams = CommonScriptParams;
+    <span class="kw">type </span>Carryover = CommonScriptCarryover;
+    <span class="kw">type </span>CarryoverParam = ();
 
-    <span class="kw">fn </span>init&lt;<span class="lifetime">'w</span>&gt;(
+    <span class="kw">fn </span>init(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         entity: Entity,
         settings: <span class="kw-2">&amp;</span><span class="self">Self</span>::Settings,
         metadata: <span class="kw-2">&amp;</span>ScriptMetadata,
-        (time, gametime, leveltime, query_tb, query_quant): <span class="kw-2">&amp;mut </span>&lt;<span class="self">Self</span>::InitParam <span class="kw">as </span>SystemParam&gt;::Item&lt;<span class="lifetime">'w</span>, <span class="lifetime">'_</span>&gt;,
+        _carryover: <span class="self">Self</span>::Carryover,
+        (time, gametime, leveltime, query_tb, query_quant): <span class="kw-2">&amp;mut </span>&lt;<span class="self">Self</span>::InitParam <span class="kw">as </span>SystemParam&gt;::Item&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;,
     ) {
         <span class="kw">let </span>time_base = query_tb.get(entity).unwrap_or(<span class="kw-2">&amp;</span>settings.time_base);
         <span class="kw">let </span>tick_quant = query_quant
@@ -887,6 +935,14 @@
         }
         <span class="self">self</span>.old_key = metadata.key_previous.clone();
         <span class="self">self</span>.runcount = metadata.runcount;
+    }
+
+    <span class="kw">fn </span>produce_carryover(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        _entity: Entity,
+        <span class="kw">_</span>: <span class="kw-2">&amp;mut </span>&lt;<span class="self">Self</span>::CarryoverParam <span class="kw">as </span>SystemParam&gt;::Item&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;,
+    ) -&gt; <span class="self">Self</span>::Carryover {
+        CommonScriptCarryover
     }
 
     <span class="kw">fn </span>transfer_progress(<span class="kw-2">&amp;mut </span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="self">Self</span>) {
@@ -974,11 +1030,11 @@
         <span class="self">self</span>.time_actions.sort_by_key(|(duration, <span class="kw">_</span>)| <span class="kw-2">*</span>duration);
     }
 
-    <span class="kw">fn </span>update&lt;<span class="lifetime">'w</span>&gt;(
+    <span class="kw">fn </span>update(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         _entity: Entity,
         _settings: <span class="kw-2">&amp;</span><span class="self">Self</span>::Settings,
-        (time, game_time): <span class="kw-2">&amp;mut </span>&lt;<span class="self">Self</span>::UpdateParam <span class="kw">as </span>SystemParam&gt;::Item&lt;<span class="lifetime">'w</span>, <span class="lifetime">'_</span>&gt;,
+        (time, game_time): <span class="kw-2">&amp;mut </span>&lt;<span class="self">Self</span>::UpdateParam <span class="kw">as </span>SystemParam&gt;::Item&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;,
         queue: <span class="kw-2">&amp;mut </span>Vec&lt;QueuedAction&gt;,
     ) -&gt; ScriptUpdateResult {
         <span class="comment">// any delayed actions
@@ -1046,11 +1102,11 @@
         queue.append(<span class="kw-2">&amp;mut </span><span class="self">self</span>.q_extra);
     }
 
-    <span class="kw">fn </span>do_start&lt;<span class="lifetime">'w</span>&gt;(
+    <span class="kw">fn </span>do_start(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         _entity: Entity,
         _settings: <span class="kw-2">&amp;</span><span class="self">Self</span>::Settings,
-        (time, game_time): <span class="kw-2">&amp;mut </span>&lt;<span class="self">Self</span>::UpdateParam <span class="kw">as </span>SystemParam&gt;::Item&lt;<span class="lifetime">'w</span>, <span class="lifetime">'_</span>&gt;,
+        (_time, game_time): <span class="kw-2">&amp;mut </span>&lt;<span class="self">Self</span>::UpdateParam <span class="kw">as </span>SystemParam&gt;::Item&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;,
         queue: <span class="kw-2">&amp;mut </span>Vec&lt;QueuedAction&gt;,
     ) {
         queue.extend(<span class="self">self</span>.start_actions.drain(..).map(|action| QueuedAction {
@@ -1059,11 +1115,11 @@
         }));
     }
 
-    <span class="kw">fn </span>do_stop&lt;<span class="lifetime">'w</span>&gt;(
+    <span class="kw">fn </span>do_stop(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         _entity: Entity,
         _settings: <span class="kw-2">&amp;</span><span class="self">Self</span>::Settings,
-        (time, game_time): <span class="kw-2">&amp;mut </span>&lt;<span class="self">Self</span>::UpdateParam <span class="kw">as </span>SystemParam&gt;::Item&lt;<span class="lifetime">'w</span>, <span class="lifetime">'_</span>&gt;,
+        (_time, game_time): <span class="kw-2">&amp;mut </span>&lt;<span class="self">Self</span>::UpdateParam <span class="kw">as </span>SystemParam&gt;::Item&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;,
         queue: <span class="kw-2">&amp;mut </span>Vec&lt;QueuedAction&gt;,
     ) {
         queue.extend(<span class="self">self</span>.stop_actions.drain(..).map(|action| QueuedAction {
@@ -1144,12 +1200,12 @@
     <span class="kw">type </span>Tracker = CommonScriptTracker;
     <span class="kw">type </span>ShouldRunParam = (SRes&lt;Time&gt;, SRes&lt;GameTime&gt;);
 
-    <span class="kw">fn </span>should_run&lt;<span class="lifetime">'w</span>&gt;(
+    <span class="kw">fn </span>should_run(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         _entity: Entity,
         tracker: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::Tracker,
         action_id: ActionId,
-        (_time, game_time): <span class="kw-2">&amp;mut </span>&lt;<span class="self">Self</span>::ShouldRunParam <span class="kw">as </span>SystemParam&gt;::Item&lt;<span class="lifetime">'w</span>, <span class="lifetime">'_</span>&gt;,
+        (_time, game_time): <span class="kw-2">&amp;mut </span>&lt;<span class="self">Self</span>::ShouldRunParam <span class="kw">as </span>SystemParam&gt;::Item&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(), ScriptUpdateResult&gt; {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(i_delayed) = tracker.q_delayed.iter()
             .position(|(tick, aid)| <span class="kw-2">*</span>tick == game_time.tick() &amp;&amp; <span class="kw-2">*</span>aid == action_id)
@@ -1190,6 +1246,15 @@
                 OneOrMany::Many(x) =&gt; x.iter().any(|x| <span class="kw-2">*</span>x == tracker.runcount),
             };
             <span class="kw">if </span>!b {
+                <span class="kw">return </span><span class="prelude-val">Err</span>(ScriptUpdateResult::NormalRun);
+            }
+        }
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(eq) = <span class="kw-2">&amp;</span><span class="self">self</span>.if_runcount_is_not {
+            <span class="kw">let </span>b = <span class="kw">match </span>eq {
+                OneOrMany::Single(x) =&gt; <span class="kw-2">*</span>x == tracker.runcount,
+                OneOrMany::Many(x) =&gt; x.iter().any(|x| <span class="kw-2">*</span>x == tracker.runcount),
+            };
+            <span class="kw">if </span>b {
                 <span class="kw">return </span><span class="prelude-val">Err</span>(ScriptUpdateResult::NormalRun);
             }
         }
@@ -1240,7 +1305,7 @@
     );
     <span class="kw">type </span>Tracker = CommonScriptTracker;
 
-    <span class="kw">fn </span>run&lt;<span class="lifetime">'w</span>&gt;(
+    <span class="kw">fn </span>run(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         entity: Entity,
         timing: ScriptActionTiming,
@@ -1253,7 +1318,7 @@
             <span class="kw-2">ref </span>elabels,
             <span class="kw-2">ref mut </span>commands,
             q_mixer,
-        ): <span class="kw-2">&amp;mut </span>&lt;<span class="self">Self</span>::Param <span class="kw">as </span>SystemParam&gt;::Item&lt;<span class="lifetime">'w</span>, <span class="lifetime">'_</span>&gt;,
+        ): <span class="kw-2">&amp;mut </span>&lt;<span class="self">Self</span>::Param <span class="kw">as </span>SystemParam&gt;::Item&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;,
     ) -&gt; ScriptUpdateResult {
         <span class="kw">match </span><span class="self">self </span>{
             CommonScriptAction::RunCli { cli } =&gt; {
@@ -1273,11 +1338,7 @@
                 }
                 ScriptUpdateResult::NormalRun
             },
-            CommonScriptAction::SpawnScene {
-                asset_key,
-                as_child,
-                parent_label,
-            } =&gt; ScriptUpdateResult::NormalRun,
+            CommonScriptAction::SpawnScene { .. } =&gt; ScriptUpdateResult::NormalRun,
             CommonScriptAction::SpawnScript { asset_key } =&gt; {
                 <span class="kw">let </span><span class="kw-2">mut </span>player = ScriptPlayer::new();
                 player.play_key(asset_key.as_str());
@@ -1335,6 +1396,12 @@
 }
 
 <span class="attr">#[derive(Default)]
+</span><span class="kw">pub struct </span>ExtendedScriptCarryover&lt;T&gt; {
+    <span class="kw">pub </span>extended: T,
+    <span class="kw">pub </span>common: CommonScriptCarryover,
+}
+
+<span class="attr">#[derive(Default)]
 </span><span class="kw">pub struct </span>ExtendedScriptTracker&lt;T: ScriptTracker&gt; {
     <span class="kw">pub </span>extended: T,
     <span class="kw">pub </span>common: CommonScriptTracker,
@@ -1352,16 +1419,33 @@
         &lt;&lt;CommonScriptRunIf <span class="kw">as </span>ScriptRunIf&gt;::Tracker <span class="kw">as </span>ScriptTracker&gt;::UpdateParam,
     );
     <span class="kw">type </span>ActionParams = ExtendedScriptParams&lt;T::ActionParams&gt;;
+    <span class="kw">type </span>Carryover = ExtendedScriptCarryover&lt;T::Carryover&gt;;
+    <span class="kw">type </span>CarryoverParam = (
+        T::CarryoverParam,
+        &lt;&lt;CommonScriptRunIf <span class="kw">as </span>ScriptRunIf&gt;::Tracker <span class="kw">as </span>ScriptTracker&gt;::CarryoverParam,
+    );
 
-    <span class="kw">fn </span>init&lt;<span class="lifetime">'w</span>&gt;(
+    <span class="kw">fn </span>init(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         entity: Entity,
         settings: <span class="kw-2">&amp;</span><span class="self">Self</span>::Settings,
         metadata: <span class="kw-2">&amp;</span>ScriptMetadata,
-        param: <span class="kw-2">&amp;mut </span>&lt;<span class="self">Self</span>::InitParam <span class="kw">as </span>SystemParam&gt;::Item&lt;<span class="lifetime">'w</span>, <span class="lifetime">'_</span>&gt;,
+        carryover: <span class="self">Self</span>::Carryover,
+        param: <span class="kw-2">&amp;mut </span>&lt;<span class="self">Self</span>::InitParam <span class="kw">as </span>SystemParam&gt;::Item&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;,
     ) {
-        <span class="self">self</span>.extended.init(entity, <span class="kw-2">&amp;</span>settings.extended, metadata, <span class="kw-2">&amp;mut </span>param.<span class="number">0</span>);
-        <span class="self">self</span>.common.init(entity, <span class="kw-2">&amp;</span>settings.common, metadata, <span class="kw-2">&amp;mut </span>param.<span class="number">1</span>);
+        <span class="self">self</span>.extended.init(entity, <span class="kw-2">&amp;</span>settings.extended, metadata, carryover.extended, <span class="kw-2">&amp;mut </span>param.<span class="number">0</span>);
+        <span class="self">self</span>.common.init(entity, <span class="kw-2">&amp;</span>settings.common, metadata, carryover.common, <span class="kw-2">&amp;mut </span>param.<span class="number">1</span>);
+    }
+
+    <span class="kw">fn </span>produce_carryover(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        entity: Entity,
+        param: <span class="kw-2">&amp;mut </span>&lt;<span class="self">Self</span>::CarryoverParam <span class="kw">as </span>SystemParam&gt;::Item&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;,
+    ) -&gt; <span class="self">Self</span>::Carryover {
+        ExtendedScriptCarryover {
+            extended: <span class="self">self</span>.extended.produce_carryover(entity, <span class="kw-2">&amp;mut </span>param.<span class="number">0</span>),
+            common: <span class="self">self</span>.common.produce_carryover(entity, <span class="kw-2">&amp;mut </span>param.<span class="number">1</span>),
+        }
     }
 
     <span class="kw">fn </span>transfer_progress(<span class="kw-2">&amp;mut </span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="self">Self</span>) {
@@ -1385,11 +1469,11 @@
         <span class="self">self</span>.common.finalize();
     }
 
-    <span class="kw">fn </span>update&lt;<span class="lifetime">'w</span>&gt;(
+    <span class="kw">fn </span>update(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         entity: Entity,
         settings: <span class="kw-2">&amp;</span><span class="self">Self</span>::Settings,
-        param: <span class="kw-2">&amp;mut </span>&lt;<span class="self">Self</span>::UpdateParam <span class="kw">as </span>SystemParam&gt;::Item&lt;<span class="lifetime">'w</span>, <span class="lifetime">'_</span>&gt;,
+        param: <span class="kw-2">&amp;mut </span>&lt;<span class="self">Self</span>::UpdateParam <span class="kw">as </span>SystemParam&gt;::Item&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;,
         queue: <span class="kw-2">&amp;mut </span>Vec&lt;QueuedAction&gt;,
     ) -&gt; ScriptUpdateResult {
         <span class="kw">let </span>r_extended = <span class="self">self</span>.extended.update(
@@ -1424,22 +1508,22 @@
         <span class="self">self</span>.common.queue_extra_actions(<span class="kw-2">&amp;</span>settings.common, queue);
     }
 
-    <span class="kw">fn </span>do_start&lt;<span class="lifetime">'w</span>&gt;(
+    <span class="kw">fn </span>do_start(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         entity: Entity,
         settings: <span class="kw-2">&amp;</span><span class="self">Self</span>::Settings,
-        param: <span class="kw-2">&amp;mut </span>&lt;<span class="self">Self</span>::UpdateParam <span class="kw">as </span>SystemParam&gt;::Item&lt;<span class="lifetime">'w</span>, <span class="lifetime">'_</span>&gt;,
+        param: <span class="kw-2">&amp;mut </span>&lt;<span class="self">Self</span>::UpdateParam <span class="kw">as </span>SystemParam&gt;::Item&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;,
         queue: <span class="kw-2">&amp;mut </span>Vec&lt;QueuedAction&gt;,
     ) {
         <span class="self">self</span>.extended.do_start(entity, <span class="kw-2">&amp;</span>settings.extended, <span class="kw-2">&amp;mut </span>param.<span class="number">0</span>, queue);
         <span class="self">self</span>.common.do_start(entity, <span class="kw-2">&amp;</span>settings.common, <span class="kw-2">&amp;mut </span>param.<span class="number">1</span>, queue);
     }
 
-    <span class="kw">fn </span>do_stop&lt;<span class="lifetime">'w</span>&gt;(
+    <span class="kw">fn </span>do_stop(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         entity: Entity,
         settings: <span class="kw-2">&amp;</span><span class="self">Self</span>::Settings,
-        param: <span class="kw-2">&amp;mut </span>&lt;<span class="self">Self</span>::UpdateParam <span class="kw">as </span>SystemParam&gt;::Item&lt;<span class="lifetime">'w</span>, <span class="lifetime">'_</span>&gt;,
+        param: <span class="kw-2">&amp;mut </span>&lt;<span class="self">Self</span>::UpdateParam <span class="kw">as </span>SystemParam&gt;::Item&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;,
         queue: <span class="kw-2">&amp;mut </span>Vec&lt;QueuedAction&gt;,
     ) {
         <span class="self">self</span>.extended.do_stop(entity, <span class="kw-2">&amp;</span>settings.extended, <span class="kw-2">&amp;mut </span>param.<span class="number">0</span>, queue);
@@ -1488,12 +1572,12 @@
         T::ShouldRunParam,
         &lt;CommonScriptParams <span class="kw">as </span>ScriptActionParams&gt;::ShouldRunParam,
     );
-    <span class="kw">fn </span>should_run&lt;<span class="lifetime">'w</span>&gt;(
+    <span class="kw">fn </span>should_run(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         entity: Entity,
         tracker: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::Tracker,
         action_id: ActionId,
-        (param_ext, param_common): <span class="kw-2">&amp;mut </span>&lt;<span class="self">Self</span>::ShouldRunParam <span class="kw">as </span>SystemParam&gt;::Item&lt;<span class="lifetime">'w</span>, <span class="lifetime">'_</span>&gt;,
+        (param_ext, param_common): <span class="kw-2">&amp;mut </span>&lt;<span class="self">Self</span>::ShouldRunParam <span class="kw">as </span>SystemParam&gt;::Item&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(), ScriptUpdateResult&gt; {
         <span class="kw">if let </span><span class="prelude-val">Err</span>(r) = <span class="self">self</span>.extended.should_run(entity, <span class="kw-2">&amp;mut </span>tracker.extended, action_id, param_ext) {
             <span class="prelude-val">Err</span>(r)
@@ -1514,13 +1598,13 @@
     );
     <span class="kw">type </span>Tracker = ExtendedScriptTracker&lt;T::Tracker&gt;;
 
-    <span class="kw">fn </span>run&lt;<span class="lifetime">'w</span>&gt;(
+    <span class="kw">fn </span>run(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         entity: Entity,
         timing: ScriptActionTiming,
         actionparams: <span class="kw-2">&amp;</span><span class="self">Self</span>::ActionParams,
         tracker: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::Tracker,
-        (param_ext, param_common): <span class="kw-2">&amp;mut </span>&lt;<span class="self">Self</span>::Param <span class="kw">as </span>SystemParam&gt;::Item&lt;<span class="lifetime">'w</span>, <span class="lifetime">'_</span>&gt;,
+        (param_ext, param_common): <span class="kw-2">&amp;mut </span>&lt;<span class="self">Self</span>::Param <span class="kw">as </span>SystemParam&gt;::Item&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;,
     ) -&gt; ScriptUpdateResult {
         <span class="kw">match </span><span class="self">self </span>{
             ExtendedScriptAction::Extended(action) =&gt; {
@@ -1557,11 +1641,11 @@
         <span class="self">self</span>.settings.clone().unwrap_or_default()
     }
 
-    <span class="kw">fn </span>build&lt;<span class="lifetime">'w</span>&gt;(
+    <span class="kw">fn </span>build(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         <span class="kw-2">mut </span>builder: ScriptRuntimeBuilder&lt;<span class="self">Self</span>&gt;,
         _entity: Entity,
-        _param: <span class="kw-2">&amp;mut </span>&lt;<span class="self">Self</span>::BuildParam <span class="kw">as </span>SystemParam&gt;::Item&lt;<span class="lifetime">'w</span>, <span class="lifetime">'_</span>&gt;,
+        _param: <span class="kw-2">&amp;mut </span>&lt;<span class="self">Self</span>::BuildParam <span class="kw">as </span>SystemParam&gt;::Item&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;,
     ) -&gt; ScriptRuntimeBuilder&lt;<span class="self">Self</span>&gt; {
         builder.replace_config(<span class="kw-2">&amp;</span><span class="self">self</span>.config);
         <span class="kw">for </span>action <span class="kw">in </span><span class="self">self</span>.script.iter() {
