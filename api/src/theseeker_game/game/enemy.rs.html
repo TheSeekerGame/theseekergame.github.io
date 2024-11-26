@@ -1592,6 +1592,27 @@
 <a href="#1592" id="1592">1592</a>
 <a href="#1593" id="1593">1593</a>
 <a href="#1594" id="1594">1594</a>
+<a href="#1595" id="1595">1595</a>
+<a href="#1596" id="1596">1596</a>
+<a href="#1597" id="1597">1597</a>
+<a href="#1598" id="1598">1598</a>
+<a href="#1599" id="1599">1599</a>
+<a href="#1600" id="1600">1600</a>
+<a href="#1601" id="1601">1601</a>
+<a href="#1602" id="1602">1602</a>
+<a href="#1603" id="1603">1603</a>
+<a href="#1604" id="1604">1604</a>
+<a href="#1605" id="1605">1605</a>
+<a href="#1606" id="1606">1606</a>
+<a href="#1607" id="1607">1607</a>
+<a href="#1608" id="1608">1608</a>
+<a href="#1609" id="1609">1609</a>
+<a href="#1610" id="1610">1610</a>
+<a href="#1611" id="1611">1611</a>
+<a href="#1612" id="1612">1612</a>
+<a href="#1613" id="1613">1613</a>
+<a href="#1614" id="1614">1614</a>
+<a href="#1615" id="1615">1615</a>
 </pre></div><pre class="rust"><code><span class="attr">#[cfg(feature = <span class="string">"dev"</span>)]
 </span><span class="kw">use </span>bevy_inspector_egui::quick::FilterQueryInspectorPlugin;
 <span class="kw">use </span>rand::distributions::Standard;
@@ -1672,12 +1693,12 @@
     killed: Killed,
 }
 
-<span class="doccomment">///Component used to track kills for each EnemySpawner
-///not the same as the overall KillCount resource
+<span class="doccomment">/// Component used to track kills for each EnemySpawner
+/// not the same as the overall KillCount resource
 </span><span class="attr">#[derive(Component, Default, Debug, Deref, DerefMut)]
 </span><span class="kw">struct </span>Killed(usize);
 
-<span class="doccomment">///Enemy spawner, each slot has its own spawn cooldown
+<span class="doccomment">/// Enemy spawner, each slot has its own spawn cooldown
 </span><span class="attr">#[derive(Component, Default, Debug)]
 </span><span class="kw">pub struct </span>EnemySpawner {
     <span class="kw">pub </span>slots: Vec&lt;SpawnSlot&gt;,
@@ -1755,14 +1776,14 @@
 ) {
     <span class="kw">let </span>p_transform = player_query.get_single();
     <span class="kw">for </span>(transform, <span class="kw-2">mut </span>spawner, <span class="kw-2">mut </span>killed) <span class="kw">in </span>spawner_q.iter_mut() {
-        <span class="comment">//if spawner is empty, add a slot with completed cooldown to spawn initial enemies
+        <span class="comment">// if spawner is empty, add a slot with completed cooldown to spawn initial enemies
         </span><span class="kw">if </span>spawner.slots.is_empty() {
             spawner.slots.push(SpawnSlot {
                 enemy: <span class="prelude-val">None</span>,
                 cooldown_ticks: EnemySpawner::COOLDOWN,
             })
         }
-        <span class="comment">//if we have killed enough enemies from this spawner, adds another slot
+        <span class="comment">// if we have killed enough enemies from this spawner, adds another slot
         </span><span class="kw">if </span>spawner.slots.len() &lt; <span class="kw-2">**</span>killed {
             spawner.slots.push(SpawnSlot {
                 enemy: <span class="prelude-val">None</span>,
@@ -1772,14 +1793,14 @@
         <span class="comment">// check if enemies are dead and update
         </span><span class="kw">for </span>slot <span class="kw">in </span>spawner.slots.iter_mut() {
             <span class="kw">if let </span><span class="prelude-val">Some</span>(enemy) = slot.enemy {
-                <span class="comment">//clear dead enemies
+                <span class="comment">// clear dead enemies
                 </span><span class="kw">if </span>enemy_q.get(enemy).is_ok() {
                     slot.enemy = <span class="prelude-val">None</span>;
                     <span class="kw-2">**</span>killed += <span class="number">1</span>;
                 }
-            <span class="comment">//if the slot is empty, cooldown finished and player out of range, spawn another enemy
+            <span class="comment">// if the slot is empty, cooldown finished and player out of range, spawn another enemy
             </span>} <span class="kw">else </span>{
-                <span class="comment">//if there is a player and it is close, dont spawn, otherwise spawn
+                <span class="comment">// if there is a player and it is close, dont spawn, otherwise spawn
                 </span><span class="kw">let </span>should_spawn = <span class="kw">if let </span><span class="prelude-val">Ok</span>(ptrans) = p_transform {
                     <span class="kw">let </span>distance = transform
                         .translation
@@ -1822,9 +1843,10 @@
         <span class="kw">if </span>!bp.is_added() {
             <span class="kw">continue</span>;
         }
-        <span class="comment">//TODO: ensure propper z order
+        <span class="comment">// TODO: ensure propper z order
         </span>xf_gent.translation.z = <span class="number">14.0 </span>* <span class="number">0.000001</span>;
-        <span class="kw">let </span>e_gfx = commands.spawn(()).id();
+        xf_gent.translation.y += <span class="number">2.0</span>; <span class="comment">// Sprite offset so it looks like it is standing on the ground
+        </span><span class="kw">let </span>e_gfx = commands.spawn(()).id();
         <span class="kw">let </span>e_effects_gfx = commands.spawn(()).id();
         commands.entity(e_gent).insert((
             Name::new(<span class="string">"Enemy"</span>),
@@ -1835,8 +1857,8 @@
                     e_effects_gfx,
                 },
                 phys: GentPhysicsBundle {
-                    <span class="comment">//need to find a way to offset this one px toward back of enemys facing
-                    //direction
+                    <span class="comment">// need to find a way to offset this one px toward back of enemys facing
+                    // direction
                     </span>collider: Collider::cuboid(
                         <span class="number">16.0</span>,
                         <span class="number">10.0</span>,
@@ -2115,11 +2137,11 @@
 </span><span class="kw">struct </span>Target(<span class="prelude-ty">Option</span>&lt;Entity&gt;);
 
 <span class="kw">impl </span>Range {
-    <span class="kw">const </span>MELEE: f32 = <span class="number">12.</span>;
     <span class="kw">const </span>AGGRO: f32 = <span class="number">50.</span>;
-    <span class="kw">const </span>RANGED: f32 = <span class="number">60.</span>;
     <span class="kw">const </span>DEAGGRO: f32 = <span class="number">70.</span>;
     <span class="kw">const </span>GROUPED: f32 = <span class="number">100.</span>;
+    <span class="kw">const </span>MELEE: f32 = <span class="number">12.</span>;
+    <span class="kw">const </span>RANGED: f32 = <span class="number">60.</span>;
 }
 
 <span class="doccomment">/// Component that indicates that the player is inside of this enemy,
@@ -2133,8 +2155,8 @@
 </span><span class="attr">#[derive(Component)]
 </span><span class="kw">struct </span>Decay;
 
-<span class="comment">//Check how far the player is, set our range, set our target if applicable, turn to face player if
-//in range
+<span class="comment">// Check how far the player is, set our range, set our target if applicable, turn to face player if
+// in range
 </span><span class="kw">fn </span>check_player_range(
     <span class="kw-2">mut </span>query: Query&lt;
         (
@@ -2174,7 +2196,7 @@
 
             <span class="kw">if </span>is_aggroed &amp;&amp; !is_meleeing {
                 <span class="comment">// }
-                //if we are in AGGRO range, face the player
+                // if we are in AGGRO range, face the player
                 // if distance &lt;= Range::AGGRO {
                 </span><span class="kw">if </span>trans.translation().x &gt; player_trans.translation().x {
                     <span class="kw-2">*</span>facing = Facing::Right;
@@ -2183,7 +2205,7 @@
                 }
             }
 
-            <span class="comment">//set range and target
+            <span class="comment">// set range and target
             </span><span class="kw">if </span>distance &lt;= Range::MELEE {
                 <span class="kw-2">*</span>range = Range::Melee;
                 target.<span class="number">0 </span>= <span class="prelude-val">Some</span>(player_e);
@@ -2201,7 +2223,7 @@
                 <span class="kw-2">*</span>range = Range::Far;
                 target.<span class="number">0 </span>= <span class="prelude-val">None</span>;
             }
-        <span class="comment">//if there is no player
+        <span class="comment">// if there is no player
         </span>} <span class="kw">else </span>{
             <span class="kw-2">*</span>range = Range::None;
             target.<span class="number">0 </span>= <span class="prelude-val">None</span>;
@@ -2210,7 +2232,7 @@
     </span>}
 }
 
-<span class="comment">//check if any other enemies are nearby, if so assign to group
+<span class="comment">// check if any other enemies are nearby, if so assign to group
 </span><span class="kw">fn </span>assign_group(
     query: Query&lt;(Entity, <span class="kw-2">&amp;</span>GlobalTransform, Has&lt;Grouped&gt;), With&lt;Enemy&gt;&gt;,
     spatial_query: Res&lt;PhysicsWorld&gt;,
@@ -2367,8 +2389,8 @@
         (
             With&lt;Enemy&gt;,
             With&lt;Aggroed&gt;,
-            <span class="comment">//each "substate" of aggro should return back to waiting when with wants to return control
-            //to aggro
+            <span class="comment">// each "substate" of aggro should return back to waiting when with wants to return control
+            // to aggro
             </span>With&lt;Waiting&gt;,
         ),
     &gt;,
@@ -2376,7 +2398,7 @@
     <span class="kw">for </span>(role, range, target, is_grouped, <span class="kw-2">mut </span>transitions) <span class="kw">in </span>query.iter_mut() {
         <span class="kw">if </span>target.<span class="number">0</span>.is_some() {
             <span class="kw">let </span><span class="kw-2">mut </span>rng = rand::thread_rng();
-            <span class="comment">//return to patrol if out of aggro range
+            <span class="comment">// return to patrol if out of aggro range
             </span><span class="kw">if </span><span class="macro">matches!</span>(range, Range::Far) {
                 transitions.push(Aggroed::new_transition(Patrolling));
             } <span class="kw">else if </span>!is_grouped {
@@ -2387,9 +2409,11 @@
             } <span class="kw">else if </span>is_grouped {
                 <span class="kw">if </span><span class="macro">matches!</span>(range, Range::Melee) {
                     <span class="kw">match </span>role {
-                        Role::Melee =&gt; transitions.push(
-                            Waiting::new_transition(MeleeAttack::default()),
-                        ),
+                        Role::Melee =&gt; {
+                            transitions.push(Waiting::new_transition(
+                                MeleeAttack::default(),
+                            ))
+                        },
                         Role::Ranged =&gt; {
                             transitions.push(Waiting::new_transition(
                                 Defense::default(),
@@ -2400,7 +2424,7 @@
                     transitions.push(Waiting::new_transition(Chasing));
                 }
             }
-        <span class="comment">//if there is no player it should also return to patrol state
+        <span class="comment">// if there is no player it should also return to patrol state
         </span>} <span class="kw">else </span>{
             transitions.push(Aggroed::new_transition(Patrolling));
         }
@@ -2450,7 +2474,7 @@
             ));
             add_q.add(Idle);
         }
-        <span class="comment">//if player isnt alive, do nothing, we will transiton back once animation finishes
+        <span class="comment">// if player isnt alive, do nothing, we will transiton back once animation finishes
         </span><span class="kw">let </span><span class="prelude-val">Ok</span>(transform) = player_query.get(attack.target) <span class="kw">else </span>{
             <span class="kw">continue</span>;
         };
@@ -2594,7 +2618,7 @@
     <span class="kw">for </span>(entity, <span class="kw-2">mut </span>attack, facing, <span class="kw-2">mut </span>trans_q, gent) <span class="kw">in </span>query.iter_mut() {
         attack.ticks += <span class="number">1</span>;
         <span class="kw">if </span>attack.ticks == <span class="number">8 </span>* MeleeAttack::STARTUP {
-            <span class="comment">//spawn attack hitbox collider as child
+            <span class="comment">// spawn attack hitbox collider as child
             </span><span class="kw">let </span>collider = commands
                 .spawn((
                     Collider::empty(InteractionGroups {
@@ -2625,7 +2649,7 @@
             <span class="kw-2">&amp;mut </span>Walking,
             <span class="kw-2">&amp;mut </span>TransitionQueue,
             <span class="kw-2">&amp;mut </span>AddQueue,
-            <span class="comment">//TODO: remove addqueue
+            <span class="comment">// TODO: remove addqueue
         </span>),
         (
             With&lt;Enemy&gt;,
@@ -2643,7 +2667,7 @@
         <span class="kw-2">mut </span>add_q,
     ) <span class="kw">in </span>query.iter_mut()
     {
-        <span class="comment">//set initial velocity
+        <span class="comment">// set initial velocity
         </span>velocity.x = -<span class="number">20. </span>* facing.direction();
         <span class="kw">if </span>walking.ticks &gt;= walking.max_ticks {
             velocity.x = <span class="number">0.</span>;
@@ -2654,7 +2678,7 @@
             add_q.add(Idle);
             <span class="kw">continue</span>;
         }
-        <span class="comment">//Turn around if we get to the edge/wall
+        <span class="comment">// Turn around if we get to the edge/wall
         </span><span class="kw">match </span><span class="kw-2">*</span>nav {
             Navigation::Blocked =&gt; {
                 velocity.x <span class="kw-2">*</span>= -<span class="number">1.</span>;
@@ -2709,19 +2733,25 @@
                         Defense::default(),
                     ));
                 },
-                Range::Ranged | Range::Aggro =&gt; transitions.push(
-                    Retreating::new_transition(RangedAttack {
-                        target: player_query.get_single().expect(<span class="string">"no player"</span>),
-                        ticks: <span class="number">0</span>,
-                    }),
-                ),
-                <span class="kw">_ </span>=&gt; transitions.push(Retreating::new_transition(
-                    <span class="comment">// RangedAttack {
-                    //     target: player_query.get_single().expect("no player"),
-                    //     ticks: 0,
-                    // },
-                    </span>Waiting::default(),
-                )),
+                Range::Ranged | Range::Aggro =&gt; {
+                    transitions.push(Retreating::new_transition(
+                        RangedAttack {
+                            target: player_query
+                                .get_single()
+                                .expect(<span class="string">"no player"</span>),
+                            ticks: <span class="number">0</span>,
+                        },
+                    ))
+                },
+                <span class="kw">_ </span>=&gt; {
+                    transitions.push(Retreating::new_transition(
+                        <span class="comment">// RangedAttack {
+                        //     target: player_query.get_single().expect("no player"),
+                        //     ticks: 0,
+                        // },
+                        </span>Waiting::default(),
+                    ))
+                },
             }
         } <span class="kw">else if </span><span class="macro">matches!</span>(range, Range::Melee) {
             velocity.x = <span class="number">0.</span>;
@@ -2765,49 +2795,61 @@
     <span class="kw">for </span>(target, facing, role, range, <span class="kw-2">mut </span>nav, <span class="kw-2">mut </span>velocity, <span class="kw-2">mut </span>transitions) <span class="kw">in
         </span>query.iter_mut()
     {
-        <span class="comment">//TODO: else transition back to waiting?
+        <span class="comment">// TODO: else transition back to waiting?
         </span><span class="kw">let </span><span class="kw-2">mut </span>continue_chasing = <span class="bool-val">false</span>;
         <span class="kw">if let </span><span class="prelude-val">Some</span>(p_entity) = target.<span class="number">0 </span>{
-            <span class="comment">//check if we need to transition
+            <span class="comment">// check if we need to transition
             </span><span class="kw">match </span>role {
-                Role::Ranged =&gt; <span class="kw">match </span><span class="kw-2">*</span>range {
-                    Range::Ranged | Range::Aggro =&gt; {
-                        transitions.push(Chasing::new_transition(
-                            RangedAttack {
-                                target: p_entity,
-                                ticks: <span class="number">0</span>,
-                            },
-                        ));
-                    },
-                    Range::Melee =&gt; transitions.push(Chasing::new_transition(
-                        MeleeAttack::default(),
-                    )),
-                    Range::Deaggro =&gt; {
-                        continue_chasing = <span class="bool-val">true</span>;
-                    },
-                    <span class="kw">_ </span>=&gt; transitions.push(Chasing::new_transition(
-                        Waiting::default(),
-                    )),
+                Role::Ranged =&gt; {
+                    <span class="kw">match </span><span class="kw-2">*</span>range {
+                        Range::Ranged | Range::Aggro =&gt; {
+                            transitions.push(Chasing::new_transition(
+                                RangedAttack {
+                                    target: p_entity,
+                                    ticks: <span class="number">0</span>,
+                                },
+                            ));
+                        },
+                        Range::Melee =&gt; {
+                            transitions.push(Chasing::new_transition(
+                                MeleeAttack::default(),
+                            ))
+                        },
+                        Range::Deaggro =&gt; {
+                            continue_chasing = <span class="bool-val">true</span>;
+                        },
+                        <span class="kw">_ </span>=&gt; {
+                            transitions.push(Chasing::new_transition(
+                                Waiting::default(),
+                            ))
+                        },
+                    }
                 },
 
-                Role::Melee =&gt; <span class="kw">match </span><span class="kw-2">*</span>range {
-                    Range::Melee =&gt; transitions.push(Chasing::new_transition(
-                        MeleeAttack::default(),
-                    )),
-                    Range::Ranged | Range::Aggro | Range::Deaggro =&gt; {
-                        continue_chasing = <span class="bool-val">true</span>;
-                    },
-                    <span class="kw">_ </span>=&gt; transitions.push(Chasing::new_transition(
-                        Waiting::default(),
-                    )),
+                Role::Melee =&gt; {
+                    <span class="kw">match </span><span class="kw-2">*</span>range {
+                        Range::Melee =&gt; {
+                            transitions.push(Chasing::new_transition(
+                                MeleeAttack::default(),
+                            ))
+                        },
+                        Range::Ranged | Range::Aggro | Range::Deaggro =&gt; {
+                            continue_chasing = <span class="bool-val">true</span>;
+                        },
+                        <span class="kw">_ </span>=&gt; {
+                            transitions.push(Chasing::new_transition(
+                                Waiting::default(),
+                            ))
+                        },
+                    }
                 },
             }
 
-            <span class="comment">//if we are outside our target range, walk closer.
-            //TODO: change to add random offsets?
+            <span class="comment">// if we are outside our target range, walk closer.
+            // TODO: change to add random offsets?
             </span><span class="kw">if </span>continue_chasing {
                 velocity.x = -<span class="number">35. </span>* facing.direction();
-                <span class="comment">//if we cant get any closer because of edge
+                <span class="comment">// if we cant get any closer because of edge
                 </span><span class="kw">if let </span>Navigation::Blocked = <span class="kw-2">*</span>nav {
                     velocity.x = <span class="number">0.</span>;
                     <span class="kw-2">*</span>nav = Navigation::Grounded;
@@ -2817,11 +2859,11 @@
                         ticks: <span class="number">0</span>,
                     }));
                 }
-            <span class="comment">//if not continuing to chase, set velocity to 0 before leaving state
+            <span class="comment">// if not continuing to chase, set velocity to 0 before leaving state
             </span>} <span class="kw">else </span>{
                 velocity.x = <span class="number">0.</span>;
             }
-        <span class="comment">//if there is no target, stop chasing
+        <span class="comment">// if there is no target, stop chasing
         </span>} <span class="kw">else </span>{
             velocity.x = <span class="number">0.</span>;
             transitions.push(Chasing::new_transition(
@@ -2851,14 +2893,14 @@
         <span class="kw">let </span>shape = collider.<span class="number">0</span>.shared_shape().clone();
         <span class="kw">let </span>dir = linear_velocity.x.signum();
         <span class="kw">let </span>x_len = linear_velocity.x.abs();
-        <span class="comment">//TODO: should be based on collider half extent x
+        <span class="comment">// TODO: should be based on collider half extent x
         </span><span class="kw">let </span>front = transform.translation.x + <span class="number">10. </span>* dir;
         <span class="kw">let </span>z = transform.translation.z;
         <span class="kw">let </span><span class="kw-2">mut </span>projected_velocity = linear_velocity.xy();
 
-        <span class="comment">//Simplified version of the player collisions
-        //If the enemy encounters a collision with the player, wall or edge of platform, it sets
-        //the Navigation component to Navigation::Blocked
+        <span class="comment">// Simplified version of the player collisions
+        // If the enemy encounters a collision with the player, wall or edge of platform, it sets
+        // the Navigation component to Navigation::Blocked
         </span><span class="kw">while let </span><span class="prelude-val">Ok</span>(shape_dir) = Direction2d::new(linear_velocity.<span class="number">0</span>) {
             <span class="kw">if let </span><span class="prelude-val">Some</span>((e, first_hit)) = spatial_query.shape_cast(
                 transform.translation.xy(),
@@ -2867,7 +2909,7 @@
                 linear_velocity.length() / time.hz <span class="kw">as </span>f32 + <span class="number">0.5</span>,
                 InteractionGroups {
                     memberships: ENEMY,
-                    <span class="comment">//combination of the PLAYER + GROUND Groups
+                    <span class="comment">// combination of the PLAYER + GROUND Groups
                     </span>filter: Group::from_bits_truncate(<span class="number">0b10001</span>),
                 },
                 <span class="prelude-val">None</span>,
@@ -2889,10 +2931,10 @@
             };
         }
 
-        <span class="comment">//Raycast from underground directly below the enemy in direction of movement, detecting the edges of a platform from
-        //inside
+        <span class="comment">// Raycast from underground directly below the enemy in direction of movement, detecting the edges of a platform from
+        // inside
         </span><span class="kw">if let </span><span class="prelude-val">Some</span>((entity, first_hit)) = spatial_query.ray_cast(
-            <span class="comment">//TODO: should be based on collider half extent y + a little
+            <span class="comment">// TODO: should be based on collider half extent y + a little
             </span>Vec2::new(front, transform.translation.y - <span class="number">10.</span>),
             Vec2::new(dir, <span class="number">0.</span>),
             x_len / time.hz <span class="kw">as </span>f32,
@@ -3174,7 +3216,7 @@
         <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="kw-2">mut </span>player) = gfx_query.get_mut(gent.e_gfx) {
             <span class="kw">match </span>facing {
                 Facing::Right =&gt; {
-                    <span class="comment">//TODO: toggle facing script action
+                    <span class="comment">// TODO: toggle facing script action
                     </span>player.set_slot(<span class="string">"DirectionRight"</span>, <span class="bool-val">true</span>);
                     player.set_slot(<span class="string">"DirectionLeft"</span>, <span class="bool-val">false</span>);
                 },
