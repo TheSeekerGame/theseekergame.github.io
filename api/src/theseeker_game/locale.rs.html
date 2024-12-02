@@ -129,7 +129,16 @@
 <a href="#128" id="128">128</a>
 <a href="#129" id="129">129</a>
 <a href="#130" id="130">130</a>
-<a href="#131" id="131">131</a></pre></div><pre class="rust"><code><span class="kw">use </span>bevy::asset::{LoadedFolder, LoadState};
+<a href="#131" id="131">131</a>
+<a href="#132" id="132">132</a>
+<a href="#133" id="133">133</a>
+<a href="#134" id="134">134</a>
+<a href="#135" id="135">135</a>
+<a href="#136" id="136">136</a>
+<a href="#137" id="137">137</a>
+<a href="#138" id="138">138</a>
+<a href="#139" id="139">139</a>
+<a href="#140" id="140">140</a></pre></div><pre class="rust"><code><span class="kw">use </span>bevy::asset::{LoadState, LoadedFolder};
 <span class="kw">use </span>bevy_fluent::prelude::<span class="kw-2">*</span>;
 <span class="kw">use </span>fluent_content::Content;
 <span class="kw">use </span>unic_langid::LanguageIdentifier;
@@ -142,12 +151,14 @@
     <span class="kw">fn </span>build(<span class="kw-2">&amp;</span><span class="self">self</span>, app: <span class="kw-2">&amp;mut </span>App) {
         app.register_clicommand_args(<span class="string">"locale"</span>, cli_locale);
         app.insert_resource(
-            Locale::new(<span class="string">"en-US"</span>.parse().unwrap()).with_default(<span class="string">"en-US"</span>.parse().unwrap()),
+            Locale::new(<span class="string">"en-US"</span>.parse().unwrap())
+                .with_default(<span class="string">"en-US"</span>.parse().unwrap()),
         );
-        app.add_systems(Update,
+        app.add_systems(
+            Update,
             init_l10n
                 .track_progress()
-                .run_if(in_state(AppState::AssetsLoading))
+                .run_if(in_state(AppState::AssetsLoading)),
         );
         app.add_systems(
             Update,
@@ -167,7 +178,11 @@
 <span class="attr">#[derive(Resource)]
 </span><span class="kw">pub struct </span>Locales(HashSet&lt;LanguageIdentifier&gt;);
 
-<span class="kw">fn </span>cli_locale(In(args): In&lt;Vec&lt;String&gt;&gt;, <span class="kw-2">mut </span>locale: ResMut&lt;Locale&gt;, locales: Res&lt;Locales&gt;) {
+<span class="kw">fn </span>cli_locale(
+    In(args): In&lt;Vec&lt;String&gt;&gt;,
+    <span class="kw-2">mut </span>locale: ResMut&lt;Locale&gt;,
+    locales: Res&lt;Locales&gt;,
+) {
     <span class="kw">if </span>args.len() != <span class="number">1 </span>{
         <span class="macro">error!</span>(<span class="string">"\"locale &lt;locale&gt;\""</span>);
         <span class="kw">return</span>;
@@ -200,19 +215,22 @@
     <span class="kw">match </span>(<span class="kw-2">*</span>done, folder) {
         (<span class="bool-val">false</span>, <span class="prelude-val">None</span>) =&gt; {
             commands.insert_resource(LocalesFolder(ass.load_folder(<span class="string">"locale"</span>)));
-        }
+        },
         (<span class="bool-val">false</span>, <span class="prelude-val">Some</span>(folder)) =&gt; {
             <span class="kw">if let </span><span class="prelude-val">Some</span>(LoadState::Loaded) = ass.get_load_state(<span class="kw-2">&amp;</span>folder.<span class="number">0</span>) {
-                <span class="kw">let </span>locales = Locales(l10n_bundles.iter()
-                    .map(|(<span class="kw">_</span>, bundle)| bundle.locales[<span class="number">0</span>].clone())
-                    .collect());
+                <span class="kw">let </span>locales = Locales(
+                    l10n_bundles
+                        .iter()
+                        .map(|(<span class="kw">_</span>, bundle)| bundle.locales[<span class="number">0</span>].clone())
+                        .collect(),
+                );
                 <span class="kw">let </span>l10n = l10n_builder.build(<span class="kw-2">&amp;</span>folder.<span class="number">0</span>);
                 commands.insert_resource(locales);
                 commands.insert_resource(l10n);
                 <span class="kw-2">*</span>done = <span class="bool-val">true</span>;
             }
-        }
-        (<span class="bool-val">true</span>, <span class="kw">_</span>) =&gt; {}
+        },
+        (<span class="bool-val">true</span>, <span class="kw">_</span>) =&gt; {},
     }
     (<span class="kw-2">*</span>done).into()
 }

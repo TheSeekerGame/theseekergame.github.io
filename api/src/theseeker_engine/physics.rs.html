@@ -544,15 +544,27 @@
 <a href="#543" id="543">543</a>
 <a href="#544" id="544">544</a>
 <a href="#545" id="545">545</a>
-<a href="#546" id="546">546</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::prelude::{GameTickUpdate, HashMap};
-<span class="kw">use </span><span class="kw">crate</span>::script::ScriptSet;
+<a href="#546" id="546">546</a>
+<a href="#547" id="547">547</a>
+<a href="#548" id="548">548</a>
+<a href="#549" id="549">549</a>
+<a href="#550" id="550">550</a>
+<a href="#551" id="551">551</a>
+<a href="#552" id="552">552</a>
+<a href="#553" id="553">553</a>
+<a href="#554" id="554">554</a>
+<a href="#555" id="555">555</a>
+<a href="#556" id="556">556</a>
+<a href="#557" id="557">557</a></pre></div><pre class="rust"><code><span class="kw">use </span>std::f32::consts::PI;
+
 <span class="kw">use </span>bevy::prelude::<span class="kw-2">*</span>;
 <span class="kw">use </span>bevy::transform::TransformSystem::TransformPropagate;
 <span class="kw">use </span>rapier2d::na::{Unit, UnitComplex};
 <span class="kw">use </span>rapier2d::parry;
-<span class="kw">use </span>rapier2d::prelude::Collider <span class="kw">as </span>RapierCollider;
-<span class="kw">use </span>rapier2d::prelude::<span class="kw-2">*</span>;
-<span class="kw">use </span>std::f32::consts::PI;
+<span class="kw">use </span>rapier2d::prelude::{Collider <span class="kw">as </span>RapierCollider, <span class="kw-2">*</span>};
+
+<span class="kw">use </span><span class="kw">crate</span>::prelude::{GameTickUpdate, HashMap};
+<span class="kw">use </span><span class="kw">crate</span>::script::ScriptSet;
 
 <span class="doccomment">/// A manual implementation of rapier to only use the features required by our project
 ///
@@ -695,7 +707,11 @@
 </span><span class="kw">pub struct </span>Collider(<span class="kw">pub </span>RapierCollider);
 
 <span class="kw">impl </span>Collider {
-    <span class="kw">pub fn </span>cuboid(x_length: f32, y_length: f32, interaction: InteractionGroups) -&gt; <span class="self">Self </span>{
+    <span class="kw">pub fn </span>cuboid(
+        x_length: f32,
+        y_length: f32,
+        interaction: InteractionGroups,
+    ) -&gt; <span class="self">Self </span>{
         <span class="comment">// Rapiers cuboid is subtely different from xpbd, as rapier is defined by its
         // half extents, and xpbd is by its extents.
         </span><span class="self">Self</span>(
@@ -704,6 +720,7 @@
                 .build(),
         )
     }
+
     <span class="doccomment">/// You can use this if you want to use an animation collider
     ///
     /// Note: not actually empty, makes a 10x10cube.
@@ -874,7 +891,7 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         point: Vec2,
         interaction: InteractionGroups,
-        <span class="comment">//TODO: might want to be able to exclude multiple entities?
+        <span class="comment">// TODO: might want to be able to exclude multiple entities?
         </span>exclude: <span class="prelude-ty">Option</span>&lt;Entity&gt;,
     ) -&gt; <span class="prelude-ty">Option</span>&lt;(Entity, parry::query::PointProjection)&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>filter = QueryFilter::new().groups(interaction);
@@ -899,7 +916,10 @@
 
     <span class="doccomment">/// Small utility function that gets the entity associated with the collider;
     /// panics if entity does not exist.
-    </span><span class="kw">pub fn </span>collider2entity(<span class="kw-2">&amp;</span><span class="self">self</span>, handle: rapier2d::prelude::ColliderHandle) -&gt; <span class="prelude-ty">Option</span>&lt;Entity&gt; {
+    </span><span class="kw">pub fn </span>collider2entity(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        handle: rapier2d::prelude::ColliderHandle,
+    ) -&gt; <span class="prelude-ty">Option</span>&lt;Entity&gt; {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(result) = <span class="self">self</span>.col_set.get(handle) {
             <span class="kw">match </span>Entity::try_from_bits(result.user_data <span class="kw">as </span>u64) {
                 <span class="prelude-val">Ok</span>(e) =&gt; <span class="prelude-val">Some</span>(e),
@@ -954,7 +974,7 @@
         rb_set,
         id_tracker,
     } = <span class="kw-2">&amp;mut *</span>world;
-    <span class="comment">//query_pipeline.cast_shape()
+    <span class="comment">// query_pipeline.cast_shape()
     </span><span class="kw">let </span><span class="kw-2">mut </span>modified_colliders = <span class="macro">vec!</span>[];
     <span class="kw">for </span>(entity, trnsfm, transform, collider_info, handle) <span class="kw">in </span><span class="kw-2">&amp;</span>phys_obj_query {
         <span class="kw">let </span>col_id = <span class="kw">if </span>collider_info.is_added() &amp;&amp; handle.is_none() {
@@ -968,8 +988,9 @@
             <span class="comment">// Sets the user associated data on the collider to the entity id
             // so that when we get a query result with a collider id we can lookup
             // what entity its associated with.
-            </span>col_set.get_mut(col_id).unwrap().user_data = entity.to_bits() <span class="kw">as </span>u128;
-            <span class="comment">//println!("new collider added: {col_id:?}");
+            </span>col_set.get_mut(col_id).unwrap().user_data =
+                entity.to_bits() <span class="kw">as </span>u128;
+            <span class="comment">// println!("new collider added: {col_id:?}");
 
             </span>col_set
                 .get_mut(col_id)
@@ -1039,7 +1060,7 @@
 <span class="doccomment">/// Draws colliders using bevy's gizmos to assist with debugging.
 </span><span class="kw">pub fn </span>debug_colliders(
     world: ResMut&lt;PhysicsWorld&gt;,
-    <span class="comment">//mut gizmos: Gizmos,
+    <span class="comment">// mut gizmos: Gizmos,
     </span><span class="kw-2">mut </span>collider_gizmos: Gizmos&lt;PhsyicsCollidersGizmos&gt;,
 ) {
     <span class="kw">for </span>(handle, collider) <span class="kw">in </span>world.col_set.iter() {
@@ -1049,7 +1070,8 @@
         );
         <span class="kw">let </span>rotation: f32 = collider.rotation().angle();
         <span class="kw">if let </span><span class="prelude-val">Some</span>(cube) = collider.shared_shape().as_cuboid() {
-            <span class="kw">let </span>half_extents = Vec2::new(cube.half_extents.x, cube.half_extents.y);
+            <span class="kw">let </span>half_extents =
+                Vec2::new(cube.half_extents.x, cube.half_extents.y);
             collider_gizmos.rect(
                 pos.extend(<span class="number">0.0002</span>),
                 Quat::from_rotation_z(rotation - PI),

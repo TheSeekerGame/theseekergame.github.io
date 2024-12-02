@@ -413,30 +413,47 @@
 <a href="#412" id="412">412</a>
 <a href="#413" id="413">413</a>
 <a href="#414" id="414">414</a>
-<a href="#415" id="415">415</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::camera::MainCamera;
-<span class="kw">use </span><span class="kw">crate</span>::game::player::Player;
-<span class="kw">use </span><span class="kw">crate</span>::parallax::Parallax;
-<span class="kw">use </span>bevy::core_pipeline::core_2d;
+<a href="#415" id="415">415</a>
+<a href="#416" id="416">416</a>
+<a href="#417" id="417">417</a>
+<a href="#418" id="418">418</a>
+<a href="#419" id="419">419</a>
+<a href="#420" id="420">420</a>
+<a href="#421" id="421">421</a>
+<a href="#422" id="422">422</a>
+<a href="#423" id="423">423</a>
+<a href="#424" id="424">424</a>
+<a href="#425" id="425">425</a>
+<a href="#426" id="426">426</a>
+<a href="#427" id="427">427</a>
+<a href="#428" id="428">428</a></pre></div><pre class="rust"><code><span class="kw">use </span>bevy::core_pipeline::core_2d;
 <span class="kw">use </span>bevy::core_pipeline::fullscreen_vertex_shader::fullscreen_shader_vertex_state;
 <span class="kw">use </span>bevy::ecs::query::QueryItem;
 <span class="kw">use </span>bevy::prelude::<span class="kw-2">*</span>;
 <span class="kw">use </span>bevy::render::extract_component::{
-    ComponentUniforms, ExtractComponent, ExtractComponentPlugin, UniformComponentPlugin,
+    ComponentUniforms, ExtractComponent, ExtractComponentPlugin,
+    UniformComponentPlugin,
 };
 <span class="kw">use </span>bevy::render::render_graph::{
-    NodeRunError, RenderGraphApp, RenderGraphContext, RenderLabel, ViewNode, ViewNodeRunner,
+    NodeRunError, RenderGraphApp, RenderGraphContext, RenderLabel, ViewNode,
+    ViewNodeRunner,
 };
 <span class="kw">use </span>bevy::render::render_resource::{
-    BindGroupEntries, BindGroupLayout, BindGroupLayoutEntry,
-    BindingType, CachedRenderPipelineId, ColorTargetState, ColorWrites, FragmentState,
-    MultisampleState, Operations, PipelineCache, PrimitiveState, RenderPassColorAttachment,
-    RenderPassDescriptor, RenderPipelineDescriptor, Sampler, SamplerBindingType, SamplerDescriptor,
-    ShaderStages, ShaderType, TextureFormat, TextureSampleType, TextureViewDimension,
+    BindGroupEntries, BindGroupLayout, BindGroupLayoutEntry, BindingType,
+    CachedRenderPipelineId, ColorTargetState, ColorWrites, FragmentState,
+    MultisampleState, Operations, PipelineCache, PrimitiveState,
+    RenderPassColorAttachment, RenderPassDescriptor, RenderPipelineDescriptor,
+    Sampler, SamplerBindingType, SamplerDescriptor, ShaderStages, ShaderType,
+    TextureFormat, TextureSampleType, TextureViewDimension,
 };
 <span class="kw">use </span>bevy::render::renderer::{RenderContext, RenderDevice};
 <span class="kw">use </span>bevy::render::view::ViewTarget;
 <span class="kw">use </span>bevy::render::RenderApp;
 <span class="kw">use </span>glam::FloatExt;
+
+<span class="kw">use </span><span class="kw">crate</span>::camera::MainCamera;
+<span class="kw">use </span><span class="kw">crate</span>::game::player::Player;
+<span class="kw">use </span><span class="kw">crate</span>::parallax::Parallax;
 
 <span class="doccomment">/// To use this plugin add it to your app, and make sure the [`DarknessSettings`] component is added
 /// to the camera:
@@ -467,8 +484,8 @@
 
 <span class="kw">impl </span>Plugin <span class="kw">for </span>DarknessPlugin {
     <span class="kw">fn </span>build(<span class="kw-2">&amp;</span><span class="self">self</span>, app: <span class="kw-2">&amp;mut </span>App) {
-        <span class="comment">//app.add_systems(Update, darkness_dynamics);
-        //app.add_systems(Update, darkness_parallax);
+        <span class="comment">// app.add_systems(Update, darkness_dynamics);
+        // app.add_systems(Update, darkness_parallax);
         </span>app.add_plugins((
             <span class="comment">// The settings will be a component that lives in the main world but will
             // be extracted to the render world every frame.
@@ -573,7 +590,8 @@
     <span class="comment">// make sure the lantern is centered on the player even if the camera isn't
     </span><span class="kw">if let </span><span class="prelude-val">Ok</span>(cam_transform) = camera.get_single() {
         <span class="kw">if let </span><span class="prelude-val">Ok</span>(player_transform) = player.get_single() {
-            offest = player_transform.translation.xy() - cam_transform.translation.xy()
+            offest = player_transform.translation.xy()
+                - cam_transform.translation.xy()
         };
     };
 
@@ -587,9 +605,11 @@
         <span class="comment">// uses the lerp trick to easily add smooth transition; maybe use different
         // curve/tweening in the future.
         </span><span class="kw">if </span>intensity &lt; <span class="number">0.3 </span>{
-            setting.lantern = setting.lantern.lerp(<span class="number">1.0</span>, time.delta_seconds() * <span class="number">0.9</span>);
+            setting.lantern =
+                setting.lantern.lerp(<span class="number">1.0</span>, time.delta_seconds() * <span class="number">0.9</span>);
         } <span class="kw">else if </span>intensity &gt; <span class="number">0.3 </span>{
-            setting.lantern = setting.lantern.lerp(<span class="number">0.0</span>, time.delta_seconds() * <span class="number">0.9</span>);
+            setting.lantern =
+                setting.lantern.lerp(<span class="number">0.0</span>, time.delta_seconds() * <span class="number">0.9</span>);
         }
 
         <span class="comment">// Set the intensity.
@@ -661,7 +681,8 @@
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(), NodeRunError&gt; {
         <span class="comment">// Get the pipeline resource that contains the global data we need
         // to create the render pipeline
-        </span><span class="kw">let </span>post_process_pipeline = world.resource::&lt;DarknessPostProcessPipeline&gt;();
+        </span><span class="kw">let </span>post_process_pipeline =
+            world.resource::&lt;DarknessPostProcessPipeline&gt;();
 
         <span class="comment">// The pipeline cache is a cache of all previously created pipelines.
         // It is required to avoid creating a new pipeline each frame,
@@ -669,14 +690,17 @@
         </span><span class="kw">let </span>pipeline_cache = world.resource::&lt;PipelineCache&gt;();
 
         <span class="comment">// Get the pipeline from the cache
-        </span><span class="kw">let </span><span class="prelude-val">Some</span>(pipeline) = pipeline_cache.get_render_pipeline(post_process_pipeline.pipeline_id)
+        </span><span class="kw">let </span><span class="prelude-val">Some</span>(pipeline) = pipeline_cache
+            .get_render_pipeline(post_process_pipeline.pipeline_id)
         <span class="kw">else </span>{
             <span class="kw">return </span><span class="prelude-val">Ok</span>(());
         };
 
         <span class="comment">// Get the settings uniform binding
-        </span><span class="kw">let </span>settings_uniforms = world.resource::&lt;ComponentUniforms&lt;DarknessSettings&gt;&gt;();
-        <span class="kw">let </span><span class="prelude-val">Some</span>(settings_binding) = settings_uniforms.uniforms().binding() <span class="kw">else </span>{
+        </span><span class="kw">let </span>settings_uniforms =
+            world.resource::&lt;ComponentUniforms&lt;DarknessSettings&gt;&gt;();
+        <span class="kw">let </span><span class="prelude-val">Some</span>(settings_binding) = settings_uniforms.uniforms().binding()
+        <span class="kw">else </span>{
             <span class="kw">return </span><span class="prelude-val">Ok</span>(());
         };
 
@@ -711,19 +735,20 @@
         );
 
         <span class="comment">// Begin the render pass
-        </span><span class="kw">let </span><span class="kw-2">mut </span>render_pass = render_context.begin_tracked_render_pass(RenderPassDescriptor {
-            label: <span class="prelude-val">Some</span>(<span class="string">"darkness_post_process_pass"</span>),
-            color_attachments: <span class="kw-2">&amp;</span>[<span class="prelude-val">Some</span>(RenderPassColorAttachment {
-                <span class="comment">// We need to specify the post process destination view here
-                // to make sure we write to the appropriate texture.
-                </span>view: post_process.destination,
-                resolve_target: <span class="prelude-val">None</span>,
-                ops: Operations::default(),
-            })],
-            depth_stencil_attachment: <span class="prelude-val">None</span>,
-            timestamp_writes: <span class="prelude-val">None</span>,
-            occlusion_query_set: <span class="prelude-val">None</span>,
-        });
+        </span><span class="kw">let </span><span class="kw-2">mut </span>render_pass =
+            render_context.begin_tracked_render_pass(RenderPassDescriptor {
+                label: <span class="prelude-val">Some</span>(<span class="string">"darkness_post_process_pass"</span>),
+                color_attachments: <span class="kw-2">&amp;</span>[<span class="prelude-val">Some</span>(RenderPassColorAttachment {
+                    <span class="comment">// We need to specify the post process destination view here
+                    // to make sure we write to the appropriate texture.
+                    </span>view: post_process.destination,
+                    resolve_target: <span class="prelude-val">None</span>,
+                    ops: Operations::default(),
+                })],
+                depth_stencil_attachment: <span class="prelude-val">None</span>,
+                timestamp_writes: <span class="prelude-val">None</span>,
+                occlusion_query_set: <span class="prelude-val">None</span>,
+            });
 
         <span class="comment">// This is mostly just wgpu boilerplate for drawing a fullscreen triangle,
         // using the pipeline/bind_group created above
@@ -784,7 +809,8 @@
         );
 
         <span class="comment">// We can create the sampler here since it won't change at runtime and doesn't depend on the view
-        </span><span class="kw">let </span>sampler = render_device.create_sampler(<span class="kw-2">&amp;</span>SamplerDescriptor::default());
+        </span><span class="kw">let </span>sampler =
+            render_device.create_sampler(<span class="kw-2">&amp;</span>SamplerDescriptor::default());
 
         <span class="comment">// Get the shader handle
         </span><span class="kw">let </span>shader = world

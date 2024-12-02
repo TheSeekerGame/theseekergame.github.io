@@ -1087,7 +1087,66 @@
 <a href="#1086" id="1086">1086</a>
 <a href="#1087" id="1087">1087</a>
 <a href="#1088" id="1088">1088</a>
-<a href="#1089" id="1089">1089</a></pre></div><pre class="rust"><code><span class="doccomment">//! Modified to work with 2d from: https://github.com/bevyengine/bevy/pull/13009/files#diff-ea4d20f66869f90dce6e26ba7a6dc6efa69310fe609b60516ec135a9e89840d1
+<a href="#1089" id="1089">1089</a>
+<a href="#1090" id="1090">1090</a>
+<a href="#1091" id="1091">1091</a>
+<a href="#1092" id="1092">1092</a>
+<a href="#1093" id="1093">1093</a>
+<a href="#1094" id="1094">1094</a>
+<a href="#1095" id="1095">1095</a>
+<a href="#1096" id="1096">1096</a>
+<a href="#1097" id="1097">1097</a>
+<a href="#1098" id="1098">1098</a>
+<a href="#1099" id="1099">1099</a>
+<a href="#1100" id="1100">1100</a>
+<a href="#1101" id="1101">1101</a>
+<a href="#1102" id="1102">1102</a>
+<a href="#1103" id="1103">1103</a>
+<a href="#1104" id="1104">1104</a>
+<a href="#1105" id="1105">1105</a>
+<a href="#1106" id="1106">1106</a>
+<a href="#1107" id="1107">1107</a>
+<a href="#1108" id="1108">1108</a>
+<a href="#1109" id="1109">1109</a>
+<a href="#1110" id="1110">1110</a>
+<a href="#1111" id="1111">1111</a>
+<a href="#1112" id="1112">1112</a>
+<a href="#1113" id="1113">1113</a>
+<a href="#1114" id="1114">1114</a>
+<a href="#1115" id="1115">1115</a>
+<a href="#1116" id="1116">1116</a>
+<a href="#1117" id="1117">1117</a>
+<a href="#1118" id="1118">1118</a>
+<a href="#1119" id="1119">1119</a>
+<a href="#1120" id="1120">1120</a>
+<a href="#1121" id="1121">1121</a>
+<a href="#1122" id="1122">1122</a>
+<a href="#1123" id="1123">1123</a>
+<a href="#1124" id="1124">1124</a>
+<a href="#1125" id="1125">1125</a>
+<a href="#1126" id="1126">1126</a>
+<a href="#1127" id="1127">1127</a>
+<a href="#1128" id="1128">1128</a>
+<a href="#1129" id="1129">1129</a>
+<a href="#1130" id="1130">1130</a>
+<a href="#1131" id="1131">1131</a>
+<a href="#1132" id="1132">1132</a>
+<a href="#1133" id="1133">1133</a>
+<a href="#1134" id="1134">1134</a>
+<a href="#1135" id="1135">1135</a>
+<a href="#1136" id="1136">1136</a>
+<a href="#1137" id="1137">1137</a>
+<a href="#1138" id="1138">1138</a>
+<a href="#1139" id="1139">1139</a>
+<a href="#1140" id="1140">1140</a>
+<a href="#1141" id="1141">1141</a>
+<a href="#1142" id="1142">1142</a>
+<a href="#1143" id="1143">1143</a>
+<a href="#1144" id="1144">1144</a>
+<a href="#1145" id="1145">1145</a>
+<a href="#1146" id="1146">1146</a>
+<a href="#1147" id="1147">1147</a>
+<a href="#1148" id="1148">1148</a></pre></div><pre class="rust"><code><span class="doccomment">//! Modified to work with 2d from: https://github.com/bevyengine/bevy/pull/13009/files#diff-ea4d20f66869f90dce6e26ba7a6dc6efa69310fe609b60516ec135a9e89840d1
 //! Depth of field, a postprocessing effect that simulates camera focus.
 //!
 //! By default, Bevy renders all objects in full focus: regardless of depth, all
@@ -1107,53 +1166,61 @@
 </span><span class="kw">use </span>std::f32::consts::PI;
 <span class="kw">use </span>std::f32::INFINITY;
 
-<span class="kw">use </span><span class="kw">crate</span>::prelude::<span class="kw-2">*</span>;
 <span class="kw">use </span>bevy::asset::{load_internal_asset, Handle};
 <span class="kw">use </span>bevy::core_pipeline::core_3d::graph::{Core3d, Node3d};
-<span class="kw">use </span>bevy::core_pipeline::core_3d::{AlphaMask3d, Camera3dDepthLoadOp, CORE_3D_DEPTH_FORMAT, Opaque3d, Transmissive3d, Transparent3d};
+<span class="kw">use </span>bevy::core_pipeline::core_3d::{
+    AlphaMask3d, Camera3dDepthLoadOp, Opaque3d, Transmissive3d, Transparent3d,
+    CORE_3D_DEPTH_FORMAT,
+};
 <span class="kw">use </span>bevy::core_pipeline::fullscreen_vertex_shader::fullscreen_shader_vertex_state;
 <span class="kw">use </span>bevy::core_pipeline::prepass::DepthPrepass;
-<span class="kw">use </span>bevy::ecs::{
-    component::Component,
-    entity::Entity,
-    query::{QueryItem, With},
-    schedule::IntoSystemConfigs <span class="kw">as _</span>,
-    system::{lifetimeless::Read, Commands, Query, Res, ResMut, Resource},
-    world::{FromWorld, World},
+<span class="kw">use </span>bevy::ecs::component::Component;
+<span class="kw">use </span>bevy::ecs::entity::Entity;
+<span class="kw">use </span>bevy::ecs::query::{QueryItem, With};
+<span class="kw">use </span>bevy::ecs::schedule::IntoSystemConfigs <span class="kw">as _</span>;
+<span class="kw">use </span>bevy::ecs::system::lifetimeless::Read;
+<span class="kw">use </span>bevy::ecs::system::{Commands, Query, Res, ResMut, Resource};
+<span class="kw">use </span>bevy::ecs::world::{FromWorld, World};
+<span class="kw">use </span>bevy::render::camera::{
+    CameraMainTextureUsages, ExtractedCamera, PhysicalCameraParameters,
 };
-<span class="kw">use </span>bevy::render::render_graph::RenderLabel;
-<span class="kw">use </span>bevy::render::{
-    camera::PhysicalCameraParameters,
-    extract_component::{ComponentUniforms, DynamicUniformIndex, UniformComponentPlugin},
-    render_graph::{
-        NodeRunError, RenderGraphApp <span class="kw">as _</span>, RenderGraphContext, ViewNode, ViewNodeRunner,
-    },
-    render_resource::{
-        binding_types::{
-            sampler, texture_2d, texture_depth_2d, texture_depth_2d_multisampled, uniform_buffer,
-        },
-        BindGroup, BindGroupEntries, BindGroupLayout, BindGroupLayoutEntries,
-        CachedRenderPipelineId, ColorTargetState, ColorWrites, FilterMode, FragmentState, LoadOp,
-        Operations, PipelineCache, RenderPassColorAttachment, RenderPassDescriptor,
-        RenderPipelineDescriptor, Sampler, SamplerBindingType, SamplerDescriptor, Shader,
-        ShaderStages, ShaderType, SpecializedRenderPipeline, SpecializedRenderPipelines, StoreOp,
-        TextureDescriptor, TextureDimension, TextureFormat, TextureSampleType, TextureUsages,
-    },
-    renderer::{RenderContext, RenderDevice},
-    texture::{BevyDefault, CachedTexture, TextureCache},
-    view::{
-        prepare_view_targets, ExtractedView, Msaa, ViewDepthTexture, ViewTarget, ViewUniform,
-        ViewUniformOffset, ViewUniforms,
-    },
-    Extract, ExtractSchedule, Render, RenderApp, RenderSet,
+<span class="kw">use </span>bevy::render::extract_component::{
+    ComponentUniforms, DynamicUniformIndex, UniformComponentPlugin,
 };
-<span class="kw">use </span>bevy::render::camera::{CameraMainTextureUsages, ExtractedCamera};
+<span class="kw">use </span>bevy::render::render_graph::{
+    NodeRunError, RenderGraphApp <span class="kw">as _</span>, RenderGraphContext, RenderLabel,
+    ViewNode, ViewNodeRunner,
+};
 <span class="kw">use </span>bevy::render::render_phase::RenderPhase;
-<span class="kw">use </span>bevy::render::render_resource::Extent3d;
-<span class="kw">use </span>bevy::utils::{info_once, prelude::default, warn_once};
+<span class="kw">use </span>bevy::render::render_resource::binding_types::{
+    sampler, texture_2d, texture_depth_2d, texture_depth_2d_multisampled,
+    uniform_buffer,
+};
+<span class="kw">use </span>bevy::render::render_resource::{
+    BindGroup, BindGroupEntries, BindGroupLayout, BindGroupLayoutEntries,
+    CachedRenderPipelineId, ColorTargetState, ColorWrites, Extent3d,
+    FilterMode, FragmentState, LoadOp, Operations, PipelineCache,
+    RenderPassColorAttachment, RenderPassDescriptor, RenderPipelineDescriptor,
+    Sampler, SamplerBindingType, SamplerDescriptor, Shader, ShaderStages,
+    ShaderType, SpecializedRenderPipeline, SpecializedRenderPipelines, StoreOp,
+    TextureDescriptor, TextureDimension, TextureFormat, TextureSampleType,
+    TextureUsages,
+};
+<span class="kw">use </span>bevy::render::renderer::{RenderContext, RenderDevice};
+<span class="kw">use </span>bevy::render::texture::{BevyDefault, CachedTexture, TextureCache};
+<span class="kw">use </span>bevy::render::view::{
+    prepare_view_targets, ExtractedView, Msaa, ViewDepthTexture, ViewTarget,
+    ViewUniform, ViewUniformOffset, ViewUniforms,
+};
+<span class="kw">use </span>bevy::render::{Extract, ExtractSchedule, Render, RenderApp, RenderSet};
+<span class="kw">use </span>bevy::utils::prelude::default;
+<span class="kw">use </span>bevy::utils::{info_once, warn_once};
 <span class="kw">use </span>smallvec::SmallVec;
 
-<span class="kw">const </span>DOF_SHADER_HANDLE: Handle&lt;Shader&gt; = Handle::weak_from_u128(<span class="number">2126671480739266443</span>);
+<span class="kw">use </span><span class="kw">crate</span>::prelude::<span class="kw-2">*</span>;
+
+<span class="kw">const </span>DOF_SHADER_HANDLE: Handle&lt;Shader&gt; =
+    Handle::weak_from_u128(<span class="number">2126671480739266443</span>);
 
 <span class="doccomment">/// A plugin that adds support for the depth of field effect to Bevy.
 </span><span class="kw">pub struct </span>DepthOfFieldPlugin;
@@ -1328,7 +1395,8 @@
             .add_systems(
                 Render,
                 configure_depth_of_field_view_targets_2
-                    .before(prepare_view_targets).in_set(RenderSet::ManageViews),
+                    .before(prepare_view_targets)
+                    .in_set(RenderSet::ManageViews),
             )
             .add_systems(
                 Render,
@@ -1341,7 +1409,8 @@
             )
             .add_systems(
                 Render,
-                prepare_depth_of_field_global_bind_group.in_set(RenderSet::PrepareBindGroups),
+                prepare_depth_of_field_global_bind_group
+                    .in_set(RenderSet::PrepareBindGroups),
             )
             .add_render_graph_node::&lt;ViewNodeRunner&lt;DepthOfFieldNode&gt;&gt;(
                 Core3d,
@@ -1351,10 +1420,10 @@
                 Core3d,
                 (
                     Node3d::MainOpaquePass,
-                    <span class="comment">//Node3d::Bloom,
+                    <span class="comment">// Node3d::Bloom,
                     </span>DepthOfFieldPostProcessLabel,
                     Node3d::MainTransmissivePass,
-                    <span class="comment">//Node3d::Tonemapping,
+                    <span class="comment">// Node3d::Tonemapping,
                 </span>),
             );
     }
@@ -1467,7 +1536,7 @@
         ): QueryItem&lt;<span class="lifetime">'w</span>, <span class="self">Self</span>::ViewQuery&gt;,
         world: <span class="kw-2">&amp;</span><span class="lifetime">'w </span>World,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(), NodeRunError&gt; {
-        <span class="comment">//println!("DepthOfFieldNode is running!");
+        <span class="comment">// println!("DepthOfFieldNode is running!");
         </span><span class="kw">let </span>pipeline_cache = world.resource::&lt;PipelineCache&gt;();
         <span class="kw">let </span>view_uniforms = world.resource::&lt;ViewUniforms&gt;();
         <span class="kw">let </span>global_bind_group = world.resource::&lt;DepthOfFieldGlobalBindGroup&gt;();
@@ -1476,12 +1545,19 @@
         // similar, consisting of two passes each. We factor out the information
         // specific to each pass into
         // [`DepthOfFieldPipelines::pipeline_render_info`].
-        </span><span class="kw">for </span>pipeline_render_info <span class="kw">in </span>view_pipelines.pipeline_render_info().iter() {
-            <span class="kw">let </span>(<span class="prelude-val">Some</span>(render_pipeline), <span class="prelude-val">Some</span>(view_uniforms_binding), <span class="prelude-val">Some</span>(global_bind_group)) = (
-                pipeline_cache.get_render_pipeline(pipeline_render_info.pipeline),
+        </span><span class="kw">for </span>pipeline_render_info <span class="kw">in </span>view_pipelines.pipeline_render_info().iter()
+        {
+            <span class="kw">let </span>(
+                <span class="prelude-val">Some</span>(render_pipeline),
+                <span class="prelude-val">Some</span>(view_uniforms_binding),
+                <span class="prelude-val">Some</span>(global_bind_group),
+            ) = (
+                pipeline_cache
+                    .get_render_pipeline(pipeline_render_info.pipeline),
                 view_uniforms.uniforms.binding(),
                 <span class="kw-2">&amp;**</span>global_bind_group,
-            ) <span class="kw">else </span>{
+            )
+            <span class="kw">else </span>{
                 <span class="kw">return </span><span class="prelude-val">Ok</span>(());
             };
 
@@ -1490,18 +1566,22 @@
             // to manage a secondary *auxiliary* texture alongside the textures
             // managed by the postprocessing logic.
             </span><span class="kw">let </span>postprocess = view_target.post_process_write();
-            <span class="comment">//let src = view_target.main_texture_view();
-            //let src = view_target.sampled_main_texture_view().unwrap();
+            <span class="comment">// let src = view_target.main_texture_view();
+            // let src = view_target.sampled_main_texture_view().unwrap();
             </span><span class="kw">let </span>src = postprocess.source;
-            <span class="comment">//let dst = view_target.main_texture_other_view();
-            //let dst = view_target.sampled_main_texture_view().unwrap();
+            <span class="comment">// let dst = view_target.main_texture_other_view();
+            // let dst = view_target.sampled_main_texture_view().unwrap();
             </span><span class="kw">let </span>dst = postprocess.destination;
 
             <span class="kw">let </span>view_bind_group = <span class="kw">if </span>pipeline_render_info.is_dual_input {
-                <span class="kw">let </span>(<span class="prelude-val">Some</span>(auxiliary_dof_texture), <span class="prelude-val">Some</span>(dual_input_bind_group_layout)) = (
+                <span class="kw">let </span>(
+                    <span class="prelude-val">Some</span>(auxiliary_dof_texture),
+                    <span class="prelude-val">Some</span>(dual_input_bind_group_layout),
+                ) = (
                     auxiliary_dof_texture,
                     view_bind_group_layouts.dual_input.as_ref(),
-                ) <span class="kw">else </span>{
+                )
+                <span class="kw">else </span>{
                     <span class="macro">warn_once!</span>(<span class="string">"Should have created the auxiliary depth of field texture by now"</span>);
                     <span class="kw">continue</span>;
                 };
@@ -1559,20 +1639,20 @@
 
             {
                 <span class="comment">// take the main passes multisampled texture, and copy it to the src post process texture
-                /*let render_pass = render_context.command_encoder().begin_render_pass(&amp;RenderPassDescriptor {
-                    label: Some("resolve_from_multisampled_texture"),
-                    color_attachments: &amp;[Some(RenderPassColorAttachment {
-                        view: view_target.sampled_main_texture_view().unwrap(),
-                        resolve_target: Some(src),
-                        ops: Operations {
-                            load: LoadOp::Load,
-                            store: StoreOp::Store,
-                        },
-                    })],
-                    depth_stencil_attachment: None,
-                    timestamp_writes: None,
-                    occlusion_query_set: None,
-                });*/
+                // let render_pass = render_context.command_encoder().begin_render_pass(&amp;RenderPassDescriptor {
+                // label: Some("resolve_from_multisampled_texture"),
+                // color_attachments: &amp;[Some(RenderPassColorAttachment {
+                // view: view_target.sampled_main_texture_view().unwrap(),
+                // resolve_target: Some(src),
+                // ops: Operations {
+                // load: LoadOp::Load,
+                // store: StoreOp::Store,
+                // },
+                // })],
+                // depth_stencil_attachment: None,
+                // timestamp_writes: None,
+                // occlusion_query_set: None,
+                // });
             </span>}
             {
                 <span class="kw">let </span>render_pass_descriptor = RenderPassDescriptor {
@@ -1615,14 +1695,14 @@
                 );
             }
 
-            <span class="comment">//render_context.command_encoder().clear_texture(view_target.sampled_main_texture().unwrap(), &amp;Default::default());
-            //render_context.command_encoder().clear_texture(view_target.main_texture(), &amp;Default::default());
-            /*render_context.command_encoder().copy_texture_to_texture(
-                view_target.main_texture_other().as_image_copy(),
-                view_target.sampled_main_texture().unwrap().as_image_copy(),
-                view_target.sampled_main_texture().unwrap().size(),
-            );*/
-            //let postprocess = view_target.post_process_write();
+            <span class="comment">// render_context.command_encoder().clear_texture(view_target.sampled_main_texture().unwrap(), &amp;Default::default());
+            // render_context.command_encoder().clear_texture(view_target.main_texture(), &amp;Default::default());
+            // render_context.command_encoder().copy_texture_to_texture(
+            // view_target.main_texture_other().as_image_copy(),
+            // view_target.sampled_main_texture().unwrap().as_image_copy(),
+            // view_target.sampled_main_texture().unwrap().size(),
+            // );
+            // let postprocess = view_target.post_process_write();
         </span>}
 
         <span class="prelude-val">Ok</span>(())
@@ -1654,7 +1734,9 @@
     ///
     /// All fields of the returned [`DepthOfFieldSettings`] other than
     /// `focal_length` and `aperture_f_stops` are set to their default values.
-    </span><span class="kw">pub fn </span>from_physical_camera(camera: <span class="kw-2">&amp;</span>PhysicalCameraParameters) -&gt; DepthOfFieldSettings {
+    </span><span class="kw">pub fn </span>from_physical_camera(
+        camera: <span class="kw-2">&amp;</span>PhysicalCameraParameters,
+    ) -&gt; DepthOfFieldSettings {
         DepthOfFieldSettings {
             sensor_height: <span class="number">0.01866</span>,
             aperture_f_stops: camera.aperture_f_stops,
@@ -1727,22 +1809,28 @@
         // which takes two inputs. We only need to do this if bokeh is in use.
         </span><span class="kw">let </span>dual_input = <span class="kw">match </span>dof_settings.mode {
             DepthOfFieldMode::Gaussian =&gt; <span class="prelude-val">None</span>,
-            DepthOfFieldMode::Bokeh =&gt; <span class="prelude-val">Some</span>(render_device.create_bind_group_layout(
-                <span class="prelude-val">Some</span>(<span class="string">"depth of field bind group layout (dual input)"</span>),
-                <span class="kw-2">&amp;</span>BindGroupLayoutEntries::sequential(
-                    ShaderStages::FRAGMENT,
-                    (
-                        uniform_buffer::&lt;ViewUniform&gt;(<span class="bool-val">true</span>),
-                        <span class="kw">if </span><span class="kw-2">*</span>msaa != Msaa::Off {
-                            texture_depth_2d_multisampled()
-                        } <span class="kw">else </span>{
-                            texture_depth_2d()
-                        },
-                        texture_2d(TextureSampleType::Float { filterable: <span class="bool-val">true </span>}),
-                        texture_2d(TextureSampleType::Float { filterable: <span class="bool-val">true </span>}),
+            DepthOfFieldMode::Bokeh =&gt; {
+                <span class="prelude-val">Some</span>(render_device.create_bind_group_layout(
+                    <span class="prelude-val">Some</span>(<span class="string">"depth of field bind group layout (dual input)"</span>),
+                    <span class="kw-2">&amp;</span>BindGroupLayoutEntries::sequential(
+                        ShaderStages::FRAGMENT,
+                        (
+                            uniform_buffer::&lt;ViewUniform&gt;(<span class="bool-val">true</span>),
+                            <span class="kw">if </span><span class="kw-2">*</span>msaa != Msaa::Off {
+                                texture_depth_2d_multisampled()
+                            } <span class="kw">else </span>{
+                                texture_depth_2d()
+                            },
+                            texture_2d(TextureSampleType::Float {
+                                filterable: <span class="bool-val">true</span>,
+                            }),
+                            texture_2d(TextureSampleType::Float {
+                                filterable: <span class="bool-val">true</span>,
+                            }),
+                        ),
                     ),
-                ),
-            )),
+                ))
+            },
         };
 
         commands
@@ -1762,10 +1850,17 @@
 /// need to set the appropriate flag to tell Bevy to make samplable depth
 /// buffers.
 </span><span class="kw">pub fn </span>configure_depth_of_field_view_targets(
-    <span class="kw-2">mut </span>view_targets: Query&lt;(<span class="kw-2">&amp;mut </span>Camera3d, <span class="kw-2">&amp;mut </span>CameraMainTextureUsages), With&lt;DepthOfFieldSettings&gt;&gt;,
+    <span class="kw-2">mut </span>view_targets: Query&lt;
+        (
+            <span class="kw-2">&amp;mut </span>Camera3d,
+            <span class="kw-2">&amp;mut </span>CameraMainTextureUsages,
+        ),
+        With&lt;DepthOfFieldSettings&gt;,
+    &gt;,
 ) {
     <span class="kw">for </span>(<span class="kw-2">mut </span>camera_3d, <span class="kw-2">mut </span>texture_usages) <span class="kw">in </span>view_targets.iter_mut() {
-        <span class="kw">let </span><span class="kw-2">mut </span>depth_texture_usages = TextureUsages::from(camera_3d.depth_texture_usages);
+        <span class="kw">let </span><span class="kw-2">mut </span>depth_texture_usages =
+            TextureUsages::from(camera_3d.depth_texture_usages);
         depth_texture_usages |= TextureUsages::TEXTURE_BINDING;
         camera_3d.depth_texture_usages = depth_texture_usages.into();
 
@@ -1774,7 +1869,13 @@
 }
 
 <span class="kw">pub fn </span>configure_depth_of_field_view_targets_2(
-    <span class="kw-2">mut </span>view_targets: Query&lt;(<span class="kw-2">&amp;mut </span>Camera3d, <span class="kw-2">&amp;mut </span>CameraMainTextureUsages), With&lt;DepthOfFieldSettings&gt;&gt;,
+    <span class="kw-2">mut </span>view_targets: Query&lt;
+        (
+            <span class="kw-2">&amp;mut </span>Camera3d,
+            <span class="kw-2">&amp;mut </span>CameraMainTextureUsages,
+        ),
+        With&lt;DepthOfFieldSettings&gt;,
+    &gt;,
 ) {
     <span class="kw">for </span>(<span class="kw-2">mut </span>camera_3d, <span class="kw-2">mut </span>texture_usages) <span class="kw">in </span>view_targets.iter_mut() {
         texture_usages.<span class="number">0 </span>= texture_usages.<span class="number">0</span>.union(TextureUsages::COPY_DST);
@@ -1787,7 +1888,12 @@
     msaa: Res&lt;Msaa&gt;,
     render_device: Res&lt;RenderDevice&gt;,
     views_3d: Query&lt;
-        (Entity, <span class="kw-2">&amp;</span>ExtractedCamera, <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>DepthPrepass&gt;, <span class="kw-2">&amp;</span>Camera3d),
+        (
+            Entity,
+            <span class="kw-2">&amp;</span>ExtractedCamera,
+            <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>DepthPrepass&gt;,
+            <span class="kw-2">&amp;</span>Camera3d,
+        ),
         (
             With&lt;RenderPhase&lt;Opaque3d&gt;&gt;,
             With&lt;RenderPhase&lt;AlphaMask3d&gt;&gt;,
@@ -1903,7 +2009,8 @@
             sample_count: view_target.main_texture().sample_count(),
             dimension: TextureDimension::D2,
             format: view_target.main_texture_format(),
-            usage: TextureUsages::RENDER_ATTACHMENT | TextureUsages::TEXTURE_BINDING,
+            usage: TextureUsages::RENDER_ATTACHMENT
+                | TextureUsages::TEXTURE_BINDING,
             view_formats: <span class="kw-2">&amp;</span>[],
         };
 
@@ -1929,7 +2036,9 @@
         <span class="kw-2">&amp;</span>ViewDepthOfFieldBindGroupLayouts,
     )&gt;,
 ) {
-    <span class="kw">for </span>(entity, view, dof_settings, view_bind_group_layouts) <span class="kw">in </span>view_targets.iter() {
+    <span class="kw">for </span>(entity, view, dof_settings, view_bind_group_layouts) <span class="kw">in
+        </span>view_targets.iter()
+    {
         <span class="kw">let </span>dof_pipeline = DepthOfFieldPipeline {
             view_bind_group_layouts: view_bind_group_layouts.clone(),
             global_bind_group_layout: global_bind_group_layout.layout.clone(),
@@ -1941,9 +2050,8 @@
         <span class="comment">// Go ahead and specialize the pipelines.
         </span><span class="kw">match </span>dof_settings.mode {
             DepthOfFieldMode::Gaussian =&gt; {
-                commands
-                    .entity(entity)
-                    .insert(DepthOfFieldPipelines::Gaussian {
+                commands.entity(entity).insert(
+                    DepthOfFieldPipelines::Gaussian {
                         horizontal: pipelines.specialize(
                             <span class="kw-2">&amp;</span>pipeline_cache,
                             <span class="kw-2">&amp;</span>dof_pipeline,
@@ -1962,7 +2070,8 @@
                                 pass: DofPass::GaussianVertical,
                             },
                         ),
-                    });
+                    },
+                );
             },
 
             DepthOfFieldMode::Bokeh =&gt; {
@@ -2078,7 +2187,8 @@
     }
 
     <span class="kw">for </span>(entity, dof_settings) <span class="kw">in </span>query.iter_mut() {
-        <span class="kw">let </span>focal_length = calculate_focal_length(dof_settings.sensor_height, PI / <span class="number">4.0</span>);
+        <span class="kw">let </span>focal_length =
+            calculate_focal_length(dof_settings.sensor_height, PI / <span class="number">4.0</span>);
         <span class="macro">info_once!</span>(<span class="string">"Depth of field running!"</span>);
         <span class="comment">// Convert `DepthOfFieldSettings` to `DepthOfFieldUniform`.
         </span>commands.get_or_spawn(entity).insert((
@@ -2087,8 +2197,10 @@
                 focal_distance: dof_settings.focal_distance,
                 focal_length,
                 coc_scale_factor: focal_length * focal_length
-                    / (dof_settings.sensor_height * dof_settings.aperture_f_stops),
-                max_circle_of_confusion_diameter: dof_settings.max_circle_of_confusion_diameter,
+                    / (dof_settings.sensor_height
+                        * dof_settings.aperture_f_stops),
+                max_circle_of_confusion_diameter: dof_settings
+                    .max_circle_of_confusion_diameter,
                 max_depth: dof_settings.max_depth,
                 pad_a: <span class="number">0</span>,
                 pad_b: <span class="number">0</span>,
@@ -2116,14 +2228,16 @@
             } =&gt; [
                 DepthOfFieldPipelineRenderInfo {
                     pass_label: <span class="string">"depth of field pass (horizontal Gaussian)"</span>,
-                    view_bind_group_label: <span class="string">"depth of field view bind group (horizontal Gaussian)"</span>,
+                    view_bind_group_label:
+                        <span class="string">"depth of field view bind group (horizontal Gaussian)"</span>,
                     pipeline: horizontal_pipeline,
                     is_dual_input: <span class="bool-val">false</span>,
                     is_dual_output: <span class="bool-val">false</span>,
                 },
                 DepthOfFieldPipelineRenderInfo {
                     pass_label: <span class="string">"depth of field pass (vertical Gaussian)"</span>,
-                    view_bind_group_label: <span class="string">"depth of field view bind group (vertical Gaussian)"</span>,
+                    view_bind_group_label:
+                        <span class="string">"depth of field view bind group (vertical Gaussian)"</span>,
                     pipeline: vertical_pipeline,
                     is_dual_input: <span class="bool-val">false</span>,
                     is_dual_output: <span class="bool-val">false</span>,
@@ -2133,22 +2247,26 @@
             DepthOfFieldPipelines::Bokeh {
                 pass_0: pass_0_pipeline,
                 pass_1: pass_1_pipeline,
-            } =&gt; [
-                DepthOfFieldPipelineRenderInfo {
-                    pass_label: <span class="string">"depth of field pass (bokeh pass 0)"</span>,
-                    view_bind_group_label: <span class="string">"depth of field view bind group (bokeh pass 0)"</span>,
-                    pipeline: pass_0_pipeline,
-                    is_dual_input: <span class="bool-val">false</span>,
-                    is_dual_output: <span class="bool-val">true</span>,
-                },
-                DepthOfFieldPipelineRenderInfo {
-                    pass_label: <span class="string">"depth of field pass (bokeh pass 1)"</span>,
-                    view_bind_group_label: <span class="string">"depth of field view bind group (bokeh pass 1)"</span>,
-                    pipeline: pass_1_pipeline,
-                    is_dual_input: <span class="bool-val">true</span>,
-                    is_dual_output: <span class="bool-val">false</span>,
-                },
-            ],
+            } =&gt; {
+                [
+                    DepthOfFieldPipelineRenderInfo {
+                        pass_label: <span class="string">"depth of field pass (bokeh pass 0)"</span>,
+                        view_bind_group_label:
+                            <span class="string">"depth of field view bind group (bokeh pass 0)"</span>,
+                        pipeline: pass_0_pipeline,
+                        is_dual_input: <span class="bool-val">false</span>,
+                        is_dual_output: <span class="bool-val">true</span>,
+                    },
+                    DepthOfFieldPipelineRenderInfo {
+                        pass_label: <span class="string">"depth of field pass (bokeh pass 1)"</span>,
+                        view_bind_group_label:
+                            <span class="string">"depth of field view bind group (bokeh pass 1)"</span>,
+                        pipeline: pass_1_pipeline,
+                        is_dual_input: <span class="bool-val">true</span>,
+                        is_dual_output: <span class="bool-val">false</span>,
+                    },
+                ]
+            },
         }
     }
 }

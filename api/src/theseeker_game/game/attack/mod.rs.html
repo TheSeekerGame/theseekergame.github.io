@@ -519,19 +519,63 @@
 <a href="#518" id="518">518</a>
 <a href="#519" id="519">519</a>
 <a href="#520" id="520">520</a>
-<a href="#521" id="521">521</a></pre></div><pre class="rust"><code><span class="kw">pub mod </span>arc_attack;
+<a href="#521" id="521">521</a>
+<a href="#522" id="522">522</a>
+<a href="#523" id="523">523</a>
+<a href="#524" id="524">524</a>
+<a href="#525" id="525">525</a>
+<a href="#526" id="526">526</a>
+<a href="#527" id="527">527</a>
+<a href="#528" id="528">528</a>
+<a href="#529" id="529">529</a>
+<a href="#530" id="530">530</a>
+<a href="#531" id="531">531</a>
+<a href="#532" id="532">532</a>
+<a href="#533" id="533">533</a>
+<a href="#534" id="534">534</a>
+<a href="#535" id="535">535</a>
+<a href="#536" id="536">536</a>
+<a href="#537" id="537">537</a>
+<a href="#538" id="538">538</a>
+<a href="#539" id="539">539</a>
+<a href="#540" id="540">540</a>
+<a href="#541" id="541">541</a>
+<a href="#542" id="542">542</a>
+<a href="#543" id="543">543</a>
+<a href="#544" id="544">544</a>
+<a href="#545" id="545">545</a>
+<a href="#546" id="546">546</a>
+<a href="#547" id="547">547</a>
+<a href="#548" id="548">548</a>
+<a href="#549" id="549">549</a>
+<a href="#550" id="550">550</a>
+<a href="#551" id="551">551</a>
+<a href="#552" id="552">552</a>
+<a href="#553" id="553">553</a>
+<a href="#554" id="554">554</a>
+<a href="#555" id="555">555</a>
+<a href="#556" id="556">556</a>
+<a href="#557" id="557">557</a>
+<a href="#558" id="558">558</a>
+<a href="#559" id="559">559</a>
+<a href="#560" id="560">560</a>
+<a href="#561" id="561">561</a>
+<a href="#562" id="562">562</a></pre></div><pre class="rust"><code><span class="kw">pub mod </span>arc_attack;
 <span class="kw">pub mod </span>particles;
 
 <span class="kw">use </span>std::mem;
 
 <span class="kw">use </span>theseeker_engine::gent::Gent;
-<span class="kw">use </span>theseeker_engine::physics::{update_sprite_colliders, Collider, PhysicsWorld, GROUND};
+<span class="kw">use </span>theseeker_engine::physics::{
+    update_sprite_colliders, Collider, PhysicsWorld, GROUND,
+};
 
 <span class="kw">use </span><span class="kw">super</span>::enemy::{Defense, EnemyGfx, EnemyStateSet, JustGotHitMarker};
 <span class="kw">use </span><span class="kw">super</span>::gentstate::{Dead, Facing};
 <span class="kw">use </span><span class="kw">super</span>::physics::Knockback;
 <span class="kw">use </span><span class="kw">super</span>::player::{
-    on_hit_exit_stealthing, on_hit_stealth_reset, Passive, Passives, Player, PlayerGfx, PlayerStateSet, StatusModifier
+    on_hit_exit_stealthing, on_hit_stealth_reset, Passive, Passives, Player,
+    PlayerGfx, PlayerStateSet, StatusModifier,
 };
 <span class="kw">use </span><span class="kw">crate</span>::camera::CameraShake;
 <span class="kw">use </span><span class="kw">crate</span>::game::attack::arc_attack::{arc_projectile, Projectile};
@@ -556,9 +600,9 @@
                 (
                     determine_attack_targets,
                     apply_attack_modifications,
-                    <span class="comment">//DamageInfo event emited here
+                    <span class="comment">// DamageInfo event emited here
                     </span>apply_attack_damage,
-                    <span class="comment">//OnAttackFirstHitSet
+                    <span class="comment">// OnAttackFirstHitSet
                     </span>track_crits,
                     on_hit_cam_shake,
                     on_hit_self_pushback,
@@ -575,7 +619,7 @@
                     .chain()
                     .in_set(RespondToDamageInfoSet)
                     .after(apply_attack_damage),
-                <span class="comment">//cleanup
+                <span class="comment">// cleanup
                 </span>attack_tick,
                 despawn_projectile,
                 attack_cleanup,
@@ -590,11 +634,11 @@
     }
 }
 
-<span class="doccomment">///Effects that care about the first time an attack hits should go here
+<span class="doccomment">/// Effects that care about the first time an attack hits should go here
 </span><span class="attr">#[derive(SystemSet, Debug, Clone, PartialEq, Eq, Hash)]
 </span><span class="kw">pub struct </span>OnAttackFirstHitSet;
 
-<span class="doccomment">///Effects that are applied when an instance of damage is dealt should go here
+<span class="doccomment">/// Effects that are applied when an instance of damage is dealt should go here
 </span><span class="attr">#[derive(SystemSet, Debug, Clone, PartialEq, Eq, Hash)]
 </span><span class="kw">pub struct </span>RespondToDamageInfoSet;
 
@@ -604,7 +648,7 @@
     <span class="kw">pub </span>max: u32,
 }
 
-<span class="doccomment">///Component applied to Gfx entity sibling of Gent which has been damaged
+<span class="doccomment">/// Component applied to Gfx entity sibling of Gent which has been damaged
 </span><span class="attr">#[derive(Component)]
 </span><span class="kw">pub struct </span>DamageFlash {
     <span class="kw">pub </span>current_ticks: u32,
@@ -670,31 +714,31 @@
     <span class="kw">pub </span>stealthed: bool,
 }
 
-<span class="doccomment">///Component added to attack entity to indicate it causes Knockback to the Gent it damages
+<span class="doccomment">/// Component added to attack entity to indicate it causes Knockback to the Gent it damages
 </span><span class="attr">#[derive(Component, Default, Deref)]
 </span><span class="kw">pub struct </span>Pushback(<span class="kw">pub </span>Knockback);
 
-<span class="doccomment">///Component added to attack entity to indicate it causes Knockback to the attacker
+<span class="doccomment">/// Component added to attack entity to indicate it causes Knockback to the attacker
 </span><span class="attr">#[derive(Component, Default, Deref)]
 </span><span class="kw">pub struct </span>SelfPushback(<span class="kw">pub </span>Knockback);
 
-<span class="doccomment">///Component added to attack entity to indicate it was initiated by a Stealthing Gent
+<span class="doccomment">/// Component added to attack entity to indicate it was initiated by a Stealthing Gent
 </span><span class="attr">#[derive(Component)]
 </span><span class="kw">pub struct </span>Stealthed;
 
-<span class="doccomment">///Component added to an Attack entity the first time it hits something
+<span class="doccomment">/// Component added to an Attack entity the first time it hits something
 </span><span class="attr">#[derive(Component)]
 </span><span class="kw">pub struct </span>Hit;
 
-<span class="doccomment">///Component added to an Attack entity that indicates it *Can* backstab
+<span class="doccomment">/// Component added to an Attack entity that indicates it *Can* backstab
 </span><span class="attr">#[derive(Component)]
 </span><span class="kw">pub struct </span>Backstab;
 
-<span class="doccomment">///Component added to an Attack entity to indicate that it is a crit
+<span class="doccomment">/// Component added to an Attack entity to indicate that it is a crit
 </span><span class="attr">#[derive(Component, Debug)]
 </span><span class="kw">pub struct </span>Crit;
 
-<span class="comment">//checks nearest entities, modifies attacks targets
+<span class="comment">// checks nearest entities, modifies attacks targets
 </span><span class="kw">pub fn </span>determine_attack_targets(
     <span class="kw-2">mut </span>attack_query: Query&lt;(
         Entity,
@@ -702,7 +746,10 @@
         <span class="kw-2">&amp;mut </span>Attack,
         <span class="kw-2">&amp;</span>Collider,
     )&gt;,
-    damageable_query: Query&lt;<span class="kw-2">&amp;</span>GlobalTransform, (With&lt;Collider&gt;, With&lt;Health&gt;, With&lt;Gent&gt;)&gt;,
+    damageable_query: Query&lt;
+        <span class="kw-2">&amp;</span>GlobalTransform,
+        (With&lt;Collider&gt;, With&lt;Health&gt;, With&lt;Gent&gt;),
+    &gt;,
     spatial_query: Res&lt;PhysicsWorld&gt;,
 ) {
     <span class="kw">for </span>(entity, transform, <span class="kw-2">mut </span>attack, collider) <span class="kw">in </span>attack_query.iter_mut() {
@@ -720,7 +767,9 @@
             .into_iter()
             <span class="comment">// Filters out everything that's not damageable or one of the nearest max_targets entities to attack
             </span>.filter_map(|colliding_entity| {
-                <span class="kw">if let </span><span class="prelude-val">Ok</span>(damageable_transform) = damageable_query.get(colliding_entity) {
+                <span class="kw">if let </span><span class="prelude-val">Ok</span>(damageable_transform) =
+                    damageable_query.get(colliding_entity)
+                {
                     newly_collided.insert(entity);
                     <span class="kw">let </span>dist = damageable_transform
                         .translation()
@@ -742,12 +791,12 @@
             .collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;();
 
         <span class="kw">for </span>entity <span class="kw">in </span>valid_targets.iter() {
-            <span class="comment">//if we already damaged this entity
+            <span class="comment">// if we already damaged this entity
             </span><span class="kw">if </span>attack.damaged_set.contains(entity) {
                 <span class="kw">continue</span>;
             };
 
-            <span class="comment">//if the entity is not damageable
+            <span class="comment">// if the entity is not damageable
             </span><span class="kw">if </span>damageable_query.get(<span class="kw-2">*</span>entity).is_err() {
                 <span class="kw">continue</span>;
             }
@@ -757,39 +806,49 @@
     }
 }
 
-<span class="comment">//could switch to command/component based approach for attack modifications
+<span class="comment">// could switch to command/component based approach for attack modifications
 </span><span class="kw">pub fn </span>apply_attack_modifications(
-    <span class="kw-2">mut </span>attack_query: Query&lt;(Entity, <span class="kw-2">&amp;mut </span>Attack, Has&lt;Crit&gt;, Has&lt;Hit&gt;), Without&lt;Gent&gt;&gt;,
-    <span class="kw-2">mut </span>attacker_query: Query&lt;(<span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;mut </span>Crits&gt;, <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Passives&gt;), With&lt;Gent&gt;&gt;,
+    <span class="kw-2">mut </span>attack_query: Query&lt;
+        (Entity, <span class="kw-2">&amp;mut </span>Attack, Has&lt;Crit&gt;, Has&lt;Hit&gt;),
+        Without&lt;Gent&gt;,
+    &gt;,
+    <span class="kw-2">mut </span>attacker_query: Query&lt;
+        (<span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;mut </span>Crits&gt;, <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Passives&gt;),
+        With&lt;Gent&gt;,
+    &gt;,
     <span class="kw-2">mut </span>commands: Commands,
 ) {
     <span class="kw">for </span>(entity, <span class="kw-2">mut </span>attack, is_crit, has_hit) <span class="kw">in </span>attack_query.iter_mut() {
-        <span class="comment">//if there are no targets we dont want to do anything
+        <span class="comment">// if there are no targets we dont want to do anything
         </span><span class="kw">if </span>attack.target_set.is_empty() {
             <span class="kw">continue</span>;
         }
-        <span class="comment">//if there is an attacker, apply relevant buffs
-        </span><span class="kw">if let </span><span class="prelude-val">Ok</span>((maybe_crits, maybe_passives)) = attacker_query.get_mut(attack.attacker) {
-            <span class="comment">//TODO: attack should keep its original damage and modify only the multipliers
+        <span class="comment">// if there is an attacker, apply relevant buffs
+        </span><span class="kw">if let </span><span class="prelude-val">Ok</span>((maybe_crits, maybe_passives)) =
+            attacker_query.get_mut(attack.attacker)
+        {
+            <span class="comment">// TODO: attack should keep its original damage and modify only the multipliers
             // crit multiplier
             //
             </span><span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">mut </span>crit) = maybe_crits {
                 <span class="kw">if </span>crit.next_hit_is_critical &amp;&amp; !is_crit {
                     commands.entity(entity).insert(Crit);
-                    attack.damage = (attack.damage <span class="kw">as </span>f32 * crit.crit_damage_multiplier) <span class="kw">as </span>u32;
+                    attack.damage = (attack.damage <span class="kw">as </span>f32
+                        * crit.crit_damage_multiplier)
+                        <span class="kw">as </span>u32;
                     crit.next_hit_is_critical = <span class="bool-val">false</span>;
                 }
 
-                <span class="comment">//increment hit count the first time we hit something with an attack
+                <span class="comment">// increment hit count the first time we hit something with an attack
                 </span><span class="kw">if </span>!has_hit {
                     crit.hit_count += <span class="number">1</span>;
                 }
             }
 
-            <span class="comment">//passives
+            <span class="comment">// passives
             </span><span class="kw">if let </span><span class="prelude-val">Some</span>(passives) = maybe_passives {
-                <span class="comment">//backstab
-                //check this later on application of damage for each enemy
+                <span class="comment">// backstab
+                // check this later on application of damage for each enemy
                 </span><span class="kw">if </span>passives.contains(<span class="kw-2">&amp;</span>Passive::Backstab) {
                     commands.entity(entity).insert(Backstab);
                 }
@@ -801,7 +860,7 @@
     }
 }
 
-<span class="comment">//Now we only have the attack and target
+<span class="comment">// Now we only have the attack and target
 </span><span class="kw">pub fn </span>apply_attack_damage(
     <span class="kw-2">mut </span>attack_query: Query&lt;(
         Entity,
@@ -825,24 +884,42 @@
     <span class="kw-2">mut </span>damage_events: EventWriter&lt;DamageInfo&gt;,
     <span class="kw-2">mut </span>commands: Commands,
 ) {
-    <span class="kw">for </span>(a_entity, <span class="kw-2">mut </span>attack, transform, is_stealthed, can_backstab, is_crit, maybe_pushback) <span class="kw">in
-        </span>attack_query.iter_mut()
+    <span class="kw">for </span>(
+        a_entity,
+        <span class="kw-2">mut </span>attack,
+        transform,
+        is_stealthed,
+        can_backstab,
+        is_crit,
+        maybe_pushback,
+    ) <span class="kw">in </span>attack_query.iter_mut()
     {
-        <span class="comment">//we take this and dont put it back each tick
+        <span class="comment">// we take this and dont put it back each tick
         </span><span class="kw">let </span>target_set = mem::take(<span class="kw-2">&amp;mut </span>attack.target_set);
-        <span class="comment">//this gets put back
+        <span class="comment">// this gets put back
         </span><span class="kw">let </span>damaged_set = mem::take(<span class="kw-2">&amp;mut </span>attack.damaged_set);
         <span class="kw">for </span>target <span class="kw">in </span>target_set.difference(<span class="kw-2">&amp;</span>damaged_set) {
-            <span class="kw">if let </span><span class="prelude-val">Ok</span>((t_entity, <span class="kw-2">mut </span>health, t_transform, t_facing, is_defending)) =
-                target_query.get_mut(<span class="kw-2">*</span>target)
+            <span class="kw">if let </span><span class="prelude-val">Ok</span>((
+                t_entity,
+                <span class="kw-2">mut </span>health,
+                t_transform,
+                t_facing,
+                is_defending,
+            )) = target_query.get_mut(<span class="kw-2">*</span>target)
             {
                 <span class="kw">let </span><span class="kw-2">mut </span>damage = attack.damage;
-                <span class="comment">//modify damage based on target specific qualities
-                //target defenses...
+                <span class="comment">// modify damage based on target specific qualities
+                // target defenses...
                 </span><span class="kw">if </span>can_backstab {
                     <span class="kw">let </span>is_backstab = <span class="kw">match </span><span class="kw-2">*</span>t_facing {
-                        Facing::Right =&gt; t_transform.translation().x &gt; transform.translation().x,
-                        Facing::Left =&gt; t_transform.translation().x &lt; transform.translation().x,
+                        Facing::Right =&gt; {
+                            t_transform.translation().x
+                                &gt; transform.translation().x
+                        },
+                        Facing::Left =&gt; {
+                            t_transform.translation().x
+                                &lt; transform.translation().x
+                        },
                     };
                     <span class="kw">if </span>is_backstab {
                         damage <span class="kw-2">*</span>= <span class="number">2</span>;
@@ -852,16 +929,16 @@
                     damage /= <span class="number">4</span>;
                 }
 
-                <span class="comment">//TODO:
+                <span class="comment">// TODO:
                 // Apply Stat Modifier (if exists)
                 </span><span class="kw">if let </span><span class="prelude-val">Some</span>(stat_modifier) = <span class="kw-2">&amp;</span>attack.status_mod {
                     commands.entity(t_entity).insert(stat_modifier.clone());
                 }
 
-                <span class="comment">//apply JustGotHitMarker TODO: switch hitspark to damage_info events
+                <span class="comment">// apply JustGotHitMarker TODO: switch hitspark to damage_info events
                 </span>commands.entity(t_entity).insert(JustGotHitMarker);
 
-                <span class="comment">//apply damage to the targets health
+                <span class="comment">// apply damage to the targets health
                 </span>health.current = health.current.saturating_sub(damage);
                 <span class="kw">let </span>damage_info = DamageInfo {
                     attacker: attack.attacker,
@@ -874,7 +951,7 @@
                 attack.damaged_set.insert(t_entity);
                 damage_events.send(damage_info);
 
-                <span class="comment">//apply Knockback
+                <span class="comment">// apply Knockback
                 </span><span class="kw">if let </span><span class="prelude-val">Some</span>(pushback) = maybe_pushback {
                     commands.entity(t_entity).insert(pushback.<span class="number">0</span>);
                 }
@@ -911,7 +988,7 @@
     }
 }
 
-<span class="doccomment">///Applies camera shaker on first hit if attacker is player
+<span class="doccomment">/// Applies camera shaker on first hit if attacker is player
 </span><span class="kw">fn </span>on_hit_cam_shake(
     query: Query&lt;<span class="kw-2">&amp;</span>Attack, Added&lt;Hit&gt;&gt;,
     p_query: Query&lt;Entity, With&lt;Player&gt;&gt;,
@@ -924,7 +1001,7 @@
     }
 }
 
-<span class="doccomment">///Applies pushback to attacker on first hit of an attack with SelfPushback
+<span class="doccomment">/// Applies pushback to attacker on first hit of an attack with SelfPushback
 </span><span class="kw">fn </span>on_hit_self_pushback(
     query: Query&lt;(<span class="kw-2">&amp;</span>Attack, <span class="kw-2">&amp;</span>SelfPushback), Added&lt;Hit&gt;&gt;,
     <span class="kw-2">mut </span>commands: Commands,
@@ -934,19 +1011,19 @@
     }
 }
 
-<span class="doccomment">///Heals attacker on first hit of a Stealthed attack
+<span class="doccomment">/// Heals attacker on first hit of a Stealthed attack
 </span><span class="kw">fn </span>on_hit_lifesteal(
     query: Query&lt;(<span class="kw-2">&amp;</span>Attack, Has&lt;Crit&gt;), (Added&lt;Hit&gt;, With&lt;Stealthed&gt;)&gt;,
     <span class="kw-2">mut </span>health_query: Query&lt;<span class="kw-2">&amp;mut </span>Health, Without&lt;Attack&gt;&gt;,
 ) {
     <span class="kw">for </span>(attack, is_crit) <span class="kw">in </span>query.iter() {
         <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="kw-2">mut </span>health) = health_query.get_mut(attack.attacker) {
-            <span class="comment">//heal by 100 percent or 20 percent max health
+            <span class="comment">// heal by 100 percent or 20 percent max health
             </span><span class="kw">let </span>stealth_lifesteal = <span class="kw">if </span>is_crit { <span class="number">1. </span>} <span class="kw">else </span>{ <span class="number">0.2 </span>};
             health.current = u32::min(
-                health
-                    .current
-                    .saturating_add((stealth_lifesteal * health.max <span class="kw">as </span>f32) <span class="kw">as </span>u32),
+                health.current.saturating_add(
+                    (stealth_lifesteal * health.max <span class="kw">as </span>f32) <span class="kw">as </span>u32,
+                ),
                 health.max,
             );
         }
@@ -978,7 +1055,10 @@
     }
 }
 
-<span class="kw">fn </span>damage_flash(<span class="kw-2">mut </span>query: Query&lt;(Entity, <span class="kw-2">&amp;mut </span>Sprite, <span class="kw-2">&amp;mut </span>DamageFlash)&gt;, <span class="kw-2">mut </span>commands: Commands) {
+<span class="kw">fn </span>damage_flash(
+    <span class="kw-2">mut </span>query: Query&lt;(Entity, <span class="kw-2">&amp;mut </span>Sprite, <span class="kw-2">&amp;mut </span>DamageFlash)&gt;,
+    <span class="kw-2">mut </span>commands: Commands,
+) {
     <span class="kw">for </span>(entity, <span class="kw-2">mut </span>sprite, <span class="kw-2">mut </span>damage_flash) <span class="kw">in </span>query.iter_mut() {
         sprite.color = Color::rgb(<span class="number">2.5</span>, <span class="number">2.5</span>, <span class="number">2.5</span>);
 
@@ -1009,11 +1089,13 @@
 </span><span class="attr">#[derive(Resource, Debug, Default, Deref, DerefMut)]
 </span><span class="kw">pub struct </span>KillCount(<span class="kw">pub </span>u32);
 
-<span class="comment">//TODO:
-//add crit passive
+<span class="comment">// TODO:
+// add crit passive
 </span><span class="kw">fn </span>track_crits(<span class="kw-2">mut </span>query: Query&lt;<span class="kw-2">&amp;mut </span>Crits&gt;) {
     <span class="kw">for </span><span class="kw-2">mut </span>crits <span class="kw">in </span>query.iter_mut() {
-        <span class="kw">if </span>crits.hit_count != <span class="number">0 </span>&amp;&amp; (crits.hit_count % <span class="number">17 </span>== <span class="number">0 </span>|| crits.hit_count % <span class="number">19 </span>== <span class="number">0</span>) {
+        <span class="kw">if </span>crits.hit_count != <span class="number">0
+            </span>&amp;&amp; (crits.hit_count % <span class="number">17 </span>== <span class="number">0 </span>|| crits.hit_count % <span class="number">19 </span>== <span class="number">0</span>)
+        {
             crits.next_hit_is_critical = <span class="bool-val">true</span>;
         }
     }

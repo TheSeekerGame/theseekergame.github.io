@@ -107,9 +107,13 @@
 <a href="#106" id="106">106</a>
 <a href="#107" id="107">107</a>
 <a href="#108" id="108">108</a>
-<a href="#109" id="109">109</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::camera::MainCamera;
+<a href="#109" id="109">109</a>
+<a href="#110" id="110">110</a>
+<a href="#111" id="111">111</a>
+<a href="#112" id="112">112</a></pre></div><pre class="rust"><code><span class="kw">use </span>bevy::transform::TransformSystem::TransformPropagate;
+
+<span class="kw">use </span><span class="kw">crate</span>::camera::MainCamera;
 <span class="kw">use </span><span class="kw">crate</span>::prelude::<span class="kw-2">*</span>;
-<span class="kw">use </span>bevy::transform::TransformSystem::TransformPropagate;
 
 <span class="doccomment">/// A simple plugin for applying parallax to entities.
 /// Use by adding this plugin, and attaching the Parallax
@@ -201,12 +205,14 @@
         <span class="comment">// Same as in the wgsl fog parallax, calculates the vector from the center to the camera,
         // and then scales it based on the depth. (only difference is applying the optional offset)
         </span><span class="kw">let </span>offset = offset.map(|x| x.<span class="number">0</span>);
-        <span class="kw">let </span><span class="kw-2">mut </span>delta = cam_trnsfrm.translation.xy() - (origin.<span class="number">0 </span>+ offset.unwrap_or_default());
+        <span class="kw">let </span><span class="kw-2">mut </span>delta = cam_trnsfrm.translation.xy()
+            - (origin.<span class="number">0 </span>+ offset.unwrap_or_default());
         delta = delta / (parallax.depth);
 
         <span class="comment">// Getting the final position is different then in wgsl fog code, since we set it in world space
         // instead of camera space, as well as account for the offset here as well.
-        </span><span class="kw">let </span><span class="kw-2">mut </span>pos_final = cam_trnsfrm.translation.xy() - delta - offset.unwrap_or_default();
+        </span><span class="kw">let </span><span class="kw-2">mut </span>pos_final =
+            cam_trnsfrm.translation.xy() - delta - offset.unwrap_or_default();
 
         <span class="comment">// There is another way of doing parallax, without requiring PrallaxOrigin, that just measures
         // the camera position change, divides it by the depth, and then translates the transform.

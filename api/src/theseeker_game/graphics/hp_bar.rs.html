@@ -184,16 +184,31 @@
 <a href="#183" id="183">183</a>
 <a href="#184" id="184">184</a>
 <a href="#185" id="185">185</a>
-<a href="#186" id="186">186</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::appstate::StateDespawnMarker;
-<span class="kw">use </span><span class="kw">crate</span>::camera::MainCamera;
-<span class="kw">use </span><span class="kw">crate</span>::game::attack::Health;
-<span class="kw">use </span><span class="kw">crate</span>::game::player::Player;
-<span class="kw">use </span><span class="kw">crate</span>::prelude::Update;
-<span class="kw">use </span>bevy::prelude::<span class="kw-2">*</span>;
+<a href="#186" id="186">186</a>
+<a href="#187" id="187">187</a>
+<a href="#188" id="188">188</a>
+<a href="#189" id="189">189</a>
+<a href="#190" id="190">190</a>
+<a href="#191" id="191">191</a>
+<a href="#192" id="192">192</a>
+<a href="#193" id="193">193</a>
+<a href="#194" id="194">194</a>
+<a href="#195" id="195">195</a>
+<a href="#196" id="196">196</a>
+<a href="#197" id="197">197</a>
+<a href="#198" id="198">198</a>
+<a href="#199" id="199">199</a>
+<a href="#200" id="200">200</a></pre></div><pre class="rust"><code><span class="kw">use </span>bevy::prelude::<span class="kw-2">*</span>;
 <span class="kw">use </span>bevy::reflect::TypePath;
 <span class="kw">use </span>bevy::render::render_resource::<span class="kw-2">*</span>;
 <span class="kw">use </span>glam::Vec2;
 <span class="kw">use </span>theseeker_engine::physics::Collider;
+
+<span class="kw">use </span><span class="kw">crate</span>::appstate::StateDespawnMarker;
+<span class="kw">use </span><span class="kw">crate</span>::camera::MainCamera;
+<span class="kw">use </span><span class="kw">crate</span>::game::attack::Health;
+<span class="kw">use </span><span class="kw">crate</span>::game::player::Player;
+<span class="kw">use </span><span class="kw">crate</span>::prelude::Update;
 
 <span class="kw">pub struct </span>HpBarsPlugin;
 
@@ -214,7 +229,10 @@
 
 <span class="kw">fn </span>instance(
     <span class="kw-2">mut </span>commands: Commands,
-    entity_with_hp: Query&lt;(Entity, Ref&lt;Health&gt;, Has&lt;Player&gt;), With&lt;GlobalTransform&gt;&gt;,
+    entity_with_hp: Query&lt;
+        (Entity, Ref&lt;Health&gt;, Has&lt;Player&gt;),
+        With&lt;GlobalTransform&gt;,
+    &gt;,
     <span class="kw-2">mut </span>ui_materials: ResMut&lt;Assets&lt;HpBarUiMaterial&gt;&gt;,
 ) {
     <span class="kw">for </span>(entity, health, player) <span class="kw">in </span>entity_with_hp.iter() {
@@ -229,7 +247,8 @@
                                 padding: UiRect::all(Val::Px(<span class="number">3.0</span>)),
                                 ..default()
                             },
-                            background_color: Color::rgb(<span class="number">0.75</span>, <span class="number">0.75</span>, <span class="number">0.75</span>).into(),
+                            background_color: Color::rgb(<span class="number">0.75</span>, <span class="number">0.75</span>, <span class="number">0.75</span>)
+                                .into(),
                             visibility: Visibility::Hidden,
                             ..default()
                         },
@@ -247,8 +266,14 @@
                                 },
                                 material: ui_materials.add(HpBarUiMaterial {
                                     factor: <span class="number">1.0</span>,
-                                    background_color: Color::rgb(<span class="number">0.15</span>, <span class="number">0.15</span>, <span class="number">0.15</span>).into(),
-                                    filled_color: Color::rgb(<span class="number">0.635</span>, <span class="number">0.196</span>, <span class="number">0.306</span>).into(),
+                                    background_color: Color::rgb(
+                                        <span class="number">0.15</span>, <span class="number">0.15</span>, <span class="number">0.15</span>,
+                                    )
+                                    .into(),
+                                    filled_color: Color::rgb(
+                                        <span class="number">0.635</span>, <span class="number">0.196</span>, <span class="number">0.306</span>,
+                                    )
+                                    .into(),
                                 }),
                                 ..default()
                             },
@@ -278,7 +303,9 @@
     };
 
     <span class="kw">for </span>(bg_entity, hp_bg, <span class="kw-2">mut </span>style) <span class="kw">in </span>hp_bar.iter_mut() {
-        <span class="kw">if let </span><span class="prelude-val">Ok</span>((global_transform, collider, has_player)) = entity_with_hp.get(hp_bg.<span class="number">0</span>) {
+        <span class="kw">if let </span><span class="prelude-val">Ok</span>((global_transform, collider, has_player)) =
+            entity_with_hp.get(hp_bg.<span class="number">0</span>)
+        {
             <span class="kw">if </span>has_player {
                 <span class="kw">continue</span>;
             }
@@ -288,7 +315,8 @@
             <span class="comment">// Makes the health bar float above the collider, if it exists
             </span>world_position += <span class="kw">match </span>collider {
                 <span class="prelude-val">Some</span>(collider) =&gt; {
-                    <span class="kw">let </span>collider_height = collider.<span class="number">0</span>.compute_aabb().half_extents().y;
+                    <span class="kw">let </span>collider_height =
+                        collider.<span class="number">0</span>.compute_aabb().half_extents().y;
                     Vec3::new(<span class="number">0.0</span>, collider_height, <span class="number">0.0</span>)
                 },
                 <span class="prelude-val">None </span>=&gt; Vec3::ZERO,

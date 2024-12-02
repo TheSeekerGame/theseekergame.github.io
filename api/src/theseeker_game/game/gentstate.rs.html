@@ -120,12 +120,25 @@
 <a href="#119" id="119">119</a>
 <a href="#120" id="120">120</a>
 <a href="#121" id="121">121</a>
-<a href="#122" id="122">122</a></pre></div><pre class="rust"><code><span class="kw">use </span>bevy::ecs::component::SparseStorage;
+<a href="#122" id="122">122</a>
+<a href="#123" id="123">123</a>
+<a href="#124" id="124">124</a>
+<a href="#125" id="125">125</a>
+<a href="#126" id="126">126</a>
+<a href="#127" id="127">127</a>
+<a href="#128" id="128">128</a>
+<a href="#129" id="129">129</a>
+<a href="#130" id="130">130</a>
+<a href="#131" id="131">131</a>
+<a href="#132" id="132">132</a></pre></div><pre class="rust"><code><span class="kw">use </span>bevy::ecs::component::SparseStorage;
 
 <span class="kw">use </span><span class="kw">crate</span>::prelude::<span class="kw-2">*</span>;
 
-<span class="comment">//todo make generic
-</span><span class="kw">pub fn </span>transition(<span class="kw-2">mut </span>query: Query&lt;(Entity, <span class="kw-2">&amp;mut </span>TransitionQueue)&gt;, <span class="kw-2">mut </span>commands: Commands) {
+<span class="comment">// todo make generic
+</span><span class="kw">pub fn </span>transition(
+    <span class="kw-2">mut </span>query: Query&lt;(Entity, <span class="kw-2">&amp;mut </span>TransitionQueue)&gt;,
+    <span class="kw-2">mut </span>commands: Commands,
+) {
     <span class="kw">for </span>(entity, <span class="kw-2">mut </span>trans) <span class="kw">in </span>query.iter_mut() {
         <span class="kw">if </span>!<span class="kw-2">&amp;</span>trans.is_empty() {
             <span class="kw">let </span>transitions = std::mem::take(<span class="kw-2">&amp;mut </span>trans.<span class="number">0</span>);
@@ -139,7 +152,9 @@
 <span class="kw">pub trait </span>Transitionable&lt;T: GentState&gt; {
     <span class="kw">type </span>Removals;
     <span class="doccomment">/// StartingState::new_transition(EndingState)
-    </span><span class="kw">fn </span>new_transition(next: T) -&gt; Box&lt;<span class="kw">dyn </span>FnOnce(Entity, <span class="kw-2">&amp;mut </span>Commands) + Send + Sync&gt;
+    </span><span class="kw">fn </span>new_transition(
+        next: T,
+    ) -&gt; Box&lt;<span class="kw">dyn </span>FnOnce(Entity, <span class="kw-2">&amp;mut </span>Commands) + Send + Sync&gt;
     <span class="kw">where
         </span><span class="self">Self</span>: GentState + Component,
         &lt;<span class="self">Self </span><span class="kw">as </span>Transitionable&lt;T&gt;&gt;::Removals: Bundle,
@@ -153,9 +168,11 @@
     }
 }
 
-<span class="comment">//make not component, make field of state machine
+<span class="comment">// make not component, make field of state machine
 </span><span class="attr">#[derive(Component, Deref, DerefMut, Default)]
-</span><span class="kw">pub struct </span>TransitionQueue(Vec&lt;Box&lt;<span class="kw">dyn </span>FnOnce(Entity, <span class="kw-2">&amp;mut </span>Commands) + Send + Sync&gt;&gt;);
+</span><span class="kw">pub struct </span>TransitionQueue(
+    Vec&lt;Box&lt;<span class="kw">dyn </span>FnOnce(Entity, <span class="kw-2">&amp;mut </span>Commands) + Send + Sync&gt;&gt;,
+);
 
 <span class="attr">#[derive(Component, Deref, DerefMut, Default)]
 </span><span class="kw">pub struct </span>AddQueue(Vec&lt;Box&lt;<span class="kw">dyn </span>FnOnce(Entity, <span class="kw-2">&amp;mut </span>Commands) + Send + Sync&gt;&gt;);
@@ -168,7 +185,10 @@
     }
 }
 
-<span class="kw">pub fn </span>add_states(<span class="kw-2">mut </span>query: Query&lt;(Entity, <span class="kw-2">&amp;mut </span>AddQueue)&gt;, <span class="kw-2">mut </span>commands: Commands) {
+<span class="kw">pub fn </span>add_states(
+    <span class="kw-2">mut </span>query: Query&lt;(Entity, <span class="kw-2">&amp;mut </span>AddQueue)&gt;,
+    <span class="kw-2">mut </span>commands: Commands,
+) {
     <span class="kw">for </span>(entity, <span class="kw-2">mut </span>add_states) <span class="kw">in </span>query.iter_mut() {
         <span class="kw">if </span>!<span class="kw-2">&amp;</span>add_states.is_empty() {
             <span class="kw">let </span>additions = std::mem::take(<span class="kw-2">&amp;mut </span>add_states.<span class="number">0</span>);
@@ -211,11 +231,11 @@
     <span class="kw">type </span>Removals = (N, Idle);
 }
 
-<span class="comment">//on leaving some states the state machine should ensure we are not also in other specific states,
-//in that case do not implement GenericState for the state and instead implement
-//Transitionable with type Removals = (the states to remove)
+<span class="comment">// on leaving some states the state machine should ensure we are not also in other specific states,
+// in that case do not implement GenericState for the state and instead implement
+// Transitionable with type Removals = (the states to remove)
 
-//common states
+// common states
 </span><span class="attr">#[derive(Component, Default, Debug)]
 #[component(storage = <span class="string">"SparseSet"</span>)]
 </span><span class="kw">pub struct </span>Idle;

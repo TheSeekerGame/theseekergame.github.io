@@ -361,10 +361,83 @@
 <a href="#360" id="360">360</a>
 <a href="#361" id="361">361</a>
 <a href="#362" id="362">362</a>
-<a href="#363" id="363">363</a></pre></div><pre class="rust"><code><span class="kw">use </span>std::sync::{atomic::{AtomicBool, AtomicI64, Ordering <span class="kw">as </span>MemOrdering}, Mutex};
+<a href="#363" id="363">363</a>
+<a href="#364" id="364">364</a>
+<a href="#365" id="365">365</a>
+<a href="#366" id="366">366</a>
+<a href="#367" id="367">367</a>
+<a href="#368" id="368">368</a>
+<a href="#369" id="369">369</a>
+<a href="#370" id="370">370</a>
+<a href="#371" id="371">371</a>
+<a href="#372" id="372">372</a>
+<a href="#373" id="373">373</a>
+<a href="#374" id="374">374</a>
+<a href="#375" id="375">375</a>
+<a href="#376" id="376">376</a>
+<a href="#377" id="377">377</a>
+<a href="#378" id="378">378</a>
+<a href="#379" id="379">379</a>
+<a href="#380" id="380">380</a>
+<a href="#381" id="381">381</a>
+<a href="#382" id="382">382</a>
+<a href="#383" id="383">383</a>
+<a href="#384" id="384">384</a>
+<a href="#385" id="385">385</a>
+<a href="#386" id="386">386</a>
+<a href="#387" id="387">387</a>
+<a href="#388" id="388">388</a>
+<a href="#389" id="389">389</a>
+<a href="#390" id="390">390</a>
+<a href="#391" id="391">391</a>
+<a href="#392" id="392">392</a>
+<a href="#393" id="393">393</a>
+<a href="#394" id="394">394</a>
+<a href="#395" id="395">395</a>
+<a href="#396" id="396">396</a>
+<a href="#397" id="397">397</a>
+<a href="#398" id="398">398</a>
+<a href="#399" id="399">399</a>
+<a href="#400" id="400">400</a>
+<a href="#401" id="401">401</a>
+<a href="#402" id="402">402</a>
+<a href="#403" id="403">403</a>
+<a href="#404" id="404">404</a>
+<a href="#405" id="405">405</a>
+<a href="#406" id="406">406</a>
+<a href="#407" id="407">407</a>
+<a href="#408" id="408">408</a>
+<a href="#409" id="409">409</a>
+<a href="#410" id="410">410</a>
+<a href="#411" id="411">411</a>
+<a href="#412" id="412">412</a>
+<a href="#413" id="413">413</a>
+<a href="#414" id="414">414</a>
+<a href="#415" id="415">415</a>
+<a href="#416" id="416">416</a>
+<a href="#417" id="417">417</a>
+<a href="#418" id="418">418</a>
+<a href="#419" id="419">419</a>
+<a href="#420" id="420">420</a>
+<a href="#421" id="421">421</a>
+<a href="#422" id="422">422</a>
+<a href="#423" id="423">423</a>
+<a href="#424" id="424">424</a>
+<a href="#425" id="425">425</a>
+<a href="#426" id="426">426</a>
+<a href="#427" id="427">427</a>
+<a href="#428" id="428">428</a>
+<a href="#429" id="429">429</a>
+<a href="#430" id="430">430</a>
+<a href="#431" id="431">431</a>
+<a href="#432" id="432">432</a>
+<a href="#433" id="433">433</a>
+<a href="#434" id="434">434</a>
+<a href="#435" id="435">435</a></pre></div><pre class="rust"><code><span class="kw">use </span>std::sync::atomic::{AtomicBool, AtomicI64, Ordering <span class="kw">as </span>MemOrdering};
+<span class="kw">use </span>std::sync::Mutex;
 
-<span class="kw">use </span>rodio::{Sample, Source};
 <span class="kw">use </span>cpal::FromSample;
+<span class="kw">use </span>rodio::{Sample, Source};
 
 <span class="kw">use </span><span class="kw">crate</span>::prelude::<span class="kw-2">*</span>;
 
@@ -429,20 +502,30 @@
             tick_rate,
         })
     }
+
     <span class="kw">pub fn </span>has_playing(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
         <span class="self">self</span>.has_playing.load(MemOrdering::Relaxed)
     }
+
     <span class="kw">pub fn </span>reset_sample_counter(<span class="kw-2">&amp;</span><span class="self">self</span>, new: i64) {
         <span class="self">self</span>.sample_count.store(new, MemOrdering::Relaxed);
     }
+
     <span class="kw">pub fn </span>sample_count(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; i64 {
         <span class="self">self</span>.sample_count.load(MemOrdering::Relaxed)
     }
+
     <span class="kw">pub fn </span>sample_rate(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u32 {
         <span class="self">self</span>.sample_rate
     }
-    <span class="kw">fn </span>play_at_sample_number&lt;T, S&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, start_at_sample_number: <span class="prelude-ty">Option</span>&lt;i64&gt;, source: T, volume: f32, pan: f32)
-    <span class="kw">where
+
+    <span class="kw">fn </span>play_at_sample_number&lt;T, S&gt;(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        start_at_sample_number: <span class="prelude-ty">Option</span>&lt;i64&gt;,
+        source: T,
+        volume: f32,
+        pan: f32,
+    ) <span class="kw">where
         </span>T: Source&lt;Item = S&gt; + Send + Sync + <span class="lifetime">'static</span>,
         S: Sample + Send + <span class="lifetime">'static</span>,
         MySample: FromSample&lt;S&gt;,
@@ -452,13 +535,16 @@
         }
         <span class="kw">let </span><span class="kw-2">mut </span>source = Box::new(source.convert_samples::&lt;MySample&gt;());
         <span class="kw">if let </span><span class="prelude-val">Some</span>(first_sample) = (<span class="kw-2">&amp;mut *</span>source).next() {
-            <span class="self">self</span>.pending.lock().unwrap().push(PrecisionMixerQueuedTrack {
-                start_at_sample_number,
-                first_sample,
-                volume,
-                pan,
-                source: <span class="prelude-val">Some</span>(source),
-            });
+            <span class="self">self</span>.pending
+                .lock()
+                .unwrap()
+                .push(PrecisionMixerQueuedTrack {
+                    start_at_sample_number,
+                    first_sample,
+                    volume,
+                    pan,
+                    source: <span class="prelude-val">Some</span>(source),
+                });
         }
         <span class="self">self</span>.has_pending.store(<span class="bool-val">true</span>, MemOrdering::SeqCst);
     }
@@ -472,31 +558,52 @@
         <span class="self">self</span>.play_at_sample_number(<span class="prelude-val">None</span>, source, volume, pan);
     }
 
-    <span class="kw">pub fn </span>play_at_time&lt;T, S&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, dur: Duration, source: T, volume: f32, pan: f32)
-    <span class="kw">where
+    <span class="kw">pub fn </span>play_at_time&lt;T, S&gt;(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        dur: Duration,
+        source: T,
+        volume: f32,
+        pan: f32,
+    ) <span class="kw">where
         </span>T: Source&lt;Item = S&gt; + Send + Sync + <span class="lifetime">'static</span>,
         S: Sample + Send + <span class="lifetime">'static</span>,
         MySample: FromSample&lt;S&gt;,
     {
         <span class="kw">let </span>seconds = dur.as_secs();
         <span class="kw">let </span>nanos = dur.subsec_nanos();
-        <span class="kw">let </span>start_at_sample_number =
-            (seconds <span class="kw">as </span>u64 * <span class="self">self</span>.sample_rate <span class="kw">as </span>u64) +
-            (<span class="self">self</span>.sample_rate <span class="kw">as </span>u64 * nanos <span class="kw">as </span>u64 / <span class="number">1_000_000_000</span>);
-        <span class="self">self</span>.play_at_sample_number(<span class="prelude-val">Some</span>(start_at_sample_number <span class="kw">as </span>i64), source, volume, pan);
+        <span class="kw">let </span>start_at_sample_number = (seconds <span class="kw">as </span>u64 * <span class="self">self</span>.sample_rate <span class="kw">as </span>u64)
+            + (<span class="self">self</span>.sample_rate <span class="kw">as </span>u64 * nanos <span class="kw">as </span>u64 / <span class="number">1_000_000_000</span>);
+        <span class="self">self</span>.play_at_sample_number(
+            <span class="prelude-val">Some</span>(start_at_sample_number <span class="kw">as </span>i64),
+            source,
+            volume,
+            pan,
+        );
     }
 
-    <span class="kw">pub fn </span>play_at_tick&lt;T, S&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, tick: u32, offset_nanos: i32, source: T, volume: f32, pan: f32)
-    <span class="kw">where
+    <span class="kw">pub fn </span>play_at_tick&lt;T, S&gt;(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        tick: u32,
+        offset_nanos: i32,
+        source: T,
+        volume: f32,
+        pan: f32,
+    ) <span class="kw">where
         </span>T: Source&lt;Item = S&gt; + Send + Sync + <span class="lifetime">'static</span>,
         S: Sample + Send + <span class="lifetime">'static</span>,
         MySample: FromSample&lt;S&gt;,
     {
-        <span class="kw">let </span>start_at_sample_number = (
-            (tick <span class="kw">as </span>f64 * <span class="self">self</span>.sample_rate <span class="kw">as </span>f64 / <span class="self">self</span>.tick_rate <span class="kw">as </span>f64) <span class="kw">as </span>i64 +
-            (<span class="self">self</span>.sample_rate <span class="kw">as </span>i64 * offset_nanos <span class="kw">as </span>i64 / <span class="number">1_000_000_000</span>)
-        ) <span class="kw">as </span>i64;
-        <span class="self">self</span>.play_at_sample_number(<span class="prelude-val">Some</span>(start_at_sample_number), source, volume, pan);
+        <span class="kw">let </span>start_at_sample_number = ((tick <span class="kw">as </span>f64 * <span class="self">self</span>.sample_rate <span class="kw">as </span>f64
+            / <span class="self">self</span>.tick_rate <span class="kw">as </span>f64)
+            <span class="kw">as </span>i64
+            + (<span class="self">self</span>.sample_rate <span class="kw">as </span>i64 * offset_nanos <span class="kw">as </span>i64 / <span class="number">1_000_000_000</span>))
+            <span class="kw">as </span>i64;
+        <span class="self">self</span>.play_at_sample_number(
+            <span class="prelude-val">Some</span>(start_at_sample_number),
+            source,
+            volume,
+            pan,
+        );
     }
 }
 
@@ -504,7 +611,8 @@
     <span class="kw">type </span>Item = MySample;
 
     <span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt; {
-        <span class="self">self</span>.sample_count = <span class="self">self</span>.controller.sample_count.load(MemOrdering::Relaxed);
+        <span class="self">self</span>.sample_count =
+            <span class="self">self</span>.controller.sample_count.load(MemOrdering::Relaxed);
         <span class="kw">if </span><span class="self">self</span>.controller.has_pending.load(MemOrdering::SeqCst) {
             <span class="self">self</span>.process_pending();
         }
@@ -513,10 +621,16 @@
         <span class="self">self</span>.current_channel += <span class="number">1</span>;
         <span class="kw">if </span><span class="self">self</span>.current_channel &gt;= <span class="self">self</span>.channels() {
             <span class="self">self</span>.current_channel = <span class="number">0</span>;
-            <span class="self">self</span>.sample_count = <span class="self">self</span>.controller.sample_count.fetch_add(<span class="number">1</span>, MemOrdering::Relaxed);
+            <span class="self">self</span>.sample_count = <span class="self">self
+                </span>.controller
+                .sample_count
+                .fetch_add(<span class="number">1</span>, MemOrdering::Relaxed);
         }
 
-        <span class="self">self</span>.controller.has_playing.store(!<span class="self">self</span>.playing.is_empty(), MemOrdering::Relaxed);
+        <span class="self">self</span>.controller.has_playing.store(
+            !<span class="self">self</span>.playing.is_empty(),
+            MemOrdering::Relaxed,
+        );
 
         <span class="kw">if </span><span class="self">self</span>.playing.is_empty() {
             <span class="prelude-val">Some</span>(MySample::zero_value())
@@ -531,14 +645,17 @@
     </span><span class="kw">fn </span>current_frame_len(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;usize&gt; {
         <span class="prelude-val">None
     </span>}
+
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>channels(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u16 {
         <span class="self">self</span>.controller.channels
     }
+
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>sample_rate(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u32 {
         <span class="self">self</span>.controller.sample_rate
     }
+
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>total_duration(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Duration&gt; {
         <span class="prelude-val">None
@@ -554,6 +671,7 @@
             controller: controller.clone(),
         }
     }
+
     <span class="kw">pub fn </span>controller(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Arc&lt;PrecisionMixerController&gt; {
         <span class="self">self</span>.controller.clone()
     }
@@ -572,27 +690,34 @@
                     } <span class="kw">else </span>{
                         track.done = <span class="bool-val">true</span>;
                     }
-                }
+                },
                 (<span class="number">2</span>, <span class="number">1</span>) =&gt; {
                     <span class="comment">// only advance the mono source every other sample
                     // (mix one source sample into both L + R, with panning)
                     </span><span class="kw">if </span><span class="self">self</span>.current_channel == <span class="number">0 </span>{
-                        sum = sum.saturating_add(track.next_sample * track.volume * pan_l);
+                        sum = sum.saturating_add(
+                            track.next_sample * track.volume * pan_l,
+                        );
                     }
                     <span class="kw">if </span><span class="self">self</span>.current_channel == <span class="number">1 </span>{
-                        sum = sum.saturating_add(track.next_sample * track.volume * pan_r);
+                        sum = sum.saturating_add(
+                            track.next_sample * track.volume * pan_r,
+                        );
                         <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = track.source.next() {
                             track.next_sample = value;
                         } <span class="kw">else </span>{
                             track.done = <span class="bool-val">true</span>;
                         }
                     }
-                }
+                },
                 (<span class="number">1</span>, <span class="number">2</span>) =&gt; {
                     <span class="comment">// consume 2 samples from source and mix them (stereo -&gt; mono)
-                    </span>sum = sum.saturating_add(track.next_sample * <span class="number">0.5 </span>* track.volume * pan_l);
+                    </span>sum = sum.saturating_add(
+                        track.next_sample * <span class="number">0.5 </span>* track.volume * pan_l,
+                    );
                     <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = track.source.next() {
-                        sum = sum.saturating_add(value * <span class="number">0.5 </span>* track.volume * pan_r);
+                        sum = sum
+                            .saturating_add(value * <span class="number">0.5 </span>* track.volume * pan_r);
                     } <span class="kw">else </span>{
                         track.done = <span class="bool-val">true</span>;
                     }
@@ -601,43 +726,56 @@
                     } <span class="kw">else </span>{
                         track.done = <span class="bool-val">true</span>;
                     }
-                }
+                },
                 (<span class="number">2</span>, <span class="number">2</span>) =&gt; {
                     <span class="comment">// make sure the channels are aligned and not swapped
-                    </span><span class="kw">match </span>(<span class="self">self</span>.current_channel, track.current_channel) {
+                    </span><span class="kw">match </span>(
+                        <span class="self">self</span>.current_channel,
+                        track.current_channel,
+                    ) {
                         (<span class="number">0</span>, <span class="number">0</span>) =&gt; {
                             <span class="comment">// left channel of both source and mixer
-                            </span>sum = sum.saturating_add(track.next_sample * track.volume * pan_l);
+                            </span>sum = sum.saturating_add(
+                                track.next_sample * track.volume * pan_l,
+                            );
                             <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = track.source.next() {
                                 track.next_sample = value;
                                 track.current_channel += <span class="number">1</span>;
-                                <span class="kw">if </span>track.current_channel &gt;= track.source.channels() {
+                                <span class="kw">if </span>track.current_channel
+                                    &gt;= track.source.channels()
+                                {
                                     track.current_channel = <span class="number">0</span>;
                                 }
                             } <span class="kw">else </span>{
                                 track.done = <span class="bool-val">true</span>;
                             }
-                        }
+                        },
                         (<span class="number">1</span>, <span class="number">1</span>) =&gt; {
                             <span class="comment">// right channel of both source and mixer
-                            </span>sum = sum.saturating_add(track.next_sample * track.volume * pan_r);
+                            </span>sum = sum.saturating_add(
+                                track.next_sample * track.volume * pan_r,
+                            );
                             <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = track.source.next() {
                                 track.next_sample = value;
                                 track.current_channel += <span class="number">1</span>;
-                                <span class="kw">if </span>track.current_channel &gt;= track.source.channels() {
+                                <span class="kw">if </span>track.current_channel
+                                    &gt;= track.source.channels()
+                                {
                                     track.current_channel = <span class="number">0</span>;
                                 }
                             } <span class="kw">else </span>{
                                 track.done = <span class="bool-val">true</span>;
                             }
-                        }
+                        },
                         (<span class="number">1</span>, <span class="number">0</span>) | (<span class="number">0</span>, <span class="number">1</span>) =&gt; {
                             <span class="comment">// mismatch! output nothing for this sample to catch up
-                        </span>}
+                        </span>},
                         <span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(),
                     }
-                }
-                <span class="kw">_ </span>=&gt; <span class="macro">panic!</span>(<span class="string">"GameTickMixer does not support &gt; 2 audio channels!"</span>)
+                },
+                <span class="kw">_ </span>=&gt; {
+                    <span class="macro">panic!</span>(<span class="string">"GameTickMixer does not support &gt; 2 audio channels!"</span>)
+                },
             }
         }
         <span class="self">self</span>.playing.retain(|track| !track.done);
@@ -657,8 +795,8 @@
         // perfectly aligned to its desired sample number
 
         </span><span class="kw">for </span>track <span class="kw">in </span>pending.iter_mut() {
-            <span class="kw">let </span>start_at_sample_number = track.start_at_sample_number
-                .unwrap_or(<span class="self">self</span>.sample_count);
+            <span class="kw">let </span>start_at_sample_number =
+                track.start_at_sample_number.unwrap_or(<span class="self">self</span>.sample_count);
 
             <span class="kw">if </span>start_at_sample_number &gt; <span class="self">self</span>.sample_count {
                 <span class="comment">// we are early, it's not time for this one yet
@@ -696,7 +834,9 @@
         pending.retain(|track| track.source.is_some());
 
         <span class="kw">let </span>has_pending = !pending.is_empty();
-        <span class="self">self</span>.controller.has_pending.store(has_pending, MemOrdering::SeqCst);
+        <span class="self">self</span>.controller
+            .has_pending
+            .store(has_pending, MemOrdering::SeqCst);
     }
 }
 
@@ -704,11 +844,15 @@
     channels: u16,
     sample_rate: u32,
     tick_rate: f32,
-) -&gt; (Arc&lt;PrecisionMixerController&gt;, PrecisionMixer) {
+) -&gt; (
+    Arc&lt;PrecisionMixerController&gt;,
+    PrecisionMixer,
+) {
     <span class="kw">if </span>channels &gt; <span class="number">2 </span>{
         <span class="macro">panic!</span>(<span class="string">"GameTickMixer does not support &gt; 2 audio channels!"</span>);
     }
-    <span class="kw">let </span>controller = PrecisionMixerController::new(channels, sample_rate, tick_rate);
+    <span class="kw">let </span>controller =
+        PrecisionMixerController::new(channels, sample_rate, tick_rate);
     <span class="kw">let </span>mixer = PrecisionMixer::new(controller.clone());
     (controller, mixer)
 }

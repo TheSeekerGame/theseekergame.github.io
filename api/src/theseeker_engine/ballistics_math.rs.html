@@ -385,7 +385,9 @@
 <a href="#384" id="384">384</a>
 <a href="#385" id="385">385</a>
 <a href="#386" id="386">386</a>
-<a href="#387" id="387">387</a></pre></div><pre class="rust"><code><span class="comment">// Credit: translated to rust from, everything except ballistic_speed()
+<a href="#387" id="387">387</a>
+<a href="#388" id="388">388</a>
+<a href="#389" id="389">389</a></pre></div><pre class="rust"><code><span class="comment">// Credit: translated to rust from, everything except ballistic_speed()
 // https://github.com/forrestthewoods/lib_fts/blob/master/code/fts_ballistic_trajectory.cs
 
 </span><span class="kw">use </span>glam::Vec2;
@@ -409,7 +411,7 @@
     <span class="kw">let </span><span class="kw-2">mut </span>q;
     <span class="kw">let </span><span class="kw-2">mut </span>d;
 
-    <span class="comment">/* normal form: x^2 + px + q = 0 */
+    <span class="comment">// normal form: x^2 + px + q = 0
     </span>p = c1 / (<span class="number">2.0 </span>* c0);
     q = c2 / c0;
     d = p * p - q;
@@ -447,34 +449,34 @@
     <span class="kw">let </span><span class="kw-2">mut </span>cb_p;
     <span class="kw">let </span><span class="kw-2">mut </span>d;
 
-    <span class="comment">/* normal form: x^3 + Ax^2 + Bx + C = 0 */
+    <span class="comment">// normal form: x^3 + Ax^2 + Bx + C = 0
     </span>a = c1 / c0;
     b = c2 / c0;
     c = c3 / c0;
 
-    <span class="comment">/* substitute x = y - A/3 to eliminate quadric term: x^3 +px + q = 0 */
+    <span class="comment">// substitute x = y - A/3 to eliminate quadric term: x^3 +px + q = 0
     </span>sq_a = a * a;
     p = <span class="number">1.0 </span>/ <span class="number">3.0 </span>* (-<span class="number">1.0 </span>/ <span class="number">3.0 </span>* sq_a + b);
     q = <span class="number">1.0 </span>/ <span class="number">2.0 </span>* (<span class="number">2.0 </span>/ <span class="number">27.0 </span>* a * sq_a - <span class="number">1.0 </span>/ <span class="number">3.0 </span>* a * b + c);
 
-    <span class="comment">/* use Cardano's formula */
+    <span class="comment">// use Cardano's formula
     </span>cb_p = p * p * p;
     d = q * q + cb_p;
 
     <span class="kw">if </span>is_zero(d) {
         <span class="kw">if </span>is_zero(q) {
-            <span class="comment">/* one triple solution */
+            <span class="comment">// one triple solution
             </span><span class="kw-2">*</span>s0 = <span class="number">0.0</span>;
             num = <span class="number">1</span>;
         } <span class="kw">else </span>{
-            <span class="comment">/* one single and one double solution */
+            <span class="comment">// one single and one double solution
             </span><span class="kw">let </span>u = get_cubic_root(-q);
             <span class="kw-2">*</span>s0 = <span class="number">2.0 </span>* u;
             <span class="kw-2">*</span>s1 = -u;
             num = <span class="number">2</span>;
         }
     } <span class="kw">else if </span>d &lt; <span class="number">0.0 </span>{
-        <span class="comment">/* Casus irreducibilis: three real solutions */
+        <span class="comment">// Casus irreducibilis: three real solutions
         </span><span class="kw">let </span>phi = <span class="number">1.0 </span>/ <span class="number">3.0 </span>* (-q / (-cb_p).sqrt()).acos();
         <span class="kw">let </span>t = <span class="number">2.0 </span>* (-p).sqrt();
         <span class="kw-2">*</span>s0 = t * phi.cos();
@@ -482,7 +484,7 @@
         <span class="kw-2">*</span>s2 = -t * (phi - std::f64::consts::PI / <span class="number">3.0</span>).cos();
         num = <span class="number">3</span>;
     } <span class="kw">else </span>{
-        <span class="comment">/* one real solution */
+        <span class="comment">// one real solution
         </span><span class="kw">let </span>sqrt_d = d.sqrt();
         <span class="kw">let </span>u = get_cubic_root(sqrt_d - q);
         <span class="kw">let </span>v = -get_cubic_root(sqrt_d + q);
@@ -490,7 +492,7 @@
         num = <span class="number">1</span>;
     }
 
-    <span class="comment">/* resubstitute */
+    <span class="comment">// resubstitute
     </span>sub = <span class="number">1.0 </span>/ <span class="number">3.0 </span>* a;
     <span class="kw">if </span>num &gt; <span class="number">0 </span>{
         <span class="kw-2">*</span>s0 -= sub;
@@ -522,20 +524,20 @@
     <span class="kw">let </span>(<span class="kw-2">mut </span>sq_a, <span class="kw-2">mut </span>p, <span class="kw-2">mut </span>q, <span class="kw-2">mut </span>r);
     <span class="kw">let </span><span class="kw-2">mut </span>num;
 
-    <span class="comment">/* normal form: x^4 + Ax^3 + Bx^2 + Cx + D = 0 */
+    <span class="comment">// normal form: x^4 + Ax^3 + Bx^2 + Cx + D = 0
     </span>a = c1 / c0;
     b = c2 / c0;
     c = c3 / c0;
     d = c4 / c0;
 
-    <span class="comment">/* substitute x = y - A/4 to eliminate cubic term: x^4 + px^2 + qx + r = 0 */
+    <span class="comment">// substitute x = y - A/4 to eliminate cubic term: x^4 + px^2 + qx + r = 0
     </span>sq_a = a * a;
     p = -<span class="number">0.375 </span>* sq_a + b;
     q = <span class="number">0.125 </span>* sq_a * a - <span class="number">0.5 </span>* a * b + c;
     r = -<span class="number">0.01171875 </span>* sq_a * sq_a + <span class="number">0.0625 </span>* sq_a * b - <span class="number">0.25 </span>* a * c + d;
 
     <span class="kw">if </span>is_zero(r) {
-        <span class="comment">/* no absolute term: y(y^3 + py + q) = 0 */
+        <span class="comment">// no absolute term: y(y^3 + py + q) = 0
         </span>coeffs[<span class="number">3</span>] = q;
         coeffs[<span class="number">2</span>] = p;
         coeffs[<span class="number">1</span>] = <span class="number">0.0</span>;
@@ -544,7 +546,7 @@
             coeffs[<span class="number">0</span>], coeffs[<span class="number">1</span>], coeffs[<span class="number">2</span>], coeffs[<span class="number">3</span>], s0, s1, s2,
         );
     } <span class="kw">else </span>{
-        <span class="comment">/* solve the resolvent cubic ... */
+        <span class="comment">// solve the resolvent cubic ...
         </span>coeffs[<span class="number">3</span>] = <span class="number">0.5 </span>* r * p - <span class="number">0.125 </span>* q * q;
         coeffs[<span class="number">2</span>] = -r;
         coeffs[<span class="number">1</span>] = -<span class="number">0.5 </span>* p;
@@ -553,10 +555,10 @@
             coeffs[<span class="number">0</span>], coeffs[<span class="number">1</span>], coeffs[<span class="number">2</span>], coeffs[<span class="number">3</span>], s0, s1, s2,
         );
 
-        <span class="comment">/* ... and take the one real solution ... */
+        <span class="comment">// ... and take the one real solution ...
         </span>z = <span class="kw-2">*</span>s0;
 
-        <span class="comment">/* ... to build two quadric equations */
+        <span class="comment">// ... to build two quadric equations
         </span>u = z * z - r;
         v = <span class="number">2.0 </span>* z - p;
 
@@ -594,7 +596,7 @@
         }
     }
 
-    <span class="comment">/* resubstitute */
+    <span class="comment">// resubstitute
     </span>sub = <span class="number">0.25 </span>* a;
     <span class="kw">if </span>num &gt; <span class="number">0 </span>{
         <span class="kw-2">*</span>s0 -= sub;
@@ -637,7 +639,9 @@
     <span class="kw">let </span>sin = angle.sin();
 
     <span class="kw">let </span>range = (speed * cos / gravity)
-        * (speed * sin + (speed * speed * sin * sin + <span class="number">2.0 </span>* gravity * initial_height).sqrt());
+        * (speed * sin
+            + (speed * speed * sin * sin + <span class="number">2.0 </span>* gravity * initial_height)
+                .sqrt());
 
     range
 }

@@ -201,21 +201,34 @@
 <a href="#200" id="200">200</a>
 <a href="#201" id="201">201</a>
 <a href="#202" id="202">202</a>
-<a href="#203" id="203">203</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::game::attack::arc_attack::Projectile;
-<span class="kw">use </span><span class="kw">crate</span>::prelude::{
-    App, Assets, Commands, Component, GlobalTransform, Handle,
-    Parent, Plugin, Res, ResMut, Resource, Startup, Update,
-};
-<span class="kw">use </span>bevy::ecs::system::EntityCommands;
+<a href="#203" id="203">203</a>
+<a href="#204" id="204">204</a>
+<a href="#205" id="205">205</a>
+<a href="#206" id="206">206</a>
+<a href="#207" id="207">207</a>
+<a href="#208" id="208">208</a>
+<a href="#209" id="209">209</a>
+<a href="#210" id="210">210</a>
+<a href="#211" id="211">211</a>
+<a href="#212" id="212">212</a>
+<a href="#213" id="213">213</a>
+<a href="#214" id="214">214</a>
+<a href="#215" id="215">215</a></pre></div><pre class="rust"><code><span class="kw">use </span>bevy::ecs::system::EntityCommands;
 <span class="kw">use </span>bevy::prelude::{default, BuildChildren, Entity, Name, Query, Without};
 <span class="kw">use </span>bevy_hanabi::{
-    Attribute, ColorOverLifetimeModifier, EffectAsset, EffectProperties, ExprWriter,
-    Gradient, ParticleEffect, ParticleEffectBundle, SetAttributeModifier,
-    SetPositionCircleModifier, ShapeDimension, SizeOverLifetimeModifier, Spawner
+    Attribute, ColorOverLifetimeModifier, EffectAsset, EffectProperties,
+    ExprWriter, Gradient, ParticleEffect, ParticleEffectBundle,
+    SetAttributeModifier, SetPositionCircleModifier, ShapeDimension,
+    SizeOverLifetimeModifier, Spawner,
 };
 <span class="kw">use </span>glam::{Vec2, Vec3, Vec4};
-
 <span class="kw">use </span>theseeker_engine::prelude::{GameTickUpdate, GameTime};
+
+<span class="kw">use </span><span class="kw">crate</span>::game::attack::arc_attack::Projectile;
+<span class="kw">use </span><span class="kw">crate</span>::prelude::{
+    App, Assets, Commands, Component, GlobalTransform, Handle, Parent, Plugin,
+    Res, ResMut, Resource, Startup, Update,
+};
 
 <span class="kw">pub struct </span>AttackParticlesPlugin;
 
@@ -237,7 +250,10 @@
 </span><span class="attr">#[derive(Component)]
 </span><span class="kw">pub struct </span>SystemLifetime(f32);
 
-<span class="kw">fn </span>attack_particles_setup(<span class="kw-2">mut </span>commands: Commands, <span class="kw-2">mut </span>effects: ResMut&lt;Assets&lt;EffectAsset&gt;&gt;) {
+<span class="kw">fn </span>attack_particles_setup(
+    <span class="kw-2">mut </span>commands: Commands,
+    <span class="kw-2">mut </span>effects: ResMut&lt;Assets&lt;EffectAsset&gt;&gt;,
+) {
     <span class="comment">// Create a color gradient for the particles
     </span><span class="kw">let </span><span class="kw-2">mut </span>gradient = Gradient::new();
     <span class="kw">let </span>r = <span class="number">1.0 </span>/ <span class="number">8.0</span>;
@@ -284,7 +300,8 @@
     <span class="kw">let </span>init_age = SetAttributeModifier::new(Attribute::AGE, age);
 
     <span class="kw">let </span>lifetime = writer.lit(MAX_LIFETIME).expr();
-    <span class="kw">let </span>init_lifetime = SetAttributeModifier::new(Attribute::LIFETIME, lifetime);
+    <span class="kw">let </span>init_lifetime =
+        SetAttributeModifier::new(Attribute::LIFETIME, lifetime);
 
     <span class="kw">let </span>emit_loc = writer.add_property(<span class="string">"emit_loc"</span>, Vec3::splat(<span class="number">0.0</span>).into());
     <span class="kw">let </span>dir = writer.add_property(<span class="string">"dir"</span>, Vec3::splat(<span class="number">0.0</span>).into());
@@ -301,7 +318,9 @@
     </span><span class="kw">let </span>particle_pos = writer.attr(Attribute::POSITION) - writer.prop(emit_loc);
     <span class="kw">let </span>projection = particle_pos.clone().dot(writer.prop(dir));
     <span class="kw">let </span>skewed_pos = particle_pos.clone()
-        + writer.prop(dir) * projection * (writer.prop(speed) - writer.lit(<span class="number">1.0</span>));
+        + writer.prop(dir)
+            * projection
+            * (writer.prop(speed) - writer.lit(<span class="number">1.0</span>));
 
     <span class="kw">let </span>modded_pos = SetAttributeModifier {
         attribute: Attribute::POSITION,
@@ -310,7 +329,9 @@
 
     <span class="kw">let </span>init_vel = SetAttributeModifier {
         attribute: Attribute::VELOCITY,
-        value: (writer.prop(dir) * writer.lit(-<span class="number">0.5</span>) - particle_pos * writer.lit(<span class="number">5.5</span>)).expr(),
+        value: (writer.prop(dir) * writer.lit(-<span class="number">0.5</span>)
+            - particle_pos * writer.lit(<span class="number">5.5</span>))
+        .expr(),
     };
 
     <span class="comment">// Create a new effect asset spawning 30 particles per second from a circle
@@ -340,7 +361,10 @@
     <span class="doccomment">/// Attaches a particle bundle as a child entity to the entity being spawned
     /// When the parent entity is despawned, the particle bundles particles will
     /// stop emitting, and linger for [`MAX_LIFETIME`] seconds
-    </span><span class="kw">fn </span>with_lingering_particles(<span class="kw-2">&amp;mut </span><span class="self">self</span>, handle: Handle&lt;EffectAsset&gt;) -&gt; <span class="kw-2">&amp;mut </span><span class="self">Self </span>{
+    </span><span class="kw">fn </span>with_lingering_particles(
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+        handle: Handle&lt;EffectAsset&gt;,
+    ) -&gt; <span class="kw-2">&amp;mut </span><span class="self">Self </span>{
         <span class="self">self</span>.with_children(|builder| {
             builder
                 .spawn((

@@ -125,14 +125,30 @@
 <a href="#124" id="124">124</a>
 <a href="#125" id="125">125</a>
 <a href="#126" id="126">126</a>
-<a href="#127" id="127">127</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::graphics::hp_bar::HpBarUiMaterial;
-<span class="kw">use </span><span class="kw">crate</span>::prelude::<span class="kw-2">*</span>;
+<a href="#127" id="127">127</a>
+<a href="#128" id="128">128</a>
+<a href="#129" id="129">129</a>
+<a href="#130" id="130">130</a>
+<a href="#131" id="131">131</a>
+<a href="#132" id="132">132</a>
+<a href="#133" id="133">133</a>
+<a href="#134" id="134">134</a>
+<a href="#135" id="135">135</a>
+<a href="#136" id="136">136</a>
+<a href="#137" id="137">137</a>
+<a href="#138" id="138">138</a>
+<a href="#139" id="139">139</a>
+<a href="#140" id="140">140</a>
+<a href="#141" id="141">141</a></pre></div><pre class="rust"><code><span class="kw">use </span>std::f32::consts::PI;
+
 <span class="kw">use </span>bevy::ecs::system::{EntityCommand, EntityCommands};
 <span class="kw">use </span>sickle_ui::ui_builder::UiBuilder;
 <span class="kw">use </span>sickle_ui::ui_style::<span class="kw-2">*</span>;
 <span class="kw">use </span>sickle_ui::widgets::column::UiColumnExt;
 <span class="kw">use </span>sickle_ui::widgets::prelude::UiContainerExt;
-<span class="kw">use </span>std::f32::consts::PI;
+
+<span class="kw">use </span><span class="kw">crate</span>::graphics::hp_bar::HpBarUiMaterial;
+<span class="kw">use </span><span class="kw">crate</span>::prelude::<span class="kw-2">*</span>;
 
 <span class="attr">#[derive(Component)]
 </span><span class="kw">pub struct </span>AbilityWidget;
@@ -185,15 +201,19 @@
                         };
                         <span class="kw">let </span>handle = ui_materials.add(HpBarUiMaterial {
                             factor: <span class="number">0.3</span>,
-                            background_color: Color::rgba(<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>).into(),
-                            filled_color: Color::rgba(<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.6</span>).into(),
+                            background_color: Color::rgba(<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>)
+                                .into(),
+                            filled_color: Color::rgba(<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.6</span>)
+                                .into(),
                         });
                         w.entity_mut(entity).insert(handle);
                         <span class="comment">// Make the bar go from bottom to top
                         </span>w.entity_mut(entity).insert(Transform::from_rotation(
                             Quat::from_axis_angle(
                                 Vec3::Z,
-                                <span class="kw">if </span>config.dir_up { -<span class="number">1.0 </span>} <span class="kw">else </span>{ <span class="number">1.0 </span>} * PI * <span class="number">0.5</span>,
+                                <span class="kw">if </span>config.dir_up { -<span class="number">1.0 </span>} <span class="kw">else </span>{ <span class="number">1.0 </span>}
+                                    * PI
+                                    * <span class="number">0.5</span>,
                             ),
                         ));
                     });
@@ -216,7 +236,11 @@
 }
 
 <span class="kw">impl</span>&lt;T: Component + Clone&gt; AbilityWidgetConfig&lt;T&gt; {
-    <span class="kw">pub fn </span>from(image_path: <span class="kw">impl </span>Into&lt;String&gt;, tracking_component: T, dir_up: bool) -&gt; <span class="self">Self </span>{
+    <span class="kw">pub fn </span>from(
+        image_path: <span class="kw">impl </span>Into&lt;String&gt;,
+        tracking_component: T,
+        dir_up: bool,
+    ) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             image_path: image_path.into(),
             tracking_component,
@@ -229,11 +253,15 @@
 
 <span class="kw">impl </span>EntityCommand <span class="kw">for </span>SetFactor {
     <span class="kw">fn </span>apply(<span class="self">self</span>, entity: Entity, world: <span class="kw-2">&amp;mut </span>World) {
-        <span class="kw">let </span><span class="prelude-val">Some</span>(handle) = world.entity(entity).get::&lt;Handle&lt;HpBarUiMaterial&gt;&gt;() <span class="kw">else </span>{
+        <span class="kw">let </span><span class="prelude-val">Some</span>(handle) =
+            world.entity(entity).get::&lt;Handle&lt;HpBarUiMaterial&gt;&gt;()
+        <span class="kw">else </span>{
             <span class="kw">return</span>;
         };
         <span class="kw">let </span>handle = handle.clone();
-        <span class="kw">let </span><span class="prelude-val">Some</span>(<span class="kw-2">mut </span>assets) = world.get_resource_mut::&lt;Assets&lt;HpBarUiMaterial&gt;&gt;() <span class="kw">else </span>{
+        <span class="kw">let </span><span class="prelude-val">Some</span>(<span class="kw-2">mut </span>assets) =
+            world.get_resource_mut::&lt;Assets&lt;HpBarUiMaterial&gt;&gt;()
+        <span class="kw">else </span>{
             <span class="kw">return</span>;
         };
         <span class="kw">let </span><span class="prelude-val">Some</span>(material) = assets.get_mut(handle) <span class="kw">else </span>{
