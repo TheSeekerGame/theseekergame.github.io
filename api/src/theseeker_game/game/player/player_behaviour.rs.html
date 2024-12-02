@@ -1152,24 +1152,7 @@
 <a href="#1151" id="1151">1151</a>
 <a href="#1152" id="1152">1152</a>
 <a href="#1153" id="1153">1153</a>
-<a href="#1154" id="1154">1154</a>
-<a href="#1155" id="1155">1155</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::camera::{CameraRig, CameraShake};
-<span class="kw">use </span><span class="kw">crate</span>::game::attack::{Attack, SelfPushback, Stealthed};
-<span class="kw">use </span><span class="kw">crate</span>::game::enemy::Enemy;
-<span class="kw">use </span><span class="kw">crate</span>::game::gentstate::{Facing, TransitionQueue, Transitionable};
-<span class="kw">use </span><span class="kw">crate</span>::game::player::{
-    Attacking, CanAttack, CanDash, CoyoteTime, Dashing, Falling, Grounded,
-    HitFreezeTime, Idle, Jumping, Player, PlayerAction, PlayerConfig,
-    PlayerGfx, PlayerStateSet, Running, WallSlideTime, WhirlAbility,
-};
-<span class="kw">use </span><span class="kw">crate</span>::prelude::{
-    any_with_component, resource_changed, App, BuildChildren, Commands,
-    DetectChanges, Direction2d, Entity, GameTickUpdate, GameTime, Has,
-    IntoSystemConfigs, Plugin, Query, Res, ResMut, Transform, TransformBundle,
-    With, Without,
-};
-
-<span class="kw">use </span>bevy::sprite::Sprite;
+<a href="#1154" id="1154">1154</a></pre></div><pre class="rust"><code><span class="kw">use </span>bevy::sprite::Sprite;
 <span class="kw">use </span>bevy::transform::TransformSystem::TransformPropagate;
 <span class="kw">use </span>glam::{Vec2, Vec2Swizzles, Vec3Swizzles};
 <span class="kw">use </span>leafwing_input_manager::action_state::ActionState;
@@ -1185,14 +1168,29 @@
 <span class="kw">use </span>theseeker_engine::script::ScriptPlayer;
 
 <span class="kw">use super</span>::{
-    dash_icon_fx, player_dash_fx, player_new_stats_mod, CanStealth, DashIcon,
-    JumpCount, Knockback, PlayerStats, Pushback, StatType, Stealthing,
+    dash_icon_fx, player_dash_fx, player_new_stats_mod, AttackBundle,
+    CanStealth, DashIcon, JumpCount, KillCount, Knockback, Passives,
+    PlayerStats, Pushback, StatType, Stealthing, Whirling,
 };
-<span class="kw">use super</span>::{AttackBundle, KillCount, Passives, Whirling};
+<span class="kw">use </span><span class="kw">crate</span>::camera::CameraShake;
+<span class="kw">use </span><span class="kw">crate</span>::game::attack::{Attack, SelfPushback, Stealthed};
+<span class="kw">use </span><span class="kw">crate</span>::game::enemy::Enemy;
+<span class="kw">use </span><span class="kw">crate</span>::game::gentstate::{Facing, TransitionQueue, Transitionable};
+<span class="kw">use </span><span class="kw">crate</span>::game::player::{
+    Attacking, CanAttack, CanDash, CoyoteTime, Dashing, Falling, Grounded,
+    HitFreezeTime, Idle, Jumping, Player, PlayerAction, PlayerConfig,
+    PlayerGfx, PlayerStateSet, Running, WallSlideTime, WhirlAbility,
+};
+<span class="kw">use </span><span class="kw">crate</span>::prelude::{
+    any_with_component, resource_changed, App, BuildChildren, Commands,
+    DetectChanges, Direction2d, Entity, GameTickUpdate, GameTime, Has,
+    IntoSystemConfigs, Plugin, Query, Res, Transform, TransformBundle, With,
+    Without,
+};
 
-<span class="doccomment">///Player behavior systems.
-///Do stuff here in states and add transitions to other states by pushing
-///to a TransitionQueue.
+<span class="doccomment">/// Player behavior systems.
+/// Do stuff here in states and add transitions to other states by pushing
+/// to a TransitionQueue.
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>PlayerBehaviorPlugin;
 
 <span class="kw">impl </span>Plugin <span class="kw">for </span>PlayerBehaviorPlugin {
@@ -1234,8 +1232,8 @@
                 )
                     .in_set(PlayerStateSet::Behavior)
                     .before(update_sprite_colliders),
-                <span class="comment">//consider a set for all movement/systems modify velocity, then collisions/move
-                //moves based on velocity
+                <span class="comment">// consider a set for all movement/systems modify velocity, then collisions/move
+                // moves based on velocity
                 </span>(
                     <span class="comment">// hitfreeze,
                     </span>set_movement_slots,
@@ -1312,7 +1310,7 @@
         </span>q_gent.iter_mut()
     {
         can_stealth.remaining_cooldown -= <span class="number">1.0 </span>/ time.hz <span class="kw">as </span>f32;
-        <span class="comment">//Return to base sprite color when exiting stealth
+        <span class="comment">// Return to base sprite color when exiting stealth
         </span><span class="kw">if </span>can_stealth.is_added() {
             <span class="kw">let </span><span class="kw-2">mut </span>sprite = sprites.get_mut(gent.e_gfx).unwrap();
             sprite.color = sprite.color.with_a(<span class="number">1.0</span>);
@@ -1329,8 +1327,8 @@
     }
 }
 
-<span class="comment">//TODO: change to using Added&lt;attack::Hit&gt;
-</span><span class="kw">fn </span>hitfreeze(
+<span class="comment">// TODO: change to using Added&lt;attack::Hit&gt;
+</span><span class="kw">fn </span>_hitfreeze(
     <span class="kw-2">mut </span>player_q: Query&lt;
         (
             Entity,
@@ -1346,8 +1344,7 @@
     </span><span class="kw">for </span>(attack_entity, attack) <span class="kw">in </span>attack_q.iter() {
         <span class="kw">if </span>!attack.damaged_set.is_empty() {
             <span class="comment">// Make sure the entity doing the attack is actually the player
-            </span><span class="kw">if let </span><span class="prelude-val">Ok</span>((entity, <span class="kw-2">mut </span>hitfreeze, <span class="kw">_</span>)) =
-                player_q.get_mut(attack.attacker)
+            </span><span class="kw">if let </span><span class="prelude-val">Ok</span>((<span class="kw">_</span>, <span class="kw-2">mut </span>hitfreeze, <span class="kw">_</span>)) = player_q.get_mut(attack.attacker)
             {
                 <span class="comment">// If its the same exact attack entity as the last time the affect was activated.
                 // (for example, if the attack wasn't despawned yet) we don't want to
@@ -1363,10 +1360,8 @@
         }
     }
 
-    <span class="kw">for </span>(entity, <span class="kw-2">mut </span>hitfreeze, <span class="kw-2">mut </span>linear_vel) <span class="kw">in </span>player_q.iter_mut() {
-        <span class="kw">if </span>hitfreeze.<span class="number">0 </span>&lt; u32::MAX {
-            hitfreeze.<span class="number">0 </span>+= <span class="number">1</span>;
-        }
+    <span class="kw">for </span>(<span class="kw">_</span>, <span class="kw-2">mut </span>hitfreeze, <span class="kw-2">mut </span>linear_vel) <span class="kw">in </span>player_q.iter_mut() {
+        hitfreeze.<span class="number">0 </span>= hitfreeze.<span class="number">0</span>.saturating_add(<span class="number">1</span>);
         <span class="comment">// Where the actual affect is applied.
         // if its desired to check if its being applied in another system, can do a query and this
         // same check,
@@ -1398,10 +1393,9 @@
 }
 
 <span class="kw">fn </span>player_move(
-    config: Res&lt;PlayerConfig&gt;,
-    stats: Res&lt;PlayerStats&gt;,
     <span class="kw-2">mut </span>q_gent: Query&lt;
         (
+            <span class="kw-2">&amp;</span>PlayerStats,
             <span class="kw-2">&amp;mut </span>LinearVelocity,
             <span class="kw-2">&amp;</span>ActionState&lt;PlayerAction&gt;,
             <span class="kw-2">&amp;mut </span>Facing,
@@ -1412,10 +1406,16 @@
         (Without&lt;Knockback&gt;, With&lt;Player&gt;),
     &gt;,
 ) {
-    <span class="kw">for </span>(<span class="kw-2">mut </span>velocity, action_state, <span class="kw-2">mut </span>facing, grounded, stealth, dashing) <span class="kw">in
-        </span>q_gent.iter_mut()
+    <span class="kw">for </span>(
+        stats,
+        <span class="kw-2">mut </span>velocity,
+        action_state,
+        <span class="kw-2">mut </span>facing,
+        grounded,
+        stealth,
+        dashing,
+    ) <span class="kw">in </span>q_gent.iter_mut()
     {
-        <span class="kw">let </span><span class="kw-2">mut </span>direction: f32 = <span class="number">0.0</span>;
         <span class="comment">// Uses high starting acceleration, to emulate "shoving" off the ground/start
         // Acceleration is per game tick.
         </span><span class="kw">let </span>initial_accel = stats.get(StatType::MoveAccelInit);
@@ -1425,7 +1425,7 @@
         // Todo: Have this value be determined by tile type at some point?
         </span><span class="kw">let </span>ground_friction = <span class="number">0.7</span>;
         <span class="kw">let </span>stealth_boost = <span class="kw">if </span>stealth.is_some() { <span class="number">1.15 </span>} <span class="kw">else </span>{ <span class="number">1.0 </span>};
-        direction = action_state.value(<span class="kw-2">&amp;</span>PlayerAction::Move);
+        <span class="kw">let </span><span class="kw-2">mut </span>direction = action_state.value(<span class="kw-2">&amp;</span>PlayerAction::Move);
         <span class="kw">let </span>new_vel = <span class="kw">if </span>action_state.just_pressed(<span class="kw-2">&amp;</span>PlayerAction::Move)
             &amp;&amp; action_state.value(<span class="kw-2">&amp;</span>PlayerAction::Move) != <span class="number">0.0
         </span>{
@@ -1527,8 +1527,8 @@
         <span class="kw">if </span>action_state.pressed(<span class="kw-2">&amp;</span>PlayerAction::Move) {
             direction = action_state.value(<span class="kw-2">&amp;</span>PlayerAction::Move);
         }
-        <span class="comment">//should it account for decel and only transition to idle when player stops completely?
-        //shouldnt be able to transition to idle if we also jump
+        <span class="comment">// should it account for decel and only transition to idle when player stops completely?
+        // shouldnt be able to transition to idle if we also jump
         </span><span class="kw">if </span>direction == <span class="number">0.0 </span>&amp;&amp; action_state.released(<span class="kw-2">&amp;</span>PlayerAction::Jump) {
             transitions.push(Running::new_transition(Idle));
         }
@@ -1581,7 +1581,6 @@
     &gt;,
     time: Res&lt;GameTime&gt;,
     config: Res&lt;PlayerConfig&gt;,
-    <span class="kw-2">mut </span>rig: ResMut&lt;CameraRig&gt;,
     <span class="kw-2">mut </span>commands: Commands,
 ) {
     <span class="kw">for </span>(
@@ -1707,7 +1706,7 @@
         // so the velocity is only stopped in the x direction, but not the y, so without the extra
         // check with the new velocity and position, the y might clip the player through the roof
         // of the corner.
-        //if we are not moving, we can not shapecast in direction of movement
+        // if we are not moving, we can not shapecast in direction of movement
         </span><span class="kw">while let </span><span class="prelude-val">Ok</span>(shape_dir) = Direction2d::new(projected_velocity) {
             <span class="kw">if let </span><span class="prelude-val">Some</span>((e, first_hit)) = spatial_query.shape_cast(
                 possible_pos,
@@ -1717,23 +1716,23 @@
                 interaction,
                 <span class="prelude-val">Some</span>(entity),
             ) {
-                <span class="comment">//If we are colliding with an enemy
+                <span class="comment">// If we are colliding with an enemy
                 </span><span class="kw">if let </span><span class="prelude-val">Ok</span>((enemy, <span class="kw-2">mut </span>collider)) = q_enemy.get_mut(e) {
-                    <span class="comment">//change collision groups to only include ground so on the next loop we can
-                    //ignore enemies/check our ground collision
+                    <span class="comment">// change collision groups to only include ground so on the next loop we can
+                    // ignore enemies/check our ground collision
                     </span>interaction = InteractionGroups {
                         memberships: PLAYER,
                         filter: GROUND,
                     };
                     <span class="kw">match </span>first_hit.status {
-                        <span class="comment">//if we are not yet inside the enemy, collide, but not if we are falling
-                        //from above
+                        <span class="comment">// if we are not yet inside the enemy, collide, but not if we are falling
+                        // from above
                         </span>TOIStatus::Converged | TOIStatus::OutOfIterations =&gt; {
                             <span class="comment">// if we are also dashing, or whirling, ignore the collision entirely
                             </span><span class="kw">if </span>dashing.is_none() &amp;&amp; whirling.is_none() {
                                 <span class="kw">let </span>sliding_plane =
                                     into_vec2(first_hit.normal1);
-                                <span class="comment">//configurable theshold for collision normal/sliding plane in case of physics instability
+                                <span class="comment">// configurable theshold for collision normal/sliding plane in case of physics instability
                                 </span><span class="kw">let </span>threshold = <span class="number">0.000001</span>;
                                 <span class="kw">if </span>!(<span class="number">1. </span>- threshold..=<span class="number">1. </span>+ threshold)
                                     .contains(<span class="kw-2">&amp;</span>sliding_plane.y)
@@ -1746,8 +1745,8 @@
                                 }
                             }
                         },
-                        <span class="comment">//if we are already inside, modify the enemies collision group and add
-                        //Inside so next frame we dont collide with them
+                        <span class="comment">// if we are already inside, modify the enemies collision group and add
+                        // Inside so next frame we dont collide with them
                         </span>TOIStatus::Penetrating =&gt; {
                             collider.<span class="number">0</span>.set_collision_groups(
                                 InteractionGroups {
@@ -1759,10 +1758,10 @@
                                 .entity(enemy)
                                 .insert(<span class="kw">crate</span>::game::enemy::Inside);
                         },
-                        <span class="comment">//maybe failed never happens?
+                        <span class="comment">// maybe failed never happens?
                         </span>TOIStatus::Failed =&gt; <span class="macro">println!</span>(<span class="string">"failed"</span>),
                     }
-                <span class="comment">//otherwise we are colliding with the ground
+                <span class="comment">// otherwise we are colliding with the ground
                 </span>} <span class="kw">else </span>{
                     <span class="kw">match </span>first_hit.status {
                         TOIStatus::Converged | TOIStatus::OutOfIterations =&gt; {
@@ -1787,7 +1786,7 @@
                             </span>{
                                 <span class="comment">// make sure at least 1/2 of player is against the wall
                                 // (because it looks wierd to have the character hanging by their head)
-                                </span><span class="kw">if let </span><span class="prelude-val">Some</span>((e, first_hit)) = spatial_query
+                                </span><span class="kw">if </span>spatial_query
                                     .ray_cast(
                                         pos.translation.xy(),
                                         Vec2::new(dir, <span class="number">0.0</span>),
@@ -1804,6 +1803,7 @@
                                         },
                                         <span class="prelude-val">Some</span>(entity),
                                     )
+                                    .is_some()
                                 {
                                     wall_slide = <span class="bool-val">true</span>;
                                     -(projected_velocity.y
@@ -1921,17 +1921,15 @@
             }
         };
 
-        <span class="comment">//just pressed seems to get missed sometimes... but we need it because pressed makes you
-        //jump continuously if held
-        //known issue https://github.com/bevyengine/bevy/issues/6183
+        <span class="comment">// just pressed seems to get missed sometimes... but we need it because pressed makes you
+        // jump continuously if held
+        // known issue https://github.com/bevyengine/bevy/issues/6183
         </span><span class="kw">if </span>action_state.just_pressed(<span class="kw-2">&amp;</span>PlayerAction::Jump) {
             jump_count.<span class="number">0 </span>= <span class="number">1</span>;
             transitions.push(Grounded::new_transition(Jumping))
-        } <span class="kw">else if </span>is_falling {
-            <span class="kw">if </span>!in_c_time {
-                jump_count.<span class="number">0 </span>= <span class="number">1</span>;
-                transitions.push(Grounded::new_transition(Falling))
-            }
+        } <span class="kw">else if </span>is_falling &amp;&amp; !in_c_time {
+            jump_count.<span class="number">0 </span>= <span class="number">1</span>;
+            transitions.push(Grounded::new_transition(Falling))
         }
     }
 }
@@ -1969,15 +1967,15 @@
     {
         <span class="kw">let </span>fall_accel = config.fall_accel;
         <span class="kw">let </span><span class="kw-2">mut </span>falling = <span class="bool-val">true</span>;
-        <span class="kw">if let </span><span class="prelude-val">Some</span>((hit_entity, toi)) =
+        <span class="kw">if let </span><span class="prelude-val">Some</span>((<span class="kw">_</span>, toi)) =
             hits.cast(<span class="kw-2">&amp;</span>spatial_query, <span class="kw-2">&amp;</span>transform, <span class="prelude-val">Some</span>(entity))
         {
-            <span class="comment">//if we are ~touching the ground
+            <span class="comment">// if we are ~touching the ground
             </span><span class="kw">if </span>(toi.toi + velocity.y * (<span class="number">1.0 </span>/ time.hz) <span class="kw">as </span>f32)
                 &lt; GROUNDED_THRESHOLD
             {
                 transitions.push(Falling::new_transition(Grounded));
-                <span class="comment">//stop falling
+                <span class="comment">// stop falling
                 </span>velocity.y = <span class="number">0.0</span>;
                 transform.translation.y =
                     transform.translation.y - toi.toi + GROUNDED_THRESHOLD;
@@ -1996,11 +1994,11 @@
                 velocity.y = <span class="number">0.0</span>;
                 jump_count.<span class="number">0 </span>-= <span class="number">1</span>;
 
-                <span class="comment">//println!("air jump: {}", jump_count.0);
+                <span class="comment">// println!("air jump: {}", jump_count.0);
                 </span>transitions.push(Falling::new_transition(Jumping))
             }
             <span class="kw">if </span>velocity.y &gt; <span class="number">0.0 </span>{
-                velocity.y = velocity.y / <span class="number">1.2</span>;
+                velocity.y /= <span class="number">1.2</span>;
             }
             velocity.y -= fall_accel;
             velocity.y = velocity.y.clamp(
@@ -2159,7 +2157,7 @@
                         <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>,
                     )),
                     AnimationCollider(gent.e_gfx),
-                    <span class="comment">//TODO: ? ColliderMeta
+                    <span class="comment">// TODO: ? ColliderMeta
                     </span>Collider::empty(InteractionGroups::new(
                         PLAYER_ATTACK,
                         ENEMY_HURT,
@@ -2189,15 +2187,15 @@
         }
 
         attacking.ticks += <span class="number">1</span>;
-        <span class="comment">//if we are in the later half of attacking and another attack input was pressed,
-        //indicate an immediate follow up on animation end
+        <span class="comment">// if we are in the later half of attacking and another attack input was pressed,
+        // indicate an immediate follow up on animation end
         </span><span class="kw">if </span>attacking.ticks &gt;= Attacking::MAX * <span class="number">8 </span>- <span class="number">8
             </span>&amp;&amp; action_state.just_pressed(<span class="kw-2">&amp;</span>PlayerAction::Attack)
         {
             attacking.followup = <span class="bool-val">true</span>;
         }
 
-        <span class="comment">//leave attacking state
+        <span class="comment">// leave attacking state
         </span><span class="kw">if </span>attacking.ticks == Attacking::MAX * <span class="number">8 </span>{
             <span class="kw">if </span>attacking.followup {
                 transitions.push(Attacking::new_transition(CanAttack {
@@ -2236,8 +2234,8 @@
         ),
         (With&lt;Player&gt;, Without&lt;Dashing&gt;),
     &gt;,
-    <span class="comment">//attacks which have had their collider changed by the AnimationCollider system
-    //TODO: need to not change collider unless there is a collider?
+    <span class="comment">// attacks which have had their collider changed by the AnimationCollider system
+    // TODO: need to not change collider unless there is a collider?
     </span>attack_query: Query&lt;
         <span class="kw-2">&amp;</span>Attack,
         (
@@ -2265,16 +2263,16 @@
             || whirling.ticks &lt; Whirling::MIN_TICKS
         {
             <span class="kw">if let </span><span class="prelude-val">Some</span>(attack_entity) = whirling.attack_entity {
-                <span class="comment">//if the attack entities collider was changed, set the attack to none
+                <span class="comment">// if the attack entities collider was changed, set the attack to none
                 </span><span class="kw">if </span>attack_query.get(attack_entity).is_err() {
                     whirling.attack_entity = <span class="prelude-val">None</span>;
                 }
-            <span class="comment">//if there is no attack, spawn a new one
+            <span class="comment">// if there is no attack, spawn a new one
             </span>} <span class="kw">else </span>{
                 <span class="kw">let </span>new_attack = commands
                     .spawn((
                         AttackBundle {
-                            <span class="comment">//lifetime of two frames...
+                            <span class="comment">// lifetime of two frames...
                             </span>attack: Attack::new(<span class="number">24</span>, entity),
                             collider: Collider::empty(InteractionGroups::new(
                                 PLAYER_ATTACK,
@@ -2294,7 +2292,7 @@
                 whirling.attack_entity = <span class="prelude-val">Some</span>(new_attack);
             }
         } <span class="kw">else </span>{
-            <span class="comment">//leave whirling state if button is not pressed and we are past min ticks
+            <span class="comment">// leave whirling state if button is not pressed and we are past min ticks
             </span><span class="kw">if </span>whirling.ticks &gt;= Whirling::MIN_TICKS {
                 transitions.push(Whirling::new_transition(
                     CanAttack::default(),

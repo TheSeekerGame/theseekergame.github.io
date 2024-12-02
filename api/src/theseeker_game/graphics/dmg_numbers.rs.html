@@ -149,13 +149,27 @@
 <a href="#148" id="148">148</a>
 <a href="#149" id="149">149</a>
 <a href="#150" id="150">150</a>
-<a href="#151" id="151">151</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::camera::MainCamera;
+<a href="#151" id="151">151</a>
+<a href="#152" id="152">152</a>
+<a href="#153" id="153">153</a>
+<a href="#154" id="154">154</a>
+<a href="#155" id="155">155</a>
+<a href="#156" id="156">156</a>
+<a href="#157" id="157">157</a>
+<a href="#158" id="158">158</a>
+<a href="#159" id="159">159</a>
+<a href="#160" id="160">160</a>
+<a href="#161" id="161">161</a>
+<a href="#162" id="162">162</a>
+<a href="#163" id="163">163</a></pre></div><pre class="rust"><code><span class="kw">use </span>bevy::prelude::<span class="kw-2">*</span>;
+<span class="kw">use </span>theseeker_engine::physics::Collider;
+<span class="kw">use </span>theseeker_engine::prelude::{GameTickUpdate, GameTime};
+
+<span class="kw">use </span><span class="kw">crate</span>::camera::MainCamera;
 <span class="kw">use </span><span class="kw">crate</span>::game::attack::{apply_attack_damage, DamageInfo};
 <span class="kw">use </span><span class="kw">crate</span>::game::player::Player;
 <span class="kw">use </span><span class="kw">crate</span>::prelude::Update;
-<span class="kw">use </span>bevy::prelude::<span class="kw-2">*</span>;
-<span class="kw">use </span>theseeker_engine::physics::Collider;
-<span class="kw">use </span>theseeker_engine::prelude::{GameTickUpdate, GameTime};
+<span class="kw">use </span><span class="kw">crate</span>::StateDespawnMarker;
 
 <span class="kw">pub struct </span>DmgNumbersPlugin;
 
@@ -177,7 +191,10 @@
 <span class="kw">fn </span>instance(
     <span class="kw-2">mut </span>commands: Commands,
     asset_server: Res&lt;AssetServer&gt;,
-    entity_with_hp: Query&lt;(<span class="kw-2">&amp;</span>GlobalTransform, <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Collider&gt;), Without&lt;Player&gt;&gt;,
+    entity_with_hp: Query&lt;
+        (<span class="kw-2">&amp;</span>GlobalTransform, <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Collider&gt;),
+        Without&lt;Player&gt;,
+    &gt;,
     <span class="kw-2">mut </span>damage_events: EventReader&lt;DamageInfo&gt;,
     game_time: Res&lt;GameTime&gt;,
     q_cam: Query&lt;(<span class="kw-2">&amp;</span>GlobalTransform, <span class="kw-2">&amp;</span>Camera), With&lt;MainCamera&gt;&gt;,
@@ -187,14 +204,17 @@
     };
 
     <span class="kw">for </span>damage_info <span class="kw">in </span>damage_events.read() {
-        <span class="kw">if let </span><span class="prelude-val">Ok</span>((transform, collider)) = entity_with_hp.get(damage_info.target) {
+        <span class="kw">if let </span><span class="prelude-val">Ok</span>((transform, collider)) =
+            entity_with_hp.get(damage_info.target)
+        {
             <span class="kw">let </span><span class="kw-2">mut </span>world_position = transform.translation();
 
             <span class="comment">// Makes the number start above the collider, if it exists
             </span>world_position += <span class="kw">match </span>collider {
                 <span class="prelude-val">Some</span>(collider) =&gt; {
                     <span class="kw">let </span>above_hb_offset = <span class="number">11.0</span>;
-                    <span class="kw">let </span>collider_height = collider.<span class="number">0</span>.compute_aabb().half_extents().y;
+                    <span class="kw">let </span>collider_height =
+                        collider.<span class="number">0</span>.compute_aabb().half_extents().y;
                     Vec3::new(
                         <span class="number">1.0</span>,
                         collider_height + above_hb_offset,
@@ -211,7 +231,8 @@
             commands.spawn((
                 DmgNumber(
                     world_position,
-                    game_time.tick() <span class="kw">as </span>f64 / game_time.hz + game_time.last_update().as_secs_f64(),
+                    game_time.tick() <span class="kw">as </span>f64 / game_time.hz
+                        + game_time.last_update().as_secs_f64(),
                 ),
                 TextBundle::from_section(
                     <span class="macro">format!</span>(<span class="string">"{}"</span>, damage_info.amount),
@@ -227,10 +248,10 @@
                         } <span class="kw">else </span>{
                             Color::WHITE
                         },
-                        <span class="comment">//TODO:
-                        //if backstab, red?
-                        //TODO:
-                        //can we mix the colors to determine final color?
+                        <span class="comment">// TODO:
+                        // if backstab, red?
+                        // TODO:
+                        // can we mix the colors to determine final color?
                     </span>},
                 )
                 .with_style(Style {
@@ -239,6 +260,7 @@
                     top: Val::Px(screen_position.y),
                     ..default()
                 }),
+                StateDespawnMarker,
             ));
         }
     }
@@ -260,7 +282,8 @@
     };
     <span class="kw">let </span>max_time = <span class="number">6.0</span>;
 
-    <span class="kw">for </span>(entity, <span class="kw-2">mut </span>dmg_number, <span class="kw-2">mut </span>style, <span class="kw-2">mut </span>text) <span class="kw">in </span>dmg_numer_q.iter_mut() {
+    <span class="kw">for </span>(entity, <span class="kw-2">mut </span>dmg_number, <span class="kw-2">mut </span>style, <span class="kw-2">mut </span>text) <span class="kw">in </span>dmg_numer_q.iter_mut()
+    {
         <span class="kw">let </span>text_style = <span class="kw-2">&amp;mut </span>text.sections[<span class="number">0</span>].style;
         <span class="comment">// This way the floating text position is dependent on the gametick time,
         // so if the game is paused, the floating numbers will pause as well.
@@ -269,7 +292,8 @@
             - dmg_number.<span class="number">1</span>;
 
         <span class="comment">// apply a little wobble affect, and start each with a random different phase
-        </span><span class="kw">let </span>global_pos = dmg_number.<span class="number">0 </span>+ Vec3::new(<span class="number">0.0</span>, <span class="number">3.0 </span>* elapsed_time <span class="kw">as </span>f32, <span class="number">0.0</span>);
+        </span><span class="kw">let </span>global_pos =
+            dmg_number.<span class="number">0 </span>+ Vec3::new(<span class="number">0.0</span>, <span class="number">3.0 </span>* elapsed_time <span class="kw">as </span>f32, <span class="number">0.0</span>);
         <span class="kw">let </span>screen_position = camera
             .world_to_viewport(camera_transform, global_pos)
             .unwrap();

@@ -1032,14 +1032,21 @@
 <a href="#1031" id="1031">1031</a>
 <a href="#1032" id="1032">1032</a>
 <a href="#1033" id="1033">1033</a>
-<a href="#1034" id="1034">1034</a></pre></div><pre class="rust"><code><span class="kw">mod </span>player_anim;
+<a href="#1034" id="1034">1034</a>
+<a href="#1035" id="1035">1035</a>
+<a href="#1036" id="1036">1036</a>
+<a href="#1037" id="1037">1037</a>
+<a href="#1038" id="1038">1038</a>
+<a href="#1039" id="1039">1039</a>
+<a href="#1040" id="1040">1040</a>
+<a href="#1041" id="1041">1041</a>
+<a href="#1042" id="1042">1042</a></pre></div><pre class="rust"><code><span class="kw">mod </span>player_anim;
 <span class="kw">mod </span>player_behaviour;
 <span class="kw">use </span>bevy::utils::hashbrown::HashMap;
+<span class="kw">use </span>leafwing_input_manager::action_state::ActionState;
 <span class="kw">use </span>leafwing_input_manager::axislike::VirtualAxis;
-<span class="kw">use </span>leafwing_input_manager::{
-    action_state::ActionState, input_map::InputMap, Actionlike,
-    InputManagerBundle,
-};
+<span class="kw">use </span>leafwing_input_manager::input_map::InputMap;
+<span class="kw">use </span>leafwing_input_manager::{Actionlike, InputManagerBundle};
 <span class="kw">use </span>player_anim::PlayerAnimationPlugin;
 <span class="kw">use </span>player_behaviour::PlayerBehaviorPlugin;
 <span class="kw">use </span>rapier2d::geometry::{Group, InteractionGroups};
@@ -1115,7 +1122,7 @@
     Animation,
 }
 
-<span class="comment">//TODO: change to player spawnpoint
+<span class="comment">// TODO: change to player spawnpoint
 </span><span class="attr">#[derive(Bundle, LdtkEntity, Default)]
 </span><span class="kw">pub struct </span>PlayerBlueprintBundle {
     marker: PlayerBlueprint,
@@ -1176,14 +1183,15 @@
 }
 
 <span class="kw">impl </span>Passives {
-    <span class="comment">//TODO: pass in slice of passives, filter the locked passives on it
-    </span><span class="kw">fn </span>new_with(passive: Passive) -&gt; <span class="self">Self </span>{
-        Passives::default()
-    }
-    <span class="kw">fn </span>gain(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-        <span class="comment">//TODO: add checks for no passives remaining
-        //TODO add limit on gaining past max passive slots?
-        //does nothing if there are no more passives to gain
+    <span class="comment">// TODO: pass in slice of passives, filter the locked passives on it
+    // fn new_with(passive: Passive) -&gt; Self {
+    //     Passives::default()
+    // }
+
+    </span><span class="kw">fn </span>gain(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+        <span class="comment">// TODO: add checks for no passives remaining
+        // TODO add limit on gaining past max passive slots?
+        // does nothing if there are no more passives to gain
         </span><span class="kw">let </span><span class="kw-2">mut </span>rng = rand::thread_rng();
         <span class="kw">if </span>!<span class="self">self</span>.locked.is_empty() {
             <span class="kw">let </span>i = rng.gen_range(<span class="number">0</span>..<span class="self">self</span>.locked.len());
@@ -1205,7 +1213,7 @@
     Speedy,
 }
 
-<span class="kw">fn </span>debug_player_states(
+<span class="kw">fn </span>_debug_player_states(
     query: Query&lt;
         AnyOf&lt;(
             Ref&lt;Running&gt;,
@@ -1287,7 +1295,7 @@
     config: Res&lt;PlayerConfig&gt;,
 ) {
     <span class="kw">for </span>(<span class="kw-2">mut </span>xf_gent, e_gent, parent) <span class="kw">in </span>q.iter_mut() {
-        <span class="comment">//TODO: proper way of ensuring z is correct
+        <span class="comment">// TODO: proper way of ensuring z is correct
         </span>xf_gent.translation.z = <span class="number">15.0 </span>* <span class="number">0.000001</span>;
         <span class="macro">println!</span>(<span class="string">"{:?}"</span>, xf_gent);
         <span class="kw">let </span>e_gfx = commands.spawn(()).id();
@@ -1306,7 +1314,7 @@
                         <span class="number">10.0</span>,
                         InteractionGroups {
                             memberships: PLAYER,
-                            <span class="comment">//should be more specific
+                            <span class="comment">// should be more specific
                             </span>filter: Group::all(),
                         },
                     ),
@@ -1336,8 +1344,8 @@
                 current: config.max_health,
                 max: config.max_health,
             },
-            <span class="comment">//have to use builder here *i think* because of different types between keycode and
-            //axis
+            <span class="comment">// have to use builder here *i think* because of different types between keycode and
+            // axis
             </span>InputManagerBundle::&lt;PlayerAction&gt; {
                 action_state: ActionState::default(),
                 input_map: InputMap::default()
@@ -1361,7 +1369,7 @@
                     .with(PlayerAction::Whirl, KeyCode::KeyL)
                     .with(PlayerAction::Stealth, KeyCode::KeyI),
             },
-            <span class="comment">//bundling things up becuase we reached max tuple
+            <span class="comment">// bundling things up becuase we reached max tuple
             </span>(
                 Falling,
                 CanDash {
@@ -1371,6 +1379,7 @@
                     remaining_cooldown: <span class="number">0.0</span>,
                 },
             ),
+            PlayerStats::init_from_config(<span class="kw-2">&amp;</span>config),
             WallSlideTime(f32::MAX),
             HitFreezeTime(u32::MAX, <span class="prelude-val">None</span>),
             JumpCount(<span class="number">0</span>),
@@ -1380,7 +1389,7 @@
             StateDespawnMarker,
             Passives::default(),
         ));
-        <span class="comment">//unparent from the level
+        <span class="comment">// unparent from the level
         </span><span class="kw">if let </span><span class="prelude-val">Ok</span>(parent) = parent_query.get(parent.get()) {
             commands.entity(parent).remove_children(<span class="kw-2">&amp;</span>[e_gent]);
         }
@@ -1459,11 +1468,11 @@
 #[component(storage = <span class="string">"SparseSet"</span>)]
 </span><span class="kw">pub struct </span>Grounded;
 <span class="kw">impl </span>GentState <span class="kw">for </span>Grounded {}
-<span class="comment">//cant be Idle or Running if not Grounded
+<span class="comment">// cant be Idle or Running if not Grounded
 </span><span class="kw">impl </span>Transitionable&lt;Jumping&gt; <span class="kw">for </span>Grounded {
     <span class="kw">type </span>Removals = (Grounded, Idle, Running, Whirling);
 }
-<span class="comment">//cant be Idle or Running if not Grounded
+<span class="comment">// cant be Idle or Running if not Grounded
 </span><span class="kw">impl </span>Transitionable&lt;Falling&gt; <span class="kw">for </span>Grounded {
     <span class="kw">type </span>Removals = (Grounded, Idle, Running, Whirling);
 }
@@ -1580,9 +1589,10 @@
 // and provide storage for that behaviours state
 
 </span><span class="doccomment">/// If a player attack lands, locks their velocity for the configured number of ticks'
-</span><span class="comment">//Tracks the attack entity which last caused the hirfreeze affect. and ticks since triggered
+</span><span class="comment">// Tracks the attack entity which last caused the hirfreeze affect. and ticks since triggered
 // (this way the same attack doesn't trigger it multiple times)
-</span><span class="attr">#[derive(Component, Default, Debug)]
+</span><span class="attr">#[allow(dead_code)]
+#[derive(Component, Default, Debug)]
 </span><span class="kw">pub struct </span>HitFreezeTime(u32, <span class="prelude-ty">Option</span>&lt;Entity&gt;);
 
 <span class="attr">#[derive(Component, Default, Debug)]
@@ -1600,12 +1610,13 @@
     </span><span class="kw">fn </span>sliding(<span class="kw-2">&amp;</span><span class="self">self</span>, cfg: <span class="kw-2">&amp;</span>PlayerConfig) -&gt; bool {
         <span class="self">self</span>.<span class="number">0 </span>&lt;= cfg.max_coyote_time * <span class="number">2.0
     </span>}
+
     <span class="kw">fn </span>strict_sliding(<span class="kw-2">&amp;</span><span class="self">self</span>, cfg: <span class="kw-2">&amp;</span>PlayerConfig) -&gt; bool {
         <span class="self">self</span>.<span class="number">0 </span>&lt;= cfg.max_coyote_time * <span class="number">1.0
     </span>}
 }
 
-<span class="doccomment">///Tracks the cooldown for the available energy for the players whirl
+<span class="doccomment">/// Tracks the cooldown for the available energy for the players whirl
 </span><span class="attr">#[derive(Component, Default, Debug)]
 </span><span class="kw">pub struct </span>WhirlAbility {
     <span class="kw">pub </span>energy: f32,
@@ -1713,7 +1724,6 @@
     cfgs: Res&lt;Assets&lt;DynamicConfig&gt;&gt;,
     preloaded: Res&lt;PreloadedAssets&gt;,
     <span class="kw-2">mut </span>player_config: ResMut&lt;PlayerConfig&gt;,
-    <span class="kw-2">mut </span>commands: Commands,
     <span class="kw-2">mut </span>initialized_config: Local&lt;bool&gt;,
 ) {
     <span class="comment">// convert from asset key string to bevy handle
@@ -1734,19 +1744,16 @@
         <span class="kw-2">*</span>initialized_config = <span class="bool-val">true</span>;
     }
     <span class="kw">for </span>ev <span class="kw">in </span>ev_asset.read() {
-        <span class="kw">match </span>ev {
-            AssetEvent::Modified { id } =&gt; {
-                <span class="kw">if let </span><span class="prelude-val">Some</span>(cfg) = cfgs.get(<span class="kw-2">*</span>id) {
-                    <span class="kw">if </span>cfg_handle.id() == <span class="kw-2">*</span>id {
-                        <span class="macro">println!</span>(<span class="string">"before:"</span>);
-                        <span class="macro">dbg!</span>(<span class="kw-2">&amp;</span>player_config);
-                        update_player_config(<span class="kw-2">&amp;mut </span>player_config, cfg);
-                        <span class="macro">println!</span>(<span class="string">"after:"</span>);
-                        <span class="macro">dbg!</span>(<span class="kw-2">&amp;</span>player_config);
-                    }
+        <span class="kw">if let </span>AssetEvent::Modified { id } = ev {
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(cfg) = cfgs.get(<span class="kw-2">*</span>id) {
+                <span class="kw">if </span>cfg_handle.id() == <span class="kw-2">*</span>id {
+                    <span class="macro">println!</span>(<span class="string">"before:"</span>);
+                    <span class="macro">dbg!</span>(<span class="kw-2">&amp;</span>player_config);
+                    update_player_config(<span class="kw-2">&amp;mut </span>player_config, cfg);
+                    <span class="macro">println!</span>(<span class="string">"after:"</span>);
+                    <span class="macro">dbg!</span>(<span class="kw-2">&amp;</span>player_config);
                 }
-            },
-            <span class="kw">_ </span>=&gt; {},
+            }
         }
     }
 }
@@ -1787,14 +1794,18 @@
    }
 }
 
-<span class="kw">fn </span>load_player_stats(<span class="kw-2">mut </span>commands: Commands, player_config: Res&lt;PlayerConfig&gt;) {
-    commands.insert_resource(PlayerStats::init_from_config(
-        <span class="kw-2">&amp;</span>player_config,
-    ));
+<span class="kw">fn </span>load_player_stats(
+    player_config: Res&lt;PlayerConfig&gt;,
+    <span class="kw-2">mut </span>stat_q: Query&lt;<span class="kw-2">&amp;mut </span>PlayerStats&gt;,
+) {
+    stat_q.iter_mut().for_each(|<span class="kw-2">mut </span>stats| {
+        <span class="kw-2">*</span>stats = PlayerStats::init_from_config(<span class="kw-2">&amp;</span>player_config);
+    });
 }
 
 <span class="doccomment">/// Extend with additional parameter Stats
-</span><span class="attr">#[derive(Clone, Copy, Eq, PartialEq, Hash, Debug)]
+</span><span class="attr">#[allow(clippy::enum_variant_names)]
+#[derive(Clone, Copy, Eq, PartialEq, Hash, Debug)]
 </span><span class="kw">pub enum </span>StatType {
     MoveVelMax,
     MoveAccelInit,
@@ -1817,7 +1828,7 @@
     time_remaining: f32,
 }
 
-<span class="comment">//TODO: move to attack
+<span class="comment">// TODO: move to attack
 </span><span class="kw">impl </span>StatusModifier {
     <span class="kw">pub fn </span>basic_ice_spider() -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
@@ -1829,13 +1840,13 @@
             scalar: <span class="macro">vec!</span>[<span class="number">0.5</span>],
             delta: <span class="macro">vec!</span>[],
             <span class="comment">//            effect_col: Color::hex("C2C9C9").unwrap(),
-            </span>effect_col: Color::hex(<span class="string">"0099CC"</span>).unwrap(), <span class="comment">// For More Visible Effect
+            </span>effect_col: Color::hex(<span class="string">"0099CC"</span>).unwrap(), <span class="comment">/* For More Visible Effect */
             </span>time_remaining: <span class="number">2.0</span>,
         }
     }
 }
 
-<span class="attr">#[derive(Resource)]
+<span class="attr">#[derive(Component)]
 </span><span class="kw">pub struct </span>PlayerStats {
     <span class="kw">pub </span>base_stats: HashMap&lt;StatType, f32&gt;,
     <span class="kw">pub </span>effective_stats: HashMap&lt;StatType, f32&gt;,
@@ -1896,14 +1907,19 @@
 }
 
 <span class="kw">fn </span>player_new_stats_mod(
-    <span class="kw-2">mut </span>query: Query&lt;(Entity, <span class="kw-2">&amp;mut </span>StatusModifier)&gt;,
+    <span class="kw-2">mut </span>query: Query&lt;(
+        Entity,
+        <span class="kw-2">&amp;mut </span>StatusModifier,
+        <span class="kw-2">&amp;mut </span>PlayerStats,
+    )&gt;,
     <span class="kw-2">mut </span>gfx_query: Query&lt;(<span class="kw-2">&amp;</span>PlayerGfx, <span class="kw-2">&amp;mut </span>Sprite)&gt;,
-    <span class="kw-2">mut </span>player_stats: ResMut&lt;PlayerStats&gt;,
     time: Res&lt;Time&lt;Virtual&gt;&gt;,
     <span class="kw-2">mut </span>commands: Commands,
 ) {
     <span class="kw">for </span>(p_gfx, <span class="kw-2">mut </span>sprite) <span class="kw">in </span>gfx_query.iter_mut() {
-        <span class="kw">let </span><span class="prelude-val">Ok</span>((entity, <span class="kw-2">mut </span>modifier)) = query.get_mut(p_gfx.e_gent) <span class="kw">else </span>{
+        <span class="kw">let </span><span class="prelude-val">Ok</span>((entity, <span class="kw-2">mut </span>modifier, <span class="kw-2">mut </span>player_stats)) =
+            query.get_mut(p_gfx.e_gent)
+        <span class="kw">else </span>{
             <span class="kw">return</span>;
         };
 
@@ -1911,7 +1927,7 @@
             player_stats.update_stats(<span class="kw-2">&amp;</span>modifier);
         }
 
-        sprite.color = modifier.effect_col.clone();
+        sprite.color = modifier.effect_col;
 
         modifier.time_remaining -= time.delta_seconds();
 
@@ -1954,22 +1970,22 @@
     <span class="kw-2">mut </span>commands: Commands,
     asset: Res&lt;DashIconAssetHandle&gt;,
 ) {
-    <span class="kw">for </span>(global_tr, facing, dashing, stealthing_maybe) <span class="kw">in </span>query.iter() {
+    <span class="kw">for </span>(global_tr, facing, _dashing, stealthing_maybe) <span class="kw">in </span>query.iter() {
         <span class="kw">let </span>pos = global_tr.translation();
 
         <span class="comment">// Code for potentially interpolating position
         // Not deemed necessary due to sufficient sprite overlap
-        //let dir = Vec3::new(
+        // let dir = Vec3::new(
         //    config.dash_velocity * facing.direction(),
         //    0.0,
         //    0.0,
         //);
-        //let lpos = pos + dir * 0.5;
-        //if dashing.is_added() {
+        // let lpos = pos + dir * 0.5;
+        // if dashing.is_added() {
         //
         //} else
         </span>{
-            <span class="comment">//let dir = Vec2::new(
+            <span class="comment">// let dir = Vec2::new(
             //    config.dash_velocity * facing.direction(),
             //    0.0,
             //);
@@ -2017,7 +2033,7 @@
     }
 }
 
-<span class="doccomment">///Resets the players cooldowns/energy on hit of a stealthed critical hit
+<span class="doccomment">/// Resets the players cooldowns/energy on hit of a stealthed critical hit
 </span><span class="kw">pub fn </span>on_hit_stealth_reset(
     query: Query&lt;<span class="kw-2">&amp;</span>Attack, (Added&lt;Hit&gt;, With&lt;Crit&gt;, With&lt;Stealthed&gt;)&gt;,
     <span class="kw-2">mut </span>attacker_skills: Query&lt;(
@@ -2047,7 +2063,7 @@
     }
 }
 
-<span class="doccomment">///Exits player Stealthing state when a stealthed attack first hits
+<span class="doccomment">/// Exits player Stealthing state when a stealthed attack first hits
 </span><span class="kw">pub fn </span>on_hit_exit_stealthing(
     query: Query&lt;<span class="kw-2">&amp;</span>Attack, (Added&lt;Hit&gt;, With&lt;Stealthed&gt;)&gt;,
     <span class="kw-2">mut </span>attacker_query: Query&lt;(<span class="kw-2">&amp;</span>Gent, <span class="kw-2">&amp;mut </span>TransitionQueue), With&lt;Player&gt;&gt;,
