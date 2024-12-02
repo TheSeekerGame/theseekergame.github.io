@@ -378,20 +378,52 @@
 <a href="#377" id="377">377</a>
 <a href="#378" id="378">378</a>
 <a href="#379" id="379">379</a>
-<a href="#380" id="380">380</a></pre></div><pre class="rust"><code><span class="doccomment">//! Everything to do with the in-game camera(s)
+<a href="#380" id="380">380</a>
+<a href="#381" id="381">381</a>
+<a href="#382" id="382">382</a>
+<a href="#383" id="383">383</a>
+<a href="#384" id="384">384</a>
+<a href="#385" id="385">385</a>
+<a href="#386" id="386">386</a>
+<a href="#387" id="387">387</a>
+<a href="#388" id="388">388</a>
+<a href="#389" id="389">389</a>
+<a href="#390" id="390">390</a>
+<a href="#391" id="391">391</a>
+<a href="#392" id="392">392</a>
+<a href="#393" id="393">393</a>
+<a href="#394" id="394">394</a>
+<a href="#395" id="395">395</a>
+<a href="#396" id="396">396</a>
+<a href="#397" id="397">397</a>
+<a href="#398" id="398">398</a>
+<a href="#399" id="399">399</a>
+<a href="#400" id="400">400</a>
+<a href="#401" id="401">401</a>
+<a href="#402" id="402">402</a>
+<a href="#403" id="403">403</a>
+<a href="#404" id="404">404</a>
+<a href="#405" id="405">405</a>
+<a href="#406" id="406">406</a>
+<a href="#407" id="407">407</a>
+<a href="#408" id="408">408</a>
+<a href="#409" id="409">409</a></pre></div><pre class="rust"><code><span class="doccomment">//! Everything to do with the in-game camera(s)
 
 </span><span class="kw">use </span>std::f32::consts::PI;
+
+<span class="kw">use </span>bevy::core_pipeline::bloom::BloomSettings;
+<span class="kw">use </span>bevy::core_pipeline::prepass::DepthPrepass;
+<span class="kw">use </span>bevy::core_pipeline::tonemapping::Tonemapping;
+<span class="kw">use </span>iyes_perf_ui::PerfUiCompleteBundle;
+<span class="kw">use </span>ran::ran_f64_range;
 
 <span class="kw">use </span><span class="kw">crate</span>::game::player::Player;
 <span class="kw">use </span><span class="kw">crate</span>::graphics::darkness::DarknessSettings;
 <span class="kw">use </span><span class="kw">crate</span>::graphics::dof::{DepthOfFieldMode, DepthOfFieldSettings};
 <span class="kw">use </span><span class="kw">crate</span>::level::MainBackround;
 <span class="kw">use </span><span class="kw">crate</span>::prelude::<span class="kw-2">*</span>;
-<span class="kw">use </span>bevy::core_pipeline::bloom::BloomSettings;
-<span class="kw">use </span>bevy::core_pipeline::prepass::DepthPrepass;
-<span class="kw">use </span>bevy::core_pipeline::tonemapping::Tonemapping;
-<span class="kw">use </span>iyes_perf_ui::PerfUiCompleteBundle;
-<span class="kw">use </span>ran::ran_f64_range;
+
+<span class="kw">const </span>PROJECTION_SCALE: f32 = <span class="number">1.0 </span>/ <span class="number">5.0</span>;
 
 <span class="kw">pub struct </span>CameraPlugin;
 
@@ -411,15 +443,19 @@
 
         </span>app.insert_resource(CameraRig {
             target: Default::default(),
-            camera: Default::default(),
+            camera_position: Default::default(),
+            move_speed: <span class="number">1.9</span>,
+            lead_direction: LeadDirection::Forward,
+            lead_amount: <span class="number">20.0</span>,
+            lead_buffer: <span class="number">10.0</span>,
         });
-        app.add_systems(GameTickUpdate, camera_rig_follow_player);
         app.add_systems(
             GameTickUpdate,
             (
-                update_camera_rig.after(camera_rig_follow_player),
+                camera_rig_follow_player,
+                update_camera.after(camera_rig_follow_player),
                 update_screen_shake.run_if(resource_exists::&lt;CameraShake&gt;),
-            )
+            ),
         );
     }
 }
@@ -440,10 +476,24 @@
 <span class="attr">#[derive(Resource)]
 </span><span class="doccomment">/// Tracks the target location of the camera, as well as internal state for interpolation.
 </span><span class="kw">pub struct </span>CameraRig {
-    <span class="doccomment">/// The camera is moved towards this position smoothly
+    <span class="doccomment">/// The camera is moved towards this position smoothly.
     </span>target: Vec2,
-    <span class="doccomment">/// the "base" position of the camera before screen shake is applied
-    </span>camera: Vec2,
+    <span class="doccomment">/// the "base" position of the camera before screen shake is applied.
+    </span>camera_position: Vec2,
+    <span class="doccomment">/// The factor used in lerping to move the rig.
+    </span>move_speed: f32,
+    <span class="doccomment">/// Keeps track if the camera is leading ahead, or behind the player.
+    </span>lead_direction: LeadDirection,
+    <span class="doccomment">/// Defines how far ahead the camera will lead the player by.
+    </span>lead_amount: f32,
+    <span class="doccomment">/// Defines how far away the player can get going in the unanticipated direction
+    /// before the camera switches to track that direction.
+    </span>lead_buffer: f32,
+}
+
+<span class="kw">enum </span>LeadDirection {
+    Backward,
+    Forward,
 }
 
 <span class="doccomment">/// Limits to the viewable gameplay area.
@@ -469,7 +519,7 @@
         tonemapping: Tonemapping::None,
         ..default()
     };
-    camera.projection.scale = <span class="number">1.0 </span>/ <span class="number">5.0</span>;
+    camera.projection.scale = PROJECTION_SCALE;
 
     <span class="kw">let </span><span class="kw-2">mut </span>camera3d = Camera3dBundle {
         camera: Camera {
@@ -529,53 +579,58 @@
 <span class="doccomment">/// Updates the Camera rig (ie, the camera target) based on where the player is going.
 </span><span class="kw">fn </span>camera_rig_follow_player(
     <span class="kw-2">mut </span>rig: ResMut&lt;CameraRig&gt;,
-    q_player: Query&lt;<span class="kw-2">&amp;</span>Transform, (With&lt;Player&gt;, Without&lt;MainCamera&gt;)&gt;,
-    <span class="comment">// Keeps track if the camera is leading ahead, or behind the player
-    </span><span class="kw-2">mut </span>lead_bckwrd: Local&lt;bool&gt;,
+    player_query: Query&lt;<span class="kw-2">&amp;</span>Transform, (With&lt;Player&gt;, Without&lt;MainCamera&gt;)&gt;,
+    time: Res&lt;Time&gt;,
 ) {
-    <span class="kw">let </span><span class="prelude-val">Ok</span>(player_xform) = q_player.get_single() <span class="kw">else </span>{
+    <span class="kw">let </span><span class="prelude-val">Ok</span>(player_transform) = player_query.get_single() <span class="kw">else </span>{
         <span class="kw">return</span>;
     };
-    <span class="comment">// define how far away the player can get going in the unanticipated direction
-    // before the camera switches to track that direction
-    </span><span class="kw">let </span>max_err = <span class="number">10.0</span>;
-    <span class="comment">// Define how far ahead the camera will lead the player by
-    </span><span class="kw">let </span>lead_amnt = <span class="number">20.0</span>;
-
     <span class="comment">// Default state is to predict the player goes forward, ie "right"
-    </span><span class="kw">let </span>delta_x = player_xform.translation.x - rig.target.x;
+    </span><span class="kw">let </span>delta_x = player_transform.translation.x - rig.target.x;
 
-    <span class="kw">if </span>!<span class="kw-2">*</span>lead_bckwrd {
-        <span class="kw">if </span>delta_x &gt; -lead_amnt {
-            rig.target.x = player_xform.translation.x + lead_amnt
-        } <span class="kw">else if </span>delta_x &lt; -lead_amnt - max_err {
-            <span class="kw-2">*</span>lead_bckwrd = !<span class="kw-2">*</span>lead_bckwrd
-        }
-    } <span class="kw">else </span>{
-        <span class="kw">if </span>delta_x &lt; lead_amnt {
-            rig.target.x = player_xform.translation.x - lead_amnt
-        } <span class="kw">else if </span>delta_x &gt; lead_amnt + max_err {
-            <span class="kw-2">*</span>lead_bckwrd = !<span class="kw-2">*</span>lead_bckwrd
-        }
+    <span class="kw">match </span>rig.lead_direction {
+        LeadDirection::Backward =&gt; {
+            <span class="kw">if </span>delta_x &lt; rig.lead_amount {
+                rig.target.x = player_transform.translation.x - rig.lead_amount
+            } <span class="kw">else if </span>delta_x &gt; rig.lead_amount + rig.lead_buffer {
+                rig.lead_direction = LeadDirection::Forward
+            }
+        },
+        LeadDirection::Forward =&gt; {
+            <span class="kw">if </span>delta_x &gt; -rig.lead_amount {
+                rig.target.x = player_transform.translation.x + rig.lead_amount
+            } <span class="kw">else if </span>delta_x &lt; -rig.lead_amount - rig.lead_buffer {
+                rig.lead_direction = LeadDirection::Backward
+            }
+        },
     }
-    <span class="comment">//rig.position.x = player_xform.translation.x;
 
-    </span>rig.target.y = player_xform.translation.y;
+    rig.target.y = player_transform.translation.y;
+
+    <span class="kw">if </span>(rig.camera_position - rig.target).length() &lt; PROJECTION_SCALE {
+        <span class="comment">// Stop lerping if already at the target
+        </span>rig.camera_position = rig.target;
+    } <span class="kw">else </span>{
+        rig.camera_position = rig.camera_position.lerp(
+            rig.target,
+            time.delta_seconds() * rig.move_speed,
+        );
+    }
 }
 
 <span class="doccomment">/// Camera updates the camera position to smoothly interpolate to the
 /// rig location. also applies camera shake, and limits camera within the level boundaries
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>update_camera_rig(
-    <span class="kw-2">mut </span>q_cam: Query&lt;(<span class="kw-2">&amp;mut </span>Transform, <span class="kw-2">&amp;</span>Projection), With&lt;MainCamera&gt;&gt;,
-    <span class="kw-2">mut </span>rig: ResMut&lt;CameraRig&gt;,
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>update_camera(
+    <span class="kw-2">mut </span>camera_query: Query&lt;(<span class="kw-2">&amp;mut </span>Transform, <span class="kw-2">&amp;</span>Projection), With&lt;MainCamera&gt;&gt;,
+    rig: Res&lt;CameraRig&gt;,
     backround_query: Query&lt;
         (<span class="kw-2">&amp;</span>LayerMetadata, <span class="kw-2">&amp;</span>Transform),
         (With&lt;MainBackround&gt;, Without&lt;MainCamera&gt;),
     &gt;,
-    shake_op: <span class="prelude-ty">Option</span>&lt;Res&lt;CameraShake&gt;&gt;,
-    time: Res&lt;Time&gt;,
+    camera_shake: <span class="prelude-ty">Option</span>&lt;Res&lt;CameraShake&gt;&gt;,
 ) {
-    <span class="kw">let </span><span class="prelude-val">Ok</span>((<span class="kw-2">mut </span>cam_xform, projection)) = q_cam.get_single_mut() <span class="kw">else </span>{
+    <span class="kw">let </span><span class="prelude-val">Ok</span>((<span class="kw-2">mut </span>camera_transform, projection)) = camera_query.get_single_mut()
+    <span class="kw">else </span>{
         <span class="kw">return</span>;
     };
 
@@ -583,60 +638,59 @@
         <span class="kw">return</span>;
     };
 
-    <span class="kw">let </span>speed = <span class="number">1.9</span>;
+    camera_transform.translation.x = rig.camera_position.x;
+    camera_transform.translation.y = rig.camera_position.y;
 
-    <span class="kw">let </span>new_xy = rig.camera.lerp(rig.target, time.delta_seconds() * speed);
+    <span class="kw">if let </span><span class="prelude-val">Ok</span>((bg_layer, bg_transform)) = backround_query.get_single() {
+        <span class="kw">let </span>camera_rect = ortho_projection.area;
+        <span class="kw">let </span>background_rect = background_rect(bg_layer, bg_transform);
 
-    rig.camera = new_xy;
-
-    
-    <span class="comment">// screen shake amounts
-    </span><span class="kw">let </span>offset = <span class="kw">match </span>shake_op {
-        <span class="prelude-val">Some</span>(shake) =&gt; shake.c_offset,
-        <span class="prelude-val">None </span>=&gt; Vec2::ZERO,
-    };
-
-    <span class="kw">let </span>offset_x = offset.x;
-    <span class="kw">let </span>offset_y = offset.y;
-
-    <span class="comment">// cam_xform.rotation.z = 0.0 + angle;
-    </span>cam_xform.translation.x = rig.camera.x;
-    cam_xform.translation.y = rig.camera.y;
-
-    <span class="kw">if let </span><span class="prelude-val">Some</span>((bg_layer, bg_transform)) = backround_query.iter().next() {
-        <span class="kw">let </span>bg_width = (bg_layer.c_wid * bg_layer.grid_size) <span class="kw">as </span>f32;
-        <span class="kw">let </span>bg_height = (bg_layer.c_hei * bg_layer.grid_size) <span class="kw">as </span>f32;
-
-        <span class="kw">let </span>cam_rect = ortho_projection.area;
-
-        <span class="comment">// The backround width and height actually have 3 pixels extra padding on the far
-        // right/upper sides. This accounts for that.
-        </span><span class="kw">let </span>bg_max = Vec2::new(bg_width - <span class="number">3.0</span>, bg_height - <span class="number">3.0</span>);
-
-        <span class="comment">// bottom left corner of the background is zero/minimum corner, because
-        // that's how LDtk imports it.
-        </span><span class="kw">let </span>limit_rect = Rect::from_corners(
-            bg_max + bg_transform.translation.xy(),
-            bg_transform.translation.xy(),
+        clamp_camera_to_edge(
+            <span class="kw-2">&amp;mut </span>camera_transform,
+            background_rect,
+            camera_rect,
         );
-
-        <span class="kw">let </span>xy = cam_xform.translation.xy().clamp(
-            limit_rect.min + cam_rect.half_size(),
-            limit_rect.max - cam_rect.half_size(),
-        );
-        cam_xform.translation = xy.extend(cam_xform.translation.z);
 
         <span class="comment">// Apply screen shake after camera is clamped so that camera still shakes at the edges
-        </span>cam_xform.translation.x = cam_xform.translation.x + offset_x;
-        cam_xform.translation.y = cam_xform.translation.y + offset_y;
+        </span><span class="kw">if let </span><span class="prelude-val">Some</span>(camera_shake) = camera_shake {
+            camera_shake.apply(<span class="kw-2">&amp;mut </span>camera_transform);
+        }
 
         <span class="comment">// Apply another clamp so we don't show the edge of the level
-        </span><span class="kw">let </span>xy = cam_xform.translation.xy().clamp(
-            limit_rect.min + cam_rect.half_size(),
-            limit_rect.max - cam_rect.half_size(),
+        </span>clamp_camera_to_edge(
+            <span class="kw-2">&amp;mut </span>camera_transform,
+            background_rect,
+            camera_rect,
         );
-        cam_xform.translation = xy.extend(cam_xform.translation.z);
     }
+}
+
+<span class="kw">fn </span>background_rect(bg_layer: <span class="kw-2">&amp;</span>LayerMetadata, bg_transform: <span class="kw-2">&amp;</span>Transform) -&gt; Rect {
+    <span class="kw">let </span>bg_width = (bg_layer.c_wid * bg_layer.grid_size) <span class="kw">as </span>f32;
+    <span class="kw">let </span>bg_height = (bg_layer.c_hei * bg_layer.grid_size) <span class="kw">as </span>f32;
+
+    <span class="comment">// The backround width and height actually have 3 pixels extra padding on the far
+    // right/upper sides. This accounts for that.
+    </span><span class="kw">let </span>bg_max = Vec2::new(bg_width - <span class="number">3.0</span>, bg_height - <span class="number">3.0</span>);
+
+    <span class="comment">// bottom left corner of the background is zero/minimum corner, because
+    // that's how LDtk imports it.
+    </span>Rect::from_corners(
+        bg_max + bg_transform.translation.xy(),
+        bg_transform.translation.xy(),
+    )
+}
+
+<span class="kw">fn </span>clamp_camera_to_edge(
+    camera_transform: <span class="kw-2">&amp;mut </span>Transform,
+    background_rect: Rect,
+    camera_rect: Rect,
+) {
+    <span class="kw">let </span>xy = camera_transform.translation.xy().clamp(
+        background_rect.min + camera_rect.half_size(),
+        background_rect.max - camera_rect.half_size(),
+    );
+    camera_transform.translation = xy.extend(camera_transform.translation.z);
 }
 
 <span class="attr">#[derive(Resource, Clone)]
@@ -654,25 +708,28 @@
         <span class="kw">let </span>rand_a = ran_f64_range(<span class="number">0.0</span>..=<span class="number">360.0</span>);
         <span class="kw">let </span>dir = Vec2::from_angle(rand_a <span class="kw">as </span>f32 * PI * <span class="number">2.0</span>);
 
-        <span class="self">Self </span>{ 
-            strength, 
+        <span class="self">Self </span>{
+            strength,
             freq,
-            timer: Timer::from_seconds(t, TimerMode::Once), 
-            sub_timer: Timer::from_seconds(t / freq, TimerMode::Repeating), 
+            timer: Timer::from_seconds(t, TimerMode::Once),
+            sub_timer: Timer::from_seconds(t / freq, TimerMode::Repeating),
             c_offset: Vec2::ZERO,
             dir,
         }
     }
-}
 
+    <span class="kw">pub fn </span>apply(<span class="kw-2">&amp;</span><span class="self">self</span>, camera_transform: <span class="kw-2">&amp;mut </span>Transform) {
+        camera_transform.translation.x += <span class="self">self</span>.c_offset.x;
+        camera_transform.translation.y += <span class="self">self</span>.c_offset.y;
+    }
+}
 
 <span class="kw">pub fn </span>update_screen_shake(
     <span class="kw-2">mut </span>commands: Commands,
-<span class="comment">//    mut cam_query: Query&lt;(Entity, &amp;mut CameraShake, &amp;mut Transform), (With&lt;PlayerCamera&gt;)&gt;,
+    <span class="comment">//    mut cam_query: Query&lt;(Entity, &amp;mut CameraShake, &amp;mut Transform), (With&lt;PlayerCamera&gt;)&gt;,
     </span>time: Res&lt;Time&lt;Virtual&gt;&gt;,
     <span class="kw-2">mut </span>shake: ResMut&lt;CameraShake&gt;,
 ) {
-
     <span class="kw">let </span>freq = shake.freq;
     <span class="kw">let </span>ratio = shake.timer.fraction();
     <span class="kw">let </span>decay = <span class="number">1.0 </span>- ratio.powi(<span class="number">2</span>);
@@ -694,12 +751,10 @@
     <span class="kw">let </span>tan_val = tan_s * decay * TAN_AMP_SCALE;
 
     <span class="kw">let </span>tan_dir = Vec3::Z.cross(shake.dir.extend(<span class="number">0.</span>)).truncate();
-    
+
     <span class="kw">let </span>delta = shake.dir * val * shake.strength;
     <span class="kw">let </span>tan_delta = tan_dir * tan_val * shake.strength;
-<span class="comment">//    let angle = val * shake.strength * 0.0001;
-
-    //println!("{}", delta);
+    <span class="comment">//    let angle = val * shake.strength * 0.0001;
 
     </span>shake.c_offset = delta + tan_delta;
 
@@ -709,9 +764,12 @@
     <span class="kw">if </span>shake.timer.finished() {
         commands.remove_resource::&lt;CameraShake&gt;();
     }
-}   
+}
 
-<span class="kw">fn </span>cli_camera_at(In(args): In&lt;Vec&lt;String&gt;&gt;, <span class="kw-2">mut </span>q_cam: Query&lt;<span class="kw-2">&amp;mut </span>Transform, With&lt;MainCamera&gt;&gt;) {
+<span class="kw">fn </span>cli_camera_at(
+    In(args): In&lt;Vec&lt;String&gt;&gt;,
+    <span class="kw-2">mut </span>q_cam: Query&lt;<span class="kw-2">&amp;mut </span>Transform, With&lt;MainCamera&gt;&gt;,
+) {
     <span class="kw">if </span>args.len() != <span class="number">2 </span>{
         <span class="macro">error!</span>(<span class="string">"\"camera_at &lt;x&gt; &lt;y&gt;\""</span>);
         <span class="kw">return</span>;
