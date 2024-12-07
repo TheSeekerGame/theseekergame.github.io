@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/fdeflate-0.3.6/src/tables.rs`."><title>tables.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-b0742ba02757f159.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="fdeflate" data-themes="" data-resource-suffix="" data-rustdoc-version="1.83.0 (90b35a623 2024-11-26)" data-channel="1.83.0" data-search-js="search-f0d225181b97f9a4.js" data-settings-js="settings-805db61a62df4bd2.js" ><script src="../../static.files/storage-1d39b6787ed640ff.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-f070b9041d14864c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-0111fcff984fae8f.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">fdeflate/</div>tables.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/fdeflate-0.3.7/src/tables.rs`."><title>tables.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-b0742ba02757f159.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="fdeflate" data-themes="" data-resource-suffix="" data-rustdoc-version="1.83.0 (90b35a623 2024-11-26)" data-channel="1.83.0" data-search-js="search-f0d225181b97f9a4.js" data-settings-js="settings-805db61a62df4bd2.js" ><script src="../../static.files/storage-1d39b6787ed640ff.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-f070b9041d14864c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-0111fcff984fae8f.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">fdeflate/</div>tables.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
 <a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
@@ -154,7 +154,72 @@
 <a href="#153" id="153">153</a>
 <a href="#154" id="154">154</a>
 <a href="#155" id="155">155</a>
-<a href="#156" id="156">156</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::decompress::{EXCEPTIONAL_ENTRY, LITERAL_ENTRY};
+<a href="#156" id="156">156</a>
+<a href="#157" id="157">157</a>
+<a href="#158" id="158">158</a>
+<a href="#159" id="159">159</a>
+<a href="#160" id="160">160</a>
+<a href="#161" id="161">161</a>
+<a href="#162" id="162">162</a>
+<a href="#163" id="163">163</a>
+<a href="#164" id="164">164</a>
+<a href="#165" id="165">165</a>
+<a href="#166" id="166">166</a>
+<a href="#167" id="167">167</a>
+<a href="#168" id="168">168</a>
+<a href="#169" id="169">169</a>
+<a href="#170" id="170">170</a>
+<a href="#171" id="171">171</a>
+<a href="#172" id="172">172</a>
+<a href="#173" id="173">173</a>
+<a href="#174" id="174">174</a>
+<a href="#175" id="175">175</a>
+<a href="#176" id="176">176</a>
+<a href="#177" id="177">177</a>
+<a href="#178" id="178">178</a>
+<a href="#179" id="179">179</a>
+<a href="#180" id="180">180</a>
+<a href="#181" id="181">181</a>
+<a href="#182" id="182">182</a>
+<a href="#183" id="183">183</a>
+<a href="#184" id="184">184</a>
+<a href="#185" id="185">185</a>
+<a href="#186" id="186">186</a>
+<a href="#187" id="187">187</a>
+<a href="#188" id="188">188</a>
+<a href="#189" id="189">189</a>
+<a href="#190" id="190">190</a>
+<a href="#191" id="191">191</a>
+<a href="#192" id="192">192</a>
+<a href="#193" id="193">193</a>
+<a href="#194" id="194">194</a>
+<a href="#195" id="195">195</a>
+<a href="#196" id="196">196</a>
+<a href="#197" id="197">197</a>
+<a href="#198" id="198">198</a>
+<a href="#199" id="199">199</a>
+<a href="#200" id="200">200</a>
+<a href="#201" id="201">201</a>
+<a href="#202" id="202">202</a>
+<a href="#203" id="203">203</a>
+<a href="#204" id="204">204</a>
+<a href="#205" id="205">205</a>
+<a href="#206" id="206">206</a>
+<a href="#207" id="207">207</a>
+<a href="#208" id="208">208</a>
+<a href="#209" id="209">209</a>
+<a href="#210" id="210">210</a>
+<a href="#211" id="211">211</a>
+<a href="#212" id="212">212</a>
+<a href="#213" id="213">213</a>
+<a href="#214" id="214">214</a>
+<a href="#215" id="215">215</a>
+<a href="#216" id="216">216</a>
+<a href="#217" id="217">217</a>
+<a href="#218" id="218">218</a>
+<a href="#219" id="219">219</a>
+<a href="#220" id="220">220</a>
+<a href="#221" id="221">221</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::decompress::{EXCEPTIONAL_ENTRY, LITERAL_ENTRY};
 
 <span class="doccomment">/// Hard-coded Huffman codes used regardless of the input.
 ///
@@ -284,8 +349,73 @@
     entries
 };
 
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const </span>FIXED_CODE_LENGTHS: [u8; <span class="number">320</span>] = make_fixed_code_lengths();
-<span class="kw">const fn </span>make_fixed_code_lengths() -&gt; [u8; <span class="number">320</span>] {
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const </span>FIXED_LITLEN_TABLE: [u32; <span class="number">512</span>] = [
+    <span class="number">16391</span>, <span class="number">5275912</span>, <span class="number">1081608</span>, <span class="number">7537672</span>, <span class="number">2032135</span>, <span class="number">7373064</span>, <span class="number">3178760</span>, <span class="number">12615945</span>, <span class="number">655367</span>, <span class="number">6324488</span>,
+    <span class="number">2130184</span>, <span class="number">10518793</span>, <span class="number">33032</span>, <span class="number">8421640</span>, <span class="number">4227336</span>, <span class="number">14713097</span>, <span class="number">393223</span>, <span class="number">5800200</span>, <span class="number">1605896</span>, <span class="number">9470217</span>,
+    <span class="number">3867399</span>, <span class="number">7897352</span>, <span class="number">3703048</span>, <span class="number">13664521</span>, <span class="number">1114375</span>, <span class="number">6848776</span>, <span class="number">2654472</span>, <span class="number">11567369</span>, <span class="number">557320</span>, <span class="number">8945928</span>,
+    <span class="number">4751624</span>, <span class="number">15761673</span>, <span class="number">262151</span>, <span class="number">5538056</span>, <span class="number">1343752</span>, <span class="number">14877960</span>, <span class="number">2818823</span>, <span class="number">7635208</span>, <span class="number">3440904</span>, <span class="number">13140233</span>,
+    <span class="number">852231</span>, <span class="number">6586632</span>, <span class="number">2392328</span>, <span class="number">11043081</span>, <span class="number">295176</span>, <span class="number">8683784</span>, <span class="number">4489480</span>, <span class="number">15237385</span>, <span class="number">524295</span>, <span class="number">6062344</span>,
+    <span class="number">1868040</span>, <span class="number">9994505</span>, <span class="number">5440519</span>, <span class="number">8159496</span>, <span class="number">3965192</span>, <span class="number">14188809</span>, <span class="number">1507847</span>, <span class="number">7110920</span>, <span class="number">2916616</span>, <span class="number">12091657</span>,
+    <span class="number">819464</span>, <span class="number">9208072</span>, <span class="number">5013768</span>, <span class="number">16285961</span>, <span class="number">196615</span>, <span class="number">5406984</span>, <span class="number">1212680</span>, <span class="number">10683656</span>, <span class="number">2294535</span>, <span class="number">7504136</span>,
+    <span class="number">3309832</span>, <span class="number">12878089</span>, <span class="number">721159</span>, <span class="number">6455560</span>, <span class="number">2261256</span>, <span class="number">10780937</span>, <span class="number">164104</span>, <span class="number">8552712</span>, <span class="number">4358408</span>, <span class="number">14975241</span>,
+    <span class="number">458759</span>, <span class="number">5931272</span>, <span class="number">1736968</span>, <span class="number">9732361</span>, <span class="number">4391943</span>, <span class="number">8028424</span>, <span class="number">3834120</span>, <span class="number">13926665</span>, <span class="number">1245703</span>, <span class="number">6979848</span>,
+    <span class="number">2785544</span>, <span class="number">11829513</span>, <span class="number">688392</span>, <span class="number">9077000</span>, <span class="number">4882696</span>, <span class="number">16023817</span>, <span class="number">327687</span>, <span class="number">5669128</span>, <span class="number">1474824</span>, <span class="number">16392</span>,
+    <span class="number">3343111</span>, <span class="number">7766280</span>, <span class="number">3571976</span>, <span class="number">13402377</span>, <span class="number">983303</span>, <span class="number">6717704</span>, <span class="number">2523400</span>, <span class="number">11305225</span>, <span class="number">426248</span>, <span class="number">8814856</span>,
+    <span class="number">4620552</span>, <span class="number">15499529</span>, <span class="number">589831</span>, <span class="number">6193416</span>, <span class="number">1999112</span>, <span class="number">10256649</span>, <span class="number">6489095</span>, <span class="number">8290568</span>, <span class="number">4096264</span>, <span class="number">14450953</span>,
+    <span class="number">1769991</span>, <span class="number">7241992</span>, <span class="number">3047688</span>, <span class="number">12353801</span>, <span class="number">950536</span>, <span class="number">9339144</span>, <span class="number">5144840</span>, <span class="number">16548105</span>, <span class="number">16391</span>, <span class="number">5341448</span>,
+    <span class="number">1147144</span>, <span class="number">8586504</span>, <span class="number">2032135</span>, <span class="number">7438600</span>, <span class="number">3244296</span>, <span class="number">12747017</span>, <span class="number">655367</span>, <span class="number">6390024</span>, <span class="number">2195720</span>, <span class="number">10649865</span>,
+    <span class="number">98568</span>, <span class="number">8487176</span>, <span class="number">4292872</span>, <span class="number">14844169</span>, <span class="number">393223</span>, <span class="number">5865736</span>, <span class="number">1671432</span>, <span class="number">9601289</span>, <span class="number">3867399</span>, <span class="number">7962888</span>,
+    <span class="number">3768584</span>, <span class="number">13795593</span>, <span class="number">1114375</span>, <span class="number">6914312</span>, <span class="number">2720008</span>, <span class="number">11698441</span>, <span class="number">622856</span>, <span class="number">9011464</span>, <span class="number">4817160</span>, <span class="number">15892745</span>,
+    <span class="number">262151</span>, <span class="number">5603592</span>, <span class="number">1409288</span>, <span class="number">16908296</span>, <span class="number">2818823</span>, <span class="number">7700744</span>, <span class="number">3506440</span>, <span class="number">13271305</span>, <span class="number">852231</span>, <span class="number">6652168</span>,
+    <span class="number">2457864</span>, <span class="number">11174153</span>, <span class="number">360712</span>, <span class="number">8749320</span>, <span class="number">4555016</span>, <span class="number">15368457</span>, <span class="number">524295</span>, <span class="number">6127880</span>, <span class="number">1933576</span>, <span class="number">10125577</span>,
+    <span class="number">5440519</span>, <span class="number">8225032</span>, <span class="number">4030728</span>, <span class="number">14319881</span>, <span class="number">1507847</span>, <span class="number">7176456</span>, <span class="number">2982152</span>, <span class="number">12222729</span>, <span class="number">885000</span>, <span class="number">9273608</span>,
+    <span class="number">5079304</span>, <span class="number">16417033</span>, <span class="number">196615</span>, <span class="number">5472520</span>, <span class="number">1278216</span>, <span class="number">12780808</span>, <span class="number">2294535</span>, <span class="number">7569672</span>, <span class="number">3375368</span>, <span class="number">13009161</span>,
+    <span class="number">721159</span>, <span class="number">6521096</span>, <span class="number">2326792</span>, <span class="number">10912009</span>, <span class="number">229640</span>, <span class="number">8618248</span>, <span class="number">4423944</span>, <span class="number">15106313</span>, <span class="number">458759</span>, <span class="number">5996808</span>,
+    <span class="number">1802504</span>, <span class="number">9863433</span>, <span class="number">4391943</span>, <span class="number">8093960</span>, <span class="number">3899656</span>, <span class="number">14057737</span>, <span class="number">1245703</span>, <span class="number">7045384</span>, <span class="number">2851080</span>, <span class="number">11960585</span>,
+    <span class="number">753928</span>, <span class="number">9142536</span>, <span class="number">4948232</span>, <span class="number">16154889</span>, <span class="number">327687</span>, <span class="number">5734664</span>, <span class="number">1540360</span>, <span class="number">16392</span>, <span class="number">3343111</span>, <span class="number">7831816</span>, <span class="number">3637512</span>,
+    <span class="number">13533449</span>, <span class="number">983303</span>, <span class="number">6783240</span>, <span class="number">2588936</span>, <span class="number">11436297</span>, <span class="number">491784</span>, <span class="number">8880392</span>, <span class="number">4686088</span>, <span class="number">15630601</span>, <span class="number">589831</span>,
+    <span class="number">6258952</span>, <span class="number">2064648</span>, <span class="number">10387721</span>, <span class="number">6489095</span>, <span class="number">8356104</span>, <span class="number">4161800</span>, <span class="number">14582025</span>, <span class="number">1769991</span>, <span class="number">7307528</span>, <span class="number">3113224</span>,
+    <span class="number">12484873</span>, <span class="number">1016072</span>, <span class="number">9404680</span>, <span class="number">5210376</span>, <span class="number">16679177</span>, <span class="number">16391</span>, <span class="number">5275912</span>, <span class="number">1081608</span>, <span class="number">7537672</span>, <span class="number">2032135</span>,
+    <span class="number">7373064</span>, <span class="number">3178760</span>, <span class="number">12681481</span>, <span class="number">655367</span>, <span class="number">6324488</span>, <span class="number">2130184</span>, <span class="number">10584329</span>, <span class="number">33032</span>, <span class="number">8421640</span>, <span class="number">4227336</span>,
+    <span class="number">14778633</span>, <span class="number">393223</span>, <span class="number">5800200</span>, <span class="number">1605896</span>, <span class="number">9535753</span>, <span class="number">3867399</span>, <span class="number">7897352</span>, <span class="number">3703048</span>, <span class="number">13730057</span>, <span class="number">1114375</span>,
+    <span class="number">6848776</span>, <span class="number">2654472</span>, <span class="number">11632905</span>, <span class="number">557320</span>, <span class="number">8945928</span>, <span class="number">4751624</span>, <span class="number">15827209</span>, <span class="number">262151</span>, <span class="number">5538056</span>, <span class="number">1343752</span>,
+    <span class="number">14877960</span>, <span class="number">2818823</span>, <span class="number">7635208</span>, <span class="number">3440904</span>, <span class="number">13205769</span>, <span class="number">852231</span>, <span class="number">6586632</span>, <span class="number">2392328</span>, <span class="number">11108617</span>, <span class="number">295176</span>,
+    <span class="number">8683784</span>, <span class="number">4489480</span>, <span class="number">15302921</span>, <span class="number">524295</span>, <span class="number">6062344</span>, <span class="number">1868040</span>, <span class="number">10060041</span>, <span class="number">5440519</span>, <span class="number">8159496</span>, <span class="number">3965192</span>,
+    <span class="number">14254345</span>, <span class="number">1507847</span>, <span class="number">7110920</span>, <span class="number">2916616</span>, <span class="number">12157193</span>, <span class="number">819464</span>, <span class="number">9208072</span>, <span class="number">5013768</span>, <span class="number">16351497</span>, <span class="number">196615</span>,
+    <span class="number">5406984</span>, <span class="number">1212680</span>, <span class="number">10683656</span>, <span class="number">2294535</span>, <span class="number">7504136</span>, <span class="number">3309832</span>, <span class="number">12943625</span>, <span class="number">721159</span>, <span class="number">6455560</span>, <span class="number">2261256</span>,
+    <span class="number">10846473</span>, <span class="number">164104</span>, <span class="number">8552712</span>, <span class="number">4358408</span>, <span class="number">15040777</span>, <span class="number">458759</span>, <span class="number">5931272</span>, <span class="number">1736968</span>, <span class="number">9797897</span>, <span class="number">4391943</span>,
+    <span class="number">8028424</span>, <span class="number">3834120</span>, <span class="number">13992201</span>, <span class="number">1245703</span>, <span class="number">6979848</span>, <span class="number">2785544</span>, <span class="number">11895049</span>, <span class="number">688392</span>, <span class="number">9077000</span>, <span class="number">4882696</span>,
+    <span class="number">16089353</span>, <span class="number">327687</span>, <span class="number">5669128</span>, <span class="number">1474824</span>, <span class="number">16392</span>, <span class="number">3343111</span>, <span class="number">7766280</span>, <span class="number">3571976</span>, <span class="number">13467913</span>, <span class="number">983303</span>,
+    <span class="number">6717704</span>, <span class="number">2523400</span>, <span class="number">11370761</span>, <span class="number">426248</span>, <span class="number">8814856</span>, <span class="number">4620552</span>, <span class="number">15565065</span>, <span class="number">589831</span>, <span class="number">6193416</span>, <span class="number">1999112</span>,
+    <span class="number">10322185</span>, <span class="number">6489095</span>, <span class="number">8290568</span>, <span class="number">4096264</span>, <span class="number">14516489</span>, <span class="number">1769991</span>, <span class="number">7241992</span>, <span class="number">3047688</span>, <span class="number">12419337</span>, <span class="number">950536</span>,
+    <span class="number">9339144</span>, <span class="number">5144840</span>, <span class="number">16613641</span>, <span class="number">16391</span>, <span class="number">5341448</span>, <span class="number">1147144</span>, <span class="number">8586504</span>, <span class="number">2032135</span>, <span class="number">7438600</span>, <span class="number">3244296</span>,
+    <span class="number">12812553</span>, <span class="number">655367</span>, <span class="number">6390024</span>, <span class="number">2195720</span>, <span class="number">10715401</span>, <span class="number">98568</span>, <span class="number">8487176</span>, <span class="number">4292872</span>, <span class="number">14909705</span>, <span class="number">393223</span>,
+    <span class="number">5865736</span>, <span class="number">1671432</span>, <span class="number">9666825</span>, <span class="number">3867399</span>, <span class="number">7962888</span>, <span class="number">3768584</span>, <span class="number">13861129</span>, <span class="number">1114375</span>, <span class="number">6914312</span>, <span class="number">2720008</span>,
+    <span class="number">11763977</span>, <span class="number">622856</span>, <span class="number">9011464</span>, <span class="number">4817160</span>, <span class="number">15958281</span>, <span class="number">262151</span>, <span class="number">5603592</span>, <span class="number">1409288</span>, <span class="number">16908296</span>, <span class="number">2818823</span>,
+    <span class="number">7700744</span>, <span class="number">3506440</span>, <span class="number">13336841</span>, <span class="number">852231</span>, <span class="number">6652168</span>, <span class="number">2457864</span>, <span class="number">11239689</span>, <span class="number">360712</span>, <span class="number">8749320</span>, <span class="number">4555016</span>,
+    <span class="number">15433993</span>, <span class="number">524295</span>, <span class="number">6127880</span>, <span class="number">1933576</span>, <span class="number">10191113</span>, <span class="number">5440519</span>, <span class="number">8225032</span>, <span class="number">4030728</span>, <span class="number">14385417</span>, <span class="number">1507847</span>,
+    <span class="number">7176456</span>, <span class="number">2982152</span>, <span class="number">12288265</span>, <span class="number">885000</span>, <span class="number">9273608</span>, <span class="number">5079304</span>, <span class="number">16482569</span>, <span class="number">196615</span>, <span class="number">5472520</span>, <span class="number">1278216</span>,
+    <span class="number">12780808</span>, <span class="number">2294535</span>, <span class="number">7569672</span>, <span class="number">3375368</span>, <span class="number">13074697</span>, <span class="number">721159</span>, <span class="number">6521096</span>, <span class="number">2326792</span>, <span class="number">10977545</span>, <span class="number">229640</span>,
+    <span class="number">8618248</span>, <span class="number">4423944</span>, <span class="number">15171849</span>, <span class="number">458759</span>, <span class="number">5996808</span>, <span class="number">1802504</span>, <span class="number">9928969</span>, <span class="number">4391943</span>, <span class="number">8093960</span>, <span class="number">3899656</span>,
+    <span class="number">14123273</span>, <span class="number">1245703</span>, <span class="number">7045384</span>, <span class="number">2851080</span>, <span class="number">12026121</span>, <span class="number">753928</span>, <span class="number">9142536</span>, <span class="number">4948232</span>, <span class="number">16220425</span>, <span class="number">327687</span>,
+    <span class="number">5734664</span>, <span class="number">1540360</span>, <span class="number">16392</span>, <span class="number">3343111</span>, <span class="number">7831816</span>, <span class="number">3637512</span>, <span class="number">13598985</span>, <span class="number">983303</span>, <span class="number">6783240</span>, <span class="number">2588936</span>,
+    <span class="number">11501833</span>, <span class="number">491784</span>, <span class="number">8880392</span>, <span class="number">4686088</span>, <span class="number">15696137</span>, <span class="number">589831</span>, <span class="number">6258952</span>, <span class="number">2064648</span>, <span class="number">10453257</span>, <span class="number">6489095</span>,
+    <span class="number">8356104</span>, <span class="number">4161800</span>, <span class="number">14647561</span>, <span class="number">1769991</span>, <span class="number">7307528</span>, <span class="number">3113224</span>, <span class="number">12550409</span>, <span class="number">1016072</span>, <span class="number">9404680</span>, <span class="number">5210376</span>,
+    <span class="number">16744713</span>,
+];
+
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const </span>FIXED_DIST_TABLE: [u32; <span class="number">32</span>] = [
+    <span class="number">98309</span>, <span class="number">16877317</span>, <span class="number">1147653</span>, <span class="number">268536581</span>, <span class="number">360709</span>, <span class="number">67209477</span>, <span class="number">4293893</span>, <span class="number">1073843461</span>, <span class="number">229381</span>, <span class="number">33654789</span>,
+    <span class="number">2196485</span>, <span class="number">536972293</span>, <span class="number">623109</span>, <span class="number">134318597</span>, <span class="number">8488453</span>, <span class="number">5</span>, <span class="number">163845</span>, <span class="number">25265925</span>, <span class="number">1671941</span>, <span class="number">402754309</span>,
+    <span class="number">491781</span>, <span class="number">100763909</span>, <span class="number">6391045</span>, <span class="number">1610714373</span>, <span class="number">294917</span>, <span class="number">50432005</span>, <span class="number">3245061</span>, <span class="number">805407749</span>, <span class="number">885253</span>,
+    <span class="number">201427461</span>, <span class="number">12682757</span>, <span class="number">5</span>,
+];
+
+<span class="attr">#[cfg(test)]
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const </span>FIXED_CODE_LENGTHS: [u8; <span class="number">320</span>] = make_fixed_code_lengths();
+
+<span class="attr">#[cfg(test)]
+</span><span class="kw">const fn </span>make_fixed_code_lengths() -&gt; [u8; <span class="number">320</span>] {
     <span class="kw">let </span><span class="kw-2">mut </span>i = <span class="number">0</span>;
     <span class="kw">let </span><span class="kw-2">mut </span>lengths = [<span class="number">0</span>; <span class="number">320</span>];
     <span class="kw">while </span>i &lt; <span class="number">144 </span>{

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/fdeflate-0.3.6/src/decompress.rs`."><title>decompress.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-b0742ba02757f159.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="fdeflate" data-themes="" data-resource-suffix="" data-rustdoc-version="1.83.0 (90b35a623 2024-11-26)" data-channel="1.83.0" data-search-js="search-f0d225181b97f9a4.js" data-settings-js="settings-805db61a62df4bd2.js" ><script src="../../static.files/storage-1d39b6787ed640ff.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-f070b9041d14864c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-0111fcff984fae8f.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">fdeflate/</div>decompress.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/fdeflate-0.3.7/src/decompress.rs`."><title>decompress.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-b0742ba02757f159.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="fdeflate" data-themes="" data-resource-suffix="" data-rustdoc-version="1.83.0 (90b35a623 2024-11-26)" data-channel="1.83.0" data-search-js="search-f0d225181b97f9a4.js" data-settings-js="settings-805db61a62df4bd2.js" ><script src="../../static.files/storage-1d39b6787ed640ff.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-f070b9041d14864c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-0111fcff984fae8f.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">fdeflate/</div>decompress.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
 <a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
@@ -1286,13 +1286,68 @@
 <a href="#1285" id="1285">1285</a>
 <a href="#1286" id="1286">1286</a>
 <a href="#1287" id="1287">1287</a>
-<a href="#1288" id="1288">1288</a></pre></div><pre class="rust"><code><span class="kw">use </span>simd_adler32::Adler32;
+<a href="#1288" id="1288">1288</a>
+<a href="#1289" id="1289">1289</a>
+<a href="#1290" id="1290">1290</a>
+<a href="#1291" id="1291">1291</a>
+<a href="#1292" id="1292">1292</a>
+<a href="#1293" id="1293">1293</a>
+<a href="#1294" id="1294">1294</a>
+<a href="#1295" id="1295">1295</a>
+<a href="#1296" id="1296">1296</a>
+<a href="#1297" id="1297">1297</a>
+<a href="#1298" id="1298">1298</a>
+<a href="#1299" id="1299">1299</a>
+<a href="#1300" id="1300">1300</a>
+<a href="#1301" id="1301">1301</a>
+<a href="#1302" id="1302">1302</a>
+<a href="#1303" id="1303">1303</a>
+<a href="#1304" id="1304">1304</a>
+<a href="#1305" id="1305">1305</a>
+<a href="#1306" id="1306">1306</a>
+<a href="#1307" id="1307">1307</a>
+<a href="#1308" id="1308">1308</a>
+<a href="#1309" id="1309">1309</a>
+<a href="#1310" id="1310">1310</a>
+<a href="#1311" id="1311">1311</a>
+<a href="#1312" id="1312">1312</a>
+<a href="#1313" id="1313">1313</a>
+<a href="#1314" id="1314">1314</a>
+<a href="#1315" id="1315">1315</a>
+<a href="#1316" id="1316">1316</a>
+<a href="#1317" id="1317">1317</a>
+<a href="#1318" id="1318">1318</a>
+<a href="#1319" id="1319">1319</a>
+<a href="#1320" id="1320">1320</a>
+<a href="#1321" id="1321">1321</a>
+<a href="#1322" id="1322">1322</a>
+<a href="#1323" id="1323">1323</a>
+<a href="#1324" id="1324">1324</a>
+<a href="#1325" id="1325">1325</a>
+<a href="#1326" id="1326">1326</a>
+<a href="#1327" id="1327">1327</a>
+<a href="#1328" id="1328">1328</a>
+<a href="#1329" id="1329">1329</a>
+<a href="#1330" id="1330">1330</a>
+<a href="#1331" id="1331">1331</a>
+<a href="#1332" id="1332">1332</a>
+<a href="#1333" id="1333">1333</a>
+<a href="#1334" id="1334">1334</a>
+<a href="#1335" id="1335">1335</a>
+<a href="#1336" id="1336">1336</a>
+<a href="#1337" id="1337">1337</a>
+<a href="#1338" id="1338">1338</a>
+<a href="#1339" id="1339">1339</a>
+<a href="#1340" id="1340">1340</a>
+<a href="#1341" id="1341">1341</a>
+<a href="#1342" id="1342">1342</a>
+<a href="#1343" id="1343">1343</a></pre></div><pre class="rust"><code><span class="kw">use </span>simd_adler32::Adler32;
 
 <span class="kw">use crate</span>::{
     huffman::{<span class="self">self</span>, build_table},
     tables::{
-        <span class="self">self</span>, CLCL_ORDER, DIST_SYM_TO_DIST_BASE, DIST_SYM_TO_DIST_EXTRA, FIXED_CODE_LENGTHS,
-        LEN_SYM_TO_LEN_BASE, LEN_SYM_TO_LEN_EXTRA, LITLEN_TABLE_ENTRIES,
+        <span class="self">self</span>, CLCL_ORDER, DIST_SYM_TO_DIST_BASE, DIST_SYM_TO_DIST_EXTRA, FIXED_DIST_TABLE,
+        FIXED_LITLEN_TABLE, LEN_SYM_TO_LEN_BASE, LEN_SYM_TO_LEN_EXTRA, LITLEN_TABLE_ENTRIES,
     },
 };
 
@@ -1350,13 +1405,12 @@
 <span class="kw">pub const </span>SECONDARY_TABLE_ENTRY: u32 = <span class="number">0x2000</span>;
 
 <span class="doccomment">/// The Decompressor state for a compressed block.
-</span><span class="attr">#[repr(align(<span class="number">64</span>))]
-#[derive(Eq, PartialEq, Debug)]
+</span><span class="attr">#[derive(Eq, PartialEq, Debug)]
 </span><span class="kw">struct </span>CompressedBlock {
-    litlen_table: [u32; <span class="number">4096</span>],
+    litlen_table: Box&lt;[u32; <span class="number">4096</span>]&gt;,
     secondary_table: Vec&lt;u16&gt;,
 
-    dist_table: [u32; <span class="number">512</span>],
+    dist_table: Box&lt;[u32; <span class="number">512</span>]&gt;,
     dist_secondary_table: Vec&lt;u16&gt;,
 
     eof_code: u16,
@@ -1391,6 +1445,7 @@
     queued_rle: <span class="prelude-ty">Option</span>&lt;(u8, usize)&gt;,
     queued_backref: <span class="prelude-ty">Option</span>&lt;(usize, usize)&gt;,
     last_block: bool,
+    fixed_table: bool,
 
     state: State,
     checksum: Adler32,
@@ -1410,8 +1465,8 @@
             buffer: <span class="number">0</span>,
             nbits: <span class="number">0</span>,
             compression: CompressedBlock {
-                litlen_table: [<span class="number">0</span>; <span class="number">4096</span>],
-                dist_table: [<span class="number">0</span>; <span class="number">512</span>],
+                litlen_table: Box::new([<span class="number">0</span>; <span class="number">4096</span>]),
+                dist_table: Box::new([<span class="number">0</span>; <span class="number">512</span>]),
                 secondary_table: Vec::new(),
                 dist_secondary_table: Vec::new(),
                 eof_code: <span class="number">0</span>,
@@ -1433,6 +1488,7 @@
             state: State::ZlibHeader,
             last_block: <span class="bool-val">false</span>,
             ignore_adler32: <span class="bool-val">false</span>,
+            fixed_table: <span class="bool-val">false</span>,
         }
     }
 
@@ -1470,7 +1526,7 @@
 
     <span class="kw">fn </span>read_block_header(<span class="kw-2">&amp;mut </span><span class="self">self</span>, remaining_input: <span class="kw-2">&amp;mut &amp;</span>[u8]) -&gt; <span class="prelude-ty">Result</span>&lt;(), DecompressionError&gt; {
         <span class="self">self</span>.fill_buffer(remaining_input);
-        <span class="kw">if </span><span class="self">self</span>.nbits &lt; <span class="number">3 </span>{
+        <span class="kw">if </span><span class="self">self</span>.nbits &lt; <span class="number">10 </span>{
             <span class="kw">return </span><span class="prelude-val">Ok</span>(());
         }
 
@@ -1497,8 +1553,43 @@
             }
             <span class="number">0b01 </span>=&gt; {
                 <span class="self">self</span>.consume_bits(<span class="number">3</span>);
-                <span class="comment">// TODO: Do this statically rather than every time.
-                </span><span class="self">Self</span>::build_tables(<span class="number">288</span>, <span class="kw-2">&amp;</span>FIXED_CODE_LENGTHS, <span class="kw-2">&amp;mut </span><span class="self">self</span>.compression)<span class="question-mark">?</span>;
+
+                <span class="comment">// Check for an entirely empty blocks which can happen if there are "partial
+                // flushes" in the deflate stream. With fixed huffman codes, the EOF symbol is
+                // 7-bits of zeros so we peak ahead and see if the next 7-bits are all zero.
+                </span><span class="kw">if </span><span class="self">self</span>.peak_bits(<span class="number">7</span>) == <span class="number">0 </span>{
+                    <span class="self">self</span>.consume_bits(<span class="number">7</span>);
+                    <span class="kw">if </span><span class="self">self</span>.last_block {
+                        <span class="self">self</span>.state = State::Checksum;
+                        <span class="kw">return </span><span class="prelude-val">Ok</span>(());
+                    }
+
+                    <span class="comment">// At this point we've consumed the entire block and need to read the next block
+                    // header. If tail call optimization were guaranteed, we could just recurse
+                    // here. But without it, a long sequence of empty fixed-blocks might cause a
+                    // stack overflow. Instead, we consume all empty blocks in a loop and then
+                    // recurse. This is the only recursive call this function, and thus is safe.
+                    </span><span class="kw">while </span><span class="self">self</span>.nbits &gt;= <span class="number">10 </span>&amp;&amp; <span class="self">self</span>.peak_bits(<span class="number">10</span>) == <span class="number">0b010 </span>{
+                        <span class="self">self</span>.consume_bits(<span class="number">10</span>);
+                        <span class="self">self</span>.fill_buffer(remaining_input);
+                    }
+                    <span class="kw">return </span><span class="self">self</span>.read_block_header(remaining_input);
+                }
+
+                <span class="comment">// Build decoding tables if the previous block wasn't also a fixed block.
+                </span><span class="kw">if </span>!<span class="self">self</span>.fixed_table {
+                    <span class="self">self</span>.fixed_table = <span class="bool-val">true</span>;
+                    <span class="kw">for </span>chunk <span class="kw">in </span><span class="self">self</span>.compression.litlen_table.chunks_exact_mut(<span class="number">512</span>) {
+                        chunk.copy_from_slice(<span class="kw-2">&amp;</span>FIXED_LITLEN_TABLE);
+                    }
+                    <span class="kw">for </span>chunk <span class="kw">in </span><span class="self">self</span>.compression.dist_table.chunks_exact_mut(<span class="number">32</span>) {
+                        chunk.copy_from_slice(<span class="kw-2">&amp;</span>FIXED_DIST_TABLE);
+                    }
+                    <span class="self">self</span>.compression.eof_bits = <span class="number">7</span>;
+                    <span class="self">self</span>.compression.eof_code = <span class="number">0</span>;
+                    <span class="self">self</span>.compression.eof_mask = <span class="number">0x7f</span>;
+                }
+
                 <span class="self">self</span>.state = State::CompressedData;
                 <span class="prelude-val">Ok</span>(())
             }
@@ -1519,6 +1610,7 @@
 
                 <span class="self">self</span>.consume_bits(<span class="number">17</span>);
                 <span class="self">self</span>.state = State::CodeLengthCodes;
+                <span class="self">self</span>.fixed_table = <span class="bool-val">false</span>;
                 <span class="prelude-val">Ok</span>(())
             }
             <span class="number">0b11 </span>=&gt; <span class="prelude-val">Err</span>(DecompressionError::InvalidBlockType),
@@ -1663,7 +1755,7 @@
             <span class="kw-2">&amp;</span>code_lengths[..hlit],
             <span class="kw-2">&amp;</span>LITLEN_TABLE_ENTRIES,
             <span class="kw-2">&amp;mut </span>codes[..hlit],
-            <span class="kw-2">&amp;mut </span>compression.litlen_table,
+            <span class="kw-2">&amp;mut *</span>compression.litlen_table,
             <span class="kw-2">&amp;mut </span>compression.secondary_table,
             <span class="bool-val">false</span>,
             <span class="bool-val">true</span>,
@@ -1685,7 +1777,7 @@
                 lengths,
                 <span class="kw-2">&amp;</span>tables::DISTANCE_TABLE_ENTRIES,
                 <span class="kw-2">&amp;mut </span>dist_codes,
-                <span class="kw-2">&amp;mut </span>compression.dist_table,
+                <span class="kw-2">&amp;mut *</span>compression.dist_table,
                 <span class="kw-2">&amp;mut </span>compression.dist_secondary_table,
                 <span class="bool-val">true</span>,
                 <span class="bool-val">false</span>,
@@ -2413,6 +2505,23 @@
     }
 
     <span class="attr">#[test]
+    </span><span class="kw">fn </span>fixed_tables() {
+        <span class="kw">let </span><span class="kw-2">mut </span>compression = CompressedBlock {
+            litlen_table: Box::new([<span class="number">0</span>; <span class="number">4096</span>]),
+            dist_table: Box::new([<span class="number">0</span>; <span class="number">512</span>]),
+            secondary_table: Vec::new(),
+            dist_secondary_table: Vec::new(),
+            eof_code: <span class="number">0</span>,
+            eof_mask: <span class="number">0</span>,
+            eof_bits: <span class="number">0</span>,
+        };
+        Decompressor::build_tables(<span class="number">288</span>, <span class="kw-2">&amp;</span>FIXED_CODE_LENGTHS, <span class="kw-2">&amp;mut </span>compression).unwrap();
+
+        <span class="macro">assert_eq!</span>(compression.litlen_table[..<span class="number">512</span>], FIXED_LITLEN_TABLE);
+        <span class="macro">assert_eq!</span>(compression.dist_table[..<span class="number">32</span>], FIXED_DIST_TABLE);
+    }
+
+    <span class="attr">#[test]
     </span><span class="kw">fn </span>it_works() {
         roundtrip(<span class="string">b"Hello world!"</span>);
     }
@@ -2517,6 +2626,7 @@
     }
 
     <span class="kw">mod </span>test_utils;
+    <span class="kw">use </span>tables::FIXED_CODE_LENGTHS;
     <span class="kw">use </span>test_utils::{decompress_by_chunks, TestDecompressionError};
 
     <span class="kw">fn </span>verify_no_sensitivity_to_input_chunking(
