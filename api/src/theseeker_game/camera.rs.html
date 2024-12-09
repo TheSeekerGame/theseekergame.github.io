@@ -403,11 +403,7 @@
 <a href="#402" id="402">402</a>
 <a href="#403" id="403">403</a>
 <a href="#404" id="404">404</a>
-<a href="#405" id="405">405</a>
-<a href="#406" id="406">406</a>
-<a href="#407" id="407">407</a>
-<a href="#408" id="408">408</a>
-<a href="#409" id="409">409</a></pre></div><pre class="rust"><code><span class="doccomment">//! Everything to do with the in-game camera(s)
+<a href="#405" id="405">405</a></pre></div><pre class="rust"><code><span class="doccomment">//! Everything to do with the in-game camera(s)
 
 </span><span class="kw">use </span>std::f32::consts::PI;
 
@@ -418,8 +414,9 @@
 <span class="kw">use </span>ran::ran_f64_range;
 
 <span class="kw">use </span><span class="kw">crate</span>::game::player::Player;
-<span class="kw">use </span><span class="kw">crate</span>::graphics::darkness::DarknessSettings;
 <span class="kw">use </span><span class="kw">crate</span>::graphics::dof::{DepthOfFieldMode, DepthOfFieldSettings};
+<span class="comment">// use crate::graphics::post_processing::darkness::DarknessSettings;
+</span><span class="kw">use </span><span class="kw">crate</span>::graphics::post_processing::vignette::VignetteSettings;
 <span class="kw">use </span><span class="kw">crate</span>::level::MainBackround;
 <span class="kw">use </span><span class="kw">crate</span>::prelude::<span class="kw-2">*</span>;
 
@@ -502,11 +499,7 @@
 </span><span class="attr">#[derive(Component)]
 </span><span class="kw">pub struct </span>GameViewLimits(Rect);
 
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>setup_main_camera(
-    <span class="kw-2">mut </span>commands: Commands,
-    <span class="kw-2">mut </span>meshes: ResMut&lt;Assets&lt;Mesh&gt;&gt;,
-    <span class="kw-2">mut </span>materials: ResMut&lt;Assets&lt;StandardMaterial&gt;&gt;,
-) {
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>setup_main_camera(<span class="kw-2">mut </span>commands: Commands) {
     commands.spawn((
         PerfUiCompleteBundle::default(),
         StateDespawnMarker,
@@ -557,20 +550,19 @@
             max_depth: <span class="number">500.0</span>,
         },
         BloomSettings::NATURAL,
-        DarknessSettings {
-            bg_light_level: <span class="number">1.0</span>,
-            lantern_position: Default::default(),
-            lantern: <span class="number">0.0</span>,
-            lantern_color: Vec3::new(<span class="number">0.965</span>, <span class="number">0.882</span>, <span class="number">0.678</span>),
-            bg_light_color: Vec3::new(<span class="number">0.761</span>, <span class="number">0.773</span>, <span class="number">0.8</span>),
-        },
+        <span class="comment">// DarknessSettings {
+        //     bg_light_level: 1.0,
+        //     lantern_position: Default::default(),
+        //     lantern: 0.0,
+        //     lantern_color: Vec3::new(0.965, 0.882, 0.678),
+        //     bg_light_color: Vec3::new(0.761, 0.773, 0.8),
+        // },
+        </span>VignetteSettings::default(),
         Name::new(<span class="string">"MainCamera"</span>),
     ));
-
-    <span class="kw">let </span>debug_material = materials.add(StandardMaterial { ..default() });
 }
 
-<span class="kw">fn </span>manage_camera_projection(<span class="comment">// mut q_cam: Query&lt;&amp;mut OrthographicProjection, With&lt;MainCamera&gt;&gt;,
+<span class="kw">fn </span>_manage_camera_projection(<span class="comment">// mut q_cam: Query&lt;&amp;mut OrthographicProjection, With&lt;MainCamera&gt;&gt;,
                             // mut q_window: Query&lt;&amp;Window, With&lt;PrimaryWindow&gt;&gt;,
 </span>) {
     <span class="comment">// TODO

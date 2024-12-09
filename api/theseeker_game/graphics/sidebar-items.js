@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["darkness","dmg_numbers","dof","fog","hp_bar","particles_util"],"struct":["GraphicsFxPlugin"]};
+window.SIDEBAR_ITEMS = {"mod":["dmg_numbers","dof","fog","hp_bar","particles_util","post_processing"],"struct":["GraphicsFxPlugin"]};

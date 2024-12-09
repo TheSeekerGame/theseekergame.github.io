@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["_darkness_dynamics","_darkness_parallax"],"struct":["DarknessPlugin","DarknessPostProcessLabel","DarknessPostProcessNode","DarknessPostProcessPipeline","DarknessSettings"]};
