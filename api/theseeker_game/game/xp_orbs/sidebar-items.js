@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["DIST_THRESHOLD"],"fn":["spawn_orbs_on_death","update_orbs_pos","update_orbs_vel"],"struct":["XpOrb","XpPlugin"]};
