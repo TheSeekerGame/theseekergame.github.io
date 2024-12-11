@@ -1616,8 +1616,7 @@
 <a href="#1615" id="1615">1615</a>
 <a href="#1616" id="1616">1616</a>
 <a href="#1617" id="1617">1617</a>
-<a href="#1618" id="1618">1618</a>
-<a href="#1619" id="1619">1619</a></pre></div><pre class="rust"><code><span class="attr">#[cfg(feature = <span class="string">"dev"</span>)]
+<a href="#1618" id="1618">1618</a></pre></div><pre class="rust"><code><span class="attr">#[cfg(feature = <span class="string">"dev"</span>)]
 </span><span class="kw">use </span>bevy_inspector_egui::quick::FilterQueryInspectorPlugin;
 <span class="kw">use </span>rand::distributions::Standard;
 <span class="kw">use </span>rapier2d::geometry::SharedShape;
@@ -1965,8 +1964,8 @@
                         </span>),
                         (
                             walking.run_if(any_with_component::&lt;Walking&gt;),
-                            retreating.run_if(any_with_component::&lt;Retreating&gt;),
-                            chasing.run_if(any_with_component::&lt;Chasing&gt;),
+                            <span class="comment">// retreating.run_if(any_with_component::&lt;Retreating&gt;),
+                            </span>chasing.run_if(any_with_component::&lt;Chasing&gt;),
                         ),
                     )
                         .chain(),
@@ -1999,16 +1998,16 @@
 <span class="kw">impl </span>GentState <span class="kw">for </span>Walking {}
 <span class="kw">impl </span>GenericState <span class="kw">for </span>Walking {}
 
-<span class="attr">#[derive(Component, Debug)]
-#[component(storage = <span class="string">"SparseSet"</span>)]
-</span><span class="kw">struct </span>Retreating {
-    ticks: u32,
-    max_ticks: u32,
-}
-<span class="kw">impl </span>GentState <span class="kw">for </span>Retreating {}
-<span class="kw">impl </span>GenericState <span class="kw">for </span>Retreating {}
+<span class="comment">// #[derive(Component, Debug)]
+// #[component(storage = "SparseSet")]
+// struct Retreating {
+//     ticks: u32,
+//     max_ticks: u32,
+// }
+// impl GentState for Retreating {}
+// impl GenericState for Retreating {}
 
-<span class="attr">#[derive(Component, Debug, Default)]
+</span><span class="attr">#[derive(Component, Debug, Default)]
 #[component(storage = <span class="string">"SparseSet"</span>)]
 </span><span class="kw">struct </span>Chasing;
 <span class="kw">impl </span>GentState <span class="kw">for </span>Chasing {}
@@ -2393,6 +2392,7 @@
             <span class="kw-2">&amp;</span>Role,
             <span class="kw-2">&amp;</span>Range,
             <span class="kw-2">&amp;</span>Target,
+            <span class="kw-2">&amp;mut </span>LinearVelocity,
             <span class="kw-2">&amp;mut </span>TransitionQueue,
         ),
         (
@@ -2404,7 +2404,8 @@
         ),
     &gt;,
 ) {
-    <span class="kw">for </span>(role, range, target, <span class="kw-2">mut </span>transitions) <span class="kw">in </span>query.iter_mut() {
+    <span class="kw">for </span>(role, range, target, <span class="kw-2">mut </span>velocity, <span class="kw-2">mut </span>transitions) <span class="kw">in </span>query.iter_mut()
+    {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(p_entity) = target.<span class="number">0 </span>{
             <span class="kw">let </span><span class="kw-2">mut </span>rng = rand::thread_rng();
             <span class="comment">// return to patrol if out of aggro range
@@ -2418,6 +2419,7 @@
                         ))
                     },
                     Role::Ranged =&gt; {
+                        velocity.x = <span class="number">0.</span>;
                         transitions.push(Waiting::new_transition(
                             Defense::default(),
                         ));
@@ -2660,8 +2662,8 @@
         </span>),
         (
             With&lt;Enemy&gt;,
-            Without&lt;Retreating&gt;,
-            Without&lt;Knockback&gt;,
+            <span class="comment">// Without&lt;Retreating&gt;,
+            </span>Without&lt;Knockback&gt;,
         ),
     &gt;,
 ) {
@@ -2701,87 +2703,83 @@
     }
 }
 
-<span class="kw">fn </span>retreating(
-    <span class="kw-2">mut </span>query: Query&lt;
-        (
-            <span class="kw-2">&amp;</span>Range,
-            <span class="kw-2">&amp;</span>Facing,
-            <span class="kw-2">&amp;mut </span>Navigation,
-            <span class="kw-2">&amp;mut </span>LinearVelocity,
-            <span class="kw-2">&amp;mut </span>Retreating,
-            <span class="kw-2">&amp;mut </span>TransitionQueue,
-        ),
-        (
-            With&lt;Enemy&gt;,
-            Without&lt;Walking&gt;,
-            Without&lt;Knockback&gt;,
-        ),
-    &gt;,
-    player_query: Query&lt;Entity, With&lt;Player&gt;&gt;,
-) {
-    <span class="kw">for </span>(
-        range,
-        facing,
-        <span class="kw-2">mut </span>nav,
-        <span class="kw-2">mut </span>velocity,
-        <span class="kw-2">mut </span>retreating,
-        <span class="kw-2">mut </span>transitions,
-    ) <span class="kw">in </span>query.iter_mut()
-    {
-        velocity.x = <span class="number">12. </span>* facing.direction();
-        <span class="kw">if </span><span class="macro">matches!</span>(<span class="kw-2">*</span>nav, Navigation::Blocked)
-            || retreating.ticks &gt; retreating.max_ticks
-        {
-            velocity.x = <span class="number">0.</span>;
-            <span class="kw-2">*</span>nav = Navigation::Grounded;
-            <span class="kw">match </span>range {
-                Range::Melee =&gt; {
-                    transitions.push(Retreating::new_transition(
-                        Defense::default(),
-                    ));
-                },
-                Range::Ranged | Range::Aggro =&gt; {
-                    transitions.push(Retreating::new_transition(
-                        RangedAttack {
-                            target: player_query
-                                .get_single()
-                                .expect(<span class="string">"no player"</span>),
-                            ticks: <span class="number">0</span>,
-                        },
-                    ))
-                },
-                <span class="kw">_ </span>=&gt; {
-                    transitions.push(Retreating::new_transition(
-                        <span class="comment">// RangedAttack {
-                        //     target: player_query.get_single().expect("no player"),
-                        //     ticks: 0,
-                        // },
-                        </span>Waiting::default(),
-                    ))
-                },
-            }
-        } <span class="kw">else if </span><span class="macro">matches!</span>(range, Range::Melee) {
-            velocity.x = <span class="number">0.</span>;
-            transitions.push(Retreating::new_transition(
-                Defense::default(),
-            ));
-        } <span class="kw">else if </span><span class="macro">matches!</span>(range, Range::Ranged)
-            || <span class="macro">matches!</span>(range, Range::Aggro)
-        {
-            velocity.x = <span class="number">0.</span>;
-            transitions.push(Retreating::new_transition(
-                RangedAttack {
-                    target: player_query.get_single().expect(<span class="string">"no player"</span>),
-                    ticks: <span class="number">0</span>,
-                },
-            ));
-        }
+<span class="comment">// fn retreating(
+//     mut query: Query&lt;
+//         (
+//             &amp;Range,
+//             &amp;Facing,
+//             &amp;mut Navigation,
+//             &amp;mut LinearVelocity,
+//             &amp;mut Retreating,
+//             &amp;mut TransitionQueue,
+//         ),
+//         (
+//             With&lt;Enemy&gt;,
+//             Without&lt;Walking&gt;,
+//             Without&lt;Knockback&gt;,
+//         ),
+//     &gt;,
+//     player_query: Query&lt;Entity, With&lt;Player&gt;&gt;,
+// ) {
+//     for (
+//         range,
+//         facing,
+//         mut nav,
+//         mut velocity,
+//         mut retreating,
+//         mut transitions,
+//     ) in query.iter_mut()
+//     {
+//         velocity.x = 12. * facing.direction();
+//         if matches!(*nav, Navigation::Blocked)
+//             || retreating.ticks &gt; retreating.max_ticks
+//         {
+//             velocity.x = 0.;
+//             *nav = Navigation::Grounded;
+//             match range {
+//                 Range::Melee =&gt; {
+//                     transitions.push(Retreating::new_transition(
+//                         Defense::default(),
+//                     ));
+//                 },
+//                 Range::Ranged | Range::Aggro =&gt; transitions.push(
+//                     Retreating::new_transition(RangedAttack {
+//                         target: player_query.get_single().expect("no player"),
+//                         ticks: 0,
+//                     }),
+//                 ),
+//                 _ =&gt; {
+//                     transitions.push(Retreating::new_transition(
+//                         // RangedAttack {
+//                         //     target: player_query.get_single().expect("no player"),
+//                         //     ticks: 0,
+//                         // },
+//                         Waiting::default(),
+//                     ))
+//                 },
+//             }
+//         } else if matches!(range, Range::Melee) {
+//             velocity.x = 0.;
+//             transitions.push(Retreating::new_transition(
+//                 Defense::default(),
+//             ));
+//         } else if matches!(range, Range::Ranged)
+//             || matches!(range, Range::Aggro)
+//         {
+//             velocity.x = 0.;
+//             transitions.push(Retreating::new_transition(
+//                 RangedAttack {
+//                     target: player_query.get_single().expect("no player"),
+//                     ticks: 0,
+//                 },
+//             ));
+//         }
+//
+//         retreating.ticks += 1;
+//     }
+// }
 
-        retreating.ticks += <span class="number">1</span>;
-    }
-}
-
-<span class="kw">fn </span>chasing(
+</span><span class="kw">fn </span>chasing(
     <span class="kw-2">mut </span>query: Query&lt;
         (
             <span class="kw-2">&amp;</span>Target,
@@ -3024,8 +3022,8 @@
                 enemy_defense_animation,
                 enemy_walking_animation,
                 enemy_chasing_animation,
-                enemy_retreat_animation,
-                enemy_ranged_attack_animation,
+                <span class="comment">// enemy_retreat_animation,
+                </span>enemy_ranged_attack_animation,
                 enemy_melee_attack_animation,
                 <span class="comment">// enemy_pushback_attack_animation,
                 </span>enemy_death_animation,
@@ -3161,18 +3159,18 @@
 }
 
 <span class="comment">// no longer used?
-</span><span class="kw">fn </span>enemy_retreat_animation(
-    i_query: Query&lt;<span class="kw-2">&amp;</span>Gent, (Added&lt;Retreating&gt;, With&lt;Enemy&gt;)&gt;,
-    <span class="kw-2">mut </span>gfx_query: Query&lt;<span class="kw-2">&amp;mut </span>ScriptPlayer&lt;SpriteAnimation&gt;, With&lt;EnemyGfx&gt;&gt;,
-) {
-    <span class="kw">for </span>gent <span class="kw">in </span>i_query.iter() {
-        <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="kw-2">mut </span>enemy) = gfx_query.get_mut(gent.e_gfx) {
-            enemy.play_key(<span class="string">"anim.spider.Retreat"</span>);
-        }
-    }
-}
+// fn enemy_retreat_animation(
+//     i_query: Query&lt;&amp;Gent, (Added&lt;Retreating&gt;, With&lt;Enemy&gt;)&gt;,
+//     mut gfx_query: Query&lt;&amp;mut ScriptPlayer&lt;SpriteAnimation&gt;, With&lt;EnemyGfx&gt;&gt;,
+// ) {
+//     for gent in i_query.iter() {
+//         if let Ok(mut enemy) = gfx_query.get_mut(gent.e_gfx) {
+//             enemy.play_key("anim.spider.Retreat");
+//         }
+//     }
+// }
 
-<span class="kw">fn </span>enemy_death_animation(
+</span><span class="kw">fn </span>enemy_death_animation(
     i_query: Query&lt;(<span class="kw-2">&amp;</span>Gent, <span class="kw-2">&amp;</span>Role), (Added&lt;Dead&gt;, With&lt;Enemy&gt;)&gt;,
     <span class="kw-2">mut </span>gfx_query: Query&lt;<span class="kw-2">&amp;mut </span>ScriptPlayer&lt;SpriteAnimation&gt;, With&lt;EnemyGfx&gt;&gt;,
 ) {
