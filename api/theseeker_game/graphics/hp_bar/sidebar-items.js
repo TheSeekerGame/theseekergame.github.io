@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"fn":["instance","update_hp","update_positions","update_visibility"],"struct":["HpBackground","HpBar","HpBarUiMaterial","HpBarsPlugin"]};

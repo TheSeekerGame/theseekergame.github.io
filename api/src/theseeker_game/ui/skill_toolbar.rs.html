@@ -301,8 +301,7 @@
 <a href="#300" id="300">300</a>
 <a href="#301" id="301">301</a>
 <a href="#302" id="302">302</a>
-<a href="#303" id="303">303</a>
-<a href="#304" id="304">304</a></pre></div><pre class="rust"><code><span class="kw">use </span>sickle_ui::ui_builder::{UiBuilderExt, UiRoot};
+<a href="#303" id="303">303</a></pre></div><pre class="rust"><code><span class="kw">use </span>sickle_ui::ui_builder::{UiBuilderExt, UiRoot};
 <span class="kw">use </span>sickle_ui::ui_style::<span class="kw-2">*</span>;
 <span class="kw">use </span>sickle_ui::widgets::prelude::<span class="kw-2">*</span>;
 
@@ -312,7 +311,7 @@
     Attacking, CanAttack, CanDash, CanStealth, Player, PlayerConfig,
     WhirlAbility,
 };
-<span class="kw">use </span><span class="kw">crate</span>::graphics::hp_bar::{HpBackground, HpBar, HpBarUiMaterial};
+<span class="kw">use </span><span class="kw">crate</span>::graphics::{ability_cooldown, player_hp};
 <span class="kw">use </span><span class="kw">crate</span>::prelude::<span class="kw-2">*</span>;
 <span class="kw">use </span><span class="kw">crate</span>::ui::ability_widget::{
     AbilityWidget, AbilityWidgetCommands, AbilityWidgetConfig,
@@ -342,7 +341,7 @@
 <span class="kw">fn </span>spawn_toolbar(
     <span class="kw-2">mut </span>commands: Commands,
     q_cam: Query&lt;Entity, With&lt;MainCamera&gt;&gt;,
-    <span class="kw-2">mut </span>ui_materials: ResMut&lt;Assets&lt;HpBarUiMaterial&gt;&gt;,
+    <span class="kw-2">mut </span>ui_materials: ResMut&lt;Assets&lt;player_hp::Material&gt;&gt;,
 ) {
     <span class="kw">let </span><span class="prelude-val">Ok</span>(cam_e) = q_cam.get_single() <span class="kw">else </span>{
         <span class="kw">return</span>;
@@ -395,7 +394,6 @@
                     ..default()
                 },
                 Name::new(<span class="string">"hp_bg"</span>),
-                HpBackground(Entity::PLACEHOLDER),
             ),
             |parent| {
                 parent.spawn((
@@ -406,7 +404,7 @@
                             align_self: AlignSelf::Center,
                             ..default()
                         },
-                        material: ui_materials.add(HpBarUiMaterial {
+                        material: ui_materials.add(player_hp::Material {
                             factor: <span class="number">1.0</span>,
                             background_color: Color::rgb(<span class="number">0.15</span>, <span class="number">0.15</span>, <span class="number">0.15</span>)
                                 .into(),
@@ -414,7 +412,7 @@
                         }),
                         ..default()
                     },
-                    HpBar(Entity::PLACEHOLDER),
+                    player_hp::Bar(Entity::PLACEHOLDER),
                     Name::new(<span class="string">"hp_bar"</span>),
                     PlayerHpUI,
                 ));
@@ -476,7 +474,7 @@
                             align_self: AlignSelf::Center,
                             ..default()
                         },
-                        material: ui_materials.add(HpBarUiMaterial {
+                        material: ui_materials.add(player_hp::Material {
                             factor: <span class="number">1.0</span>,
                             background_color: Color::rgb(<span class="number">0.15</span>, <span class="number">0.15</span>, <span class="number">0.15</span>)
                                 .into(),
@@ -495,7 +493,7 @@
 
 <span class="kw">fn </span>assign_hp_bar(
     player: Query&lt;Entity, Added&lt;Player&gt;&gt;,
-    <span class="kw-2">mut </span>hp_bar_q: Query&lt;<span class="kw-2">&amp;mut </span>HpBar, With&lt;PlayerHpUI&gt;&gt;,
+    <span class="kw-2">mut </span>hp_bar_q: Query&lt;<span class="kw-2">&amp;mut </span>player_hp::Bar, With&lt;PlayerHpUI&gt;&gt;,
 ) {
     <span class="kw">let </span><span class="prelude-val">Some</span>(player) = player.iter().next() <span class="kw">else </span>{
         <span class="kw">return</span>;
