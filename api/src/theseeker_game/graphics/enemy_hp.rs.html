@@ -176,9 +176,80 @@
 <a href="#175" id="175">175</a>
 <a href="#176" id="176">176</a>
 <a href="#177" id="177">177</a>
-<a href="#178" id="178">178</a></pre></div><pre class="rust"><code><span class="kw">use </span>bevy::prelude::<span class="kw-2">*</span>;
+<a href="#178" id="178">178</a>
+<a href="#179" id="179">179</a>
+<a href="#180" id="180">180</a>
+<a href="#181" id="181">181</a>
+<a href="#182" id="182">182</a>
+<a href="#183" id="183">183</a>
+<a href="#184" id="184">184</a>
+<a href="#185" id="185">185</a>
+<a href="#186" id="186">186</a>
+<a href="#187" id="187">187</a>
+<a href="#188" id="188">188</a>
+<a href="#189" id="189">189</a>
+<a href="#190" id="190">190</a>
+<a href="#191" id="191">191</a>
+<a href="#192" id="192">192</a>
+<a href="#193" id="193">193</a>
+<a href="#194" id="194">194</a>
+<a href="#195" id="195">195</a>
+<a href="#196" id="196">196</a>
+<a href="#197" id="197">197</a>
+<a href="#198" id="198">198</a>
+<a href="#199" id="199">199</a>
+<a href="#200" id="200">200</a>
+<a href="#201" id="201">201</a>
+<a href="#202" id="202">202</a>
+<a href="#203" id="203">203</a>
+<a href="#204" id="204">204</a>
+<a href="#205" id="205">205</a>
+<a href="#206" id="206">206</a>
+<a href="#207" id="207">207</a>
+<a href="#208" id="208">208</a>
+<a href="#209" id="209">209</a>
+<a href="#210" id="210">210</a>
+<a href="#211" id="211">211</a>
+<a href="#212" id="212">212</a>
+<a href="#213" id="213">213</a>
+<a href="#214" id="214">214</a>
+<a href="#215" id="215">215</a>
+<a href="#216" id="216">216</a>
+<a href="#217" id="217">217</a>
+<a href="#218" id="218">218</a>
+<a href="#219" id="219">219</a>
+<a href="#220" id="220">220</a>
+<a href="#221" id="221">221</a>
+<a href="#222" id="222">222</a>
+<a href="#223" id="223">223</a>
+<a href="#224" id="224">224</a>
+<a href="#225" id="225">225</a>
+<a href="#226" id="226">226</a>
+<a href="#227" id="227">227</a>
+<a href="#228" id="228">228</a>
+<a href="#229" id="229">229</a>
+<a href="#230" id="230">230</a>
+<a href="#231" id="231">231</a>
+<a href="#232" id="232">232</a>
+<a href="#233" id="233">233</a>
+<a href="#234" id="234">234</a>
+<a href="#235" id="235">235</a>
+<a href="#236" id="236">236</a>
+<a href="#237" id="237">237</a>
+<a href="#238" id="238">238</a>
+<a href="#239" id="239">239</a>
+<a href="#240" id="240">240</a>
+<a href="#241" id="241">241</a>
+<a href="#242" id="242">242</a>
+<a href="#243" id="243">243</a>
+<a href="#244" id="244">244</a>
+<a href="#245" id="245">245</a></pre></div><pre class="rust"><code><span class="kw">use </span>std::time::Duration;
+
+<span class="kw">use </span>anyhow::{anyhow, <span class="prelude-ty">Result</span>};
+<span class="kw">use </span>bevy::prelude::<span class="kw-2">*</span>;
 <span class="kw">use </span>bevy::reflect::TypePath;
 <span class="kw">use </span>bevy::render::render_resource::<span class="kw-2">*</span>;
+<span class="kw">use </span>bevy::utils;
 <span class="kw">use </span>glam::Vec2;
 <span class="kw">use </span>theseeker_engine::physics::Collider;
 
@@ -186,35 +257,55 @@
 <span class="kw">use </span><span class="kw">crate</span>::camera::MainCamera;
 <span class="kw">use </span><span class="kw">crate</span>::game::attack::Health;
 <span class="kw">use </span><span class="kw">crate</span>::game::enemy::Enemy;
+<span class="kw">use </span><span class="kw">crate</span>::game::gentstate::Dead;
 <span class="kw">use </span><span class="kw">crate</span>::prelude::Update;
+
+<span class="kw">const </span>BACKGROUND_COLOR: Color = Color::rgba(<span class="number">0.5</span>, <span class="number">0.5</span>, <span class="number">0.5</span>, <span class="number">0.5</span>);
+<span class="kw">const </span>ANIMATION_DELAY_IN_MILLIS: u64 = <span class="number">600</span>;
+<span class="kw">const </span>ANIMATION_SPEED: f32 = <span class="number">0.2</span>;
 
 <span class="kw">pub struct </span>EnemyHpBarPlugin;
 
 <span class="kw">impl </span>Plugin <span class="kw">for </span>EnemyHpBarPlugin {
     <span class="kw">fn </span>build(<span class="kw-2">&amp;</span><span class="self">self</span>, app: <span class="kw-2">&amp;mut </span>App) {
         app.add_plugins(UiMaterialPlugin::&lt;Material&gt;::default());
-        app.add_systems(Update, instance);
-        app.add_systems(Update, update_positions);
-        app.add_systems(Update, update_hp);
-        app.add_systems(Update, update_visibility);
+        app.add_systems(
+            Update,
+            (
+                instance,
+                update_positions.map(utils::dbg),
+                update_hp.map(utils::dbg),
+                update_visibility.map(utils::dbg),
+                tick_damage_animation,
+                despawn,
+            ),
+        );
     }
 }
 
 <span class="attr">#[derive(Component)]
-</span><span class="kw">pub struct </span>Root(<span class="kw">pub </span>Entity);
+</span><span class="kw">pub struct </span>Root {
+    <span class="kw">pub </span>parent: Entity,
+}
 
 <span class="attr">#[derive(Component)]
-</span><span class="kw">pub struct </span>Bar(<span class="kw">pub </span>Entity);
+</span><span class="kw">pub struct </span>Bar {
+    <span class="kw">pub </span>parent: Entity,
+}
+
+<span class="attr">#[derive(Component)]
+</span><span class="kw">pub struct </span>DamageAnimation {
+    delay: Timer,
+}
 
 <span class="attr">#[derive(Asset, TypePath, AsBindGroup, Clone, Copy, Debug)]
 </span><span class="kw">pub struct </span>Material {
-    <span class="doccomment">/// A number between `0` and `1` indicating how much of the bar should be filled.
+    <span class="doccomment">/// A number between `0` and `1` indicating the health amount.
     </span><span class="attr">#[uniform(<span class="number">0</span>)]
-    </span><span class="kw">pub </span>factor: f32,
-    <span class="attr">#[uniform(<span class="number">1</span>)]
-    </span><span class="kw">pub </span>background_color: Color,
-    <span class="attr">#[uniform(<span class="number">2</span>)]
-    </span><span class="kw">pub </span>filled_color: Color,
+    </span>health: f32,
+    <span class="doccomment">/// The current position of the damage taken indicator.
+    </span><span class="attr">#[uniform(<span class="number">1</span>)]
+    </span>damage: f32,
 }
 
 <span class="kw">impl </span>UiMaterial <span class="kw">for </span>Material {
@@ -234,16 +325,17 @@
                 .spawn((
                     NodeBundle {
                         style: Style {
-                            width: Val::Px(<span class="number">75.0</span>),
-                            height: Val::Px(<span class="number">14.0</span>),
-                            padding: UiRect::all(Val::Px(<span class="number">3.0</span>)),
+                            width: Val::Px(<span class="number">60.0</span>),
+                            height: Val::Px(<span class="number">10.0</span>),
+                            padding: UiRect::horizontal(Val::Px(<span class="number">2.0</span>)),
+                            position_type: PositionType::Absolute,
                             ..default()
                         },
-                        background_color: Color::rgb(<span class="number">0.75</span>, <span class="number">0.75</span>, <span class="number">0.75</span>).into(),
+                        background_color: BACKGROUND_COLOR.into(),
                         visibility: Visibility::Hidden,
                         ..default()
                     },
-                    Root(entity),
+                    Root { parent: entity },
                     StateDespawnMarker,
                 ))
                 .with_children(|parent| {
@@ -251,20 +343,25 @@
                         MaterialNodeBundle {
                             style: Style {
                                 width: Val::Percent(<span class="number">100.0</span>),
-                                height: Val::Percent(<span class="number">100.0</span>),
+                                height: Val::Percent(<span class="number">200.0</span>),
                                 align_self: AlignSelf::Center,
                                 ..default()
                             },
                             material: material.add(Material {
-                                factor: <span class="number">1.0</span>,
-                                background_color: Color::rgb(<span class="number">0.15</span>, <span class="number">0.15</span>, <span class="number">0.15</span>)
-                                    .into(),
-                                filled_color: Color::rgb(<span class="number">0.635</span>, <span class="number">0.196</span>, <span class="number">0.306</span>)
-                                    .into(),
+                                health: <span class="number">1.0</span>,
+                                damage: <span class="number">1.0</span>,
                             }),
                             ..default()
                         },
-                        Bar(entity),
+                        Bar { parent: entity },
+                        DamageAnimation {
+                            delay: Timer::new(
+                                Duration::from_millis(
+                                    ANIMATION_DELAY_IN_MILLIS,
+                                ),
+                                TimerMode::Once,
+                            ),
+                        },
                     ));
                 });
         }
@@ -272,85 +369,122 @@
 }
 
 <span class="kw">fn </span>update_positions(
-    <span class="kw-2">mut </span>commands: Commands,
     enemy_q: Query&lt;
         (<span class="kw-2">&amp;</span>GlobalTransform, <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Collider&gt;),
         (With&lt;Health&gt;, With&lt;Enemy&gt;),
     &gt;,
-    <span class="kw-2">mut </span>hp_root_q: Query&lt;(Entity, <span class="kw-2">&amp;</span>Root, <span class="kw-2">&amp;mut </span>Style)&gt;,
+    <span class="kw-2">mut </span>hp_root_q: Query&lt;(<span class="kw-2">&amp;</span>Root, <span class="kw-2">&amp;mut </span>Style)&gt;,
     <span class="kw-2">mut </span>camera_q: Query&lt;(<span class="kw-2">&amp;</span>GlobalTransform, <span class="kw-2">&amp;</span>Camera), With&lt;MainCamera&gt;&gt;,
-) {
-    <span class="kw">let </span><span class="prelude-val">Some</span>((camera_transform, camera)) = camera_q.iter().next() <span class="kw">else </span>{
-        <span class="kw">return</span>;
-    };
+) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
+    <span class="kw">let </span>(camera_transform, camera) = camera_q.get_single()<span class="question-mark">?</span>;
 
-    <span class="kw">for </span>(bg_entity, hp_bg, <span class="kw-2">mut </span>style) <span class="kw">in </span>hp_root_q.iter_mut() {
-        <span class="kw">if let </span><span class="prelude-val">Ok</span>((global_transform, collider)) = enemy_q.get(hp_bg.<span class="number">0</span>) {
-            <span class="kw">let </span><span class="kw-2">mut </span>world_position = global_transform.translation();
+    <span class="kw">for </span>(hp_root, <span class="kw-2">mut </span>style) <span class="kw">in </span>hp_root_q.iter_mut() {
+        <span class="kw">let </span>(global_transform, collider) = enemy_q.get(hp_root.parent)<span class="question-mark">?</span>;
+        <span class="kw">let </span><span class="kw-2">mut </span>world_position = global_transform.translation();
 
-            <span class="comment">// Makes the health bar float above the collider, if it exists
-            </span>world_position += <span class="kw">match </span>collider {
-                <span class="prelude-val">Some</span>(collider) =&gt; {
-                    <span class="kw">let </span>collider_height =
-                        collider.<span class="number">0</span>.compute_aabb().half_extents().y;
-                    Vec3::new(<span class="number">0.0</span>, collider_height, <span class="number">0.0</span>)
-                },
-                <span class="prelude-val">None </span>=&gt; Vec3::ZERO,
-            };
+        <span class="comment">// Makes the health bar float above the collider, if it exists
+        </span>world_position += <span class="kw">match </span>collider {
+            <span class="prelude-val">Some</span>(collider) =&gt; {
+                <span class="kw">let </span>collider_height =
+                    collider.<span class="number">0</span>.compute_aabb().half_extents().y;
+                Vec3::new(<span class="number">0.0</span>, collider_height, <span class="number">0.0</span>)
+            },
+            <span class="prelude-val">None </span>=&gt; Vec3::ZERO,
+        };
 
-            <span class="kw">let </span>screen_position = camera
-                .world_to_viewport(camera_transform, world_position)
-                .unwrap_or_default();
+        <span class="kw">let </span>screen_position = camera
+            .world_to_viewport(camera_transform, world_position)
+            .ok_or(<span class="macro">anyhow!</span>(
+                <span class="string">"Unable to get screen position from camera."
+            </span>))<span class="question-mark">?</span>;
 
-            <span class="kw">let </span>width = <span class="kw">match </span>style.width {
-                Val::Px(value) =&gt; value,
-                <span class="kw">_ </span>=&gt; <span class="number">100.0</span>,
-            };
+        <span class="kw">let </span>width = <span class="kw">match </span>style.width {
+            Val::Px(value) =&gt; value,
+            <span class="kw">_ </span>=&gt; <span class="number">100.0</span>,
+        };
 
-            <span class="comment">// center the bar, and make it hover above the collider
-            </span><span class="kw">let </span><span class="kw-2">mut </span>offset = Vec2::ZERO + Vec2::new(-width * <span class="number">0.5</span>, -<span class="number">30.0</span>);
+        <span class="comment">// center the bar, and make it hover above the collider
+        </span><span class="kw">let </span>offset = Vec2::ZERO + Vec2::new(-width * <span class="number">0.5</span>, -<span class="number">30.0</span>);
 
-            <span class="comment">// Update the position of the health bar UI
-            </span>style.left = Val::Px(screen_position.x + offset.x);
-            style.top = Val::Px(screen_position.y + offset.y);
-            style.position_type = PositionType::Absolute;
-        } <span class="kw">else if </span>hp_bg.<span class="number">0 </span>!= Entity::PLACEHOLDER {
-            commands.entity(bg_entity).despawn();
-        }
+        <span class="comment">// Update the position of the health bar UI
+        </span>style.left = Val::Px(screen_position.x + offset.x);
+        style.top = Val::Px(screen_position.y + offset.y);
     }
+
+    <span class="prelude-val">Ok</span>(())
 }
 
 <span class="kw">fn </span>update_hp(
     enemy_q: Query&lt;<span class="kw-2">&amp;</span>Health, With&lt;Enemy&gt;&gt;,
-    <span class="kw-2">mut </span>hp_bar_q: Query&lt;(<span class="kw-2">&amp;</span>Bar, <span class="kw-2">&amp;</span>Handle&lt;Material&gt;)&gt;,
+    <span class="kw-2">mut </span>hp_bar_q: Query&lt;(
+        <span class="kw-2">&amp;</span>Bar,
+        <span class="kw-2">&amp;</span>Handle&lt;Material&gt;,
+        <span class="kw-2">&amp;mut </span>DamageAnimation,
+    )&gt;,
     <span class="kw-2">mut </span>material: ResMut&lt;Assets&lt;Material&gt;&gt;,
-) {
-    <span class="kw">for </span>(hp_bar, ui_mat_handle) <span class="kw">in </span>hp_bar_q.iter() {
-        <span class="kw">if let </span><span class="prelude-val">Ok</span>(health) = enemy_q.get(hp_bar.<span class="number">0</span>) {
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(mat) = material.get_mut(ui_mat_handle) {
-                mat.factor = <span class="number">1.0 </span>* (health.current <span class="kw">as </span>f32 / health.max <span class="kw">as </span>f32)
-            }
-        } <span class="kw">else </span>{
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(mat) = material.get_mut(ui_mat_handle) {
-                mat.factor = <span class="number">0.0</span>;
-            }
+) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
+    <span class="kw">for </span>(hp_bar, handle, <span class="kw-2">mut </span>damage_animation) <span class="kw">in </span><span class="kw-2">&amp;mut </span>hp_bar_q {
+        <span class="kw">let </span>health = enemy_q.get(hp_bar.parent)<span class="question-mark">?</span>;
+        <span class="kw">let </span>material = material.get_mut(handle).ok_or(<span class="macro">anyhow!</span>(
+            <span class="string">"Enemy health bar material not found"
+        </span>))<span class="question-mark">?</span>;
+
+        <span class="kw">let </span>health_factor = <span class="number">1.0 </span>* (health.current <span class="kw">as </span>f32 / health.max <span class="kw">as </span>f32);
+
+        <span class="comment">// Reset the damage animation on taking damage
+        </span><span class="kw">if </span>material.health != health_factor {
+            damage_animation.delay.reset();
         }
+
+        <span class="kw">if </span>damage_animation.delay.finished() {
+            material.damage =
+                material.damage.lerp(health_factor, ANIMATION_SPEED);
+        }
+
+        material.health = health_factor;
+    }
+
+    <span class="prelude-val">Ok</span>(())
+}
+
+<span class="kw">fn </span>tick_damage_animation(
+    <span class="kw-2">mut </span>damage_animation: Query&lt;<span class="kw-2">&amp;mut </span>DamageAnimation&gt;,
+    time: Res&lt;Time&gt;,
+) {
+    <span class="kw">for </span><span class="kw-2">mut </span>damage_animation <span class="kw">in </span><span class="kw-2">&amp;mut </span>damage_animation {
+        damage_animation.delay.tick(time.delta());
     }
 }
 
 <span class="kw">fn </span>update_visibility(
     enemy_q: Query&lt;Ref&lt;Health&gt;, With&lt;Enemy&gt;&gt;,
     <span class="kw-2">mut </span>hp_root_q: Query&lt;(<span class="kw-2">&amp;</span>Root, <span class="kw-2">&amp;mut </span>Visibility)&gt;,
-) {
+) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
     <span class="kw">for </span>(hp_bar, <span class="kw-2">mut </span>visibility) <span class="kw">in </span>hp_root_q.iter_mut() {
-        <span class="kw">if let </span><span class="prelude-val">Ok</span>(health) = enemy_q.get(hp_bar.<span class="number">0</span>) {
-            <span class="kw">if </span>health.is_changed() {
-                <span class="kw">if </span>health.current == health.max {
-                    <span class="kw-2">*</span>visibility = Visibility::Hidden
-                } <span class="kw">else </span>{
-                    <span class="kw-2">*</span>visibility = Visibility::Inherited
-                }
+        <span class="kw">let </span>health = enemy_q.get(hp_bar.parent)<span class="question-mark">?</span>;
+        <span class="kw">if </span>health.is_changed() {
+            <span class="kw">if </span>health.current == health.max {
+                <span class="kw-2">*</span>visibility = Visibility::Hidden
+            } <span class="kw">else </span>{
+                <span class="kw-2">*</span>visibility = Visibility::Inherited
             }
+        }
+    }
+    <span class="prelude-val">Ok</span>(())
+}
+
+<span class="kw">fn </span>despawn(
+    <span class="kw-2">mut </span>commands: Commands,
+    enemy_q: Query&lt;<span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Dead&gt;, With&lt;Enemy&gt;&gt;,
+    hp_root_q: Query&lt;(Entity, <span class="kw-2">&amp;</span>Root)&gt;,
+) {
+    <span class="kw">for </span>(hp_entity, hp_root) <span class="kw">in </span><span class="kw-2">&amp;</span>hp_root_q {
+        <span class="kw">match </span>enemy_q.get(hp_root.parent) {
+            <span class="comment">// Despawn if entity can't be found or is marked as dead.
+            </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(<span class="kw">_</span>)) | <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; {
+                commands.entity(hp_entity).despawn_recursive()
+            },
+            <span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>) =&gt; {},
         }
     }
 }
