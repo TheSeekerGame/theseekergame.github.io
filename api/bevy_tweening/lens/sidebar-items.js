@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"struct":["ColorMaterialColorLens","SpriteColorLens","TextColorLens","TransformPositionLens","TransformRotateAxisLens","TransformRotateXLens","TransformRotateYLens","TransformRotateZLens","TransformRotationLens","TransformScaleLens","UiBackgroundColorLens","UiPositionLens"],"trait":["Lens"]};

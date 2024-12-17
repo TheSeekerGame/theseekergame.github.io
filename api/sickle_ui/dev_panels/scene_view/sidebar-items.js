@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"struct":["SceneView","SceneViewPlugin","SpawnSceneViewPreUpdate","SpawnSceneViewUpdate"],"trait":["UiSceneViewExt"]};

@@ -124,7 +124,37 @@
 <a href="#123" id="123">123</a>
 <a href="#124" id="124">124</a>
 <a href="#125" id="125">125</a>
-<a href="#126" id="126">126</a></pre></div><pre class="rust"><code><span class="attr">#![allow(unused_mut)]
+<a href="#126" id="126">126</a>
+<a href="#127" id="127">127</a>
+<a href="#128" id="128">128</a>
+<a href="#129" id="129">129</a>
+<a href="#130" id="130">130</a>
+<a href="#131" id="131">131</a>
+<a href="#132" id="132">132</a>
+<a href="#133" id="133">133</a>
+<a href="#134" id="134">134</a>
+<a href="#135" id="135">135</a>
+<a href="#136" id="136">136</a>
+<a href="#137" id="137">137</a>
+<a href="#138" id="138">138</a>
+<a href="#139" id="139">139</a>
+<a href="#140" id="140">140</a>
+<a href="#141" id="141">141</a>
+<a href="#142" id="142">142</a>
+<a href="#143" id="143">143</a>
+<a href="#144" id="144">144</a>
+<a href="#145" id="145">145</a>
+<a href="#146" id="146">146</a>
+<a href="#147" id="147">147</a>
+<a href="#148" id="148">148</a>
+<a href="#149" id="149">149</a>
+<a href="#150" id="150">150</a>
+<a href="#151" id="151">151</a>
+<a href="#152" id="152">152</a>
+<a href="#153" id="153">153</a>
+<a href="#154" id="154">154</a>
+<a href="#155" id="155">155</a>
+<a href="#156" id="156">156</a></pre></div><pre class="rust"><code><span class="attr">#![allow(unused_mut)]
 
 </span><span class="doccomment">/// Custom prelude, for stuff we'd like to access all over the codebase
 /// Use in every file. :)
@@ -135,6 +165,8 @@
     <span class="kw">pub use </span><span class="kw">crate</span>::gamestate::GameState;
 }
 
+<span class="kw">use </span>bevy::core::TaskPoolThreadAssignmentPolicy;
+<span class="kw">use </span>bevy::ecs::schedule::ExecutorKind;
 <span class="kw">use </span>bevy::render::settings::{WgpuFeatures, WgpuSettings};
 <span class="kw">use </span>bevy::render::RenderPlugin;
 <span class="kw">use </span>iyes_perf_ui::PerfUiPlugin;
@@ -178,7 +210,7 @@
     <span class="kw">let </span>bevy_plugins = bevy_plugins.set(WindowPlugin {
         primary_window: <span class="prelude-val">Some</span>(Window {
             title: <span class="string">"The Seeker (PRE-ALPHA)"</span>.into(),
-            present_mode: bevy::window::PresentMode::Fifo,
+            present_mode: bevy::window::PresentMode::AutoNoVsync,
             resizable: <span class="bool-val">true</span>,
             ..Default::default()
         }),
@@ -189,6 +221,31 @@
     <span class="kw">let </span>bevy_plugins = bevy_plugins.set(RenderPlugin {
         render_creation: wgpu_settings.into(),
         synchronous_pipeline_compilation: <span class="bool-val">false</span>,
+    });
+
+    <span class="kw">let </span>cpus = num_cpus::get_physical();
+    <span class="kw">let </span>cpus_io = (cpus * <span class="number">3 </span>/ <span class="number">4</span>).max(<span class="number">2</span>);
+    <span class="kw">let </span>cpus_async_compute = (cpus / <span class="number">4</span>).max(<span class="number">2</span>);
+    <span class="kw">let </span>bevy_plugins = bevy_plugins.set(TaskPoolPlugin {
+        task_pool_options: TaskPoolOptions {
+            min_total_threads: <span class="number">1</span>,
+            max_total_threads: usize::MAX,
+            io: TaskPoolThreadAssignmentPolicy {
+                min_threads: cpus_io,
+                max_threads: cpus_io,
+                percent: <span class="number">1.0</span>,
+            },
+            async_compute: TaskPoolThreadAssignmentPolicy {
+                min_threads: cpus_async_compute,
+                max_threads: cpus_async_compute,
+                percent: <span class="number">1.0</span>,
+            },
+            compute: TaskPoolThreadAssignmentPolicy {
+                min_threads: cpus,
+                max_threads: cpus,
+                percent: <span class="number">1.0</span>,
+            },
+        },
     });
 
     <span class="attr">#[cfg(feature = <span class="string">"dev"</span>)]
@@ -217,7 +274,6 @@
     // external plugins
     </span>app.add_plugins((
         LdtkPlugin,
-        bevy_tweening::TweeningPlugin,
         bevy_fluent::FluentPlugin,
         iyes_bevy_extras::d2::WorldCursorPlugin,
         ProgressPlugin::new(AppState::AssetsLoading)
@@ -247,6 +303,10 @@
 
     <span class="attr">#[cfg(feature = <span class="string">"dev"</span>)]
     </span>app.add_plugins(<span class="kw">crate</span>::dev::DevPlugin);
+
+    app.edit_schedule(Update, |s| {
+        s.set_executor_kind(ExecutorKind::SingleThreaded);
+    });
 
     app.run();
 }
