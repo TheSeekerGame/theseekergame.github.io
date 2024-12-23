@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/typetag-impl-0.2.18/src/parse.rs`."><title>parse.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-b0742ba02757f159.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="typetag_impl" data-themes="" data-resource-suffix="" data-rustdoc-version="1.83.0 (90b35a623 2024-11-26)" data-channel="1.83.0" data-search-js="search-f0d225181b97f9a4.js" data-settings-js="settings-805db61a62df4bd2.js" ><script src="../../static.files/storage-1d39b6787ed640ff.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-f070b9041d14864c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-0111fcff984fae8f.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">typetag_impl/</div>parse.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/typetag-impl-0.2.19/src/parse.rs`."><title>parse.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-b0742ba02757f159.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="typetag_impl" data-themes="" data-resource-suffix="" data-rustdoc-version="1.83.0 (90b35a623 2024-11-26)" data-channel="1.83.0" data-search-js="search-f0d225181b97f9a4.js" data-settings-js="settings-805db61a62df4bd2.js" ><script src="../../static.files/storage-1d39b6787ed640ff.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-f070b9041d14864c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-0111fcff984fae8f.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">typetag_impl/</div>parse.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
 <a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
@@ -184,9 +184,32 @@
 <a href="#183" id="183">183</a>
 <a href="#184" id="184">184</a>
 <a href="#185" id="185">185</a>
-<a href="#186" id="186">186</a></pre></div><pre class="rust"><code><span class="kw">use </span>quote::quote;
+<a href="#186" id="186">186</a>
+<a href="#187" id="187">187</a>
+<a href="#188" id="188">188</a>
+<a href="#189" id="189">189</a>
+<a href="#190" id="190">190</a>
+<a href="#191" id="191">191</a>
+<a href="#192" id="192">192</a>
+<a href="#193" id="193">193</a>
+<a href="#194" id="194">194</a>
+<a href="#195" id="195">195</a>
+<a href="#196" id="196">196</a>
+<a href="#197" id="197">197</a>
+<a href="#198" id="198">198</a>
+<a href="#199" id="199">199</a>
+<a href="#200" id="200">200</a>
+<a href="#201" id="201">201</a>
+<a href="#202" id="202">202</a>
+<a href="#203" id="203">203</a>
+<a href="#204" id="204">204</a>
+<a href="#205" id="205">205</a>
+<a href="#206" id="206">206</a></pre></div><pre class="rust"><code><span class="kw">use </span>quote::quote;
 <span class="kw">use </span>syn::parse::{Parse, ParseStream, <span class="prelude-ty">Result</span>};
-<span class="kw">use </span>syn::{Attribute, Error, ImplItem, ItemImpl, ItemTrait, LitStr, Token, TraitItem, Visibility};
+<span class="kw">use </span>syn::{
+    Attribute, Error, Generics, ImplItem, ItemImpl, ItemTrait, LitStr, Token, TraitItem, Type,
+    TypeParamBound, Visibility, WherePredicate,
+};
 
 <span class="kw">mod </span>kw {
     <span class="macro">syn::custom_keyword!</span>(tag);
@@ -237,11 +260,13 @@
                     <span class="kw">let </span>msg = <span class="string">"typetag trait with associated const is not supported yet"</span>;
                     <span class="kw">return </span><span class="prelude-val">Err</span>(Error::new_spanned(span, msg));
                 } <span class="kw">else if let </span>TraitItem::Type(assoc) = assoc {
-                    <span class="kw">let </span>type_token = assoc.type_token;
-                    <span class="kw">let </span>semi_token = assoc.semi_token;
-                    <span class="kw">let </span>span = <span class="macro">quote!</span>(#type_token #semi_token);
-                    <span class="kw">let </span>msg = <span class="string">"typetag trait with associated type is not supported yet"</span>;
-                    <span class="kw">return </span><span class="prelude-val">Err</span>(Error::new_spanned(span, msg));
+                    <span class="kw">if </span>!is_self_sized(<span class="kw-2">&amp;</span>assoc.generics) {
+                        <span class="kw">let </span>type_token = assoc.type_token;
+                        <span class="kw">let </span>semi_token = assoc.semi_token;
+                        <span class="kw">let </span>span = <span class="macro">quote!</span>(#type_token #semi_token);
+                        <span class="kw">let </span>msg = <span class="string">"typetag trait with associated type is not supported yet"</span>;
+                        <span class="kw">return </span><span class="prelude-val">Err</span>(Error::new_spanned(span, msg));
+                    }
                 }
             }
             attrs.extend(item.attrs);
@@ -262,12 +287,6 @@
                     <span class="kw">let </span>semi_token = assoc.semi_token;
                     <span class="kw">let </span>span = <span class="macro">quote!</span>(#const_token #semi_token);
                     <span class="kw">let </span>msg = <span class="string">"typetag trait with associated const is not supported yet"</span>;
-                    <span class="kw">return </span><span class="prelude-val">Err</span>(Error::new_spanned(span, msg));
-                } <span class="kw">else if let </span>ImplItem::Type(assoc) = assoc {
-                    <span class="kw">let </span>type_token = assoc.type_token;
-                    <span class="kw">let </span>semi_token = assoc.semi_token;
-                    <span class="kw">let </span>span = <span class="macro">quote!</span>(#type_token #semi_token);
-                    <span class="kw">let </span>msg = <span class="string">"typetag trait with associated type is not supported yet"</span>;
                     <span class="kw">return </span><span class="prelude-val">Err</span>(Error::new_spanned(span, msg));
                 }
             }
@@ -370,4 +389,25 @@
         <span class="prelude-val">Ok</span>(ImplArgs { name })
     }
 }
+
+<span class="kw">fn </span>is_self_sized(generics: <span class="kw-2">&amp;</span>Generics) -&gt; bool {
+    <span class="kw">if let </span><span class="prelude-val">Some</span>(where_clause) = <span class="kw-2">&amp;</span>generics.where_clause {
+        <span class="kw">for </span>predicate <span class="kw">in </span><span class="kw-2">&amp;</span>where_clause.predicates {
+            <span class="kw">if let </span>WherePredicate::Type(pred_type) = predicate {
+                <span class="kw">if let </span>Type::Path(type_path) = <span class="kw-2">&amp;</span>pred_type.bounded_ty {
+                    <span class="kw">if </span>type_path.path.is_ident(<span class="string">"Self"</span>) {
+                        <span class="kw">for </span>bound <span class="kw">in </span><span class="kw-2">&amp;</span>pred_type.bounds {
+                            <span class="kw">if let </span>TypeParamBound::Trait(trait_bound) = bound {
+                                <span class="kw">if </span>trait_bound.path.is_ident(<span class="string">"Sized"</span>) {
+                                    <span class="kw">return </span><span class="bool-val">true</span>;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    <span class="bool-val">false
+</span>}
 </code></pre></div></section></main></body></html>
