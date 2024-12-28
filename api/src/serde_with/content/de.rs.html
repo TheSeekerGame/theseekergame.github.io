@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde_with-3.11.0/src/content/de.rs`."><title>de.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-b0742ba02757f159.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="serde_with" data-themes="" data-resource-suffix="" data-rustdoc-version="1.83.0 (90b35a623 2024-11-26)" data-channel="1.83.0" data-search-js="search-f0d225181b97f9a4.js" data-settings-js="settings-805db61a62df4bd2.js" ><script src="../../../static.files/storage-1d39b6787ed640ff.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-f070b9041d14864c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-0111fcff984fae8f.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">serde_with/content/</div>de.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde_with-3.12.0/src/content/de.rs`."><title>de.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-b0742ba02757f159.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="serde_with" data-themes="" data-resource-suffix="" data-rustdoc-version="1.83.0 (90b35a623 2024-11-26)" data-channel="1.83.0" data-search-js="search-f0d225181b97f9a4.js" data-settings-js="settings-805db61a62df4bd2.js" ><script src="../../../static.files/storage-1d39b6787ed640ff.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-f070b9041d14864c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-0111fcff984fae8f.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">serde_with/content/</div>de.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
 <a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
@@ -1894,7 +1894,42 @@
 <a href="#1893" id="1893">1893</a>
 <a href="#1894" id="1894">1894</a>
 <a href="#1895" id="1895">1895</a>
-<a href="#1896" id="1896">1896</a></pre></div><pre class="rust"><code><span class="doccomment">//! Buffer for deserializing data.
+<a href="#1896" id="1896">1896</a>
+<a href="#1897" id="1897">1897</a>
+<a href="#1898" id="1898">1898</a>
+<a href="#1899" id="1899">1899</a>
+<a href="#1900" id="1900">1900</a>
+<a href="#1901" id="1901">1901</a>
+<a href="#1902" id="1902">1902</a>
+<a href="#1903" id="1903">1903</a>
+<a href="#1904" id="1904">1904</a>
+<a href="#1905" id="1905">1905</a>
+<a href="#1906" id="1906">1906</a>
+<a href="#1907" id="1907">1907</a>
+<a href="#1908" id="1908">1908</a>
+<a href="#1909" id="1909">1909</a>
+<a href="#1910" id="1910">1910</a>
+<a href="#1911" id="1911">1911</a>
+<a href="#1912" id="1912">1912</a>
+<a href="#1913" id="1913">1913</a>
+<a href="#1914" id="1914">1914</a>
+<a href="#1915" id="1915">1915</a>
+<a href="#1916" id="1916">1916</a>
+<a href="#1917" id="1917">1917</a>
+<a href="#1918" id="1918">1918</a>
+<a href="#1919" id="1919">1919</a>
+<a href="#1920" id="1920">1920</a>
+<a href="#1921" id="1921">1921</a>
+<a href="#1922" id="1922">1922</a>
+<a href="#1923" id="1923">1923</a>
+<a href="#1924" id="1924">1924</a>
+<a href="#1925" id="1925">1925</a>
+<a href="#1926" id="1926">1926</a>
+<a href="#1927" id="1927">1927</a>
+<a href="#1928" id="1928">1928</a>
+<a href="#1929" id="1929">1929</a>
+<a href="#1930" id="1930">1930</a>
+<a href="#1931" id="1931">1931</a></pre></div><pre class="rust"><code><span class="doccomment">//! Buffer for deserializing data.
 //!
 //! This is a copy and improvement of the `serde` private type:
 //! &lt;https://github.com/serde-rs/serde/blob/f85c4f2fa99c7f3b103e6e2580e75eb9313b00d0/serde/src/private/de.rs#L195&gt;
@@ -1910,7 +1945,8 @@
 //! In the future this can hopefully be replaced by a public type in `serde` itself.
 //! &lt;https://github.com/serde-rs/serde/pull/2348&gt;
 
-</span><span class="kw">use crate</span>::{
+</span><span class="kw">use </span><span class="self">self</span>::utils::{get_unexpected_i128, get_unexpected_u128};
+<span class="kw">use crate</span>::{
     prelude::<span class="kw-2">*</span>,
     utils::{size_hint_cautious, size_hint_from_bounds},
 };
@@ -1955,20 +1991,20 @@
 
 <span class="kw">impl </span>Content&lt;<span class="lifetime">'_</span>&gt; {
     <span class="attr">#[cold]
-    </span><span class="kw">fn </span>unexpected(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Unexpected&lt;<span class="lifetime">'_</span>&gt; {
+    </span><span class="kw">fn </span>unexpected&lt;<span class="lifetime">'a</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="self">self</span>, buf: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>[u8; <span class="number">58</span>]) -&gt; Unexpected&lt;<span class="lifetime">'a</span>&gt; {
         <span class="kw">match </span><span class="kw-2">*</span><span class="self">self </span>{
             Content::Bool(b) =&gt; Unexpected::Bool(b),
-            Content::U8(n) =&gt; Unexpected::Unsigned(n <span class="kw">as </span>u64),
-            Content::U16(n) =&gt; Unexpected::Unsigned(n <span class="kw">as </span>u64),
-            Content::U32(n) =&gt; Unexpected::Unsigned(n <span class="kw">as </span>u64),
+            Content::U8(n) =&gt; Unexpected::Unsigned(u64::from(n)),
+            Content::U16(n) =&gt; Unexpected::Unsigned(u64::from(n)),
+            Content::U32(n) =&gt; Unexpected::Unsigned(u64::from(n)),
             Content::U64(n) =&gt; Unexpected::Unsigned(n),
-            Content::U128(<span class="kw">_</span>) =&gt; Unexpected::Other(<span class="string">"u128"</span>),
-            Content::I8(n) =&gt; Unexpected::Signed(n <span class="kw">as </span>i64),
-            Content::I16(n) =&gt; Unexpected::Signed(n <span class="kw">as </span>i64),
-            Content::I32(n) =&gt; Unexpected::Signed(n <span class="kw">as </span>i64),
+            Content::U128(n) =&gt; get_unexpected_u128(n, buf),
+            Content::I8(n) =&gt; Unexpected::Signed(i64::from(n)),
+            Content::I16(n) =&gt; Unexpected::Signed(i64::from(n)),
+            Content::I32(n) =&gt; Unexpected::Signed(i64::from(n)),
             Content::I64(n) =&gt; Unexpected::Signed(n),
-            Content::I128(<span class="kw">_</span>) =&gt; Unexpected::Other(<span class="string">"i128"</span>),
-            Content::F32(f) =&gt; Unexpected::Float(f <span class="kw">as </span>f64),
+            Content::I128(n) =&gt; get_unexpected_i128(n, buf),
+            Content::F32(f) =&gt; Unexpected::Float(f64::from(f)),
             Content::F64(f) =&gt; Unexpected::Float(f),
             Content::Char(c) =&gt; Unexpected::Char(c),
             Content::String(<span class="kw-2">ref </span>s) =&gt; Unexpected::Str(s),
@@ -2221,7 +2257,8 @@
 {
     <span class="attr">#[cold]
     </span><span class="kw">fn </span>invalid_type(<span class="self">self</span>, exp: <span class="kw-2">&amp;</span><span class="kw">dyn </span>Expected) -&gt; E {
-        DeError::invalid_type(<span class="self">self</span>.content.unexpected(), exp)
+        <span class="kw">let </span><span class="kw-2">mut </span>buf = [<span class="number">0</span>; <span class="number">58</span>];
+        DeError::invalid_type(<span class="self">self</span>.content.unexpected(<span class="kw-2">&amp;mut </span>buf), exp)
     }
 
     <span class="kw">fn </span>deserialize_integer&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, E&gt;
@@ -2663,7 +2700,11 @@
             }
             s @ Content::String(<span class="kw">_</span>) | s @ Content::Str(<span class="kw">_</span>) =&gt; (s, <span class="prelude-val">None</span>),
             other =&gt; {
-                <span class="kw">return </span><span class="prelude-val">Err</span>(DeError::invalid_type(other.unexpected(), <span class="kw-2">&amp;</span><span class="string">"string or map"</span>));
+                <span class="kw">let </span><span class="kw-2">mut </span>buf = [<span class="number">0</span>; <span class="number">58</span>];
+                <span class="kw">return </span><span class="prelude-val">Err</span>(DeError::invalid_type(
+                    other.unexpected(<span class="kw-2">&amp;mut </span>buf),
+                    <span class="kw-2">&amp;</span><span class="string">"string or map"</span>,
+                ));
             }
         };
 
@@ -2809,7 +2850,13 @@
                 SeqDeserializer::new(v, <span class="self">self</span>.is_human_readable),
                 visitor,
             ),
-            <span class="prelude-val">Some</span>(other) =&gt; <span class="prelude-val">Err</span>(DeError::invalid_type(other.unexpected(), <span class="kw-2">&amp;</span><span class="string">"tuple variant"</span>)),
+            <span class="prelude-val">Some</span>(other) =&gt; {
+                <span class="kw">let </span><span class="kw-2">mut </span>buf = [<span class="number">0</span>; <span class="number">58</span>];
+                <span class="prelude-val">Err</span>(DeError::invalid_type(
+                    other.unexpected(<span class="kw-2">&amp;mut </span>buf),
+                    <span class="kw-2">&amp;</span><span class="string">"tuple variant"</span>,
+                ))
+            }
             <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Err</span>(DeError::invalid_type(
                 Unexpected::UnitVariant,
                 <span class="kw-2">&amp;</span><span class="string">"tuple variant"</span>,
@@ -2834,7 +2881,13 @@
                 SeqDeserializer::new(v, <span class="self">self</span>.is_human_readable),
                 visitor,
             ),
-            <span class="prelude-val">Some</span>(other) =&gt; <span class="prelude-val">Err</span>(DeError::invalid_type(other.unexpected(), <span class="kw-2">&amp;</span><span class="string">"struct variant"</span>)),
+            <span class="prelude-val">Some</span>(other) =&gt; {
+                <span class="kw">let </span><span class="kw-2">mut </span>buf = [<span class="number">0</span>; <span class="number">58</span>];
+                <span class="prelude-val">Err</span>(DeError::invalid_type(
+                    other.unexpected(<span class="kw-2">&amp;mut </span>buf),
+                    <span class="kw-2">&amp;</span><span class="string">"struct variant"</span>,
+                ))
+            }
             <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Err</span>(DeError::invalid_type(
                 Unexpected::UnitVariant,
                 <span class="kw-2">&amp;</span><span class="string">"struct variant"</span>,
@@ -3025,7 +3078,8 @@
 {
     <span class="attr">#[cold]
     </span><span class="kw">fn </span>invalid_type(<span class="self">self</span>, exp: <span class="kw-2">&amp;</span><span class="kw">dyn </span>Expected) -&gt; E {
-        DeError::invalid_type(<span class="self">self</span>.content.unexpected(), exp)
+        <span class="kw">let </span><span class="kw-2">mut </span>buf = [<span class="number">0</span>; <span class="number">58</span>];
+        DeError::invalid_type(<span class="self">self</span>.content.unexpected(<span class="kw-2">&amp;mut </span>buf), exp)
     }
 
     <span class="kw">fn </span>deserialize_integer&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, E&gt;
@@ -3438,7 +3492,11 @@
             }
             <span class="kw-2">ref </span>s @ Content::String(<span class="kw">_</span>) | <span class="kw-2">ref </span>s @ Content::Str(<span class="kw">_</span>) =&gt; (s, <span class="prelude-val">None</span>),
             <span class="kw-2">ref </span>other =&gt; {
-                <span class="kw">return </span><span class="prelude-val">Err</span>(DeError::invalid_type(other.unexpected(), <span class="kw-2">&amp;</span><span class="string">"string or map"</span>));
+                <span class="kw">let </span><span class="kw-2">mut </span>buf = [<span class="number">0</span>; <span class="number">58</span>];
+                <span class="kw">return </span><span class="prelude-val">Err</span>(DeError::invalid_type(
+                    other.unexpected(<span class="kw-2">&amp;mut </span>buf),
+                    <span class="kw-2">&amp;</span><span class="string">"string or map"</span>,
+                ));
             }
         };
 
@@ -3566,7 +3624,13 @@
                 SeqRefDeserializer::new(v, <span class="self">self</span>.is_human_readable),
                 visitor,
             ),
-            <span class="prelude-val">Some</span>(other) =&gt; <span class="prelude-val">Err</span>(DeError::invalid_type(other.unexpected(), <span class="kw-2">&amp;</span><span class="string">"tuple variant"</span>)),
+            <span class="prelude-val">Some</span>(other) =&gt; {
+                <span class="kw">let </span><span class="kw-2">mut </span>buf = [<span class="number">0</span>; <span class="number">58</span>];
+                <span class="prelude-val">Err</span>(DeError::invalid_type(
+                    other.unexpected(<span class="kw-2">&amp;mut </span>buf),
+                    <span class="kw-2">&amp;</span><span class="string">"tuple variant"</span>,
+                ))
+            }
             <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Err</span>(DeError::invalid_type(
                 Unexpected::UnitVariant,
                 <span class="kw-2">&amp;</span><span class="string">"tuple variant"</span>,
@@ -3591,7 +3655,13 @@
                 SeqRefDeserializer::new(v, <span class="self">self</span>.is_human_readable),
                 visitor,
             ),
-            <span class="prelude-val">Some</span>(other) =&gt; <span class="prelude-val">Err</span>(DeError::invalid_type(other.unexpected(), <span class="kw-2">&amp;</span><span class="string">"struct variant"</span>)),
+            <span class="prelude-val">Some</span>(other) =&gt; {
+                <span class="kw">let </span><span class="kw-2">mut </span>buf = [<span class="number">0</span>; <span class="number">58</span>];
+                <span class="prelude-val">Err</span>(DeError::invalid_type(
+                    other.unexpected(<span class="kw-2">&amp;mut </span>buf),
+                    <span class="kw-2">&amp;</span><span class="string">"struct variant"</span>,
+                ))
+            }
             <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Err</span>(DeError::invalid_type(
                 Unexpected::UnitVariant,
                 <span class="kw-2">&amp;</span><span class="string">"struct variant"</span>,

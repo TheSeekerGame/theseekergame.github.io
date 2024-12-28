@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["PlayerWeapon"],"fn":["is_player_using_bow","swap_weapon"],"struct":["PlayerWeaponPlugin"]};

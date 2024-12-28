@@ -270,9 +270,7 @@
 <a href="#269" id="269">269</a>
 <a href="#270" id="270">270</a>
 <a href="#271" id="271">271</a>
-<a href="#272" id="272">272</a>
-<a href="#273" id="273">273</a>
-<a href="#274" id="274">274</a></pre></div><pre class="rust"><code><span class="kw">use </span>bevy::prelude::{DetectChanges, Ref};
+<a href="#272" id="272">272</a></pre></div><pre class="rust"><code><span class="kw">use </span>bevy::prelude::{DetectChanges, Ref};
 <span class="kw">use </span>theseeker_engine::assets::animation::SpriteAnimation;
 <span class="kw">use </span>theseeker_engine::gent::Gent;
 <span class="kw">use </span>theseeker_engine::physics::LinearVelocity;
@@ -289,6 +287,8 @@
     in_state, Added, App, Has, IntoSystemConfigs, Local, Or, Plugin, Query,
     Res, With, Without,
 };
+
+<span class="kw">use </span><span class="kw">super</span>::player_weapon::PlayerWeapon;
 
 <span class="doccomment">/// play animations here, run after transitions
 </span><span class="kw">pub struct </span>PlayerAnimationPlugin;
@@ -426,10 +426,11 @@
             <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>HitFreezeTime&gt;,
             Ref&lt;Attacking&gt;,
         ),
-        (Without&lt;Whirling&gt;),
+        Without&lt;Whirling&gt;,
     &gt;,
     <span class="kw-2">mut </span>gfx_query: Query&lt;<span class="kw-2">&amp;mut </span>ScriptPlayer&lt;SpriteAnimation&gt;, With&lt;PlayerGfx&gt;&gt;,
     config: Res&lt;PlayerConfig&gt;,
+    weapon: Res&lt;PlayerWeapon&gt;,
 ) {
     <span class="kw">for </span>(gent, is_falling, is_jumping, is_running, hitfrozen, attacking) <span class="kw">in
         </span>query.iter()
@@ -440,31 +441,29 @@
                 .unwrap_or(<span class="bool-val">false</span>);
             <span class="comment">// let current = player.current_key().unwrap_or("").clone();
             </span>player.set_slot(<span class="string">"AttackTransition"</span>, <span class="bool-val">false</span>);
+            <span class="kw">let </span>basic_air_anim_key_str = <span class="kw-2">&amp;</span>weapon.get_anim_key(<span class="string">"BasicAir"</span>);
+            <span class="kw">let </span>basic_run_anim_key_str = <span class="kw-2">&amp;</span>weapon.get_anim_key(<span class="string">"BasicRun"</span>);
+            <span class="kw">let </span>basic_idle_anim_key_str = <span class="kw-2">&amp;</span>weapon.get_anim_key(<span class="string">"BasicIdle"</span>);
+
             <span class="kw">if </span>is_falling || is_jumping {
                 <span class="comment">// TODO: These need a way to resume the new animation from the current frame index
                 // or specified offset
-                </span><span class="kw">if </span>player.current_key().unwrap_or(<span class="string">""</span>)
-                    != <span class="string">"anim.player.SwordBasicAir"
-                </span>{
-                    player.play_key(<span class="string">"anim.player.SwordBasicAir"</span>);
+                </span><span class="kw">if </span>player.current_key() != <span class="prelude-val">Some</span>(basic_air_anim_key_str) {
+                    player.play_key(basic_air_anim_key_str);
                     <span class="kw">if </span>!attacking.is_added() {
                         player.set_slot(<span class="string">"AttackTransition"</span>, <span class="bool-val">true</span>);
                     }
                 }
             } <span class="kw">else if </span>is_running &amp;&amp; !hitfrozen {
-                <span class="kw">if </span>player.current_key().unwrap_or(<span class="string">""</span>)
-                    != <span class="string">"anim.player.SwordBasicRun"
-                </span>{
-                    player.play_key(<span class="string">"anim.player.SwordBasicRun"</span>);
+                <span class="kw">if </span>player.current_key() != <span class="prelude-val">Some</span>(basic_run_anim_key_str) {
+                    player.play_key(basic_run_anim_key_str);
                     <span class="kw">if </span>!attacking.is_added() {
                         player.set_slot(<span class="string">"AttackTransition"</span>, <span class="bool-val">true</span>);
                     }
                 }
             } <span class="kw">else </span>{
-                <span class="kw">if </span>player.current_key().unwrap_or(<span class="string">""</span>)
-                    != <span class="string">"anim.player.SwordBasicIdle"
-                </span>{
-                    player.play_key(<span class="string">"anim.player.SwordBasicIdle"</span>);
+                <span class="kw">if </span>player.current_key() != <span class="prelude-val">Some</span>(basic_idle_anim_key_str) {
+                    player.play_key(basic_idle_anim_key_str);
                     <span class="kw">if </span>!attacking.is_added() {
                         player.set_slot(<span class="string">"AttackTransition"</span>, <span class="bool-val">true</span>);
                     }
@@ -502,6 +501,7 @@
     <span class="kw-2">mut </span>current_direction: Local&lt;bool&gt;,
     <span class="kw-2">mut </span>old_direction: Local&lt;bool&gt;,
     time: Res&lt;GameTime&gt;,
+    weapon: Res&lt;PlayerWeapon&gt;,
 ) {
     <span class="kw">for </span>(facing, gent, wall_slide_time) <span class="kw">in </span>query.iter() {
         <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="kw-2">mut </span>player) = gfx_query.get_mut(gent.e_gfx) {
@@ -510,14 +510,10 @@
 
             <span class="comment">// Have the player face away from the wall if they are attacking while wall sliding
             </span><span class="kw">let </span>pressed_on_wall = wall_slide_time
-                <span class="comment">// checks that player is actually against the wall, rather then it being close
-                // enough time from the player having left the wall to still jump
-                // (ie: not wall_jump_coyote_time)
-                </span>.map(|s| s.<span class="number">0 </span>&lt;= <span class="number">1.0 </span>/ time.hz <span class="kw">as </span>f32)
-                .unwrap_or(<span class="bool-val">false</span>);
-            <span class="kw">if </span>pressed_on_wall
-                &amp;&amp; player.current_key() == <span class="prelude-val">Some</span>(<span class="string">"anim.player.SwordBasicAir"</span>)
-            {
+                .is_some_and(|s| s.is_pressed_against_wall(<span class="kw-2">&amp;</span>time));
+            <span class="kw">let </span>is_attacking_while_falling =
+                player.current_key() == <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>weapon.get_anim_key(<span class="string">"BasicAir"</span>));
+            <span class="kw">if </span>pressed_on_wall &amp;&amp; is_attacking_while_falling {
                 facing = <span class="kw">match </span>facing {
                     Facing::Right =&gt; Facing::Left,
                     Facing::Left =&gt; Facing::Right,

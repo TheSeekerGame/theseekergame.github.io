@@ -67,7 +67,14 @@
 <a href="#66" id="66">66</a>
 <a href="#67" id="67">67</a>
 <a href="#68" id="68">68</a>
-<a href="#69" id="69">69</a></pre></div><pre class="rust"><code><span class="kw">use </span>theseeker_engine::ballistics_math::solve_ballistic_arc;
+<a href="#69" id="69">69</a>
+<a href="#70" id="70">70</a>
+<a href="#71" id="71">71</a>
+<a href="#72" id="72">72</a>
+<a href="#73" id="73">73</a>
+<a href="#74" id="74">74</a>
+<a href="#75" id="75">75</a>
+<a href="#76" id="76">76</a></pre></div><pre class="rust"><code><span class="kw">use </span>theseeker_engine::ballistics_math::solve_ballistic_arc;
 <span class="kw">use </span>theseeker_engine::physics::{Collider, LinearVelocity};
 
 <span class="kw">use </span><span class="kw">crate</span>::game::attack::Attack;
@@ -114,13 +121,18 @@
     }
 }
 
+<span class="doccomment">/// Marker that identifies arrows shot by the Player.
+</span><span class="attr">#[derive(Component)]
+</span><span class="kw">pub struct </span>Arrow;
+
 <span class="doccomment">/// Applies gravity to the projectile
+/// It will not add gravity to Arrows shot by the Player.
 </span><span class="kw">pub fn </span>arc_projectile(
     <span class="kw-2">mut </span>query: Query&lt;
         (
             <span class="kw-2">&amp;mut </span>Transform,
-            <span class="kw-2">&amp;</span>Collider,
             <span class="kw-2">&amp;mut </span>Projectile,
+            Has&lt;Arrow&gt;,
         ),
         With&lt;Attack&gt;,
     &gt;,
@@ -128,8 +140,10 @@
     time: Res&lt;GameTime&gt;,
 ) {
     <span class="kw">let </span>fall_accel = config.fall_accel;
-    <span class="kw">for </span>(<span class="kw-2">mut </span>transform, collider, <span class="kw-2">mut </span>projectile) <span class="kw">in </span>query.iter_mut() {
-        projectile.vel.<span class="number">0</span>.y -= fall_accel;
+    <span class="kw">for </span>(<span class="kw-2">mut </span>transform, <span class="kw-2">mut </span>projectile, arrow) <span class="kw">in </span>query.iter_mut() {
+        <span class="kw">if </span>!arrow {
+            projectile.vel.<span class="number">0</span>.y -= fall_accel;
+        }
         <span class="kw">let </span>z = transform.translation.z;
         transform.translation = (transform.translation.xy()
             + <span class="kw-2">*</span>projectile.vel * (<span class="number">1.0 </span>/ time.hz <span class="kw">as </span>f32))
