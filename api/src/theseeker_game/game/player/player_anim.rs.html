@@ -270,13 +270,31 @@
 <a href="#269" id="269">269</a>
 <a href="#270" id="270">270</a>
 <a href="#271" id="271">271</a>
-<a href="#272" id="272">272</a></pre></div><pre class="rust"><code><span class="kw">use </span>bevy::prelude::{DetectChanges, Ref};
+<a href="#272" id="272">272</a>
+<a href="#273" id="273">273</a>
+<a href="#274" id="274">274</a>
+<a href="#275" id="275">275</a>
+<a href="#276" id="276">276</a>
+<a href="#277" id="277">277</a>
+<a href="#278" id="278">278</a>
+<a href="#279" id="279">279</a>
+<a href="#280" id="280">280</a>
+<a href="#281" id="281">281</a>
+<a href="#282" id="282">282</a>
+<a href="#283" id="283">283</a>
+<a href="#284" id="284">284</a>
+<a href="#285" id="285">285</a>
+<a href="#286" id="286">286</a>
+<a href="#287" id="287">287</a>
+<a href="#288" id="288">288</a>
+<a href="#289" id="289">289</a></pre></div><pre class="rust"><code><span class="kw">use </span>bevy::prelude::{DetectChanges, Ref, RemovedComponents};
 <span class="kw">use </span>theseeker_engine::assets::animation::SpriteAnimation;
 <span class="kw">use </span>theseeker_engine::gent::Gent;
 <span class="kw">use </span>theseeker_engine::physics::LinearVelocity;
 <span class="kw">use </span>theseeker_engine::prelude::{GameTickUpdate, GameTime};
 <span class="kw">use </span>theseeker_engine::script::ScriptPlayer;
 
+<span class="kw">use </span><span class="kw">super</span>::DashStrike;
 <span class="kw">use </span><span class="kw">crate</span>::appstate::AppState;
 <span class="kw">use </span><span class="kw">crate</span>::game::gentstate::Facing;
 <span class="kw">use </span><span class="kw">crate</span>::game::player::{
@@ -305,6 +323,7 @@
                 player_attacking_animation,
                 player_whirling_animation,
                 player_dashing_animation,
+                player_dashing_strike_animation,
                 sprite_flip.after(player_dashing_animation),
             )
                 .in_set(PlayerStateSet::Animation)
@@ -485,12 +504,27 @@
 }
 
 <span class="kw">fn </span>player_dashing_animation(
-    query: Query&lt;<span class="kw-2">&amp;</span>Gent, Added&lt;Dashing&gt;&gt;,
+    query: Query&lt;(<span class="kw-2">&amp;</span>Gent, <span class="kw-2">&amp;</span>Dashing), Added&lt;Dashing&gt;&gt;,
     <span class="kw-2">mut </span>gfx_query: Query&lt;<span class="kw-2">&amp;mut </span>ScriptPlayer&lt;SpriteAnimation&gt;, With&lt;PlayerGfx&gt;&gt;,
 ) {
-    <span class="kw">for </span>gent <span class="kw">in </span>query.iter() {
+    <span class="kw">for </span>(gent, dashing) <span class="kw">in </span>query.iter() {
         <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="kw-2">mut </span>player) = gfx_query.get_mut(gent.e_gfx) {
-            player.play_key(<span class="string">"anim.player.Dash"</span>)
+            <span class="kw">if </span>dashing.is_down_dash() {
+                player.play_key(<span class="string">"anim.player.SwordDashDown"</span>)
+            } <span class="kw">else </span>{
+                player.play_key(<span class="string">"anim.player.Dash"</span>)
+            }
+        }
+    }
+}
+
+<span class="kw">fn </span>player_dashing_strike_animation(
+    query: Query&lt;(<span class="kw-2">&amp;</span>Gent, <span class="kw-2">&amp;</span>DashStrike), Added&lt;DashStrike&gt;&gt;,
+    <span class="kw-2">mut </span>gfx_query: Query&lt;<span class="kw-2">&amp;mut </span>ScriptPlayer&lt;SpriteAnimation&gt;, With&lt;PlayerGfx&gt;&gt;,
+) {
+    <span class="kw">for </span>(gent, _dash_strike) <span class="kw">in </span>query.iter() {
+        <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="kw-2">mut </span>player) = gfx_query.get_mut(gent.e_gfx) {
+            player.play_key(<span class="string">"anim.player.SwordDashDownStrike"</span>)
         }
     }
 }
