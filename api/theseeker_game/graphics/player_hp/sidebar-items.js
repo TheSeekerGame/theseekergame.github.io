@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["update_hp"],"struct":["Bar","Material","PlayerHpBarPlugin"]};
+window.SIDEBAR_ITEMS = {"fn":["update_hp","update_hp_vignette"],"struct":["Bar","Material","PlayerHpBarPlugin"]};
