@@ -1453,7 +1453,17 @@
 <a href="#1452" id="1452">1452</a>
 <a href="#1453" id="1453">1453</a>
 <a href="#1454" id="1454">1454</a>
-<a href="#1455" id="1455">1455</a></pre></div><pre class="rust"><code><span class="kw">use </span>bevy::sprite::{Sprite, SpriteSheetBundle};
+<a href="#1455" id="1455">1455</a>
+<a href="#1456" id="1456">1456</a>
+<a href="#1457" id="1457">1457</a>
+<a href="#1458" id="1458">1458</a>
+<a href="#1459" id="1459">1459</a>
+<a href="#1460" id="1460">1460</a>
+<a href="#1461" id="1461">1461</a>
+<a href="#1462" id="1462">1462</a>
+<a href="#1463" id="1463">1463</a>
+<a href="#1464" id="1464">1464</a>
+<a href="#1465" id="1465">1465</a></pre></div><pre class="rust"><code><span class="kw">use </span>bevy::sprite::{Sprite, SpriteSheetBundle};
 <span class="kw">use </span>bevy::transform::TransformSystem::TransformPropagate;
 <span class="kw">use </span>glam::{Vec2, Vec2Swizzles, Vec3Swizzles};
 <span class="kw">use </span>leafwing_input_manager::action_state::ActionState;
@@ -1471,11 +1481,10 @@
 <span class="kw">use </span><span class="kw">super</span>::arc_attack::{Arrow, Projectile};
 <span class="kw">use </span><span class="kw">super</span>::player_weapon::{is_player_using_bow, PlayerWeapon};
 <span class="kw">use super</span>::{
-    dash_icon_fx, player_dash_fx, player_new_stats_mod, AttackBundle,
-    CanStealth, DashIcon, DashStrike, DashType, JumpCount, KillCount,
-    Knockback, Passives, PlayerStats, Pushback, StatType, Stealthing, Whirling,
+    dash_icon_fx, player_dash_fx, AttackBundle, CanStealth, DashIcon,
+    DashStrike, DashType, JumpCount, Knockback, PlayerStats, Pushback,
+    StatType, Stealthing, Whirling,
 };
-<span class="kw">use </span><span class="kw">crate</span>::camera::CameraShake;
 <span class="kw">use </span><span class="kw">crate</span>::game::attack::{Attack, SelfPushback, Stealthed};
 <span class="kw">use </span><span class="kw">crate</span>::game::enemy::Enemy;
 <span class="kw">use </span><span class="kw">crate</span>::game::gentstate::{Facing, TransitionQueue, Transitionable};
@@ -1485,12 +1494,12 @@
     PlayerGfx, PlayerStateSet, Running, WallSlideTime, WhirlAbility,
 };
 <span class="kw">use </span><span class="kw">crate</span>::prelude::{
-    any_with_component, resource_changed, App, BuildChildren, Commands,
-    DetectChanges, Direction2d, Entity, GameTickUpdate, GameTime, Has,
-    IntoSystemConfigs, Plugin, Query, Res, Transform, TransformBundle, With,
-    Without,
+    any_with_component, App, BuildChildren, Commands, DetectChanges,
+    Direction2d, Entity, GameTickUpdate, GameTime, Has, IntoSystemConfigs,
+    Plugin, Query, Res, Transform, TransformBundle, With, Without,
 };
 <span class="kw">use </span><span class="kw">crate</span>::StateDespawnMarker;
+<span class="kw">use crate</span>::{camera::CameraShake, game::player::PlayerStatMod};
 
 <span class="doccomment">/// Player behavior systems.
 /// Do stuff here in states and add transitions to other states by pushing
@@ -1502,10 +1511,6 @@
         app.add_systems(
             GameTickUpdate,
             (
-                (
-                    gain_passives.run_if(resource_changed::&lt;KillCount&gt;),
-                    player_new_stats_mod,
-                ),
                 (
                     player_idle.run_if(any_with_component::&lt;Idle&gt;),
                     add_attack,
@@ -1529,8 +1534,7 @@
                     player_grounded.run_if(any_with_component::&lt;Grounded&gt;),
                     player_falling.run_if(any_with_component::&lt;Falling&gt;),
                     <span class="kw">crate</span>::game::physics::knockback
-                        <span class="comment">// player_pushback
-                        </span>.run_if(any_with_component::&lt;Knockback&gt;)
+                        .run_if(any_with_component::&lt;Knockback&gt;)
                         .before(player_jump)
                         .after(player_sliding),
                     player_sliding
@@ -1556,19 +1560,6 @@
             )
                 .chain(),
         );
-    }
-}
-
-<span class="kw">fn </span>gain_passives(
-    <span class="kw-2">mut </span>query: Query&lt;<span class="kw-2">&amp;mut </span>Passives, With&lt;Player&gt;&gt;,
-    kills: Res&lt;KillCount&gt;,
-    player_config: Res&lt;PlayerConfig&gt;,
-) {
-    <span class="kw">for </span><span class="kw-2">mut </span>passives <span class="kw">in </span>query.iter_mut() {
-        <span class="kw">if </span><span class="kw-2">**</span>kills % player_config.passive_gain_rate == <span class="number">0 </span>{
-            passives.gain();
-            <span class="macro">println!</span>(<span class="string">"{:?}"</span>, passives);
-        }
     }
 }
 
@@ -1609,6 +1600,7 @@
             <span class="kw-2">&amp;</span>ActionState&lt;PlayerAction&gt;,
             <span class="kw-2">&amp;mut </span>CanStealth,
             <span class="kw-2">&amp;mut </span>TransitionQueue,
+            <span class="kw-2">&amp;</span>PlayerStatMod,
             <span class="kw-2">&amp;</span>Gent,
         ),
         (With&lt;Player&gt;, With&lt;Gent&gt;),
@@ -1617,10 +1609,10 @@
     time: Res&lt;GameTime&gt;,
     <span class="kw-2">mut </span>commands: Commands,
 ) {
-    <span class="kw">for </span>(action_state, <span class="kw-2">mut </span>can_stealth, <span class="kw-2">mut </span>transition_queue, gent) <span class="kw">in
+    <span class="kw">for </span>(action_state, <span class="kw-2">mut </span>can_stealth, <span class="kw-2">mut </span>transition_queue, statmod, gent) <span class="kw">in
         </span>q_gent.iter_mut()
     {
-        can_stealth.remaining_cooldown -= <span class="number">1.0 </span>/ time.hz <span class="kw">as </span>f32;
+        can_stealth.remaining_cooldown -= statmod.cdr / time.hz <span class="kw">as </span>f32;
         <span class="comment">// Return to base sprite color when exiting stealth
         </span><span class="kw">if </span>can_stealth.is_added() {
             <span class="kw">let </span><span class="kw-2">mut </span>sprite = sprites.get_mut(gent.e_gfx).unwrap();
@@ -1707,6 +1699,7 @@
     <span class="kw-2">mut </span>q_gent: Query&lt;
         (
             <span class="kw-2">&amp;</span>PlayerStats,
+            <span class="kw-2">&amp;</span>PlayerStatMod,
             <span class="kw-2">&amp;mut </span>LinearVelocity,
             <span class="kw-2">&amp;</span>ActionState&lt;PlayerAction&gt;,
             <span class="kw-2">&amp;mut </span>Facing,
@@ -1720,6 +1713,7 @@
 ) {
     <span class="kw">for </span>(
         stats,
+        stat_mod,
         <span class="kw-2">mut </span>velocity,
         action_state,
         <span class="kw-2">mut </span>facing,
@@ -1744,13 +1738,16 @@
             &amp;&amp; action_state.value(<span class="kw-2">&amp;</span>PlayerAction::Move) != <span class="number">0.0
             </span>&amp;&amp; controllable
         {
-            (velocity.x + accel * direction * ground_friction) * stealth_boost
+            (velocity.x + accel * direction * ground_friction)
+                * stealth_boost
+                * stat_mod.speed
         } <span class="kw">else if </span>action_state.pressed(<span class="kw-2">&amp;</span>PlayerAction::Move)
             &amp;&amp; action_state.value(<span class="kw-2">&amp;</span>PlayerAction::Move) != <span class="number">0.0
             </span>&amp;&amp; controllable
         {
             (velocity.x + initial_accel * direction * ground_friction)
                 * stealth_boost
+                * stat_mod.speed
         } <span class="kw">else </span>{
             <span class="comment">// de-acceleration profile
             </span><span class="kw">if </span>is_grounded {
@@ -1772,8 +1769,12 @@
 
         <span class="kw">if </span>!is_dashing {
             velocity.x = new_vel.clamp(
-                -stats.get(StatType::MoveVelMax) * stealth_boost,
-                stats.get(StatType::MoveVelMax) * stealth_boost,
+                -stats.get(StatType::MoveVelMax)
+                    * stealth_boost
+                    * stat_mod.speed,
+                stats.get(StatType::MoveVelMax)
+                    * stealth_boost
+                    * stat_mod.speed,
             );
         }
         <span class="kw">if </span>direction &gt; <span class="number">0.0 </span>{
@@ -1895,6 +1896,7 @@
     <span class="kw-2">mut </span>q_gent: Query&lt;
         (
             <span class="kw-2">&amp;</span>ActionState&lt;PlayerAction&gt;,
+            <span class="kw-2">&amp;</span>PlayerStatMod,
             <span class="kw-2">&amp;</span>Facing,
             <span class="kw-2">&amp;mut </span>CanDash,
             <span class="kw-2">&amp;mut </span>LinearVelocity,
@@ -1909,6 +1911,7 @@
 ) {
     <span class="kw">for </span>(
         action_state,
+        statmod,
         facing,
         <span class="kw-2">mut </span>can_dash,
         <span class="kw-2">mut </span>velocity,
@@ -1916,7 +1919,7 @@
         hitfreeze,
     ) <span class="kw">in </span>q_gent.iter_mut()
     {
-        can_dash.remaining_cooldown -= <span class="number">1.0 </span>/ time.hz <span class="kw">as </span>f32;
+        can_dash.remaining_cooldown -= statmod.cdr / time.hz <span class="kw">as </span>f32;
         <span class="kw">if </span>action_state.just_pressed(<span class="kw-2">&amp;</span>PlayerAction::Dash) {
             <span class="kw">if </span>can_dash.remaining_cooldown &lt;= <span class="number">0.0 </span>{
                 <span class="kw">let </span>dash_action = Dashing::from_action_state(action_state);
@@ -1943,6 +1946,7 @@
             <span class="kw-2">&amp;mut </span>TransitionQueue,
             Has&lt;Grounded&gt;,
             Has&lt;Stealthing&gt;,
+            <span class="kw-2">&amp;</span>PlayerStatMod,
         ),
         With&lt;Player&gt;,
     &gt;,
@@ -1957,6 +1961,7 @@
         <span class="kw-2">mut </span>transitions,
         is_grounded,
         is_stealthed,
+        player_stat_mod,
     ) <span class="kw">in </span>query.iter_mut()
     {
         <span class="kw">if </span>strike.ticks == <span class="number">10 </span>{
@@ -1967,6 +1972,7 @@
                 gent,
                 facing,
                 is_stealthed,
+                player_stat_mod.attack,
             );
         }
         strike.ticks += <span class="number">1</span>;
@@ -2076,6 +2082,7 @@
     gent: <span class="kw-2">&amp;</span>Gent,
     facing: <span class="kw-2">&amp;</span>Facing,
     stealthed: bool,
+    attack_mod: f32,
 ) {
     <span class="kw">let </span>attack = commands
         .spawn((
@@ -2086,7 +2093,7 @@
                 PLAYER_ATTACK,
                 ENEMY_HURT,
             )),
-            Attack::new(<span class="number">16</span>, entity),
+            Attack::new(<span class="number">16</span>, entity, <span class="number">20. </span>* attack_mod),
             SelfPushback(Knockback::new(
                 Vec2::new(
                     config.melee_self_pushback * -facing.direction(),
@@ -2624,6 +2631,7 @@
             <span class="kw-2">&amp;mut </span>Attacking,
             <span class="kw-2">&amp;mut </span>TransitionQueue,
             <span class="kw-2">&amp;</span>ActionState&lt;PlayerAction&gt;,
+            <span class="kw-2">&amp;</span>PlayerStatMod,
             Has&lt;Stealthing&gt;,
         ),
         (With&lt;Player&gt;, Without&lt;Whirling&gt;),
@@ -2642,6 +2650,7 @@
         <span class="kw-2">mut </span>attacking,
         <span class="kw-2">mut </span>transitions,
         action_state,
+        stat_mod,
         stealthed,
     ) <span class="kw">in </span>query.iter_mut()
     {
@@ -2690,7 +2699,7 @@
                                     ENEMY_HURT | GROUND,
                                 ),
                             ),
-                            Attack::new(<span class="number">192</span>, entity)
+                            Attack::new(<span class="number">192</span>, entity, <span class="number">20. </span>* stat_mod.attack)
                                 .with_damage(config.bow_attack_damage)
                                 .with_max_targets(<span class="number">1</span>),
                             Pushback(Knockback::new(
@@ -2717,7 +2726,7 @@
                                 PLAYER_ATTACK,
                                 ENEMY_HURT,
                             )),
-                            Attack::new(<span class="number">16</span>, entity),
+                            Attack::new(<span class="number">16</span>, entity, <span class="number">20. </span>* stat_mod.attack),
                             SelfPushback(Knockback::new(
                                 Vec2::new(
                                     config.melee_self_pushback
@@ -2745,16 +2754,20 @@
         }
 
         attacking.ticks += <span class="number">1</span>;
+        <span class="kw">let </span>maximum_ticks = (((Attacking::MAX * <span class="number">8</span>) <span class="kw">as </span>f32 / stat_mod.cdr)
+            <span class="kw">as </span>u32)
+            .clamp(Attacking::MIN * <span class="number">8</span>, Attacking::MAX * <span class="number">8</span>);
+
         <span class="comment">// if we are in the later half of attacking and another attack input was pressed,
         // indicate an immediate follow up on animation end
-        </span><span class="kw">if </span>attacking.ticks &gt;= Attacking::MAX * <span class="number">8 </span>- <span class="number">8
+        </span><span class="kw">if </span>attacking.ticks &gt;= maximum_ticks - <span class="number">8
             </span>&amp;&amp; action_state.just_pressed(<span class="kw-2">&amp;</span>PlayerAction::Attack)
         {
             attacking.followup = <span class="bool-val">true</span>;
         }
 
         <span class="comment">// leave attacking state
-        </span><span class="kw">if </span>attacking.ticks == Attacking::MAX * <span class="number">8 </span>{
+        </span><span class="kw">if </span>attacking.ticks &gt;= maximum_ticks {
             <span class="kw">if </span>attacking.followup {
                 transitions.push(Attacking::new_transition(CanAttack {
                     immediate: <span class="bool-val">true</span>,
@@ -2769,12 +2782,13 @@
 }
 
 <span class="kw">pub fn </span>player_whirl_charge(
-    <span class="kw-2">mut </span>query: Query&lt;<span class="kw-2">&amp;mut </span>WhirlAbility, Without&lt;Whirling&gt;&gt;,
+    <span class="kw-2">mut </span>query: Query&lt;(<span class="kw-2">&amp;mut </span>WhirlAbility, <span class="kw-2">&amp;</span>PlayerStatMod), Without&lt;Whirling&gt;&gt;,
     config: Res&lt;PlayerConfig&gt;,
     time: Res&lt;GameTime&gt;,
 ) {
-    <span class="kw">for </span><span class="kw-2">mut </span>whirl <span class="kw">in </span>query.iter_mut() {
-        whirl.energy = (whirl.energy + config.whirl_regen / time.hz <span class="kw">as </span>f32)
+    <span class="kw">for </span>(<span class="kw-2">mut </span>whirl, statmod) <span class="kw">in </span>query.iter_mut() {
+        whirl.energy = (whirl.energy
+            + (config.whirl_regen * statmod.cdr) / time.hz <span class="kw">as </span>f32)
             .clamp(<span class="number">0.0</span>, config.max_whirl_energy);
     }
 }
@@ -2787,6 +2801,7 @@
             <span class="kw-2">&amp;mut </span>TransitionQueue,
             <span class="kw-2">&amp;mut </span>Whirling,
             <span class="kw-2">&amp;mut </span>WhirlAbility,
+            <span class="kw-2">&amp;</span>PlayerStatMod,
             Has&lt;Stealthing&gt;,
             <span class="kw-2">&amp;</span>Gent,
         ),
@@ -2815,6 +2830,7 @@
         <span class="kw-2">mut </span>transitions,
         <span class="kw-2">mut </span>whirling,
         <span class="kw-2">mut </span>whirl_ability,
+        stat_mod,
         is_stealthing,
         gent,
     ) <span class="kw">in </span>gent_query.iter_mut()
@@ -2835,7 +2851,11 @@
                     .spawn((
                         AttackBundle {
                             <span class="comment">// lifetime of two frames...
-                            </span>attack: Attack::new(<span class="number">24</span>, entity),
+                            </span>attack: Attack::new(
+                                <span class="number">24</span>,
+                                entity,
+                                <span class="number">20. </span>* stat_mod.attack,
+                            ),
                             collider: Collider::empty(InteractionGroups::new(
                                 PLAYER_ATTACK,
                                 ENEMY_HURT,

@@ -1614,7 +1614,12 @@
 <a href="#1613" id="1613">1613</a>
 <a href="#1614" id="1614">1614</a>
 <a href="#1615" id="1615">1615</a>
-<a href="#1616" id="1616">1616</a></pre></div><pre class="rust"><code><span class="attr">#[cfg(feature = <span class="string">"dev"</span>)]
+<a href="#1616" id="1616">1616</a>
+<a href="#1617" id="1617">1617</a>
+<a href="#1618" id="1618">1618</a>
+<a href="#1619" id="1619">1619</a>
+<a href="#1620" id="1620">1620</a>
+<a href="#1621" id="1621">1621</a></pre></div><pre class="rust"><code><span class="attr">#[cfg(feature = <span class="string">"dev"</span>)]
 </span><span class="kw">use </span>bevy_inspector_egui::quick::FilterQueryInspectorPlugin;
 <span class="kw">use </span>rand::distributions::Standard;
 <span class="kw">use </span>rapier2d::geometry::SharedShape;
@@ -1633,10 +1638,10 @@
 
 <span class="kw">use </span><span class="kw">super</span>::physics::Knockback;
 <span class="kw">use </span><span class="kw">super</span>::player::{Player, PlayerConfig, StatusModifier, Stealthing};
-<span class="kw">use </span><span class="kw">crate</span>::game::attack::arc_attack::Projectile;
 <span class="kw">use </span><span class="kw">crate</span>::game::attack::particles::ArcParticleEffectHandle;
 <span class="kw">use </span><span class="kw">crate</span>::game::attack::<span class="kw-2">*</span>;
 <span class="kw">use </span><span class="kw">crate</span>::game::gentstate::<span class="kw-2">*</span>;
+<span class="kw">use </span><span class="kw">crate</span>::game::{attack::arc_attack::Projectile, player::EnemiesNearby};
 <span class="kw">use </span><span class="kw">crate</span>::graphics::particles_util::BuildParticles;
 <span class="kw">use </span><span class="kw">crate</span>::prelude::<span class="kw-2">*</span>;
 
@@ -2092,9 +2097,6 @@
 <span class="kw">impl </span>GentState <span class="kw">for </span>Waiting {}
 <span class="kw">impl </span>GenericState <span class="kw">for </span>Waiting {}
 
-<span class="attr">#[derive(Component)]
-</span><span class="kw">pub struct </span>JustGotHitMarker;
-
 <span class="attr">#[derive(Component, Reflect)]
 </span><span class="kw">enum </span>Navigation {
     Grounded,
@@ -2178,30 +2180,35 @@
         ),
         With&lt;Enemy&gt;,
     &gt;,
-    player_query: Query&lt;
+    <span class="kw-2">mut </span>player_query: Query&lt;
         (
             Entity,
             <span class="kw-2">&amp;</span>GlobalTransform,
             <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Stealthing&gt;,
+            <span class="kw-2">&amp;mut </span>EnemiesNearby,
         ),
         (Without&lt;Enemy&gt;, With&lt;Player&gt;),
     &gt;,
 ) {
-    <span class="kw">for </span>(
-        <span class="kw-2">mut </span>range,
-        <span class="kw-2">mut </span>target,
-        <span class="kw-2">mut </span>facing,
-        role,
-        trans,
-        is_aggroed,
-        is_meleeing,
-        is_defending,
-    ) <span class="kw">in </span>query.iter_mut()
+    <span class="kw">if let </span><span class="prelude-val">Ok</span>((player_e, player_trans, player_stealth, <span class="kw-2">mut </span>enemies_nearby)) =
+        player_query.get_single_mut()
     {
-        <span class="kw">if let </span><span class="prelude-val">Ok</span>((player_e, player_trans, player_stealth)) =
-            player_query.get_single()
+        <span class="comment">//reset every tick
+        </span><span class="kw-2">**</span>enemies_nearby = <span class="number">0</span>;
+
+        <span class="kw">for </span>(
+            <span class="kw-2">mut </span>range,
+            <span class="kw-2">mut </span>target,
+            <span class="kw-2">mut </span>facing,
+            role,
+            trans,
+            is_aggroed,
+            is_meleeing,
+            is_defending,
+        ) <span class="kw">in </span>query.iter_mut()
         {
-            <span class="kw">if </span>player_stealth.is_some() {
+            <span class="comment">//TODO: still update enemies nearby in stealth?
+            </span><span class="kw">if </span>player_stealth.is_some() {
                 <span class="kw-2">*</span>range = Range::Deaggro;
                 target.<span class="number">0 </span>= <span class="prelude-val">None</span>;
                 <span class="kw">continue</span>;
@@ -2229,6 +2236,7 @@
             } <span class="kw">else if </span>distance &lt;= Range::AGGRO {
                 <span class="kw-2">*</span>range = Range::Aggro;
                 target.<span class="number">0 </span>= <span class="prelude-val">Some</span>(player_e);
+                <span class="kw-2">**</span>enemies_nearby += <span class="number">1</span>;
             } <span class="kw">else if </span><span class="macro">matches!</span>(role, Role::Ranged) &amp;&amp; distance &lt;= Range::RANGED
             {
                 <span class="kw-2">*</span>range = Range::Ranged;
@@ -2242,13 +2250,14 @@
                 <span class="kw-2">*</span>range = Range::Far;
                 target.<span class="number">0 </span>= <span class="prelude-val">None</span>;
             }
-        <span class="comment">// if there is no player
-        </span>} <span class="kw">else </span>{
+        }
+    <span class="comment">// if there is no player
+    </span>} <span class="kw">else </span>{
+        <span class="kw">for </span>(<span class="kw-2">mut </span>range, <span class="kw-2">mut </span>target, <span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>) <span class="kw">in </span>query.iter_mut() {
             <span class="kw-2">*</span>range = Range::None;
             target.<span class="number">0 </span>= <span class="prelude-val">None</span>;
         }
-        <span class="comment">// dbg!(range);
-    </span>}
+    }
 }
 
 <span class="comment">// check if any other enemies are nearby, if so assign to group
@@ -2585,7 +2594,7 @@
             <span class="comment">// spawn in the new projectile:
             </span>commands
                 .spawn((
-                    Attack::new(<span class="number">1000</span>, entity)
+                    Attack::new(<span class="number">1000</span>, entity, <span class="number">20.</span>)
                         .set_stat_mod(StatusModifier::basic_ice_spider()),
                     final_solution,
                     Collider::cuboid(
@@ -2632,7 +2641,7 @@
                     }),
                     TransformBundle::from_transform(Transform::default()),
                     AnimationCollider(gent.e_gfx),
-                    Attack::new(<span class="number">8</span>, entity),
+                    Attack::new(<span class="number">8</span>, entity, <span class="number">20.</span>),
                 ))
                 .set_parent(entity)
                 .id();
@@ -3036,37 +3045,38 @@
 }
 
 <span class="kw">fn </span>enemy_sparks_on_hit_animation(
-    i_query: Query&lt;(Entity, <span class="kw-2">&amp;</span>Gent), (Added&lt;JustGotHitMarker&gt;, With&lt;Enemy&gt;)&gt;,
+    i_query: Query&lt;<span class="kw-2">&amp;</span>Gent, With&lt;Enemy&gt;&gt;,
+    <span class="kw-2">mut </span>damage_events: EventReader&lt;DamageInfo&gt;,
     <span class="kw-2">mut </span>gfx_query: Query&lt;
         <span class="kw-2">&amp;mut </span>ScriptPlayer&lt;SpriteAnimation&gt;,
         With&lt;EnemyEffectGfx&gt;,
     &gt;,
-    <span class="kw-2">mut </span>commands: Commands,
     player_facing_dir: Query&lt;<span class="kw-2">&amp;</span>Facing, With&lt;Player&gt;&gt;,
 ) {
-    <span class="kw">for </span>(e, gent) <span class="kw">in </span>i_query.iter() {
-        <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="kw-2">mut </span>enemy) = gfx_query.get_mut(gent.e_effects_gfx) {
-            <span class="kw">let </span><span class="kw-2">mut </span>rng = thread_rng();
-            <span class="kw">let </span>picked_spark = rng.gen_range(<span class="number">1</span>..=<span class="number">6</span>);
-            enemy.play_key(<span class="string">"anim.spider.Sparks"</span>);
-            enemy.clear_slots();
-            enemy.set_slot(
-                <span class="macro">format!</span>(<span class="string">"Spark{picked_spark}"</span>).as_str(),
-                <span class="bool-val">true</span>,
-            );
-            <span class="kw">if let </span><span class="prelude-val">Ok</span>(direction) = player_facing_dir.get_single() {
-                <span class="kw">match </span>direction {
-                    Facing::Right =&gt; {
-                        enemy.set_slot(<span class="string">"DirectionRight"</span>, <span class="bool-val">true</span>);
-                        enemy.set_slot(<span class="string">"DirectionLeft"</span>, <span class="bool-val">false</span>);
-                    },
-                    Facing::Left =&gt; {
-                        enemy.set_slot(<span class="string">"DirectionRight"</span>, <span class="bool-val">false</span>);
-                        enemy.set_slot(<span class="string">"DirectionLeft"</span>, <span class="bool-val">true</span>);
-                    },
-                };
+    <span class="kw">for </span>damage_info <span class="kw">in </span>damage_events.read() {
+        <span class="kw">if let </span><span class="prelude-val">Ok</span>(enemy) = i_query.get(damage_info.target) {
+            <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="kw-2">mut </span>hit_gfx) = gfx_query.get_mut(enemy.e_effects_gfx) {
+                <span class="kw">let </span><span class="kw-2">mut </span>rng = thread_rng();
+                <span class="kw">let </span>picked_spark = rng.gen_range(<span class="number">1</span>..=<span class="number">6</span>);
+                hit_gfx.play_key(<span class="string">"anim.spider.Sparks"</span>);
+                hit_gfx.clear_slots();
+                hit_gfx.set_slot(
+                    <span class="macro">format!</span>(<span class="string">"Spark{picked_spark}"</span>).as_str(),
+                    <span class="bool-val">true</span>,
+                );
+                <span class="kw">if let </span><span class="prelude-val">Ok</span>(direction) = player_facing_dir.get_single() {
+                    <span class="kw">match </span>direction {
+                        Facing::Right =&gt; {
+                            hit_gfx.set_slot(<span class="string">"DirectionRight"</span>, <span class="bool-val">true</span>);
+                            hit_gfx.set_slot(<span class="string">"DirectionLeft"</span>, <span class="bool-val">false</span>);
+                        },
+                        Facing::Left =&gt; {
+                            hit_gfx.set_slot(<span class="string">"DirectionRight"</span>, <span class="bool-val">false</span>);
+                            hit_gfx.set_slot(<span class="string">"DirectionLeft"</span>, <span class="bool-val">true</span>);
+                        },
+                    };
+                }
             }
-            commands.entity(e).remove::&lt;JustGotHitMarker&gt;();
         }
     }
 }
