@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/event-listener-5.3.1/src/std.rs`."><title>std.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-b0742ba02757f159.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="event_listener" data-themes="" data-resource-suffix="" data-rustdoc-version="1.83.0 (90b35a623 2024-11-26)" data-channel="1.83.0" data-search-js="search-f0d225181b97f9a4.js" data-settings-js="settings-805db61a62df4bd2.js" ><script src="../../static.files/storage-1d39b6787ed640ff.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-f070b9041d14864c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-0111fcff984fae8f.css"></noscript><link rel="icon" href="https://raw.githubusercontent.com/smol-rs/smol/master/assets/images/logo_fullsize_transparent.png"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">event_listener/</div>std.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/event-listener-5.4.0/src/intrusive.rs`."><title>intrusive.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-42caa33d.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="event_listener" data-themes="" data-resource-suffix="" data-rustdoc-version="1.84.0 (9fc6b4312 2025-01-07)" data-channel="1.84.0" data-search-js="search-92e6798f.js" data-settings-js="settings-0f613d39.js" ><script src="../../static.files/storage-59e33391.js"></script><script defer src="../../static.files/src-script-56102188.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-5f194d8c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-893ab5e7.css"></noscript><link rel="icon" href="https://raw.githubusercontent.com/smol-rs/smol/master/assets/images/logo_fullsize_transparent.png"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">event_listener/</div>intrusive.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
 <a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
@@ -390,23 +390,97 @@
 <a href="#389" id="389">389</a>
 <a href="#390" id="390">390</a>
 <a href="#391" id="391">391</a>
-<a href="#392" id="392">392</a></pre></div><pre class="rust"><code><span class="doccomment">//! libstd-based implementation of `event-listener`.
+<a href="#392" id="392">392</a>
+<a href="#393" id="393">393</a>
+<a href="#394" id="394">394</a>
+<a href="#395" id="395">395</a>
+<a href="#396" id="396">396</a>
+<a href="#397" id="397">397</a>
+<a href="#398" id="398">398</a>
+<a href="#399" id="399">399</a>
+<a href="#400" id="400">400</a>
+<a href="#401" id="401">401</a>
+<a href="#402" id="402">402</a>
+<a href="#403" id="403">403</a>
+<a href="#404" id="404">404</a>
+<a href="#405" id="405">405</a>
+<a href="#406" id="406">406</a>
+<a href="#407" id="407">407</a>
+<a href="#408" id="408">408</a>
+<a href="#409" id="409">409</a>
+<a href="#410" id="410">410</a>
+<a href="#411" id="411">411</a>
+<a href="#412" id="412">412</a>
+<a href="#413" id="413">413</a>
+<a href="#414" id="414">414</a>
+<a href="#415" id="415">415</a>
+<a href="#416" id="416">416</a>
+<a href="#417" id="417">417</a>
+<a href="#418" id="418">418</a>
+<a href="#419" id="419">419</a>
+<a href="#420" id="420">420</a>
+<a href="#421" id="421">421</a>
+<a href="#422" id="422">422</a>
+<a href="#423" id="423">423</a>
+<a href="#424" id="424">424</a>
+<a href="#425" id="425">425</a>
+<a href="#426" id="426">426</a>
+<a href="#427" id="427">427</a>
+<a href="#428" id="428">428</a>
+<a href="#429" id="429">429</a>
+<a href="#430" id="430">430</a>
+<a href="#431" id="431">431</a>
+<a href="#432" id="432">432</a>
+<a href="#433" id="433">433</a>
+<a href="#434" id="434">434</a>
+<a href="#435" id="435">435</a>
+<a href="#436" id="436">436</a>
+<a href="#437" id="437">437</a>
+<a href="#438" id="438">438</a>
+<a href="#439" id="439">439</a>
+<a href="#440" id="440">440</a>
+<a href="#441" id="441">441</a>
+<a href="#442" id="442">442</a>
+<a href="#443" id="443">443</a>
+<a href="#444" id="444">444</a>
+<a href="#445" id="445">445</a>
+<a href="#446" id="446">446</a>
+<a href="#447" id="447">447</a>
+<a href="#448" id="448">448</a>
+<a href="#449" id="449">449</a>
+<a href="#450" id="450">450</a>
+<a href="#451" id="451">451</a>
+<a href="#452" id="452">452</a>
+<a href="#453" id="453">453</a>
+<a href="#454" id="454">454</a>
+<a href="#455" id="455">455</a></pre></div><pre class="rust"><code><span class="doccomment">//! Intrusive linked list-based implementation of `event-listener`.
 //!
-//! This implementation crates an intrusive linked list of listeners.
+//! This implementation crates an intrusive linked list of listeners. This list
+//! is secured using either a libstd mutex or a critical section.
 
 </span><span class="kw">use </span><span class="kw">crate</span>::notify::{GenericNotify, Internal, Notification};
 <span class="kw">use </span><span class="kw">crate</span>::sync::atomic::Ordering;
 <span class="kw">use </span><span class="kw">crate</span>::sync::cell::{Cell, UnsafeCell};
-<span class="kw">use </span><span class="kw">crate</span>::sync::{Mutex, MutexGuard};
 <span class="kw">use crate</span>::{RegisterResult, State, TaskRef};
+
+<span class="attr">#[cfg(feature = <span class="string">"critical-section"</span>)]
+</span><span class="kw">use </span>core::cell::RefCell;
+<span class="attr">#[cfg(all(feature = <span class="string">"std"</span>, not(feature = <span class="string">"critical-section"</span>)))]
+</span><span class="kw">use </span>core::ops::{Deref, DerefMut};
 
 <span class="kw">use </span>core::marker::PhantomPinned;
 <span class="kw">use </span>core::mem;
-<span class="kw">use </span>core::ops::{Deref, DerefMut};
 <span class="kw">use </span>core::pin::Pin;
 <span class="kw">use </span>core::ptr::NonNull;
 
-<span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">struct </span>List&lt;T&gt;(Mutex&lt;Inner&lt;T&gt;&gt;);
+<span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">struct </span>List&lt;T&gt;(
+    <span class="doccomment">/// libstd-based implementation uses a normal Muetx to secure the data.
+    </span><span class="attr">#[cfg(all(feature = <span class="string">"std"</span>, not(feature = <span class="string">"critical-section"</span>)))]
+    </span><span class="kw">crate</span>::sync::Mutex&lt;Inner&lt;T&gt;&gt;,
+    <span class="doccomment">/// Critical-section-based implementation uses a CS cell that wraps a RefCell.
+    </span><span class="attr">#[cfg(feature = <span class="string">"critical-section"</span>)]
+    </span>critical_section::Mutex&lt;RefCell&lt;Inner&lt;T&gt;&gt;&gt;,
+);
 
 <span class="kw">struct </span>Inner&lt;T&gt; {
     <span class="doccomment">/// The head of the linked list.
@@ -428,67 +502,141 @@
 <span class="kw">impl</span>&lt;T&gt; List&lt;T&gt; {
     <span class="doccomment">/// Create a new, empty event listener list.
     </span><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>new() -&gt; <span class="self">Self </span>{
-        <span class="self">Self</span>(Mutex::new(Inner {
+        <span class="kw">let </span>inner = Inner {
             head: <span class="prelude-val">None</span>,
             tail: <span class="prelude-val">None</span>,
             next: <span class="prelude-val">None</span>,
             len: <span class="number">0</span>,
             notified: <span class="number">0</span>,
-        }))
+        };
+
+        <span class="attr">#[cfg(feature = <span class="string">"critical-section"</span>)]
+        </span>{
+            <span class="self">Self</span>(critical_section::Mutex::new(RefCell::new(inner)))
+        }
+
+        <span class="attr">#[cfg(not(feature = <span class="string">"critical-section"</span>))]
+        </span><span class="self">Self</span>(<span class="kw">crate</span>::sync::Mutex::new(inner))
     }
 
     <span class="doccomment">/// Get the total number of listeners without blocking.
+    </span><span class="attr">#[cfg(all(feature = <span class="string">"std"</span>, not(feature = <span class="string">"critical-section"</span>)))]
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>try_total_listeners(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;usize&gt; {
         <span class="self">self</span>.<span class="number">0</span>.try_lock().ok().map(|list| list.len)
     }
 
+    <span class="doccomment">/// Get the total number of listeners without blocking.
+    </span><span class="attr">#[cfg(feature = <span class="string">"critical-section"</span>)]
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>try_total_listeners(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;usize&gt; {
+        <span class="prelude-val">Some</span>(<span class="self">self</span>.total_listeners())
+    }
+
     <span class="doccomment">/// Get the total number of listeners with blocking.
+    </span><span class="attr">#[cfg(all(feature = <span class="string">"std"</span>, not(feature = <span class="string">"critical-section"</span>)))]
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>total_listeners(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
         <span class="self">self</span>.<span class="number">0</span>.lock().unwrap_or_else(|e| e.into_inner()).len
+    }
+
+    <span class="doccomment">/// Get the total number of listeners with blocking.
+    </span><span class="attr">#[cfg(feature = <span class="string">"critical-section"</span>)]
+    #[allow(unused)]
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>total_listeners(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
+        critical_section::with(|cs| <span class="self">self</span>.<span class="number">0</span>.borrow(cs).borrow().len)
     }
 }
 
 <span class="kw">impl</span>&lt;T&gt; <span class="kw">crate</span>::Inner&lt;T&gt; {
-    <span class="kw">fn </span>lock(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; ListLock&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>, T&gt; {
-        ListLock {
+    <span class="attr">#[cfg(all(feature = <span class="string">"std"</span>, not(feature = <span class="string">"critical-section"</span>)))]
+    </span><span class="kw">fn </span>with_inner&lt;R&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span>Inner&lt;T&gt;) -&gt; R) -&gt; R {
+        <span class="kw">struct </span>ListLock&lt;<span class="lifetime">'a</span>, <span class="lifetime">'b</span>, T&gt; {
+            lock: <span class="kw">crate</span>::sync::MutexGuard&lt;<span class="lifetime">'a</span>, Inner&lt;T&gt;&gt;,
+            inner: <span class="kw-2">&amp;</span><span class="lifetime">'b </span><span class="kw">crate</span>::Inner&lt;T&gt;,
+        }
+
+        <span class="kw">impl</span>&lt;T&gt; Deref <span class="kw">for </span>ListLock&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>, T&gt; {
+            <span class="kw">type </span>Target = Inner&lt;T&gt;;
+
+            <span class="kw">fn </span>deref(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="self">Self</span>::Target {
+                <span class="kw-2">&amp;</span><span class="self">self</span>.lock
+            }
+        }
+
+        <span class="kw">impl</span>&lt;T&gt; DerefMut <span class="kw">for </span>ListLock&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>, T&gt; {
+            <span class="kw">fn </span>deref_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span><span class="self">Self</span>::Target {
+                <span class="kw-2">&amp;mut </span><span class="self">self</span>.lock
+            }
+        }
+
+        <span class="kw">impl</span>&lt;T&gt; Drop <span class="kw">for </span>ListLock&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>, T&gt; {
+            <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+                update_notified(<span class="kw-2">&amp;</span><span class="self">self</span>.inner.notified, <span class="kw-2">&amp;</span><span class="self">self</span>.lock);
+            }
+        }
+
+        <span class="kw">let </span><span class="kw-2">mut </span>list = ListLock {
             inner: <span class="self">self</span>,
             lock: <span class="self">self</span>.list.<span class="number">0</span>.lock().unwrap_or_else(|e| e.into_inner()),
+        };
+        f(<span class="kw-2">&amp;mut </span>list)
+    }
+
+    <span class="attr">#[cfg(feature = <span class="string">"critical-section"</span>)]
+    </span><span class="kw">fn </span>with_inner&lt;R&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span>Inner&lt;T&gt;) -&gt; R) -&gt; R {
+        <span class="kw">struct </span>ListWrapper&lt;<span class="lifetime">'a</span>, T&gt; {
+            inner: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw">crate</span>::Inner&lt;T&gt;,
+            list: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Inner&lt;T&gt;,
         }
+
+        <span class="kw">impl</span>&lt;T&gt; Drop <span class="kw">for </span>ListWrapper&lt;<span class="lifetime">'_</span>, T&gt; {
+            <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+                update_notified(<span class="kw-2">&amp;</span><span class="self">self</span>.inner.notified, <span class="self">self</span>.list);
+            }
+        }
+
+        critical_section::with(<span class="kw">move </span>|cs| {
+            <span class="kw">let </span><span class="kw-2">mut </span>list = <span class="self">self</span>.list.<span class="number">0</span>.borrow_ref_mut(cs);
+            <span class="kw">let </span>wrapper = ListWrapper {
+                inner: <span class="self">self</span>,
+                list: <span class="kw-2">&amp;mut *</span>list,
+            };
+
+            f(wrapper.list)
+        })
     }
 
     <span class="doccomment">/// Add a new listener to the list.
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>insert(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw-2">mut </span>listener: Pin&lt;<span class="kw-2">&amp;mut </span><span class="prelude-ty">Option</span>&lt;Listener&lt;T&gt;&gt;&gt;) {
-        <span class="kw">let </span><span class="kw-2">mut </span>inner = <span class="self">self</span>.lock();
+        <span class="self">self</span>.with_inner(|inner| {
+            listener.as_mut().set(<span class="prelude-val">Some</span>(Listener {
+                link: UnsafeCell::new(Link {
+                    state: Cell::new(State::Created),
+                    prev: Cell::new(inner.tail),
+                    next: Cell::new(<span class="prelude-val">None</span>),
+                }),
+                _pin: PhantomPinned,
+            }));
+            <span class="kw">let </span>listener = listener.as_pin_mut().unwrap();
 
-        listener.as_mut().set(<span class="prelude-val">Some</span>(Listener {
-            link: UnsafeCell::new(Link {
-                state: Cell::new(State::Created),
-                prev: Cell::new(inner.tail),
-                next: Cell::new(<span class="prelude-val">None</span>),
-            }),
-            _pin: PhantomPinned,
-        }));
-        <span class="kw">let </span>listener = listener.as_pin_mut().unwrap();
+            {
+                <span class="kw">let </span>entry_guard = listener.link.get();
+                <span class="comment">// SAFETY: We are locked, so we can access the inner `link`.
+                </span><span class="kw">let </span>entry = <span class="kw">unsafe </span>{ entry_guard.deref() };
 
-        {
-            <span class="kw">let </span>entry_guard = listener.link.get();
-            <span class="comment">// SAFETY: We are locked, so we can access the inner `link`.
-            </span><span class="kw">let </span>entry = <span class="kw">unsafe </span>{ entry_guard.deref() };
+                <span class="comment">// Replace the tail with the new entry.
+                </span><span class="kw">match </span>mem::replace(<span class="kw-2">&amp;mut </span>inner.tail, <span class="prelude-val">Some</span>(entry.into())) {
+                    <span class="prelude-val">None </span>=&gt; inner.head = <span class="prelude-val">Some</span>(entry.into()),
+                    <span class="prelude-val">Some</span>(t) =&gt; <span class="kw">unsafe </span>{ t.as_ref().next.set(<span class="prelude-val">Some</span>(entry.into())) },
+                };
+            }
 
-            <span class="comment">// Replace the tail with the new entry.
-            </span><span class="kw">match </span>mem::replace(<span class="kw-2">&amp;mut </span>inner.tail, <span class="prelude-val">Some</span>(entry.into())) {
-                <span class="prelude-val">None </span>=&gt; inner.head = <span class="prelude-val">Some</span>(entry.into()),
-                <span class="prelude-val">Some</span>(t) =&gt; <span class="kw">unsafe </span>{ t.as_ref().next.set(<span class="prelude-val">Some</span>(entry.into())) },
-            };
-        }
+            <span class="comment">// If there are no unnotified entries, this is the first one.
+            </span><span class="kw">if </span>inner.next.is_none() {
+                inner.next = inner.tail;
+            }
 
-        <span class="comment">// If there are no unnotified entries, this is the first one.
-        </span><span class="kw">if </span>inner.next.is_none() {
-            inner.next = inner.tail;
-        }
-
-        <span class="comment">// Bump the entry count.
-        </span>inner.len += <span class="number">1</span>;
+            <span class="comment">// Bump the entry count.
+            </span>inner.len += <span class="number">1</span>;
+        });
     }
 
     <span class="doccomment">/// Remove a listener from the list.
@@ -497,13 +645,13 @@
         listener: Pin&lt;<span class="kw-2">&amp;mut </span><span class="prelude-ty">Option</span>&lt;Listener&lt;T&gt;&gt;&gt;,
         propagate: bool,
     ) -&gt; <span class="prelude-ty">Option</span>&lt;State&lt;T&gt;&gt; {
-        <span class="self">self</span>.lock().remove(listener, propagate)
+        <span class="self">self</span>.with_inner(|inner| inner.remove(listener, propagate))
     }
 
     <span class="doccomment">/// Notifies a number of entries.
     </span><span class="attr">#[cold]
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>notify(<span class="kw-2">&amp;</span><span class="self">self</span>, notify: <span class="kw">impl </span>Notification&lt;Tag = T&gt;) -&gt; usize {
-        <span class="self">self</span>.lock().notify(notify)
+        <span class="self">self</span>.with_inner(|inner| inner.notify(notify))
     }
 
     <span class="doccomment">/// Register a task to be notified when the event is triggered.
@@ -515,41 +663,42 @@
         <span class="kw-2">mut </span>listener: Pin&lt;<span class="kw-2">&amp;mut </span><span class="prelude-ty">Option</span>&lt;Listener&lt;T&gt;&gt;&gt;,
         task: TaskRef&lt;<span class="lifetime">'_</span>&gt;,
     ) -&gt; RegisterResult&lt;T&gt; {
-        <span class="kw">let </span><span class="kw-2">mut </span>inner = <span class="self">self</span>.lock();
-        <span class="kw">let </span>entry_guard = <span class="kw">match </span>listener.as_mut().as_pin_mut() {
-            <span class="prelude-val">Some</span>(listener) =&gt; listener.link.get(),
-            <span class="prelude-val">None </span>=&gt; <span class="kw">return </span>RegisterResult::NeverInserted,
-        };
-        <span class="comment">// SAFETY: We are locked, so we can access the inner `link`.
-        </span><span class="kw">let </span>entry = <span class="kw">unsafe </span>{ entry_guard.deref() };
+        <span class="self">self</span>.with_inner(|inner| {
+            <span class="kw">let </span>entry_guard = <span class="kw">match </span>listener.as_mut().as_pin_mut() {
+                <span class="prelude-val">Some</span>(listener) =&gt; listener.link.get(),
+                <span class="prelude-val">None </span>=&gt; <span class="kw">return </span>RegisterResult::NeverInserted,
+            };
+            <span class="comment">// SAFETY: We are locked, so we can access the inner `link`.
+            </span><span class="kw">let </span>entry = <span class="kw">unsafe </span>{ entry_guard.deref() };
 
-        <span class="comment">// Take out the state and check it.
-        </span><span class="kw">match </span>entry.state.replace(State::NotifiedTaken) {
-            State::Notified { tag, .. } =&gt; {
-                <span class="comment">// We have been notified, remove the listener.
-                </span>inner.remove(listener, <span class="bool-val">false</span>);
-                RegisterResult::Notified(tag)
+            <span class="comment">// Take out the state and check it.
+            </span><span class="kw">match </span>entry.state.replace(State::NotifiedTaken) {
+                State::Notified { tag, .. } =&gt; {
+                    <span class="comment">// We have been notified, remove the listener.
+                    </span>inner.remove(listener, <span class="bool-val">false</span>);
+                    RegisterResult::Notified(tag)
+                }
+
+                State::Task(other_task) =&gt; {
+                    <span class="comment">// Only replace the task if it's different.
+                    </span>entry.state.set(State::Task({
+                        <span class="kw">if </span>!task.will_wake(other_task.as_task_ref()) {
+                            task.into_task()
+                        } <span class="kw">else </span>{
+                            other_task
+                        }
+                    }));
+
+                    RegisterResult::Registered
+                }
+
+                <span class="kw">_ </span>=&gt; {
+                    <span class="comment">// We have not been notified, register the task.
+                    </span>entry.state.set(State::Task(task.into_task()));
+                    RegisterResult::Registered
+                }
             }
-
-            State::Task(other_task) =&gt; {
-                <span class="comment">// Only replace the task if it's different.
-                </span>entry.state.set(State::Task({
-                    <span class="kw">if </span>!task.will_wake(other_task.as_task_ref()) {
-                        task.into_task()
-                    } <span class="kw">else </span>{
-                        other_task
-                    }
-                }));
-
-                RegisterResult::Registered
-            }
-
-            <span class="kw">_ </span>=&gt; {
-                <span class="comment">// We have not been notified, register the task.
-                </span>entry.state.set(State::Task(task.into_task()));
-                RegisterResult::Registered
-            }
-        }
+        })
     }
 }
 
@@ -666,38 +815,15 @@
     }
 }
 
-<span class="kw">struct </span>ListLock&lt;<span class="lifetime">'a</span>, <span class="lifetime">'b</span>, T&gt; {
-    lock: MutexGuard&lt;<span class="lifetime">'a</span>, Inner&lt;T&gt;&gt;,
-    inner: <span class="kw-2">&amp;</span><span class="lifetime">'b </span><span class="kw">crate</span>::Inner&lt;T&gt;,
-}
+<span class="kw">fn </span>update_notified&lt;T&gt;(slot: <span class="kw-2">&amp;</span><span class="kw">crate</span>::sync::atomic::AtomicUsize, list: <span class="kw-2">&amp;</span>Inner&lt;T&gt;) {
+    <span class="comment">// Update the notified count.
+    </span><span class="kw">let </span>notified = <span class="kw">if </span>list.notified &lt; list.len {
+        list.notified
+    } <span class="kw">else </span>{
+        usize::MAX
+    };
 
-<span class="kw">impl</span>&lt;T&gt; Deref <span class="kw">for </span>ListLock&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>, T&gt; {
-    <span class="kw">type </span>Target = Inner&lt;T&gt;;
-
-    <span class="kw">fn </span>deref(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="self">Self</span>::Target {
-        <span class="kw-2">&amp;</span><span class="self">self</span>.lock
-    }
-}
-
-<span class="kw">impl</span>&lt;T&gt; DerefMut <span class="kw">for </span>ListLock&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>, T&gt; {
-    <span class="kw">fn </span>deref_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span><span class="self">Self</span>::Target {
-        <span class="kw-2">&amp;mut </span><span class="self">self</span>.lock
-    }
-}
-
-<span class="kw">impl</span>&lt;T&gt; Drop <span class="kw">for </span>ListLock&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>, T&gt; {
-    <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-        <span class="kw">let </span>list = <span class="kw-2">&amp;mut **</span><span class="self">self</span>;
-
-        <span class="comment">// Update the notified count.
-        </span><span class="kw">let </span>notified = <span class="kw">if </span>list.notified &lt; list.len {
-            list.notified
-        } <span class="kw">else </span>{
-            usize::MAX
-        };
-
-        <span class="self">self</span>.inner.notified.store(notified, Ordering::Release);
-    }
+    slot.store(notified, Ordering::Release);
 }
 
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>Listener&lt;T&gt; {
@@ -750,15 +876,15 @@
         inner.insert(listen2.as_mut());
         inner.insert(listen3.as_mut());
 
-        <span class="macro">assert_eq!</span>(inner.lock().len, <span class="number">3</span>);
+        <span class="macro">assert_eq!</span>(inner.list.try_total_listeners(), <span class="prelude-val">Some</span>(<span class="number">3</span>));
 
         <span class="comment">// Remove one.
         </span><span class="macro">assert_eq!</span>(inner.remove(listen2, <span class="bool-val">false</span>), <span class="prelude-val">Some</span>(State::Created));
-        <span class="macro">assert_eq!</span>(inner.lock().len, <span class="number">2</span>);
+        <span class="macro">assert_eq!</span>(inner.list.try_total_listeners(), <span class="prelude-val">Some</span>(<span class="number">2</span>));
 
         <span class="comment">// Remove another.
         </span><span class="macro">assert_eq!</span>(inner.remove(listen1, <span class="bool-val">false</span>), <span class="prelude-val">Some</span>(State::Created));
-        <span class="macro">assert_eq!</span>(inner.lock().len, <span class="number">1</span>);
+        <span class="macro">assert_eq!</span>(inner.list.try_total_listeners(), <span class="prelude-val">Some</span>(<span class="number">1</span>));
     }
 
     <span class="attr">#[test]
