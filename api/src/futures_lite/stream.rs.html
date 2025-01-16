@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/futures-lite-2.5.0/src/stream.rs`."><title>stream.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-42caa33d.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="futures_lite" data-themes="" data-resource-suffix="" data-rustdoc-version="1.84.0 (9fc6b4312 2025-01-07)" data-channel="1.84.0" data-search-js="search-92e6798f.js" data-settings-js="settings-0f613d39.js" ><script src="../../static.files/storage-59e33391.js"></script><script defer src="../../static.files/src-script-56102188.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-5f194d8c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-893ab5e7.css"></noscript><link rel="icon" href="https://raw.githubusercontent.com/smol-rs/smol/master/assets/images/logo_fullsize_transparent.png"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">futures_lite/</div>stream.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/futures-lite-2.6.0/src/stream.rs`."><title>stream.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-42caa33d.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="futures_lite" data-themes="" data-resource-suffix="" data-rustdoc-version="1.84.0 (9fc6b4312 2025-01-07)" data-channel="1.84.0" data-search-js="search-92e6798f.js" data-settings-js="settings-0f613d39.js" ><script src="../../static.files/storage-59e33391.js"></script><script defer src="../../static.files/src-script-56102188.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-5f194d8c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-893ab5e7.css"></noscript><link rel="icon" href="https://raw.githubusercontent.com/smol-rs/smol/master/assets/images/logo_fullsize_transparent.png"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">futures_lite/</div>stream.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
 <a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
@@ -3480,7 +3480,70 @@
 <a href="#3479" id="3479">3479</a>
 <a href="#3480" id="3480">3480</a>
 <a href="#3481" id="3481">3481</a>
-<a href="#3482" id="3482">3482</a></pre></div><pre class="rust"><code><span class="doccomment">//! Combinators for the [`Stream`] trait.
+<a href="#3482" id="3482">3482</a>
+<a href="#3483" id="3483">3483</a>
+<a href="#3484" id="3484">3484</a>
+<a href="#3485" id="3485">3485</a>
+<a href="#3486" id="3486">3486</a>
+<a href="#3487" id="3487">3487</a>
+<a href="#3488" id="3488">3488</a>
+<a href="#3489" id="3489">3489</a>
+<a href="#3490" id="3490">3490</a>
+<a href="#3491" id="3491">3491</a>
+<a href="#3492" id="3492">3492</a>
+<a href="#3493" id="3493">3493</a>
+<a href="#3494" id="3494">3494</a>
+<a href="#3495" id="3495">3495</a>
+<a href="#3496" id="3496">3496</a>
+<a href="#3497" id="3497">3497</a>
+<a href="#3498" id="3498">3498</a>
+<a href="#3499" id="3499">3499</a>
+<a href="#3500" id="3500">3500</a>
+<a href="#3501" id="3501">3501</a>
+<a href="#3502" id="3502">3502</a>
+<a href="#3503" id="3503">3503</a>
+<a href="#3504" id="3504">3504</a>
+<a href="#3505" id="3505">3505</a>
+<a href="#3506" id="3506">3506</a>
+<a href="#3507" id="3507">3507</a>
+<a href="#3508" id="3508">3508</a>
+<a href="#3509" id="3509">3509</a>
+<a href="#3510" id="3510">3510</a>
+<a href="#3511" id="3511">3511</a>
+<a href="#3512" id="3512">3512</a>
+<a href="#3513" id="3513">3513</a>
+<a href="#3514" id="3514">3514</a>
+<a href="#3515" id="3515">3515</a>
+<a href="#3516" id="3516">3516</a>
+<a href="#3517" id="3517">3517</a>
+<a href="#3518" id="3518">3518</a>
+<a href="#3519" id="3519">3519</a>
+<a href="#3520" id="3520">3520</a>
+<a href="#3521" id="3521">3521</a>
+<a href="#3522" id="3522">3522</a>
+<a href="#3523" id="3523">3523</a>
+<a href="#3524" id="3524">3524</a>
+<a href="#3525" id="3525">3525</a>
+<a href="#3526" id="3526">3526</a>
+<a href="#3527" id="3527">3527</a>
+<a href="#3528" id="3528">3528</a>
+<a href="#3529" id="3529">3529</a>
+<a href="#3530" id="3530">3530</a>
+<a href="#3531" id="3531">3531</a>
+<a href="#3532" id="3532">3532</a>
+<a href="#3533" id="3533">3533</a>
+<a href="#3534" id="3534">3534</a>
+<a href="#3535" id="3535">3535</a>
+<a href="#3536" id="3536">3536</a>
+<a href="#3537" id="3537">3537</a>
+<a href="#3538" id="3538">3538</a>
+<a href="#3539" id="3539">3539</a>
+<a href="#3540" id="3540">3540</a>
+<a href="#3541" id="3541">3541</a>
+<a href="#3542" id="3542">3542</a>
+<a href="#3543" id="3543">3543</a>
+<a href="#3544" id="3544">3544</a>
+<a href="#3545" id="3545">3545</a></pre></div><pre class="rust"><code><span class="doccomment">//! Combinators for the [`Stream`] trait.
 //!
 //! # Examples
 //!
@@ -4619,6 +4682,41 @@
         }
     }
 
+    <span class="doccomment">/// Maps items while `predicate` returns [`Some`].
+    ///
+    /// This stream is not fused. After the predicate returns [`None`] the stream still
+    /// contains remaining items that can be obtained by subsequent `next` calls.
+    /// You can [`fuse`](StreamExt::fuse) the stream if this behavior is undesirable.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use futures_lite::stream::{self, StreamExt};
+    ///
+    /// # spin_on::spin_on(async {
+    /// let s = stream::iter(vec![1, 2, 0, 3]);
+    /// let mut s = s.map_while(|x: u32| x.checked_sub(1));
+    ///
+    /// assert_eq!(s.next().await, Some(0));
+    /// assert_eq!(s.next().await, Some(1));
+    /// assert_eq!(s.next().await, None);
+    ///
+    /// // Continue to iterate the stream.
+    /// assert_eq!(s.next().await, Some(2));
+    /// assert_eq!(s.next().await, None);
+    /// # });
+    /// ```
+    </span><span class="kw">fn </span>map_while&lt;B, P&gt;(<span class="self">self</span>, predicate: P) -&gt; MapWhile&lt;<span class="self">Self</span>, P&gt;
+    <span class="kw">where
+        </span><span class="self">Self</span>: Sized,
+        P: FnMut(<span class="self">Self</span>::Item) -&gt; <span class="prelude-ty">Option</span>&lt;B&gt;,
+    {
+        MapWhile {
+            stream: <span class="self">self</span>,
+            predicate,
+        }
+    }
+
     <span class="doccomment">/// Skips the first `n` items of the stream.
     ///
     /// # Examples
@@ -5746,9 +5844,9 @@
     acc: <span class="prelude-ty">Option</span>&lt;B&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, S, F, B&gt; Unpin <span class="kw">for </span>TryFoldFuture&lt;<span class="lifetime">'a</span>, S, F, B&gt; {}
+<span class="kw">impl</span>&lt;S, F, B&gt; Unpin <span class="kw">for </span>TryFoldFuture&lt;<span class="lifetime">'_</span>, S, F, B&gt; {}
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, T, E, S, F, B&gt; Future <span class="kw">for </span>TryFoldFuture&lt;<span class="lifetime">'a</span>, S, F, B&gt;
+<span class="kw">impl</span>&lt;T, E, S, F, B&gt; Future <span class="kw">for </span>TryFoldFuture&lt;<span class="lifetime">'_</span>, S, F, B&gt;
 <span class="kw">where
     </span>S: Stream&lt;Item = <span class="prelude-ty">Result</span>&lt;T, E&gt;&gt; + Unpin,
     F: FnMut(B, T) -&gt; <span class="prelude-ty">Result</span>&lt;B, E&gt;,
@@ -6273,6 +6371,34 @@
 }
 
 <span class="macro">pin_project!</span> {
+    <span class="doccomment">/// Stream for the [`StreamExt::map_while()`] method.
+    </span><span class="attr">#[derive(Clone, Debug)]
+    #[must_use = <span class="string">"streams do nothing unless polled"</span>]
+    </span><span class="kw">pub struct </span>MapWhile&lt;S, P&gt; {
+        <span class="attr">#[pin]
+        </span>stream: S,
+        predicate: P,
+    }
+}
+
+<span class="kw">impl</span>&lt;B, S, P&gt; Stream <span class="kw">for </span>MapWhile&lt;S, P&gt;
+<span class="kw">where
+    </span>S: Stream,
+    P: FnMut(S::Item) -&gt; <span class="prelude-ty">Option</span>&lt;B&gt;,
+{
+    <span class="kw">type </span>Item = B;
+
+    <span class="kw">fn </span>poll_next(<span class="self">self</span>: Pin&lt;<span class="kw-2">&amp;mut </span><span class="self">Self</span>&gt;, cx: <span class="kw-2">&amp;mut </span>Context&lt;<span class="lifetime">'_</span>&gt;) -&gt; Poll&lt;<span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt;&gt; {
+        <span class="kw">let </span>this = <span class="self">self</span>.project();
+
+        <span class="kw">match </span><span class="macro">ready!</span>(this.stream.poll_next(cx)) {
+            <span class="prelude-val">Some</span>(v) =&gt; Poll::Ready((this.predicate)(v)),
+            <span class="prelude-val">None </span>=&gt; Poll::Ready(<span class="prelude-val">None</span>),
+        }
+    }
+}
+
+<span class="macro">pin_project!</span> {
     <span class="doccomment">/// Stream for the [`StreamExt::skip()`] method.
     </span><span class="attr">#[derive(Clone, Debug)]
     #[must_use = <span class="string">"streams do nothing unless polled"</span>]
@@ -6556,7 +6682,7 @@
 
 <span class="kw">impl</span>&lt;S: Unpin + <span class="question-mark">?</span>Sized&gt; Unpin <span class="kw">for </span>NthFuture&lt;<span class="lifetime">'_</span>, S&gt; {}
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, S&gt; Future <span class="kw">for </span>NthFuture&lt;<span class="lifetime">'a</span>, S&gt;
+<span class="kw">impl</span>&lt;S&gt; Future <span class="kw">for </span>NthFuture&lt;<span class="lifetime">'_</span>, S&gt;
 <span class="kw">where
     </span>S: Stream + Unpin + <span class="question-mark">?</span>Sized,
 {
@@ -6610,7 +6736,7 @@
 
 <span class="kw">impl</span>&lt;S: Unpin + <span class="question-mark">?</span>Sized, P&gt; Unpin <span class="kw">for </span>FindFuture&lt;<span class="lifetime">'_</span>, S, P&gt; {}
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, S, P&gt; Future <span class="kw">for </span>FindFuture&lt;<span class="lifetime">'a</span>, S, P&gt;
+<span class="kw">impl</span>&lt;S, P&gt; Future <span class="kw">for </span>FindFuture&lt;<span class="lifetime">'_</span>, S, P&gt;
 <span class="kw">where
     </span>S: Stream + Unpin + <span class="question-mark">?</span>Sized,
     P: FnMut(<span class="kw-2">&amp;</span>S::Item) -&gt; bool,
@@ -6638,7 +6764,7 @@
 
 <span class="kw">impl</span>&lt;S: Unpin + <span class="question-mark">?</span>Sized, F&gt; Unpin <span class="kw">for </span>FindMapFuture&lt;<span class="lifetime">'_</span>, S, F&gt; {}
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, S, B, F&gt; Future <span class="kw">for </span>FindMapFuture&lt;<span class="lifetime">'a</span>, S, F&gt;
+<span class="kw">impl</span>&lt;S, B, F&gt; Future <span class="kw">for </span>FindMapFuture&lt;<span class="lifetime">'_</span>, S, F&gt;
 <span class="kw">where
     </span>S: Stream + Unpin + <span class="question-mark">?</span>Sized,
     F: FnMut(S::Item) -&gt; <span class="prelude-ty">Option</span>&lt;B&gt;,
@@ -6668,9 +6794,9 @@
     index: usize,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, S: Unpin + <span class="question-mark">?</span>Sized, P&gt; Unpin <span class="kw">for </span>PositionFuture&lt;<span class="lifetime">'a</span>, S, P&gt; {}
+<span class="kw">impl</span>&lt;S: Unpin + <span class="question-mark">?</span>Sized, P&gt; Unpin <span class="kw">for </span>PositionFuture&lt;<span class="lifetime">'_</span>, S, P&gt; {}
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, S, P&gt; Future <span class="kw">for </span>PositionFuture&lt;<span class="lifetime">'a</span>, S, P&gt;
+<span class="kw">impl</span>&lt;S, P&gt; Future <span class="kw">for </span>PositionFuture&lt;<span class="lifetime">'_</span>, S, P&gt;
 <span class="kw">where
     </span>S: Stream + Unpin + <span class="question-mark">?</span>Sized,
     P: FnMut(S::Item) -&gt; bool,
@@ -6792,9 +6918,9 @@
     f: F,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, S: Unpin + <span class="question-mark">?</span>Sized, F&gt; Unpin <span class="kw">for </span>TryForEachFuture&lt;<span class="lifetime">'a</span>, S, F&gt; {}
+<span class="kw">impl</span>&lt;S: Unpin + <span class="question-mark">?</span>Sized, F&gt; Unpin <span class="kw">for </span>TryForEachFuture&lt;<span class="lifetime">'_</span>, S, F&gt; {}
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, S, F, E&gt; Future <span class="kw">for </span>TryForEachFuture&lt;<span class="lifetime">'a</span>, S, F&gt;
+<span class="kw">impl</span>&lt;S, F, E&gt; Future <span class="kw">for </span>TryForEachFuture&lt;<span class="lifetime">'_</span>, S, F&gt;
 <span class="kw">where
     </span>S: Stream + Unpin + <span class="question-mark">?</span>Sized,
     F: FnMut(S::Item) -&gt; <span class="prelude-ty">Result</span>&lt;(), E&gt;,
@@ -6886,7 +7012,7 @@
     stream: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>S,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, S: Unpin + <span class="question-mark">?</span>Sized&gt; Unpin <span class="kw">for </span>Drain&lt;<span class="lifetime">'a</span>, S&gt; {}
+<span class="kw">impl</span>&lt;S: Unpin + <span class="question-mark">?</span>Sized&gt; Unpin <span class="kw">for </span>Drain&lt;<span class="lifetime">'_</span>, S&gt; {}
 
 <span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, S: Unpin + <span class="question-mark">?</span>Sized&gt; Drain&lt;<span class="lifetime">'a</span>, S&gt; {
     <span class="doccomment">/// Get a reference to the underlying stream.
@@ -6947,7 +7073,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, S: Stream + Unpin + <span class="question-mark">?</span>Sized&gt; Stream <span class="kw">for </span>Drain&lt;<span class="lifetime">'a</span>, S&gt; {
+<span class="kw">impl</span>&lt;S: Stream + Unpin + <span class="question-mark">?</span>Sized&gt; Stream <span class="kw">for </span>Drain&lt;<span class="lifetime">'_</span>, S&gt; {
     <span class="kw">type </span>Item = S::Item;
 
     <span class="kw">fn </span>poll_next(<span class="kw-2">mut </span><span class="self">self</span>: Pin&lt;<span class="kw-2">&amp;mut </span><span class="self">Self</span>&gt;, cx: <span class="kw-2">&amp;mut </span>Context&lt;<span class="lifetime">'_</span>&gt;) -&gt; Poll&lt;<span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt;&gt; {
