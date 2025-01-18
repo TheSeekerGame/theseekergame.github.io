@@ -1476,7 +1476,65 @@
 <a href="#1475" id="1475">1475</a>
 <a href="#1476" id="1476">1476</a>
 <a href="#1477" id="1477">1477</a>
-<a href="#1478" id="1478">1478</a></pre></div><pre class="rust"><code><span class="kw">use </span>bevy::sprite::{Sprite, SpriteSheetBundle};
+<a href="#1478" id="1478">1478</a>
+<a href="#1479" id="1479">1479</a>
+<a href="#1480" id="1480">1480</a>
+<a href="#1481" id="1481">1481</a>
+<a href="#1482" id="1482">1482</a>
+<a href="#1483" id="1483">1483</a>
+<a href="#1484" id="1484">1484</a>
+<a href="#1485" id="1485">1485</a>
+<a href="#1486" id="1486">1486</a>
+<a href="#1487" id="1487">1487</a>
+<a href="#1488" id="1488">1488</a>
+<a href="#1489" id="1489">1489</a>
+<a href="#1490" id="1490">1490</a>
+<a href="#1491" id="1491">1491</a>
+<a href="#1492" id="1492">1492</a>
+<a href="#1493" id="1493">1493</a>
+<a href="#1494" id="1494">1494</a>
+<a href="#1495" id="1495">1495</a>
+<a href="#1496" id="1496">1496</a>
+<a href="#1497" id="1497">1497</a>
+<a href="#1498" id="1498">1498</a>
+<a href="#1499" id="1499">1499</a>
+<a href="#1500" id="1500">1500</a>
+<a href="#1501" id="1501">1501</a>
+<a href="#1502" id="1502">1502</a>
+<a href="#1503" id="1503">1503</a>
+<a href="#1504" id="1504">1504</a>
+<a href="#1505" id="1505">1505</a>
+<a href="#1506" id="1506">1506</a>
+<a href="#1507" id="1507">1507</a>
+<a href="#1508" id="1508">1508</a>
+<a href="#1509" id="1509">1509</a>
+<a href="#1510" id="1510">1510</a>
+<a href="#1511" id="1511">1511</a>
+<a href="#1512" id="1512">1512</a>
+<a href="#1513" id="1513">1513</a>
+<a href="#1514" id="1514">1514</a>
+<a href="#1515" id="1515">1515</a>
+<a href="#1516" id="1516">1516</a>
+<a href="#1517" id="1517">1517</a>
+<a href="#1518" id="1518">1518</a>
+<a href="#1519" id="1519">1519</a>
+<a href="#1520" id="1520">1520</a>
+<a href="#1521" id="1521">1521</a>
+<a href="#1522" id="1522">1522</a>
+<a href="#1523" id="1523">1523</a>
+<a href="#1524" id="1524">1524</a>
+<a href="#1525" id="1525">1525</a>
+<a href="#1526" id="1526">1526</a>
+<a href="#1527" id="1527">1527</a>
+<a href="#1528" id="1528">1528</a>
+<a href="#1529" id="1529">1529</a>
+<a href="#1530" id="1530">1530</a>
+<a href="#1531" id="1531">1531</a>
+<a href="#1532" id="1532">1532</a>
+<a href="#1533" id="1533">1533</a>
+<a href="#1534" id="1534">1534</a>
+<a href="#1535" id="1535">1535</a></pre></div><pre class="rust"><code><span class="kw">use </span>bevy::prelude::{resource_equals, Added};
+<span class="kw">use </span>bevy::sprite::{Sprite, SpriteSheetBundle};
 <span class="kw">use </span>bevy::transform::TransformSystem::TransformPropagate;
 <span class="kw">use </span>glam::{Vec2, Vec2Swizzles, Vec3Swizzles};
 <span class="kw">use </span>leafwing_input_manager::action_state::ActionState;
@@ -1492,7 +1550,9 @@
 <span class="kw">use </span>theseeker_engine::script::ScriptPlayer;
 
 <span class="kw">use </span><span class="kw">super</span>::arc_attack::{Arrow, Projectile};
-<span class="kw">use </span><span class="kw">super</span>::player_weapon::{is_player_using_bow, PlayerWeapon};
+<span class="kw">use </span><span class="kw">super</span>::player_weapon::{
+    PlayerCombatStyle, PlayerMeleeWeapon, PushbackValues,
+};
 <span class="kw">use super</span>::{
     dash_icon_fx, player_dash_fx, AttackBundle, CanStealth, DashIcon,
     DashStrike, DashType, JumpCount, Knockback, PlayerStats, Pushback,
@@ -1531,15 +1591,19 @@
                     player_whirl_charge.before(player_whirl),
                     player_whirl.before(player_attack),
                     player_attack.run_if(any_with_component::&lt;Attacking&gt;),
+                    player_restore_velocity
+                        .after(player_attack)
+                        .run_if(any_with_component::&lt;CanAttack&gt;),
                     player_move,
                     player_can_dash.run_if(any_with_component::&lt;CanDash&gt;),
                     player_can_stealth.run_if(any_with_component::&lt;CanStealth&gt;),
                     player_run.run_if(any_with_component::&lt;Running&gt;),
                     player_jump.run_if(any_with_component::&lt;Jumping&gt;),
                     player_dash_strike.run_if(any_with_component::&lt;DashStrike&gt;),
-                    player_dash.run_if(any_with_component::&lt;Dashing&gt;),
-                    player_dash_fx
-                        .after(player_dash)
+                    (
+                        player_dash,
+                        player_dash_fx.after(player_dash),
+                    )
                         .run_if(any_with_component::&lt;Dashing&gt;),
                     dash_icon_fx
                         .after(player_dash_fx)
@@ -1556,7 +1620,9 @@
                     bow_auto_aim
                         .after(player_move)
                         .before(player_attack)
-                        .run_if(is_player_using_bow),
+                        .run_if(resource_equals(
+                            PlayerCombatStyle::Ranged,
+                        )),
                 )
                     .in_set(PlayerStateSet::Behavior)
                     .before(update_sprite_colliders),
@@ -1971,6 +2037,7 @@
     &gt;,
     <span class="kw-2">mut </span>commands: Commands,
     config: Res&lt;PlayerConfig&gt;,
+    melee_weapon: Res&lt;PlayerMeleeWeapon&gt;,
 ) {
     <span class="kw">for </span>(
         entity,
@@ -1986,12 +2053,12 @@
         <span class="kw">if </span>strike.ticks == <span class="number">10 </span>{
             add_dash_strike_collider(
                 <span class="kw-2">&amp;mut </span>commands,
-                <span class="kw-2">&amp;</span>config,
                 entity,
                 gent,
                 facing,
                 is_stealthed,
                 player_stat_mod.attack,
+                melee_weapon.pushback_values(<span class="kw-2">&amp;</span>config),
             );
         }
         strike.ticks += <span class="number">1</span>;
@@ -2096,13 +2163,20 @@
 
 <span class="kw">fn </span>add_dash_strike_collider(
     <span class="kw-2">mut </span>commands: <span class="kw-2">&amp;mut </span>Commands,
-    config: <span class="kw-2">&amp;</span>PlayerConfig,
     entity: Entity,
     gent: <span class="kw-2">&amp;</span>Gent,
     facing: <span class="kw-2">&amp;</span>Facing,
     stealthed: bool,
     attack_mod: f32,
+    pushback_values: PushbackValues,
 ) {
+    <span class="kw">let </span>PushbackValues {
+        self_pushback,
+        self_pushback_ticks,
+        pushback,
+        pushback_ticks,
+    } = pushback_values;
+
     <span class="kw">let </span>attack = commands
         .spawn((
             TransformBundle::from_transform(Transform::from_xyz(<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>)),
@@ -2114,18 +2188,12 @@
             )),
             Attack::new(<span class="number">16</span>, entity, <span class="number">20. </span>* attack_mod),
             SelfPushback(Knockback::new(
-                Vec2::new(
-                    config.melee_self_pushback * -facing.direction(),
-                    <span class="number">0.</span>,
-                ),
-                config.melee_self_pushback_ticks,
+                Vec2::new(self_pushback * -facing.direction(), <span class="number">0.</span>),
+                self_pushback_ticks,
             )),
             Pushback(Knockback::new(
-                Vec2::new(
-                    facing.direction() * config.melee_pushback,
-                    <span class="number">0.</span>,
-                ),
-                config.melee_pushback_ticks,
+                Vec2::new(facing.direction() * pushback, <span class="number">0.</span>),
+                pushback_ticks,
             )),
         ))
         .set_parent(entity)
@@ -2647,6 +2715,7 @@
             <span class="kw-2">&amp;</span>Facing,
             <span class="kw-2">&amp;</span>Transform,
             <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>WallSlideTime&gt;,
+            <span class="kw-2">&amp;mut </span>PlayerStats,
             <span class="kw-2">&amp;mut </span>Attacking,
             <span class="kw-2">&amp;mut </span>TransitionQueue,
             <span class="kw-2">&amp;</span>ActionState&lt;PlayerAction&gt;,
@@ -2657,7 +2726,8 @@
     &gt;,
     <span class="kw-2">mut </span>commands: Commands,
     config: Res&lt;PlayerConfig&gt;,
-    weapon: Res&lt;PlayerWeapon&gt;,
+    combat_style: Res&lt;PlayerCombatStyle&gt;,
+    melee_weapon: Res&lt;PlayerMeleeWeapon&gt;,
     time: Res&lt;GameTime&gt;,
 ) {
     <span class="kw">for </span>(
@@ -2666,6 +2736,7 @@
         facing,
         transform,
         wall_slide_time,
+        <span class="kw-2">mut </span>player_stats,
         <span class="kw-2">mut </span>attacking,
         <span class="kw-2">mut </span>transitions,
         action_state,
@@ -2674,8 +2745,8 @@
     ) <span class="kw">in </span>query.iter_mut()
     {
         <span class="kw">if </span>attacking.ticks == <span class="number">0 </span>{
-            <span class="kw">let </span>attack = <span class="kw">match </span><span class="kw-2">*</span>weapon {
-                PlayerWeapon::Bow =&gt; {
+            <span class="kw">let </span>attack = <span class="kw">match </span><span class="kw-2">*</span>combat_style {
+                PlayerCombatStyle::Ranged =&gt; {
                     <span class="kw">let </span><span class="kw-2">mut </span>animation: ScriptPlayer&lt;SpriteAnimation&gt; =
                         ScriptPlayer::default();
                     animation.play_key(<span class="string">"anim.player.BowBasicArrow"</span>);
@@ -2736,7 +2807,38 @@
                         ))
                         .id()
                 },
-                PlayerWeapon::Sword =&gt; {
+                PlayerCombatStyle::Melee =&gt; {
+                    <span class="kw">let </span>(
+                        damage,
+                        self_pushback,
+                        self_pushback_ticks,
+                        pushback,
+                        pushback_ticks,
+                    ) = <span class="kw">match </span><span class="kw-2">*</span>melee_weapon {
+                        PlayerMeleeWeapon::Hammer =&gt; (
+                            config.hammer_attack_damage,
+                            config.hammer_self_pushback,
+                            config.hammer_self_pushback_ticks,
+                            config.hammer_pushback,
+                            config.hammer_pushback_ticks,
+                        ),
+                        PlayerMeleeWeapon::Sword =&gt; (
+                            config.sword_attack_damage,
+                            config.sword_self_pushback,
+                            config.sword_self_pushback_ticks,
+                            config.sword_pushback,
+                            config.sword_pushback_ticks,
+                        ),
+                    };
+
+                    <span class="comment">// Slow the player down when they attack with the Hammer
+                    </span><span class="kw">if let </span>PlayerMeleeWeapon::Hammer = <span class="kw-2">*</span>melee_weapon {
+                        player_stats.set(
+                            StatType::MoveVelMax,
+                            config.hammer_max_move_vel,
+                        );
+                    }
+
                     commands
                         .spawn((
                             TransformBundle::from_transform(
@@ -2748,25 +2850,17 @@
                                 PLAYER_ATTACK,
                                 ENEMY_HURT,
                             )),
-                            Attack::new(
-                                <span class="number">16</span>,
-                                entity,
-                                config.sword_attack_damage * stat_mod.attack,
-                            ),
+                            Attack::new(<span class="number">16</span>, entity, damage * stat_mod.attack),
                             SelfPushback(Knockback::new(
                                 Vec2::new(
-                                    config.melee_self_pushback
-                                        * -facing.direction(),
+                                    self_pushback * -facing.direction(),
                                     <span class="number">0.</span>,
                                 ),
-                                config.melee_self_pushback_ticks,
+                                self_pushback_ticks,
                             )),
                             Pushback(Knockback::new(
-                                Vec2::new(
-                                    facing.direction() * config.melee_pushback,
-                                    <span class="number">0.</span>,
-                                ),
-                                config.melee_pushback_ticks,
+                                Vec2::new(facing.direction() * pushback, <span class="number">0.</span>),
+                                pushback_ticks,
                             )),
                         ))
                         .set_parent(entity)
@@ -2807,6 +2901,15 @@
     }
 }
 
+<span class="doccomment">/// Restores the player movement velocity after attacking.
+</span><span class="kw">fn </span>player_restore_velocity(
+    <span class="kw-2">mut </span>query: Query&lt;<span class="kw-2">&amp;mut </span>PlayerStats, (With&lt;Player&gt;, Added&lt;CanAttack&gt;)&gt;,
+) {
+    <span class="kw">for </span><span class="kw-2">mut </span>stats <span class="kw">in </span>query.iter_mut() {
+        stats.reset_stat(StatType::MoveVelMax);
+    }
+}
+
 <span class="kw">pub fn </span>player_whirl_charge(
     <span class="kw-2">mut </span>query: Query&lt;(<span class="kw-2">&amp;mut </span>WhirlAbility, <span class="kw-2">&amp;</span>PlayerStatMod), Without&lt;Whirling&gt;&gt;,
     config: Res&lt;PlayerConfig&gt;,
@@ -2827,6 +2930,7 @@
             <span class="kw-2">&amp;mut </span>TransitionQueue,
             <span class="kw-2">&amp;mut </span>Whirling,
             <span class="kw-2">&amp;mut </span>WhirlAbility,
+            <span class="kw-2">&amp;mut </span>PlayerStats,
             <span class="kw-2">&amp;</span>PlayerStatMod,
             Has&lt;Stealthing&gt;,
             <span class="kw-2">&amp;</span>Gent,
@@ -2847,6 +2951,7 @@
         </span>),
     &gt;,
     <span class="kw-2">mut </span>commands: Commands,
+    melee_weapon: Res&lt;PlayerMeleeWeapon&gt;,
     config: Res&lt;PlayerConfig&gt;,
     time: Res&lt;GameTime&gt;,
 ) {
@@ -2856,6 +2961,7 @@
         <span class="kw-2">mut </span>transitions,
         <span class="kw-2">mut </span>whirling,
         <span class="kw-2">mut </span>whirl_ability,
+        <span class="kw-2">mut </span>player_stats,
         stat_mod,
         is_stealthing,
         gent,
@@ -2866,6 +2972,14 @@
         <span class="kw">if </span>action_state.pressed(<span class="kw-2">&amp;</span>PlayerAction::Whirl)
             || whirling.ticks &lt; Whirling::MIN_TICKS
         {
+            <span class="comment">// Slow the player down when they attack with the Hammer
+            </span><span class="kw">if let </span>PlayerMeleeWeapon::Hammer = <span class="kw-2">*</span>melee_weapon {
+                player_stats.set(
+                    StatType::MoveVelMax,
+                    config.hammer_max_move_vel,
+                );
+            }
+
             <span class="kw">if let </span><span class="prelude-val">Some</span>(attack_entity) = whirling.attack_entity {
                 <span class="comment">// if the attack entities collider was changed, set the attack to none
                 </span><span class="kw">if </span>attack_query.get(attack_entity).is_err() {

@@ -1457,9 +1457,70 @@
 <a href="#1456" id="1456">1456</a>
 <a href="#1457" id="1457">1457</a>
 <a href="#1458" id="1458">1458</a>
-<a href="#1459" id="1459">1459</a></pre></div><pre class="rust"><code><span class="kw">mod </span>player_anim;
+<a href="#1459" id="1459">1459</a>
+<a href="#1460" id="1460">1460</a>
+<a href="#1461" id="1461">1461</a>
+<a href="#1462" id="1462">1462</a>
+<a href="#1463" id="1463">1463</a>
+<a href="#1464" id="1464">1464</a>
+<a href="#1465" id="1465">1465</a>
+<a href="#1466" id="1466">1466</a>
+<a href="#1467" id="1467">1467</a>
+<a href="#1468" id="1468">1468</a>
+<a href="#1469" id="1469">1469</a>
+<a href="#1470" id="1470">1470</a>
+<a href="#1471" id="1471">1471</a>
+<a href="#1472" id="1472">1472</a>
+<a href="#1473" id="1473">1473</a>
+<a href="#1474" id="1474">1474</a>
+<a href="#1475" id="1475">1475</a>
+<a href="#1476" id="1476">1476</a>
+<a href="#1477" id="1477">1477</a>
+<a href="#1478" id="1478">1478</a>
+<a href="#1479" id="1479">1479</a>
+<a href="#1480" id="1480">1480</a>
+<a href="#1481" id="1481">1481</a>
+<a href="#1482" id="1482">1482</a>
+<a href="#1483" id="1483">1483</a>
+<a href="#1484" id="1484">1484</a>
+<a href="#1485" id="1485">1485</a>
+<a href="#1486" id="1486">1486</a>
+<a href="#1487" id="1487">1487</a>
+<a href="#1488" id="1488">1488</a>
+<a href="#1489" id="1489">1489</a>
+<a href="#1490" id="1490">1490</a>
+<a href="#1491" id="1491">1491</a>
+<a href="#1492" id="1492">1492</a>
+<a href="#1493" id="1493">1493</a>
+<a href="#1494" id="1494">1494</a>
+<a href="#1495" id="1495">1495</a>
+<a href="#1496" id="1496">1496</a>
+<a href="#1497" id="1497">1497</a>
+<a href="#1498" id="1498">1498</a>
+<a href="#1499" id="1499">1499</a>
+<a href="#1500" id="1500">1500</a>
+<a href="#1501" id="1501">1501</a>
+<a href="#1502" id="1502">1502</a>
+<a href="#1503" id="1503">1503</a>
+<a href="#1504" id="1504">1504</a>
+<a href="#1505" id="1505">1505</a>
+<a href="#1506" id="1506">1506</a>
+<a href="#1507" id="1507">1507</a>
+<a href="#1508" id="1508">1508</a>
+<a href="#1509" id="1509">1509</a>
+<a href="#1510" id="1510">1510</a>
+<a href="#1511" id="1511">1511</a>
+<a href="#1512" id="1512">1512</a>
+<a href="#1513" id="1513">1513</a>
+<a href="#1514" id="1514">1514</a>
+<a href="#1515" id="1515">1515</a>
+<a href="#1516" id="1516">1516</a>
+<a href="#1517" id="1517">1517</a>
+<a href="#1518" id="1518">1518</a>
+<a href="#1519" id="1519">1519</a>
+<a href="#1520" id="1520">1520</a></pre></div><pre class="rust"><code><span class="kw">mod </span>player_anim;
 <span class="kw">mod </span>player_behaviour;
-<span class="kw">mod </span>player_weapon;
+<span class="kw">pub mod </span>player_weapon;
 <span class="kw">use </span>bevy::utils::hashbrown::HashMap;
 <span class="kw">use </span>leafwing_input_manager::action_state::ActionState;
 <span class="kw">use </span>leafwing_input_manager::axislike::VirtualAxis;
@@ -1591,7 +1652,8 @@
     Whirl,
     Stealth,
     Fall,
-    SwapWeapon,
+    SwapCombatStyle,
+    SwapMeleeWeapon,
     Interact,
     ToggleControlOverlay,
 }
@@ -1858,10 +1920,17 @@
                         KeyCode::Semicolon,
                     )
                     .with(PlayerAction::Stealth, KeyCode::Digit4)
-                    .with(PlayerAction::SwapWeapon, KeyCode::KeyH)
                     .with(
-                        PlayerAction::SwapWeapon,
+                        PlayerAction::SwapCombatStyle,
+                        KeyCode::KeyH,
+                    )
+                    .with(
+                        PlayerAction::SwapCombatStyle,
                         KeyCode::Backquote,
+                    )
+                    .with(
+                        PlayerAction::SwapMeleeWeapon,
+                        KeyCode::KeyG,
                     )
                     .with(PlayerAction::Interact, KeyCode::KeyF)
                     .with(
@@ -2032,15 +2101,11 @@
 
 <span class="doccomment">/// Differentiates between different types of dashing
 </span><span class="comment">//#[allow(clippy::enum_variant_names)]
-</span><span class="attr">#[derive(Clone, Copy, Eq, PartialEq, Hash, Debug)]
+</span><span class="attr">#[derive(Clone, Copy, Eq, PartialEq, Hash, Debug, Default)]
 </span><span class="kw">pub enum </span>DashType {
-    Horizontal,
+    <span class="attr">#[default]
+    </span>Horizontal,
     Downward,
-}
-<span class="kw">impl </span>Default <span class="kw">for </span>DashType {
-    <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
-        <span class="kw">return </span>DashType::Horizontal;
-    }
 }
 
 <span class="attr">#[derive(Component, Debug, Default)]
@@ -2055,32 +2120,32 @@
     <span class="kw">pub fn </span>from_action_state(action_state: <span class="kw-2">&amp;</span>ActionState&lt;PlayerAction&gt;) -&gt; <span class="self">Self </span>{
         <span class="kw">if </span>action_state.pressed(<span class="kw-2">&amp;</span>PlayerAction::Fall) {
             <span class="macro">println!</span>(<span class="string">"dashing down!"</span>);
-            <span class="kw">return </span><span class="self">Self </span>{
+            <span class="self">Self </span>{
                 dash_type: DashType::Downward,
                 ..default()
-            };
+            }
         } <span class="kw">else </span>{
             <span class="macro">println!</span>(<span class="string">"dashing horizontally!"</span>);
-            <span class="kw">return </span><span class="self">Self </span>{
+            <span class="self">Self </span>{
                 dash_type: DashType::Horizontal,
                 ..default()
-            };
+            }
         }
     }
 
     <span class="kw">pub fn </span>dash_duration(<span class="kw-2">&amp;</span><span class="self">self</span>, config: <span class="kw-2">&amp;</span>PlayerConfig) -&gt; f32 {
-        <span class="kw">return match </span><span class="self">self</span>.dash_type {
+        <span class="kw">match </span><span class="self">self</span>.dash_type {
             DashType::Horizontal =&gt; config.dash_duration,
             DashType::Downward =&gt; config.dash_down_duration,
-        };
+        }
     }
 
     <span class="kw">pub fn </span>is_down_dash(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        <span class="kw">return </span><span class="self">self</span>.dash_type == DashType::Downward;
+        <span class="self">self</span>.dash_type == DashType::Downward
     }
 
     <span class="kw">pub fn </span>is_horizontal_dash(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        <span class="kw">return </span><span class="self">self</span>.dash_type == DashType::Horizontal;
+        <span class="self">self</span>.dash_type == DashType::Horizontal
     }
 
     <span class="kw">pub fn </span>set_player_velocity(
@@ -2238,6 +2303,11 @@
     /// (in pixels/second)
     </span>max_move_vel: f32,
 
+    <span class="doccomment">/// The maximum horizontal velocity the player can move at while using the Hammer weapon.
+    ///
+    /// (in pixels/second)
+    </span>hammer_max_move_vel: f32,
+
     <span class="doccomment">/// The maximum downward velocity the player can fall at.
     ///
     /// (in pixels/second)
@@ -2324,23 +2394,29 @@
     <span class="doccomment">/// Ticks for wall pushback velocity; determines how long movement is locked for
     </span>wall_pushback_ticks: u32,
 
-    <span class="doccomment">/// Self pushback velocity on basic melee hits
-    </span>melee_self_pushback: f32,
+    <span class="doccomment">/// Self pushback velocity on basic sword hits
+    </span>sword_self_pushback: f32,
 
-    <span class="doccomment">/// Ticks for melee self pushback velocity; determines how long movement is locked for
-    </span>melee_self_pushback_ticks: u32,
+    <span class="doccomment">/// Ticks for sword self pushback velocity; determines how long movement is locked for
+    </span>sword_self_pushback_ticks: u32,
 
-    <span class="doccomment">/// Knockback velocity applied to enemy on basic melee hit
-    </span>melee_pushback: f32,
+    <span class="doccomment">/// Knockback velocity applied to enemy on basic sword hit
+    </span>sword_pushback: f32,
 
-    <span class="doccomment">/// Ticks for melee knockback velocity; determines how long movement is locked for
-    </span>melee_pushback_ticks: u32,
+    <span class="doccomment">/// Ticks for sword knockback velocity; determines how long movement is locked for
+    </span>sword_pushback_ticks: u32,
 
-    <span class="doccomment">/// Base sword attack damage
-    </span>sword_attack_damage: f32,
+    <span class="doccomment">/// Self pushback velocity on basic hammer hits
+    </span>hammer_self_pushback: f32,
 
-    <span class="doccomment">/// Base bow attack damage
-    </span>bow_attack_damage: f32,
+    <span class="doccomment">/// Ticks for hammer self pushback velocity; determines how long movement is locked for
+    </span>hammer_self_pushback_ticks: u32,
+
+    <span class="doccomment">/// Knockback velocity applied to enemy on basic hammer hit
+    </span>hammer_pushback: f32,
+
+    <span class="doccomment">/// Ticks for hammer knockback velocity; determines how long movement is locked for
+    </span>hammer_pushback_ticks: u32,
 
     <span class="doccomment">/// Pushback velocity on basic bow shots
     </span>bow_self_pushback: f32,
@@ -2354,8 +2430,31 @@
     <span class="doccomment">/// Ticks for melee knockback velocity; determines how long movement is locked for
     </span>bow_pushback_ticks: u32,
 
+    <span class="doccomment">/// Base sword attack damage
+    </span>sword_attack_damage: f32,
+
+    <span class="doccomment">/// Base hammer attack damage
+    </span>hammer_attack_damage: f32,
+
+    <span class="doccomment">/// Base bow attack damage
+    </span>bow_attack_damage: f32,
+
     <span class="doccomment">/// Velocity of the projectiles fired by the Bow weapon
     </span>arrow_velocity: f32,
+
+    <span class="doccomment">/// Default strength for on hit camera screen shake
+    </span><span class="kw">pub </span>default_on_hit_screenshake_strength: f32,
+    <span class="doccomment">/// Default duration (in seconds) for on hit camera screen shake
+    </span><span class="kw">pub </span>default_on_hit_screenshake_duration_secs: f32,
+    <span class="doccomment">/// Default frequency for on hit camera screen shake
+    </span><span class="kw">pub </span>default_on_hit_screenshake_frequency: f32,
+
+    <span class="doccomment">/// Hammer-specific strength for on hit camera screen shake
+    </span><span class="kw">pub </span>hammer_on_hit_screenshake_strength: f32,
+    <span class="doccomment">/// Hammer-specific duration (in seconds) for on hit camera screen shake
+    </span><span class="kw">pub </span>hammer_on_hit_screenshake_duration_secs: f32,
+    <span class="doccomment">/// Hammer-specific frequency for on hit camera screen shake
+    </span><span class="kw">pub </span>hammer_on_hit_screenshake_frequency: f32,
 
     <span class="doccomment">/// How many kills to trigger a passive gain
     </span>passive_gain_rate: u32,
@@ -2404,6 +2503,7 @@
 </span><span class="kw">fn </span>update_player_config(config: <span class="kw-2">&amp;mut </span>PlayerConfig, cfg: <span class="kw-2">&amp;</span>DynamicConfig) {
     <span class="kw">let </span><span class="kw-2">mut </span>errors = Vec::new();
     update_field(<span class="kw-2">&amp;mut </span>errors, <span class="kw-2">&amp;</span>cfg.<span class="number">0</span>, <span class="string">"max_move_vel"</span>, |val| config.max_move_vel = val);
+    update_field(<span class="kw-2">&amp;mut </span>errors, <span class="kw-2">&amp;</span>cfg.<span class="number">0</span>, <span class="string">"hammer_max_move_vel"</span>, |val| config.hammer_max_move_vel = val);
     update_field(<span class="kw-2">&amp;mut </span>errors, <span class="kw-2">&amp;</span>cfg.<span class="number">0</span>, <span class="string">"max_fall_vel"</span>, |val| config.max_fall_vel = val);
     update_field(<span class="kw-2">&amp;mut </span>errors, <span class="kw-2">&amp;</span>cfg.<span class="number">0</span>, <span class="string">"move_accel_init"</span>, |val| config.move_accel_init = val);
     update_field(<span class="kw-2">&amp;mut </span>errors, <span class="kw-2">&amp;</span>cfg.<span class="number">0</span>, <span class="string">"move_accel"</span>, |val| config.move_accel = val);
@@ -2428,18 +2528,29 @@
     update_field(<span class="kw-2">&amp;mut </span>errors, <span class="kw-2">&amp;</span>cfg.<span class="number">0</span>, <span class="string">"max_health"</span>, |val| config.max_health = val <span class="kw">as </span>u32);
     update_field(<span class="kw-2">&amp;mut </span>errors, <span class="kw-2">&amp;</span>cfg.<span class="number">0</span>, <span class="string">"wall_pushback"</span>, |val| config.wall_pushback = val);
     update_field(<span class="kw-2">&amp;mut </span>errors, <span class="kw-2">&amp;</span>cfg.<span class="number">0</span>, <span class="string">"wall_pushback_ticks"</span>, |val| config.wall_pushback_ticks = val <span class="kw">as </span>u32);
-    update_field(<span class="kw-2">&amp;mut </span>errors, <span class="kw-2">&amp;</span>cfg.<span class="number">0</span>, <span class="string">"melee_self_pushback"</span>, |val| config.melee_self_pushback = val);
-    update_field(<span class="kw-2">&amp;mut </span>errors, <span class="kw-2">&amp;</span>cfg.<span class="number">0</span>, <span class="string">"melee_self_pushback_ticks"</span>, |val| config.melee_self_pushback_ticks = val <span class="kw">as </span>u32);
-    update_field(<span class="kw-2">&amp;mut </span>errors, <span class="kw-2">&amp;</span>cfg.<span class="number">0</span>, <span class="string">"melee_pushback"</span>, |val| config.melee_pushback = val);
-    update_field(<span class="kw-2">&amp;mut </span>errors, <span class="kw-2">&amp;</span>cfg.<span class="number">0</span>, <span class="string">"melee_pushback_ticks"</span>, |val| config.melee_pushback_ticks = val <span class="kw">as </span>u32);
+    update_field(<span class="kw-2">&amp;mut </span>errors, <span class="kw-2">&amp;</span>cfg.<span class="number">0</span>, <span class="string">"sword_self_pushback"</span>, |val| config.sword_self_pushback = val);
+    update_field(<span class="kw-2">&amp;mut </span>errors, <span class="kw-2">&amp;</span>cfg.<span class="number">0</span>, <span class="string">"sword_self_pushback_ticks"</span>, |val| config.sword_self_pushback_ticks = val <span class="kw">as </span>u32);
+    update_field(<span class="kw-2">&amp;mut </span>errors, <span class="kw-2">&amp;</span>cfg.<span class="number">0</span>, <span class="string">"sword_pushback"</span>, |val| config.sword_pushback = val);
+    update_field(<span class="kw-2">&amp;mut </span>errors, <span class="kw-2">&amp;</span>cfg.<span class="number">0</span>, <span class="string">"sword_pushback_ticks"</span>, |val| config.sword_pushback_ticks = val <span class="kw">as </span>u32);
+    update_field(<span class="kw-2">&amp;mut </span>errors, <span class="kw-2">&amp;</span>cfg.<span class="number">0</span>, <span class="string">"hammer_self_pushback"</span>, |val| config.hammer_self_pushback = val);
+    update_field(<span class="kw-2">&amp;mut </span>errors, <span class="kw-2">&amp;</span>cfg.<span class="number">0</span>, <span class="string">"hammer_self_pushback_ticks"</span>, |val| config.hammer_self_pushback_ticks = val <span class="kw">as </span>u32);
+    update_field(<span class="kw-2">&amp;mut </span>errors, <span class="kw-2">&amp;</span>cfg.<span class="number">0</span>, <span class="string">"hammer_pushback"</span>, |val| config.hammer_pushback = val);
+    update_field(<span class="kw-2">&amp;mut </span>errors, <span class="kw-2">&amp;</span>cfg.<span class="number">0</span>, <span class="string">"hammer_pushback_ticks"</span>, |val| config.hammer_pushback_ticks = val <span class="kw">as </span>u32);
     update_field(<span class="kw-2">&amp;mut </span>errors, <span class="kw-2">&amp;</span>cfg.<span class="number">0</span>, <span class="string">"sword_attack_damage"</span>, |val| config.sword_attack_damage = val);
+    update_field(<span class="kw-2">&amp;mut </span>errors, <span class="kw-2">&amp;</span>cfg.<span class="number">0</span>, <span class="string">"hammer_attack_damage"</span>, |val| config.hammer_attack_damage = val);
     update_field(<span class="kw-2">&amp;mut </span>errors, <span class="kw-2">&amp;</span>cfg.<span class="number">0</span>, <span class="string">"bow_attack_damage"</span>, |val| config.bow_attack_damage = val);
     update_field(<span class="kw-2">&amp;mut </span>errors, <span class="kw-2">&amp;</span>cfg.<span class="number">0</span>, <span class="string">"bow_self_pushback"</span>, |val| config.bow_self_pushback = val);
     update_field(<span class="kw-2">&amp;mut </span>errors, <span class="kw-2">&amp;</span>cfg.<span class="number">0</span>, <span class="string">"bow_self_pushback_ticks"</span>, |val| config.bow_self_pushback_ticks = val <span class="kw">as </span>u32);
     update_field(<span class="kw-2">&amp;mut </span>errors, <span class="kw-2">&amp;</span>cfg.<span class="number">0</span>, <span class="string">"bow_pushback"</span>, |val| config.bow_pushback = val);
     update_field(<span class="kw-2">&amp;mut </span>errors, <span class="kw-2">&amp;</span>cfg.<span class="number">0</span>, <span class="string">"bow_pushback_ticks"</span>, |val| config.bow_pushback_ticks = val <span class="kw">as </span>u32);
-    update_field(<span class="kw-2">&amp;mut </span>errors, <span class="kw-2">&amp;</span>cfg.<span class="number">0</span>, <span class="string">"passive_gain_rate"</span>, |val| config.passive_gain_rate = val <span class="kw">as </span>u32);
     update_field(<span class="kw-2">&amp;mut </span>errors, <span class="kw-2">&amp;</span>cfg.<span class="number">0</span>, <span class="string">"arrow_velocity"</span>, |val| config.arrow_velocity = val);
+    update_field(<span class="kw-2">&amp;mut </span>errors, <span class="kw-2">&amp;</span>cfg.<span class="number">0</span>, <span class="string">"default_on_hit_screenshake_strength"</span>, |val| config.default_on_hit_screenshake_strength = val);
+    update_field(<span class="kw-2">&amp;mut </span>errors, <span class="kw-2">&amp;</span>cfg.<span class="number">0</span>, <span class="string">"default_on_hit_screenshake_duration_secs"</span>, |val| config.default_on_hit_screenshake_duration_secs = val);
+    update_field(<span class="kw-2">&amp;mut </span>errors, <span class="kw-2">&amp;</span>cfg.<span class="number">0</span>, <span class="string">"default_on_hit_screenshake_frequency"</span>, |val| config.default_on_hit_screenshake_frequency = val);
+    update_field(<span class="kw-2">&amp;mut </span>errors, <span class="kw-2">&amp;</span>cfg.<span class="number">0</span>, <span class="string">"hammer_on_hit_screenshake_strength"</span>, |val| config.hammer_on_hit_screenshake_strength = val);
+    update_field(<span class="kw-2">&amp;mut </span>errors, <span class="kw-2">&amp;</span>cfg.<span class="number">0</span>, <span class="string">"hammer_on_hit_screenshake_duration_secs"</span>, |val| config.hammer_on_hit_screenshake_duration_secs = val);
+    update_field(<span class="kw-2">&amp;mut </span>errors, <span class="kw-2">&amp;</span>cfg.<span class="number">0</span>, <span class="string">"hammer_on_hit_screenshake_frequency"</span>, |val| config.hammer_on_hit_screenshake_frequency = val);
+    update_field(<span class="kw-2">&amp;mut </span>errors, <span class="kw-2">&amp;</span>cfg.<span class="number">0</span>, <span class="string">"passive_gain_rate"</span>, |val| config.passive_gain_rate = val <span class="kw">as </span>u32);
 
     <span class="kw">for </span>error <span class="kw">in </span>errors{
        <span class="macro">warn!</span>(<span class="string">"failed to load player cfg value: {}"</span>, error);
@@ -2528,6 +2639,18 @@
         <span class="self">self</span>.effective_stats[<span class="kw-2">&amp;</span>stat]
     }
 
+    <span class="kw">pub fn </span>set(<span class="kw-2">&amp;mut </span><span class="self">self</span>, stat: StatType, value: f32) {
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(effective_stat) = <span class="self">self</span>.effective_stats.get_mut(<span class="kw-2">&amp;</span>stat) {
+            <span class="kw-2">*</span>effective_stat = value;
+        }
+    }
+
+    <span class="kw">pub fn </span>reset_stat(<span class="kw-2">&amp;mut </span><span class="self">self</span>, stat: StatType) {
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(effective_stat) = <span class="self">self</span>.effective_stats.get_mut(<span class="kw-2">&amp;</span>stat) {
+            <span class="kw-2">*</span>effective_stat = <span class="self">self</span>.base_stats[<span class="kw-2">&amp;</span>stat];
+        }
+    }
+
     <span class="kw">pub fn </span>reset_stats(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
         <span class="self">self</span>.effective_stats = <span class="self">self</span>.base_stats.clone();
     }
@@ -2598,7 +2721,7 @@
         <span class="kw">let </span><span class="kw-2">mut </span>speed = <span class="number">1.</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>cdr = <span class="number">1.</span>;
         <span class="kw">if </span>passives.contains(<span class="kw-2">&amp;</span>Passive::GlowingShard) {
-            attack <span class="kw-2">*</span>= (<span class="number">1. </span>+ <span class="number">0.1 </span>* enemies_nearby.<span class="number">0 </span><span class="kw">as </span>f32);
+            attack <span class="kw-2">*</span>= <span class="number">1. </span>+ <span class="number">0.1 </span>* enemies_nearby.<span class="number">0 </span><span class="kw">as </span>f32;
         }
         <span class="kw">if </span>passives.contains(<span class="kw-2">&amp;</span>Passive::SerpentRing) {
             speed <span class="kw-2">*</span>= <span class="number">1.2</span>;
@@ -2780,7 +2903,6 @@
     <span class="kw-2">mut </span>commands: Commands,
     <span class="kw-2">mut </span>query: Query&lt;(Entity, <span class="kw-2">&amp;</span>DashIcon, <span class="kw-2">&amp;mut </span>Sprite)&gt;,
     time: Res&lt;GameTime&gt;,
-    config: Res&lt;PlayerConfig&gt;,
 ) {
     <span class="kw">for </span>(entity, icon, <span class="kw-2">mut </span>sprite) <span class="kw">in </span>query.iter_mut() {
         <span class="kw">let </span>d = time.time_in_seconds() <span class="kw">as </span>f32 - icon.time;
@@ -2883,7 +3005,7 @@
 ) {
     <span class="kw">if let </span><span class="prelude-val">Ok</span>((passives, <span class="kw-2">mut </span>health)) = query.get_single_mut() {
         <span class="kw">if </span>passives.contains(<span class="kw-2">&amp;</span>Passive::Bloodstone) {
-            <span class="kw">for </span>event <span class="kw">in </span>xp_event.read() {
+            <span class="kw">for </span>_event <span class="kw">in </span>xp_event.read() {
                 health.current = (health.current + <span class="number">2</span>).min(health.max);
             }
         }

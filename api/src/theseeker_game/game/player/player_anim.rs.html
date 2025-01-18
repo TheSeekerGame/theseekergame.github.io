@@ -280,14 +280,7 @@
 <a href="#279" id="279">279</a>
 <a href="#280" id="280">280</a>
 <a href="#281" id="281">281</a>
-<a href="#282" id="282">282</a>
-<a href="#283" id="283">283</a>
-<a href="#284" id="284">284</a>
-<a href="#285" id="285">285</a>
-<a href="#286" id="286">286</a>
-<a href="#287" id="287">287</a>
-<a href="#288" id="288">288</a>
-<a href="#289" id="289">289</a></pre></div><pre class="rust"><code><span class="kw">use </span>bevy::prelude::{DetectChanges, Ref, RemovedComponents};
+<a href="#282" id="282">282</a></pre></div><pre class="rust"><code><span class="kw">use </span>bevy::prelude::{DetectChanges, Ref};
 <span class="kw">use </span>theseeker_engine::assets::animation::SpriteAnimation;
 <span class="kw">use </span>theseeker_engine::gent::Gent;
 <span class="kw">use </span>theseeker_engine::physics::LinearVelocity;
@@ -306,7 +299,7 @@
     Res, With, Without,
 };
 
-<span class="kw">use </span><span class="kw">super</span>::player_weapon::PlayerWeapon;
+<span class="kw">use </span><span class="kw">super</span>::player_weapon::CurrentWeapon;
 
 <span class="doccomment">/// play animations here, run after transitions
 </span><span class="kw">pub struct </span>PlayerAnimationPlugin;
@@ -378,20 +371,15 @@
                     </span>{
                         player.play_key(<span class="string">"anim.player.WallSlide"</span>);
                     }
-                } <span class="kw">else </span>{
-                    <span class="kw">if </span>velocity.y &lt; <span class="number">0.
-                        </span>&amp;&amp; player.current_key().unwrap_or(<span class="string">""</span>)
-                            != <span class="string">"anim.player.Fall"
-                    </span>{
-                        player.play_key(<span class="string">"anim.player.Fall"</span>);
-                    }
-                }
-            } <span class="kw">else </span>{
-                <span class="kw">if </span>velocity.y &lt; <span class="number">0.
+                } <span class="kw">else if </span>velocity.y &lt; <span class="number">0.
                     </span>&amp;&amp; player.current_key().unwrap_or(<span class="string">""</span>) != <span class="string">"anim.player.Fall"
                 </span>{
                     player.play_key(<span class="string">"anim.player.Fall"</span>);
                 }
+            } <span class="kw">else if </span>velocity.y &lt; <span class="number">0.
+                </span>&amp;&amp; player.current_key().unwrap_or(<span class="string">""</span>) != <span class="string">"anim.player.Fall"
+            </span>{
+                player.play_key(<span class="string">"anim.player.Fall"</span>);
             }
         }
     }
@@ -449,7 +437,7 @@
     &gt;,
     <span class="kw-2">mut </span>gfx_query: Query&lt;<span class="kw-2">&amp;mut </span>ScriptPlayer&lt;SpriteAnimation&gt;, With&lt;PlayerGfx&gt;&gt;,
     config: Res&lt;PlayerConfig&gt;,
-    weapon: Res&lt;PlayerWeapon&gt;,
+    weapon: CurrentWeapon,
 ) {
     <span class="kw">for </span>(gent, is_falling, is_jumping, is_running, hitfrozen, attacking) <span class="kw">in
         </span>query.iter()
@@ -458,8 +446,7 @@
             <span class="kw">let </span>hitfrozen = hitfrozen
                 .map(|f| f.<span class="number">0 </span>&lt; config.hitfreeze_ticks)
                 .unwrap_or(<span class="bool-val">false</span>);
-            <span class="comment">// let current = player.current_key().unwrap_or("").clone();
-            </span>player.set_slot(<span class="string">"AttackTransition"</span>, <span class="bool-val">false</span>);
+            player.set_slot(<span class="string">"AttackTransition"</span>, <span class="bool-val">false</span>);
             <span class="kw">let </span>basic_air_anim_key_str = <span class="kw-2">&amp;</span>weapon.get_anim_key(<span class="string">"BasicAir"</span>);
             <span class="kw">let </span>basic_run_anim_key_str = <span class="kw-2">&amp;</span>weapon.get_anim_key(<span class="string">"BasicRun"</span>);
             <span class="kw">let </span>basic_idle_anim_key_str = <span class="kw-2">&amp;</span>weapon.get_anim_key(<span class="string">"BasicIdle"</span>);
@@ -480,12 +467,10 @@
                         player.set_slot(<span class="string">"AttackTransition"</span>, <span class="bool-val">true</span>);
                     }
                 }
-            } <span class="kw">else </span>{
-                <span class="kw">if </span>player.current_key() != <span class="prelude-val">Some</span>(basic_idle_anim_key_str) {
-                    player.play_key(basic_idle_anim_key_str);
-                    <span class="kw">if </span>!attacking.is_added() {
-                        player.set_slot(<span class="string">"AttackTransition"</span>, <span class="bool-val">true</span>);
-                    }
+            } <span class="kw">else if </span>player.current_key() != <span class="prelude-val">Some</span>(basic_idle_anim_key_str) {
+                player.play_key(basic_idle_anim_key_str);
+                <span class="kw">if </span>!attacking.is_added() {
+                    player.set_slot(<span class="string">"AttackTransition"</span>, <span class="bool-val">true</span>);
                 }
             }
         }
@@ -495,10 +480,11 @@
 <span class="kw">fn </span>player_whirling_animation(
     query: Query&lt;<span class="kw-2">&amp;</span>Gent, Added&lt;Whirling&gt;&gt;,
     <span class="kw-2">mut </span>gfx_query: Query&lt;<span class="kw-2">&amp;mut </span>ScriptPlayer&lt;SpriteAnimation&gt;, With&lt;PlayerGfx&gt;&gt;,
+    weapon: CurrentWeapon,
 ) {
     <span class="kw">for </span>gent <span class="kw">in </span>query.iter() {
         <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="kw-2">mut </span>player) = gfx_query.get_mut(gent.e_gfx) {
-            player.play_key(<span class="string">"anim.player.SwordWhirling"</span>)
+            player.play_key(<span class="kw-2">&amp;</span>weapon.whirling_anim_key());
         }
     }
 }
@@ -535,7 +521,7 @@
     <span class="kw-2">mut </span>current_direction: Local&lt;bool&gt;,
     <span class="kw-2">mut </span>old_direction: Local&lt;bool&gt;,
     time: Res&lt;GameTime&gt;,
-    weapon: Res&lt;PlayerWeapon&gt;,
+    weapon: CurrentWeapon,
 ) {
     <span class="kw">for </span>(facing, gent, wall_slide_time) <span class="kw">in </span>query.iter() {
         <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="kw-2">mut </span>player) = gfx_query.get_mut(gent.e_gfx) {
