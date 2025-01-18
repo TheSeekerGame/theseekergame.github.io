@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["activate_switches","parse_puzzle_id","setup_puzzles","setup_switches","should_change_switch_status"],"struct":["Puzzle","PuzzleBundle","PuzzleGfx","PuzzleGfxBundle","PuzzleId","Switch","SwitchBundle","SwitchGfx","SwitchGfxBundle","SwitchesPlugin"]};

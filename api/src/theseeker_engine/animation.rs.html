@@ -621,9 +621,7 @@
 <a href="#620" id="620">620</a>
 <a href="#621" id="621">621</a>
 <a href="#622" id="622">622</a>
-<a href="#623" id="623">623</a>
-<a href="#624" id="624">624</a>
-<a href="#625" id="625">625</a></pre></div><pre class="rust"><code><span class="kw">use </span>bevy::ecs::system::lifetimeless::<span class="kw-2">*</span>;
+<a href="#623" id="623">623</a></pre></div><pre class="rust"><code><span class="kw">use </span>bevy::ecs::system::lifetimeless::<span class="kw-2">*</span>;
 <span class="kw">use </span>bevy::ecs::system::SystemParam;
 
 <span class="kw">use </span><span class="kw">crate</span>::assets::animation::<span class="kw-2">*</span>;
@@ -710,13 +708,11 @@
             } <span class="kw">else </span>{
                 <span class="prelude-val">None
             </span>}
+        } <span class="kw">else if </span>current &lt; <span class="self">self</span>.frame_max {
+            <span class="prelude-val">Some</span>(current + <span class="number">1</span>)
         } <span class="kw">else </span>{
-            <span class="kw">if </span>current &lt; <span class="self">self</span>.frame_max {
-                <span class="prelude-val">Some</span>(current + <span class="number">1</span>)
-            } <span class="kw">else </span>{
-                <span class="prelude-val">None
-            </span>}
-        };
+            <span class="prelude-val">None
+        </span>};
     }
 }
 
@@ -737,22 +733,22 @@
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(), ScriptUpdateResult&gt; {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(oldanim_index) = tracker.carryover.frame {
             <span class="kw">if let </span><span class="prelude-val">Some</span>(lt) = <span class="kw-2">&amp;</span><span class="self">self</span>.if_oldanim_frame_lt {
-                <span class="kw">if </span>!(oldanim_index &lt; <span class="kw-2">*</span>lt) {
+                <span class="kw">if </span>oldanim_index &gt;= <span class="kw-2">*</span>lt {
                     <span class="kw">return </span><span class="prelude-val">Err</span>(ScriptUpdateResult::NormalRun);
                 }
             }
             <span class="kw">if let </span><span class="prelude-val">Some</span>(le) = <span class="kw-2">&amp;</span><span class="self">self</span>.if_oldanim_frame_le {
-                <span class="kw">if </span>!(oldanim_index &lt;= <span class="kw-2">*</span>le) {
+                <span class="kw">if </span>oldanim_index &gt; <span class="kw-2">*</span>le {
                     <span class="kw">return </span><span class="prelude-val">Err</span>(ScriptUpdateResult::NormalRun);
                 }
             }
             <span class="kw">if let </span><span class="prelude-val">Some</span>(gt) = <span class="kw-2">&amp;</span><span class="self">self</span>.if_oldanim_frame_gt {
-                <span class="kw">if </span>!(oldanim_index &gt; <span class="kw-2">*</span>gt) {
+                <span class="kw">if </span>oldanim_index &lt;= <span class="kw-2">*</span>gt {
                     <span class="kw">return </span><span class="prelude-val">Err</span>(ScriptUpdateResult::NormalRun);
                 }
             }
             <span class="kw">if let </span><span class="prelude-val">Some</span>(ge) = <span class="kw-2">&amp;</span><span class="self">self</span>.if_oldanim_frame_ge {
-                <span class="kw">if </span>!(oldanim_index &gt;= <span class="kw-2">*</span>ge) {
+                <span class="kw">if </span>oldanim_index &lt; <span class="kw-2">*</span>ge {
                     <span class="kw">return </span><span class="prelude-val">Err</span>(ScriptUpdateResult::NormalRun);
                 }
             }
@@ -792,29 +788,29 @@
         <span class="kw">let </span>current_index =
             FrameId::from_sprite_index(q_self.get(entity).unwrap().<span class="number">0</span>.index);
         <span class="kw">if let </span><span class="prelude-val">Some</span>(lt) = <span class="kw-2">&amp;</span><span class="self">self</span>.if_frame_lt {
-            <span class="kw">if </span>!(current_index
-                &lt; tracker.resolve_frame(<span class="self">self</span>.frame_bookmark.as_ref(), lt))
+            <span class="kw">if </span>current_index
+                &gt;= tracker.resolve_frame(<span class="self">self</span>.frame_bookmark.as_ref(), lt)
             {
                 <span class="kw">return </span><span class="prelude-val">Err</span>(ScriptUpdateResult::NormalRun);
             }
         }
         <span class="kw">if let </span><span class="prelude-val">Some</span>(le) = <span class="kw-2">&amp;</span><span class="self">self</span>.if_frame_le {
-            <span class="kw">if </span>!(current_index
-                &lt;= tracker.resolve_frame(<span class="self">self</span>.frame_bookmark.as_ref(), le))
+            <span class="kw">if </span>current_index
+                &gt; tracker.resolve_frame(<span class="self">self</span>.frame_bookmark.as_ref(), le)
             {
                 <span class="kw">return </span><span class="prelude-val">Err</span>(ScriptUpdateResult::NormalRun);
             }
         }
         <span class="kw">if let </span><span class="prelude-val">Some</span>(gt) = <span class="kw-2">&amp;</span><span class="self">self</span>.if_frame_gt {
-            <span class="kw">if </span>!(current_index
-                &gt; tracker.resolve_frame(<span class="self">self</span>.frame_bookmark.as_ref(), gt))
+            <span class="kw">if </span>current_index
+                &lt;= tracker.resolve_frame(<span class="self">self</span>.frame_bookmark.as_ref(), gt)
             {
                 <span class="kw">return </span><span class="prelude-val">Err</span>(ScriptUpdateResult::NormalRun);
             }
         }
         <span class="kw">if let </span><span class="prelude-val">Some</span>(ge) = <span class="kw-2">&amp;</span><span class="self">self</span>.if_frame_ge {
-            <span class="kw">if </span>!(current_index
-                &gt;= tracker.resolve_frame(<span class="self">self</span>.frame_bookmark.as_ref(), ge))
+            <span class="kw">if </span>current_index
+                &lt; tracker.resolve_frame(<span class="self">self</span>.frame_bookmark.as_ref(), ge)
             {
                 <span class="kw">return </span><span class="prelude-val">Err</span>(ScriptUpdateResult::NormalRun);
             }
@@ -1072,7 +1068,7 @@
 
         <span class="kw">let </span><span class="kw-2">mut </span>atlas = q
             .get_mut(entity)
-            .expect(<span class="string">"Animation entity must have TextureAtlasSprite component"</span>);
+            .expect(<span class="string">"Animation entity must have TextureAtlas component"</span>);
         atlas.index = settings.frame_start.as_sprite_index();
     }
 
@@ -1145,19 +1141,19 @@
     ) -&gt; ScriptUpdateResult {
         <span class="kw">let </span><span class="kw-2">mut </span>atlas = q
             .get_mut(entity)
-            .expect(<span class="string">"Animation entity must have TextureAtlasSprite component"</span>);
+            .expect(<span class="string">"Animation entity must have TextureAtlas component"</span>);
 
         <span class="kw">if </span><span class="self">self</span>.ticks_remain == <span class="number">0 </span>{
             <span class="kw">let </span><span class="prelude-val">Some</span>(next_frame) = <span class="self">self</span>.next_frame <span class="kw">else </span>{
                 <span class="kw">return </span>ScriptUpdateResult::Finished;
             };
             <span class="kw">if let </span><span class="prelude-val">Some</span>(actions) = <span class="self">self</span>.frame_actions.get(<span class="kw-2">&amp;</span>next_frame) {
-                queue.extend(actions.iter().map(|<span class="kw-2">&amp;</span>action| {
-                    QueuedAction {
+                queue.extend(
+                    actions.iter().map(|<span class="kw-2">&amp;</span>action| QueuedAction {
                         timing: ScriptActionTiming::Tick(gt.tick()),
                         action,
-                    }
-                }));
+                    }),
+                );
             }
             <span class="kw">for </span>(quant, action_id) <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.framequant_actions {
                 <span class="kw">if </span>quant.check(next_frame.as_sprite_index() <span class="kw">as </span>i64) {
@@ -1219,7 +1215,7 @@
             .expect(<span class="string">"Animation entity must have Texture Atlas components"</span>);
 
         <span class="kw">let </span>(h_image, h_layout) = <span class="self">self
-            </span>.resolve_image_atlas(<span class="kw-2">&amp;</span>preloaded, builder.asset_key())
+            </span>.resolve_image_atlas(preloaded, builder.asset_key())
             .expect(
                 <span class="string">"Cannot resolve Animation asset's Image and Layout assets."</span>,
             );
