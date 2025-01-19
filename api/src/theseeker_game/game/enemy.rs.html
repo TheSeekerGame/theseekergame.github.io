@@ -1738,7 +1738,29 @@
 <a href="#1737" id="1737">1737</a>
 <a href="#1738" id="1738">1738</a>
 <a href="#1739" id="1739">1739</a>
-<a href="#1740" id="1740">1740</a></pre></div><pre class="rust"><code><span class="attr">#[cfg(feature = <span class="string">"dev"</span>)]
+<a href="#1740" id="1740">1740</a>
+<a href="#1741" id="1741">1741</a>
+<a href="#1742" id="1742">1742</a>
+<a href="#1743" id="1743">1743</a>
+<a href="#1744" id="1744">1744</a>
+<a href="#1745" id="1745">1745</a>
+<a href="#1746" id="1746">1746</a>
+<a href="#1747" id="1747">1747</a>
+<a href="#1748" id="1748">1748</a>
+<a href="#1749" id="1749">1749</a>
+<a href="#1750" id="1750">1750</a>
+<a href="#1751" id="1751">1751</a>
+<a href="#1752" id="1752">1752</a>
+<a href="#1753" id="1753">1753</a>
+<a href="#1754" id="1754">1754</a>
+<a href="#1755" id="1755">1755</a>
+<a href="#1756" id="1756">1756</a>
+<a href="#1757" id="1757">1757</a>
+<a href="#1758" id="1758">1758</a>
+<a href="#1759" id="1759">1759</a>
+<a href="#1760" id="1760">1760</a>
+<a href="#1761" id="1761">1761</a>
+<a href="#1762" id="1762">1762</a></pre></div><pre class="rust"><code><span class="attr">#[cfg(feature = <span class="string">"dev"</span>)]
 </span><span class="kw">use </span>bevy_inspector_egui::quick::FilterQueryInspectorPlugin;
 <span class="kw">use </span>rand::distributions::Standard;
 <span class="kw">use </span>rapier2d::geometry::SharedShape;
@@ -1750,7 +1772,7 @@
 <span class="kw">use </span>theseeker_engine::gent::{Gent, GentPhysicsBundle, TransformGfxFromGent};
 <span class="kw">use </span>theseeker_engine::physics::{
     into_vec2, update_sprite_colliders, AnimationCollider, Collider,
-    LinearVelocity, PhysicsWorld, ShapeCaster, ENEMY, ENEMY_ATTACK, ENEMY_HURT,
+    LinearVelocity, PhysicsWorld, ShapeCaster, ENEMY, ENEMY_ATTACK,
     ENEMY_INSIDE, GROUND, PLAYER, SENSOR,
 };
 <span class="kw">use </span>theseeker_engine::script::ScriptPlayer;
@@ -2327,14 +2349,41 @@
     Three = <span class="number">3</span>,
 }
 
-<span class="comment">// TODO: 60/40 distribution?
-</span><span class="kw">impl </span>Distribution&lt;Role&gt; <span class="kw">for </span>Standard {
+<span class="kw">impl </span>Distribution&lt;Role&gt; <span class="kw">for </span>Standard {
     <span class="kw">fn </span>sample&lt;R: Rng + <span class="question-mark">?</span>Sized&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, rng: <span class="kw-2">&amp;mut </span>R) -&gt; Role {
         <span class="kw">let </span>index: u8 = rng.gen_range(<span class="number">0</span>..=<span class="number">1</span>);
         <span class="kw">match </span>index {
             <span class="number">0 </span>=&gt; Role::Melee,
             <span class="number">1 </span>=&gt; Role::Ranged,
             <span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(),
+        }
+    }
+}
+<span class="kw">impl </span>Role {
+    <span class="kw">pub fn </span>check_range(<span class="kw-2">&amp;</span><span class="self">self</span>, distance: f32) -&gt; Range {
+        <span class="kw">match </span><span class="self">self </span>{
+            Role::Melee =&gt; {
+                <span class="kw">if </span>distance &lt;= Range::MELEE_MELEE {
+                    Range::Melee
+                } <span class="kw">else if </span>distance &lt;= Range::MELEE_AGGRO {
+                    Range::Aggro
+                } <span class="kw">else if </span>distance &lt;= Range::MELEE_DEAGGRO {
+                    Range::Deaggro
+                } <span class="kw">else </span>{
+                    Range::Far
+                }
+            },
+            Role::Ranged =&gt; {
+                <span class="kw">if </span>distance &lt;= Range::RANGED_MELEE {
+                    Range::Melee
+                } <span class="kw">else if </span>distance &lt;= Range::RANGED_AGGRO {
+                    Range::Aggro
+                } <span class="kw">else if </span>distance &lt;= Range::RANGED_RANGED {
+                    Range::Ranged
+                } <span class="kw">else </span>{
+                    Range::Far
+                }
+            },
         }
     }
 }
@@ -2350,16 +2399,21 @@
 }
 
 <span class="attr">#[derive(Component, Debug, Deref)]
-</span><span class="comment">// Target entity, distance
 </span><span class="kw">struct </span>Target(<span class="prelude-ty">Option</span>&lt;Entity&gt;);
 
 <span class="kw">impl </span>Range {
-    <span class="kw">const </span>AGGRO: f32 = <span class="number">50.</span>;
-    <span class="kw">const </span>DEAGGRO: f32 = <span class="number">70.</span>;
-    <span class="comment">// const GROUPED: f32 = 100.;
-    </span><span class="kw">const </span>MELEE: f32 = <span class="number">14.</span>;
-    <span class="comment">// const MELEE: f32 = 12.;
-    </span><span class="kw">const </span>RANGED: f32 = <span class="number">60.</span>;
+    <span class="kw">const </span>RANGED_AGGRO: f32 = <span class="number">50.</span>;
+    <span class="comment">// const RANGED_DEAGGRO: f32 = 70.;
+    </span><span class="kw">const </span>RANGED_MELEE: f32 = <span class="number">20.</span>;
+    <span class="kw">const </span>RANGED_RANGED: f32 = <span class="number">60.</span>;
+
+    <span class="kw">const </span>MELEE_AGGRO: f32 = <span class="number">50.</span>;
+    <span class="kw">const </span>MELEE_DEAGGRO: f32 = <span class="number">70.</span>;
+    <span class="kw">const </span>MELEE_MELEE: f32 = <span class="number">12.</span>;
+    <span class="comment">// const MELEE_RANGED: f32 = 60.;
+
+    // for players passive enemies nearby buff
+    </span><span class="kw">const </span>NEARBY: f32 = <span class="number">20.</span>;
 }
 
 <span class="doccomment">/// Component that indicates that the player is inside of this enemy,
@@ -2428,38 +2482,26 @@
                 .truncate()
                 .distance(player_trans.translation().truncate());
 
-            <span class="kw">if </span>is_aggroed &amp;&amp; !is_meleeing &amp;&amp; !is_defending {
-                <span class="comment">// }
-                // if we are in AGGRO range, face the player
-                // if distance &lt;= Range::AGGRO {
-                </span><span class="kw">if </span>trans.translation().x &gt; player_trans.translation().x {
+            <span class="comment">// face player
+            </span><span class="kw">if </span>is_aggroed &amp;&amp; !is_meleeing &amp;&amp; !is_defending {
+                <span class="kw">if </span>trans.translation().x &gt; player_trans.translation().x {
                     <span class="kw-2">*</span>facing = Facing::Right;
                 } <span class="kw">else if </span>trans.translation().x &lt; player_trans.translation().x {
                     <span class="kw-2">*</span>facing = Facing::Left;
                 }
             }
 
-            <span class="comment">// set range and target
-            </span><span class="kw">if </span>distance &lt;= Range::MELEE {
-                <span class="kw-2">*</span>range = Range::Melee;
-                target.<span class="number">0 </span>= <span class="prelude-val">Some</span>(player_e);
-            } <span class="kw">else if </span>distance &lt;= Range::AGGRO {
-                <span class="kw-2">*</span>range = Range::Aggro;
-                target.<span class="number">0 </span>= <span class="prelude-val">Some</span>(player_e);
+            <span class="comment">// set range
+            </span><span class="kw-2">*</span>range = role.check_range(distance);
+            <span class="comment">// set target
+            </span>target.<span class="number">0 </span>= <span class="kw">match </span><span class="kw-2">*</span>range {
+                Range::Melee | Range::Aggro | Range::Ranged =&gt; <span class="prelude-val">Some</span>(player_e),
+                Range::Deaggro | Range::Far | Range::None =&gt; <span class="prelude-val">None</span>,
+            };
+            <span class="comment">//set nearby enemies for passive buff
+            </span><span class="kw">if </span>distance &lt; Range::NEARBY {
                 <span class="kw-2">**</span>enemies_nearby += <span class="number">1</span>;
-            } <span class="kw">else if </span><span class="macro">matches!</span>(role, Role::Ranged) &amp;&amp; distance &lt;= Range::RANGED
-            {
-                <span class="kw-2">*</span>range = Range::Ranged;
-                target.<span class="number">0 </span>= <span class="prelude-val">Some</span>(player_e);
-            } <span class="kw">else if </span><span class="macro">matches!</span>(role, Role::Melee) &amp;&amp; distance &lt;= Range::DEAGGRO
-            {
-                <span class="kw-2">*</span>range = Range::Deaggro;
-                target.<span class="number">0 </span>= <span class="prelude-val">Some</span>(player_e);
-                <span class="comment">// target.0 = None;
-            </span>} <span class="kw">else </span>{
-                <span class="kw-2">*</span>range = Range::Far;
-                target.<span class="number">0 </span>= <span class="prelude-val">None</span>;
-            }
+            };
         }
     <span class="comment">// if there is no player
     </span>} <span class="kw">else </span>{
@@ -2756,9 +2798,11 @@
                 transform.translation.x - enemy_transform.translation().x;
             <span class="kw">let </span>gravity = config.fall_accel * time.hz <span class="kw">as </span>f32;
             <span class="kw">let </span>rng_factor = <span class="number">1.0</span>;
-            <span class="kw">let </span><span class="kw-2">mut </span>speed =
-                ballistic_speed(Range::RANGED, gravity, relative_height)
-                    * rng_factor <span class="kw">as </span>f32;
+            <span class="kw">let </span><span class="kw-2">mut </span>speed = ballistic_speed(
+                Range::RANGED_RANGED,
+                gravity,
+                relative_height,
+            ) * rng_factor <span class="kw">as </span>f32;
             <span class="kw">let </span>max_attempts = <span class="number">10</span>;
             <span class="comment">// Define default arc as 50ish degree shot with in the direction of the player
             </span><span class="kw">let </span><span class="kw-2">mut </span>final_solution = Projectile {
@@ -3384,7 +3428,7 @@
     i_query: Query&lt;(<span class="kw-2">&amp;</span>Gent, <span class="kw-2">&amp;</span>Tier), (Added&lt;Defense&gt;, With&lt;Enemy&gt;)&gt;,
     <span class="kw-2">mut </span>gfx_query: Query&lt;<span class="kw-2">&amp;mut </span>ScriptPlayer&lt;SpriteAnimation&gt;, With&lt;EnemyGfx&gt;&gt;,
 ) {
-    <span class="kw">for </span>((gent, tier)) <span class="kw">in </span>i_query.iter() {
+    <span class="kw">for </span>(gent, tier) <span class="kw">in </span>i_query.iter() {
         <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="kw-2">mut </span>enemy) = gfx_query.get_mut(gent.e_gfx) {
             <span class="kw">let </span>key = <span class="kw">match </span>tier {
                 Tier::Base =&gt; <span class="string">"anim.spider.Defense"</span>,
