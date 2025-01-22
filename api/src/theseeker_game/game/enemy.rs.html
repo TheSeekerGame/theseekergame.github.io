@@ -1748,19 +1748,7 @@
 <a href="#1747" id="1747">1747</a>
 <a href="#1748" id="1748">1748</a>
 <a href="#1749" id="1749">1749</a>
-<a href="#1750" id="1750">1750</a>
-<a href="#1751" id="1751">1751</a>
-<a href="#1752" id="1752">1752</a>
-<a href="#1753" id="1753">1753</a>
-<a href="#1754" id="1754">1754</a>
-<a href="#1755" id="1755">1755</a>
-<a href="#1756" id="1756">1756</a>
-<a href="#1757" id="1757">1757</a>
-<a href="#1758" id="1758">1758</a>
-<a href="#1759" id="1759">1759</a>
-<a href="#1760" id="1760">1760</a>
-<a href="#1761" id="1761">1761</a>
-<a href="#1762" id="1762">1762</a></pre></div><pre class="rust"><code><span class="attr">#[cfg(feature = <span class="string">"dev"</span>)]
+<a href="#1750" id="1750">1750</a></pre></div><pre class="rust"><code><span class="attr">#[cfg(feature = <span class="string">"dev"</span>)]
 </span><span class="kw">use </span>bevy_inspector_egui::quick::FilterQueryInspectorPlugin;
 <span class="kw">use </span>rand::distributions::Standard;
 <span class="kw">use </span>rapier2d::geometry::SharedShape;
@@ -2122,8 +2110,8 @@
             Idle,
             Waiting::new(<span class="number">12</span>),
             AddQueue::default(),
-            TransitionQueue::default(), <span class="comment">// },
-            </span>StateDespawnMarker,
+            TransitionQueue::default(),
+            StateDespawnMarker,
         ));
         commands.entity(e_gfx).insert((
             EnemyGfxBundle {
@@ -2140,10 +2128,8 @@
             },
             StateDespawnMarker,
         ));
-        <span class="kw">let </span><span class="kw-2">mut </span>animation: ScriptPlayer&lt;SpriteAnimation&gt; =
-            ScriptPlayer::default();
+        <span class="kw">let </span><span class="kw-2">mut </span>animation = ScriptPlayer::&lt;SpriteAnimation&gt;::default();
         animation.play_key(<span class="string">"anim.spider.Sparks"</span>);
-        animation.set_slot(<span class="string">"Start"</span>, <span class="bool-val">true</span>);
         commands.entity(e_effects_gfx).insert((
             EnemyEffectsGfxBundle {
                 marker: EnemyEffectGfx { e_gent },
@@ -2666,7 +2652,6 @@
     <span class="kw">for </span>(role, range, target, <span class="kw-2">mut </span>velocity, <span class="kw-2">mut </span>transitions) <span class="kw">in </span>query.iter_mut()
     {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(p_entity) = target.<span class="number">0 </span>{
-            <span class="kw">let </span><span class="kw-2">mut </span>rng = rand::thread_rng();
             <span class="comment">// return to patrol if out of aggro range
             </span><span class="kw">if </span><span class="macro">matches!</span>(range, Range::Far) {
                 transitions.push(Aggroed::new_transition(Patrolling));
@@ -2677,9 +2662,7 @@
                     )),
                     Role::Ranged =&gt; {
                         velocity.x = <span class="number">0.</span>;
-                        transitions.push(Waiting::new_transition(
-                            Defense::default(),
-                        ));
+                        transitions.push(Waiting::new_transition(Defense));
                     },
                 }
             } <span class="kw">else if </span><span class="macro">matches!</span>(role, Role::Melee) {
@@ -2752,7 +2735,7 @@
                 * <span class="number">0.5</span>;
             <span class="comment">// how far is the ceiling above the mid point of the projectile trajectory?
             </span><span class="kw">let </span><span class="kw-2">mut </span>ceiling = f32::MAX;
-            <span class="kw">if let </span><span class="prelude-val">Some</span>((hit_e, hit)) = spatial_query.ray_cast(
+            <span class="kw">if let </span><span class="prelude-val">Some</span>((_hit_e, hit)) = spatial_query.ray_cast(
                 mid_pt,
                 Vec2::new(<span class="number">0.0</span>, <span class="number">1.0</span>),
                 f32::MAX,
@@ -2766,7 +2749,7 @@
                         mid_pt.y + hit.toi - enemy_transform.translation().y;
                 } <span class="kw">else </span>{
                     <span class="comment">// if it did start underground, fire another one to find how far underground, and then fire again from there + 0.1
-                    </span><span class="kw">if let </span><span class="prelude-val">Some</span>((hit_e, hit)) = spatial_query.ray_cast(
+                    </span><span class="kw">if let </span><span class="prelude-val">Some</span>((_hit_e, hit)) = spatial_query.ray_cast(
                         mid_pt,
                         Vec2::new(<span class="number">0.0</span>, <span class="number">1.0</span>),
                         f32::MAX,
@@ -2774,7 +2757,7 @@
                         InteractionGroups::new(ENEMY, GROUND),
                         <span class="prelude-val">None</span>,
                     ) {
-                        <span class="kw">if let </span><span class="prelude-val">Some</span>((hit_e, hit_2)) = spatial_query.ray_cast(
+                        <span class="kw">if let </span><span class="prelude-val">Some</span>((_hit_e, hit_2)) = spatial_query.ray_cast(
                             mid_pt + Vec2::new(<span class="number">0.0</span>, hit.toi + <span class="number">0.001</span>),
                             Vec2::new(<span class="number">0.0</span>, <span class="number">1.0</span>),
                             f32::MAX,
@@ -2837,12 +2820,10 @@
                     }
                     final_solution = projectile;
                     <span class="kw">break</span>;
+                } <span class="kw">else if </span>i == max_attempts - <span class="number">1 </span>{
+                    <span class="macro">warn!</span>(<span class="string">"No solution for ballistic trajectory, even after increased speed to {speed}, using default trajectory!"</span>)
                 } <span class="kw">else </span>{
-                    <span class="kw">if </span>i == max_attempts - <span class="number">1 </span>{
-                        <span class="macro">warn!</span>(<span class="string">"No solution for ballistic trajectory, even after increased speed to {speed}, using default trajectory!"</span>)
-                    } <span class="kw">else </span>{
-                        speed <span class="kw-2">*</span>= <span class="number">1.15</span>;
-                    }
+                    speed <span class="kw-2">*</span>= <span class="number">1.15</span>;
                 }
             }
             <span class="comment">// spawn in the new projectile:
@@ -2863,9 +2844,7 @@
                 .with_lingering_particles(particle_effect.<span class="number">0</span>.clone());
         }
         <span class="kw">if </span><span class="macro">matches!</span>(range, Range::Melee) {
-            trans_q.push(RangedAttack::new_transition(
-                Defense::default(),
-            ));
+            trans_q.push(RangedAttack::new_transition(Defense));
         }
     }
 }
@@ -2876,7 +2855,6 @@
             Entity,
             <span class="kw-2">&amp;mut </span>MeleeAttack,
             <span class="kw-2">&amp;</span>Tier,
-            <span class="kw-2">&amp;</span>Facing,
             <span class="kw-2">&amp;mut </span>TransitionQueue,
             <span class="kw-2">&amp;</span>Gent,
         ),
@@ -2884,13 +2862,11 @@
     &gt;,
     <span class="kw-2">mut </span>commands: Commands,
 ) {
-    <span class="kw">for </span>(entity, <span class="kw-2">mut </span>attack, tier, facing, <span class="kw-2">mut </span>trans_q, gent) <span class="kw">in
-        </span>query.iter_mut()
-    {
+    <span class="kw">for </span>(entity, <span class="kw-2">mut </span>attack, tier, <span class="kw-2">mut </span>trans_q, gent) <span class="kw">in </span>query.iter_mut() {
         attack.ticks += <span class="number">1</span>;
         <span class="kw">if </span>attack.ticks == <span class="number">8 </span>* MeleeAttack::STARTUP {
             <span class="comment">// spawn attack hitbox collider as child
-            </span><span class="kw">let </span>collider = commands
+            </span>commands
                 .spawn((
                     Collider::empty(InteractionGroups {
                         memberships: SENSOR,
@@ -2900,8 +2876,7 @@
                     AnimationCollider(gent.e_gfx),
                     Attack::new(<span class="number">8</span>, entity, <span class="number">17. </span>* <span class="kw-2">*</span>tier <span class="kw">as </span>u32 <span class="kw">as </span>f32),
                 ))
-                .set_parent(entity)
-                .id();
+                .set_parent(entity);
         }
         <span class="kw">if </span>attack.ticks &gt;= MeleeAttack::MAX * <span class="number">8 </span>{
             trans_q.push(MeleeAttack::new_transition(
@@ -3066,7 +3041,7 @@
         </span><span class="kw">if </span>!<span class="macro">matches!</span>(role, Role::Melee) {
             <span class="kw">continue</span>;
         }
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(p_entity) = target.<span class="number">0 </span>{
+        <span class="kw">if </span>target.<span class="number">0</span>.is_some() {
             <span class="comment">// check if we need to transition
             </span><span class="kw">match </span><span class="kw-2">*</span>range {
                 Range::Melee =&gt; {
@@ -3133,7 +3108,7 @@
         // If the enemy encounters a collision with the player, wall or edge of platform, it sets
         // the Navigation component to Navigation::Blocked
         </span><span class="kw">while let </span><span class="prelude-val">Ok</span>(shape_dir) = Direction2d::new(linear_velocity.<span class="number">0</span>) {
-            <span class="kw">if let </span><span class="prelude-val">Some</span>((e, first_hit)) = spatial_query.shape_cast(
+            <span class="kw">if let </span><span class="prelude-val">Some</span>((_entity, first_hit)) = spatial_query.shape_cast(
                 transform.translation.xy(),
                 shape_dir,
                 <span class="kw-2">&amp;*</span>shape,
@@ -3164,7 +3139,7 @@
 
         <span class="comment">// Raycast from underground directly below the enemy in direction of movement, detecting the edges of a platform from
         // inside
-        </span><span class="kw">if let </span><span class="prelude-val">Some</span>((entity, first_hit)) = spatial_query.ray_cast(
+        </span><span class="kw">if let </span><span class="prelude-val">Some</span>((_entity, first_hit)) = spatial_query.ray_cast(
             <span class="comment">// TODO: should be based on collider half extent y + a little
             </span>Vec2::new(front, transform.translation.y - <span class="number">10.</span>),
             Vec2::new(dir, <span class="number">0.</span>),
@@ -3219,11 +3194,11 @@
 <span class="doccomment">/// Increments the global KillCount, removes most components from the Enemy
 /// after a set amount of ticks transitions to the Decay state
 </span><span class="kw">pub fn </span>dead(
-    <span class="kw-2">mut </span>query: Query&lt;(Entity, <span class="kw-2">&amp;mut </span>Dead, <span class="kw-2">&amp;</span>Gent), With&lt;Enemy&gt;&gt;,
+    <span class="kw-2">mut </span>query: Query&lt;(Entity, <span class="kw-2">&amp;mut </span>Dead), With&lt;Enemy&gt;&gt;,
     <span class="kw-2">mut </span>kill_count: ResMut&lt;KillCount&gt;,
     <span class="kw-2">mut </span>commands: Commands,
 ) {
-    <span class="kw">for </span>(entity, <span class="kw-2">mut </span>dead, gent) <span class="kw">in </span>query.iter_mut() {
+    <span class="kw">for </span>(entity, <span class="kw-2">mut </span>dead) <span class="kw">in </span>query.iter_mut() {
         <span class="kw">if </span>dead.ticks == <span class="number">0 </span>{
             <span class="kw-2">**</span>kill_count += <span class="number">1</span>;
             commands.entity(entity).retain::&lt;(
@@ -3326,6 +3301,7 @@
                     <span class="macro">format!</span>(<span class="string">"Spark{picked_spark}"</span>).as_str(),
                     <span class="bool-val">true</span>,
                 );
+                hit_gfx.set_slot(<span class="string">"Hit"</span>, <span class="bool-val">true</span>);
                 <span class="kw">if let </span><span class="prelude-val">Ok</span>(direction) = player_facing_dir.get_single() {
                     <span class="kw">match </span>direction {
                         Facing::Right =&gt; {
