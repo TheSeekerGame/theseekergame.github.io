@@ -1533,7 +1533,8 @@
 <a href="#1532" id="1532">1532</a>
 <a href="#1533" id="1533">1533</a>
 <a href="#1534" id="1534">1534</a>
-<a href="#1535" id="1535">1535</a></pre></div><pre class="rust"><code><span class="kw">use </span>bevy::prelude::{resource_equals, Added};
+<a href="#1535" id="1535">1535</a>
+<a href="#1536" id="1536">1536</a></pre></div><pre class="rust"><code><span class="kw">use </span>bevy::prelude::{resource_equals, Added};
 <span class="kw">use </span>bevy::sprite::{Sprite, SpriteSheetBundle};
 <span class="kw">use </span>bevy::transform::TransformSystem::TransformPropagate;
 <span class="kw">use </span>glam::{Vec2, Vec2Swizzles, Vec3Swizzles};
@@ -2477,15 +2478,16 @@
         <span class="kw-2">mut </span>jump_count,
     ) <span class="kw">in </span>query.iter_mut()
     {
-        <span class="kw">let </span><span class="kw-2">mut </span>time_of_impact = <span class="number">0.0</span>;
-        <span class="kw">let </span>is_falling = ray_cast_info
-            .cast(<span class="kw-2">&amp;</span>spatial_query, <span class="kw-2">&amp;</span>position, <span class="prelude-val">Some</span>(entity))
+        <span class="kw">let </span>ray_cast =
+            ray_cast_info.cast(<span class="kw-2">&amp;</span>spatial_query, <span class="kw-2">&amp;</span>position, <span class="prelude-val">Some</span>(entity));
+        <span class="kw">let </span>falling_toi = ray_cast
             .iter()
-            .any(|x| {
-                time_of_impact = x.<span class="number">1</span>.toi;
-                x.<span class="number">1</span>.toi &gt; GROUNDED_THRESHOLD + <span class="number">0.01
-            </span>});
-        <span class="comment">// Ensures player character lands at the expected x height every time.
+            .find(|x| x.<span class="number">1</span>.toi &gt; GROUNDED_THRESHOLD + <span class="number">0.01</span>);
+        <span class="kw">let </span>is_falling = falling_toi.is_some();
+        <span class="kw">let </span>time_of_impact = falling_toi.map_or(<span class="number">0.0</span>, |x| x.<span class="number">1</span>.toi);
+
+        <span class="comment">// This condition might never be true, but in the rare case where the TOI goes above the threshold
+        // it will ensure that the player character lands at the expected y height every time.
         </span><span class="kw">if </span>!is_falling &amp;&amp; time_of_impact != <span class="number">0.0 </span>{
             position.translation.y =
                 position.translation.y - time_of_impact + GROUNDED_THRESHOLD;
