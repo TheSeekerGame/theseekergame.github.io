@@ -1748,7 +1748,10 @@
 <a href="#1747" id="1747">1747</a>
 <a href="#1748" id="1748">1748</a>
 <a href="#1749" id="1749">1749</a>
-<a href="#1750" id="1750">1750</a></pre></div><pre class="rust"><code><span class="attr">#[cfg(feature = <span class="string">"dev"</span>)]
+<a href="#1750" id="1750">1750</a>
+<a href="#1751" id="1751">1751</a>
+<a href="#1752" id="1752">1752</a>
+<a href="#1753" id="1753">1753</a></pre></div><pre class="rust"><code><span class="attr">#[cfg(feature = <span class="string">"dev"</span>)]
 </span><span class="kw">use </span>bevy_inspector_egui::quick::FilterQueryInspectorPlugin;
 <span class="kw">use </span>rand::distributions::Standard;
 <span class="kw">use </span>rapier2d::geometry::SharedShape;
@@ -1786,7 +1789,7 @@
         );
         app.add_systems(
             GameTickUpdate,
-            spawn_enemy.after(setup_enemy),
+            spawn_enemies.after(setup_enemy),
         );
         app.add_plugins((
             EnemyBehaviorPlugin,
@@ -1922,7 +1925,7 @@
 //tier one at a time
 //when ranged should be capped at 2 per spawner
 //only tick cooldown when spawner is cleared
-</span><span class="kw">fn </span>spawn_enemy(
+</span><span class="kw">fn </span>spawn_enemies(
     <span class="kw-2">mut </span>spawner_q: Query&lt;(<span class="kw-2">&amp;</span>Transform, <span class="kw-2">&amp;mut </span>EnemySpawner)&gt;,
     <span class="comment">//dead enemies to clear
     </span>enemy_q: Query&lt;
@@ -1956,8 +1959,11 @@
             <span class="kw">match </span>spawner.spawn_state {
                 SpawnerState::Upgrade =&gt; {
                     <span class="comment">// set number of clears till next upgrade 2 or 3
-                    </span>spawner.threshold_next = thread_rng().gen_range(<span class="number">2</span>..<span class="number">4</span>);
-                    <span class="comment">// add a slot
+                    //TODO: get rid of threshold_next if we decide to continue with spawning every
+                    //clear
+                    </span>spawner.threshold_next = <span class="number">1</span>;
+                    <span class="comment">// spawner.threshold_next = thread_rng().gen_range(2..4);
+                    // add a slot
                     </span><span class="kw">if </span>spawner.slots.len() &lt; EnemySpawner::MAX {
                         spawner.slots.push(SpawnSlot {
                             enemy: <span class="prelude-val">None</span>,
@@ -2008,7 +2014,7 @@
                                             bonus_hp: <span class="number">20 </span>* killed,
                                         },
                                     },
-                                    slot.tier.clone(),
+                                    slot.tier,
                                     role,
                                     TransformBundle::from_transform(<span class="kw-2">*</span>transform),
                                 ))
