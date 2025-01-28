@@ -1518,7 +1518,11 @@
 <a href="#1517" id="1517">1517</a>
 <a href="#1518" id="1518">1518</a>
 <a href="#1519" id="1519">1519</a>
-<a href="#1520" id="1520">1520</a></pre></div><pre class="rust"><code><span class="kw">mod </span>player_anim;
+<a href="#1520" id="1520">1520</a>
+<a href="#1521" id="1521">1521</a>
+<a href="#1522" id="1522">1522</a>
+<a href="#1523" id="1523">1523</a>
+<a href="#1524" id="1524">1524</a></pre></div><pre class="rust"><code><span class="kw">mod </span>player_anim;
 <span class="kw">mod </span>player_behaviour;
 <span class="kw">pub mod </span>player_weapon;
 <span class="kw">use </span>bevy::utils::hashbrown::HashMap;
@@ -1541,8 +1545,9 @@
 };
 
 <span class="kw">use </span><span class="kw">super</span>::physics::Knockback;
+<span class="kw">use </span><span class="kw">crate</span>::game::attack::<span class="kw-2">*</span>;
 <span class="kw">use </span><span class="kw">crate</span>::game::gentstate::<span class="kw-2">*</span>;
-<span class="kw">use </span><span class="kw">crate</span>::game::{attack::<span class="kw-2">*</span>, xp_orbs::XpOrbPickup};
+<span class="kw">use </span><span class="kw">crate</span>::game::xp_orbs::XpOrbPickup;
 <span class="kw">use </span><span class="kw">crate</span>::prelude::<span class="kw-2">*</span>;
 
 <span class="kw">pub struct </span>PlayerPlugin;
@@ -1570,7 +1575,10 @@
         app.add_systems(Startup, load_dash_asset);
         app.add_systems(
             GameTickUpdate,
-            ((setup_player, despawn_dead_player)
+            ((
+                setup_player,
+                despawn_dead_player.after(<span class="kw">super</span>::game_over::on_game_over),
+            )
                 .run_if(in_state(GameState::Playing)))
             .before(PlayerStateSet::Transition)
             .run_if(in_state(AppState::InGame)),
@@ -1701,7 +1709,7 @@
     }
 }
 
-<span class="comment">//they could also be components...limit only by the pickup/gain function instead of sized hashmap
+<span class="comment">// they could also be components...limit only by the pickup/gain function instead of sized hashmap
 </span><span class="attr">#[derive(Debug, Eq, PartialEq, Hash, EnumIter)]
 </span><span class="kw">pub enum </span>Passive {
     <span class="doccomment">/// Heal when killing an enemy
@@ -1951,7 +1959,7 @@
             ),
             (
                 PlayerStats::init_from_config(<span class="kw-2">&amp;</span>config),
-                <span class="comment">//maybe consolidate with PlayerStats
+                <span class="comment">// maybe consolidate with PlayerStats
                 </span>PlayerStatMod::new(),
                 EnemiesNearby(<span class="number">0</span>),
             ),
@@ -2061,7 +2069,7 @@
 <span class="kw">impl </span>Attacking {
     <span class="kw">pub const </span>MAX: u32 = <span class="number">4</span>;
     <span class="comment">// pub const MAX: u32 = 4;
-    //minimum amount of frames that should be played from attack animation
+    // minimum amount of frames that should be played from attack animation
     </span><span class="kw">pub const </span>MIN: u32 = <span class="number">2</span>;
 }
 <span class="kw">impl </span>GentState <span class="kw">for </span>Attacking {}
@@ -2729,7 +2737,7 @@
             defense <span class="kw-2">*</span>= <span class="number">0.5</span>;
         }
         <span class="kw">if </span>passives.contains(<span class="kw-2">&amp;</span>Passive::HeavyBoots) {
-            <span class="comment">//if we are moving
+            <span class="comment">// if we are moving
             </span><span class="kw">if </span>vel.length() &gt; <span class="number">0.0001 </span>{
                 attack <span class="kw-2">*</span>= <span class="number">0.5</span>;
                 defense <span class="kw-2">*</span>= <span class="number">0.5</span>;
@@ -2760,7 +2768,7 @@
         <span class="kw-2">&amp;mut </span>PlayerStats,
     )&gt;,
     <span class="kw-2">mut </span>gfx_query: Query&lt;(<span class="kw-2">&amp;</span>PlayerGfx, <span class="kw-2">&amp;mut </span>Sprite)&gt;,
-    <span class="comment">//TODO: switch to ticks
+    <span class="comment">// TODO: switch to ticks
     </span>time: Res&lt;Time&lt;Virtual&gt;&gt;,
     <span class="kw-2">mut </span>commands: Commands,
 ) {
@@ -2777,7 +2785,7 @@
 
         sprite.color = modifier.effect_col;
 
-        <span class="comment">//TODO: switch to ticks
+        <span class="comment">// TODO: switch to ticks
         </span>modifier.time_remaining -= time.delta_seconds();
 
         <span class="kw">if </span>modifier.time_remaining &lt; <span class="number">0. </span>{
@@ -3023,7 +3031,7 @@
     <span class="kw-2">mut </span>damage_events: EventReader&lt;DamageInfo&gt;,
 ) {
     <span class="kw">if let </span><span class="prelude-val">Ok</span>((player_e, passives, <span class="kw-2">mut </span>buff)) = query.get_single_mut() {
-        <span class="comment">//tick falloff
+        <span class="comment">// tick falloff
         </span>buff.falloff = buff.falloff.saturating_sub(<span class="number">1</span>);
         <span class="kw">if </span>passives.contains(<span class="kw-2">&amp;</span>Passive::FrenziedAttack) {
             <span class="kw">for </span>damage_info <span class="kw">in </span>damage_events.read() {

@@ -1751,7 +1751,10 @@
 <a href="#1750" id="1750">1750</a>
 <a href="#1751" id="1751">1751</a>
 <a href="#1752" id="1752">1752</a>
-<a href="#1753" id="1753">1753</a></pre></div><pre class="rust"><code><span class="attr">#[cfg(feature = <span class="string">"dev"</span>)]
+<a href="#1753" id="1753">1753</a>
+<a href="#1754" id="1754">1754</a>
+<a href="#1755" id="1755">1755</a>
+<a href="#1756" id="1756">1756</a></pre></div><pre class="rust"><code><span class="attr">#[cfg(feature = <span class="string">"dev"</span>)]
 </span><span class="kw">use </span>bevy_inspector_egui::quick::FilterQueryInspectorPlugin;
 <span class="kw">use </span>rand::distributions::Standard;
 <span class="kw">use </span>rapier2d::geometry::SharedShape;
@@ -1770,10 +1773,11 @@
 
 <span class="kw">use </span><span class="kw">super</span>::physics::Knockback;
 <span class="kw">use </span><span class="kw">super</span>::player::{Player, PlayerConfig, StatusModifier, Stealthing};
+<span class="kw">use </span><span class="kw">crate</span>::game::attack::arc_attack::Projectile;
 <span class="kw">use </span><span class="kw">crate</span>::game::attack::particles::ArcParticleEffectHandle;
 <span class="kw">use </span><span class="kw">crate</span>::game::attack::<span class="kw-2">*</span>;
 <span class="kw">use </span><span class="kw">crate</span>::game::gentstate::<span class="kw-2">*</span>;
-<span class="kw">use </span><span class="kw">crate</span>::game::{attack::arc_attack::Projectile, player::EnemiesNearby};
+<span class="kw">use </span><span class="kw">crate</span>::game::player::EnemiesNearby;
 <span class="kw">use </span><span class="kw">crate</span>::graphics::particles_util::BuildParticles;
 <span class="kw">use </span><span class="kw">crate</span>::prelude::<span class="kw-2">*</span>;
 
@@ -1822,7 +1826,7 @@
 
 <span class="attr">#[derive(Bundle, LdtkEntity, Default)]
 </span><span class="kw">pub struct </span>EnemyBlueprintBundle {
-    marker: EnemyBlueprint,
+    <span class="kw">pub</span>(<span class="kw">crate</span>) marker: EnemyBlueprint,
 }
 
 <span class="attr">#[derive(Bundle, LdtkEntity, Default)]
@@ -1883,7 +1887,7 @@
 #[component(storage = <span class="string">"SparseSet"</span>)]
 </span><span class="kw">pub struct </span>EnemyBlueprint {
     <span class="doccomment">/// Hp added from spawner due to number of enemies killed.
-    </span>bonus_hp: u32,
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) bonus_hp: u32,
 }
 
 <span class="attr">#[derive(Bundle)]
@@ -2449,7 +2453,7 @@
     <span class="kw">if let </span><span class="prelude-val">Ok</span>((player_e, player_trans, player_stealth, <span class="kw-2">mut </span>enemies_nearby)) =
         player_query.get_single_mut()
     {
-        <span class="comment">//reset every tick
+        <span class="comment">// reset every tick
         </span><span class="kw-2">**</span>enemies_nearby = <span class="number">0</span>;
 
         <span class="kw">for </span>(
@@ -2463,7 +2467,7 @@
             is_defending,
         ) <span class="kw">in </span>query.iter_mut()
         {
-            <span class="comment">//TODO: still update enemies nearby in stealth?
+            <span class="comment">// TODO: still update enemies nearby in stealth?
             </span><span class="kw">if </span>player_stealth.is_some() {
                 <span class="kw-2">*</span>range = Range::Deaggro;
                 target.<span class="number">0 </span>= <span class="prelude-val">None</span>;
@@ -2663,9 +2667,11 @@
                 transitions.push(Aggroed::new_transition(Patrolling));
             } <span class="kw">else if </span><span class="macro">matches!</span>(range, Range::Melee) {
                 <span class="kw">match </span>role {
-                    Role::Melee =&gt; transitions.push(Waiting::new_transition(
-                        MeleeAttack::default(),
-                    )),
+                    Role::Melee =&gt; {
+                        transitions.push(Waiting::new_transition(
+                            MeleeAttack::default(),
+                        ))
+                    },
                     Role::Ranged =&gt; {
                         velocity.x = <span class="number">0.</span>;
                         transitions.push(Waiting::new_transition(Defense));
