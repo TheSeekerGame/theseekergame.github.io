@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["FLOATER_BUFFER_LAYERS","FLOATER_BUFFER_SIZE","FLOATER_SAMPLES_X","FLOATER_SAMPLES_Y","FLOATER_SHADER_HANDLE","FLOATER_TEXTURE_FILE"],"struct":["Floater","FloaterBgRenderLabel","FloaterBuffer","FloaterFgRenderLabel","FloaterPipeline","FloaterPlugin","FloaterPostProcessNode","FloaterPrepassLabel","FloaterPrepassNode","FloaterSettings"]};

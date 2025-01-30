@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["darkness","vignette"],"struct":["PostProcessingPlugin"]};
+window.SIDEBAR_ITEMS = {"constant":["PERLIN_3D_SHADER_HANDLE"],"mod":["darkness","floaters","vignette"],"struct":["PostProcessingPlugin"]};
