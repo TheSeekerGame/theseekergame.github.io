@@ -211,36 +211,7 @@
 <a href="#210" id="210">210</a>
 <a href="#211" id="211">211</a>
 <a href="#212" id="212">212</a>
-<a href="#213" id="213">213</a>
-<a href="#214" id="214">214</a>
-<a href="#215" id="215">215</a>
-<a href="#216" id="216">216</a>
-<a href="#217" id="217">217</a>
-<a href="#218" id="218">218</a>
-<a href="#219" id="219">219</a>
-<a href="#220" id="220">220</a>
-<a href="#221" id="221">221</a>
-<a href="#222" id="222">222</a>
-<a href="#223" id="223">223</a>
-<a href="#224" id="224">224</a>
-<a href="#225" id="225">225</a>
-<a href="#226" id="226">226</a>
-<a href="#227" id="227">227</a>
-<a href="#228" id="228">228</a>
-<a href="#229" id="229">229</a>
-<a href="#230" id="230">230</a>
-<a href="#231" id="231">231</a>
-<a href="#232" id="232">232</a>
-<a href="#233" id="233">233</a>
-<a href="#234" id="234">234</a>
-<a href="#235" id="235">235</a>
-<a href="#236" id="236">236</a>
-<a href="#237" id="237">237</a>
-<a href="#238" id="238">238</a>
-<a href="#239" id="239">239</a>
-<a href="#240" id="240">240</a>
-<a href="#241" id="241">241</a>
-<a href="#242" id="242">242</a></pre></div><pre class="rust"><code><span class="kw">use </span>rapier2d::prelude::InteractionGroups;
+<a href="#213" id="213">213</a></pre></div><pre class="rust"><code><span class="kw">use </span>rapier2d::prelude::InteractionGroups;
 <span class="kw">use </span>theseeker_engine::animation::SpriteAnimationBundle;
 <span class="kw">use </span>theseeker_engine::assets::animation::SpriteAnimation;
 <span class="kw">use </span>theseeker_engine::gent::{Gent, TransformGfxFromGent};
@@ -249,6 +220,8 @@
 
 <span class="kw">use </span><span class="kw">crate</span>::prelude::<span class="kw-2">*</span>;
 
+<span class="kw">use </span><span class="kw">super</span>::player::{Idle, Player};
+
 <span class="kw">pub struct </span>SwitchesPlugin;
 
 <span class="kw">impl </span>Plugin <span class="kw">for </span>SwitchesPlugin {
@@ -256,14 +229,14 @@
         app.add_systems(
             GameTickUpdate,
             (
-                setup_switches,
-                setup_puzzles,
-                activate_switches.run_if(should_change_switch_status),
+                setup_switches.run_if(any_matching::&lt;Added&lt;Switch&gt;&gt;()),
+                setup_puzzles.run_if(any_matching::&lt;Added&lt;Switch&gt;&gt;()),
+                activate_switches.run_if(any_matching::&lt;(
+                    With&lt;Player&gt;,
+                    Without&lt;Idle&gt;,
+                )&gt;()),
             )
-                .run_if(
-                    in_state(AppState::InGame)
-                        .and_then(in_state(GameState::Playing)),
-                ),
+                .run_if(in_state(AppState::InGame)),
         );
     }
 }
@@ -334,8 +307,8 @@
                 e_effects_gfx,
             },
             Collider::cuboid(
-                <span class="number">32.0</span>,
-                <span class="number">32.0</span>,
+                <span class="number">30.0</span>,
+                <span class="number">30.0</span>,
                 InteractionGroups {
                     memberships: SENSOR,
                     filter: PLAYER,
@@ -416,7 +389,7 @@
                 memberships: SENSOR,
                 filter: PLAYER,
             },
-            <span class="prelude-val">None</span>,
+            <span class="prelude-val">Some</span>(entity),
         );
 
         <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="kw-2">mut </span>animation) = switch_animation_query.get_mut(gent.e_gfx) {
@@ -450,36 +423,5 @@
     name.strip_prefix(prefix)
         .and_then(|id| id.parse::&lt;u8&gt;().ok())
         .unwrap_or_default()
-}
-
-<span class="kw">fn </span>should_change_switch_status(
-    spatial_query: Res&lt;PhysicsWorld&gt;,
-    query: Query&lt;(<span class="kw-2">&amp;</span>Gent, <span class="kw-2">&amp;</span>GlobalTransform, <span class="kw-2">&amp;</span>Collider), With&lt;Switch&gt;&gt;,
-    switch_animation_query: Query&lt;
-        <span class="kw-2">&amp;</span>ScriptPlayer&lt;SpriteAnimation&gt;,
-        With&lt;SwitchGfx&gt;,
-    &gt;,
-) -&gt; bool {
-    query.iter().any(|(gent, transform, collider)| {
-        switch_animation_query
-            .get(gent.e_gfx)
-            .is_ok_and(|animation| {
-                <span class="kw">let </span>intersections = spatial_query.intersect(
-                    transform.translation().xy(),
-                    collider.<span class="number">0</span>.shape(),
-                    InteractionGroups {
-                        memberships: SENSOR,
-                        filter: PLAYER,
-                    },
-                    <span class="prelude-val">None</span>,
-                );
-
-                <span class="kw">if </span>intersections.is_empty() {
-                    animation.has_slot(<span class="string">"Activated"</span>)
-                } <span class="kw">else </span>{
-                    !animation.has_slot(<span class="string">"Activated"</span>)
-                }
-            })
-    })
 }
 </code></pre></div></section></main></body></html>
