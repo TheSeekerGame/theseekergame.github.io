@@ -1522,7 +1522,18 @@
 <a href="#1521" id="1521">1521</a>
 <a href="#1522" id="1522">1522</a>
 <a href="#1523" id="1523">1523</a>
-<a href="#1524" id="1524">1524</a></pre></div><pre class="rust"><code><span class="kw">mod </span>player_anim;
+<a href="#1524" id="1524">1524</a>
+<a href="#1525" id="1525">1525</a>
+<a href="#1526" id="1526">1526</a>
+<a href="#1527" id="1527">1527</a>
+<a href="#1528" id="1528">1528</a>
+<a href="#1529" id="1529">1529</a>
+<a href="#1530" id="1530">1530</a>
+<a href="#1531" id="1531">1531</a>
+<a href="#1532" id="1532">1532</a>
+<a href="#1533" id="1533">1533</a>
+<a href="#1534" id="1534">1534</a>
+<a href="#1535" id="1535">1535</a></pre></div><pre class="rust"><code><span class="kw">mod </span>player_anim;
 <span class="kw">mod </span>player_behaviour;
 <span class="kw">pub mod </span>player_weapon;
 <span class="kw">use </span>bevy::utils::hashbrown::HashMap;
@@ -3027,10 +3038,20 @@
 }
 
 <span class="kw">fn </span>track_hits(
-    <span class="kw-2">mut </span>query: Query&lt;(Entity, <span class="kw-2">&amp;</span>Passives, <span class="kw-2">&amp;mut </span>BuffTick), With&lt;Player&gt;&gt;,
+    <span class="kw-2">mut </span>query: Query&lt;
+        (
+            Entity,
+            <span class="kw-2">&amp;</span>Passives,
+            <span class="kw-2">&amp;mut </span>Health,
+            <span class="kw-2">&amp;mut </span>BuffTick,
+        ),
+        With&lt;Player&gt;,
+    &gt;,
     <span class="kw-2">mut </span>damage_events: EventReader&lt;DamageInfo&gt;,
 ) {
-    <span class="kw">if let </span><span class="prelude-val">Ok</span>((player_e, passives, <span class="kw-2">mut </span>buff)) = query.get_single_mut() {
+    <span class="kw">if let </span><span class="prelude-val">Ok</span>((player_e, passives, <span class="kw-2">mut </span>health, <span class="kw-2">mut </span>buff)) =
+        query.get_single_mut()
+    {
         <span class="comment">// tick falloff
         </span>buff.falloff = buff.falloff.saturating_sub(<span class="number">1</span>);
         <span class="kw">if </span>passives.contains(<span class="kw-2">&amp;</span>Passive::FrenziedAttack) {
@@ -3038,6 +3059,7 @@
                 <span class="kw">if </span>damage_info.attacker == player_e {
                     buff.falloff = <span class="number">288</span>;
                     buff.stacks += <span class="number">1</span>;
+                    health.current -= buff.stacks;
                 }
             }
         }
