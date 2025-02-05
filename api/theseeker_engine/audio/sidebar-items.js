@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["AudioPlugin","PrecisionMixerControl"]};
+window.SIDEBAR_ITEMS = {"struct":["AudioPlugin","LabeledBackgroundSound","PreciseAudioId","PrecisionMixerControl"]};
