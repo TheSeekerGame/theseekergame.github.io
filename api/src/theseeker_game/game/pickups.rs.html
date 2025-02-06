@@ -607,13 +607,12 @@
 <a href="#606" id="606">606</a>
 <a href="#607" id="607">607</a>
 <a href="#608" id="608">608</a>
-<a href="#609" id="609">609</a>
-<a href="#610" id="610">610</a>
-<a href="#611" id="611">611</a></pre></div><pre class="rust"><code><span class="kw">use </span>bevy::{
+<a href="#609" id="609">609</a></pre></div><pre class="rust"><code><span class="kw">use </span>bevy::{
     ecs::system::Command, prelude::<span class="kw-2">*</span>, text::BreakLineOn,
     transform::TransformSystem, ui::UiSystem, utils::hashbrown::HashMap,
 };
 <span class="kw">use </span>rand::Rng;
+<span class="kw">use </span>strum::IntoEnumIterator;
 <span class="kw">use </span>theseeker_engine::time::GameTickUpdate;
 
 <span class="kw">use crate</span>::{
@@ -980,12 +979,9 @@
     <span class="kw">pub </span>seeds: HashMap&lt;PlanetarySeed, Vec&lt;(u32, String)&gt;&gt;,
 }
 
-<span class="kw">impl </span>FromWorld <span class="kw">for </span>DropTracker {
-    <span class="kw">fn </span>from_world(world: <span class="kw-2">&amp;mut </span>World) -&gt; <span class="self">Self </span>{
-        <span class="kw">let </span><span class="kw-2">mut </span>passives = world.query::&lt;<span class="kw-2">&amp;</span>Passives&gt;();
-        <span class="kw">let </span>passives = <span class="kw-2">&amp;</span>passives.single(world).locked;
-
-        <span class="self">Self</span>::reset(passives.len())
+<span class="kw">impl </span>Default <span class="kw">for </span>DropTracker {
+    <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
+        DropTracker::new(Passive::iter().count())
     }
 }
 
@@ -999,7 +995,7 @@
         <span class="self">self</span>.passive_rolls.get(<span class="self">self</span>.progress)
     }
 
-    <span class="kw">fn </span>reset(passive_count: usize) -&gt; <span class="self">Self </span>{
+    <span class="kw">fn </span>new(passive_count: usize) -&gt; <span class="self">Self </span>{
         <span class="kw">const </span>SPAN: u32 = <span class="number">10</span>;
 
         <span class="kw">let </span><span class="kw-2">mut </span>rng = rand::thread_rng();
