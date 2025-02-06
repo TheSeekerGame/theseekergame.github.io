@@ -291,26 +291,15 @@
 <a href="#290" id="290">290</a>
 <a href="#291" id="291">291</a>
 <a href="#292" id="292">292</a>
-<a href="#293" id="293">293</a>
-<a href="#294" id="294">294</a>
-<a href="#295" id="295">295</a>
-<a href="#296" id="296">296</a>
-<a href="#297" id="297">297</a>
-<a href="#298" id="298">298</a>
-<a href="#299" id="299">299</a>
-<a href="#300" id="300">300</a>
-<a href="#301" id="301">301</a>
-<a href="#302" id="302">302</a></pre></div><pre class="rust"><code><span class="kw">use </span>sickle_ui::ui_builder::{UiBuilderExt, UiRoot};
+<a href="#293" id="293">293</a></pre></div><pre class="rust"><code><span class="kw">use </span>sickle_ui::ui_builder::{UiBuilderExt, UiRoot};
 <span class="kw">use </span>sickle_ui::ui_style::<span class="kw-2">*</span>;
 <span class="kw">use </span>sickle_ui::widgets::prelude::<span class="kw-2">*</span>;
 
 <span class="kw">use </span><span class="kw">crate</span>::appstate::AppState;
-<span class="kw">use </span><span class="kw">crate</span>::camera::MainCamera;
 <span class="kw">use </span><span class="kw">crate</span>::game::player::{
-    Attacking, CanAttack, CanDash, CanStealth, Player, PlayerConfig,
-    WhirlAbility,
+    Attacking, CanDash, CanStealth, Player, PlayerConfig, WhirlAbility,
 };
-<span class="kw">use </span><span class="kw">crate</span>::graphics::{ability_cooldown, player_hp};
+<span class="kw">use </span><span class="kw">crate</span>::graphics::player_hp;
 <span class="kw">use </span><span class="kw">crate</span>::prelude::<span class="kw-2">*</span>;
 <span class="kw">use </span><span class="kw">crate</span>::ui::ability_widget::{
     AbilityWidget, AbilityWidgetCommands, AbilityWidgetConfig,
@@ -330,46 +319,20 @@
         app.add_systems(Update, update_dash_ability_ui);
         app.add_systems(Update, update_whirl_ability_ui);
         app.add_systems(Update, update_stealth_ability_ui);
-        app.add_systems(
-            OnExit(AppState::InGame),
-            despawn_toolbar,
-        );
     }
 }
 
 <span class="kw">fn </span>spawn_toolbar(
     <span class="kw-2">mut </span>commands: Commands,
-    q_cam: Query&lt;Entity, With&lt;MainCamera&gt;&gt;,
     <span class="kw-2">mut </span>ui_materials: ResMut&lt;Assets&lt;player_hp::Material&gt;&gt;,
 ) {
-    <span class="kw">let </span><span class="prelude-val">Ok</span>(cam_e) = q_cam.get_single() <span class="kw">else </span>{
-        <span class="kw">return</span>;
-    };
-
-    commands.ui_builder(UiRoot).container(
-        (
-            NodeBundle {
-                style: Style {
-                    width: Val::Percent(<span class="number">100.0</span>),
-                    height: Val::Percent(<span class="number">100.0</span>),
-                    flex_direction: FlexDirection::ColumnReverse,
-                    ..default()
-                },
-                ..default()
-            },
-            TargetCamera(cam_e),
-            StateDespawnMarker,
-        ),
-        |<span class="kw">_</span>| {},
-    );
-    <span class="comment">// Make a bar centered 20px from the bottom of the screen
-    </span><span class="kw">let </span><span class="kw-2">mut </span>ability_bar = Entity::PLACEHOLDER;
+    <span class="kw">let </span><span class="kw-2">mut </span>ability_bar = Entity::PLACEHOLDER;
     commands
         .ui_builder(UiRoot)
         .row(|row| {
             row.style()
-                .position_type(PositionType::Absolute)
-                .bottom(Val::Px(<span class="number">20.0</span>))
+                .align_self(AlignSelf::End)
+                .justify_self(JustifySelf::Center)
                 .justify_content(JustifyContent::Center);
             row.named(<span class="string">"ability_bar_ui"</span>);
             ability_bar = row.column(|<span class="kw">_</span>| {}).id();
@@ -378,15 +341,17 @@
         .id();
 
     commands.ui_builder(ability_bar).row(|row| {
-        <span class="comment">// todo: after alpha, refactor this to be more generic; either a progress bar widget,
-        //  or proper health bar widget
+        <span class="comment">// todo: after alpha, refactor this to be more generic; either a progress bar or a health bar widget
         </span>row.container(
             (
                 NodeBundle {
                     style: Style {
                         width: Val::Px(<span class="number">270.0</span>),
                         height: Val::Px(<span class="number">10.0</span>),
-                        padding: UiRect::all(Val::Px(<span class="number">0.0</span>)),
+                        <span class="comment">// TODO: Change this to relative positioning later
+                        </span>position_type: PositionType::Absolute,
+                        bottom: Val::Px(-<span class="number">125.0</span>),
+                        left: Val::Px(<span class="number">45.0</span>),
                         ..default()
                     },
                     background_color: Color::rgb(<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>).into(),
@@ -400,14 +365,20 @@
                         style: Style {
                             width: Val::Percent(<span class="number">100.0</span>),
                             height: Val::Percent(<span class="number">100.0</span>),
-                            align_self: AlignSelf::Center,
                             ..default()
                         },
                         material: ui_materials.add(player_hp::Material {
                             factor: <span class="number">1.0</span>,
-                            background_color: Color::rgb(<span class="number">0.23137254901960785</span>, <span class="number">0.12549019607843137</span>, <span class="number">0.12549019607843137</span>)
-                                .into(),
-                            filled_color: Color::rgb(<span class="number">0.6352941176470588</span>, <span class="number">0.196078431372549022</span>, <span class="number">0.3058823529411765</span>).into(),
+                            background_color: Color::rgb(
+                                <span class="number">0.23137254901960785</span>,
+                                <span class="number">0.12549019607843137</span>,
+                                <span class="number">0.12549019607843137</span>,
+                            ),
+                            filled_color: Color::rgb(
+                                <span class="number">0.6352941176470588</span>,
+                                <span class="number">0.196078431372549022</span>,
+                                <span class="number">0.3058823529411765</span>,
+                            ),
                         }),
                         ..default()
                     },
@@ -418,16 +389,21 @@
             },
         );
     });
-    commands
-        .ui_builder(ability_bar)
-        .container(ImageBundle::default(), |row| {
+    commands.ui_builder(ability_bar).container(
+        ImageBundle {
+            style: Style {
+                justify_content: JustifyContent::Center,
+                ..Default::default()
+            },
+            ..Default::default()
+        },
+        |row| {
             row.style()
                 .image(<span class="string">"ui/game/ToolbarFrame.png"</span>)
                 .width(Val::Px(<span class="number">360.0</span>))
                 .height(Val::Px(<span class="number">150.0</span>))
-                .justify_content(JustifyContent::SpaceAround);
-            <span class="comment">//.justify_content(JustifyContent::SpaceAround);
-            </span>row.ability_widget(AbilityWidgetConfig::from(
+                .column_gap(Val::Px(<span class="number">10.0</span>));
+            row.ability_widget(AbilityWidgetConfig::from(
                 <span class="string">"ui/game/AttackSkillIcon.png"</span>,
                 AttackAbilityUI,
                 <span class="bool-val">true</span>,
@@ -447,7 +423,8 @@
                 StealthAbilityUI,
                 <span class="bool-val">true</span>,
             ));
-        });
+        },
+    );
     commands.ui_builder(ability_bar).row(|row| {
         <span class="comment">// The xp bar; placeholder until xp exists
         </span>row.container(
@@ -456,10 +433,14 @@
                     style: Style {
                         width: Val::Px(<span class="number">270.0</span>),
                         height: Val::Px(<span class="number">5.0</span>),
-                        padding: UiRect::all(Val::Px(<span class="number">0.0</span>)),
+                        <span class="comment">// TODO: Change this to relative positioning later
+                        </span>position_type: PositionType::Absolute,
+                        bottom: Val::Px(<span class="number">15.0</span>),
+                        left: Val::Px(<span class="number">45.0</span>),
                         ..default()
                     },
                     background_color: Color::rgb(<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>).into(),
+                    z_index: ZIndex::Global(-<span class="number">1</span>),
                     ..default()
                 },
                 Name::new(<span class="string">"xp_bg"</span>),
@@ -470,14 +451,20 @@
                         style: Style {
                             width: Val::Percent(<span class="number">100.0</span>),
                             height: Val::Percent(<span class="number">100.0</span>),
-                            align_self: AlignSelf::Center,
                             ..default()
                         },
                         material: ui_materials.add(player_hp::Material {
                             factor: <span class="number">1.0</span>,
-                            background_color: Color::rgb(<span class="number">0.17647058823529413</span>, <span class="number">0.15294117647058825</span>, <span class="number">0.22745098039215686</span>)
-                                .into(),
-                            filled_color: Color::rgb(<span class="number">0.24705882352941178</span>, <span class="number">0.3137254901960784</span>, <span class="number">0.43137254901960786</span>).into(),
+                            background_color: Color::rgb(
+                                <span class="number">0.17647058823529413</span>,
+                                <span class="number">0.15294117647058825</span>,
+                                <span class="number">0.22745098039215686</span>,
+                            ),
+                            filled_color: Color::rgb(
+                                <span class="number">0.24705882352941178</span>,
+                                <span class="number">0.3137254901960784</span>,
+                                <span class="number">0.43137254901960786</span>,
+                            ),
                         }),
                         ..default()
                     },
@@ -487,8 +474,6 @@
         );
     });
 }
-
-<span class="kw">fn </span>despawn_toolbar() {}
 
 <span class="kw">fn </span>assign_hp_bar(
     player: Query&lt;Entity, Added&lt;Player&gt;&gt;,
@@ -515,7 +500,7 @@
 </span><span class="kw">pub struct </span>StealthAbilityUI;
 
 <span class="kw">fn </span>update_attack_ability_ui(
-    player: Query&lt;(<span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Attacking&gt;, Has&lt;CanAttack&gt;), With&lt;Player&gt;&gt;,
+    player: Query&lt;<span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Attacking&gt;, With&lt;Player&gt;&gt;,
     ui: Query&lt;
         Entity,
         (
@@ -525,15 +510,13 @@
     &gt;,
     <span class="kw-2">mut </span>commands: Commands,
 ) {
-    <span class="kw">let </span><span class="prelude-val">Some</span>((attack, can_attack)) = player.iter().next() <span class="kw">else </span>{
+    <span class="kw">let </span><span class="prelude-val">Some</span>(attack) = player.iter().next() <span class="kw">else </span>{
         <span class="kw">return</span>;
     };
     <span class="kw">for </span>entity <span class="kw">in </span>ui.iter() {
         <span class="kw">let </span>factor = <span class="kw">if let </span><span class="prelude-val">Some</span>(attack) = attack {
             <span class="number">1.0 </span>- attack.ticks <span class="kw">as </span>f32 / (Attacking::MAX * <span class="number">8</span>) <span class="kw">as </span>f32
-        } <span class="kw">else if </span>can_attack {
-            <span class="number">0.0
-        </span>} <span class="kw">else </span>{
+        } <span class="kw">else </span>{
             <span class="number">0.0
         </span>};
         commands.entity(entity).factor(factor);
@@ -549,7 +532,6 @@
             Without&lt;AbilityWidget&gt;,
         ),
     &gt;,
-    config: Res&lt;PlayerConfig&gt;,
     <span class="kw-2">mut </span>commands: Commands,
 ) {
     <span class="kw">let </span><span class="prelude-val">Some</span>(can_dash) = player.iter().next() <span class="kw">else </span>{
