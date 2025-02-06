@@ -1616,7 +1616,13 @@
 <a href="#1615" id="1615">1615</a>
 <a href="#1616" id="1616">1616</a>
 <a href="#1617" id="1617">1617</a>
-<a href="#1618" id="1618">1618</a></pre></div><pre class="rust"><code><span class="kw">use </span>bevy::prelude::{resource_equals, Added};
+<a href="#1618" id="1618">1618</a>
+<a href="#1619" id="1619">1619</a>
+<a href="#1620" id="1620">1620</a>
+<a href="#1621" id="1621">1621</a>
+<a href="#1622" id="1622">1622</a>
+<a href="#1623" id="1623">1623</a>
+<a href="#1624" id="1624">1624</a></pre></div><pre class="rust"><code><span class="kw">use </span>bevy::prelude::{resource_equals, Added};
 <span class="kw">use </span>bevy::sprite::{Sprite, SpriteSheetBundle};
 <span class="kw">use </span>bevy::transform::TransformSystem::TransformPropagate;
 <span class="kw">use </span>glam::{Vec2, Vec2Swizzles, Vec3Swizzles};
@@ -2852,9 +2858,15 @@
                     } <span class="kw">else </span>{
                         facing.direction()
                     };
+                    <span class="comment">// Used for the collider length and the starting position offset
+                    </span><span class="kw">let </span>arrow_length = <span class="number">30.0</span>;
                     <span class="kw">let </span>vel = LinearVelocity(
                         Vec2::X * arrow_direction * config.arrow_velocity,
                     );
+                    <span class="kw">let </span><span class="kw-2">mut </span>arrow_transform = <span class="kw-2">*</span>transform;
+                    <span class="comment">// Add an offset to avoid arrows immediately colliding with walls when fired
+                    </span><span class="kw">let </span>arrow_pos_offset = arrow_length * <span class="number">0.5 </span>* arrow_direction;
+                    arrow_transform.translation.x += arrow_pos_offset;
 
                     <span class="kw">if </span>!is_player_pressed_against_wall {
                         commands.entity(entity).insert(Knockback::new(
@@ -2870,14 +2882,14 @@
                         .spawn((
                             Arrow,
                             SpriteSheetBundle {
-                                transform: <span class="kw-2">*</span>transform,
+                                transform: arrow_transform,
                                 ..Default::default()
                             },
                             Projectile { vel },
                             Collider::cuboid(
                                 <span class="comment">//TODO: temp fix of extending collider length to account for
                                 //tunneling
-                                </span><span class="number">30.0</span>,
+                                </span>arrow_length,
                                 <span class="number">3.0</span>,
                                 InteractionGroups::new(
                                     PLAYER_ATTACK,
