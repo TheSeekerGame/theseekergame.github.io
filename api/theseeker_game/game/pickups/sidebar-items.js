@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["PICKUP_RANGE_SQUARED"],"enum":["PickupType","PlanetarySeed"],"fn":["display_passives_description","load_pickup_assets","spawn_pickups_on_death"],"struct":["DropTracker","PassiveDescriptionNode","PassiveEntity","PickupAssetHandles","PickupDrop","PickupHint","PickupPlugin","SpawnPickupCommand"]};

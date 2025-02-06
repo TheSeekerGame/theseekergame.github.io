@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["BACKGROUND_COLOR","ICON_BACKGROUND_COLOR","OVERLAY_COLOR","POPUP_DURATION_SECS","SPACER_COLOR","TEXT_COLOR"],"fn":["despawn_popup_on_timer","plugin"],"struct":["Popup","PopupTimer"],"trait":["PopupUi"]};

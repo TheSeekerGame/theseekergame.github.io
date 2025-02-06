@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["button","spawn_menuentry"],"mod":["ability_widget","console","controls_overlay","kill_counter","mainmenu","skill_toolbar"],"struct":["UiPlugin"],"trait":["Spawn"]};
+window.SIDEBAR_ITEMS = {"fn":["button","spawn_menuentry"],"mod":["ability_widget","console","controls_overlay","kill_counter","mainmenu","passives","popup","skill_toolbar"],"struct":["UiPlugin"],"trait":["Spawn"]};

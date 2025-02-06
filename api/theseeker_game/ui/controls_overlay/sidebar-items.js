@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"constant":["BACKGROUND_COLOR","ICON_BACKGROUND_COLOR","OVERLAY_COLOR","POPUP_DURATION_SECONDS","SPACER_COLOR","TEXT_COLOR"],"fn":["hide_popup","plugin","spawn_control_hint","spawn_control_overlay","toggle_control_overlay"],"struct":["ControlsOverlay","ControlsPopup"],"trait":["ControlsOverlayUi"]};
+window.SIDEBAR_ITEMS = {"fn":["hide_controls_hint","plugin","spawn_control_hint","spawn_control_overlay","toggle_control_overlay"],"struct":["ControlsHint","ControlsOverlay"]};
