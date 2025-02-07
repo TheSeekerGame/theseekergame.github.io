@@ -298,7 +298,24 @@
 <a href="#297" id="297">297</a>
 <a href="#298" id="298">298</a>
 <a href="#299" id="299">299</a>
-<a href="#300" id="300">300</a></pre></div><pre class="rust"><code><span class="kw">use </span>bevy::prelude::{DetectChanges, Ref};
+<a href="#300" id="300">300</a>
+<a href="#301" id="301">301</a>
+<a href="#302" id="302">302</a>
+<a href="#303" id="303">303</a>
+<a href="#304" id="304">304</a>
+<a href="#305" id="305">305</a>
+<a href="#306" id="306">306</a>
+<a href="#307" id="307">307</a>
+<a href="#308" id="308">308</a>
+<a href="#309" id="309">309</a>
+<a href="#310" id="310">310</a>
+<a href="#311" id="311">311</a>
+<a href="#312" id="312">312</a>
+<a href="#313" id="313">313</a>
+<a href="#314" id="314">314</a>
+<a href="#315" id="315">315</a>
+<a href="#316" id="316">316</a>
+<a href="#317" id="317">317</a></pre></div><pre class="rust"><code><span class="kw">use </span>bevy::prelude::{DetectChanges, Ref};
 <span class="kw">use </span>theseeker_engine::assets::animation::SpriteAnimation;
 <span class="kw">use </span>theseeker_engine::gent::Gent;
 <span class="kw">use </span>theseeker_engine::physics::LinearVelocity;
@@ -337,7 +354,8 @@
                 player_dashing_animation,
                 player_dashing_strike_animation,
                 sprite_flip.after(player_dashing_animation),
-                update_serpent_ring_slot.after(sprite_flip)
+                update_serpent_ring_slot.after(sprite_flip),
+                update_frenzied_attack_slot.after(update_serpent_ring_slot)
             )
                 .in_set(PlayerStateSet::Animation)
                 .after(PlayerStateSet::Transition)
@@ -594,6 +612,22 @@
                 anim_player.set_slot(<span class="string">"SerpentRing"</span>, <span class="bool-val">true</span>);
             } <span class="kw">else </span>{
                 anim_player.set_slot(<span class="string">"SerpentRing"</span>, <span class="bool-val">false</span>);
+            }
+        }
+    }
+}
+
+<span class="kw">fn </span>update_frenzied_attack_slot(
+    player_query: Query&lt;(<span class="kw-2">&amp;</span>Gent, <span class="kw-2">&amp;</span>Passives), With&lt;Player&gt;&gt;,
+    <span class="kw-2">mut </span>gfx_query: Query&lt;<span class="kw-2">&amp;mut </span>ScriptPlayer&lt;SpriteAnimation&gt;, With&lt;PlayerGfx&gt;&gt;,
+) {
+    <span class="kw">for </span>(gent, passives) <span class="kw">in </span>player_query.iter() {
+        <span class="kw">let </span>has_frenzied_attack = passives.contains(<span class="kw-2">&amp;</span>Passive::FrenziedAttack);
+        <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="kw-2">mut </span>anim_player) = gfx_query.get_mut(gent.e_gfx) {
+            <span class="kw">if </span>has_frenzied_attack {
+                anim_player.set_slot(<span class="string">"FrenziedAttack"</span>, <span class="bool-val">true</span>);
+            } <span class="kw">else </span>{
+                anim_player.set_slot(<span class="string">"FrenziedAttack"</span>, <span class="bool-val">false</span>);
             }
         }
     }
