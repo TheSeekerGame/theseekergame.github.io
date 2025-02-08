@@ -1552,8 +1552,7 @@
 <a href="#1551" id="1551">1551</a>
 <a href="#1552" id="1552">1552</a>
 <a href="#1553" id="1553">1553</a>
-<a href="#1554" id="1554">1554</a>
-<a href="#1555" id="1555">1555</a></pre></div><pre class="rust"><code><span class="kw">mod </span>player_anim;
+<a href="#1554" id="1554">1554</a></pre></div><pre class="rust"><code><span class="kw">mod </span>player_anim;
 <span class="kw">mod </span>player_behaviour;
 <span class="kw">pub mod </span>player_weapon;
 <span class="kw">use </span>bevy::utils::hashbrown::HashMap;
@@ -1581,6 +1580,7 @@
 <span class="kw">use </span><span class="kw">crate</span>::game::xp_orbs::XpOrbPickup;
 <span class="kw">use </span><span class="kw">crate</span>::prelude::<span class="kw-2">*</span>;
 
+<span class="kw">use </span><span class="kw">super</span>::game_over::GameOver;
 <span class="kw">use </span><span class="kw">super</span>::physics::Knockback;
 
 <span class="kw">pub struct </span>PlayerPlugin;
@@ -1607,10 +1607,7 @@
         app.add_systems(Startup, load_dash_asset);
         app.add_systems(
             GameTickUpdate,
-            ((
-                setup_player,
-                despawn_dead_player.after(<span class="kw">super</span>::game_over::on_game_over),
-            )
+            ((setup_player, despawn_dead_player)
                 .run_if(in_state(GameState::Playing)))
             .after(PlayerStateSet::Transition)
             .run_if(in_state(AppState::InGame)),
@@ -2047,6 +2044,7 @@
     <span class="kw">for </span>(entity, gent) <span class="kw">in </span>query.iter() {
         commands.entity(gent.e_gfx).despawn_recursive();
         commands.entity(entity).despawn_recursive();
+        commands.insert_resource(GameOver);
     }
 }
 

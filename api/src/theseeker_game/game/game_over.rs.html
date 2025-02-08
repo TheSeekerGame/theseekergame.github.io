@@ -187,26 +187,24 @@
 <a href="#186" id="186">186</a>
 <a href="#187" id="187">187</a>
 <a href="#188" id="188">188</a>
-<a href="#189" id="189">189</a>
-<a href="#190" id="190">190</a>
-<a href="#191" id="191">191</a></pre></div><pre class="rust"><code><span class="kw">use </span>iyes_ui::prelude::OnClick;
+<a href="#189" id="189">189</a></pre></div><pre class="rust"><code><span class="kw">use </span>iyes_ui::prelude::OnClick;
 <span class="kw">use </span>sickle_ui::ui_builder::{UiBuilderExt, UiRoot};
 <span class="kw">use </span>sickle_ui::ui_style::{
     SetNodeAlignItemsExt, SetNodeJustifyContentsExt, SetNodePositionTypeExt,
     SetNodeTopExt, SetNodeWidthExt,
 };
 <span class="kw">use </span>sickle_ui::widgets::prelude::<span class="kw-2">*</span>;
-<span class="kw">use </span>theseeker_engine::gent::Gent;
-<span class="kw">use </span>theseeker_engine::prelude::{in_state, Color, GameTickUpdate, GameTime};
+<span class="kw">use </span>theseeker_engine::prelude::{
+    in_state, resource_exists, Color, GameTickUpdate, GameTime, Resource,
+};
 
 <span class="kw">use </span><span class="kw">crate</span>::camera::MainCamera;
 <span class="kw">use </span><span class="kw">crate</span>::game::attack::KillCount;
-<span class="kw">use </span><span class="kw">crate</span>::game::gentstate::Dead;
-<span class="kw">use </span><span class="kw">crate</span>::game::player::{Player, PlayerStateSet};
+<span class="kw">use </span><span class="kw">crate</span>::game::player::PlayerStateSet;
 <span class="kw">use </span><span class="kw">crate</span>::gamestate::GameState;
 <span class="kw">use </span><span class="kw">crate</span>::prelude::{
     default, AlignItems, App, AppState, AssetServer, BackgroundColor, Commands,
-    Component, Entity, FlexDirection, Has, IntoSystemConfigs, JustifyContent,
+    Component, Entity, FlexDirection, IntoSystemConfigs, JustifyContent,
     NodeBundle, Plugin, PositionType, Query, Res, ResMut, StateDespawnMarker,
     Style, TargetCamera, TextBundle, TextStyle, Time, Update, Val, With,
     ZIndex,
@@ -225,7 +223,8 @@
             on_game_over
                 .run_if(in_state(GameState::Playing))
                 .after(PlayerStateSet::Transition)
-                .run_if(in_state(AppState::InGame)),
+                .run_if(in_state(AppState::InGame))
+                .run_if(resource_exists::&lt;GameOver&gt;),
         );
         app.add_systems(Update, update_fade_in);
     }
@@ -256,8 +255,11 @@
     }
 }
 
+<span class="doccomment">/// Inserted on player despawn
+</span><span class="attr">#[derive(Resource)]
+</span><span class="kw">pub struct </span>GameOver;
+
 <span class="kw">pub fn </span>on_game_over(
-    query: Query&lt;(Entity, <span class="kw-2">&amp;</span>Gent, Has&lt;Dead&gt;), With&lt;Player&gt;&gt;,
     q_cam: Query&lt;Entity, With&lt;MainCamera&gt;&gt;,
     <span class="kw-2">mut </span>commands: Commands,
     asset_server: Res&lt;AssetServer&gt;,
@@ -265,13 +267,6 @@
     time: Res&lt;GameTime&gt;,
 ) {
     <span class="kw">let </span><span class="prelude-val">Ok</span>(cam_e) = q_cam.get_single() <span class="kw">else </span>{
-        <span class="kw">return</span>;
-    };
-    <span class="kw">if let </span><span class="prelude-val">Some</span>((e, g, is_dead)) = query.iter().next() {
-        <span class="kw">if </span>!is_dead {
-            <span class="kw">return</span>;
-        }
-    } <span class="kw">else </span>{
         <span class="kw">return</span>;
     };
 
@@ -379,5 +374,6 @@
 
     <span class="comment">// TODO: Move this to some less obscure system that resets game state.
     </span>commands.insert_resource(DropTracker::default());
+    commands.remove_resource::&lt;GameOver&gt;();
 }
 </code></pre></div></section></main></body></html>
