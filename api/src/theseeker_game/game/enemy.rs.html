@@ -2048,7 +2048,20 @@
 <a href="#2047" id="2047">2047</a>
 <a href="#2048" id="2048">2048</a>
 <a href="#2049" id="2049">2049</a>
-<a href="#2050" id="2050">2050</a></pre></div><pre class="rust"><code><span class="attr">#[cfg(feature = <span class="string">"dev"</span>)]
+<a href="#2050" id="2050">2050</a>
+<a href="#2051" id="2051">2051</a>
+<a href="#2052" id="2052">2052</a>
+<a href="#2053" id="2053">2053</a>
+<a href="#2054" id="2054">2054</a>
+<a href="#2055" id="2055">2055</a>
+<a href="#2056" id="2056">2056</a>
+<a href="#2057" id="2057">2057</a>
+<a href="#2058" id="2058">2058</a>
+<a href="#2059" id="2059">2059</a>
+<a href="#2060" id="2060">2060</a>
+<a href="#2061" id="2061">2061</a>
+<a href="#2062" id="2062">2062</a>
+<a href="#2063" id="2063">2063</a></pre></div><pre class="rust"><code><span class="attr">#[cfg(feature = <span class="string">"dev"</span>)]
 </span><span class="kw">use </span>bevy_inspector_egui::quick::FilterQueryInspectorPlugin;
 <span class="kw">use </span>rand::distributions::Standard;
 <span class="kw">use </span>rapier2d::geometry::SharedShape;
@@ -2067,6 +2080,7 @@
 <span class="kw">use </span>theseeker_engine::script::ScriptPlayer;
 
 <span class="kw">use </span><span class="kw">super</span>::physics::Knockback;
+<span class="kw">use </span><span class="kw">super</span>::player::player_weapon::CurrentWeapon;
 <span class="kw">use </span><span class="kw">super</span>::player::{Player, PlayerConfig, StatusModifier, Stealthing};
 <span class="kw">use </span><span class="kw">crate</span>::game::attack::arc_attack::Projectile;
 <span class="kw">use </span><span class="kw">crate</span>::game::attack::particles::ArcParticleEffectHandle;
@@ -3860,28 +3874,34 @@
         app.add_systems(
             GameTickUpdate,
             (
-                enemy_idle_animation,
-                enemy_defense_animation,
-                enemy_walking_animation,
-                enemy_chasing_animation,
-                <span class="comment">// enemy_retreat_animation,
-                </span>enemy_ranged_attack_animation,
-                enemy_melee_attack_animation,
-                <span class="comment">// enemy_pushback_attack_animation,
-                </span>enemy_death_animation,
-                enemy_decay_animation,
-                enemy_sparks_on_hit_animation.run_if(on_event::&lt;DamageInfo&gt;()),
-                enemy_decay_visibility,
-                sprite_flip,
-            )
-                .in_set(EnemyStateSet::Animation)
-                .after(EnemyStateSet::Transition)
-                .run_if(in_state(AppState::InGame)),
+                (
+                    enemy_idle_animation,
+                    enemy_defense_animation,
+                    enemy_walking_animation,
+                    enemy_chasing_animation,
+                    <span class="comment">// enemy_retreat_animation,
+                    </span>enemy_ranged_attack_animation,
+                    enemy_melee_attack_animation,
+                    <span class="comment">// enemy_pushback_attack_animation,
+                    </span>enemy_death_animation,
+                    enemy_decay_animation,
+                    <span class="comment">// enemy_sparks_on_hit_animation.run_if(on_event::&lt;DamageInfo&gt;()),
+                    </span>enemy_decay_visibility,
+                    sprite_flip,
+                )
+                    .in_set(EnemyStateSet::Animation)
+                    .after(EnemyStateSet::Transition)
+                    .run_if(in_state(AppState::InGame)),
+                enemy_hit_sfx_gfx
+                    .run_if(on_event::&lt;DamageInfo&gt;())
+                    .in_set(RespondToDamageInfoSet),
+            ),
         );
     }
 }
 
-<span class="kw">fn </span>enemy_sparks_on_hit_animation(
+<span class="kw">fn </span>enemy_hit_sfx_gfx(
+    current_weapon: CurrentWeapon,
     i_query: Query&lt;<span class="kw-2">&amp;</span>Gent, With&lt;Enemy&gt;&gt;,
     <span class="kw-2">mut </span>damage_events: EventReader&lt;DamageInfo&gt;,
     <span class="kw-2">mut </span>gfx_query: Query&lt;
@@ -3896,12 +3916,18 @@
                 <span class="kw">let </span><span class="kw-2">mut </span>rng = thread_rng();
                 <span class="kw">let </span>picked_spark = rng.gen_range(<span class="number">1</span>..=<span class="number">6</span>);
                 hit_gfx.play_key(<span class="string">"anim.spider.Sparks"</span>);
-                hit_gfx.clear_slots();
+                <span class="comment">//reset everything so as not to glitch audio?
+                </span>hit_gfx.clear_slots();
                 hit_gfx.set_slot(
                     <span class="macro">format!</span>(<span class="string">"Spark{picked_spark}"</span>).as_str(),
                     <span class="bool-val">true</span>,
                 );
-                hit_gfx.set_slot(<span class="string">"AttackHit"</span>, <span class="bool-val">true</span>);
+                <span class="comment">//set hit
+                </span>hit_gfx.set_slot(<span class="string">"AttackHit"</span>, <span class="bool-val">true</span>);
+                <span class="comment">//set weapon slot hit used for playing correct hit sfx
+                </span><span class="kw">let </span>current_weapon_name = current_weapon.to_string();
+                <span class="kw">let </span>slot = <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"{current_weapon_name}Hit"</span>);
+                hit_gfx.set_slot(slot, <span class="bool-val">true</span>);
                 <span class="kw">if let </span><span class="prelude-val">Ok</span>(direction) = player_facing_dir.get_single() {
                     <span class="kw">match </span>direction {
                         Facing::Right =&gt; {

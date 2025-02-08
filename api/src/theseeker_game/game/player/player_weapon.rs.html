@@ -190,32 +190,20 @@
 <a href="#189" id="189">189</a>
 <a href="#190" id="190">190</a>
 <a href="#191" id="191">191</a>
-<a href="#192" id="192">192</a>
-<a href="#193" id="193">193</a>
-<a href="#194" id="194">194</a>
-<a href="#195" id="195">195</a>
-<a href="#196" id="196">196</a>
-<a href="#197" id="197">197</a>
-<a href="#198" id="198">198</a>
-<a href="#199" id="199">199</a>
-<a href="#200" id="200">200</a>
-<a href="#201" id="201">201</a></pre></div><pre class="rust"><code><span class="kw">use </span>bevy::ecs::system::SystemParam;
+<a href="#192" id="192">192</a></pre></div><pre class="rust"><code><span class="kw">use </span>bevy::ecs::system::SystemParam;
 <span class="kw">use </span>bevy::prelude::{in_state, IntoSystemConfigs, Res};
 <span class="kw">use </span>leafwing_input_manager::prelude::ActionState;
 <span class="kw">use </span>strum_macros::Display;
 <span class="kw">use </span>theseeker_engine::assets::animation::SpriteAnimation;
-<span class="kw">use </span>theseeker_engine::prelude::{
-    on_event, Changed, Commands, Condition, DetectChanges, OnEnter,
-};
+<span class="kw">use </span>theseeker_engine::prelude::{Commands, DetectChanges, OnEnter};
 <span class="kw">use </span>theseeker_engine::script::ScriptPlayer;
 <span class="kw">use </span>theseeker_engine::time::GameTickUpdate;
 
-<span class="kw">use </span><span class="kw">crate</span>::game::attack::DamageInfo;
-<span class="kw">use </span><span class="kw">crate</span>::game::enemy::{EnemyEffectGfx, EnemyStateSet};
+<span class="kw">use </span><span class="kw">crate</span>::game::enemy::EnemyEffectGfx;
 <span class="kw">use </span><span class="kw">crate</span>::game::player::{Player, PlayerAction};
 <span class="kw">use </span><span class="kw">crate</span>::prelude::{App, AppState, Plugin, Query, ResMut, Resource, With};
 
-<span class="kw">use </span><span class="kw">super</span>::PlayerConfig;
+<span class="kw">use super</span>::{PlayerConfig, PlayerStateSet};
 
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>PlayerWeaponPlugin;
 
@@ -230,19 +218,10 @@
         );
         app.add_systems(
             GameTickUpdate,
-            (
-                swap_combat_style,
-                swap_melee_weapon,
-                set_sfx_slot
-                    .after(EnemyStateSet::Animation)
-                    .after(swap_combat_style)
-                    .after(swap_melee_weapon)
-                    .run_if(
-                        is_current_weapon_changed
-                            .or_else(on_event::&lt;DamageInfo&gt;()),
-                    ),
-            )
-                .run_if(in_state(AppState::InGame)),
+            ((swap_combat_style, swap_melee_weapon)
+                .chain()
+                .before(PlayerStateSet::Behavior))
+            .run_if(in_state(AppState::InGame)),
         );
     }
 }
@@ -381,19 +360,22 @@
     <span class="kw-2">mut </span>query: Query&lt;
         <span class="kw-2">&amp;mut </span>ScriptPlayer&lt;SpriteAnimation&gt;,
         (
-            Changed&lt;ScriptPlayer&lt;SpriteAnimation&gt;&gt;,
-            With&lt;EnemyEffectGfx&gt;,
+            <span class="comment">// Changed&lt;ScriptPlayer&lt;SpriteAnimation&gt;&gt;,
+            </span>With&lt;EnemyEffectGfx&gt;,
         ),
     &gt;,
 ) {
     <span class="kw">let </span>current_weapon_name = current_weapon.to_string();
+    <span class="macro">println!</span>(<span class="string">"weap sfx sys ran?"</span>);
+    <span class="macro">println!</span>(<span class="string">"{:?}"</span>, current_weapon_name);
     <span class="kw">if </span>current_weapon_name.is_empty() {
         <span class="macro">eprintln!</span>(<span class="string">"Invalid weapon name"</span>);
         <span class="kw">return</span>;
     }
     <span class="kw">let </span>slot = <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"{current_weapon_name}Hit"</span>);
-    <span class="kw">for </span><span class="kw-2">mut </span>animation <span class="kw">in </span>query.iter_mut() {
-        animation.set_slot(slot, <span class="bool-val">true</span>);
+    <span class="comment">// println!("{:?}", slot);
+    </span><span class="kw">for </span><span class="kw-2">mut </span>animation <span class="kw">in </span>query.iter_mut() {
+        animation.set_slot(<span class="kw-2">&amp;</span>current_weapon_name, <span class="bool-val">true</span>);
     }
 }
 
