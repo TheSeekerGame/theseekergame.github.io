@@ -332,7 +332,23 @@
 <a href="#331" id="331">331</a>
 <a href="#332" id="332">332</a>
 <a href="#333" id="333">333</a>
-<a href="#334" id="334">334</a></pre></div><pre class="rust"><code><span class="kw">use </span>bevy::prelude::{DetectChanges, Ref};
+<a href="#334" id="334">334</a>
+<a href="#335" id="335">335</a>
+<a href="#336" id="336">336</a>
+<a href="#337" id="337">337</a>
+<a href="#338" id="338">338</a>
+<a href="#339" id="339">339</a>
+<a href="#340" id="340">340</a>
+<a href="#341" id="341">341</a>
+<a href="#342" id="342">342</a>
+<a href="#343" id="343">343</a>
+<a href="#344" id="344">344</a>
+<a href="#345" id="345">345</a>
+<a href="#346" id="346">346</a>
+<a href="#347" id="347">347</a>
+<a href="#348" id="348">348</a>
+<a href="#349" id="349">349</a>
+<a href="#350" id="350">350</a></pre></div><pre class="rust"><code><span class="kw">use </span>bevy::prelude::{DetectChanges, Ref};
 <span class="kw">use </span>theseeker_engine::assets::animation::SpriteAnimation;
 <span class="kw">use </span>theseeker_engine::gent::Gent;
 <span class="kw">use </span>theseeker_engine::physics::LinearVelocity;
@@ -355,6 +371,7 @@
 
 <span class="kw">use </span><span class="kw">super</span>::player_weapon::CurrentWeapon;
 <span class="kw">use </span><span class="kw">crate</span>::game::xp_orbs::XpOrbPickup;
+<span class="kw">use </span><span class="kw">crate</span>::game::attack::DamageInfo;
 
 <span class="doccomment">/// play animations here, run after transitions
 </span><span class="kw">pub struct </span>PlayerAnimationPlugin;
@@ -375,7 +392,8 @@
                 sprite_flip.after(player_dashing_animation),
                 update_serpent_ring_slot.after(sprite_flip),
                 update_frenzied_attack_slot.after(update_serpent_ring_slot),
-                xp_orb_animation_handler
+                xp_orb_animation_handler,
+                player_damage_animation_handler
             )
                 .in_set(PlayerStateSet::Animation)
                 .after(PlayerStateSet::Transition)
@@ -663,6 +681,20 @@
             anim.set_slot(<span class="string">"XpOrb"</span>, <span class="bool-val">true</span>);
         } <span class="kw">else </span>{
             anim.set_slot(<span class="string">"XpOrb"</span>, <span class="bool-val">false</span>);
+        }
+    }
+}
+
+<span class="kw">fn </span>player_damage_animation_handler(
+    <span class="kw-2">mut </span>damage_events: EventReader&lt;DamageInfo&gt;,
+    <span class="kw-2">mut </span>gfx_query: Query&lt;<span class="kw-2">&amp;mut </span>ScriptPlayer&lt;SpriteAnimation&gt;, With&lt;PlayerGfx&gt;&gt;
+) {
+    <span class="kw">let </span>damaged_event_occurred = !damage_events.is_empty();
+    <span class="kw">for </span><span class="kw-2">mut </span>anim <span class="kw">in </span>gfx_query.iter_mut() {
+        <span class="kw">if </span>damaged_event_occurred {
+            anim.set_slot(<span class="string">"Damaged"</span>, <span class="bool-val">true</span>);
+        } <span class="kw">else </span>{
+            anim.set_slot(<span class="string">"Damaged"</span>, <span class="bool-val">false</span>);
         }
     }
 }
