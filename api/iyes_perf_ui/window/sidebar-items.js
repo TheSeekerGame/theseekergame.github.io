@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"struct":["PerfUiEntryCursorPosition","PerfUiEntryWindowMode","PerfUiEntryWindowPresentMode","PerfUiEntryWindowResolution","PerfUiEntryWindowScaleFactor"]};

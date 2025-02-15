@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"struct":["PerfUiEntryCpuUsage","PerfUiEntryEntityCount","PerfUiEntryFPS","PerfUiEntryFPSWorst","PerfUiEntryFrameCount","PerfUiEntryFrameTime","PerfUiEntryFrameTimeWorst","PerfUiEntryMemUsage"]};
