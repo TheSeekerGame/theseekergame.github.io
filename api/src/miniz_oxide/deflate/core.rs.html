@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/miniz_oxide-0.8.4/src/deflate/core.rs`."><title>core.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../static.files/rustdoc-42caa33d.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="miniz_oxide" data-themes="" data-resource-suffix="" data-rustdoc-version="1.84.1 (e71f9a9a9 2025-01-27)" data-channel="1.84.1" data-search-js="search-92e6798f.js" data-settings-js="settings-0f613d39.js" ><script src="../../../static.files/storage-59e33391.js"></script><script defer src="../../../static.files/src-script-56102188.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-5f194d8c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-893ab5e7.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">miniz_oxide/deflate/</div>core.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/miniz_oxide-0.8.5/src/deflate/core.rs`."><title>core.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../static.files/rustdoc-46132b98.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="miniz_oxide" data-themes="" data-resource-suffix="" data-rustdoc-version="1.85.0 (4d91de4e4 2025-02-17)" data-channel="1.85.0" data-search-js="search-75f5ac3e.js" data-settings-js="settings-0f613d39.js" ><script src="../../../static.files/storage-59e33391.js"></script><script defer src="../../../static.files/src-script-56102188.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-5f194d8c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-893ab5e7.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">miniz_oxide/deflate/</div>core.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
 <a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
@@ -2462,7 +2462,9 @@
 <a href="#2461" id="2461">2461</a>
 <a href="#2462" id="2462">2462</a>
 <a href="#2463" id="2463">2463</a>
-<a href="#2464" id="2464">2464</a></pre></div><pre class="rust"><code><span class="doccomment">//! Streaming compression functionality.
+<a href="#2464" id="2464">2464</a>
+<a href="#2465" id="2465">2465</a>
+<a href="#2466" id="2466">2466</a></pre></div><pre class="rust"><code><span class="doccomment">//! Streaming compression functionality.
 
 </span><span class="kw">use </span>alloc::boxed::Box;
 <span class="kw">use </span>core::convert::TryInto;
@@ -2485,9 +2487,9 @@
 </span><span class="kw">type </span><span class="prelude-ty">Result</span>&lt;T, E = Error&gt; = core::result::Result&lt;T, E&gt;;
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>Error {}
 
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const </span>MAX_PROBES_MASK: i32 = <span class="number">0xFFF</span>;
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const </span>MAX_PROBES_MASK: u32 = <span class="number">0xFFF</span>;
 
-<span class="kw">const </span>MAX_SUPPORTED_HUFF_CODESIZE: usize = <span class="number">32</span>;
+<span class="kw">const </span>MAX_SUPPORTED_HUFF_CODESIZE: usize = <span class="number">15</span>;
 
 <span class="doccomment">/// Length code for length values.
 </span><span class="attr">#[rustfmt::skip]
@@ -2623,7 +2625,7 @@
 
 <span class="doccomment">/// The maximum number of checks for matches in the hash table the compressor will make for each
 /// compression level.
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const </span>NUM_PROBES: [u32; <span class="number">11</span>] = [<span class="number">0</span>, <span class="number">1</span>, <span class="number">6</span>, <span class="number">32</span>, <span class="number">16</span>, <span class="number">32</span>, <span class="number">128</span>, <span class="number">256</span>, <span class="number">512</span>, <span class="number">768</span>, <span class="number">1500</span>];
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const </span>NUM_PROBES: [u16; <span class="number">11</span>] = [<span class="number">0</span>, <span class="number">1</span>, <span class="number">6</span>, <span class="number">32</span>, <span class="number">16</span>, <span class="number">32</span>, <span class="number">128</span>, <span class="number">256</span>, <span class="number">512</span>, <span class="number">768</span>, <span class="number">1500</span>];
 
 <span class="attr">#[derive(Copy, Clone)]
 </span><span class="kw">struct </span>SymFreq {
@@ -2769,7 +2771,7 @@
 <span class="doccomment">/// The maximum length of a match.
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const </span>MAX_MATCH_LEN: usize = <span class="number">258</span>;
 
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const </span>DEFAULT_FLAGS: u32 = NUM_PROBES[<span class="number">4</span>] | TDEFL_WRITE_ZLIB_HEADER;
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const </span>DEFAULT_FLAGS: u32 = NUM_PROBES[<span class="number">4</span>] <span class="kw">as </span>u32 | TDEFL_WRITE_ZLIB_HEADER;
 
 <span class="attr">#[cfg(test)]
 #[inline]
@@ -2780,7 +2782,7 @@
 
 <span class="comment">// Read the two bytes starting at pos and interpret them as an u16.
 </span><span class="attr">#[inline]
-</span><span class="kw">const fn </span>read_u16_le(slice: <span class="kw-2">&amp;</span>[u8], pos: usize) -&gt; u16 {
+</span><span class="kw">const fn </span>read_u16_le&lt;<span class="kw">const </span>N: usize&gt;(slice: <span class="kw-2">&amp;</span>[u8; N], pos: usize) -&gt; u16 {
     <span class="comment">// The compiler is smart enough to optimize this into an unaligned load.
     </span>slice[pos] <span class="kw">as </span>u16 | ((slice[pos + <span class="number">1</span>] <span class="kw">as </span>u16) &lt;&lt; <span class="number">8</span>)
 }
@@ -3377,7 +3379,7 @@
         code_size_limit: usize,
         static_table: bool,
     ) {
-        <span class="kw">let </span><span class="kw-2">mut </span>num_codes = [<span class="number">0i32</span>; MAX_SUPPORTED_HUFF_CODESIZE + <span class="number">1</span>];
+        <span class="kw">let </span><span class="kw-2">mut </span>num_codes = [<span class="number">0i32</span>; <span class="number">32 </span>+ <span class="number">1</span>];
         <span class="kw">let </span><span class="kw-2">mut </span>next_code = [<span class="number">0u32</span>; MAX_SUPPORTED_HUFF_CODESIZE + <span class="number">1</span>];
 
         <span class="kw">if </span>static_table {
@@ -3451,15 +3453,13 @@
                 <span class="kw">continue</span>;
             }
 
-            <span class="kw">let </span><span class="kw-2">mut </span>code = next_code[code_size <span class="kw">as </span>usize];
+            <span class="kw">let </span>code = next_code[code_size <span class="kw">as </span>usize];
+
             next_code[code_size <span class="kw">as </span>usize] += <span class="number">1</span>;
 
-            <span class="kw">let </span><span class="kw-2">mut </span>rev_code = <span class="number">0</span>;
-            <span class="kw">for _ in </span><span class="number">0</span>..code_size {
-                rev_code = (rev_code &lt;&lt; <span class="number">1</span>) | (code &amp; <span class="number">1</span>);
-                code &gt;&gt;= <span class="number">1</span>;
-            }
-            <span class="kw-2">*</span>huff_code = rev_code <span class="kw">as </span>u16;
+            <span class="kw">let </span>rev_code = (code <span class="kw">as </span>u16).reverse_bits() &gt;&gt; (<span class="number">16 </span>- code_size);
+
+            <span class="kw-2">*</span>huff_code = rev_code;
         }
     }
 
@@ -3667,13 +3667,6 @@
         u64::from_le_bytes(bytes)
     }
 
-    <span class="doccomment">/// Do an unaligned read of the data at `pos` in the dictionary and treat it as if it was of
-    /// type T.
-    </span><span class="attr">#[inline(always)]
-    </span><span class="kw">fn </span>read_as_u16(<span class="kw-2">&amp;</span><span class="self">self</span>, pos: usize) -&gt; u16 {
-        read_u16_le(<span class="kw-2">&amp;</span><span class="self">self</span>.b.dict[..], pos)
-    }
-
     <span class="doccomment">/// Try to find a match for the data at lookahead_pos in the dictionary that is
     /// longer than `match_len`.
     /// Returns a tuple containing (match_distance, match_length). Will be equal to the input
@@ -3702,12 +3695,16 @@
         <span class="kw">let </span>pos = lookahead_pos &amp; LZ_DICT_SIZE_MASK;
         <span class="kw">let </span><span class="kw-2">mut </span>probe_pos = pos;
         <span class="comment">// Number of probes into the hash chains.
-        </span><span class="kw">let </span><span class="kw-2">mut </span>num_probes_left = <span class="self">self</span>.max_probes[(match_len &gt;= <span class="number">32</span>) <span class="kw">as </span>usize];
+        </span><span class="kw">let </span><span class="kw-2">mut </span>num_probes_left = <span class="kw">if </span>match_len &lt; <span class="number">32 </span>{
+            <span class="self">self</span>.max_probes[<span class="number">0</span>]
+        } <span class="kw">else </span>{
+            <span class="self">self</span>.max_probes[<span class="number">1</span>]
+        };
 
         <span class="comment">// Read the last byte of the current match, and the next one, used to compare matches.
-        </span><span class="kw">let </span><span class="kw-2">mut </span>c01: u16 = <span class="self">self</span>.read_as_u16(pos + match_len <span class="kw">as </span>usize - <span class="number">1</span>);
+        </span><span class="kw">let </span><span class="kw-2">mut </span>c01: u16 = read_u16_le(<span class="kw-2">&amp;</span><span class="self">self</span>.b.dict, pos + match_len <span class="kw">as </span>usize - <span class="number">1</span>);
         <span class="comment">// Read the two bytes at the end position of the current match.
-        </span><span class="kw">let </span>s01: u16 = <span class="self">self</span>.read_as_u16(pos);
+        </span><span class="kw">let </span>s01: u16 = read_u16_le(<span class="kw-2">&amp;</span><span class="self">self</span>.b.dict, pos);
 
         <span class="lifetime">'outer</span>: <span class="kw">loop </span>{
             <span class="kw">let </span><span class="kw-2">mut </span>dist;
@@ -3735,7 +3732,7 @@
                     </span>probe_pos = next_probe_pos &amp; LZ_DICT_SIZE_MASK;
 
                     <span class="comment">// TODO: This bounds check does not get optimized out
-                    </span><span class="kw">if </span><span class="self">self</span>.read_as_u16(probe_pos + match_len <span class="kw">as </span>usize - <span class="number">1</span>) == c01 {
+                    </span><span class="kw">if </span>read_u16_le(<span class="kw-2">&amp;</span><span class="self">self</span>.b.dict, probe_pos + match_len <span class="kw">as </span>usize - <span class="number">1</span>) == c01 {
                         <span class="kw">break </span><span class="lifetime">'found</span>;
                     }
                 }
@@ -3748,7 +3745,7 @@
             }
 
             <span class="comment">// Check if the two first bytes match.
-            </span><span class="kw">if </span><span class="self">self</span>.read_as_u16(probe_pos) != s01 {
+            </span><span class="kw">if </span>read_u16_le(<span class="kw-2">&amp;</span><span class="self">self</span>.b.dict, probe_pos) != s01 {
                 <span class="kw">continue</span>;
             }
 
@@ -3781,7 +3778,7 @@
                         }
                         <span class="comment">// We found a better match, so save the last two bytes for further match
                         // comparisons.
-                        </span>c01 = read_u16_le(<span class="kw-2">&amp;</span><span class="self">self</span>.b.dict[..], pos + match_len <span class="kw">as </span>usize - <span class="number">1</span>);
+                        </span>c01 = read_u16_le(<span class="kw-2">&amp;</span><span class="self">self</span>.b.dict, pos + match_len <span class="kw">as </span>usize - <span class="number">1</span>);
                     }
                     <span class="kw">continue </span><span class="lifetime">'outer</span>;
                 }
@@ -3927,7 +3924,8 @@
 <span class="kw">fn </span>compress_lz_codes(
     huff: <span class="kw-2">&amp;</span>HuffmanOxide,
     output: <span class="kw-2">&amp;mut </span>OutputBufferOxide,
-    lz_code_buf: <span class="kw-2">&amp;</span>[u8],
+    lz_code_buf: <span class="kw-2">&amp;</span>[u8; LZ_CODE_BUF_SIZE],
+    lz_code_buf_used_len: usize,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;bool&gt; {
     <span class="kw">let </span><span class="kw-2">mut </span>flags = <span class="number">1</span>;
     <span class="kw">let </span><span class="kw-2">mut </span>bb = BitBuffer {
@@ -3935,8 +3933,12 @@
         bits_in: output.bits_in,
     };
 
+    <span class="comment">// Help out the compiler know this variable won't be larger than
+    // the buffer length since the constants won't propagate through the function call.
+    </span><span class="kw">let </span>lz_code_buf_used_len = cmp::min(lz_code_buf.len(), lz_code_buf_used_len);
+
     <span class="kw">let </span><span class="kw-2">mut </span>i: usize = <span class="number">0</span>;
-    <span class="kw">while </span>i &lt; lz_code_buf.len() {
+    <span class="kw">while </span>i &lt; lz_code_buf_used_len {
         <span class="kw">if </span>flags == <span class="number">1 </span>{
             flags = u32::from(lz_code_buf[i]) | <span class="number">0x100</span>;
             i += <span class="number">1</span>;
@@ -3986,7 +3988,7 @@
             <span class="comment">// The lz code was a literal
             </span><span class="kw">for _ in </span><span class="number">0</span>..<span class="number">3 </span>{
                 flags &gt;&gt;= <span class="number">1</span>;
-                <span class="kw">let </span>lit = lz_code_buf[i];
+                <span class="kw">let </span>lit = lz_code_buf[i &amp; (LZ_CODE_BUF_SIZE - <span class="number">1</span>)];
                 i += <span class="number">1</span>;
 
                 <span class="macro">debug_assert!</span>(huff.code_sizes[<span class="number">0</span>][lit <span class="kw">as </span>usize] != <span class="number">0</span>);
@@ -3995,7 +3997,7 @@
                     u32::from(huff.code_sizes[<span class="number">0</span>][lit <span class="kw">as </span>usize]),
                 );
 
-                <span class="kw">if </span>flags &amp; <span class="number">1 </span>== <span class="number">1 </span>|| i &gt;= lz_code_buf.len() {
+                <span class="kw">if </span>flags &amp; <span class="number">1 </span>== <span class="number">1 </span>|| i &gt;= lz_code_buf_used_len {
                     <span class="kw">break</span>;
                 }
             }
@@ -4034,7 +4036,7 @@
         huff.start_dynamic_block(output)<span class="question-mark">?</span>;
     }
 
-    compress_lz_codes(huff, output, <span class="kw-2">&amp;</span>lz.codes[..lz.code_position])
+    compress_lz_codes(huff, output, <span class="kw-2">&amp;</span>lz.codes, lz.code_position)
 }
 
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>flush_block(
@@ -4103,7 +4105,7 @@
             <span class="comment">// Block header.
             </span>output.put_bits(<span class="number">0</span>, <span class="number">2</span>);
 
-            <span class="comment">// Block length has to start on a byte boundary, s opad.
+            <span class="comment">// Block length has to start on a byte boundary, so pad.
             </span>output.pad_to_bytes();
 
             <span class="comment">// Block length and ones complement of block length.
@@ -4115,9 +4117,11 @@
             <span class="kw">let </span>end = (d.dict.code_buf_dict_pos + d.lz.total_bytes <span class="kw">as </span>usize) &amp; LZ_DICT_SIZE_MASK;
             <span class="kw">let </span>dict = <span class="kw-2">&amp;mut </span>d.dict.b.dict;
             <span class="kw">if </span>start &lt; end {
-                output.write_bytes(<span class="kw-2">&amp;</span>dict[start..end]);
-            } <span class="kw">else </span>{
-                output.write_bytes(<span class="kw-2">&amp;</span>dict[start..LZ_DICT_SIZE]);
+                <span class="comment">// The data does not wrap around.
+                </span>output.write_bytes(<span class="kw-2">&amp;</span>dict[start..end]);
+            } <span class="kw">else if </span>d.lz.total_bytes &gt; <span class="number">0 </span>{
+                <span class="comment">// The data wraps around and the input was not 0 bytes.
+                </span>output.write_bytes(<span class="kw-2">&amp;</span>dict[start..LZ_DICT_SIZE]);
                 output.write_bytes(<span class="kw-2">&amp;</span>dict[..end]);
             }
         } <span class="kw">else if </span>!comp_success {
@@ -4202,12 +4206,12 @@
 }
 
 <span class="kw">fn </span>compress_normal(d: <span class="kw-2">&amp;mut </span>CompressorOxide, callback: <span class="kw-2">&amp;mut </span>CallbackOxide) -&gt; bool {
-    <span class="kw">let </span><span class="kw-2">mut </span>src_pos = d.params.src_pos;
     <span class="kw">let </span>in_buf = <span class="kw">match </span>callback.in_buf {
         <span class="prelude-val">None </span>=&gt; <span class="kw">return </span><span class="bool-val">true</span>,
         <span class="prelude-val">Some</span>(in_buf) =&gt; in_buf,
     };
 
+    <span class="kw">let </span><span class="kw-2">mut </span>src_pos = d.params.src_pos;
     <span class="kw">let </span><span class="kw-2">mut </span>lookahead_size = d.dict.lookahead_size;
     <span class="kw">let </span><span class="kw-2">mut </span>lookahead_pos = d.dict.lookahead_pos;
     <span class="kw">let </span><span class="kw-2">mut </span>saved_lit = d.params.saved_lit;
@@ -4694,7 +4698,7 @@
         <span class="kw">return </span>res;
     }
 
-    <span class="kw">let </span>one_probe = d.params.flags &amp; MAX_PROBES_MASK <span class="kw">as </span>u32 == <span class="number">1</span>;
+    <span class="kw">let </span>one_probe = d.params.flags &amp; MAX_PROBES_MASK == <span class="number">1</span>;
     <span class="kw">let </span>greedy = d.params.flags &amp; TDEFL_GREEDY_PARSING_FLAG != <span class="number">0</span>;
     <span class="kw">let </span>filter_or_rle = d.params.flags &amp; (TDEFL_FILTER_MATCHES | TDEFL_FORCE_ALL_RAW_BLOCKS) != <span class="number">0</span>;
 
@@ -4783,7 +4787,7 @@
     } <span class="kw">else </span>{
         <span class="number">0
     </span>};
-    <span class="kw">let </span><span class="kw-2">mut </span>comp_flags = NUM_PROBES[num_probes] | greedy;
+    <span class="kw">let </span><span class="kw-2">mut </span>comp_flags = u32::from(NUM_PROBES[num_probes]) | greedy;
 
     <span class="kw">if </span>window_bits &gt; <span class="number">0 </span>{
         comp_flags |= TDEFL_WRITE_ZLIB_HEADER;
@@ -4794,7 +4798,7 @@
     } <span class="kw">else if </span>strategy == CompressionStrategy::Filtered <span class="kw">as </span>i32 {
         comp_flags |= TDEFL_FILTER_MATCHES;
     } <span class="kw">else if </span>strategy == CompressionStrategy::HuffmanOnly <span class="kw">as </span>i32 {
-        comp_flags &amp;= !MAX_PROBES_MASK <span class="kw">as </span>u32;
+        comp_flags &amp;= !MAX_PROBES_MASK;
     } <span class="kw">else if </span>strategy == CompressionStrategy::Fixed <span class="kw">as </span>i32 {
         comp_flags |= TDEFL_FORCE_ALL_STATIC_BLOCKS;
     } <span class="kw">else if </span>strategy == CompressionStrategy::RLE <span class="kw">as </span>i32 {

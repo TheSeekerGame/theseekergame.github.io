@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/flate2-1.0.35/src/mem.rs`."><title>mem.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-42caa33d.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="flate2" data-themes="" data-resource-suffix="" data-rustdoc-version="1.84.1 (e71f9a9a9 2025-01-27)" data-channel="1.84.1" data-search-js="search-92e6798f.js" data-settings-js="settings-0f613d39.js" ><script src="../../static.files/storage-59e33391.js"></script><script defer src="../../static.files/src-script-56102188.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-5f194d8c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-893ab5e7.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">flate2/</div>mem.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/flate2-1.1.0/src/mem.rs`."><title>mem.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-46132b98.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="flate2" data-themes="" data-resource-suffix="" data-rustdoc-version="1.85.0 (4d91de4e4 2025-02-17)" data-channel="1.85.0" data-search-js="search-75f5ac3e.js" data-settings-js="settings-0f613d39.js" ><script src="../../static.files/storage-59e33391.js"></script><script defer src="../../static.files/src-script-56102188.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-5f194d8c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-893ab5e7.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">flate2/</div>mem.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
 <a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
@@ -831,6 +831,16 @@
     /// accumulate before producing output in order to maximize compression.
     </span><span class="prelude-val">None </span>= ffi::MZ_NO_FLUSH <span class="kw">as </span>isize,
 
+    <span class="doccomment">/// All pending output is flushed to the output buffer, but the output is
+    /// not aligned to a byte boundary.
+    ///
+    /// All input data so far will be available to the decompressor (as with
+    /// `Flush::Sync`). This completes the current deflate block and follows it
+    /// with an empty fixed codes block that is 10 bytes long, and it assures
+    /// that enough bytes are output in order for the decompressor to finish the
+    /// block before the empty fixed code block.
+    </span>Partial = ffi::MZ_PARTIAL_FLUSH <span class="kw">as </span>isize,
+
     <span class="doccomment">/// All pending output is flushed to the output buffer and the output is
     /// aligned on a byte boundary so that the decompressor can get all input
     /// data available so far.
@@ -839,16 +849,6 @@
     /// it should only be used when necessary. This will complete the current
     /// deflate block and follow it with an empty stored block.
     </span>Sync = ffi::MZ_SYNC_FLUSH <span class="kw">as </span>isize,
-
-    <span class="doccomment">/// All pending output is flushed to the output buffer, but the output is
-    /// not aligned to a byte boundary.
-    ///
-    /// All of the input data so far will be available to the decompressor (as
-    /// with `Flush::Sync`. This completes the current deflate block and follows
-    /// it with an empty fixed codes block that is 10 bites long, and it assures
-    /// that enough bytes are output in order for the decompressor to finish the
-    /// block before the empty fixed code block.
-    </span>Partial = ffi::MZ_PARTIAL_FLUSH <span class="kw">as </span>isize,
 
     <span class="doccomment">/// All output is flushed as with `Flush::Sync` and the compression state is
     /// reset so decompression can restart from this point if previous
@@ -891,7 +891,7 @@
 }
 
 <span class="doccomment">/// The inner state for an error when decompressing
-</span><span class="attr">#[derive(Debug)]
+</span><span class="attr">#[derive(Clone, Debug)]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">enum </span>DecompressErrorInner {
     General { msg: ErrorMessage },
     NeedsDictionary(u32),
@@ -899,7 +899,7 @@
 
 <span class="doccomment">/// Error returned when a decompression object finds that the input stream of
 /// bytes was not a valid input stream of bytes.
-</span><span class="attr">#[derive(Debug)]
+</span><span class="attr">#[derive(Clone, Debug)]
 </span><span class="kw">pub struct </span>DecompressError(<span class="kw">pub</span>(<span class="kw">crate</span>) DecompressErrorInner);
 
 <span class="kw">impl </span>DecompressError {
@@ -929,7 +929,7 @@
 
 <span class="doccomment">/// Error returned when a compression object is used incorrectly or otherwise
 /// generates an error.
-</span><span class="attr">#[derive(Debug)]
+</span><span class="attr">#[derive(Clone, Debug)]
 </span><span class="kw">pub struct </span>CompressError {
     <span class="kw">pub</span>(<span class="kw">crate</span>) msg: ErrorMessage,
 }
