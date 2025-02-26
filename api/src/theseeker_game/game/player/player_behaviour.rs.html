@@ -1628,7 +1628,22 @@
 <a href="#1627" id="1627">1627</a>
 <a href="#1628" id="1628">1628</a>
 <a href="#1629" id="1629">1629</a>
-<a href="#1630" id="1630">1630</a></pre></div><pre class="rust"><code><span class="kw">use </span>bevy::sprite::{Sprite, SpriteSheetBundle};
+<a href="#1630" id="1630">1630</a>
+<a href="#1631" id="1631">1631</a>
+<a href="#1632" id="1632">1632</a>
+<a href="#1633" id="1633">1633</a>
+<a href="#1634" id="1634">1634</a>
+<a href="#1635" id="1635">1635</a>
+<a href="#1636" id="1636">1636</a>
+<a href="#1637" id="1637">1637</a>
+<a href="#1638" id="1638">1638</a>
+<a href="#1639" id="1639">1639</a>
+<a href="#1640" id="1640">1640</a>
+<a href="#1641" id="1641">1641</a>
+<a href="#1642" id="1642">1642</a>
+<a href="#1643" id="1643">1643</a>
+<a href="#1644" id="1644">1644</a>
+<a href="#1645" id="1645">1645</a></pre></div><pre class="rust"><code><span class="kw">use </span>bevy::sprite::{Sprite, SpriteSheetBundle};
 <span class="kw">use </span>bevy::transform::TransformSystem::TransformPropagate;
 <span class="kw">use </span>glam::{Vec2, Vec2Swizzles, Vec3Swizzles};
 <span class="kw">use </span>leafwing_input_manager::action_state::ActionState;
@@ -1652,7 +1667,9 @@
     DashStrike, DashType, JumpCount, Knockback, Passives, PlayerStats,
     Pushback, StatType, Stealthing, Whirling,
 };
-<span class="kw">use </span><span class="kw">crate</span>::game::attack::{Attack, SelfPushback, Stealthed};
+<span class="kw">use </span><span class="kw">crate</span>::game::attack::{
+    Attack, DownwardAttack, Hit, SelfPushback, Stealthed,
+};
 <span class="kw">use </span><span class="kw">crate</span>::game::enemy::Enemy;
 <span class="kw">use </span><span class="kw">crate</span>::game::gentstate::{Facing, TransitionQueue, Transitionable};
 <span class="kw">use </span><span class="kw">crate</span>::game::pickups::{
@@ -1668,7 +1685,6 @@
 <span class="kw">use </span><span class="kw">crate</span>::ui::popup::{PopupTimer, PopupUi};
 <span class="kw">use </span><span class="kw">crate</span>::StateDespawnMarker;
 <span class="kw">use crate</span>::{camera::CameraShake, game::player::PlayerStatMod};
-<span class="kw">use </span><span class="kw">crate</span>::game::player::Passive;
 
 <span class="doccomment">/// Player behavior systems.
 /// Do stuff here in states and add transitions to other states by pushing
@@ -1687,7 +1703,13 @@
                     add_attack,
                     player_stealth,
                     player_whirl_charge.before(player_whirl),
-                    player_whirl.before(player_attack),
+                    (
+                        player_whirl,
+                        bow_auto_aim.after(player_move).run_if(
+                            resource_equals(PlayerCombatStyle::Ranged),
+                        ),
+                    )
+                        .before(player_attack),
                     player_attack.run_if(any_with_component::&lt;Attacking&gt;),
                     player_restore_velocity
                         .after(player_attack)
@@ -1712,16 +1734,11 @@
                         player_sliding.before(player_jump),
                     )
                         .run_if(any_with_component::&lt;Falling&gt;),
+                    reset_player_jump_on_downward_attack.after(player_falling),
                     <span class="kw">crate</span>::game::physics::knockback
                         .run_if(any_with_component::&lt;Knockback&gt;)
                         .before(player_jump)
                         .after(player_sliding),
-                    bow_auto_aim
-                        .after(player_move)
-                        .before(player_attack)
-                        .run_if(resource_equals(
-                            PlayerCombatStyle::Ranged,
-                        )),
                 )
                     .in_set(PlayerStateSet::Behavior)
                     .before(update_sprite_colliders),
@@ -1739,6 +1756,17 @@
                 .chain()
                 .run_if(in_state(AppState::InGame)),
         );
+    }
+}
+
+<span class="kw">fn </span>reset_player_jump_on_downward_attack(
+    <span class="kw-2">mut </span>p_query: Query&lt;<span class="kw-2">&amp;mut </span>JumpCount, With&lt;Player&gt;&gt;,
+    query: Query&lt;<span class="kw-2">&amp;</span>Attack, (Added&lt;Hit&gt;, With&lt;DownwardAttack&gt;)&gt;,
+) {
+    <span class="kw">for </span>attack <span class="kw">in </span>query.iter() {
+        <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="kw-2">mut </span>jump_count) = p_query.get_mut(attack.attacker) {
+            jump_count.reset();
+        }
     }
 }
 
@@ -2822,6 +2850,7 @@
             <span class="kw-2">&amp;</span>ActionState&lt;PlayerAction&gt;,
             <span class="kw-2">&amp;</span>PlayerStatMod,
             Has&lt;Stealthing&gt;,
+            Has&lt;Grounded&gt;,
         ),
         (With&lt;Player&gt;, Without&lt;Whirling&gt;),
     &gt;,
@@ -2843,6 +2872,7 @@
         action_state,
         stat_mod,
         stealthed,
+        grounded,
     ) <span class="kw">in </span>query.iter_mut()
     {
         <span class="kw">if </span>attacking.ticks == <span class="number">0 </span>{
@@ -2948,32 +2978,43 @@
                         );
                     }
 
-                    commands
-                        .spawn((
-                            TransformBundle::from_transform(
-                                Transform::from_xyz(<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>),
-                            ),
-                            AnimationCollider(gent.e_gfx),
-                            <span class="comment">// TODO: ? ColliderMeta
-                            </span>Collider::empty(InteractionGroups::new(
-                                PLAYER_ATTACK,
-                                ENEMY_HURT,
-                            )),
-                            Attack::new(<span class="number">16</span>, entity, damage * stat_mod.attack),
-                            SelfPushback(Knockback::new(
-                                Vec2::new(
-                                    self_pushback * -facing.direction(),
-                                    <span class="number">0.</span>,
-                                ),
-                                self_pushback_ticks,
-                            )),
-                            Pushback(Knockback::new(
+                    <span class="kw">let </span>is_attacking_downwards =
+                        !grounded &amp;&amp; action_state.pressed(<span class="kw-2">&amp;</span>PlayerAction::Fall);
+                    <span class="kw">let </span>self_knockback_strength = <span class="kw">if </span>is_attacking_downwards {
+                        Vec2::new(<span class="number">0.0</span>, self_pushback * <span class="number">2.0</span>)
+                    } <span class="kw">else </span>{
+                        Vec2::new(self_pushback * -facing.direction(), <span class="number">0.</span>)
+                    };
+                    <span class="kw">let </span><span class="kw-2">mut </span>attack_entity_commands = commands.spawn((
+                        TransformBundle::from_transform(Transform::from_xyz(
+                            <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>,
+                        )),
+                        AnimationCollider(gent.e_gfx),
+                        <span class="comment">// TODO: ? ColliderMeta
+                        </span>Collider::empty(InteractionGroups::new(
+                            PLAYER_ATTACK,
+                            ENEMY_HURT,
+                        )),
+                        Attack::new(<span class="number">16</span>, entity, damage * stat_mod.attack),
+                        SelfPushback(Knockback::new(
+                            self_knockback_strength,
+                            self_pushback_ticks,
+                        )),
+                    ));
+                    attack_entity_commands.set_parent(entity);
+
+                    <span class="kw">if </span>!is_attacking_downwards {
+                        attack_entity_commands.insert(Pushback(
+                            Knockback::new(
                                 Vec2::new(facing.direction() * pushback, <span class="number">0.</span>),
                                 pushback_ticks,
-                            )),
-                        ))
-                        .set_parent(entity)
-                        .id()
+                            ),
+                        ));
+                    } <span class="kw">else </span>{
+                        attack_entity_commands.insert(DownwardAttack);
+                    }
+
+                    attack_entity_commands.id()
                 },
             };
 
@@ -3043,7 +3084,7 @@
             <span class="kw-2">&amp;</span>PlayerStatMod,
             Has&lt;Stealthing&gt;,
             <span class="kw-2">&amp;</span>Gent,
-            <span class="kw-2">&amp;</span>Passives
+            <span class="kw-2">&amp;</span>Passives,
         ),
         (
             With&lt;Player&gt;,
@@ -3098,31 +3139,20 @@
                 }
             <span class="comment">// if there is no attack, spawn a new one
             </span>} <span class="kw">else </span>{
-                <span class="comment">// Determine collider lifetime based on melee weapon and passives:
-                // For Sword: default = 16, if (SerpentRing or FrenziedAttack) active then 12
-                // For Hammer: default = 24, if (SerpentRing or FrenziedAttack) active then 18
-                </span><span class="kw">let </span>lifetime = <span class="kw">if </span><span class="kw-2">*</span>melee_weapon == PlayerMeleeWeapon::Hammer {
-                    <span class="kw">if </span>passives.contains(<span class="kw-2">&amp;</span>Passive::SerpentRing) || passives.contains(<span class="kw-2">&amp;</span>Passive::FrenziedAttack) {
-                        <span class="number">18
-                    </span>} <span class="kw">else </span>{
-                        <span class="number">24
-                    </span>}
-                } <span class="kw">else </span>{
-                    <span class="kw">if </span>passives.contains(<span class="kw-2">&amp;</span>Passive::SerpentRing) || passives.contains(<span class="kw-2">&amp;</span>Passive::FrenziedAttack) {
-                        <span class="number">12
-                    </span>} <span class="kw">else </span>{
-                        <span class="number">16
-                    </span>}
-                };
-
-                <span class="kw">let </span>damage = <span class="kw">if </span><span class="kw-2">*</span>melee_weapon == PlayerMeleeWeapon::Hammer { <span class="number">51.0 </span>} <span class="kw">else </span>{ <span class="number">33.0 </span>} * stat_mod.attack;
+                <span class="kw">let </span>lifetime = melee_weapon.attack_lifetime(passives);
+                <span class="kw">let </span>damage = melee_weapon.base_damage() * stat_mod.attack;
                 <span class="kw">let </span>new_attack = commands
                     .spawn((
                         AttackBundle {
                             attack: Attack::new(lifetime, entity, damage),
-                            collider: Collider::empty(InteractionGroups::new(PLAYER_ATTACK, ENEMY_HURT)),
+                            collider: Collider::empty(InteractionGroups::new(
+                                PLAYER_ATTACK,
+                                ENEMY_HURT,
+                            )),
                         },
-                        TransformBundle::from_transform(Transform::from_xyz(<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>)),
+                        TransformBundle::from_transform(Transform::from_xyz(
+                            <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>,
+                        )),
                         AnimationCollider(gent.e_gfx),
                     ))
                     .set_parent(entity)
