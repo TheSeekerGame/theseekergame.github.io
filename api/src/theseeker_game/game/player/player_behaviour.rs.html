@@ -1643,7 +1643,26 @@
 <a href="#1642" id="1642">1642</a>
 <a href="#1643" id="1643">1643</a>
 <a href="#1644" id="1644">1644</a>
-<a href="#1645" id="1645">1645</a></pre></div><pre class="rust"><code><span class="kw">use </span>bevy::sprite::{Sprite, SpriteSheetBundle};
+<a href="#1645" id="1645">1645</a>
+<a href="#1646" id="1646">1646</a>
+<a href="#1647" id="1647">1647</a>
+<a href="#1648" id="1648">1648</a>
+<a href="#1649" id="1649">1649</a>
+<a href="#1650" id="1650">1650</a>
+<a href="#1651" id="1651">1651</a>
+<a href="#1652" id="1652">1652</a>
+<a href="#1653" id="1653">1653</a>
+<a href="#1654" id="1654">1654</a>
+<a href="#1655" id="1655">1655</a>
+<a href="#1656" id="1656">1656</a>
+<a href="#1657" id="1657">1657</a>
+<a href="#1658" id="1658">1658</a>
+<a href="#1659" id="1659">1659</a>
+<a href="#1660" id="1660">1660</a>
+<a href="#1661" id="1661">1661</a></pre></div><pre class="rust"><code><span class="kw">use </span>bevy::sprite::{Sprite, SpriteSheetBundle};
+
+<span class="comment">//TODO: remove, remove passive check in jumps
+</span><span class="kw">use </span><span class="kw">crate</span>::game::player::Passive;
 <span class="kw">use </span>bevy::transform::TransformSystem::TransformPropagate;
 <span class="kw">use </span>glam::{Vec2, Vec2Swizzles, Vec3Swizzles};
 <span class="kw">use </span>leafwing_input_manager::action_state::ActionState;
@@ -2583,6 +2602,7 @@
             <span class="kw-2">&amp;mut </span>TransitionQueue,
             <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;mut </span>CoyoteTime&gt;,
             <span class="kw-2">&amp;mut </span>JumpCount,
+            <span class="kw-2">&amp;</span>Passives,
         ),
         (
             With&lt;Player&gt;,
@@ -2603,6 +2623,7 @@
         <span class="kw-2">mut </span>transitions,
         coyote_time,
         <span class="kw-2">mut </span>jump_count,
+        passives,
     ) <span class="kw">in </span>query.iter_mut()
     {
         <span class="kw">let </span>ray_cast =
@@ -2613,8 +2634,7 @@
         <span class="kw">let </span>is_falling = falling_toi.is_some();
         <span class="kw">let </span>time_of_impact = falling_toi.map_or(<span class="number">0.0</span>, |x| x.<span class="number">1</span>.toi);
 
-        <span class="comment">// This condition might never be true, but in the rare case where the TOI goes above the threshold
-        // it will ensure that the player character lands at the expected y height every time.
+        <span class="comment">// Adjust position if TOI is nonzero.
         </span><span class="kw">if </span>!is_falling &amp;&amp; time_of_impact != <span class="number">0.0 </span>{
             position.translation.y =
                 position.translation.y - time_of_impact + GROUNDED_THRESHOLD;
@@ -2622,25 +2642,32 @@
         <span class="kw">let </span><span class="kw-2">mut </span>in_c_time = <span class="bool-val">false</span>;
         <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">mut </span>c_time) = coyote_time {
             <span class="kw">if </span>!is_falling {
-                <span class="comment">// resets the c_time every time ground gets close again.
+                <span class="comment">// resets the coyote timer every time ground gets close again.
                 </span>c_time.<span class="number">0 </span>= <span class="number">0.0</span>;
             } <span class="kw">else </span>{
-                c_time.<span class="number">0 </span>+= (<span class="number">1.0 </span>/ time.hz) <span class="kw">as </span>f32;
+                c_time.<span class="number">0 </span>+= <span class="number">1.0 </span>/ time.hz <span class="kw">as </span>f32;
             }
             <span class="kw">if </span>c_time.<span class="number">0 </span>&lt; max_coyote_time {
                 in_c_time = <span class="bool-val">true</span>;
             };
-        };
+        }
+        <span class="comment">// When the player is grounded (i.e. not falling), fully restore available jumps.
+        </span><span class="kw">if </span>!is_falling {
+            jump_count.<span class="number">0 </span>= <span class="number">0</span>;
+        }
 
-        <span class="comment">// just pressed seems to get missed sometimes... but we need it because pressed makes you
-        // jump continuously if held
-        // known issue https://github.com/bevyengine/bevy/issues/6183
-        </span><span class="kw">if </span>action_state.just_pressed(<span class="kw-2">&amp;</span>PlayerAction::Jump) {
-            jump_count.<span class="number">0 </span>= <span class="number">1</span>;
-            transitions.push(Grounded::new_transition(Jumping))
+        <span class="kw">if </span>action_state.just_pressed(<span class="kw-2">&amp;</span>PlayerAction::Jump) {
+            <span class="kw">let </span>allowed_jumps = <span class="kw">if </span>passives.contains(<span class="kw-2">&amp;</span>Passive::RabbitsFoot) {
+                <span class="number">3
+            </span>} <span class="kw">else </span>{
+                <span class="number">2
+            </span>};
+            <span class="kw">if </span>jump_count.<span class="number">0 </span>&lt; allowed_jumps {
+                jump_count.<span class="number">0 </span>+= <span class="number">1</span>;
+                transitions.push(Grounded::new_transition(Jumping));
+            }
         } <span class="kw">else if </span>is_falling &amp;&amp; !in_c_time {
-            jump_count.<span class="number">0 </span>= <span class="number">1</span>;
-            transitions.push(Grounded::new_transition(Falling))
+            transitions.push(Grounded::new_transition(Falling));
         }
     }
 }
@@ -2656,6 +2683,7 @@
             <span class="kw-2">&amp;</span>ShapeCaster,
             <span class="kw-2">&amp;mut </span>TransitionQueue,
             <span class="kw-2">&amp;mut </span>JumpCount,
+            <span class="kw-2">&amp;</span>Passives,
         ),
         (
             With&lt;Player&gt;,
@@ -2674,6 +2702,7 @@
         hits,
         <span class="kw-2">mut </span>transitions,
         <span class="kw-2">mut </span>jump_count,
+        passives,
     ) <span class="kw">in </span>query.iter_mut()
     {
         <span class="kw">let </span>fall_accel = config.fall_accel;
@@ -2686,8 +2715,7 @@
                 &lt; GROUNDED_THRESHOLD
             {
                 transitions.push(Falling::new_transition(Grounded));
-                <span class="comment">// stop falling
-                </span>velocity.y = <span class="number">0.0</span>;
+                velocity.y = <span class="number">0.0</span>;
                 transform.translation.y =
                     transform.translation.y - toi.toi + GROUNDED_THRESHOLD;
                 <span class="kw">if </span>action_state.pressed(<span class="kw-2">&amp;</span>PlayerAction::Move) {
@@ -2699,14 +2727,18 @@
             }
         }
         <span class="kw">if </span>falling {
-            <span class="kw">if </span>action_state.just_pressed(<span class="kw-2">&amp;</span>PlayerAction::Jump)
-                &amp;&amp; jump_count.<span class="number">0 </span>&gt; <span class="number">0
-            </span>{
-                velocity.y = <span class="number">0.0</span>;
-                jump_count.<span class="number">0 </span>-= <span class="number">1</span>;
-
-                <span class="comment">// println!("air jump: {}", jump_count.0);
-                </span>transitions.push(Falling::new_transition(Jumping))
+            <span class="kw">if </span>action_state.just_pressed(<span class="kw-2">&amp;</span>PlayerAction::Jump) {
+                <span class="kw">let </span>allowed_jumps = <span class="kw">if </span>passives.contains(<span class="kw-2">&amp;</span>Passive::RabbitsFoot)
+                {
+                    <span class="number">3
+                </span>} <span class="kw">else </span>{
+                    <span class="number">2
+                </span>};
+                <span class="kw">if </span>jump_count.<span class="number">0 </span>&lt; allowed_jumps {
+                    velocity.y = <span class="number">0.0</span>;
+                    jump_count.<span class="number">0 </span>+= <span class="number">1</span>;
+                    transitions.push(Falling::new_transition(Jumping));
+                }
             }
             <span class="kw">if </span>velocity.y &gt; <span class="number">0.0 </span>{
                 velocity.y /= <span class="number">1.2</span>;

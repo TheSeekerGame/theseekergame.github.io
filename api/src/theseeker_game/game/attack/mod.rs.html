@@ -621,7 +621,40 @@
 <a href="#620" id="620">620</a>
 <a href="#621" id="621">621</a>
 <a href="#622" id="622">622</a>
-<a href="#623" id="623">623</a></pre></div><pre class="rust"><code><span class="kw">pub mod </span>arc_attack;
+<a href="#623" id="623">623</a>
+<a href="#624" id="624">624</a>
+<a href="#625" id="625">625</a>
+<a href="#626" id="626">626</a>
+<a href="#627" id="627">627</a>
+<a href="#628" id="628">628</a>
+<a href="#629" id="629">629</a>
+<a href="#630" id="630">630</a>
+<a href="#631" id="631">631</a>
+<a href="#632" id="632">632</a>
+<a href="#633" id="633">633</a>
+<a href="#634" id="634">634</a>
+<a href="#635" id="635">635</a>
+<a href="#636" id="636">636</a>
+<a href="#637" id="637">637</a>
+<a href="#638" id="638">638</a>
+<a href="#639" id="639">639</a>
+<a href="#640" id="640">640</a>
+<a href="#641" id="641">641</a>
+<a href="#642" id="642">642</a>
+<a href="#643" id="643">643</a>
+<a href="#644" id="644">644</a>
+<a href="#645" id="645">645</a>
+<a href="#646" id="646">646</a>
+<a href="#647" id="647">647</a>
+<a href="#648" id="648">648</a>
+<a href="#649" id="649">649</a>
+<a href="#650" id="650">650</a>
+<a href="#651" id="651">651</a>
+<a href="#652" id="652">652</a>
+<a href="#653" id="653">653</a>
+<a href="#654" id="654">654</a>
+<a href="#655" id="655">655</a>
+<a href="#656" id="656">656</a></pre></div><pre class="rust"><code><span class="kw">pub mod </span>arc_attack;
 <span class="kw">pub mod </span>particles;
 
 <span class="kw">use </span>std::mem;
@@ -638,7 +671,7 @@
 <span class="kw">use </span><span class="kw">super</span>::physics::Knockback;
 <span class="kw">use </span><span class="kw">super</span>::player::player_weapon::CurrentWeapon;
 <span class="kw">use </span><span class="kw">super</span>::player::{
-    on_crit_cooldown_reduce, on_hit_exit_stealthing,
+    on_crit_cooldown_reduce, on_crit_heal, on_hit_exit_stealthing,
     on_stealth_hit_cooldown_reset, Passive, Passives, Player, PlayerConfig,
     PlayerGfx, PlayerStateSet, StatusModifier,
 };
@@ -673,6 +706,7 @@
                     on_hit_self_pushback,
                     on_hit_lifesteal,
                     on_crit_cooldown_reduce,
+                    on_crit_heal,
                     on_stealth_hit_cooldown_reset,
                     on_hit_exit_stealthing,
                 )
@@ -901,24 +935,24 @@
         </span><span class="kw">if let </span><span class="prelude-val">Ok</span>((maybe_crits, maybe_passives)) =
             attacker_query.get_mut(attack.attacker)
         {
-            <span class="comment">// passives
-            </span><span class="kw">if let </span><span class="prelude-val">Some</span>(passives) = maybe_passives {
-                <span class="comment">// backstab
-                // check this later on application of damage for each enemy
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(passives) = maybe_passives {
+                <span class="comment">// Existing IceDagger passive check
                 </span><span class="kw">if </span>passives.contains(<span class="kw-2">&amp;</span>Passive::IceDagger) {
                     commands.entity(entity).insert(Backstab);
                 }
+                <span class="comment">// &lt;-- New Pack Killer effect:
+                </span><span class="kw">if </span>passives.contains(<span class="kw-2">&amp;</span>Passive::PackKiller) {
+                    <span class="kw">let </span>bonus_multiplier =
+                        <span class="number">1.0 </span>+ (attack.target_set.len() <span class="kw">as </span>f32 * <span class="number">0.30</span>);
+                    attack.damage <span class="kw-2">*</span>= bonus_multiplier;
+                }
             }
-            <span class="comment">// TODO: attack should keep its original damage and modify only the multipliers
-            // crit multiplier
-            //
-            </span><span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">mut </span>crit) = maybe_crits {
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">mut </span>crit) = maybe_crits {
                 <span class="kw">if </span>crit.next_hit_is_critical &amp;&amp; !is_crit {
                     commands.entity(entity).insert(Crit);
                     attack.damage <span class="kw-2">*</span>= crit.crit_damage_multiplier;
                     crit.next_hit_is_critical = <span class="bool-val">false</span>;
                 }
-
                 <span class="comment">// increment hit count the first time we hit something with an attack
                 </span><span class="kw">if </span>!has_hit {
                     crit.hit_count += <span class="number">1</span>;
@@ -955,6 +989,7 @@
     &gt;,
     <span class="kw-2">mut </span>damage_events: EventWriter&lt;DamageInfo&gt;,
     <span class="kw-2">mut </span>commands: Commands,
+    player_passives: Query&lt;<span class="kw-2">&amp;</span>Passives, With&lt;Player&gt;&gt;,
 ) {
     <span class="kw">for </span>(
         a_entity,
@@ -1012,6 +1047,14 @@
                 <span class="comment">// apply player defense modifier if it exists
                 </span><span class="kw">if let </span><span class="prelude-val">Some</span>(statmod) = maybe_player_statmod {
                     damage /= statmod.defense;
+                }
+
+                <span class="comment">// If the target is the player and has ProtectiveSpirit, cap damage to 1/3 of max health.
+                </span><span class="kw">if let </span><span class="prelude-val">Ok</span>(passives) = player_passives.get(t_entity) {
+                    <span class="kw">if </span>passives.contains(<span class="kw-2">&amp;</span>Passive::ProtectiveSpirit) {
+                        <span class="kw">let </span>max_allowed = (health.max <span class="kw">as </span>f32) / <span class="number">3.0</span>;
+                        damage = damage.min(max_allowed);
+                    }
                 }
 
                 <span class="comment">// apply damage to the targets health
@@ -1135,7 +1178,7 @@
     <span class="kw">for </span>(attack, is_crit) <span class="kw">in </span>query.iter() {
         <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="kw-2">mut </span>health) = health_query.get_mut(attack.attacker) {
             <span class="comment">// heal by 100 percent or 20 percent max health
-            </span><span class="kw">let </span>stealth_lifesteal = <span class="kw">if </span>is_crit { <span class="number">1. </span>} <span class="kw">else </span>{ <span class="number">0.2 </span>};
+            </span><span class="kw">let </span>stealth_lifesteal = <span class="kw">if </span>is_crit { <span class="number">0.24 </span>} <span class="kw">else </span>{ <span class="number">0.2 </span>};
             health.current = u32::min(
                 health.current.saturating_add(
                     (stealth_lifesteal * health.max <span class="kw">as </span>f32) <span class="kw">as </span>u32,
@@ -1215,8 +1258,31 @@
         <span class="kw">if let </span><span class="prelude-val">Some</span>(passives) = maybe_passives {
             <span class="kw">if </span>passives.contains(<span class="kw-2">&amp;</span>Passive::FlamingHeart)
                 &amp;&amp; health.current &lt; health.max / <span class="number">4
-            </span><span class="comment">// &amp;&amp; (crits.hit_count % 1 == 0 || crits.hit_count % 2 == 0)
-            </span>{
+                </span>&amp;&amp; (crits.hit_count % <span class="number">2 </span>== <span class="number">0 </span>|| crits.hit_count % <span class="number">3 </span>== <span class="number">0</span>)
+            {
+                crits.next_hit_is_critical = <span class="bool-val">true</span>;
+            }
+            <span class="kw">if </span>passives.contains(<span class="kw-2">&amp;</span>Passive::DeadlyFeather)
+                &amp;&amp; (crits.hit_count % <span class="number">5 </span>== <span class="number">0
+                    </span>|| crits.hit_count % <span class="number">7 </span>== <span class="number">0
+                    </span>|| crits.hit_count % <span class="number">11 </span>== <span class="number">0
+                    </span>|| crits.hit_count % <span class="number">13 </span>== <span class="number">0</span>)
+            {
+                crits.next_hit_is_critical = <span class="bool-val">true</span>;
+            }
+            <span class="kw">if </span>passives.contains(<span class="kw-2">&amp;</span>Passive::ObsidianNecklace)
+                &amp;&amp; (crits.hit_count % <span class="number">23 </span>== <span class="number">0
+                    </span>|| crits.hit_count % <span class="number">29 </span>== <span class="number">0
+                    </span>|| crits.hit_count % <span class="number">31 </span>== <span class="number">0</span>)
+            {
+                crits.next_hit_is_critical = <span class="bool-val">true</span>;
+            }
+            <span class="kw">if </span>passives.contains(<span class="kw-2">&amp;</span>Passive::RabbitsFoot)
+                &amp;&amp; (crits.hit_count % <span class="number">37 </span>== <span class="number">0
+                    </span>|| crits.hit_count % <span class="number">41 </span>== <span class="number">0
+                    </span>|| crits.hit_count % <span class="number">43 </span>== <span class="number">0
+                    </span>|| crits.hit_count % <span class="number">47 </span>== <span class="number">0</span>)
+            {
                 crits.next_hit_is_critical = <span class="bool-val">true</span>;
             }
         }

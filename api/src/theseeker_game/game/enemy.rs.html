@@ -2052,7 +2052,35 @@
 <a href="#2051" id="2051">2051</a>
 <a href="#2052" id="2052">2052</a>
 <a href="#2053" id="2053">2053</a>
-<a href="#2054" id="2054">2054</a></pre></div><pre class="rust"><code><span class="attr">#[cfg(feature = <span class="string">"dev"</span>)]
+<a href="#2054" id="2054">2054</a>
+<a href="#2055" id="2055">2055</a>
+<a href="#2056" id="2056">2056</a>
+<a href="#2057" id="2057">2057</a>
+<a href="#2058" id="2058">2058</a>
+<a href="#2059" id="2059">2059</a>
+<a href="#2060" id="2060">2060</a>
+<a href="#2061" id="2061">2061</a>
+<a href="#2062" id="2062">2062</a>
+<a href="#2063" id="2063">2063</a>
+<a href="#2064" id="2064">2064</a>
+<a href="#2065" id="2065">2065</a>
+<a href="#2066" id="2066">2066</a>
+<a href="#2067" id="2067">2067</a>
+<a href="#2068" id="2068">2068</a>
+<a href="#2069" id="2069">2069</a>
+<a href="#2070" id="2070">2070</a>
+<a href="#2071" id="2071">2071</a>
+<a href="#2072" id="2072">2072</a>
+<a href="#2073" id="2073">2073</a>
+<a href="#2074" id="2074">2074</a>
+<a href="#2075" id="2075">2075</a>
+<a href="#2076" id="2076">2076</a>
+<a href="#2077" id="2077">2077</a>
+<a href="#2078" id="2078">2078</a>
+<a href="#2079" id="2079">2079</a>
+<a href="#2080" id="2080">2080</a>
+<a href="#2081" id="2081">2081</a>
+<a href="#2082" id="2082">2082</a></pre></div><pre class="rust"><code><span class="attr">#[cfg(feature = <span class="string">"dev"</span>)]
 </span><span class="kw">use </span>bevy_inspector_egui::quick::FilterQueryInspectorPlugin;
 <span class="kw">use </span>rand::distributions::Standard;
 <span class="kw">use </span>rapier2d::geometry::SharedShape;
@@ -3072,9 +3100,11 @@
                 transitions.push(Aggroed::new_transition(Patrolling));
             } <span class="kw">else if </span><span class="macro">matches!</span>(range, Range::Melee) {
                 <span class="kw">match </span>role {
-                    Role::Melee =&gt; transitions.push(Waiting::new_transition(
-                        MeleeAttack::default(),
-                    )),
+                    Role::Melee =&gt; {
+                        transitions.push(Waiting::new_transition(
+                            MeleeAttack::default(),
+                        ))
+                    },
                     Role::Ranged =&gt; {
                         velocity.x = <span class="number">0.</span>;
                         transitions.push(Waiting::new_transition(Defense));
@@ -3383,6 +3413,8 @@
             <span class="kw-2">&amp;mut </span>Navigation,
             <span class="kw-2">&amp;</span>Collider,
             <span class="kw-2">&amp;</span>Gent,
+            <span class="kw-2">&amp;</span>Role,
+            <span class="kw-2">&amp;</span>Tier,
         ),
         With&lt;Enemy&gt;,
     &gt;,
@@ -3390,8 +3422,17 @@
     enemy_config: Res&lt;EnemyConfig&gt;,
     <span class="kw-2">mut </span>gfx_query: Query&lt;<span class="kw-2">&amp;mut </span>ScriptPlayer&lt;SpriteAnimation&gt;, With&lt;EnemyGfx&gt;&gt;,
 ) {
-    <span class="kw">for </span>(entity, <span class="kw-2">mut </span>velocity, <span class="kw-2">mut </span>transform, <span class="kw">_</span>, <span class="kw-2">mut </span>nav, collider, gent) <span class="kw">in
-        </span>query.iter_mut()
+    <span class="kw">for </span>(
+        entity,
+        <span class="kw-2">mut </span>velocity,
+        <span class="kw-2">mut </span>transform,
+        <span class="kw">_</span>,
+        <span class="kw-2">mut </span>nav,
+        collider,
+        gent,
+        role,
+        tier,
+    ) <span class="kw">in </span>query.iter_mut()
     {
         <span class="kw">if </span><span class="macro">matches!</span>(<span class="kw-2">*</span>nav, Navigation::Falling { .. }) {
             <span class="kw">if let </span><span class="prelude-val">Some</span>((e, toi)) = spatial_query.shape_cast(
@@ -3422,7 +3463,10 @@
                         <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="kw-2">mut </span>enemy_anim) =
                             gfx_query.get_mut(gent.e_gfx)
                         {
-                            enemy_anim.play_key(<span class="string">"anim.smallspider.Chase"</span>);
+                            enemy_anim.play_key(<span class="kw-2">&amp;</span><span class="macro">format!</span>(
+                                <span class="string">"{}.Chase"</span>,
+                                enemy_anim_prefix(role, tier)
+                            ));
                         }
                         <span class="kw">continue</span>;
                     }
@@ -3468,7 +3512,10 @@
                 <span class="macro">println!</span>(<span class="string">"refalling"</span>);
                 <span class="kw-2">*</span>nav = Navigation::Falling { jumping: <span class="bool-val">false </span>};
                 <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="kw-2">mut </span>enemy_anim) = gfx_query.get_mut(gent.e_gfx) {
-                    enemy_anim.play_key(<span class="string">"anim.smallspider.Jump"</span>);
+                    enemy_anim.play_key(<span class="kw-2">&amp;</span><span class="macro">format!</span>(
+                        <span class="string">"{}.Jump"</span>,
+                        enemy_anim_prefix(role, tier)
+                    )); 
                 }
             }
         }
@@ -3563,6 +3610,7 @@
             <span class="kw-2">&amp;mut </span>TransitionQueue,
             <span class="kw-2">&amp;</span>Transform,
             <span class="kw-2">&amp;</span>Gent,
+            <span class="kw-2">&amp;</span>Tier,
         ),
         (
             With&lt;Enemy&gt;,
@@ -3585,6 +3633,7 @@
         <span class="kw-2">mut </span>transitions,
         trans,
         gent,
+        tier,
     ) <span class="kw">in </span>query.iter_mut()
     {
         <span class="comment">// only melee chase
@@ -3616,7 +3665,10 @@
                             <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="kw-2">mut </span>enemy_anim) =
                                 gfx_query.get_mut(gent.e_gfx)
                             {
-                                enemy_anim.play_key(<span class="string">"anim.smallspider.Jump"</span>);
+                                enemy_anim.play_key(<span class="kw-2">&amp;</span><span class="macro">format!</span>(
+                                    <span class="string">"{}.Jump"</span>,
+                                    enemy_anim_prefix(role, tier)
+                                ));
                                 <span class="comment">// enemy_anim.set_slot("fall", true);
                                 // enemy_anim.set_slot("jump", false);
                             </span>}
@@ -3629,7 +3681,10 @@
                             <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="kw-2">mut </span>enemy_anim) =
                                 gfx_query.get_mut(gent.e_gfx)
                             {
-                                enemy_anim.play_key(<span class="string">"anim.smallspider.Jump"</span>);
+                                enemy_anim.play_key(<span class="kw-2">&amp;</span><span class="macro">format!</span>(
+                                    <span class="string">"{}.Jump"</span>,
+                                    enemy_anim_prefix(role, tier)
+                                ));
                                 <span class="comment">// enemy_anim.set_slot("jump", true);
                                 // enemy_anim.set_slot("fall", false);
                             </span>}
@@ -4073,7 +4128,8 @@
     }
 }
 
-<span class="kw">fn </span>enemy_anim_prefix(role: <span class="kw-2">&amp;</span>Role, tier: <span class="kw-2">&amp;</span>Tier) -&gt; String {
+<span class="doccomment">/// Outputs "anim.{enemy}{tier}"
+</span><span class="kw">fn </span>enemy_anim_prefix(role: <span class="kw-2">&amp;</span>Role, tier: <span class="kw-2">&amp;</span>Tier) -&gt; String {
     <span class="kw">let </span>r = <span class="kw">match </span>role {
         Role::Ranged =&gt; <span class="string">"spider"</span>,
         Role::Melee =&gt; <span class="string">"smallspider"</span>,

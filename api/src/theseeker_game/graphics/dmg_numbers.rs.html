@@ -161,7 +161,10 @@
 <a href="#160" id="160">160</a>
 <a href="#161" id="161">161</a>
 <a href="#162" id="162">162</a>
-<a href="#163" id="163">163</a></pre></div><pre class="rust"><code><span class="kw">use </span>bevy::prelude::<span class="kw-2">*</span>;
+<a href="#163" id="163">163</a>
+<a href="#164" id="164">164</a>
+<a href="#165" id="165">165</a>
+<a href="#166" id="166">166</a></pre></div><pre class="rust"><code><span class="kw">use </span>bevy::prelude::<span class="kw-2">*</span>;
 <span class="kw">use </span>theseeker_engine::physics::Collider;
 <span class="kw">use </span>theseeker_engine::prelude::{GameTickUpdate, GameTime};
 
@@ -191,10 +194,8 @@
 <span class="kw">fn </span>instance(
     <span class="kw-2">mut </span>commands: Commands,
     asset_server: Res&lt;AssetServer&gt;,
-    entity_with_hp: Query&lt;
-        (<span class="kw-2">&amp;</span>GlobalTransform, <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Collider&gt;),
-        Without&lt;Player&gt;,
-    &gt;,
+    enemy_query: Query&lt;(<span class="kw-2">&amp;</span>GlobalTransform, <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Collider&gt;), Without&lt;Player&gt;&gt;,
+    player_query: Query&lt;(<span class="kw-2">&amp;</span>GlobalTransform, <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Collider&gt;), With&lt;Player&gt;&gt;,
     <span class="kw-2">mut </span>damage_events: EventReader&lt;DamageInfo&gt;,
     game_time: Res&lt;GameTime&gt;,
     q_cam: Query&lt;(<span class="kw-2">&amp;</span>GlobalTransform, <span class="kw-2">&amp;</span>Camera), With&lt;MainCamera&gt;&gt;,
@@ -204,65 +205,70 @@
     };
 
     <span class="kw">for </span>damage_info <span class="kw">in </span>damage_events.read() {
-        <span class="kw">if let </span><span class="prelude-val">Ok</span>((transform, collider)) =
-            entity_with_hp.get(damage_info.target)
+        <span class="comment">// Try the enemy query first:
+        </span><span class="kw">let </span>(transform, collider, text_color) = <span class="kw">if let </span><span class="prelude-val">Ok</span>((transform, collider)) =
+            enemy_query.get(damage_info.target)
         {
-            <span class="kw">let </span><span class="kw-2">mut </span>world_position = transform.translation();
-
-            <span class="comment">// Makes the number start above the collider, if it exists
-            </span>world_position += <span class="kw">match </span>collider {
-                <span class="prelude-val">Some</span>(collider) =&gt; {
-                    <span class="kw">let </span>above_hb_offset = <span class="number">11.0</span>;
-                    <span class="kw">let </span>collider_height =
-                        collider.<span class="number">0</span>.compute_aabb().half_extents().y;
-                    Vec3::new(
-                        <span class="number">1.0</span>,
-                        collider_height + above_hb_offset,
-                        <span class="number">0.0</span>,
-                    )
+            (
+                transform,
+                collider,
+                <span class="kw">if </span>damage_info.crit &amp;&amp; damage_info.stealthed {
+                    Color::PURPLE
+                } <span class="kw">else if </span>damage_info.crit {
+                    Color::YELLOW * <span class="number">1.1
+                </span>} <span class="kw">else if </span>damage_info.stealthed {
+                    Color::PINK
+                } <span class="kw">else </span>{
+                    Color::WHITE
                 },
-                <span class="prelude-val">None </span>=&gt; Vec3::ZERO,
-            };
+            )
+        } <span class="kw">else if let </span><span class="prelude-val">Ok</span>((transform, collider)) =
+            player_query.get(damage_info.target)
+        {
+            <span class="comment">// For player, force red color
+            </span>(transform, collider, Color::RED)
+        } <span class="kw">else </span>{
+            <span class="kw">continue</span>;
+        };
 
-            <span class="kw">let </span>screen_position = camera
-                .world_to_viewport(camera_transform, world_position)
-                .unwrap_or_default();
+        <span class="kw">let </span><span class="kw-2">mut </span>world_position = transform.translation();
 
-            commands.spawn((
-                DmgNumber(
-                    world_position,
-                    game_time.tick() <span class="kw">as </span>f64 / game_time.hz
-                        + game_time.last_update().as_secs_f64(),
-                ),
-                TextBundle::from_section(
-                    <span class="macro">format!</span>(<span class="string">"{}"</span>, damage_info.amount),
-                    TextStyle {
-                        font: asset_server.load(<span class="string">"font/Tektur-Regular.ttf"</span>),
-                        font_size: <span class="number">42.0</span>,
-                        color: <span class="kw">if </span>damage_info.crit &amp;&amp; damage_info.stealthed {
-                            Color::PURPLE
-                        } <span class="kw">else if </span>damage_info.crit {
-                            Color::YELLOW * <span class="number">1.1
-                        </span>} <span class="kw">else if </span>damage_info.stealthed {
-                            Color::PINK
-                        } <span class="kw">else </span>{
-                            Color::WHITE
-                        },
-                        <span class="comment">// TODO:
-                        // if backstab, red?
-                        // TODO:
-                        // can we mix the colors to determine final color?
-                    </span>},
-                )
-                .with_style(Style {
-                    position_type: PositionType::Absolute,
-                    left: Val::Px(screen_position.x),
-                    top: Val::Px(screen_position.y),
-                    ..default()
-                }),
-                StateDespawnMarker,
-            ));
-        }
+        <span class="comment">// Offset from collider (above hitbox) if available.
+        </span>world_position += <span class="kw">match </span>collider {
+            <span class="prelude-val">Some</span>(collider) =&gt; {
+                <span class="kw">let </span>above_hb_offset = <span class="number">11.0</span>;
+                <span class="kw">let </span>collider_height = collider.<span class="number">0</span>.compute_aabb().half_extents().y;
+                Vec3::new(<span class="number">1.0</span>, collider_height + above_hb_offset, <span class="number">0.0</span>)
+            }
+            <span class="prelude-val">None </span>=&gt; Vec3::ZERO,
+        };
+
+        <span class="kw">let </span>screen_position = camera
+            .world_to_viewport(camera_transform, world_position)
+            .unwrap_or_default();
+
+        commands.spawn((
+            DmgNumber(
+                world_position,
+                game_time.tick() <span class="kw">as </span>f64 / game_time.hz
+                    + game_time.last_update().as_secs_f64(),
+            ),
+            TextBundle::from_section(
+                <span class="macro">format!</span>(<span class="string">"{:.1}"</span>, damage_info.amount), <span class="comment">// round to 1 decimal place
+                </span>TextStyle {
+                    font: asset_server.load(<span class="string">"font/Tektur-Regular.ttf"</span>),
+                    font_size: <span class="number">42.0</span>,
+                    color: text_color,
+                },
+            )
+            .with_style(Style {
+                position_type: PositionType::Absolute,
+                left: Val::Px(screen_position.x),
+                top: Val::Px(screen_position.y),
+                ..default()
+            }),
+            StateDespawnMarker,
+        ));
     }
 }
 
