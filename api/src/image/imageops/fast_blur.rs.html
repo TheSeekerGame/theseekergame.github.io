@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/image-0.25.5/src/imageops/fast_blur.rs`."><title>fast_blur.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../static.files/rustdoc-46132b98.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="image" data-themes="" data-resource-suffix="" data-rustdoc-version="1.85.0 (4d91de4e4 2025-02-17)" data-channel="1.85.0" data-search-js="search-75f5ac3e.js" data-settings-js="settings-0f613d39.js" ><script src="../../../static.files/storage-59e33391.js"></script><script defer src="../../../static.files/src-script-56102188.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-5f194d8c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-893ab5e7.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">image/imageops/</div>fast_blur.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/image-0.25.6/src/imageops/fast_blur.rs`."><title>fast_blur.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../static.files/rustdoc-46132b98.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="image" data-themes="" data-resource-suffix="" data-rustdoc-version="1.85.1 (4eb161250 2025-03-15)" data-channel="1.85.1" data-search-js="search-75f5ac3e.js" data-settings-js="settings-0f613d39.js" ><script src="../../../static.files/storage-59e33391.js"></script><script defer src="../../../static.files/src-script-56102188.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-5f194d8c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-893ab5e7.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">image/imageops/</div>fast_blur.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
 <a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
@@ -150,13 +150,17 @@
 <a href="#149" id="149">149</a>
 <a href="#150" id="150">150</a>
 <a href="#151" id="151">151</a>
-<a href="#152" id="152">152</a></pre></div><pre class="rust"><code><span class="kw">use </span>num_traits::clamp;
+<a href="#152" id="152">152</a>
+<a href="#153" id="153">153</a>
+<a href="#154" id="154">154</a></pre></div><pre class="rust"><code><span class="kw">use </span>num_traits::clamp;
 
 <span class="kw">use crate</span>::{ImageBuffer, Pixel, Primitive};
 
 <span class="doccomment">/// Approximation of Gaussian blur after
 /// Kovesi, P.:  Fast Almost-Gaussian Filtering The Australian Pattern
 /// Recognition Society Conference: DICTA 2010. December 2010. Sydney.
+/// This method assumes alpha pre-multiplication for images that contain non-constant alpha.
+</span><span class="attr">#[must_use]
 </span><span class="kw">pub fn </span>fast_blur&lt;P: Pixel&gt;(
     image_buffer: <span class="kw-2">&amp;</span>ImageBuffer&lt;P, Vec&lt;P::Subpixel&gt;&gt;,
     sigma: f32,
@@ -194,8 +198,8 @@
     <span class="kw">let </span>w_ideal = f32::sqrt((<span class="number">12.0 </span>* sigma.powi(<span class="number">2</span>) / (n <span class="kw">as </span>f32)) + <span class="number">1.0</span>);
     <span class="kw">let </span><span class="kw-2">mut </span>w_l = w_ideal.floor();
     <span class="kw">if </span>w_l % <span class="number">2.0 </span>== <span class="number">0.0 </span>{
-        w_l -= <span class="number">1.0
-    </span>};
+        w_l -= <span class="number">1.0</span>;
+    };
     <span class="kw">let </span>w_u = w_l + <span class="number">2.0</span>;
 
     <span class="kw">let </span>m_ideal = <span class="number">0.25 </span>* (n <span class="kw">as </span>f32) * (w_l + <span class="number">3.0</span>) - <span class="number">3.0 </span>* sigma.powi(<span class="number">2</span>) * (w_l + <span class="number">1.0</span>).recip();
@@ -242,7 +246,7 @@
                     .to_f32()
                     .unwrap_or(<span class="number">0.0</span>)
                 })
-                .sum()
+                .sum();
         }
 
         <span class="kw">for </span>column <span class="kw">in </span><span class="number">0</span>..width {
@@ -281,7 +285,7 @@
                         channel_num,
                     )
                     .to_f32()
-                    .unwrap_or(<span class="number">0.0</span>)
+                    .unwrap_or(<span class="number">0.0</span>);
             }
         }
     }

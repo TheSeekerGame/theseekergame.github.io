@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/getrandom-0.3.1/src/backends/linux_android_with_fallback.rs`."><title>linux_android_with_fallback.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../static.files/rustdoc-46132b98.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="getrandom" data-themes="" data-resource-suffix="" data-rustdoc-version="1.85.0 (4d91de4e4 2025-02-17)" data-channel="1.85.0" data-search-js="search-75f5ac3e.js" data-settings-js="settings-0f613d39.js" ><script src="../../../static.files/storage-59e33391.js"></script><script defer src="../../../static.files/src-script-56102188.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-5f194d8c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-893ab5e7.css"></noscript><link rel="icon" href="https://www.rust-lang.org/favicon.ico"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">getrandom/backends/</div>linux_android_with_fallback.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/getrandom-0.3.2/src/backends/linux_android_with_fallback.rs`."><title>linux_android_with_fallback.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../static.files/rustdoc-46132b98.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="getrandom" data-themes="" data-resource-suffix="" data-rustdoc-version="1.85.1 (4eb161250 2025-03-15)" data-channel="1.85.1" data-search-js="search-75f5ac3e.js" data-settings-js="settings-0f613d39.js" ><script src="../../../static.files/storage-59e33391.js"></script><script defer src="../../../static.files/src-script-56102188.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-5f194d8c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-893ab5e7.css"></noscript><link rel="icon" href="https://www.rust-lang.org/favicon.ico"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">getrandom/backends/</div>linux_android_with_fallback.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
 <a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
@@ -82,13 +82,30 @@
 <a href="#81" id="81">81</a>
 <a href="#82" id="82">82</a>
 <a href="#83" id="83">83</a>
-<a href="#84" id="84">84</a></pre></div><pre class="rust"><code><span class="doccomment">//! Implementation for Linux / Android with `/dev/urandom` fallback
+<a href="#84" id="84">84</a>
+<a href="#85" id="85">85</a>
+<a href="#86" id="86">86</a>
+<a href="#87" id="87">87</a>
+<a href="#88" id="88">88</a>
+<a href="#89" id="89">89</a>
+<a href="#90" id="90">90</a>
+<a href="#91" id="91">91</a>
+<a href="#92" id="92">92</a>
+<a href="#93" id="93">93</a>
+<a href="#94" id="94">94</a>
+<a href="#95" id="95">95</a>
+<a href="#96" id="96">96</a>
+<a href="#97" id="97">97</a>
+<a href="#98" id="98">98</a>
+<a href="#99" id="99">99</a>
+<a href="#100" id="100">100</a>
+<a href="#101" id="101">101</a></pre></div><pre class="rust"><code><span class="doccomment">//! Implementation for Linux / Android with `/dev/urandom` fallback
 </span><span class="kw">use </span><span class="kw">super</span>::use_file;
 <span class="kw">use </span><span class="kw">crate</span>::Error;
 <span class="kw">use </span>core::{
     ffi::c_void,
-    mem::{<span class="self">self</span>, MaybeUninit},
-    ptr::{<span class="self">self</span>, NonNull},
+    mem::{transmute, MaybeUninit},
+    ptr::NonNull,
     sync::atomic::{AtomicPtr, Ordering},
 };
 <span class="kw">use </span>use_file::util_libc;
@@ -101,17 +118,28 @@
 /// or not supported by kernel.
 </span><span class="kw">const </span>NOT_AVAILABLE: NonNull&lt;c_void&gt; = <span class="kw">unsafe </span>{ NonNull::new_unchecked(usize::MAX <span class="kw">as </span><span class="kw-2">*mut </span>c_void) };
 
-<span class="kw">static </span>GETRANDOM_FN: AtomicPtr&lt;c_void&gt; = AtomicPtr::new(ptr::null_mut());
+<span class="kw">static </span>GETRANDOM_FN: AtomicPtr&lt;c_void&gt; = AtomicPtr::new(core::ptr::null_mut());
 
 <span class="attr">#[cold]
+#[inline(never)]
 </span><span class="kw">fn </span>init() -&gt; NonNull&lt;c_void&gt; {
-    <span class="kw">static </span>NAME: <span class="kw-2">&amp;</span>[u8] = <span class="string">b"getrandom\0"</span>;
-    <span class="kw">let </span>name_ptr = NAME.as_ptr().cast::&lt;libc::c_char&gt;();
-    <span class="kw">let </span>raw_ptr = <span class="kw">unsafe </span>{ libc::dlsym(libc::RTLD_DEFAULT, name_ptr) };
+    <span class="comment">// Use static linking to `libc::getrandom` on MUSL targets and `dlsym` everywhere else
+    </span><span class="attr">#[cfg(not(target_env = <span class="string">"musl"</span>))]
+    </span><span class="kw">let </span>raw_ptr = {
+        <span class="kw">static </span>NAME: <span class="kw-2">&amp;</span>[u8] = <span class="string">b"getrandom\0"</span>;
+        <span class="kw">let </span>name_ptr = NAME.as_ptr().cast::&lt;libc::c_char&gt;();
+        <span class="kw">unsafe </span>{ libc::dlsym(libc::RTLD_DEFAULT, name_ptr) }
+    };
+    <span class="attr">#[cfg(target_env = <span class="string">"musl"</span>)]
+    </span><span class="kw">let </span>raw_ptr = {
+        <span class="kw">let </span>fptr: GetRandomFn = libc::getrandom;
+        <span class="kw">unsafe </span>{ transmute::&lt;GetRandomFn, <span class="kw-2">*mut </span>c_void&gt;(fptr) }
+    };
+
     <span class="kw">let </span>res_ptr = <span class="kw">match </span>NonNull::new(raw_ptr) {
         <span class="prelude-val">Some</span>(fptr) =&gt; {
-            <span class="kw">let </span>getrandom_fn = <span class="kw">unsafe </span>{ mem::transmute::&lt;NonNull&lt;c_void&gt;, GetRandomFn&gt;(fptr) };
-            <span class="kw">let </span>dangling_ptr = ptr::NonNull::dangling().as_ptr();
+            <span class="kw">let </span>getrandom_fn = <span class="kw">unsafe </span>{ transmute::&lt;NonNull&lt;c_void&gt;, GetRandomFn&gt;(fptr) };
+            <span class="kw">let </span>dangling_ptr = NonNull::dangling().as_ptr();
             <span class="comment">// Check that `getrandom` syscall is supported by kernel
             </span><span class="kw">let </span>res = <span class="kw">unsafe </span>{ getrandom_fn(dangling_ptr, <span class="number">0</span>, <span class="number">0</span>) };
             <span class="kw">if </span><span class="macro">cfg!</span>(getrandom_test_linux_fallback) {
@@ -133,17 +161,23 @@
         <span class="prelude-val">None </span>=&gt; NOT_AVAILABLE,
     };
 
+    <span class="attr">#[cfg(getrandom_test_linux_without_fallback)]
+    </span><span class="kw">if </span>res_ptr == NOT_AVAILABLE {
+        <span class="macro">panic!</span>(<span class="string">"Fallback is triggered with enabled `getrandom_test_linux_without_fallback`"</span>)
+    }
+
     GETRANDOM_FN.store(res_ptr.as_ptr(), Ordering::Release);
     res_ptr
 }
 
-<span class="comment">// prevent inlining of the fallback implementation
+<span class="comment">// Prevent inlining of the fallback implementation
 </span><span class="attr">#[inline(never)]
 </span><span class="kw">fn </span>use_file_fallback(dest: <span class="kw-2">&amp;mut </span>[MaybeUninit&lt;u8&gt;]) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
     use_file::fill_inner(dest)
 }
 
-<span class="kw">pub fn </span>fill_inner(dest: <span class="kw-2">&amp;mut </span>[MaybeUninit&lt;u8&gt;]) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
+<span class="attr">#[inline]
+</span><span class="kw">pub fn </span>fill_inner(dest: <span class="kw-2">&amp;mut </span>[MaybeUninit&lt;u8&gt;]) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
     <span class="comment">// Despite being only a single atomic variable, we still cannot always use
     // Ordering::Relaxed, as we need to make sure a successful call to `init`
     // is "ordered before" any data read through the returned pointer (which
@@ -159,8 +193,8 @@
     <span class="kw">if </span>fptr == NOT_AVAILABLE {
         use_file_fallback(dest)
     } <span class="kw">else </span>{
-        <span class="comment">// note: `transume` is currently the only way to convert pointer into function reference
-        </span><span class="kw">let </span>getrandom_fn = <span class="kw">unsafe </span>{ mem::transmute::&lt;NonNull&lt;c_void&gt;, GetRandomFn&gt;(fptr) };
+        <span class="comment">// note: `transmute` is currently the only way to convert a pointer into a function reference
+        </span><span class="kw">let </span>getrandom_fn = <span class="kw">unsafe </span>{ transmute::&lt;NonNull&lt;c_void&gt;, GetRandomFn&gt;(fptr) };
         util_libc::sys_fill_exact(dest, |buf| <span class="kw">unsafe </span>{
             getrandom_fn(buf.as_mut_ptr().cast(), buf.len(), <span class="number">0</span>)
         })

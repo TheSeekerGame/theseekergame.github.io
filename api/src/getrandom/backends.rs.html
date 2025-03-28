@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/getrandom-0.3.1/src/backends.rs`."><title>backends.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-46132b98.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="getrandom" data-themes="" data-resource-suffix="" data-rustdoc-version="1.85.0 (4d91de4e4 2025-02-17)" data-channel="1.85.0" data-search-js="search-75f5ac3e.js" data-settings-js="settings-0f613d39.js" ><script src="../../static.files/storage-59e33391.js"></script><script defer src="../../static.files/src-script-56102188.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-5f194d8c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-893ab5e7.css"></noscript><link rel="icon" href="https://www.rust-lang.org/favicon.ico"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">getrandom/</div>backends.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/getrandom-0.3.2/src/backends.rs`."><title>backends.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-46132b98.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="getrandom" data-themes="" data-resource-suffix="" data-rustdoc-version="1.85.1 (4eb161250 2025-03-15)" data-channel="1.85.1" data-search-js="search-75f5ac3e.js" data-settings-js="settings-0f613d39.js" ><script src="../../static.files/storage-59e33391.js"></script><script defer src="../../static.files/src-script-56102188.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-5f194d8c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-893ab5e7.css"></noscript><link rel="icon" href="https://www.rust-lang.org/favicon.ico"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">getrandom/</div>backends.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
 <a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
@@ -169,7 +169,16 @@
 <a href="#168" id="168">168</a>
 <a href="#169" id="169">169</a>
 <a href="#170" id="170">170</a>
-<a href="#171" id="171">171</a></pre></div><pre class="rust"><code><span class="doccomment">//! System-specific implementations.
+<a href="#171" id="171">171</a>
+<a href="#172" id="172">172</a>
+<a href="#173" id="173">173</a>
+<a href="#174" id="174">174</a>
+<a href="#175" id="175">175</a>
+<a href="#176" id="176">176</a>
+<a href="#177" id="177">177</a>
+<a href="#178" id="178">178</a>
+<a href="#179" id="179">179</a>
+<a href="#180" id="180">180</a></pre></div><pre class="rust"><code><span class="doccomment">//! System-specific implementations.
 //!
 //! This module should provide `fill_inner` with the signature
 //! `fn fill_inner(dest: &amp;mut [MaybeUninit&lt;u8&gt;]) -&gt; Result&lt;(), Error&gt;`.
@@ -182,14 +191,20 @@
         <span class="kw">mod </span>custom;
         <span class="kw">pub use </span>custom::<span class="kw-2">*</span>;
     } <span class="kw">else if </span><span class="attr">#[cfg(getrandom_backend = <span class="string">"linux_getrandom"</span>)] </span>{
-        <span class="kw">mod </span>linux_android;
-        <span class="kw">pub use </span>linux_android::<span class="kw-2">*</span>;
+        <span class="kw">mod </span>getrandom;
+        <span class="kw">pub use </span>getrandom::<span class="kw-2">*</span>;
+    } <span class="kw">else if </span><span class="attr">#[cfg(getrandom_backend = <span class="string">"linux_raw"</span>)] </span>{
+        <span class="kw">mod </span>linux_raw;
+        <span class="kw">pub use </span>linux_raw::<span class="kw-2">*</span>;
     } <span class="kw">else if </span><span class="attr">#[cfg(getrandom_backend = <span class="string">"rdrand"</span>)] </span>{
         <span class="kw">mod </span>rdrand;
         <span class="kw">pub use </span>rdrand::<span class="kw-2">*</span>;
     } <span class="kw">else if </span><span class="attr">#[cfg(getrandom_backend = <span class="string">"rndr"</span>)] </span>{
         <span class="kw">mod </span>rndr;
         <span class="kw">pub use </span>rndr::<span class="kw-2">*</span>;
+    } <span class="kw">else if </span><span class="attr">#[cfg(getrandom_backend = <span class="string">"efi_rng"</span>)] </span>{
+        <span class="kw">mod </span>efi_rng;
+        <span class="kw">pub use </span>efi_rng::<span class="kw-2">*</span>;
     } <span class="kw">else if </span><span class="attr">#[cfg(all(getrandom_backend = <span class="string">"wasm_js"</span>))] </span>{
         <span class="macro">cfg_if!</span> {
             <span class="kw">if </span><span class="attr">#[cfg(feature = <span class="string">"wasm_js"</span>)] </span>{
@@ -203,6 +218,9 @@
                 </span>);
             }
         }
+    } <span class="kw">else if </span><span class="attr">#[cfg(all(target_os = <span class="string">"linux"</span>, target_env = <span class="string">""</span>))] </span>{
+        <span class="kw">mod </span>linux_raw;
+        <span class="kw">pub use </span>linux_raw::<span class="kw-2">*</span>;
     } <span class="kw">else if </span><span class="attr">#[cfg(target_os = <span class="string">"espidf"</span>)] </span>{
         <span class="kw">mod </span>esp_idf;
         <span class="kw">pub use </span>esp_idf::<span class="kw-2">*</span>;
@@ -222,17 +240,6 @@
     ))] </span>{
         <span class="kw">mod </span>getentropy;
         <span class="kw">pub use </span>getentropy::<span class="kw-2">*</span>;
-    } <span class="kw">else if </span><span class="attr">#[cfg(any(
-        target_os = <span class="string">"dragonfly"</span>,
-        target_os = <span class="string">"freebsd"</span>,
-        target_os = <span class="string">"hurd"</span>,
-        target_os = <span class="string">"illumos"</span>,
-        <span class="comment">// Check for target_arch = "arm" to only include the 3DS. Does not
-        // include the Nintendo Switch (which is target_arch = "aarch64").
-        </span>all(target_os = <span class="string">"horizon"</span>, target_arch = <span class="string">"arm"</span>),
-    ))] </span>{
-        <span class="kw">mod </span>getrandom;
-        <span class="kw">pub use </span>getrandom::<span class="kw-2">*</span>;
     } <span class="kw">else if </span><span class="attr">#[cfg(any(
         <span class="comment">// Rust supports Android API level 19 (KitKat) [0] and the next upgrade targets
         // level 21 (Lollipop) [1], while `getrandom(2)` was added only in
@@ -273,9 +280,20 @@
         <span class="kw">mod </span>use_file;
         <span class="kw">mod </span>linux_android_with_fallback;
         <span class="kw">pub use </span>linux_android_with_fallback::<span class="kw-2">*</span>;
-    } <span class="kw">else if </span><span class="attr">#[cfg(any(target_os = <span class="string">"android"</span>, target_os = <span class="string">"linux"</span>))] </span>{
-        <span class="kw">mod </span>linux_android;
-        <span class="kw">pub use </span>linux_android::<span class="kw-2">*</span>;
+    } <span class="kw">else if </span><span class="attr">#[cfg(any(
+        target_os = <span class="string">"android"</span>,
+        target_os = <span class="string">"linux"</span>,
+        target_os = <span class="string">"dragonfly"</span>,
+        target_os = <span class="string">"freebsd"</span>,
+        target_os = <span class="string">"hurd"</span>,
+        target_os = <span class="string">"illumos"</span>,
+        target_os = <span class="string">"cygwin"</span>,
+        <span class="comment">// Check for target_arch = "arm" to only include the 3DS. Does not
+        // include the Nintendo Switch (which is target_arch = "aarch64").
+        </span>all(target_os = <span class="string">"horizon"</span>, target_arch = <span class="string">"arm"</span>),
+    ))] </span>{
+        <span class="kw">mod </span>getrandom;
+        <span class="kw">pub use </span>getrandom::<span class="kw-2">*</span>;
     } <span class="kw">else if </span><span class="attr">#[cfg(target_os = <span class="string">"solaris"</span>)] </span>{
         <span class="kw">mod </span>solaris;
         <span class="kw">pub use </span>solaris::<span class="kw-2">*</span>;
@@ -317,7 +335,7 @@
     } <span class="kw">else if </span><span class="attr">#[cfg(target_os = <span class="string">"solid_asp3"</span>)] </span>{
         <span class="kw">mod </span>solid;
         <span class="kw">pub use </span>solid::<span class="kw-2">*</span>;
-    } <span class="kw">else if </span><span class="attr">#[cfg(all(windows, target_vendor = <span class="string">"win7"</span>))] </span>{
+    } <span class="kw">else if </span><span class="attr">#[cfg(all(windows, any(target_vendor = <span class="string">"win7"</span>, getrandom_windows_legacy)))] </span>{
         <span class="kw">mod </span>windows7;
         <span class="kw">pub use </span>windows7::<span class="kw-2">*</span>;
     } <span class="kw">else if </span><span class="attr">#[cfg(windows)] </span>{
