@@ -31,10 +31,11 @@
         <!-- Custom theme stylesheets -->
 
 
-        <!-- Provide site root to javascript -->
+        <!-- Provide site root and default themes to javascript -->
         <script>
-            var path_to_root = "../../";
-            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc.js"></script>
@@ -44,8 +45,8 @@
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
         <script>
             try {
-                var theme = localStorage.getItem('mdbook-theme');
-                var sidebar = localStorage.getItem('mdbook-sidebar');
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
 
                 if (theme.startsWith('"') && theme.endsWith('"')) {
                     localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
@@ -59,7 +60,8 @@
 
         <!-- Set the theme before any content is loaded, prevents flash -->
         <script>
-            var theme;
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
             const html = document.documentElement;
@@ -72,8 +74,8 @@
 
         <!-- Hide / unhide sidebar before it is displayed -->
         <script>
-            var sidebar = null;
-            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
@@ -109,6 +111,7 @@
                             <i class="fa fa-paint-brush"></i>
                         </button>
                         <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
@@ -153,15 +156,30 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="passive-skills"><a class="header" href="#passive-skills">Passive Skills</a></h1>
-<p>Passive skills are skills that are always active and have a passive effect on you, and that mostly means modifying certain stats based on specific conditions
-For example: 'deal double damage when you're at very low health', or 'deal more damage when attacking from behind', or 'deal more damage when there are no enemies in close proximity to you', or 'critical hits reduce your active skills cooldowns', etc
-Each one of those passive skills is meant to incentivize a specific kind of playstyle
-For example, the passive that makes you deal more damage when no enemies are nearby incentivizes ranged builds that involve staying away from enemies, so ranged attacks that stun or push back or slow down your enemies will work well with this.
-Since those passives are mostly just modifying variables based on If statements, it should be very easy to implement a lot of those
-I'm thinking having between 30 and 50 should be relatively easy for a start
-The player will be able to have around 5 of those passives equipped at a time
-The power of this approach is that if we assume 50 passives where you can pick 5 at a time, that's already 2,118,760 possible combinations, just with those passives, without even including the active skills or the weapon choices.
-An important design goal here is to make those passives as compatible with eachother as possible.</p>
+<p>Passive skills are skills that have an ongoing effect and don't need manual activation.</p>
+<p>They are mostly focused on modifying certain stats based on specific conditions.</p>
+<p>They usually have very little or no visual effect, they are just conditional stat modifiers.</p>
+<p>The player can choose up to 4 passives to be equipped at once (although we might add a passives that unlock additional passive slots)</p>
+<p>Passives work as 'functions', each accepting as input the player stats spitted out by the previous passives, etc</p>
+<p>This means that ordering of passives matters, and players can chain them up as they choose</p>
+<p>Some passives might be strongly affected by ordering, while others not at all</p>
+<p>Some examples of Passive skills could be:</p>
+<ul>
+<li>'get higher crit chance when you're at very low health'</li>
+<li>'deal more damage when attacking from behind'</li>
+<li>'attack faster when there are no enemies in close proximity to you'</li>
+<li>'critical hits reduce your active skills cooldowns'</li>
+<li>etc</li>
+</ul>
+<p>Passives can also affect the effects of other passives, or even amounts of passives that the player can equip.</p>
+<p>For example there could be a passive like:</p>
+<ul>
+<li>Double the effects of all your other passives, but max passive slots get reduced to 3.</li>
+</ul>
+<p>Each one of those passive skills is meant to incentivize a specific kind of playstyle.</p>
+<p>For example, the passive that makes you attack faster when no enemies are nearby incentivizes ranged builds that involve staying away from enemies, so ranged attacks that stun or push back or slow down your enemies will work well with this. Then the increased attack speed might also be a good combination with effects that proc 'per hit', etc.</p>
+<p>Since those passives are mostly just modifying variables based on If statements, it should be relatively easy to implement a lot of those for the player to choose from, leading to astronomical amounts of possible permutations.</p>
+<p>An important design goal is to make the passives as compatible with eachother as possible.</p>
 
                     </main>
 
@@ -171,7 +189,7 @@ An important design goal here is to make those passives as compatible with eacho
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="../../game-design/game-mechanics/platforming.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../game-design/game-mechanics/weapons-and-crafting.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -185,7 +203,7 @@ An important design goal here is to make those passives as compatible with eacho
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="../../game-design/game-mechanics/platforming.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../game-design/game-mechanics/weapons-and-crafting.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>

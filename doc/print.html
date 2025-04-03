@@ -32,10 +32,11 @@
         <!-- Custom theme stylesheets -->
 
 
-        <!-- Provide site root to javascript -->
+        <!-- Provide site root and default themes to javascript -->
         <script>
-            var path_to_root = "";
-            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc.js"></script>
@@ -45,8 +46,8 @@
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
         <script>
             try {
-                var theme = localStorage.getItem('mdbook-theme');
-                var sidebar = localStorage.getItem('mdbook-sidebar');
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
 
                 if (theme.startsWith('"') && theme.endsWith('"')) {
                     localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
@@ -60,7 +61,8 @@
 
         <!-- Set the theme before any content is loaded, prevents flash -->
         <script>
-            var theme;
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
             const html = document.documentElement;
@@ -73,8 +75,8 @@
 
         <!-- Hide / unhide sidebar before it is displayed -->
         <script>
-            var sidebar = null;
-            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
@@ -110,6 +112,7 @@
                             <i class="fa fa-paint-brush"></i>
                         </button>
                         <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
@@ -307,30 +310,70 @@ For instance creatures in cold areas might be more vulnerable to fire builds, wh
 Item drops will also be creature-dependent. This creates a potential gameplay scenario where for instance you might need to go kill some fiery creatures to get fire items, and then those items will allow you to explore some icy area better and vice-versa. Again incentivizing exploration and curiosity.
 So overall there's a nice feedback loop  within this design where all the parts synergize to incentivise exploration and curiosity, both in the area of mechanics and in the area of actual world exploration.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="active-skills"><a class="header" href="#active-skills">Active Skills</a></h1>
-<p>Active skills are skills that need to be manually triggered by the player and have an active visual effect and usually come with their own animations.
-For example, a basic sword slash, or a spinning melee attack, or shooting guns, or a dash
-All active skills can either be used independently of the weapon the player uses (like a dash, or putting a turret on the ground)
-Or they are dependent only on the category of the weapon: melee or ranged, and since the player always has 1 melee and 1 ranged weapon equipped, using those skills will automatically use the correct weapon.</p>
+<p>Active skills are skills that need to be manually triggered by the player and have an active visual effect and usually come with their own animations. For example, a basic sword slash, or a spinning melee attack, or shooting guns, or a dash.</p>
+<p>All active skills can either be used independently of the weapon the player uses (like a dash, or putting a turret on the ground), or they are dependent only on the category of the weapon: melee or ranged, and since the player always has 1 melee and 1 ranged weapon equipped, using those skills will automatically use the correct weapon.</p>
 <p>So for instance, if you have a 'spinning melee attack' equipped and you have a hammer in your melee weapon slot, you will start spinning with a hammer.
 But if you use this attack while having a sword in your melee weapon slot you will start spinning with a sword.</p>
-<p>This means there's no need to ever manually swap your weapons, and all skills you equip will always be available to you
-There will be around 30 active skills, and you will be able to equip 4-5 of them at a time (I'll have to see what number feels the best in game)
-in terms of acquiring the skills, I will initially make it so that every time you kill an enemy you have a small chance that a random skill will be unlocked. Later I might come up with some better way of progression, but this should work for now</p>
-<p>Also, one important design goal is to minimize the interdependence between movement and attacks: for example you can perform all basic attacks in all states, when running, jumping and falling, and the attacks won't slow you down or impact your motion
-the only instance where active skills will impact your motion is when those skills are movement related skills, like a dash
-the overall goal here is to make the combat as seamless as possible, no need to think about swapping weapons or whether you're currently jumping or running, when you hit that attack button you will always get the desired effect
-I'm also considering implementing a very basic auto-aim for ranged weapons, so if there are no enemies in the direction where you are running you will shoot backwards
-but if there are enemies in both directions then you shoot in direction of motion.</p>
+<p>This means there's no need to ever manually swap your weapons, and all skills you equip will always be available to you.</p>
+<p>There will be a long list of skills to choose from (aiming for at least 30), and you will be able to equip 4 of them at a time, leading to a lot of possible combinations.</p>
+<p>Each skill will also have 3 variants:</p>
+<ul>
+<li>Regular (when pressing the skill button)</li>
+<li>'Up' variant (when pressing the skill while holding Up key)</li>
+<li>'Down' variant (whep pressing the skill while holding Down key)</li>
+</ul>
+<p>So for example, a regular sword slash will slash forwards in its regular version, upwards in Up variant, and downwards in Down variant.
+But, for skills that are not direction-based, this can be used for more interesting variants. For example, the regular version of Stealth skill might put you in stealth for a few seconds, but its Down variant might leave a shadow behind, and make you teleport back to the shadow when the stealth duration ends. There are no specific rules for how these variants should behave, other than they should be somewhat related to the regular version of the skill.</p>
+<p>The way skills will be acquired has not been decided yet. In the near term we might just unlock a random skill every time the player levels up.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="passive-skills"><a class="header" href="#passive-skills">Passive Skills</a></h1>
-<p>Passive skills are skills that are always active and have a passive effect on you, and that mostly means modifying certain stats based on specific conditions
-For example: 'deal double damage when you're at very low health', or 'deal more damage when attacking from behind', or 'deal more damage when there are no enemies in close proximity to you', or 'critical hits reduce your active skills cooldowns', etc
-Each one of those passive skills is meant to incentivize a specific kind of playstyle
-For example, the passive that makes you deal more damage when no enemies are nearby incentivizes ranged builds that involve staying away from enemies, so ranged attacks that stun or push back or slow down your enemies will work well with this.
-Since those passives are mostly just modifying variables based on If statements, it should be very easy to implement a lot of those
-I'm thinking having between 30 and 50 should be relatively easy for a start
-The player will be able to have around 5 of those passives equipped at a time
-The power of this approach is that if we assume 50 passives where you can pick 5 at a time, that's already 2,118,760 possible combinations, just with those passives, without even including the active skills or the weapon choices.
-An important design goal here is to make those passives as compatible with eachother as possible.</p>
+<p>Passive skills are skills that have an ongoing effect and don't need manual activation.</p>
+<p>They are mostly focused on modifying certain stats based on specific conditions.</p>
+<p>They usually have very little or no visual effect, they are just conditional stat modifiers.</p>
+<p>The player can choose up to 4 passives to be equipped at once (although we might add a passives that unlock additional passive slots)</p>
+<p>Passives work as 'functions', each accepting as input the player stats spitted out by the previous passives, etc</p>
+<p>This means that ordering of passives matters, and players can chain them up as they choose</p>
+<p>Some passives might be strongly affected by ordering, while others not at all</p>
+<p>Some examples of Passive skills could be:</p>
+<ul>
+<li>'get higher crit chance when you're at very low health'</li>
+<li>'deal more damage when attacking from behind'</li>
+<li>'attack faster when there are no enemies in close proximity to you'</li>
+<li>'critical hits reduce your active skills cooldowns'</li>
+<li>etc</li>
+</ul>
+<p>Passives can also affect the effects of other passives, or even amounts of passives that the player can equip.</p>
+<p>For example there could be a passive like:</p>
+<ul>
+<li>Double the effects of all your other passives, but max passive slots get reduced to 3.</li>
+</ul>
+<p>Each one of those passive skills is meant to incentivize a specific kind of playstyle.</p>
+<p>For example, the passive that makes you attack faster when no enemies are nearby incentivizes ranged builds that involve staying away from enemies, so ranged attacks that stun or push back or slow down your enemies will work well with this. Then the increased attack speed might also be a good combination with effects that proc 'per hit', etc.</p>
+<p>Since those passives are mostly just modifying variables based on If statements, it should be relatively easy to implement a lot of those for the player to choose from, leading to astronomical amounts of possible permutations.</p>
+<p>An important design goal is to make the passives as compatible with eachother as possible.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="weapons--crafting"><a class="header" href="#weapons--crafting">Weapons &amp; Crafting</a></h1>
+<p>Weapons and Weapon Crafting are currently at a very exeperimental idea stage.</p>
+<p>The overall goal for those would be to make weapons not drop as loot, but instead to make them primarily obtainable through crafting.</p>
+<p>The goal here is to create a sense of realism - alien creatures shouldn't be dropping guns and swords as loot.</p>
+<p>Instead, enemies will drop various materials, and the player will be able to craft weapons from those.</p>
+<p>The idea for the crafting, is to go nuts with a function-based 'signal flow' idea.</p>
+<p>A crafting window will look similar to node-based programming environments like Touch Designer.</p>
+<p>The player will always start with a single initial node that will signify their weapon type, let's say a Bow.</p>
+<p>Now this Bow will have a single output, signfying an arrow.</p>
+<p>Then, you might connect that output to a 'Splitstone' that you acquire as loot from some strange alien creatures.</p>
+<p>This Splitstone will split the arrow into 3 smaller arrows, leading to 3 separate outputs that can be processed independently.</p>
+<p>Then, you might decide to apply 'Volcaning Shard' on the first output, which will make this arrow burn</p>
+<p>Then, apply some other modifier on the second arrow that makes it ricochet whenever it hits walls</p>
+<p>Then, you might even apply Splitstone once again on the third arrow, leading to 3 new arrows coming out of that one!</p>
+<p>We could even have modifiers that introduce 'delay' (making the effect happen after some duration instead of immediately), or modifiers altering the angle of projectiles, etc.</p>
+<p>If you want your Bow to shoot out a perfeclty fine tuned sequence of arrows that spells out some words on the screen, you could (technically) do it!</p>
+<p>The only limitation to how crazy you can get with crafting these will be:</p>
+<ul>
+<li>how many crafting materials you can acquire</li>
+<li>the total weight of the weapon</li>
+</ul>
+<p>The weight means that the player will have a certain weight capacity stat, and different weapon modifiers will have different weight values. So creating very complex weapons will also make them weigh more, potentially making them un-equippable by the player.</p>
+<p>Interestingly, the 'weight capacity' will be a stat that will also be modifiable by Passive Skills, leading to very interesting synergies.</p>
+<p>Once again, this is a very experimental idea, so feel free to share your thoughts on our Discord.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="platforming"><a class="header" href="#platforming">Platforming</a></h1>
 <p>Platforming is very similar to hollow knight:</p>
 <ul>
