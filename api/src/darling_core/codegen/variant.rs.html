@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/darling_core-0.20.10/src/codegen/variant.rs`."><title>variant.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../static.files/rustdoc-46132b98.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="darling_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.85.1 (4eb161250 2025-03-15)" data-channel="1.85.1" data-search-js="search-75f5ac3e.js" data-settings-js="settings-0f613d39.js" ><script src="../../../static.files/storage-59e33391.js"></script><script defer src="../../../static.files/src-script-56102188.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-5f194d8c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-893ab5e7.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">darling_core/codegen/</div>variant.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/darling_core-0.20.11/src/codegen/variant.rs`."><title>variant.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../static.files/rustdoc-46132b98.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="darling_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.85.1 (4eb161250 2025-03-15)" data-channel="1.85.1" data-search-js="search-75f5ac3e.js" data-settings-js="settings-0f613d39.js" ><script src="../../../static.files/storage-59e33391.js"></script><script defer src="../../../static.files/src-script-56102188.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-5f194d8c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-893ab5e7.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">darling_core/codegen/</div>variant.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
 <a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
@@ -191,13 +191,7 @@
 <a href="#190" id="190">190</a>
 <a href="#191" id="191">191</a>
 <a href="#192" id="192">192</a>
-<a href="#193" id="193">193</a>
-<a href="#194" id="194">194</a>
-<a href="#195" id="195">195</a>
-<a href="#196" id="196">196</a>
-<a href="#197" id="197">197</a>
-<a href="#198" id="198">198</a>
-<a href="#199" id="199">199</a></pre></div><pre class="rust"><code><span class="kw">use </span>std::borrow::Cow;
+<a href="#193" id="193">193</a></pre></div><pre class="rust"><code><span class="kw">use </span>std::borrow::Cow;
 
 <span class="kw">use </span>proc_macro2::TokenStream;
 <span class="kw">use </span>quote::{quote, ToTokens, TokenStreamExt};
@@ -225,10 +219,6 @@
     <span class="doccomment">/// Whether or not the variant should be skipped in the generated code.
     </span><span class="kw">pub </span>skip: bool,
 
-    <span class="doccomment">/// Whether or not the variant should be used to create an instance for
-    /// `FromMeta::from_word`.
-    </span><span class="kw">pub </span>word: bool,
-
     <span class="kw">pub </span>allow_unknown_fields: bool,
 }
 
@@ -246,7 +236,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; UsesTypeParams <span class="kw">for </span>Variant&lt;<span class="lifetime">'a</span>&gt; {
+<span class="kw">impl </span>UsesTypeParams <span class="kw">for </span>Variant&lt;<span class="lifetime">'_</span>&gt; {
     <span class="kw">fn </span>uses_type_params&lt;<span class="lifetime">'b</span>&gt;(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         options: <span class="kw-2">&amp;</span>usage::Options,
@@ -256,24 +246,14 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; ToTokens <span class="kw">for </span>Variant&lt;<span class="lifetime">'a</span>&gt; {
-    <span class="kw">fn </span>to_tokens(<span class="kw-2">&amp;</span><span class="self">self</span>, tokens: <span class="kw-2">&amp;mut </span>TokenStream) {
-        <span class="kw">if </span><span class="self">self</span>.data.is_unit() {
-            <span class="self">self</span>.as_unit_match_arm().to_tokens(tokens);
-        } <span class="kw">else </span>{
-            <span class="self">self</span>.as_data_match_arm().to_tokens(tokens)
-        }
-    }
-}
-
 <span class="doccomment">/// Code generator for an enum variant in a unit match position.
 /// This is placed in generated `from_string` calls for the parent enum.
 /// Value-carrying variants wrapped in this type will emit code to produce an "unsupported format" error.
 </span><span class="kw">pub struct </span>UnitMatchArm&lt;<span class="lifetime">'a</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">'a </span>Variant&lt;<span class="lifetime">'a</span>&gt;);
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; ToTokens <span class="kw">for </span>UnitMatchArm&lt;<span class="lifetime">'a</span>&gt; {
+<span class="kw">impl </span>ToTokens <span class="kw">for </span>UnitMatchArm&lt;<span class="lifetime">'_</span>&gt; {
     <span class="kw">fn </span>to_tokens(<span class="kw-2">&amp;</span><span class="self">self</span>, tokens: <span class="kw-2">&amp;mut </span>TokenStream) {
-        <span class="kw">let </span>val: <span class="kw-2">&amp;</span>Variant&lt;<span class="lifetime">'a</span>&gt; = <span class="self">self</span>.<span class="number">0</span>;
+        <span class="kw">let </span>val: <span class="kw-2">&amp;</span>Variant&lt;<span class="lifetime">'_</span>&gt; = <span class="self">self</span>.<span class="number">0</span>;
 
         <span class="kw">if </span>val.skip {
             <span class="kw">return</span>;
@@ -327,9 +307,9 @@
 /// Unit variants wrapped in this type will emit code to produce an "unsupported format" error.
 </span><span class="kw">pub struct </span>DataMatchArm&lt;<span class="lifetime">'a</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">'a </span>Variant&lt;<span class="lifetime">'a</span>&gt;);
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; ToTokens <span class="kw">for </span>DataMatchArm&lt;<span class="lifetime">'a</span>&gt; {
+<span class="kw">impl </span>ToTokens <span class="kw">for </span>DataMatchArm&lt;<span class="lifetime">'_</span>&gt; {
     <span class="kw">fn </span>to_tokens(<span class="kw-2">&amp;</span><span class="self">self</span>, tokens: <span class="kw-2">&amp;mut </span>TokenStream) {
-        <span class="kw">let </span>val: <span class="kw-2">&amp;</span>Variant&lt;<span class="lifetime">'a</span>&gt; = <span class="self">self</span>.<span class="number">0</span>;
+        <span class="kw">let </span>val: <span class="kw-2">&amp;</span>Variant&lt;<span class="lifetime">'_</span>&gt; = <span class="self">self</span>.<span class="number">0</span>;
 
         <span class="kw">if </span>val.skip {
             <span class="kw">return</span>;
@@ -340,8 +320,16 @@
         <span class="kw">let </span>ty_ident = val.ty_ident;
 
         <span class="kw">if </span>val.data.is_unit() {
-            tokens.append_all(<span class="macro">quote!</span>(
-                #name_in_attr =&gt; ::darling::export::Err(::darling::Error::unsupported_format(<span class="string">"list"</span>)),
+            <span class="comment">// Allow unit variants to match a list item if it's just a path with no associated
+            // value, e.g. `volume(shout)` is allowed.
+            </span>tokens.append_all(<span class="macro">quote!</span>(
+                #name_in_attr =&gt; {
+                    <span class="kw">if let </span>::darling::export::syn::Meta::Path(<span class="kw">_</span>) = <span class="kw-2">*</span>__nested {
+                        ::darling::export::Ok(#ty_ident::#variant_ident)
+                    } <span class="kw">else </span>{
+                        ::darling::export::Err(::darling::Error::unsupported_format(<span class="string">"non-path"</span>))
+                    }
+                },
             ));
 
             <span class="kw">return</span>;

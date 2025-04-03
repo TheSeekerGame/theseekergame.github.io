@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/darling_core-0.20.10/src/codegen/field.rs`."><title>field.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../static.files/rustdoc-46132b98.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="darling_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.85.1 (4eb161250 2025-03-15)" data-channel="1.85.1" data-search-js="search-75f5ac3e.js" data-settings-js="settings-0f613d39.js" ><script src="../../../static.files/storage-59e33391.js"></script><script defer src="../../../static.files/src-script-56102188.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-5f194d8c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-893ab5e7.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">darling_core/codegen/</div>field.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/darling_core-0.20.11/src/codegen/field.rs`."><title>field.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../static.files/rustdoc-46132b98.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="darling_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.85.1 (4eb161250 2025-03-15)" data-channel="1.85.1" data-search-js="search-75f5ac3e.js" data-settings-js="settings-0f613d39.js" ><script src="../../../static.files/storage-59e33391.js"></script><script defer src="../../../static.files/src-script-56102188.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-5f194d8c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-893ab5e7.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">darling_core/codegen/</div>field.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
 <a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
@@ -265,11 +265,18 @@
 <a href="#264" id="264">264</a>
 <a href="#265" id="265">265</a>
 <a href="#266" id="266">266</a>
-<a href="#267" id="267">267</a></pre></div><pre class="rust"><code><span class="kw">use </span>std::borrow::Cow;
+<a href="#267" id="267">267</a>
+<a href="#268" id="268">268</a>
+<a href="#269" id="269">269</a>
+<a href="#270" id="270">270</a>
+<a href="#271" id="271">271</a>
+<a href="#272" id="272">272</a>
+<a href="#273" id="273">273</a>
+<a href="#274" id="274">274</a></pre></div><pre class="rust"><code><span class="kw">use </span>std::borrow::Cow;
 
 <span class="kw">use </span>proc_macro2::TokenStream;
 <span class="kw">use </span>quote::{quote, quote_spanned, ToTokens, TokenStreamExt};
-<span class="kw">use </span>syn::{spanned::Spanned, Ident, Path, Type};
+<span class="kw">use </span>syn::{spanned::Spanned, Ident, Type};
 
 <span class="kw">use </span><span class="kw">crate</span>::codegen::{DefaultExpression, PostfixTransform};
 <span class="kw">use </span><span class="kw">crate</span>::usage::{<span class="self">self</span>, IdentRefSet, IdentSet, UsesTypeParams};
@@ -289,7 +296,10 @@
     <span class="doccomment">/// The type of the field in the input.
     </span><span class="kw">pub </span>ty: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Type,
     <span class="kw">pub </span>default_expression: <span class="prelude-ty">Option</span>&lt;DefaultExpression&lt;<span class="lifetime">'a</span>&gt;&gt;,
-    <span class="kw">pub </span>with_path: Cow&lt;<span class="lifetime">'a</span>, Path&gt;,
+    <span class="doccomment">/// An expression that will be wrapped in a call to [`core::convert::identity`] and
+    /// then used for converting a provided value into the field value _before_ postfix
+    /// transforms are called.
+    </span><span class="kw">pub </span>with_callable: Cow&lt;<span class="lifetime">'a</span>, syn::Expr&gt;,
     <span class="kw">pub </span>post_transform: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>PostfixTransform&gt;,
     <span class="kw">pub </span>skip: bool,
     <span class="kw">pub </span>multiple: bool,
@@ -338,7 +348,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; UsesTypeParams <span class="kw">for </span>Field&lt;<span class="lifetime">'a</span>&gt; {
+<span class="kw">impl </span>UsesTypeParams <span class="kw">for </span>Field&lt;<span class="lifetime">'_</span>&gt; {
     <span class="kw">fn </span>uses_type_params&lt;<span class="lifetime">'b</span>&gt;(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         options: <span class="kw-2">&amp;</span>usage::Options,
@@ -351,7 +361,7 @@
 <span class="doccomment">/// An individual field during variable declaration in the generated parsing method.
 </span><span class="kw">pub struct </span>Declaration&lt;<span class="lifetime">'a</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">'a </span>Field&lt;<span class="lifetime">'a</span>&gt;);
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; ToTokens <span class="kw">for </span>Declaration&lt;<span class="lifetime">'a</span>&gt; {
+<span class="kw">impl </span>ToTokens <span class="kw">for </span>Declaration&lt;<span class="lifetime">'_</span>&gt; {
     <span class="kw">fn </span>to_tokens(<span class="kw-2">&amp;</span><span class="self">self</span>, tokens: <span class="kw-2">&amp;mut </span>TokenStream) {
         <span class="kw">let </span>field = <span class="self">self</span>.<span class="number">0</span>;
         <span class="kw">let </span>ident = field.ident;
@@ -382,7 +392,7 @@
     parent_field_names: Vec&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>str&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; ToTokens <span class="kw">for </span>FlattenInitializer&lt;<span class="lifetime">'a</span>&gt; {
+<span class="kw">impl </span>ToTokens <span class="kw">for </span>FlattenInitializer&lt;<span class="lifetime">'_</span>&gt; {
     <span class="kw">fn </span>to_tokens(<span class="kw-2">&amp;</span><span class="self">self</span>, tokens: <span class="kw-2">&amp;mut </span>TokenStream) {
         <span class="kw">let </span><span class="self">Self </span>{
             field,
@@ -411,7 +421,7 @@
 <span class="doccomment">/// Represents an individual field in the match.
 </span><span class="kw">pub struct </span>MatchArm&lt;<span class="lifetime">'a</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">'a </span>Field&lt;<span class="lifetime">'a</span>&gt;);
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; ToTokens <span class="kw">for </span>MatchArm&lt;<span class="lifetime">'a</span>&gt; {
+<span class="kw">impl </span>ToTokens <span class="kw">for </span>MatchArm&lt;<span class="lifetime">'_</span>&gt; {
     <span class="kw">fn </span>to_tokens(<span class="kw-2">&amp;</span><span class="self">self</span>, tokens: <span class="kw-2">&amp;mut </span>TokenStream) {
         <span class="kw">let </span>field = <span class="self">self</span>.<span class="number">0</span>;
 
@@ -423,7 +433,7 @@
 
         <span class="kw">let </span>name_str = <span class="kw-2">&amp;</span>field.name_in_attr;
         <span class="kw">let </span>ident = field.ident;
-        <span class="kw">let </span>with_path = <span class="kw-2">&amp;</span>field.with_path;
+        <span class="kw">let </span>with_callable = <span class="kw-2">&amp;</span>field.with_callable;
         <span class="kw">let </span>post_transform = field.post_transform.as_ref();
 
         <span class="comment">// Errors include the location of the bad input, so we compute that here.
@@ -438,7 +448,7 @@
             <span class="macro">quote!</span>(#name_str)
         };
 
-        <span class="comment">// Give darling's generated code the span of the `with_path` so that if the target
+        <span class="comment">// Give darling's generated code the span of the `with_callable` so that if the target
         // type doesn't impl FromMeta, darling's immediate user gets a properly-spanned error.
         //
         // Within the generated code, add the span immediately on extraction failure, so that it's
@@ -446,7 +456,11 @@
         // The behavior of `with_span` makes this safe to do; if the child applied an
         // even-more-specific span, our attempt here will not overwrite that and will only cost
         // us one `if` check.
-        </span><span class="kw">let </span>extractor = <span class="macro">quote_spanned!</span>(with_path.span()=&gt;#with_path(__inner)#post_transform.map_err(|e| e.with_span(<span class="kw-2">&amp;</span>__inner).at(#location)));
+        </span><span class="kw">let </span>extractor = <span class="macro">quote_spanned!</span>(with_callable.span()=&gt;
+        ::darling::export::identity::&lt;<span class="kw">fn</span>(<span class="kw-2">&amp;</span>::syn::Meta) -&gt; ::darling::Result&lt;<span class="kw">_</span>&gt;&gt;(#with_callable)(__inner)
+            #post_transform
+            .map_err(|e| e.with_span(<span class="kw-2">&amp;</span>__inner).at(#location))
+        );
 
         tokens.append_all(<span class="kw">if </span>field.multiple {
                 <span class="macro">quote!</span>(
@@ -476,7 +490,7 @@
 <span class="doccomment">/// Wrapper to generate initialization code for a field.
 </span><span class="kw">pub struct </span>Initializer&lt;<span class="lifetime">'a</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">'a </span>Field&lt;<span class="lifetime">'a</span>&gt;);
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; ToTokens <span class="kw">for </span>Initializer&lt;<span class="lifetime">'a</span>&gt; {
+<span class="kw">impl </span>ToTokens <span class="kw">for </span>Initializer&lt;<span class="lifetime">'_</span>&gt; {
     <span class="kw">fn </span>to_tokens(<span class="kw-2">&amp;</span><span class="self">self</span>, tokens: <span class="kw-2">&amp;mut </span>TokenStream) {
         <span class="kw">let </span>field = <span class="self">self</span>.<span class="number">0</span>;
         <span class="kw">let </span>ident = field.ident;
@@ -505,7 +519,7 @@
 <span class="doccomment">/// Creates an error if a field has no value and no default.
 </span><span class="kw">pub struct </span>CheckMissing&lt;<span class="lifetime">'a</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">'a </span>Field&lt;<span class="lifetime">'a</span>&gt;);
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; ToTokens <span class="kw">for </span>CheckMissing&lt;<span class="lifetime">'a</span>&gt; {
+<span class="kw">impl </span>ToTokens <span class="kw">for </span>CheckMissing&lt;<span class="lifetime">'_</span>&gt; {
     <span class="kw">fn </span>to_tokens(<span class="kw-2">&amp;</span><span class="self">self</span>, tokens: <span class="kw-2">&amp;mut </span>TokenStream) {
         <span class="kw">if </span>!<span class="self">self</span>.<span class="number">0</span>.multiple &amp;&amp; <span class="self">self</span>.<span class="number">0</span>.default_expression.is_none() {
             <span class="kw">let </span>ident = <span class="self">self</span>.<span class="number">0</span>.ident;
