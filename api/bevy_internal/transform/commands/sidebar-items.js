@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"struct":["PushChildInPlace","RemoveParentInPlace"],"trait":["BuildChildrenTransformExt"]};

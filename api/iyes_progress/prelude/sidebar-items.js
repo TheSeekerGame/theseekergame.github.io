@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["AssetsLoading","AssetsTrackProgress"]};
+window.SIDEBAR_ITEMS = {"fn":["clear_global_progress","dummy_system_count_frames","dummy_system_wait_frames","dummy_system_wait_millis","hide_progress","unhide_progress"],"struct":["CheckProgressSet","HiddenProgress","Progress","ProgressEntity","ProgressEntry","ProgressEntryId","ProgressPlugin","ProgressTracker"],"trait":["ProgressReturningSystem"]};

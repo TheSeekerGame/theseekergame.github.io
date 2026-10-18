@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["PlayerAction"],"struct":["PlayerActionPlugin"]};
+window.SIDEBAR_ITEMS = {"enum":["PlayerAction"],"fn":["apply_resolved_facing","axis_horizontal_intent","both_directions_intent","facing_from_axis","fallback_horizontal_movement","is_just_pressed","is_pressed","resolve_horizontal_input_intent"],"struct":["PlayerActionPlugin"]};

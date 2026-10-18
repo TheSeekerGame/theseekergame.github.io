@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["maintain_pixel_perfect_camera","pixel_composite_pass","pixel_perfect_layers","spawn_pixel_perfect_camera"],"struct":["PixelPerfectCamera","PixelPerfectCompositePipeline","PixelPerfectCompositeSettings","PixelPerfectPlugin","PixelPerfectTarget"]};

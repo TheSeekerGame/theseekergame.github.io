@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"enum":["AnimationProgress"],"fn":["add_animated_interaction_state","update_animated_interaction_state"],"struct":["AnimatedInteraction","AnimatedInteractionPlugin","AnimatedInteractionState","AnimatedInteractionUpdate","AnimationConfig"]};

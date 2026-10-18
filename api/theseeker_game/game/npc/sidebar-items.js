@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["NpcKind"],"fn":["setup_npcs"]};

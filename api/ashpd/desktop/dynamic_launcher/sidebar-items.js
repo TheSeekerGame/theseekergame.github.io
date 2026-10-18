@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["IconType","LauncherType"],"struct":["DynamicLauncherProxy","LauncherIcon","PrepareInstallOptions","PrepareInstallResponse","UnexpectedIconError"]};

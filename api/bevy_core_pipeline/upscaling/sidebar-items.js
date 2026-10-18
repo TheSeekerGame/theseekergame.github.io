@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["UpscalingNode","UpscalingPlugin","ViewUpscalingPipeline"]};
+window.SIDEBAR_ITEMS = {"fn":["upscaling"],"struct":["UpscalingPlugin","ViewUpscalingPipeline"]};

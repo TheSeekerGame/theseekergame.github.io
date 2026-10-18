@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"derive":["Bundle","Component","Event","QueryData","QueryFilter","Resource","ScheduleLabel","States","SystemParam","SystemSet"],"macro":["impl_param_set"]};
+window.SIDEBAR_ITEMS = {"derive":["Bundle","Component","EntityEvent","Event","FromTemplate","FromWorld","MapEntities","Message","QueryData","QueryFilter","Resource","ScheduleLabel","SettingsGroup","SystemParam","SystemSet","VariantDefaults"]};

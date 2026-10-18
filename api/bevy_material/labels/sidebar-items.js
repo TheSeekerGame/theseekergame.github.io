@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"derive":["DrawFunctionLabel","ShaderLabel"],"struct":["DrawFunctionId"],"trait":["DrawFunctionLabel","ShaderLabel"],"type":["InternedDrawFunctionLabel","InternedShaderLabel"]};

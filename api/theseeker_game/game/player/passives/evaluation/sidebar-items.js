@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["distance_multiplier","heavy_boots_multiplier","ordered_passives","pack_multiplier","protective_heal","pulse_drive","vitality_multiplier"],"struct":["PassiveEvaluation"]};

@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"fn":["node_index"],"struct":["EdgeReferences","Edges","MatrixGraph","Neighbors","NodeIdentifiers","NodeReferences","NotZero"],"trait":["IndexType","Nullable","Zero"],"type":["DiMatrix","NodeIndex","UnMatrix"]};

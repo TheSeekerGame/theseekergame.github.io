@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["WHIRL_METADATA"],"fn":["try_start_whirl_slot","whirl_active_tick","whirl_energy_regen"]};

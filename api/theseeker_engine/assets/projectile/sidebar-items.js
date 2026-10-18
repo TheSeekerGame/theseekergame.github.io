@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["ProjectileDescriptorKind","ProjectileHitEffect"],"struct":["BallisticProjectileDescriptor","DirectProjectileDescriptor","ProjectileColliderDescriptor","ProjectileDescriptor","ProjectilePopDescriptor","SpriteProjectileDescriptor"]};

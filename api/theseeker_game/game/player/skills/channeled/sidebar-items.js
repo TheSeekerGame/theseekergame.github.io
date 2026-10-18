@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["channeled_skill_tick_and_emit_repeats"],"struct":["ChanneledSkill"]};

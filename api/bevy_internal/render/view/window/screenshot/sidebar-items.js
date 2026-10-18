@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"struct":["ScreenshotAlreadyRequestedError","ScreenshotManager","ScreenshotPlugin","ScreenshotPreparedState","ScreenshotToScreenPipeline"],"type":["ScreenshotFn"]};

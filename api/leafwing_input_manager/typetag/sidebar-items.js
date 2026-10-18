@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["MapRegistry"],"trait":["RegisterTypeTag","Registry"]};
+window.SIDEBAR_ITEMS = {"struct":["InfallibleMapRegistry"],"trait":["RegisterTypeTag","Registry"]};

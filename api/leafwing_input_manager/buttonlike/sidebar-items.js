@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["ButtonState","MouseMotionDirection","MouseWheelDirection"]};
+window.SIDEBAR_ITEMS = {"enum":["ButtonState"],"struct":["ButtonValue"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["MAX_RIPPLES"],"fn":["ripple_pass","update_ripples"],"struct":["ActiveRipple","GpuRipple","RippleDescriptor","RippleEvent","RippleFxPlugin","RipplePipeline","RippleState","RippleUniform"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["CAPSULE_TRANSIT_STOP_EPS"],"fn":["enemy_blocked_player_x","finish_optional_action","player_collisions","record_player_enemy_inside","update_wall_slide_timer"],"struct":["PlayerCollisionPlugin"]};

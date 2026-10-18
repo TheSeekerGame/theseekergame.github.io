@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":["cell","cfg","collections","dirs","future","hash","prelude","sync","thread","time"]};

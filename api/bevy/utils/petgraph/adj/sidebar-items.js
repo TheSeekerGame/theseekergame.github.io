@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"struct":["EdgeIndex","EdgeIndices","EdgeReference","EdgeReferences","List","Neighbors","NodeIndices","OutgoingEdgeIndices","OutgoingEdgeReferences"],"trait":["IndexType"],"type":["DefaultIx","NodeIndex","UnweightedList"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["CursorMode","PersistMode","SourceType"],"struct":["Screencast","Stream","Streams"]};

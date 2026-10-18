@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"constant":["CHECK_TICK_THRESHOLD","MAX_CHANGE_AGE"],"struct":["Mut","MutUntyped","NonSendMut","Ref","Res","ResMut"],"trait":["DetectChanges","DetectChangesMut"]};
+window.SIDEBAR_ITEMS = {"constant":["CHECK_TICK_THRESHOLD","MAX_CHANGE_AGE"],"struct":["CheckChangeTicks","ComponentTickCells","ComponentTicks","ContiguousComponentTicksMut","ContiguousComponentTicksRef","ContiguousMut","ContiguousRef","MaybeLocation","Mut","MutUntyped","NonSend","NonSendMut","Ref","Res","ResMut","Tick"],"trait":["DetectChanges","DetectChangesMut"]};

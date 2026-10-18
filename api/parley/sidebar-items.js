@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["InlineBoxKind"],"mod":["editing","layout","setting","style"],"struct":["BoundingBox","FontContext","FontData","InlineBox","Layout","LayoutContext","RangedBuilder","StyleRunBuilder","TreeBuilder"],"type":["Font"]};

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"trait":["BuildParticles"]};
+window.SIDEBAR_ITEMS = {"fn":["color_gradient"],"struct":["CircleParticles"]};

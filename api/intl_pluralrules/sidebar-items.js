@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"enum":["PluralCategory","PluralRuleType"],"mod":["operands"],"static":["CLDR_VERSION"],"struct":["PluralRules"]};

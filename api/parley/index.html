@@ -1,0 +1,79 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Parley is a library for rich text layout."><title>parley - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../static.files/rustdoc-0c87338a.css"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="parley" data-themes="" data-resource-suffix="" data-rustdoc-version="1.99.1 (58cf8f9c3 2026-10-13)" data-channel="1.99.1" data-search-js="search-cf4fc35e.js" data-stringdex-js="stringdex-b5109af9.js" data-settings-js="settings-170eb4bf.js" ><script src="../static.files/storage-41dd4d93.js"></script><script defer src="../crates.js"></script><script defer src="../static.files/main-417ebf0a.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-9f56287d.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-eab170b8.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-044be391.svg"></head><body class="rustdoc mod crate"><a class="skip-main-content" href="#main-content">Skip to main content</a><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><rustdoc-topbar><h2><a href="#">Crate parley</a></h2></rustdoc-topbar><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../parley/index.html">parley</a><span class="version">0.9.0</span></h2></div><div class="sidebar-elems"><ul class="block"><li><a id="all-types" href="all.html">All Items</a></li></ul><section id="rustdoc-toc"><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#usage-example" title="Usage Example">Usage Example</a></li></ul><h3><a href="#reexports">Crate Items</a></h3><ul class="block"><li><a href="#reexports" title="Re-exports">Re-exports</a></li><li><a href="#modules" title="Modules">Modules</a></li><li><a href="#structs" title="Structs">Structs</a></li><li><a href="#enums" title="Enums">Enums</a></li><li><a href="#types" title="Type Aliases">Type Aliases</a></li></ul></section><div id="rustdoc-modnav"></div></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><div class="width-limiter"><section id="main-content" class="content" tabindex="-1"><div class="main-heading"><h1>Crate <span>parley</span>&nbsp;<button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../src/parley/lib.rs.html#4-149">Source</a> </span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Parley is a library for rich text layout.</p>
+<p>Some key types are:</p>
+<ul>
+<li>
+<p><a href="struct.FontContext.html" title="struct parley::FontContext"><code>FontContext</code></a> and <a href="struct.LayoutContext.html" title="struct parley::LayoutContext"><code>LayoutContext</code></a> are resources which should be shared globally (or at coarse-grained boundaries).</p>
+<ul>
+<li><a href="struct.FontContext.html" title="struct parley::FontContext"><code>FontContext</code></a> is database of fonts.</li>
+<li><a href="struct.LayoutContext.html" title="struct parley::LayoutContext"><code>LayoutContext</code></a> is scratch space that allows for reuse of allocations between layouts.</li>
+</ul>
+</li>
+<li>
+<p>Builders for creating a <a href="struct.Layout.html" title="struct parley::Layout"><code>Layout</code></a>:</p>
+<ul>
+<li><a href="struct.RangedBuilder.html" title="struct parley::RangedBuilder"><code>RangedBuilder</code></a>: styles specified as a flat <code>Vec</code> of property spans</li>
+<li><a href="struct.TreeBuilder.html" title="struct parley::TreeBuilder"><code>TreeBuilder</code></a>: styles specified as a tree of spans</li>
+<li><a href="struct.StyleRunBuilder.html" title="struct parley::StyleRunBuilder"><code>StyleRunBuilder</code></a>: styles specified as a shared style table plus non-overlapping indexed runs</li>
+</ul>
+<p>They are constructed using <a href="struct.LayoutContext.html#method.ranged_builder" title="method parley::LayoutContext::ranged_builder"><code>LayoutContext::ranged_builder</code></a>, <a href="struct.LayoutContext.html#method.tree_builder" title="method parley::LayoutContext::tree_builder"><code>LayoutContext::tree_builder</code></a>,
+and <a href="struct.LayoutContext.html#method.style_run_builder" title="method parley::LayoutContext::style_run_builder"><code>LayoutContext::style_run_builder</code></a>.</p>
+</li>
+<li>
+<p><a href="struct.Layout.html" title="struct parley::Layout"><code>Layout</code></a> which represents styled paragraph(s) of text and can perform shaping, line-breaking, bidi-reordering, and alignment of that text.</p>
+<p><code>Layout</code> supports re-linebreaking and re-aligning many times (in case the width at which wrapping should occur changes). But if the text content or
+the styles applied to that content change then a new <code>Layout</code> must be created using a new
+<code>RangedBuilder</code>, <code>TreeBuilder</code>, or <code>StyleRunBuilder</code>.</p>
+</li>
+</ul>
+<h3 id="usage-example"><a class="doc-anchor" href="#usage-example">§</a>Usage Example</h3>
+<p>See the <a href="https://github.com/linebender/parley/tree/main/examples">examples</a> directory for more complete usage examples that include rendering.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>parley::{
+   Alignment, AlignmentOptions, FontContext, FontWeight, InlineBox, InlineBoxKind, Layout,
+   LayoutContext, LineHeight, PositionedLayoutItem, StyleProperty,
+};
+
+<span class="comment">// Create a FontContext (font database) and LayoutContext (scratch space).
+// These are both intended to be constructed rarely (perhaps even once per app):
+</span><span class="kw">let </span><span class="kw-2">mut </span>font_cx = FontContext::new();
+<span class="kw">let </span><span class="kw-2">mut </span>layout_cx = LayoutContext::new();
+
+<span class="comment">// Create a `RangedBuilder` or a `TreeBuilder`, which are used to construct a `Layout`.
+</span><span class="kw">const </span>DISPLAY_SCALE : f32 = <span class="number">1.0</span>;
+<span class="kw">const </span>TEXT : <span class="kw-2">&amp;</span>str = <span class="string">"Lorem Ipsum..."</span>;
+<span class="kw">let </span><span class="kw-2">mut </span>builder = layout_cx.ranged_builder(<span class="kw-2">&amp;mut </span>font_cx, <span class="kw-2">&amp;</span>TEXT, DISPLAY_SCALE, <span class="bool-val">true</span>);
+
+<span class="comment">// Set default styles that apply to the entire layout
+</span>builder.push_default(StyleProperty::FontSize(<span class="number">16.0</span>));
+
+<span class="comment">// Set a style that applies to the first 4 characters
+</span>builder.push(StyleProperty::FontWeight(FontWeight::new(<span class="number">600.0</span>)), <span class="number">0</span>..<span class="number">4</span>);
+
+<span class="comment">// Add a box to be laid out inline with the text
+</span>builder.push_inline_box(InlineBox { id: <span class="number">0</span>, kind: InlineBoxKind::InFlow, index: <span class="number">5</span>, width: <span class="number">50.0</span>, height: <span class="number">50.0 </span>});
+
+<span class="comment">// Build the builder into a Layout
+</span><span class="kw">let </span><span class="kw-2">mut </span>layout: Layout&lt;()&gt; = builder.build(<span class="kw-2">&amp;</span>TEXT);
+
+<span class="comment">// Run line-breaking and alignment on the Layout
+</span><span class="kw">const </span>MAX_WIDTH : <span class="prelude-ty">Option</span>&lt;f32&gt; = <span class="prelude-val">Some</span>(<span class="number">100.0</span>);
+layout.break_all_lines(MAX_WIDTH);
+layout.align(Alignment::Start, AlignmentOptions::default());
+
+<span class="comment">// Inspect computed layout (see examples for more details)
+</span><span class="kw">let </span>width = layout.width();
+<span class="kw">let </span>height = layout.height();
+<span class="kw">for </span>line <span class="kw">in </span>layout.lines() {
+    <span class="kw">for </span>item <span class="kw">in </span>line.items() {
+        <span class="kw">match </span>item {
+            PositionedLayoutItem::GlyphRun(glyph_run) =&gt; {
+                <span class="comment">// Render the glyph run
+            </span>}
+            PositionedLayoutItem::InlineBox(inline_box) =&gt; {
+                <span class="comment">// Render the inline box
+            </span>}
+        };
+    }
+}</code></pre></div></div></details><h2 id="reexports" class="section-header">Re-exports<a href="#reexports" class="anchor">§</a></h2><dl class="item-table reexports"><dt id="reexport.fontique"><code>pub use <a class="mod" href="../fontique/index.html" title="mod fontique">fontique</a>;</code></dt><dt><code>pub use <a class="mod" href="editing/index.html" title="mod parley::editing">editing</a>::*;</code></dt><dt><code>pub use <a class="mod" href="layout/index.html" title="mod parley::layout">layout</a>::*;</code></dt><dt><code>pub use <a class="mod" href="style/index.html" title="mod parley::style">style</a>::*;</code></dt></dl><h2 id="modules" class="section-header">Modules<a href="#modules" class="anchor">§</a></h2><dl class="item-table"><dt><a class="mod" href="editing/index.html" title="mod parley::editing">editing</a></dt><dt><a class="mod" href="layout/index.html" title="mod parley::layout">layout</a></dt><dd>Layout types.</dd><dt><a class="mod" href="setting/index.html" title="mod parley::setting">setting</a></dt><dd>OpenType settings (features and variations).</dd><dt><a class="mod" href="style/index.html" title="mod parley::style">style</a></dt><dd>Rich styling support.</dd></dl><h2 id="structs" class="section-header">Structs<a href="#structs" class="anchor">§</a></h2><dl class="item-table"><dt><a class="struct" href="struct.BoundingBox.html" title="struct parley::BoundingBox">Bounding<wbr>Box</a></dt><dd>A bounding box.</dd><dt><a class="struct" href="struct.FontContext.html" title="struct parley::FontContext">Font<wbr>Context</a></dt><dd>A font database/cache (wrapper around a Fontique <a href="../fontique/collection/struct.Collection.html" title="struct fontique::collection::Collection"><code>Collection</code></a> and <a href="../fontique/source_cache/struct.SourceCache.html" title="struct fontique::source_cache::SourceCache"><code>SourceCache</code></a>).</dd><dt><a class="struct" href="struct.FontData.html" title="struct parley::FontData">Font<wbr>Data</a></dt><dd>Owned shareable font resource.</dd><dt><a class="struct" href="struct.InlineBox.html" title="struct parley::InlineBox">Inline<wbr>Box</a></dt><dd>A box to be laid out inline with text</dd><dt><a class="struct" href="struct.Layout.html" title="struct parley::Layout">Layout</a></dt><dd>Text layout.</dd><dt><a class="struct" href="struct.LayoutContext.html" title="struct parley::LayoutContext">Layout<wbr>Context</a></dt><dd>Shared scratch space used when constructing text layouts.</dd><dt><a class="struct" href="struct.RangedBuilder.html" title="struct parley::RangedBuilder">Ranged<wbr>Builder</a></dt><dd>Builder for constructing a text layout with ranged attributes.</dd><dt><a class="struct" href="struct.StyleRunBuilder.html" title="struct parley::StyleRunBuilder">Style<wbr>RunBuilder</a></dt><dd>Builder for constructing a text layout from a style table and
+indexed style runs.</dd><dt><a class="struct" href="struct.TreeBuilder.html" title="struct parley::TreeBuilder">Tree<wbr>Builder</a></dt><dd>Builder for constructing a text layout with a tree of attributes.</dd></dl><h2 id="enums" class="section-header">Enums<a href="#enums" class="anchor">§</a></h2><dl class="item-table"><dt><a class="enum" href="enum.InlineBoxKind.html" title="enum parley::InlineBoxKind">Inline<wbr>BoxKind</a></dt><dd>Whether a box is in-flow (takes up space in the layout) or out-of-flow (e.g. absolutely positioned)
+or custom-out-of-flow (line-breaking should yield control flow)</dd></dl><h2 id="types" class="section-header">Type Aliases<a href="#types" class="anchor">§</a></h2><dl class="item-table"><dt class="deprecated"><a class="type" href="type.Font.html" title="type parley::Font">Font</a><wbr><span class="stab deprecated" title="">Deprecated</span></dt></dl></section></div></main></body></html>

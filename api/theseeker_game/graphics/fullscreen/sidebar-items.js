@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["sampler","texture"],"struct":["FullscreenPass"],"type":["FullscreenView"]};

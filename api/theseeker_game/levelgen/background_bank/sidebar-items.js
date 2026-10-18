@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["BANK_DIR","FORMAT_VERSION","PADDING"],"fn":["load_layer","load_pair","load_patch_batch","load_patches","read_patch","selection","validate_region"],"struct":["Manifest","Patch"]};

@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"struct":["MpaDecoder","MpaReader"],"type":["Mp3Decoder","Mp3Reader"]};

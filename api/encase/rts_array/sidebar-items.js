@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"macro":["impl_rts_array"],"trait":["Length","Truncate"]};
+window.SIDEBAR_ITEMS = {"macro":[["impl_rts_array",1]],"trait":["Length","Truncate"]};

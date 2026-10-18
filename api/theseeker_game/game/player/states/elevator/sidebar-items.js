@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["ELEVATOR_ANIMATION_KEY","PLAYER_OVERLAY_RENDER_LAYER","PLAYER_WORLD_RENDER_LAYER"],"fn":["elevator_update_system","play_elevator_animation","sync_elevator_render_layers"],"struct":["ElevatorStatePlugin"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["biome_layers","cell_uses_tundra","ensure_ground","mark_spike_int_grid_cells","prepare_main_surface","prepare_terrain_geometry","publish_ground_patch","publish_surface_variant","terrain_categories","tile_is_optional_spike"],"struct":["TerrainGeometry","TerrainRules"]};

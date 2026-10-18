@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["MAX_HEALTH"],"enum":["InvulnerabilitySource"],"mod":["blood","damage_pipeline","damage_source","effects","sparks"],"struct":["CombatPlugin","DamageInfo","DamageWindow","Health","Invulnerable","KillCount","PlanetImmunityLevel"]};

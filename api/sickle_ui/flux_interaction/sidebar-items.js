@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"enum":["FluxInteraction","PrevInteraction"],"struct":["FluxInteractionConfig","FluxInteractionPlugin","FluxInteractionStopwatch","FluxInteractionUpdate","TrackedInteraction"]};

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["UnsafeEntityCell","UnsafeWorldCell"]};
+window.SIDEBAR_ITEMS = {"enum":["GetEntityMutByIdError"],"struct":["UnsafeEntityCell","UnsafeWorldCell"]};

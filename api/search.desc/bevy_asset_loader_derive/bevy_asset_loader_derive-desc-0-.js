@@ -1,1 +1,0 @@
-searchState.loadedDescShard("bevy_asset_loader_derive", 0, "This crate adds support for deriving <code>AssetCollection</code>\nDerive macro for <code>AssetCollection</code>")

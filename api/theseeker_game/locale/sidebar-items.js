@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"fn":["cli_locale","init_l10n","resolve_l10n"],"struct":["L10nKey","L10nResolveSet","LocalePlugin","Locales","LocalesFolder"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["AllocationError","MemoryLocation"],"mod":["vulkan"],"struct":["AllocationReport","AllocationSizes","AllocatorDebugSettings","AllocatorReport","MemoryBlockReport"],"type":["Result"]};

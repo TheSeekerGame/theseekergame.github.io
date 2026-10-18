@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"enum":["GizmoRenderSystem"],"mod":["aabb","arcs","arrows","circles","config","gizmos","prelude","primitives"],"struct":["GizmoPlugin"],"trait":["AppGizmoBuilder"]};

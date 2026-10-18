@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["IS_RESOURCE"],"derive":["Resource"],"struct":["IsResource","ResourceEntities"],"trait":["Resource"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":["chilled","frozen","stealthed"],"struct":["EffectsPlugin"]};

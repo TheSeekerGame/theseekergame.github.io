@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["apply_falling_transition","clear_player_inside_if_needed","enemy_gravity","move_collide","remove_inside","resolve_ground_displacement","stop_at_ground_edge"]};

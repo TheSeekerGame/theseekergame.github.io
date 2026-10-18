@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["SPIT_TARGET_RANGE"],"fn":["begin_spit","find_nearest_enemy_position","find_nearest_enemy_position_any_range","nearest_enemy_facing","nearest_enemy_position_by_distance","release_spit","tick_spitting"],"struct":["SpitContext","SpitPlugin"],"type":["LiveEnemyQuery","PlayerSpitGfxQuery"]};

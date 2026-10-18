@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["permutator_skill_tracker"],"struct":["PermutatorState"]};

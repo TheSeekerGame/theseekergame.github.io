@@ -1,0 +1,334 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_text-0.19.1/src/editing.rs`."><title>editing.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-0c87338a.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bevy_text" data-themes="" data-resource-suffix="" data-rustdoc-version="1.99.1 (58cf8f9c3 2026-10-13)" data-channel="1.99.1" data-search-js="search-cf4fc35e.js" data-stringdex-js="stringdex-b5109af9.js" data-settings-js="settings-170eb4bf.js" ><script src="../../static.files/storage-41dd4d93.js"></script><script defer src="../../static.files/src-script-813739b1.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-417ebf0a.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-9f56287d.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-eab170b8.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><a class="skip-main-content" href="#main-content">Skip to main content</a><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><section id="main-content" class="content" tabindex="-1"><div class="main-heading"><h1><div class="sub-heading">bevy_text/</div>editing.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap digits-3"><pre class="rust"><code><a href=#1 id=1 data-nosnippet>1</a><span class="doccomment">//! A simple text input widget for Bevy UI.
+<a href=#2 id=2 data-nosnippet>2</a>//!
+<a href=#3 id=3 data-nosnippet>3</a>//! The [`EditableText`] widget is an undecorated rectangular text input field,
+<a href=#4 id=4 data-nosnippet>4</a>//! which allows users to input and edit text within a Bevy UI application.
+<a href=#5 id=5 data-nosnippet>5</a>//! Every [`EditableText`] component is also a [`Node`](https://docs.rs/bevy/latest/bevy/prelude/struct.Node.html) in the Bevy UI hierarchy,
+<a href=#6 id=6 data-nosnippet>6</a>//! allowing you to position and size it using standard Bevy UI layout techniques.
+<a href=#7 id=7 data-nosnippet>7</a>//! You can think of it as the editable equivalent of [`Text`](https://docs.rs/bevy/latest/bevy/prelude/struct.Text.html),
+<a href=#8 id=8 data-nosnippet>8</a>//! and components such as [`TextFont`] and [`TextColor`] can be used to style it.
+<a href=#9 id=9 data-nosnippet>9</a>//!
+<a href=#10 id=10 data-nosnippet>10</a>//! [`EditableText`] supports the following functionality:
+<a href=#11 id=11 data-nosnippet>11</a>//!
+<a href=#12 id=12 data-nosnippet>12</a>//! - Text entry
+<a href=#13 id=13 data-nosnippet>13</a>//! - Keyboard-driven cursor movement: arrow keys, Home/End, and word-level shortcuts (Ctrl/Alt+arrow)
+<a href=#14 id=14 data-nosnippet>14</a>//! - Shift+arrow and Shift+word-arrow to extend the selection by character or word
+<a href=#15 id=15 data-nosnippet>15</a>//! - Backspace and delete operations, both for single characters and words
+<a href=#16 id=16 data-nosnippet>16</a>//! - Clipboard operations (copy, cut, paste) — requires the `system_clipboard` feature for OS clipboard integration
+<a href=#17 id=17 data-nosnippet>17</a>//! - Click to place cursor; click and drag to extend the selection
+<a href=#18 id=18 data-nosnippet>18</a>//! - Multi-click: double-click to select a word, triple-click to select a line
+<a href=#19 id=19 data-nosnippet>19</a>//! - Optional select-all on focus via the `SelectAllOnFocus` component
+<a href=#20 id=20 data-nosnippet>20</a>//! - Per-character input filtering via the [`EditableTextFilter`] component
+<a href=#21 id=21 data-nosnippet>21</a>//! - Max character limits via [`EditableText::max_characters`]
+<a href=#22 id=22 data-nosnippet>22</a>//! - Cursor blinking
+<a href=#23 id=23 data-nosnippet>23</a>//! - Newline support for multi-line input
+<a href=#24 id=24 data-nosnippet>24</a>//! - Soft-wrapping of long lines
+<a href=#25 id=25 data-nosnippet>25</a>//! - Vertical scrolling for multi-line input
+<a href=#26 id=26 data-nosnippet>26</a>//! - Horizontal scrolling for long lines
+<a href=#27 id=27 data-nosnippet>27</a>//! - Input Method Editor (IME) support for complex scripts (Japanese, Chinese, Korean, etc.)
+<a href=#28 id=28 data-nosnippet>28</a>//! - Bidirectional text support (e.g., mixing left-to-right and right-to-left scripts)
+<a href=#29 id=29 data-nosnippet>29</a>//! - Input consumption (preventing other systems from receiving keyboard input events when the text input is focused)
+<a href=#30 id=30 data-nosnippet>30</a>//!
+<a href=#31 id=31 data-nosnippet>31</a>//! You might use this widget as the basis for text input fields in forms, chat boxes, for naming characters,
+<a href=#32 id=32 data-nosnippet>32</a>//! or any other scenario where you want to extract an unformatted text string from the user.
+<a href=#33 id=33 data-nosnippet>33</a>//!
+<a href=#34 id=34 data-nosnippet>34</a>//! Reusable widgets that build on top of this basic text input field (as might be found in Bevy's Feathers UI framework),
+<a href=#35 id=35 data-nosnippet>35</a>//! will typically combine this widget with additional UI elements such as borders, backgrounds, and labels,
+<a href=#36 id=36 data-nosnippet>36</a>//! creating a multi-entity widget that matches the semantics and visual appearance required by the application.
+<a href=#37 id=37 data-nosnippet>37</a>//!
+<a href=#38 id=38 data-nosnippet>38</a>//! ## Handling user input
+<a href=#39 id=39 data-nosnippet>39</a>//!
+<a href=#40 id=40 data-nosnippet>40</a>//! User input is handled via a plugin in `bevy_ui_widgets`:
+<a href=#41 id=41 data-nosnippet>41</a>//! [`bevy_text`](crate) is not aware of input events directly.
+<a href=#42 id=42 data-nosnippet>42</a>//!
+<a href=#43 id=43 data-nosnippet>43</a>//! With the correct plugin enabled, when an [`EditableText`] entity is focused,
+<a href=#44 id=44 data-nosnippet>44</a>//! keyboard input events are captured and processed into [`TextEdit`] actions.
+<a href=#45 id=45 data-nosnippet>45</a>//!
+<a href=#46 id=46 data-nosnippet>46</a>//! ## Limitations
+<a href=#47 id=47 data-nosnippet>47</a>//!
+<a href=#48 id=48 data-nosnippet>48</a>//! The formatting of the text is uniform throughout the entire input field.
+<a href=#49 id=49 data-nosnippet>49</a>//! As a result, rich text-editing is out-of-scope:
+<a href=#50 id=50 data-nosnippet>50</a>//! this widget is not intended to form the basis for a full-featured text editor.
+<a href=#51 id=51 data-nosnippet>51</a>//!
+<a href=#52 id=52 data-nosnippet>52</a>//! Similarly, this widget is "headless": it has no built-in styling, and is intended to be used
+<a href=#53 id=53 data-nosnippet>53</a>//! with a themed UI framework of your choice (e.g. Feathers). This means that no text boxes, borders, or other
+<a href=#54 id=54 data-nosnippet>54</a>//! visual elements are provided by default, and must be added separately using Bevy UI entities / components,
+<a href=#55 id=55 data-nosnippet>55</a>//! and any reactive styling (e.g., focus/hover states) must also be implemented separately.
+<a href=#56 id=56 data-nosnippet>56</a>//!
+<a href=#57 id=57 data-nosnippet>57</a>//! However, the following features are planned but currently not implemented:
+<a href=#58 id=58 data-nosnippet>58</a>//!
+<a href=#59 id=59 data-nosnippet>59</a>//! - Placeholder text (displayed when the input is empty)
+<a href=#60 id=60 data-nosnippet>60</a>//! - Undo/redo functionality
+<a href=#61 id=61 data-nosnippet>61</a>//! - Text validation (e.g., email format, numeric input)
+<a href=#62 id=62 data-nosnippet>62</a>//! - Password-style character masking
+<a href=#63 id=63 data-nosnippet>63</a>//! - Mobile pop-up keyboard support
+<a href=#64 id=64 data-nosnippet>64</a>//! - Overwrite mode (typically toggled by the `Insert` key)
+<a href=#65 id=65 data-nosnippet>65</a>//! - AccessKit integration for screen readers and other assistive technologies
+<a href=#66 id=66 data-nosnippet>66</a>//! - World-space text input
+<a href=#67 id=67 data-nosnippet>67</a>//! - Text form submission handling
+<a href=#68 id=68 data-nosnippet>68</a>//!
+<a href=#69 id=69 data-nosnippet>69</a>//! If you require any of these features, please consider contributing it to the crate,
+<a href=#70 id=70 data-nosnippet>70</a>//! one feature at a time!
+<a href=#71 id=71 data-nosnippet>71</a></span><span class="comment">// Note: this logic is in `bevy_text`, rather than higher up in `bevy_ui` or `bevy_ui_widgets`,
+<a href=#72 id=72 data-nosnippet>72</a>// because doing so allows us to process `EditableText` in the various systems provided by `bevy_text`
+<a href=#73 id=73 data-nosnippet>73</a>// and `bevy_ui`, such as text layout and font management.
+<a href=#74 id=74 data-nosnippet>74</a>
+<a href=#75 id=75 data-nosnippet>75</a></span><span class="kw">use crate</span>::{
+<a href=#76 id=76 data-nosnippet>76</a>    text_edit::{poll_and_apply_paste, TextEdit},
+<a href=#77 id=77 data-nosnippet>77</a>    FontCx, FontHinting, LayoutCx, LineHeight, TextBrush, TextColor, TextFont, TextLayout,
+<a href=#78 id=78 data-nosnippet>78</a>};
+<a href=#79 id=79 data-nosnippet>79</a><span class="kw">use </span>alloc::sync::Arc;
+<a href=#80 id=80 data-nosnippet>80</a><span class="kw">use </span>bevy_clipboard::ClipboardRead;
+<a href=#81 id=81 data-nosnippet>81</a><span class="kw">use </span>bevy_derive::{Deref, DerefMut};
+<a href=#82 id=82 data-nosnippet>82</a><span class="kw">use </span>bevy_ecs::prelude::<span class="kw-2">*</span>;
+<a href=#83 id=83 data-nosnippet>83</a><span class="kw">use </span>core::time::Duration;
+<a href=#84 id=84 data-nosnippet>84</a><span class="kw">use </span>parley::{FontContext, LayoutContext, PlainEditor, SplitString};
+<a href=#85 id=85 data-nosnippet>85</a>
+<a href=#86 id=86 data-nosnippet>86</a><span class="doccomment">/// A plain-text text input field.
+<a href=#87 id=87 data-nosnippet>87</a>///
+<a href=#88 id=88 data-nosnippet>88</a>/// Please see this module docs for more details on usage and functionality.
+<a href=#89 id=89 data-nosnippet>89</a>///
+<a href=#90 id=90 data-nosnippet>90</a>/// Note that text editing operations are trickier than they might first appear,
+<a href=#91 id=91 data-nosnippet>91</a>/// due to the complexities of Unicode text handling.
+<a href=#92 id=92 data-nosnippet>92</a>///
+<a href=#93 id=93 data-nosnippet>93</a>/// As a result, we store an internal [`PlainEditor`] instance,
+<a href=#94 id=94 data-nosnippet>94</a>/// which manages both the text content and the cursor position,
+<a href=#95 id=95 data-nosnippet>95</a>/// and provides methods for applying text edits and cursor movements correctly
+<a href=#96 id=96 data-nosnippet>96</a>/// according to Unicode rules.
+<a href=#97 id=97 data-nosnippet>97</a></span><span class="attr">#[derive(Component, Clone)]
+<a href=#98 id=98 data-nosnippet>98</a>#[require(
+<a href=#99 id=99 data-nosnippet>99</a>    TextLayout,
+<a href=#100 id=100 data-nosnippet>100</a>    TextFont,
+<a href=#101 id=101 data-nosnippet>101</a>    TextColor,
+<a href=#102 id=102 data-nosnippet>102</a>    LineHeight,
+<a href=#103 id=103 data-nosnippet>103</a>    FontHinting,
+<a href=#104 id=104 data-nosnippet>104</a>    EditableTextGeneration
+<a href=#105 id=105 data-nosnippet>105</a>)]
+<a href=#106 id=106 data-nosnippet>106</a></span><span class="kw">pub struct </span>EditableText {
+<a href=#107 id=107 data-nosnippet>107</a>    <span class="doccomment">/// A [`parley::PlainEditor`], tracking both the text content and cursor position.
+<a href=#108 id=108 data-nosnippet>108</a>    ///
+<a href=#109 id=109 data-nosnippet>109</a>    /// This serves as an analogue to [`ComputedTextBlock`](crate::ComputedTextBlock) for editable text.
+<a href=#110 id=110 data-nosnippet>110</a>    ///
+<a href=#111 id=111 data-nosnippet>111</a>    /// In most cases, you should queue text edits via the [`EditableText::queue_edit`] method instead of directly manipulating the editor,
+<a href=#112 id=112 data-nosnippet>112</a>    /// and then allow the [`apply_text_edits`] system to apply the edits at the appropriate time in the update cycle.
+<a href=#113 id=113 data-nosnippet>113</a>    ///
+<a href=#114 id=114 data-nosnippet>114</a>    /// Note that many more complex editing operations require working with [`PlainEditor::driver`].
+<a href=#115 id=115 data-nosnippet>115</a>    /// These operations should generally be batched together to avoid redundant layout work.
+<a href=#116 id=116 data-nosnippet>116</a>    </span><span class="comment">// The B: Brush generic here must match the brush used by `ComputedTextBlock` to ensure that the font system is compatible.
+<a href=#117 id=117 data-nosnippet>117</a>    </span><span class="kw">pub </span>editor: PlainEditor&lt;TextBrush&gt;,
+<a href=#118 id=118 data-nosnippet>118</a>    <span class="doccomment">/// Text edit actions that have been requested but not yet applied.
+<a href=#119 id=119 data-nosnippet>119</a>    ///
+<a href=#120 id=120 data-nosnippet>120</a>    /// These edits are processed in first-in, first-out order.
+<a href=#121 id=121 data-nosnippet>121</a>    </span><span class="kw">pub </span>pending_edits: Vec&lt;TextEdit&gt;,
+<a href=#122 id=122 data-nosnippet>122</a>    <span class="doccomment">/// A paste operation that is awaiting clipboard I/O.
+<a href=#123 id=123 data-nosnippet>123</a>    ///
+<a href=#124 id=124 data-nosnippet>124</a>    /// On platforms where system clipboard reads are asynchronous (currently wasm32), a
+<a href=#125 id=125 data-nosnippet>125</a>    /// [`TextEdit::Paste`] may not resolve in the same frame it was queued.
+<a href=#126 id=126 data-nosnippet>126</a>    ///
+<a href=#127 id=127 data-nosnippet>127</a>    /// While this field is `Some`, [`apply_pending_edits`](Self::apply_pending_edits) waits for this to resolve,
+<a href=#128 id=128 data-nosnippet>128</a>    /// rather than draining further edits, so that everything after the paste stays correctly ordered *behind* it.
+<a href=#129 id=129 data-nosnippet>129</a>    </span><span class="comment">// TODO: this may cause unexpected stalls if the clipboard read takes too long. We may want to add a timeout.
+<a href=#130 id=130 data-nosnippet>130</a>    </span><span class="kw">pub </span>pending_paste: <span class="prelude-ty">Option</span>&lt;ClipboardRead&gt;,
+<a href=#131 id=131 data-nosnippet>131</a>    <span class="doccomment">/// Cursor width, relative to font size
+<a href=#132 id=132 data-nosnippet>132</a>    </span><span class="kw">pub </span>cursor_width: f32,
+<a href=#133 id=133 data-nosnippet>133</a>    <span class="doccomment">/// Cursor blink period in seconds.
+<a href=#134 id=134 data-nosnippet>134</a>    </span><span class="kw">pub </span>cursor_blink_period: Duration,
+<a href=#135 id=135 data-nosnippet>135</a>    <span class="doccomment">/// Maximum number of characters the text input can contain.
+<a href=#136 id=136 data-nosnippet>136</a>    ///
+<a href=#137 id=137 data-nosnippet>137</a>    /// Edits which would cause the length to exceed the maximum are ignored.
+<a href=#138 id=138 data-nosnippet>138</a>    /// Does not stop setting a string longer than the maximum using `set_text`.
+<a href=#139 id=139 data-nosnippet>139</a>    </span><span class="kw">pub </span>max_characters: <span class="prelude-ty">Option</span>&lt;usize&gt;,
+<a href=#140 id=140 data-nosnippet>140</a>    <span class="doccomment">/// Sets the input’s height in number of visible lines.
+<a href=#141 id=141 data-nosnippet>141</a>    </span><span class="kw">pub </span>visible_lines: <span class="prelude-ty">Option</span>&lt;f32&gt;,
+<a href=#142 id=142 data-nosnippet>142</a>    <span class="doccomment">/// Sets the input's width in number of visible glyphs.
+<a href=#143 id=143 data-nosnippet>143</a>    /// For proportional fonts the final size is the given value times the "0" advance width.
+<a href=#144 id=144 data-nosnippet>144</a>    </span><span class="kw">pub </span>visible_width: <span class="prelude-ty">Option</span>&lt;f32&gt;,
+<a href=#145 id=145 data-nosnippet>145</a>    <span class="doccomment">/// Allow new lines
+<a href=#146 id=146 data-nosnippet>146</a>    </span><span class="kw">pub </span>allow_newlines: bool,
+<a href=#147 id=147 data-nosnippet>147</a>}
+<a href=#148 id=148 data-nosnippet>148</a>
+<a href=#149 id=149 data-nosnippet>149</a><span class="kw">impl </span>Default <span class="kw">for </span>EditableText {
+<a href=#150 id=150 data-nosnippet>150</a>    <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
+<a href=#151 id=151 data-nosnippet>151</a>        <span class="self">Self </span>{
+<a href=#152 id=152 data-nosnippet>152</a>            <span class="comment">// Defaults selected to match `Text::default()`
+<a href=#153 id=153 data-nosnippet>153</a>            </span>editor: PlainEditor::new(<span class="number">100.</span>),
+<a href=#154 id=154 data-nosnippet>154</a>            pending_edits: Vec::new(),
+<a href=#155 id=155 data-nosnippet>155</a>            pending_paste: <span class="prelude-val">None</span>,
+<a href=#156 id=156 data-nosnippet>156</a>            cursor_width: <span class="number">0.2</span>,
+<a href=#157 id=157 data-nosnippet>157</a>            cursor_blink_period: Duration::from_secs(<span class="number">1</span>),
+<a href=#158 id=158 data-nosnippet>158</a>            max_characters: <span class="prelude-val">None</span>,
+<a href=#159 id=159 data-nosnippet>159</a>            visible_lines: <span class="prelude-val">Some</span>(<span class="number">1.</span>),
+<a href=#160 id=160 data-nosnippet>160</a>            visible_width: <span class="prelude-val">None</span>,
+<a href=#161 id=161 data-nosnippet>161</a>            allow_newlines: <span class="bool-val">false</span>,
+<a href=#162 id=162 data-nosnippet>162</a>        }
+<a href=#163 id=163 data-nosnippet>163</a>    }
+<a href=#164 id=164 data-nosnippet>164</a>}
+<a href=#165 id=165 data-nosnippet>165</a>
+<a href=#166 id=166 data-nosnippet>166</a><span class="kw">impl </span>EditableText {
+<a href=#167 id=167 data-nosnippet>167</a>    <span class="doccomment">/// Creates a new `EditableText` with its buffer already containing some initial text and
+<a href=#168 id=168 data-nosnippet>168</a>    /// its cursor positioned at the end.
+<a href=#169 id=169 data-nosnippet>169</a>    </span><span class="kw">pub fn </span>new(initial_text: <span class="kw">impl </span>AsRef&lt;str&gt;) -&gt; <span class="self">Self </span>{
+<a href=#170 id=170 data-nosnippet>170</a>        <span class="kw">let </span><span class="kw-2">mut </span>editable_text = <span class="self">Self</span>::default();
+<a href=#171 id=171 data-nosnippet>171</a>        editable_text.editor.set_text(initial_text.as_ref());
+<a href=#172 id=172 data-nosnippet>172</a>        editable_text.queue_edit(TextEdit::TextEnd(<span class="bool-val">false</span>));
+<a href=#173 id=173 data-nosnippet>173</a>        editable_text
+<a href=#174 id=174 data-nosnippet>174</a>    }
+<a href=#175 id=175 data-nosnippet>175</a>
+<a href=#176 id=176 data-nosnippet>176</a>    <span class="doccomment">/// Access the internal [`PlainEditor`].
+<a href=#177 id=177 data-nosnippet>177</a>    </span><span class="kw">pub fn </span>editor(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>PlainEditor&lt;TextBrush&gt; {
+<a href=#178 id=178 data-nosnippet>178</a>        <span class="kw-2">&amp;</span><span class="self">self</span>.editor
+<a href=#179 id=179 data-nosnippet>179</a>    }
+<a href=#180 id=180 data-nosnippet>180</a>
+<a href=#181 id=181 data-nosnippet>181</a>    <span class="doccomment">/// Mutably access the internal [`PlainEditor`].
+<a href=#182 id=182 data-nosnippet>182</a>    ///
+<a href=#183 id=183 data-nosnippet>183</a>    </span><span class="kw">pub fn </span>editor_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span>PlainEditor&lt;TextBrush&gt; {
+<a href=#184 id=184 data-nosnippet>184</a>        <span class="kw-2">&amp;mut </span><span class="self">self</span>.editor
+<a href=#185 id=185 data-nosnippet>185</a>    }
+<a href=#186 id=186 data-nosnippet>186</a>
+<a href=#187 id=187 data-nosnippet>187</a>    <span class="doccomment">/// Get the current text input as a [`SplitString`].
+<a href=#188 id=188 data-nosnippet>188</a>    ///
+<a href=#189 id=189 data-nosnippet>189</a>    /// A [`SplitString`] can be converted into a [`String`] using `to_string` if needed.
+<a href=#190 id=190 data-nosnippet>190</a>    </span><span class="kw">pub fn </span>value(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; SplitString&lt;<span class="lifetime">'_</span>&gt; {
+<a href=#191 id=191 data-nosnippet>191</a>        <span class="self">self</span>.editor.text()
+<a href=#192 id=192 data-nosnippet>192</a>    }
+<a href=#193 id=193 data-nosnippet>193</a>
+<a href=#194 id=194 data-nosnippet>194</a>    <span class="doccomment">/// Queue a [`TextEdit`] action to be applied later by the [`apply_text_edits`] system.
+<a href=#195 id=195 data-nosnippet>195</a>    </span><span class="kw">pub fn </span>queue_edit(<span class="kw-2">&amp;mut </span><span class="self">self</span>, edit: TextEdit) {
+<a href=#196 id=196 data-nosnippet>196</a>        <span class="self">self</span>.pending_edits.push(edit);
+<a href=#197 id=197 data-nosnippet>197</a>    }
+<a href=#198 id=198 data-nosnippet>198</a>
+<a href=#199 id=199 data-nosnippet>199</a>    <span class="doccomment">/// Applies all [`TextEdit`]s in `pending_edits` immediately, updating the [`PlainEditor`] text / cursor state accordingly.
+<a href=#200 id=200 data-nosnippet>200</a>    ///
+<a href=#201 id=201 data-nosnippet>201</a>    /// [`FontContext`] should be gathered from the [`FontCx`] resource, and [`LayoutContext`] should be gathered from the [`LayoutCx`] resource.
+<a href=#202 id=202 data-nosnippet>202</a>    ///
+<a href=#203 id=203 data-nosnippet>203</a>    /// On platforms with async clipboard reads (wasm32), a [`TextEdit::Paste`] whose
+<a href=#204 id=204 data-nosnippet>204</a>    /// contents aren't yet available acts as a barrier: this call parks the in-flight
+<a href=#205 id=205 data-nosnippet>205</a>    /// read on [`EditableText`] and leaves the remaining edits queued in order. Each
+<a href=#206 id=206 data-nosnippet>206</a>    /// subsequent frame re-polls the read, and processing resumes once it resolves.
+<a href=#207 id=207 data-nosnippet>207</a>    /// On native targets clipboard reads are synchronous, so this barrier collapses.
+<a href=#208 id=208 data-nosnippet>208</a>    </span><span class="kw">pub fn </span>apply_pending_edits(
+<a href=#209 id=209 data-nosnippet>209</a>        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+<a href=#210 id=210 data-nosnippet>210</a>        font_context: <span class="kw-2">&amp;mut </span>FontContext,
+<a href=#211 id=211 data-nosnippet>211</a>        layout_context: <span class="kw-2">&amp;mut </span>LayoutContext&lt;TextBrush&gt;,
+<a href=#212 id=212 data-nosnippet>212</a>        clipboard: <span class="kw-2">&amp;mut </span>bevy_clipboard::Clipboard,
+<a href=#213 id=213 data-nosnippet>213</a>        char_filter: <span class="kw">impl </span>Fn(char) -&gt; bool,
+<a href=#214 id=214 data-nosnippet>214</a>    ) {
+<a href=#215 id=215 data-nosnippet>215</a>        <span class="kw">let </span><span class="self">Self </span>{
+<a href=#216 id=216 data-nosnippet>216</a>            editor,
+<a href=#217 id=217 data-nosnippet>217</a>            pending_edits,
+<a href=#218 id=218 data-nosnippet>218</a>            pending_paste,
+<a href=#219 id=219 data-nosnippet>219</a>            max_characters,
+<a href=#220 id=220 data-nosnippet>220</a>            ..
+<a href=#221 id=221 data-nosnippet>221</a>        } = <span class="self">self</span>;
+<a href=#222 id=222 data-nosnippet>222</a>
+<a href=#223 id=223 data-nosnippet>223</a>        <span class="kw">let </span><span class="kw-2">mut </span>driver = editor.driver(font_context, layout_context);
+<a href=#224 id=224 data-nosnippet>224</a>
+<a href=#225 id=225 data-nosnippet>225</a>        <span class="comment">// First: resolve any paste carried over from a previous frame. If it's still
+<a href=#226 id=226 data-nosnippet>226</a>        // pending, hold the remaining edits (untouched in `pending_edits`) for next frame
+<a href=#227 id=227 data-nosnippet>227</a>        // so ordering relative to the paste is preserved.
+<a href=#228 id=228 data-nosnippet>228</a>        </span><span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">mut </span>read) = pending_paste.take()
+<a href=#229 id=229 data-nosnippet>229</a>            &amp;&amp; !poll_and_apply_paste(<span class="kw-2">&amp;mut </span>read, <span class="kw-2">&amp;mut </span>driver, <span class="kw-2">*</span>max_characters, <span class="kw-2">&amp;</span>char_filter)
+<a href=#230 id=230 data-nosnippet>230</a>        {
+<a href=#231 id=231 data-nosnippet>231</a>            <span class="kw-2">*</span>pending_paste = <span class="prelude-val">Some</span>(read);
+<a href=#232 id=232 data-nosnippet>232</a>            <span class="kw">return</span>;
+<a href=#233 id=233 data-nosnippet>233</a>        }
+<a href=#234 id=234 data-nosnippet>234</a>
+<a href=#235 id=235 data-nosnippet>235</a>        <span class="comment">// Drain edits one at a time. A paste that resolves synchronously (always the case
+<a href=#236 id=236 data-nosnippet>236</a>        // on native) applies immediately, but a still-pending paste stashes its `ClipboardRead` and
+<a href=#237 id=237 data-nosnippet>237</a>        // requeues the *remaining* edits, so this loop continually requeues the pending paste until it resolves.
+<a href=#238 id=238 data-nosnippet>238</a>        </span><span class="kw">let </span><span class="kw-2">mut </span>edits = core::mem::take(pending_edits).into_iter();
+<a href=#239 id=239 data-nosnippet>239</a>        <span class="kw">while let </span><span class="prelude-val">Some</span>(edit) = edits.next() {
+<a href=#240 id=240 data-nosnippet>240</a>            <span class="kw">match </span>edit {
+<a href=#241 id=241 data-nosnippet>241</a>                TextEdit::Paste =&gt; {
+<a href=#242 id=242 data-nosnippet>242</a>                    <span class="kw">let </span><span class="kw-2">mut </span>read = clipboard.fetch_text();
+<a href=#243 id=243 data-nosnippet>243</a>                    <span class="kw">if </span>!poll_and_apply_paste(<span class="kw-2">&amp;mut </span>read, <span class="kw-2">&amp;mut </span>driver, <span class="kw-2">*</span>max_characters, <span class="kw-2">&amp;</span>char_filter)
+<a href=#244 id=244 data-nosnippet>244</a>                    {
+<a href=#245 id=245 data-nosnippet>245</a>                        <span class="kw-2">*</span>pending_paste = <span class="prelude-val">Some</span>(read);
+<a href=#246 id=246 data-nosnippet>246</a>                        pending_edits.extend(edits);
+<a href=#247 id=247 data-nosnippet>247</a>                        <span class="kw">return</span>;
+<a href=#248 id=248 data-nosnippet>248</a>                    }
+<a href=#249 id=249 data-nosnippet>249</a>                }
+<a href=#250 id=250 data-nosnippet>250</a>                other =&gt; other.apply(<span class="kw-2">&amp;mut </span>driver, clipboard, <span class="kw-2">*</span>max_characters, <span class="kw-2">&amp;</span>char_filter),
+<a href=#251 id=251 data-nosnippet>251</a>            }
+<a href=#252 id=252 data-nosnippet>252</a>        }
+<a href=#253 id=253 data-nosnippet>253</a>    }
+<a href=#254 id=254 data-nosnippet>254</a>
+<a href=#255 id=255 data-nosnippet>255</a>    <span class="doccomment">/// Clears the input's text buffer and any pending edits.
+<a href=#256 id=256 data-nosnippet>256</a>    ///
+<a href=#257 id=257 data-nosnippet>257</a>    /// Also drops any in-flight paste. The underlying clipboard read task
+<a href=#258 id=258 data-nosnippet>258</a>    /// will still complete, but its result is discarded.
+<a href=#259 id=259 data-nosnippet>259</a>    </span><span class="kw">pub fn </span>clear(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+<a href=#260 id=260 data-nosnippet>260</a>        <span class="self">self</span>.editor.set_text(<span class="string">""</span>);
+<a href=#261 id=261 data-nosnippet>261</a>        <span class="self">self</span>.pending_edits.clear();
+<a href=#262 id=262 data-nosnippet>262</a>        <span class="self">self</span>.pending_paste = <span class="prelude-val">None</span>;
+<a href=#263 id=263 data-nosnippet>263</a>    }
+<a href=#264 id=264 data-nosnippet>264</a>
+<a href=#265 id=265 data-nosnippet>265</a>    <span class="doccomment">/// Is the IME currently composing text for this input?
+<a href=#266 id=266 data-nosnippet>266</a>    ///
+<a href=#267 id=267 data-nosnippet>267</a>    /// Some behavior (e.g. "submit on Enter") may want to be suppressed while the IME is active
+<a href=#268 id=268 data-nosnippet>268</a>    /// to avoid interrupting the user's composition.
+<a href=#269 id=269 data-nosnippet>269</a>    </span><span class="kw">pub fn </span>is_composing(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+<a href=#270 id=270 data-nosnippet>270</a>        <span class="self">self</span>.editor.is_composing()
+<a href=#271 id=271 data-nosnippet>271</a>    }
+<a href=#272 id=272 data-nosnippet>272</a>}
+<a href=#273 id=273 data-nosnippet>273</a>
+<a href=#274 id=274 data-nosnippet>274</a><span class="doccomment">/// Wrapper around a `parley::Generation`. Used to track when `TextLayoutInfo` is stale and needs reupdating.
+<a href=#275 id=275 data-nosnippet>275</a>/// The initial `Generation` of the `PlainEditor` is not equal to the default `Generation` value, so the
+<a href=#276 id=276 data-nosnippet>276</a>/// `TextLayoutInfo` will always be given an initial update.
+<a href=#277 id=277 data-nosnippet>277</a></span><span class="attr">#[derive(Component, PartialEq, Eq, Default, Clone, Copy, Deref, DerefMut)]
+<a href=#278 id=278 data-nosnippet>278</a></span><span class="kw">pub struct </span>EditableTextGeneration(parley::Generation);
+<a href=#279 id=279 data-nosnippet>279</a>
+<a href=#280 id=280 data-nosnippet>280</a><span class="doccomment">/// Sets a per-character filter for this text input. Insert and paste edits are ignored if the filter rejects any character.
+<a href=#281 id=281 data-nosnippet>281</a>///
+<a href=#282 id=282 data-nosnippet>282</a>/// The filter does not apply to characters already within the `EditableText`'s text buffer.
+<a href=#283 id=283 data-nosnippet>283</a></span><span class="attr">#[derive(Component, Clone, Default)]
+<a href=#284 id=284 data-nosnippet>284</a></span><span class="kw">pub struct </span>EditableTextFilter(<span class="prelude-ty">Option</span>&lt;Arc&lt;<span class="kw">dyn </span>Fn(char) -&gt; bool + Send + Sync + <span class="lifetime">'static</span>&gt;&gt;);
+<a href=#285 id=285 data-nosnippet>285</a>
+<a href=#286 id=286 data-nosnippet>286</a><span class="kw">impl </span>EditableTextFilter {
+<a href=#287 id=287 data-nosnippet>287</a>    <span class="doccomment">/// Create a new `EditableTextFilter` from the given filter function.
+<a href=#288 id=288 data-nosnippet>288</a>    </span><span class="kw">pub fn </span>new(filter: <span class="kw">impl </span>Fn(char) -&gt; bool + Send + Sync + <span class="lifetime">'static</span>) -&gt; <span class="self">Self </span>{
+<a href=#289 id=289 data-nosnippet>289</a>        <span class="self">Self</span>(<span class="prelude-val">Some</span>(Arc::new(filter)))
+<a href=#290 id=290 data-nosnippet>290</a>    }
+<a href=#291 id=291 data-nosnippet>291</a>}
+<a href=#292 id=292 data-nosnippet>292</a>
+<a href=#293 id=293 data-nosnippet>293</a><span class="doccomment">/// Applies pending text edit actions to all [`EditableText`] widgets.
+<a href=#294 id=294 data-nosnippet>294</a></span><span class="kw">pub fn </span>apply_text_edits(
+<a href=#295 id=295 data-nosnippet>295</a>    <span class="kw-2">mut </span>query: Query&lt;(
+<a href=#296 id=296 data-nosnippet>296</a>        Entity,
+<a href=#297 id=297 data-nosnippet>297</a>        <span class="kw-2">&amp;mut </span>EditableText,
+<a href=#298 id=298 data-nosnippet>298</a>        <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>EditableTextFilter&gt;,
+<a href=#299 id=299 data-nosnippet>299</a>        <span class="kw-2">&amp;</span>EditableTextGeneration,
+<a href=#300 id=300 data-nosnippet>300</a>    )&gt;,
+<a href=#301 id=301 data-nosnippet>301</a>    <span class="kw-2">mut </span>font_context: ResMut&lt;FontCx&gt;,
+<a href=#302 id=302 data-nosnippet>302</a>    <span class="kw-2">mut </span>layout_context: ResMut&lt;LayoutCx&gt;,
+<a href=#303 id=303 data-nosnippet>303</a>    <span class="kw-2">mut </span>clipboard: ResMut&lt;bevy_clipboard::Clipboard&gt;,
+<a href=#304 id=304 data-nosnippet>304</a>    <span class="kw-2">mut </span>commands: Commands,
+<a href=#305 id=305 data-nosnippet>305</a>) {
+<a href=#306 id=306 data-nosnippet>306</a>    <span class="kw">for </span>(entity, <span class="kw-2">mut </span>editable_text, filter, generation) <span class="kw">in </span>query.iter_mut() {
+<a href=#307 id=307 data-nosnippet>307</a>        <span class="comment">// `pending_paste` can hold a cross-frame paste even when no new edits are queued,
+<a href=#308 id=308 data-nosnippet>308</a>        // so check for either before doing work.
+<a href=#309 id=309 data-nosnippet>309</a>        </span><span class="kw">if </span>!editable_text.pending_edits.is_empty() || editable_text.pending_paste.is_some() {
+<a href=#310 id=310 data-nosnippet>310</a>            editable_text.apply_pending_edits(
+<a href=#311 id=311 data-nosnippet>311</a>                <span class="kw-2">&amp;mut </span>font_context,
+<a href=#312 id=312 data-nosnippet>312</a>                <span class="kw-2">&amp;mut </span>layout_context.<span class="number">0</span>,
+<a href=#313 id=313 data-nosnippet>313</a>                <span class="kw-2">&amp;mut </span>clipboard,
+<a href=#314 id=314 data-nosnippet>314</a>                <span class="kw">match </span>filter {
+<a href=#315 id=315 data-nosnippet>315</a>                    <span class="prelude-val">Some</span>(EditableTextFilter(<span class="prelude-val">Some</span>(filter))) =&gt; filter.as_ref(),
+<a href=#316 id=316 data-nosnippet>316</a>                    <span class="kw">_ </span>=&gt; <span class="kw-2">&amp;</span>|<span class="kw">_</span>| <span class="bool-val">true</span>,
+<a href=#317 id=317 data-nosnippet>317</a>                },
+<a href=#318 id=318 data-nosnippet>318</a>            );
+<a href=#319 id=319 data-nosnippet>319</a>        }
+<a href=#320 id=320 data-nosnippet>320</a>
+<a href=#321 id=321 data-nosnippet>321</a>        <span class="kw">if </span><span class="kw-2">**</span>generation != editable_text.editor.generation() {
+<a href=#322 id=322 data-nosnippet>322</a>            commands.trigger(TextEditChange { entity });
+<a href=#323 id=323 data-nosnippet>323</a>        }
+<a href=#324 id=324 data-nosnippet>324</a>    }
+<a href=#325 id=325 data-nosnippet>325</a>}
+<a href=#326 id=326 data-nosnippet>326</a>
+<a href=#327 id=327 data-nosnippet>327</a><span class="doccomment">/// Triggered after applying all pending [`TextEdit`]s to the [`EditableText`] by [`apply_text_edits`].
+<a href=#328 id=328 data-nosnippet>328</a>///
+<a href=#329 id=329 data-nosnippet>329</a>/// As [`TextEdit`] includes cursor motions, this will be emitted even if [`EditableText::value`] is unchanged.
+<a href=#330 id=330 data-nosnippet>330</a></span><span class="attr">#[derive(EntityEvent)]
+<a href=#331 id=331 data-nosnippet>331</a></span><span class="kw">pub struct </span>TextEditChange {
+<a href=#332 id=332 data-nosnippet>332</a>    entity: Entity,
+<a href=#333 id=333 data-nosnippet>333</a>}
+</code></pre></div></section></main></body></html>

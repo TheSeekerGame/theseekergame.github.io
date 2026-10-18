@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["ProcessorGatedReader","TransactionLockedReader"]};
+window.SIDEBAR_ITEMS = {"struct":["TransactionLockedReader"]};

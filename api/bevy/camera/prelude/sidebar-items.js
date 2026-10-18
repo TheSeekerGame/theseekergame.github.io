@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["ClearColorConfig","CompositingSpace","MsaaWriteback","Projection","Visibility"],"struct":["Camera","Camera2d","Camera3d","ClearColor","InheritedVisibility","OrthographicProjection","PerspectiveProjection","ViewVisibility"]};

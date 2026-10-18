@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["alpha","bake_batch","bake_ground","bake_jobs","blend_over","blit_row","chunk_regions","crop","decorate","decoration_chunks","expand","image","paint_tile","snow_occlusion","spike_pixels","visible"],"struct":["DecorationArt","GroundPatch","TilePaint","TileSurface"]};

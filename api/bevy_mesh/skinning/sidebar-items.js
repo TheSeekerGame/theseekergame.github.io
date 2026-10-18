@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["EntityAabbFromSkinnedMeshBoundsError","MeshAttributeError","SkinnedMeshBoundsError"],"fn":["entity_aabb_from_skinned_mesh_bounds"],"struct":["Influence","InfluenceIterator","JointAabb","JointIndex","SkinnedMesh","SkinnedMeshBounds","SkinnedMeshInverseBindposes","SkinnedMeshTemplate"]};

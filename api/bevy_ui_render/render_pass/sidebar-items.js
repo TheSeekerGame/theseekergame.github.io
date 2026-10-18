@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["ui_pass"],"struct":["DrawUiNode","SetUiTextureBindGroup","SetUiViewBindGroup","TransparentUi"],"type":["DrawUi"]};

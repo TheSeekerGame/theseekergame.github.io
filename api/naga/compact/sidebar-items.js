@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["compact"]};
+window.SIDEBAR_ITEMS = {"enum":["KeepUnused"],"fn":["compact"]};

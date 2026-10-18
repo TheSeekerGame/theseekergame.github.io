@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["ClashStrategy"]};
+window.SIDEBAR_ITEMS = {"enum":["BasicInputs","ClashStrategy"]};

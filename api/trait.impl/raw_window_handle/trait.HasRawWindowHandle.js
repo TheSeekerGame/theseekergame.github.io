@@ -1,9 +1,9 @@
 (function() {
-    var implementors = Object.fromEntries([["raw_window_handle",[]],["wgpu",[]]]);
+    const implementors = Object.fromEntries([["raw_window_handle",[]]]);
     if (window.register_implementors) {
         window.register_implementors(implementors);
     } else {
         window.pending_implementors = implementors;
     }
 })()
-//{"start":57,"fragment_lengths":[24,12]}
+//{"start":59,"fragment_lengths":[24]}

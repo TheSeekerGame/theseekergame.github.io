@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["BREAKABLE_WALL_HITS","ON_BREAK_SHAKE_DURATION","ON_BREAK_SHAKE_FREQ","ON_BREAK_SHAKE_STRENGTH","ON_HIT_SHAKE_DURATION","ON_HIT_SHAKE_FREQ","ON_HIT_SHAKE_STRENGTH"],"fn":["breakable_wall_damage_handler"],"struct":["BreakableWall","BreakableWallPlugin","SecretRoomCover"]};

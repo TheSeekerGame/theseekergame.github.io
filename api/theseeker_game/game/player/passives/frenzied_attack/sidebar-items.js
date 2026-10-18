@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["FA_FRACTION","FA_HP_PER_TICK_DEFAULT"],"fn":["apply_frenzied_cooldown_extra","apply_frenzied_cooldown_key","apply_frenzied_energy_extra","apply_frenzied_flicker_extra","apply_frenzied_life_debt","apply_frenzied_whirl_extra","frenzied_attack_runtime","pending_frenzied_life_debt_damage"],"struct":["EnergyRegenDeltas","LifeDebt"]};

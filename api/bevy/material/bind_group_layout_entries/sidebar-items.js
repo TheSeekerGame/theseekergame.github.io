@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":["binding_types"],"struct":["BindGroupLayoutEntries","BindGroupLayoutEntryBuilder","DynamicBindGroupLayoutEntries"],"trait":["IntoBindGroupLayoutEntryBuilder","IntoBindGroupLayoutEntryBuilderArray","IntoIndexedBindGroupLayoutEntryBuilderArray"]};

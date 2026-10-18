@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["GameState"],"fn":["pause","unpause"],"struct":["GameStatePlugin"]};
+window.SIDEBAR_ITEMS = {"enum":["GameState"],"fn":["apply_pause","clear_pause_requests","update_pause_requests"],"struct":["GameStatePlugin","PauseRequests"]};

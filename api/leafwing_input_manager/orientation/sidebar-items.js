@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"enum":["RotationDirection"],"struct":["Rotation"],"trait":["Orientation"]};

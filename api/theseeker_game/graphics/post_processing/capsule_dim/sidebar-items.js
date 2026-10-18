@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["CAPSULE_DIM_FADE_SPEED","CAPSULE_DIM_MAX_ALPHA","CAPSULE_DIM_RECT_LIMIT"],"fn":["capsule_dim_pass","sync_capsule_dim_settings"],"struct":["CapsuleDimPipeline","CapsuleDimPlugin","CapsuleDimSettings"]};

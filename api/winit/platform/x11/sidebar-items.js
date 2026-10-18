@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["XNotSupported","XWindowType"],"fn":["register_xlib_error_hook"],"trait":["EventLoopBuilderExtX11","EventLoopWindowTargetExtX11","MonitorHandleExtX11","WindowBuilderExtX11","WindowExtX11"],"type":["XVisualID","XWindow","XlibErrorHook"]};
+window.SIDEBAR_ITEMS = {"enum":["WindowType"],"fn":["register_xlib_error_hook"],"trait":["ActiveEventLoopExtX11","EventLoopBuilderExtX11","EventLoopExtX11","MonitorHandleExtX11","WindowAttributesExtX11","WindowExtX11"],"type":["XVisualID","XWindow","XlibErrorHook"]};

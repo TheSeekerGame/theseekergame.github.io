@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["idle_enter_system","idle_update_system","settle_idle_velocity"],"struct":["IdleStatePlugin"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["DISTANCES","SUPPORT_PX"],"fn":["attenuation","boundary_at","shade","shade_with_buffer","terrain_at"],"static":["ATTENUATION"]};

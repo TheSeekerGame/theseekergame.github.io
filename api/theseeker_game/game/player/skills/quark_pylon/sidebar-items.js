@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["QUARK_PYLON_METADATA"],"fn":["active_pylon_count","find_quark_pylon_placement"]};

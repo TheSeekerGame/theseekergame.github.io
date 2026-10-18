@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["DeferredGBufferPrepassNode"]};
+window.SIDEBAR_ITEMS = {"fn":["late_deferred_prepass"]};

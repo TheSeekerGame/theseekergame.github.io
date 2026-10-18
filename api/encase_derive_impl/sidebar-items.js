@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["derive_shader_type"],"macro":["implement"]};
+window.SIDEBAR_ITEMS = {"enum":["ShaderAttr","SizeAttr"],"fn":["derive_shader_type"],"macro":[["implement",1]],"struct":["AlignmentAttr","ShaderAttrList","StaticSizeAttr"]};

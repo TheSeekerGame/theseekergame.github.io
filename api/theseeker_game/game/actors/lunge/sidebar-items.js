@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["LungeHits","MotionContact"],"fn":["emit_lunge_hits","swept_hit_shape"],"struct":["LungeHitRequest","LungeRuntime"]};

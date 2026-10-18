@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["CopyError"],"fn":["clone_into_maybe_uninit_slice","copy_from_iter_to_offset_with_align_packed","copy_from_slice_to_offset","copy_from_slice_to_offset_with_align","copy_into_maybe_uninit_slice","copy_to_offset","copy_to_offset_with_align"],"struct":["BorrowedRawAllocation","CopyRecord","RawAllocation"],"trait":["Slab"]};

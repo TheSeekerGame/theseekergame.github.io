@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["animation_hitbox"],"mod":["attacking","burning_dashing","dash_striking","dashing","flicker_striking","gathering","whirling"]};

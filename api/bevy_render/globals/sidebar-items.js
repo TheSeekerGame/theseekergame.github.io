@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"constant":["GLOBALS_TYPE_HANDLE"],"struct":["GlobalsBuffer","GlobalsPlugin","GlobalsUniform"]};
+window.SIDEBAR_ITEMS = {"struct":["GlobalsBuffer","GlobalsPlugin","GlobalsUniform"]};

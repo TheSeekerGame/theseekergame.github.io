@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["begin_diagnostics_frame","resolve_encoder"],"struct":["DiagnosticsRecorder","ErasedRenderAssetDiagnosticPlugin","MeshAllocatorDiagnosticPlugin","PassSpanGuard","RenderAssetDiagnosticPlugin","RenderDiagnosticsPlugin","TimeSpanGuard"],"trait":["RecordDiagnostics"]};

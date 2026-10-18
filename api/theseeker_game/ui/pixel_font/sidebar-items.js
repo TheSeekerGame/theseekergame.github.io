@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["CAP_TOP","FALLBACK_CHAR","FONT_IMAGE_PATH","GLYPH_HEIGHT","LINE_ADVANCE","ROW_0_BOUNDS","ROW_1_BOUNDS","ROW_2_BOUNDS"],"fn":["glyph_rect","text_width","wrap_text"]};

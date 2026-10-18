@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["PlacementTool"],"fn":["cleanup_orphaned_previews","commit_placement","despawn_preview","placement","sync_preview","update_placement_previews","update_tool"],"struct":["Placement","PlacementPreview","PlacementUser","PlacementUserItem","PlacementUserReadOnly","PlacementUserReadOnlyItem","PreviewWorld"]};

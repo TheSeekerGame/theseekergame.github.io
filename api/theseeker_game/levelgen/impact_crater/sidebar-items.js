@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["PIT_FILL_DEPTH","PIT_FILL_HALF_WIDTH","PRE_IMPACT_DIR"],"fn":["fill_pit_below","publish_intact_patches","set_terrain","terrain_at"],"struct":["ImpactFormed","ImpactIntact","LevelSurfaceInputs","PreImpactTerrain"]};

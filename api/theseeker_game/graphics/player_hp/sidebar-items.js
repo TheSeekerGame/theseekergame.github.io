@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["update_hp","update_hp_vignette"],"struct":["Bar","Material","PlayerHpBarPlugin"]};
+window.SIDEBAR_ITEMS = {"constant":["LOW_HEALTH_BRIGHTNESS_DROP","LOW_HEALTH_COLOR_BASE","LOW_HEALTH_COLOR_PULSE_RANGE","LOW_HEALTH_FOG_STRENGTH_BOOST","LOW_HEALTH_MIN_DANGER_INTENSITY","LOW_HEALTH_MIN_PULSE_INTENSITY","LOW_HEALTH_PULSE_BPM","LOW_HEALTH_THRESHOLD"],"fn":["update_hp_vignette"],"struct":["LowHealthVignettePlugin"]};

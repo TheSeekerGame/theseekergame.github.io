@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["RenderGraphRunnerError"],"fn":["initialize_renderer","render_system"],"struct":["ErasedRenderDevice","RenderAdapter","RenderAdapterInfo","RenderContext","RenderDevice","RenderInstance","RenderQueue"]};
+window.SIDEBAR_ITEMS = {"enum":["RenderGraphSystems"],"fn":["initialize_renderer","render_system"],"struct":["CurrentView","FlushCommands","PendingCommandBuffers","RenderAdapter","RenderAdapterInfo","RenderContext","RenderContextState","RenderDevice","RenderGraph","RenderInstance","RenderQueue","ViewQuery","WgpuWrapper"]};

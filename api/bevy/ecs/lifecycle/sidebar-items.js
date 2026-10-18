@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["ADD","DESPAWN","DISCARD","INSERT","REMOVE"],"struct":["Add","ComponentHooks","Despawn","Discard","HookContext","Insert","Remove","RemovedComponentEntity","RemovedComponentMessages","RemovedComponentReader","RemovedComponents"],"type":["ComponentHook","RemovedIter","RemovedIterWithId"]};

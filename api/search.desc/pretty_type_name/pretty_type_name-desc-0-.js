@@ -1,1 +1,0 @@
-searchState.loadedDescShard("pretty_type_name", 0, "Returns a shorter version of <code>std::any::type_name</code>\nsame as pretty_type_name, but works strings")

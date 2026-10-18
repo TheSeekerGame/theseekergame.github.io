@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["bake","bake_patch","inset_uvs","parallax_depth","publish"],"struct":["BackgroundBake","BackgroundPatch","SpawnChunkCutout"]};

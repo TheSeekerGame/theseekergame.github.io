@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["layout_flexbox"]};
+window.SIDEBAR_ITEMS = {};

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["TomlLoaderError"],"struct":["TomlAssetPlugin"]};
+window.SIDEBAR_ITEMS = {"enum":["TomlAssetError"],"struct":["TomlAssetLoader","TomlAssetPlugin","TomlAssetSaver"],"type":["TomlLoaderError"]};

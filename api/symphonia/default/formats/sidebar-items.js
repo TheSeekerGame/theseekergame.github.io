@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["MpaReader"],"type":["Mp3Reader"]};
+window.SIDEBAR_ITEMS = {"struct":["FlacReader","OggReader","WavReader"]};

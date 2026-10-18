@@ -1,0 +1,323 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `game/src/game/enemy/actor_setup.rs`."><title>actor_setup.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-0c87338a.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="theseeker_game" data-themes="" data-resource-suffix="" data-rustdoc-version="1.99.1 (58cf8f9c3 2026-10-13)" data-channel="1.99.1" data-search-js="search-cf4fc35e.js" data-stringdex-js="stringdex-b5109af9.js" data-settings-js="settings-170eb4bf.js" ><script src="../../../../static.files/storage-41dd4d93.js"></script><script defer src="../../../../static.files/src-script-813739b1.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-417ebf0a.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-9f56287d.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-eab170b8.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><a class="skip-main-content" href="#main-content">Skip to main content</a><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><section id="main-content" class="content" tabindex="-1"><div class="main-heading"><h1><div class="sub-heading">theseeker_game/game/enemy/</div>actor_setup.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap digits-3"><pre class="rust"><code><a href=#1 id=1 data-nosnippet>1</a><span class="doccomment">//! Enemy assembly: a blueprint names its catalog actor, and setup builds the body, its runtime, and
+<a href=#2 id=2 data-nosnippet>2</a>//! its graphics from the resolved definition.
+<a href=#3 id=3 data-nosnippet>3</a></span><span class="kw">use </span>std::sync::Arc;
+<a href=#4 id=4 data-nosnippet>4</a>
+<a href=#5 id=5 data-nosnippet>5</a><span class="kw">use super</span>::<span class="kw-2">*</span>;
+<a href=#6 id=6 data-nosnippet>6</a><span class="kw">use </span><span class="kw">super</span>::animation_lifecycle::FacingSlots;
+<a href=#7 id=7 data-nosnippet>7</a><span class="kw">use </span><span class="kw">super</span>::death::DeathPolicy;
+<a href=#8 id=8 data-nosnippet>8</a><span class="kw">use </span><span class="kw">super</span>::flying_motor::{
+<a href=#9 id=9 data-nosnippet>9</a>    FlyingMotor, FlyingMotorConfig, HealthRegen, OrientToVelocity, VOID_FACE_Z_OFFSET, VOID_GHOST_INTERVAL_TICKS,
+<a href=#10 id=10 data-nosnippet>10</a>    VOID_GHOST_LIFETIME_TICKS, VOID_GHOST_MIN_SCALE,
+<a href=#11 id=11 data-nosnippet>11</a>};
+<a href=#12 id=12 data-nosnippet>12</a><span class="kw">use </span><span class="kw">super</span>::jump_motor::JumpMotor;
+<a href=#13 id=13 data-nosnippet>13</a><span class="kw">use </span><span class="kw">super</span>::trap_controller::{StationaryTrapController, TrapPrey};
+<a href=#14 id=14 data-nosnippet>14</a><span class="kw">use </span><span class="kw">crate</span>::game::actors::catalog::{ActorCatalog, ResolvedActor};
+<a href=#15 id=15 data-nosnippet>15</a><span class="kw">use </span><span class="kw">crate</span>::game::actors::definition::{EnemyArchetype, EnemyFacingSetup, EnemyGfxKind, EnemySetupController};
+<a href=#16 id=16 data-nosnippet>16</a><span class="kw">use </span><span class="kw">crate</span>::game::actors::sensors::CachedArchetypeStats;
+<a href=#17 id=17 data-nosnippet>17</a><span class="kw">use </span><span class="kw">crate</span>::game::actors::{ActorBundle, LevelSeed};
+<a href=#18 id=18 data-nosnippet>18</a>
+<a href=#19 id=19 data-nosnippet>19</a><span class="doccomment">/// An enemy waiting for setup, named by its catalog actor.
+<a href=#20 id=20 data-nosnippet>20</a></span><span class="attr">#[derive(Component)]
+<a href=#21 id=21 data-nosnippet>21</a></span><span class="kw">pub struct </span>EnemyActorBlueprint {
+<a href=#22 id=22 data-nosnippet>22</a>    arch_id: String,
+<a href=#23 id=23 data-nosnippet>23</a>    spider: <span class="prelude-ty">Option</span>&lt;SpiderActorSetup&gt;,
+<a href=#24 id=24 data-nosnippet>24</a>}
+<a href=#25 id=25 data-nosnippet>25</a>
+<a href=#26 id=26 data-nosnippet>26</a><span class="doccomment">/// A spider's spawn-time traits.
+<a href=#27 id=27 data-nosnippet>27</a></span><span class="attr">#[derive(Clone, Copy)]
+<a href=#28 id=28 data-nosnippet>28</a></span><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">struct </span>SpiderActorSetup {
+<a href=#29 id=29 data-nosnippet>29</a>    <span class="kw">pub </span>role: Role,
+<a href=#30 id=30 data-nosnippet>30</a>    <span class="kw">pub </span>tier: Tier,
+<a href=#31 id=31 data-nosnippet>31</a>    <span class="kw">pub </span>biome: SpiderBiome,
+<a href=#32 id=32 data-nosnippet>32</a>    <span class="kw">pub </span>small: bool,
+<a href=#33 id=33 data-nosnippet>33</a>    <span class="kw">pub </span>large_freeze: bool,
+<a href=#34 id=34 data-nosnippet>34</a>    <span class="kw">pub </span>spawn_z: f32,
+<a href=#35 id=35 data-nosnippet>35</a>}
+<a href=#36 id=36 data-nosnippet>36</a>
+<a href=#37 id=37 data-nosnippet>37</a><span class="kw">pub fn </span>spawn_enemy_actor_blueprint(
+<a href=#38 id=38 data-nosnippet>38</a>    commands: <span class="kw-2">&amp;mut </span>Commands,
+<a href=#39 id=39 data-nosnippet>39</a>    arch_id: <span class="kw">impl </span>Into&lt;String&gt;,
+<a href=#40 id=40 data-nosnippet>40</a>    transform: Transform,
+<a href=#41 id=41 data-nosnippet>41</a>) -&gt; Entity {
+<a href=#42 id=42 data-nosnippet>42</a>    spawn_blueprint(commands, EnemyActorBlueprint { arch_id: arch_id.into(), spider: <span class="prelude-val">None </span>}, transform)
+<a href=#43 id=43 data-nosnippet>43</a>}
+<a href=#44 id=44 data-nosnippet>44</a>
+<a href=#45 id=45 data-nosnippet>45</a><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>spawn_spider_actor_blueprint(
+<a href=#46 id=46 data-nosnippet>46</a>    commands: <span class="kw-2">&amp;mut </span>Commands,
+<a href=#47 id=47 data-nosnippet>47</a>    arch_id: <span class="kw">impl </span>Into&lt;String&gt;,
+<a href=#48 id=48 data-nosnippet>48</a>    transform: Transform,
+<a href=#49 id=49 data-nosnippet>49</a>    spider: SpiderActorSetup,
+<a href=#50 id=50 data-nosnippet>50</a>) -&gt; Entity {
+<a href=#51 id=51 data-nosnippet>51</a>    spawn_blueprint(commands, EnemyActorBlueprint { arch_id: arch_id.into(), spider: <span class="prelude-val">Some</span>(spider) }, transform)
+<a href=#52 id=52 data-nosnippet>52</a>}
+<a href=#53 id=53 data-nosnippet>53</a>
+<a href=#54 id=54 data-nosnippet>54</a><span class="kw">fn </span>spawn_blueprint(commands: <span class="kw-2">&amp;mut </span>Commands, blueprint: EnemyActorBlueprint, transform: Transform) -&gt; Entity {
+<a href=#55 id=55 data-nosnippet>55</a>    commands.spawn((blueprint, transform, GlobalTransform::default(), StateDespawnMarker)).id()
+<a href=#56 id=56 data-nosnippet>56</a>}
+<a href=#57 id=57 data-nosnippet>57</a>
+<a href=#58 id=58 data-nosnippet>58</a><span class="doccomment">/// Builds each new blueprint from its catalog actor.
+<a href=#59 id=59 data-nosnippet>59</a></span><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>setup_enemy_actor(
+<a href=#60 id=60 data-nosnippet>60</a>    <span class="kw-2">mut </span>blueprints: Query&lt;(Entity, <span class="kw-2">&amp;mut </span>Transform, <span class="kw-2">&amp;</span>EnemyActorBlueprint), Added&lt;EnemyActorBlueprint&gt;&gt;,
+<a href=#61 id=61 data-nosnippet>61</a>    <span class="kw-2">mut </span>commands: Commands,
+<a href=#62 id=62 data-nosnippet>62</a>    catalog: Res&lt;ActorCatalog&gt;,
+<a href=#63 id=63 data-nosnippet>63</a>    level_seed: Res&lt;LevelSeed&gt;,
+<a href=#64 id=64 data-nosnippet>64</a>) {
+<a href=#65 id=65 data-nosnippet>65</a>    <span class="kw">for </span>(entity, <span class="kw-2">mut </span>transform, blueprint) <span class="kw">in </span><span class="kw-2">&amp;mut </span>blueprints {
+<a href=#66 id=66 data-nosnippet>66</a>        <span class="kw">let </span><span class="prelude-val">Some</span>(actor) = catalog.actors.get(<span class="kw-2">&amp;</span>blueprint.arch_id) <span class="kw">else </span>{
+<a href=#67 id=67 data-nosnippet>67</a>            <span class="macro">error!</span>(<span class="string">"Failed to resolve actor definition for archetype: {}"</span>, blueprint.arch_id);
+<a href=#68 id=68 data-nosnippet>68</a>            commands.entity(entity).despawn();
+<a href=#69 id=69 data-nosnippet>69</a>            <span class="kw">continue</span>;
+<a href=#70 id=70 data-nosnippet>70</a>        };
+<a href=#71 id=71 data-nosnippet>71</a>        <span class="kw">let </span><span class="kw-2">mut </span>offset = actor.body.spawn_offset;
+<a href=#72 id=72 data-nosnippet>72</a>        <span class="kw">if let </span><span class="prelude-val">Some</span>(spider) = blueprint.spider {
+<a href=#73 id=73 data-nosnippet>73</a>            offset.z = spider.spawn_z;
+<a href=#74 id=74 data-nosnippet>74</a>        }
+<a href=#75 id=75 data-nosnippet>75</a>        transform.translation += offset;
+<a href=#76 id=76 data-nosnippet>76</a>        assemble_enemy(<span class="kw-2">&amp;mut </span>commands, entity, <span class="kw-2">*</span>transform, blueprint, actor, level_seed.<span class="number">0</span>);
+<a href=#77 id=77 data-nosnippet>77</a>        commands.entity(entity).remove::&lt;EnemyActorBlueprint&gt;();
+<a href=#78 id=78 data-nosnippet>78</a>    }
+<a href=#79 id=79 data-nosnippet>79</a>}
+<a href=#80 id=80 data-nosnippet>80</a>
+<a href=#81 id=81 data-nosnippet>81</a><span class="kw">fn </span>assemble_enemy(
+<a href=#82 id=82 data-nosnippet>82</a>    commands: <span class="kw-2">&amp;mut </span>Commands,
+<a href=#83 id=83 data-nosnippet>83</a>    entity: Entity,
+<a href=#84 id=84 data-nosnippet>84</a>    transform: Transform,
+<a href=#85 id=85 data-nosnippet>85</a>    blueprint: <span class="kw-2">&amp;</span>EnemyActorBlueprint,
+<a href=#86 id=86 data-nosnippet>86</a>    actor: <span class="kw-2">&amp;</span>Arc&lt;ResolvedActor&gt;,
+<a href=#87 id=87 data-nosnippet>87</a>    level_seed: u32,
+<a href=#88 id=88 data-nosnippet>88</a>) {
+<a href=#89 id=89 data-nosnippet>89</a>    <span class="kw">let </span>graphics = (commands.spawn(()).id(), commands.spawn(()).id());
+<a href=#90 id=90 data-nosnippet>90</a>    <span class="kw">let </span>(body, stats, archetype) = (<span class="kw-2">&amp;</span>actor.body, actor.stats(), <span class="kw-2">&amp;</span>actor.archetype);
+<a href=#91 id=91 data-nosnippet>91</a>    <span class="kw">let </span>collider = Collider::cuboid(body.collider_half_extents.x, body.collider_half_extents.y);
+<a href=#92 id=92 data-nosnippet>92</a>    commands.entity(entity).insert((
+<a href=#93 id=93 data-nosnippet>93</a>        Name::new(body.name.clone()),
+<a href=#94 id=94 data-nosnippet>94</a>        Enemy,
+<a href=#95 id=95 data-nosnippet>95</a>        Gent { e_gfx: graphics.<span class="number">0</span>, e_effects_gfx: graphics.<span class="number">1 </span>},
+<a href=#96 id=96 data-nosnippet>96</a>        FoliageInteractor::body(<span class="kw-2">&amp;</span>collider),
+<a href=#97 id=97 data-nosnippet>97</a>        GentPhysicsBundle { collider, linear_velocity: LinearVelocity(Vec2::ZERO) },
+<a href=#98 id=98 data-nosnippet>98</a>        theseeker_engine::physics::groups::enemy_body(),
+<a href=#99 id=99 data-nosnippet>99</a>        Health { current: stats.spawn_hp, max: stats.spawn_hp },
+<a href=#100 id=100 data-nosnippet>100</a>        spawn_facing(body.facing),
+<a href=#101 id=101 data-nosnippet>101</a>        StateDespawnMarker,
+<a href=#102 id=102 data-nosnippet>102</a>        DeathPolicy::from_setup(archetype.death.as_ref()),
+<a href=#103 id=103 data-nosnippet>103</a>    ));
+<a href=#104 id=104 data-nosnippet>104</a>    <span class="kw">if let </span><span class="prelude-val">Some</span>((right, left)) = <span class="kw-2">&amp;</span>body.facing_slots {
+<a href=#105 id=105 data-nosnippet>105</a>        commands.entity(entity).insert(FacingSlots::new(right.clone(), left.clone()));
+<a href=#106 id=106 data-nosnippet>106</a>    }
+<a href=#107 id=107 data-nosnippet>107</a>    insert_body_runtime(commands, entity, actor, transform.translation.xy());
+<a href=#108 id=108 data-nosnippet>108</a>    <span class="kw">let </span>spider = blueprint.spider.map(|spider| (spider, SpiderJitter::new(entity, level_seed, spider.small)));
+<a href=#109 id=109 data-nosnippet>109</a>    <span class="kw">let </span>jitter = spider.as_ref().map(|(<span class="kw">_</span>, jitter)| jitter);
+<a href=#110 id=110 data-nosnippet>110</a>    commands.entity(entity).insert((ActorBundle::new(actor.clone(), entity, level_seed), cached_stats(actor, jitter)));
+<a href=#111 id=111 data-nosnippet>111</a>    <span class="kw">if </span>stats.dmg_ranged &gt; <span class="number">0 </span>{
+<a href=#112 id=112 data-nosnippet>112</a>        commands.entity(entity).insert(ProjectileCache::new());
+<a href=#113 id=113 data-nosnippet>113</a>    }
+<a href=#114 id=114 data-nosnippet>114</a>    <span class="kw">if let </span><span class="prelude-val">Some</span>(from_frame) = archetype.defense.and_then(|defense| defense.invulnerable_from_frame) {
+<a href=#115 id=115 data-nosnippet>115</a>        <span class="kw">let </span>anim_key = archetype.anim.get(<span class="string">"Defense"</span>).cloned();
+<a href=#116 id=116 data-nosnippet>116</a>        commands.entity(entity).insert(DefenseInvulnerabilityTiming { from_frame, anim_key });
+<a href=#117 id=117 data-nosnippet>117</a>    }
+<a href=#118 id=118 data-nosnippet>118</a>    <span class="kw">if let </span><span class="prelude-val">Some</span>((spider, jitter)) = <span class="kw-2">&amp;</span>spider {
+<a href=#119 id=119 data-nosnippet>119</a>        insert_spider_traits(commands, entity, spider, jitter, stats.melee_range);
+<a href=#120 id=120 data-nosnippet>120</a>    }
+<a href=#121 id=121 data-nosnippet>121</a>    insert_graphics(commands, entity, graphics, transform, actor);
+<a href=#122 id=122 data-nosnippet>122</a>}
+<a href=#123 id=123 data-nosnippet>123</a>
+<a href=#124 id=124 data-nosnippet>124</a><span class="kw">fn </span>spawn_facing(setup: EnemyFacingSetup) -&gt; Facing {
+<a href=#125 id=125 data-nosnippet>125</a>    <span class="kw">match </span>setup {
+<a href=#126 id=126 data-nosnippet>126</a>        EnemyFacingSetup::Right =&gt; Facing::Right,
+<a href=#127 id=127 data-nosnippet>127</a>        EnemyFacingSetup::Left =&gt; Facing::Left,
+<a href=#128 id=128 data-nosnippet>128</a>        EnemyFacingSetup::RandomHorizontal =&gt; {
+<a href=#129 id=129 data-nosnippet>129</a>            <span class="kw">if </span>rand::rng().random_bool(<span class="number">0.5</span>) { Facing::Right } <span class="kw">else </span>{ Facing::Left }
+<a href=#130 id=130 data-nosnippet>130</a>        },
+<a href=#131 id=131 data-nosnippet>131</a>    }
+<a href=#132 id=132 data-nosnippet>132</a>}
+<a href=#133 id=133 data-nosnippet>133</a>
+<a href=#134 id=134 data-nosnippet>134</a><span class="doccomment">/// The body's motor and its standing effects.
+<a href=#135 id=135 data-nosnippet>135</a></span><span class="kw">fn </span>insert_body_runtime(commands: <span class="kw-2">&amp;mut </span>Commands, entity: Entity, actor: <span class="kw-2">&amp;</span>ResolvedActor, home: Vec2) {
+<a href=#136 id=136 data-nosnippet>136</a>    <span class="kw">let </span>(archetype, body) = (<span class="kw-2">&amp;</span>actor.archetype, <span class="kw-2">&amp;</span>actor.body);
+<a href=#137 id=137 data-nosnippet>137</a>    <span class="kw">let </span><span class="kw-2">mut </span>entity = commands.entity(entity);
+<a href=#138 id=138 data-nosnippet>138</a>    <span class="kw">if </span>body.trap_prey {
+<a href=#139 id=139 data-nosnippet>139</a>        entity.insert(TrapPrey);
+<a href=#140 id=140 data-nosnippet>140</a>    }
+<a href=#141 id=141 data-nosnippet>141</a>    <span class="kw">match </span>body.controller {
+<a href=#142 id=142 data-nosnippet>142</a>        EnemySetupController::Flying =&gt; {
+<a href=#143 id=143 data-nosnippet>143</a>            entity.insert(FlyingMotor::new(home, FlyingMotorConfig::from_setup(archetype.flying, actor.stats().walk_speed)))
+<a href=#144 id=144 data-nosnippet>144</a>        },
+<a href=#145 id=145 data-nosnippet>145</a>        EnemySetupController::Ground =&gt; entity.insert((Navigation::Grounded, GroundMotor, MovementState::default())),
+<a href=#146 id=146 data-nosnippet>146</a>        EnemySetupController::Jump =&gt; {
+<a href=#147 id=147 data-nosnippet>147</a>            entity.insert((Navigation::Grounded, JumpMotor::new(archetype.jump), MovementState::default()))
+<a href=#148 id=148 data-nosnippet>148</a>        },
+<a href=#149 id=149 data-nosnippet>149</a>        EnemySetupController::StationaryTrap =&gt; entity.insert((
+<a href=#150 id=150 data-nosnippet>150</a>            DamageWindow { open: <span class="bool-val">false </span>},
+<a href=#151 id=151 data-nosnippet>151</a>            StationaryTrapController::new(body.collider_half_extents, archetype.trap),
+<a href=#152 id=152 data-nosnippet>152</a>        )),
+<a href=#153 id=153 data-nosnippet>153</a>    };
+<a href=#154 id=154 data-nosnippet>154</a>    <span class="kw">if let </span><span class="prelude-val">Some</span>(regen) = archetype.health_regen {
+<a href=#155 id=155 data-nosnippet>155</a>        entity.insert(HealthRegen::new(regen.amount, regen.interval_ticks));
+<a href=#156 id=156 data-nosnippet>156</a>    }
+<a href=#157 id=157 data-nosnippet>157</a>    <span class="kw">if let </span><span class="prelude-val">Some</span>(contact) = archetype.contact_damage {
+<a href=#158 id=158 data-nosnippet>158</a>        <span class="kw">let </span>pushback = contact.pushback.map(|pushback| ContactPushback {
+<a href=#159 id=159 data-nosnippet>159</a>            horizontal: pushback.horizontal,
+<a href=#160 id=160 data-nosnippet>160</a>            vertical: pushback.vertical,
+<a href=#161 id=161 data-nosnippet>161</a>            ticks: pushback.ticks,
+<a href=#162 id=162 data-nosnippet>162</a>        });
+<a href=#163 id=163 data-nosnippet>163</a>        entity.insert(ContactDamage::new(contact.damage, contact.cooldown_ticks, pushback));
+<a href=#164 id=164 data-nosnippet>164</a>    }
+<a href=#165 id=165 data-nosnippet>165</a>}
+<a href=#166 id=166 data-nosnippet>166</a>
+<a href=#167 id=167 data-nosnippet>167</a><span class="doccomment">/// Perception stats after a spider's jitter, raised to the body's floors.
+<a href=#168 id=168 data-nosnippet>168</a></span><span class="kw">fn </span>cached_stats(actor: <span class="kw-2">&amp;</span>ResolvedActor, jitter: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>SpiderJitter&gt;) -&gt; CachedArchetypeStats {
+<a href=#169 id=169 data-nosnippet>169</a>    <span class="kw">let </span>(stats, body) = (actor.stats(), <span class="kw-2">&amp;</span>actor.body);
+<a href=#170 id=170 data-nosnippet>170</a>    <span class="kw">let </span>vision = jitter.map_or(stats.vision_range, |jitter| jitter.vision_range(stats.vision_range));
+<a href=#171 id=171 data-nosnippet>171</a>    <span class="kw">let </span>melee = jitter.map_or(stats.melee_range, |jitter| jitter.melee_range(stats.melee_range));
+<a href=#172 id=172 data-nosnippet>172</a>    CachedArchetypeStats {
+<a href=#173 id=173 data-nosnippet>173</a>        vision_range: vision.max(body.min_vision_range),
+<a href=#174 id=174 data-nosnippet>174</a>        melee_range: melee.max(body.min_melee_range),
+<a href=#175 id=175 data-nosnippet>175</a>        walk_speed: stats.walk_speed,
+<a href=#176 id=176 data-nosnippet>176</a>        chase_speed: stats.chase_speed,
+<a href=#177 id=177 data-nosnippet>177</a>        needs_line_of_sight: body.needs_line_of_sight,
+<a href=#178 id=178 data-nosnippet>178</a>        reaction_time: jitter.map_or(stats.reaction_time, |jitter| jitter.reaction_time(stats.reaction_time)),
+<a href=#179 id=179 data-nosnippet>179</a>    }
+<a href=#180 id=180 data-nosnippet>180</a>}
+<a href=#181 id=181 data-nosnippet>181</a>
+<a href=#182 id=182 data-nosnippet>182</a><span class="kw">fn </span>insert_spider_traits(
+<a href=#183 id=183 data-nosnippet>183</a>    commands: <span class="kw-2">&amp;mut </span>Commands,
+<a href=#184 id=184 data-nosnippet>184</a>    entity: Entity,
+<a href=#185 id=185 data-nosnippet>185</a>    spider: <span class="kw-2">&amp;</span>SpiderActorSetup,
+<a href=#186 id=186 data-nosnippet>186</a>    jitter: <span class="kw-2">&amp;</span>SpiderJitter,
+<a href=#187 id=187 data-nosnippet>187</a>    melee_range: f32,
+<a href=#188 id=188 data-nosnippet>188</a>) {
+<a href=#189 id=189 data-nosnippet>189</a>    <span class="kw">let </span><span class="kw-2">mut </span>entity = commands.entity(entity);
+<a href=#190 id=190 data-nosnippet>190</a>    entity.insert((
+<a href=#191 id=191 data-nosnippet>191</a>        spider.role,
+<a href=#192 id=192 data-nosnippet>192</a>        spider.tier,
+<a href=#193 id=193 data-nosnippet>193</a>        spider.biome,
+<a href=#194 id=194 data-nosnippet>194</a>        DistanceJitter { melee: jitter.melee_scale(melee_range), vision: jitter.vision_scale },
+<a href=#195 id=195 data-nosnippet>195</a>        PatrolTimeScale(jitter.patrol_scale),
+<a href=#196 id=196 data-nosnippet>196</a>    ));
+<a href=#197 id=197 data-nosnippet>197</a>    <span class="kw">if </span>spider.large_freeze {
+<a href=#198 id=198 data-nosnippet>198</a>        entity.insert(LargeFreezeTarget);
+<a href=#199 id=199 data-nosnippet>199</a>    }
+<a href=#200 id=200 data-nosnippet>200</a>}
+<a href=#201 id=201 data-nosnippet>201</a>
+<a href=#202 id=202 data-nosnippet>202</a><span class="doccomment">/// The body sprite and the effects sprite. A split Void shows its face on the effects sprite, in
+<a href=#203 id=203 data-nosnippet>203</a>/// front of its ghosting body.
+<a href=#204 id=204 data-nosnippet>204</a></span><span class="kw">fn </span>insert_graphics(
+<a href=#205 id=205 data-nosnippet>205</a>    commands: <span class="kw-2">&amp;mut </span>Commands,
+<a href=#206 id=206 data-nosnippet>206</a>    entity: Entity,
+<a href=#207 id=207 data-nosnippet>207</a>    (gfx, effects_gfx): (Entity, Entity),
+<a href=#208 id=208 data-nosnippet>208</a>    transform: Transform,
+<a href=#209 id=209 data-nosnippet>209</a>    actor: <span class="kw-2">&amp;</span>ResolvedActor,
+<a href=#210 id=210 data-nosnippet>210</a>) {
+<a href=#211 id=211 data-nosnippet>211</a>    <span class="kw">let </span>(archetype, body) = (<span class="kw-2">&amp;</span>actor.archetype, <span class="kw-2">&amp;</span>actor.body);
+<a href=#212 id=212 data-nosnippet>212</a>    <span class="kw">let </span>clip = first_clip(archetype, <span class="kw-2">&amp;</span>body.animation_keys);
+<a href=#213 id=213 data-nosnippet>213</a>    commands.entity(effects_gfx).insert(StateDespawnMarker);
+<a href=#214 id=214 data-nosnippet>214</a>    <span class="kw">match </span>body.gfx {
+<a href=#215 id=215 data-nosnippet>215</a>        EnemyGfxKind::PixelPerfect =&gt; {
+<a href=#216 id=216 data-nosnippet>216</a>            <span class="kw">let </span>sprite = enemy_sprite(entity, transform, body.gfx_offset, body.pixel_aligned, clip);
+<a href=#217 id=217 data-nosnippet>217</a>            commands.entity(gfx).insert((sprite, pixel_perfect_layers()));
+<a href=#218 id=218 data-nosnippet>218</a>        },
+<a href=#219 id=219 data-nosnippet>219</a>        EnemyGfxKind::World =&gt; {
+<a href=#220 id=220 data-nosnippet>220</a>            <span class="kw">let </span>sprite = enemy_sprite(entity, transform, body.gfx_offset, body.pixel_aligned, clip);
+<a href=#221 id=221 data-nosnippet>221</a>            commands.entity(gfx).insert((sprite, RenderLayers::layer(<span class="number">0</span>)));
+<a href=#222 id=222 data-nosnippet>222</a>        },
+<a href=#223 id=223 data-nosnippet>223</a>        EnemyGfxKind::VoidSplit =&gt; {
+<a href=#224 id=224 data-nosnippet>224</a>            <span class="kw">let </span>ghosting = GhostingSource {
+<a href=#225 id=225 data-nosnippet>225</a>                spawn_interval_ticks: VOID_GHOST_INTERVAL_TICKS,
+<a href=#226 id=226 data-nosnippet>226</a>                ghost_lifetime_ticks: VOID_GHOST_LIFETIME_TICKS,
+<a href=#227 id=227 data-nosnippet>227</a>                initial_alpha: <span class="number">1.0</span>,
+<a href=#228 id=228 data-nosnippet>228</a>                fade_curve: FadeCurve::Constant,
+<a href=#229 id=229 data-nosnippet>229</a>                color_mode: GhostColorMode::Original,
+<a href=#230 id=230 data-nosnippet>230</a>                scale_over_time: ScaleCurve::Axes { x: VOID_GHOST_MIN_SCALE, y: VOID_GHOST_MIN_SCALE },
+<a href=#231 id=231 data-nosnippet>231</a>                movement: GhostMovement::Static,
+<a href=#232 id=232 data-nosnippet>232</a>                render_layers: <span class="prelude-val">Some</span>(pixel_perfect_layers()),
+<a href=#233 id=233 data-nosnippet>233</a>                ..default()
+<a href=#234 id=234 data-nosnippet>234</a>            };
+<a href=#235 id=235 data-nosnippet>235</a>            <span class="kw">let </span>face = Vec3::new(<span class="number">0.0</span>, <span class="number">0.0</span>, VOID_FACE_Z_OFFSET);
+<a href=#236 id=236 data-nosnippet>236</a>            <span class="kw">let </span>face_transform = Transform::from_translation(transform.translation + face);
+<a href=#237 id=237 data-nosnippet>237</a>            <span class="kw">let </span>face_sprite = enemy_sprite(entity, face_transform, face, <span class="bool-val">true</span>, first_clip(archetype, <span class="kw-2">&amp;</span>[<span class="string">"Face"</span>]));
+<a href=#238 id=238 data-nosnippet>238</a>            commands.entity(entity).insert(OrientToVelocity);
+<a href=#239 id=239 data-nosnippet>239</a>            commands.entity(gfx).insert((enemy_sprite(entity, transform, Vec3::ZERO, <span class="bool-val">true</span>, clip), ghosting, pixel_perfect_layers()));
+<a href=#240 id=240 data-nosnippet>240</a>            commands.entity(effects_gfx).insert((face_sprite, OrientToVelocity, pixel_perfect_layers()));
+<a href=#241 id=241 data-nosnippet>241</a>        },
+<a href=#242 id=242 data-nosnippet>242</a>    }
+<a href=#243 id=243 data-nosnippet>243</a>}
+<a href=#244 id=244 data-nosnippet>244</a>
+<a href=#245 id=245 data-nosnippet>245</a><span class="doccomment">/// A sprite that follows the enemy's body.
+<a href=#246 id=246 data-nosnippet>246</a></span><span class="kw">fn </span>enemy_sprite(
+<a href=#247 id=247 data-nosnippet>247</a>    gent: Entity,
+<a href=#248 id=248 data-nosnippet>248</a>    transform: Transform,
+<a href=#249 id=249 data-nosnippet>249</a>    offset: Vec3,
+<a href=#250 id=250 data-nosnippet>250</a>    pixel_aligned: bool,
+<a href=#251 id=251 data-nosnippet>251</a>    player: ScriptPlayer&lt;SpriteAnimation&gt;,
+<a href=#252 id=252 data-nosnippet>252</a>) -&gt; <span class="kw">impl </span>Bundle {
+<a href=#253 id=253 data-nosnippet>253</a>    (
+<a href=#254 id=254 data-nosnippet>254</a>        EnemyGfx,
+<a href=#255 id=255 data-nosnippet>255</a>        TransformGfxFromGent { pixel_aligned, gent, offset: <span class="prelude-val">Some</span>(offset) },
+<a href=#256 id=256 data-nosnippet>256</a>        Sprite { texture_atlas: <span class="prelude-val">Some</span>(TextureAtlas::default()), ..default() },
+<a href=#257 id=257 data-nosnippet>257</a>        transform,
+<a href=#258 id=258 data-nosnippet>258</a>        GlobalTransform::default(),
+<a href=#259 id=259 data-nosnippet>259</a>        Visibility::Visible,
+<a href=#260 id=260 data-nosnippet>260</a>        InheritedVisibility::VISIBLE,
+<a href=#261 id=261 data-nosnippet>261</a>        ViewVisibility::default(),
+<a href=#262 id=262 data-nosnippet>262</a>        SpriteAnimationBundle { player },
+<a href=#263 id=263 data-nosnippet>263</a>        StateDespawnMarker,
+<a href=#264 id=264 data-nosnippet>264</a>    )
+<a href=#265 id=265 data-nosnippet>265</a>}
+<a href=#266 id=266 data-nosnippet>266</a>
+<a href=#267 id=267 data-nosnippet>267</a><span class="doccomment">/// A playback of the first of `slots` the archetype binds.
+<a href=#268 id=268 data-nosnippet>268</a></span><span class="kw">fn </span>first_clip(archetype: <span class="kw-2">&amp;</span>EnemyArchetype, slots: <span class="kw-2">&amp;</span>[<span class="kw">impl </span>AsRef&lt;str&gt;]) -&gt; ScriptPlayer&lt;SpriteAnimation&gt; {
+<a href=#269 id=269 data-nosnippet>269</a>    <span class="kw">let </span><span class="kw-2">mut </span>player = ScriptPlayer::default();
+<a href=#270 id=270 data-nosnippet>270</a>    <span class="kw">if let </span><span class="prelude-val">Some</span>(key) = slots.iter().find_map(|slot| archetype.anim.get(slot.as_ref())) {
+<a href=#271 id=271 data-nosnippet>271</a>        player.play_key(key);
+<a href=#272 id=272 data-nosnippet>272</a>    }
+<a href=#273 id=273 data-nosnippet>273</a>    player
+<a href=#274 id=274 data-nosnippet>274</a>}
+<a href=#275 id=275 data-nosnippet>275</a>
+<a href=#276 id=276 data-nosnippet>276</a><span class="doccomment">/// Per-spider variation of patrol pace, vision, reaction, and (for small spiders) melee reach,
+<a href=#277 id=277 data-nosnippet>277</a>/// seeded by the entity and the level.
+<a href=#278 id=278 data-nosnippet>278</a></span><span class="kw">struct </span>SpiderJitter {
+<a href=#279 id=279 data-nosnippet>279</a>    patrol_scale: f32,
+<a href=#280 id=280 data-nosnippet>280</a>    vision_scale: f32,
+<a href=#281 id=281 data-nosnippet>281</a>    reaction_scale: f32,
+<a href=#282 id=282 data-nosnippet>282</a>    melee_offset: f32,
+<a href=#283 id=283 data-nosnippet>283</a>}
+<a href=#284 id=284 data-nosnippet>284</a>
+<a href=#285 id=285 data-nosnippet>285</a><span class="kw">impl </span>SpiderJitter {
+<a href=#286 id=286 data-nosnippet>286</a>    <span class="kw">fn </span>new(entity: Entity, level_seed: u32, small: bool) -&gt; <span class="self">Self </span>{
+<a href=#287 id=287 data-nosnippet>287</a>        <span class="kw">let </span>bits = entity.to_bits();
+<a href=#288 id=288 data-nosnippet>288</a>        <span class="kw">let </span><span class="kw-2">mut </span>state = ((bits ^ (bits &gt;&gt; <span class="number">32</span>)) <span class="kw">as </span>u32) ^ level_seed ^ <span class="number">0x9E37_79B9</span>;
+<a href=#289 id=289 data-nosnippet>289</a>        <span class="kw">let </span><span class="kw-2">mut </span>next = <span class="kw">move </span>|| {
+<a href=#290 id=290 data-nosnippet>290</a>            state = state.wrapping_mul(<span class="number">1_664_525</span>).wrapping_add(<span class="number">1_013_904_223</span>);
+<a href=#291 id=291 data-nosnippet>291</a>            state
+<a href=#292 id=292 data-nosnippet>292</a>        };
+<a href=#293 id=293 data-nosnippet>293</a>        <span class="comment">// A magnitude from `least` to `least + spread`, with a random sign.
+<a href=#294 id=294 data-nosnippet>294</a>        </span><span class="kw">let </span><span class="kw-2">mut </span>signed = |least: f32, spread: f32| {
+<a href=#295 id=295 data-nosnippet>295</a>            <span class="kw">let </span>magnitude = least + next() <span class="kw">as </span>f32 / u32::MAX <span class="kw">as </span>f32 * spread;
+<a href=#296 id=296 data-nosnippet>296</a>            <span class="kw">let </span>sign = (next() &amp; <span class="number">1</span>) <span class="kw">as </span>f32 * <span class="number">2.0 </span>- <span class="number">1.0</span>;
+<a href=#297 id=297 data-nosnippet>297</a>            sign * magnitude
+<a href=#298 id=298 data-nosnippet>298</a>        };
+<a href=#299 id=299 data-nosnippet>299</a>        <span class="self">Self </span>{
+<a href=#300 id=300 data-nosnippet>300</a>            patrol_scale: <span class="number">1.0 </span>+ signed(<span class="number">0.05</span>, <span class="number">0.05</span>),
+<a href=#301 id=301 data-nosnippet>301</a>            vision_scale: <span class="number">1.0 </span>+ signed(<span class="number">0.05</span>, <span class="number">0.05</span>),
+<a href=#302 id=302 data-nosnippet>302</a>            reaction_scale: <span class="number">1.0 </span>+ signed(<span class="number">0.05</span>, <span class="number">0.05</span>),
+<a href=#303 id=303 data-nosnippet>303</a>            melee_offset: <span class="kw">if </span>small { signed(<span class="number">0.0</span>, <span class="number">2.0</span>) } <span class="kw">else </span>{ <span class="number">0.0 </span>},
+<a href=#304 id=304 data-nosnippet>304</a>        }
+<a href=#305 id=305 data-nosnippet>305</a>    }
+<a href=#306 id=306 data-nosnippet>306</a>
+<a href=#307 id=307 data-nosnippet>307</a>    <span class="kw">fn </span>melee_range(<span class="kw-2">&amp;</span><span class="self">self</span>, base: f32) -&gt; f32 {
+<a href=#308 id=308 data-nosnippet>308</a>        <span class="kw">if </span>base &lt;= <span class="number">0.0 </span>{ base } <span class="kw">else </span>{ (base + <span class="self">self</span>.melee_offset).max(<span class="number">1.0</span>) }
+<a href=#309 id=309 data-nosnippet>309</a>    }
+<a href=#310 id=310 data-nosnippet>310</a>
+<a href=#311 id=311 data-nosnippet>311</a>    <span class="kw">fn </span>melee_scale(<span class="kw-2">&amp;</span><span class="self">self</span>, base: f32) -&gt; f32 {
+<a href=#312 id=312 data-nosnippet>312</a>        <span class="kw">if </span>base &lt;= <span class="number">0.0 </span>{ <span class="number">1.0 </span>} <span class="kw">else </span>{ <span class="self">self</span>.melee_range(base) / base }
+<a href=#313 id=313 data-nosnippet>313</a>    }
+<a href=#314 id=314 data-nosnippet>314</a>
+<a href=#315 id=315 data-nosnippet>315</a>    <span class="kw">fn </span>vision_range(<span class="kw-2">&amp;</span><span class="self">self</span>, base: f32) -&gt; f32 {
+<a href=#316 id=316 data-nosnippet>316</a>        <span class="kw">if </span>base &lt;= <span class="number">0.0 </span>{ base } <span class="kw">else </span>{ base * <span class="self">self</span>.vision_scale }
+<a href=#317 id=317 data-nosnippet>317</a>    }
+<a href=#318 id=318 data-nosnippet>318</a>
+<a href=#319 id=319 data-nosnippet>319</a>    <span class="kw">fn </span>reaction_time(<span class="kw-2">&amp;</span><span class="self">self</span>, base: u8) -&gt; u8 {
+<a href=#320 id=320 data-nosnippet>320</a>        <span class="kw">if </span>base == <span class="number">0 </span>{ <span class="number">0 </span>} <span class="kw">else </span>{ ((base <span class="kw">as </span>f32 * <span class="self">self</span>.reaction_scale).round() <span class="kw">as </span>i32).clamp(<span class="number">1</span>, <span class="number">32</span>) <span class="kw">as </span>u8 }
+<a href=#321 id=321 data-nosnippet>321</a>    }
+<a href=#322 id=322 data-nosnippet>322</a>}
+</code></pre></div></section></main></body></html>

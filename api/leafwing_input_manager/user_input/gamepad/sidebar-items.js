@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["find_gamepad"],"struct":["GamepadButtonInput","GamepadControlAxis","GamepadControlDirection","GamepadStick","SpecificGamepadAxis","SpecificGamepadButton"]};

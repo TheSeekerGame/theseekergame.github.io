@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["GATHERING_ANIMATION_KEY","GATHERING_TICKS"],"fn":["gathering_enter_system","gathering_update_system"],"struct":["GatheringStatePlugin"]};

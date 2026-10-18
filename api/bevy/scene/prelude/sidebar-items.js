@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["SceneFilter"],"struct":["DynamicScene","DynamicSceneBuilder","DynamicSceneBundle","Scene","SceneBundle","SceneSpawner"]};
+window.SIDEBAR_ITEMS = {"derive":["SceneComponent"],"fn":["on","template_value"],"macro":["bsn","bsn_list"],"struct":["ScenePatchInstance"],"trait":["CommandsSceneExt","EntityCommandsSceneExt","EntityWorldMutSceneExt","PatchFromTemplate","PatchTemplate","Scene","SceneComponent","SceneList","SpawnListSystem","SpawnSystem","WorldSceneExt"]};

@@ -1,0 +1,9 @@
+(function() {
+    const implementors = Object.fromEntries([["bevy",[]],["bevy_color",[["impl <a class=\"trait\" href=\"bevy_math/common_traits/trait.StableInterpolate.html\" title=\"trait bevy_math::common_traits::StableInterpolate\">StableInterpolate</a> for <a class=\"struct\" href=\"bevy_color/struct.Laba.html\" title=\"struct bevy_color::Laba\">Laba</a>",0],["impl <a class=\"trait\" href=\"bevy_math/common_traits/trait.StableInterpolate.html\" title=\"trait bevy_math::common_traits::StableInterpolate\">StableInterpolate</a> for <a class=\"struct\" href=\"bevy_color/struct.LinearRgba.html\" title=\"struct bevy_color::LinearRgba\">LinearRgba</a>",0],["impl <a class=\"trait\" href=\"bevy_math/common_traits/trait.StableInterpolate.html\" title=\"trait bevy_math::common_traits::StableInterpolate\">StableInterpolate</a> for <a class=\"struct\" href=\"bevy_color/struct.Oklaba.html\" title=\"struct bevy_color::Oklaba\">Oklaba</a>",0],["impl <a class=\"trait\" href=\"bevy_math/common_traits/trait.StableInterpolate.html\" title=\"trait bevy_math::common_traits::StableInterpolate\">StableInterpolate</a> for <a class=\"struct\" href=\"bevy_color/struct.Srgba.html\" title=\"struct bevy_color::Srgba\">Srgba</a>",0],["impl <a class=\"trait\" href=\"bevy_math/common_traits/trait.StableInterpolate.html\" title=\"trait bevy_math::common_traits::StableInterpolate\">StableInterpolate</a> for <a class=\"struct\" href=\"bevy_color/struct.Xyza.html\" title=\"struct bevy_color::Xyza\">Xyza</a>",0]]],["bevy_math",[]],["theseeker_engine",[]],["theseeker_game",[]]]);
+    if (window.register_implementors) {
+        window.register_implementors(implementors);
+    } else {
+        window.pending_implementors = implementors;
+    }
+})()
+//{"start":59,"fragment_lengths":[11,1434,17,24,22]}

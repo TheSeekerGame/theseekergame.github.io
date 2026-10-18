@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["Axis","ProbeDirection"],"fn":["distance_to_interval","distance_to_rects","intervals_overlap","nearest_axis_stop","resolve_rects_axis"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["FAR"],"fn":["copy_column","fill_features","intersection","transform","write_column"],"struct":["DistanceField"]};

@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"derive":["GizmoConfigGroup"],"struct":["DefaultGizmoConfigGroup","GizmoConfig","GizmoConfigStore"],"trait":["GizmoConfigGroup"]};

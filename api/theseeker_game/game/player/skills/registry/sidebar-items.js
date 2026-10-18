@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["SLOT_INPUTS"],"fn":["activate_instant_slot","activate_skill"],"struct":["SkillActivationContext","SlotInput"]};

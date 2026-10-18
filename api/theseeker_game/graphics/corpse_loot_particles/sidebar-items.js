@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["PARTICLE_LIFETIME_SECONDS","PARTICLE_RATE","PARTICLE_SIZE_WORLD_UNITS","PARTICLE_SPAWN_RADIUS","PARTICLE_SPEED"],"fn":["setup_corpse_loot_particles","spawn_corpse_loot_particle_emitter"],"struct":["CorpseLootParticleEffectHandle","CorpseLootParticlesPlugin"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["gameplay_click","open_timing_log","player_presentation_override","probe_controls","spawn_probe","update_probe","write_timing_log"],"struct":["Probe","ProbeText","TimingLog","TimingProbePlugin"],"type":["ProbeDisplayKey"]};

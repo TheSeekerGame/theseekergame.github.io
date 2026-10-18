@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["RenderBand"],"fn":["align_sprite_proxies","align_world_meshes","snap_world_position_to_physical_pixels","snap_world_residual_to_physical_pixels","update_pixel_view"],"struct":["PixelAlignedWorldMesh","PixelView","PixelViewMapping","PixelViewPlugin"]};

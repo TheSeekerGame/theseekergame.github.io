@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["CHILLED_COLOR"],"fn":["chilled_effect_system","chilled_exit_restoration_system","restore_chilled_sprite"],"struct":["ChilledEffect"]};

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["AssetsPlugin","DialogAssets","MainMenuAssets","UiAssets"]};
+window.SIDEBAR_ITEMS = {"constant":["GENERATED_GAMEPLAY_ASSET_DIRS"],"fn":["animation_asset_keys","path_string","register_animation_asset","register_animation_assets","register_animation_assets_in","register_gameplay_assets","register_generated_gameplay_assets"],"struct":["AssetsPlugin","GameUiAssets"]};

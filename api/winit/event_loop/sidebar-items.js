@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["ControlFlow","DeviceEvents"],"struct":["AsyncRequestSerial","EventLoop","EventLoopBuilder","EventLoopClosed","EventLoopProxy","EventLoopWindowTarget"]};
+window.SIDEBAR_ITEMS = {"enum":["ControlFlow","DeviceEvents"],"struct":["ActiveEventLoop","AsyncRequestSerial","EventLoop","EventLoopBuilder","EventLoopClosed","EventLoopProxy","OwnedDisplayHandle"]};

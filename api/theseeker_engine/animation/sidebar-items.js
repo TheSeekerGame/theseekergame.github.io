@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["SpriteAnimationBundle","SpriteAnimationCarryover","SpriteAnimationPlugin","SpriteAnimationTracker"]};
+window.SIDEBAR_ITEMS = {"enum":["AnimationSet","PlaybackEventKind"],"fn":["cue_id"],"struct":["CueId","PlaybackEvent","PlaybackId","PlaybackState","SpriteAnimationBundle","SpriteAnimationCarryover","SpriteAnimationPlugin","SpriteAnimationTracker"]};

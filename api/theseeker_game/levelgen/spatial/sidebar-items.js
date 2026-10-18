@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["CELL_SIZE"],"fn":["cell","clear_row"],"struct":["PlacementIndex"]};

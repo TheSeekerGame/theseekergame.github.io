@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["LIGHTMAP_SCALE","MASK_CHUNK_EDGE","SOURCE_LIGHT_FALLOFF_EXPONENT","SOURCE_LIGHT_RADIUS_WORLD"],"fn":["bake","bake_lightmap","light_by_distance","lightmap_size","reset_bake"],"struct":["DarknessBakeMaskAtlas","DarknessBakeMaskLayer","MaskChunk"]};

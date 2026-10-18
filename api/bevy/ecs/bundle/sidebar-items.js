@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"derive":["Bundle"],"struct":["BundleId","BundleInfo","Bundles"],"trait":["Bundle","DynamicBundle"]};
+window.SIDEBAR_ITEMS = {"derive":["Bundle"],"enum":["InsertMode"],"struct":["BundleId","BundleInfo","BundleScratch","BundleWriter","Bundles"],"trait":["Bundle","BundleFromComponents","DynamicBundle","NoBundleEffect"]};

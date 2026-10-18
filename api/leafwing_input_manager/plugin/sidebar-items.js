@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["InputManagerSystem"],"struct":["InputManagerPlugin"]};
+window.SIDEBAR_ITEMS = {"enum":["InputManagerSystem"],"struct":["CentralInputStorePlugin","InputManagerPlugin","TickActionStateSystem"]};

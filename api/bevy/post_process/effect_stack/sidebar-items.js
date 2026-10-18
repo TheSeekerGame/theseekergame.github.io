@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["ChromaticAberration","ChromaticAberrationUniform","EffectStackPlugin","LensDistortion","LensDistortionUniform","PostProcessingPipeline","PostProcessingPipelineId","PostProcessingPipelineKey","PostProcessingUniformBufferOffsets","PostProcessingUniformBuffers","Vignette","VignetteUniform"]};

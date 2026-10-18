@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["ActionData","ActionState"]};
+window.SIDEBAR_ITEMS = {"enum":["ActionKindData"],"struct":["ActionData","ActionState","AxisData","ButtonData","DualAxisData","TripleAxisData"]};

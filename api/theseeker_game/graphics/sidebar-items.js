@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["ability_cooldown","dmg_numbers","dof","enemy_hp","fog","particles_util","player_hp","post_processing"],"struct":["GraphicsFxPlugin"]};
+window.SIDEBAR_ITEMS = {"fn":["assemble_render_passes"],"mod":["background_blur","corpse_loot_particles","dmg_numbers","enemy_hp","fullscreen","particle_presentation","particles_util","pixel_perfect","pixel_view","player_hp","post_processing","progression_particles","projectile_particles","quad_mesh","ripple","snow"],"struct":["GraphicsFxPlugin"]};

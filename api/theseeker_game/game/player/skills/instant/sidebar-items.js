@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["ActivationOrigin","InstantResult"],"fn":["mine_direction"],"struct":["InstantUser","InstantWorld"]};

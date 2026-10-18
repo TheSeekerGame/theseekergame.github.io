@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["ElementClass"],"fn":["allocate_and_free_meshes"],"struct":["ElementLayout","MeshAllocationKey","MeshAllocator","MeshAllocatorPlugin","MeshAllocatorSettings","MeshSlabItem","MeshSlabs"],"type":["MeshBufferSlice","MeshSlabId"]};

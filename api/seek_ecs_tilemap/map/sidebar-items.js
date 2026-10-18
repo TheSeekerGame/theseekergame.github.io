@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"enum":["TilemapType","TilesetTexture"],"struct":["TilemapBundle","TilemapChunks","TilemapGridSize","TilemapId","TilemapSize","TilemapSpacing","TilemapTextureSize","TilemapTileSize"]};

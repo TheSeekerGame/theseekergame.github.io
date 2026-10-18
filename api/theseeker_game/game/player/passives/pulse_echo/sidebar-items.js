@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["DEFAULT_DAMAGE","PRISM_SPREAD_DEGREES","RANGE","SPAWN_OFFSET","SPEED"],"fn":["despawn_spent_echoes","release_swing_echoes"],"struct":["EchoRange","PulseEcho","PulseEchoPlugin","SwingEcho"]};

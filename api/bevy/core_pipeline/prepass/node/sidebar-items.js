@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["PrepassNode"]};
+window.SIDEBAR_ITEMS = {"fn":["early_prepass","late_prepass"]};

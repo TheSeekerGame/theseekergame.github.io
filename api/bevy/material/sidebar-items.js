@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["AlphaMode","OpaqueRendererMethod","RenderPhaseType"],"mod":["bind_group_layout_entries","descriptor","key","labels","prelude","specialize"],"struct":["MaterialProperties"]};

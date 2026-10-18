@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["MonitorHandle","VideoMode"]};
+window.SIDEBAR_ITEMS = {"struct":["MonitorHandle","VideoModeHandle"],"type":["VideoMode"]};

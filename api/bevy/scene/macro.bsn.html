@@ -1,0 +1,121 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Creates a `Scene` using BSN (Bevy Scene Notation) syntax. These docs primarily show syntax."><title>bsn in bevy::scene - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-0c87338a.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bevy" data-themes="" data-resource-suffix="" data-rustdoc-version="1.99.1 (58cf8f9c3 2026-10-13)" data-channel="1.99.1" data-search-js="search-cf4fc35e.js" data-stringdex-js="stringdex-b5109af9.js" data-settings-js="settings-170eb4bf.js" ><script src="../../static.files/storage-41dd4d93.js"></script><script defer src="sidebar-items.js"></script><script defer src="../../static.files/main-417ebf0a.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-9f56287d.css"></noscript><link rel="icon" href="https://bevy.org/assets/icon.png"></head><body class="rustdoc macro"><a class="skip-main-content" href="#main-content">Skip to main content</a><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><rustdoc-topbar><h2><a href="#">bsn</a></h2></rustdoc-topbar><nav class="sidebar"><div class="sidebar-crate"><a class="logo-container" href="../../bevy/index.html"><img src="https://bevy.org/assets/icon.png" alt="logo"></a><h2><a href="../../bevy/index.html">bevy</a><span class="version">0.19.1</span></h2></div><div class="sidebar-elems"><section id="rustdoc-toc"><h2 class="location"><a href="#">bsn</a></h2><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#syntax-reference" title="Syntax Reference">Syntax Reference</a><ul><li><a href="#scene-entries" title="Scene entries">Scene entries</a></li><li><a href="#scene-lists" title="Scene Lists">Scene Lists</a></li><li><a href="#values" title="Values">Values</a></li><li><a href="#other-rust-syntax" title="Other Rust syntax">Other Rust syntax</a></li><li><a href="#syntax-example" title="Syntax example">Syntax example</a></li></ul></li></ul></section><div id="rustdoc-modnav"><h2><a href="index.html">In bevy::<wbr>scene</a></h2></div></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><div class="width-limiter"><section id="main-content" class="content" tabindex="-1"><div class="main-heading"><div class="rustdoc-breadcrumbs"><a href="../index.html">bevy</a>::<wbr><a href="index.html">scene</a></div><h1>Macro <span class="macro">bsn</span>&nbsp;<button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../../src/bevy_scene_macros/lib.rs.html#176">Source</a> </span></div><pre class="rust item-decl"><code>bsn!() { <span class="comment">/* proc-macro */</span> }</code></pre><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Creates a <a href="https://docs.rs/bevy/latest/bevy/prelude/trait.Scene.html"><code>Scene</code></a> using BSN (Bevy Scene Notation) syntax. These docs primarily show syntax.</p>
+<p>See <a href="https://docs.rs/bevy/latest/bevy/scene/index.html"><code>bevy_scene</code></a> module-level docs for in-depth details about usage and behavior.</p>
+<h3 id="syntax-reference"><a class="doc-anchor" href="#syntax-reference">§</a>Syntax Reference</h3>
+<p>The syntax consists of scene entries which are listed below, which all act on the scene in some way.
+Often, this is by inserting/patching a component or its values or including other scenes.
+Scene entries can have prefix characters which specify/disambiguate the following entry.</p>
+
+<div class="example-wrap ignore"><a href="#" class="tooltip" title="This example is not tested">ⓘ</a><pre class="rust rust-example-rendered"><code><span class="macro">bsn!</span> {
+    &lt;scene entry&gt;
+    :&lt;cached scene include&gt;
+    #&lt;name&gt;
+    @&lt;SceneComponent&gt;
+    ~&lt;custom Template&gt;
+}</code></pre></div><h4 id="scene-entries"><a class="doc-anchor" href="#scene-entries">§</a>Scene entries</h4><div><table><thead><tr><th>Examples</th><th>Explanation</th></tr></thead><tbody>
+<tr><td><code>CompA</code></td><td>A unit or default component. Fields, if any exist, will be default</td></tr>
+<tr><td><code>CompA(val)</code><br><code>CompA(val, val)</code></td><td>Tuple Component with some fields specified. Unspecified fields will be default, see <a href="https://docs.rs/bevy/latest/bevy/scene/index.html#patching">patching</a></td></tr>
+<tr><td><code>CompA { name: val }</code></td><td>Component with some fields specified. Unspecified fields will be default, see <a href="https://docs.rs/bevy/latest/bevy/scene/index.html#patching">patching</a></td></tr>
+<tr><td><code>mymodule::CompA { name: val }</code></td><td>Same as above, but referring to the component by module path</td></tr>
+<tr><td><code>CompA { name }</code></td><td>Component with Rust’s “field assignment shorthand”. Evaluates to <code>CompA { name: name.into() }</code></td></tr>
+<tr><td><code>MyEnum::Variant</code></td><td>Enum Component <code>MyEnum</code> with the <code>Variant</code> variant</td></tr>
+<tr><td><code>template_value(component)</code></td><td>Insert the component value from a variable <code>component</code></td></tr>
+<tr><td><code>template_value(CompA::from_str("foo"))</code></td><td>Insert the component value by immediately calling the constructor</td></tr>
+<tr><td>`template(</td><td>context</td></tr>
+<tr><td><code>~MyType</code><br><code>~MyType {name: var}</code></td><td>Type implementing <a href="https://docs.rs/bevy/latest/bevy/ecs/prelude/trait.Template.html"><code>Template</code></a>, the prefix is used to distinguish it from Components which use <a href="https://docs.rs/bevy/latest/bevy/ecs/prelude/trait.FromTemplate.html"><code>FromTemplate</code></a></td></tr>
+<tr><td><strong>Including Scenes</strong></td><td></td></tr>
+<tr><td><code>scene()</code><br><code>scene(val)</code></td><td>Include the result of a <code>impl </code><a href="https://docs.rs/bevy/latest/bevy/prelude/trait.Scene.html"><code>Scene</code></a> function</td></tr>
+<tr><td><code>{ expr }</code></td><td>Include the result of <code>expr</code>, which should be a <a href="https://docs.rs/bevy/latest/bevy/prelude/trait.Scene.html"><code>Scene</code></a></td></tr>
+<tr><td><code>@MySceneComp</code></td><td>Include a <a href="https://docs.rs/bevy/latest/bevy/prelude/trait.SceneComponent.html"><code>SceneComponent</code></a>. Fields, if any exist, will be default</td></tr>
+<tr><td><code>@MySceneComp { @prop: val }</code></td><td>Include a <a href="https://docs.rs/bevy/latest/bevy/prelude/trait.SceneComponent.html"><code>SceneComponent</code></a> with a <code>prop</code> field, passed to this components scene function</td></tr>
+<tr><td><code>@MySceneComp { name: val }</code></td><td>Include a <a href="https://docs.rs/bevy/latest/bevy/prelude/trait.SceneComponent.html"><code>SceneComponent</code></a> with a normal field, works the same as it does for normal components</td></tr>
+<tr><td><code>@MySceneComp { @prop: val1, name: val2 }</code></td><td>Include a <a href="https://docs.rs/bevy/latest/bevy/prelude/trait.SceneComponent.html"><code>SceneComponent</code></a> with both a <code>prop</code> and a field</td></tr>
+<tr><td><code>:"scene.bsn"</code></td><td><div class="warning">Asset format not yet implemented!</div> Include a cached scene asset file</td></tr>
+<tr><td><code>:scene()</code><br><code>:@MySceneComp</code></td><td><div class="warning">Caching for scene includes not yet implemented!</div> Include a cached scene function</td></tr>
+<tr><td><strong>Named entity references</strong></td><td></td></tr>
+<tr><td><code>#MyName</code></td><td>Becomes <code>Name("MyName")</code> when used as a <code>part</code> of a scene</td></tr>
+<tr><td><code>CompA(#MyName)</code><br><code>scene(#MyName)</code></td><td>Referring to the entity which was named <code>MyName</code> in this scope, results in an <a href="https://docs.rs/bevy/latest/bevy/ecs/template/enum.EntityTemplate.html"><code>EntityTemplate</code></a> being passed</td></tr>
+<tr><td><code>Name("Foo")</code></td><td>Manually sets the Name component, can be put after a <code>#MyName</code> to use a custom name while allowing references</td></tr>
+<tr><td><strong>Observers</strong></td><td></td></tr>
+<tr><td><code>on(|ev: On&lt;Ev&gt;| { … })</code></td><td>Attaches an entity <a href="https://docs.rs/bevy/latest/bevy/prelude/struct.Observer.html"><code>observer</code></a> for the <a href="https://docs.rs/bevy/latest/bevy/ecs/event/trait.EntityEvent.html"><code>EntityEvent</code></a> <code>Ev</code> to this entity. In this example, using a closure</td></tr>
+<tr><td><code>on(my_observer)</code></td><td>Attaches an entity <a href="https://docs.rs/bevy/latest/bevy/prelude/struct.Observer.html"><code>observer</code></a> for the <a href="https://docs.rs/bevy/latest/bevy/ecs/event/trait.EntityEvent.html"><code>EntityEvent</code></a> <code>Ev</code> to this entity. In this example, using a function</td></tr>
+<tr><td><strong>Relationships</strong></td><td></td></tr>
+<tr><td><code>Children []</code></td><td>Spawns each entry as a child of this entity, see <strong>Scene Lists</strong> below for details</td></tr>
+<tr><td><code>ChildOf(entity)</code></td><td>Makes <strong>this</strong> entity a child of <code>entity</code>, accepts an <a href="https://docs.rs/bevy/latest/bevy/ecs/entity/struct.Entity.html"><code>Entity</code></a> or a <code>#Name</code> reference (<a href="https://docs.rs/bevy/latest/bevy/ecs/template/enum.EntityTemplate.html"><code>EntityTemplate</code></a>)</td></tr>
+<tr><td><code>MyRel []</code></td><td>Like <a href="https://docs.rs/bevy/latest/bevy/ecs/hierarchy/struct.Children.html"><code>Children</code></a>, but uses any <a href="https://docs.rs/bevy/latest/bevy/ecs/prelude/trait.RelationshipTarget.html"><code>RelationshipTarget</code></a> component</td></tr>
+</tbody></table>
+</div><h4 id="scene-lists"><a class="doc-anchor" href="#scene-lists">§</a>Scene Lists</h4>
+<p>Scene list syntax appears in Relationships and the <a href="../prelude/macro.bsn_list.html" title="macro bevy::prelude::bsn_list"><code>bsn_list!</code></a> macro, surrounded by <code>[ ]</code>.</p>
+<p>Unlike parts of a scene, which are whitespace-separated, the scenes in a scene list are comma-separated.
+Each comma-separated single-entity scene uses the same syntax as a single <a href="../prelude/macro.bsn.html" title="macro bevy::prelude::bsn"><code>bsn!</code></a> macro call.</p>
+<p>Note: The examples below omit the relationship or macro call, <code>Children [&lt;scene list&gt;]</code> or <code>bsn_list![&lt;scene list&gt;]</code></p>
+<div><table><thead><tr><th>Example</th><th>Meaning</th></tr></thead><tbody>
+<tr><td><code>[ #Child1 CompA, #Child2 ]</code></td><td>Spawns 2 children, one with <code>(Name("Child1"), CompA::default())</code> and the other with <code>Name("Child2")</code></td></tr>
+<tr><td><code>[ (#Child1 CompA), (#Child2) ]</code></td><td>Same as above, with explicit parentheses</td></tr>
+<tr><td><code>[ #First, { expr }, #Last ]</code></td><td>Spawns an entity with name <code>First</code>, then every entity from the <a href="https://docs.rs/bevy/latest/bevy/prelude/trait.SceneList.html"><code>SceneList</code></a> returned by expr, then one named <code>Last</code></td></tr>
+<tr><td><code>[ #First, ({ expr }), #Last ]</code></td><td>Same as above, but the <code>expr</code> should result in a <a href="https://docs.rs/bevy/latest/bevy/prelude/trait.Scene.html"><code>Scene</code></a> and will only spawn one entity using it</td></tr>
+</tbody></table>
+</div><h4 id="values"><a class="doc-anchor" href="#values">§</a>Values</h4>
+<p>Values in BSN (as in <code>val</code>,<code>val1</code> etc used above) are generally any literal Rust values, plus a few bsn-specific quirks.</p>
+<div><table><thead><tr><th>Example</th><th>Meaning</th><th>Explanation</th></tr></thead><tbody>
+<tr><td><code>1</code></td><td>Unsigned int</td><td>Positive number, common types: <a href="https://doc.rust-lang.org/1.99.1/std/primitive.usize.html" title="primitive usize"><code>usize</code></a>, <a href="https://doc.rust-lang.org/1.99.1/std/primitive.u8.html" title="primitive u8"><code>u8</code></a>, <a href="https://doc.rust-lang.org/1.99.1/std/primitive.u32.html" title="primitive u32"><code>u32</code></a>, <a href="https://doc.rust-lang.org/1.99.1/std/primitive.u64.html" title="primitive u64"><code>u64</code></a></td></tr>
+<tr><td><code>1</code> or <code>-1</code></td><td>Signed int</td><td>Positive or negative number, common types: <a href="https://doc.rust-lang.org/1.99.1/std/primitive.i32.html" title="primitive i32"><code>i32</code></a>, <a href="https://doc.rust-lang.org/1.99.1/std/primitive.i64.html" title="primitive i64"><code>i64</code></a></td></tr>
+<tr><td><code>1.1</code> or <code>-0.1</code> or <code>1.</code> or <code>-2.</code></td><td>Float</td><td>Floating point number, common types: <a href="https://doc.rust-lang.org/1.99.1/std/primitive.f32.html" title="primitive f32"><code>f32</code></a>, <a href="https://doc.rust-lang.org/1.99.1/std/primitive.f64.html" title="primitive f64"><code>f64</code></a></td></tr>
+<tr><td><code>true</code> or <code>false</code></td><td>Bool</td><td>Boolean, type: <a href="https://doc.rust-lang.org/1.99.1/std/primitive.bool.html" title="primitive bool"><code>bool</code></a></td></tr>
+<tr><td><code>"somename"</code></td><td>String</td><td>Text, types: <a href="https://doc.rust-lang.org/std/string/struct.String.html"><code>String</code></a> or <a href="https://doc.rust-lang.org/1.99.1/std/primitive.str.html" title="primitive str"><code>&amp;'static str</code></a></td></tr>
+<tr><td><code>"mypicture.png"</code></td><td>Asset path</td><td>Asset, when used in a field which expects a <a href="https://docs.rs/bevy/latest/bevy/asset/enum.Handle.html"><code>Handle</code></a> to the matching <a href="https://docs.rs/bevy/latest/bevy/asset/trait.Asset.html"><code>Asset</code></a> type</td></tr>
+<tr><td><code>some_function(1)</code></td><td>Function call</td><td>Calls a function with the provided arguments</td></tr>
+<tr><td><code>GREEN</code></td><td>Constant</td><td>Fixed value, must be in scope</td></tr>
+<tr><td><code>std::f32::consts::PI</code></td><td>Constant</td><td>Fixed value, uses full path so doesn’t need to be in scope</td></tr>
+<tr><td><strong>Expression syntax</strong></td><td></td><td></td></tr>
+<tr><td><code>{ 1 + 2 }</code></td><td>Expression</td><td>Any rust expression works in <code>{}</code>, in this case addition of 2 integers</td></tr>
+<tr><td><code>{ vec![true, false] }</code></td><td>Vector</td><td>An expression returning a <a href="https://doc.rust-lang.org/std/vec/struct.Vec.html"><code>Vec</code></a>, a collection of multiple items of one specific type.</td></tr>
+<tr><td><code>{ bsn!{ Text("foo") Style } }</code></td><td>Scene</td><td>Sometimes, you may need to pass a small <a href="https://docs.rs/bevy/latest/bevy/prelude/trait.Scene.html"><code>Scene</code></a> as a value to something else</td></tr>
+</tbody></table>
+</div><h4 id="other-rust-syntax"><a class="doc-anchor" href="#other-rust-syntax">§</a>Other Rust syntax</h4>
+<p>If you’re new to Rust, you might struggle with some of its syntax when you see it in or around BSN.
+Here are some syntax snippets which haven’t been shown so far:</p>
+<div><table><thead><tr><th>Syntax</th><th>Meaning</th><th>Explanation</th></tr></thead><tbody>
+<tr><td><code>|param| { … }</code></td><td>Closure</td><td>A closure; effectively an unnamed function</td></tr>
+<tr><td><code>Vec&lt;T&gt;</code></td><td>Generic type</td><td>A type with a generic type parameter <code>T</code></td></tr>
+<tr><td><code>//</code></td><td>Comment</td><td>Line comment; all text after <code>//</code> on the same line is ignored</td></tr>
+<tr><td><code>/* */</code></td><td>Block comment</td><td>Standard Rust block comment; all text inside <code>/* */</code> is ignored</td></tr>
+<tr><td><code>bsn! { … }</code></td><td>Macro call</td><td>Calls a macro on the value inside of the braces</td></tr>
+</tbody></table>
+</div><h4 id="syntax-example"><a class="doc-anchor" href="#syntax-example">§</a>Syntax example</h4>
+<p>Example macro showcasing most syntax (complex, most scenes won’t look like this):</p>
+
+<div class="example-wrap ignore"><a href="#" class="tooltip" title="This example is not tested">ⓘ</a><pre class="rust rust-example-rendered"><code><span class="macro">bsn!</span> {
+    some_scene()        <span class="comment">// include a scene function
+    </span>#SomeName           <span class="comment">// entity name, will insert Name("SomeName")
+    </span>ComponentA          <span class="comment">// component without a value will use default
+    </span>ComponentB(<span class="number">0.0</span>)     <span class="comment">// passing a value, other fields will use default
+    </span>Node {
+        height: px(<span class="number">0.1</span>) <span class="comment">// same with named fields, unmentioned ones stay default
+    </span>}
+    on(|evt: On&lt;MyEntityEvent&gt;, <span class="kw-2">mut </span>query: Query&lt;<span class="kw-2">&amp;mut </span>ComponentB&gt;| {  <span class="comment">// add an observer
+        </span><span class="kw">let </span><span class="kw-2">mut </span>b = query.get_mut(evt.entity).unwrap();
+        b.<span class="number">0 </span>+= evt.value;
+    })
+    Children [                   <span class="comment">// spawning multiple related entities using a RelationshipTarget component
+        </span>#Child1 ComponentA       <span class="comment">// whitespace doesn't have to be newlines
+        </span>,                        <span class="comment">// entities are comma-separated
+        </span>(other_scene() #Child3), <span class="comment">// parentheses around a single entity are optional
+        </span>Link(#SomeName),         <span class="comment">// passing a entity reference to a component as `Entity`, component has to implement FromTemplate
+        </span>@MySceneComponent {      <span class="comment">// components which derive SceneComponent have scenes and can be inherited from
+            </span>@some_prop: <span class="number">3</span>,       <span class="comment">// props, look like fields prefixed with @ but end up passed to the components scene as arguments
+            </span>normal_field: <span class="number">5      </span><span class="comment">// while normal fields are the actual fields of the component
+        </span>},
+        Node {
+            width: some_var      <span class="comment">// you can directly use variables without {}
+        </span>}
+        ComponentB({some_var + <span class="number">3.</span>})  <span class="comment">// values can be expressions, when wrapped in {}
+        </span>@Container {
+            @items: {
+                <span class="macro">bsn_list!</span>[                <span class="comment">// sometimes you may need to nest macro calls
+                    </span>#item1 SomeComponent, <span class="comment">// note: the name #item1 here is in its own scope
+                    </span>some_scene() #item2
+                ]
+            }
+        }
+    ]
+};</code></pre></div></div></details></section></div></main></body></html>

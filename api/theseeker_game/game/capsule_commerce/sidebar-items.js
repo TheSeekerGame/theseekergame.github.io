@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["CAPSULE_ACTION_ESSENCE_COST","CAPSULE_RECIPES"],"enum":["CapsuleActionResult","CapsuleRecipeId","PlayerItemGrant"],"fn":["craft_recipe","discoverable_recipes","grant_skill","purchase_tether","recipe","research_recipes"],"macro":[["ingredients",1]],"struct":["CapsuleRecipe","CraftingKnowledge"]};

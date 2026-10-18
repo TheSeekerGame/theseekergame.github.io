@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"struct":["ContextMenu","ContextMenuPlugin","ContextMenuUpdate","GenerateContextMenu","ReflectContextMenuGenerator"],"trait":["ContextMenuGenerator"]};

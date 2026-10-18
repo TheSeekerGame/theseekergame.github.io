@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["Line","MinMax","Point","Rect","Size"]};
+window.SIDEBAR_ITEMS = {"enum":["AbsoluteAxis","AbstractAxis"],"struct":["Line","MinMax","Point","Rect","Size"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["PassiveAction","PassiveEvent"],"fn":["projectile_directions"],"mod":["blood_shards","definition","evaluation","frenzied_attack","permutator","pulse_echo","runtime"],"static":["NO_HEALTH"],"struct":["DamageModifiers","PassiveContext","PassiveOwner","PassiveOwnerItem"]};

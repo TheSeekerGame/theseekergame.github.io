@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["AppState"],"fn":["cli_appstate","restart"],"struct":["AppStatesPlugin","StateDespawnMarker"]};
+window.SIDEBAR_ITEMS = {"enum":["AppState"],"fn":["despawn_all_recursive","restart","start_first_expedition"],"struct":["AppStatesPlugin","StartupAssets","StateDespawnMarker"]};

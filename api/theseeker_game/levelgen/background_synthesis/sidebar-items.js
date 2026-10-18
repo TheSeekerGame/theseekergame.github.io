@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["CAUSAL","CAUSAL_WEIGHT","COHERENCE","MOST_REACH","OPENING_REACH","RADIUS","SAMPLES","SIDE","SOLID_COLOR","VALUE_COLORS"],"fn":["chessboard_distance","decode_pixel","most_common","synthesize","window_masks","windows"],"struct":["Context","Exemplar","Synthesis","WindowMasks"]};

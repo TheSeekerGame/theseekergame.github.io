@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["spawn_mainmenu"],"struct":["MainMenuPlugin"]};
+window.SIDEBAR_ITEMS = {"constant":["ACCENT","BUTTON_HEIGHT","FIRST_BUTTON","HEIGHT","WIDTH"],"enum":["MenuAction"],"fn":["cleanup_previous_level_asset","default_levels_directory","draw_menu","handle_menu_input","insert_generated_map_resources","load_custom_level_image","menu_focus","menu_pointer","pick_custom_level_file","present_menu","reset_expedition_progress","reset_player_runtime","spawn_menu_camera","start_state"],"struct":["MainMenuPlugin","MenuPanel","MenuState","WorldStarter"]};

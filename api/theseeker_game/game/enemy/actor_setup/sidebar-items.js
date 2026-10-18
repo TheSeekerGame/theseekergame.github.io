@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["assemble_enemy","cached_stats","enemy_sprite","first_clip","insert_body_runtime","insert_graphics","insert_spider_traits","setup_enemy_actor","spawn_blueprint","spawn_enemy_actor_blueprint","spawn_facing","spawn_spider_actor_blueprint"],"struct":["EnemyActorBlueprint","SpiderActorSetup","SpiderJitter"]};

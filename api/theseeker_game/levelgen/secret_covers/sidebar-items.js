@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["CONTENTS_Z","COVER_Z","WALL_Z"],"fn":["bake","keep_tiles","spawn"],"struct":["RoomCover"]};

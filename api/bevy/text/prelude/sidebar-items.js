@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["JustifyText","TextError"],"struct":["Font","Text","Text2dBundle","TextSection","TextStyle"]};
+window.SIDEBAR_ITEMS = {"enum":["FontHinting","FontSize","FontSmoothing","FontSource","FontStyle","Justify","LineBreak","TextError"],"struct":["Font","FontWeight","FontWidth","Strikethrough","StrikethroughColor","TextColor","TextFont","TextLayout","TextSpan","Underline","UnderlineColor"]};

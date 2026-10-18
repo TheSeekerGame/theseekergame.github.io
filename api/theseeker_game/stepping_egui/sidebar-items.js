@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"enum":["SystemBehavior"],"fn":["draw_window","handle_input"],"struct":["SteppingEguiPlugin","SteppingEguiState","SteppingSchedule"]};

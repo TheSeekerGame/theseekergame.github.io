@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"externcrate":["smallvec"],"macro":["message"],"mod":["protocol","rs","sys"]};
+window.SIDEBAR_ITEMS = {"externcrate":["smallvec"],"macro":[["message",1]],"mod":["protocol","rs","sys"]};

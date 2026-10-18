@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["AMPLIFIED_BELL_METADATA","BELL_HALF_HEIGHT","BELL_HALF_WIDTH"],"fn":["amplified_bell_candidate","find_amplified_bell_placement"]};

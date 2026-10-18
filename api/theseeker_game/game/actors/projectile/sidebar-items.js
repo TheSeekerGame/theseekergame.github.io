@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["emit_projectile_shot","fallback_projectile_velocity","resolve_shot_velocity","shot_damage_source","solve_projectile_velocity","spawn_projectile","store_projectile_cache"],"struct":["ProjectileCache","ProjectilePolicy","ProjectileShot"]};

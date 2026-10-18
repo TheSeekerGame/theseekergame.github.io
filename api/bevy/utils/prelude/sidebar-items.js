@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["default"]};
+window.SIDEBAR_ITEMS = {"fn":["default"],"struct":["DebugName","ShortName"]};

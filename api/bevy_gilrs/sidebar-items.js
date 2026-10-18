@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["GilrsPlugin","RumbleSystem"]};
+window.SIDEBAR_ITEMS = {"struct":["GilrsPlugin","RumbleSystems"]};

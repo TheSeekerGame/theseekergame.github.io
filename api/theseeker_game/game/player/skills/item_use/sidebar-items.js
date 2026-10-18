@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["can_deploy","release_deployment","request_deployment","start_deployment","start_deployment_playback","tick_deployment"],"struct":["Deploying","DeploymentDefinition","ItemReservation","ItemUsePlugin"],"type":["ItemSpawner","PlacementCheck"]};

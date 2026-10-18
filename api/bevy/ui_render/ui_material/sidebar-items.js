@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["MaterialNode","MaterialNodeTemplate","UiMaterialKey"],"trait":["UiMaterial"]};

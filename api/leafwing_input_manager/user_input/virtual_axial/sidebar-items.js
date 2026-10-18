@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["VirtualAxis","VirtualDPad","VirtualDPad3D"]};

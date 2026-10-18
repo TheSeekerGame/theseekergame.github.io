@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"struct":["DockingZone","DockingZoneHighlight","DockingZonePlugin","DockingZoneSplitContainer","DockingZoneUpdate","RemoveEmptyDockingZone"],"trait":["UiDockingZoneExt"]};

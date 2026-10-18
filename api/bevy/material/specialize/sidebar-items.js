@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["SpecializedMeshPipelineError"],"type":["BaseSpecializeFn","PrepassSpecializeFn","UserSpecializeFn"]};

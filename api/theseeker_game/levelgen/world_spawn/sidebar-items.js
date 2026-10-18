@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["VAGRANT_PAIR_VERTICAL_OFFSET","VAGRANT_YAK_PAIR_HORIZONTAL_OFFSET","YAK_PAIR_VERTICAL_OFFSET"],"fn":["select_random_spawn_in_unreserved_chunk","spawn_compiled_level"]};

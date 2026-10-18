@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["Falloff","PhaseFunction"],"fn":["extract_chromatic_phase_textures"],"struct":["Atmosphere","AtmosphereTemplate","ScatteringMedium","ScatteringTerm"]};

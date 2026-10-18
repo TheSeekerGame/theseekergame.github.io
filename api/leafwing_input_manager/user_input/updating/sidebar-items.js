@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["CentralInputStore","EnabledInput"],"trait":["InputRegistration","UpdatableInput"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["BRIDGE_RADIUS","MASS_REACH","MASS_THRESHOLD","MIN_OPENING","SKIN","SKIN_JITTER"],"fn":["closing","components","flood","near_wall","open_square","square","tidy","value_noise"]};

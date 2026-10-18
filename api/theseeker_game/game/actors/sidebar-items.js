@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["actor_decisions","advance_actor_actions","decision_input"],"mod":["action","catalog","controller","definition","hopper","lunge","motion","observations","population_probe","projectile","sensors","tick_strike"],"struct":["ActorAction","ActorBundle","ActorDefinition","ActorPlugin","LevelSeed"]};

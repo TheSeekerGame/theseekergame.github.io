@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"mod":["assets","exts","plugins","prelude","resources","systems"],"struct":["BundleAsset","FluentPlugin","Locale","Localization","LocalizationBuilder","ResourceAsset"]};

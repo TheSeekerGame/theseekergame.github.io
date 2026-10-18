@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["SCRATCH"],"fn":["add_rows","apply_background_blur","blur_with_scratch","decode","encode","gaussian_kernel","horizontal","horizontal_pixel","support","vertical"],"struct":["BackgroundBlurPlugin","BackgroundBlurSettings","BlurScratch"]};

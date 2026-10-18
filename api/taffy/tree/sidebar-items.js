@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"trait":["LayoutTree"]};
+window.SIDEBAR_ITEMS = {"enum":["ClearState","RequestedAxis","RunMode","SizingMode","TaffyError"],"mod":["traits"],"struct":["Cache","CollapsibleMarginSet","Layout","LayoutInput","LayoutOutput","NodeId","TaffyTree"],"type":["TaffyResult"]};

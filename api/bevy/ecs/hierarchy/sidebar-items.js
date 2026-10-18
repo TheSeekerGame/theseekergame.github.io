@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["ChildOf","ChildOfTemplate","Children"],"type":["ChildSpawner","ChildSpawnerCommands"]};

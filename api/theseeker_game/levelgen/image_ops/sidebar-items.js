@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["SPIKE_LIGHT_OVERLAY_COLOR","SPIKE_LIGHT_OVERLAY_LAYER"],"fn":["build_spike_light_overlay_image","clear_image_rect","linear_to_srgb","linear_to_srgb8_channel","srgb8_to_linear_channel","srgb_to_linear"]};

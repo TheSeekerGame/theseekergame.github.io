@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"constant":["EMBEDDED"],"struct":["EmbeddedAssetRegistry"]};
+window.SIDEBAR_ITEMS = {"constant":["EMBEDDED"],"struct":["EmbeddedAssetRegistry"],"trait":["GetAssetServer"]};

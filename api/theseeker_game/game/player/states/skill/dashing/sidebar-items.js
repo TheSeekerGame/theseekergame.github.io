@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["DASH_VELOCITY"],"fn":["apply_dash_velocity","dash_direction","dashing_enter_system","dashing_update_system","finish_dash","play_dash_animation","reinsert_hit_freeze_if_active","reset_falling_curve"],"struct":["DashingStatePlugin"]};

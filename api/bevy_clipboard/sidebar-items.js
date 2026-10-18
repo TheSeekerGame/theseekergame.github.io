@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["ClipboardError","ClipboardRead"],"mod":["prelude"],"struct":["Clipboard","ClipboardPlugin"]};

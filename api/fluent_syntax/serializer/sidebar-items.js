@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"fn":["serialize","serialize_with_options"],"struct":["Options"]};

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"constant":["ANIMATION_DELAY_IN_MILLIS","ANIMATION_SPEED","BACKGROUND_COLOR"],"fn":["despawn","instance","tick_damage_animation","update_hp","update_positions","update_visibility"],"struct":["Bar","DamageAnimation","EnemyHpBarPlugin","Material","Root"]};
+window.SIDEBAR_ITEMS = {"constant":["BAR_RISE","BAR_SIZE","SPARK_SECONDS","TRAIL_DELAY","TRAIL_SPEED"],"fn":["spawn_hp_bars","update_hp_bars"],"struct":["EnemyHpBarPlugin","HpBar","HpBarMaterial"]};

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["extract_core_2d_camera_phases"],"mod":["graph"],"struct":["Camera2d","Camera2dBundle","Core2dPlugin","MainPass2dNode","Transparent2d"]};
+window.SIDEBAR_ITEMS = {"constant":["CORE_2D_DEPTH_FORMAT"],"fn":["extract_core_2d_camera_phases","main_opaque_pass_2d","main_transparent_pass_2d","prepare_core_2d_depth_textures"],"struct":["AlphaMask2d","AlphaMask2dBinKey","BatchSetKey2d","Core2dPlugin","Opaque2d","Opaque2dBinKey","Transparent2d"]};

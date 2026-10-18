@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["tick_cooldowns"],"struct":["CooldownEntry","Cooldowns"]};

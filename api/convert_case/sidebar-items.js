@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["Case"],"struct":["FromCasing"],"trait":["Casing"]};
+window.SIDEBAR_ITEMS = {"enum":["Case","Pattern"],"fn":["split"],"struct":["Boundary","Converter","StateConverter"],"trait":["Casing"]};

@@ -1,1 +1,0 @@
-searchState.loadedDescShard("sickle_macros", 0, "Macro to derive an EntityCommand to register and store …")

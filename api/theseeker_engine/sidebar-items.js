@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["animation","assets","audio","ballistics_math","condition","data","gent","input","physics","prelude","script","time"],"struct":["EnginePlugins"]};
+window.SIDEBAR_ITEMS = {"mod":["animation","assets","audio","ballistics_math","condition","data","effects","gent","input","physics","prelude","presentation","profile","script","time"],"struct":["EnginePlugins"]};

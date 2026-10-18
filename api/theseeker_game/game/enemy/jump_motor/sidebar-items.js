@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["JumpMotorMode"],"fn":["jump_motor_anger_trigger","jump_motor_move_collide","jump_motor_system"],"struct":["JumpBody","JumpBodyItem","JumpBodyReadOnly","JumpBodyReadOnlyItem","JumpMotor","JumpMotorConfig"]};

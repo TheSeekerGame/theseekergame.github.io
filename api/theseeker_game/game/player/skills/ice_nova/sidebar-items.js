@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["ICE_NOVA_METADATA"]};

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"macro":["hash_trait_object"],"trait":["DynHash"]};
+window.SIDEBAR_ITEMS = {"macro":[["hash_trait_object",1]],"trait":["DynHash"]};

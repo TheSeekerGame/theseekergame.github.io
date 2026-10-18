@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"fn":["cli_exit","cli_hello_args","cli_hello_noargs","cli_help"],"struct":["CliPlugin"]};

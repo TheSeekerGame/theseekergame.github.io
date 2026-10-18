@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["ErrorContext","Severity"],"fn":["bevy_error_panic_hook","debug","error","ignore","info","match_severity","panic","trace","warn"],"struct":["BevyError","FallbackErrorHandler"],"trait":["CommandOutput","EntityCommandOutput","ResultSeverityExt"],"type":["DefaultErrorHandler","ErrorHandler","Result"]};

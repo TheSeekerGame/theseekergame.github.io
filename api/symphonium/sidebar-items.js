@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["DecodedAudioType","ResampleQuality"],"mod":["error","resample"],"static":["DEFAULT_MAX_BYTES"],"struct":["DecodedAudio","DecodedAudioF32","SymphoniumLoader"]};

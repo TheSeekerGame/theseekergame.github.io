@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["AiPaused","DistanceJitter","GroundSensor","HealthSensor","PatrolTimeScale","PerceivedGroundSensor","PerceivedRangeSensor","PerceivedTargetSensor","RangeSensor","SensorHistory","TargetSensor","TurnCooldown"]};

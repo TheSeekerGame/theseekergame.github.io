@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["default_filter","enemy_attack","enemy_body","groups","player_attack","player_body"]};

@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"struct":["Box","Capsule","Circle","Cube","Cylinder","Icosphere","Plane","Quad","RegularPolygon","Torus","UVSphere"]};

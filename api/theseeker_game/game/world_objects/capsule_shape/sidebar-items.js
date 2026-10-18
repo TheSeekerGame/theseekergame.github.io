@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["HATCH","INSIDE_TRIGGER","LIFT_DOWN_STOP","LIFT_DOWN_TRIGGER","LIFT_UP_STOP","LIFT_UP_TRIGGER","LIGHT_AREA","OUTSIDE_TRIGGER","POD_SPRITE_SIZE","SHELL","UPPER_DECK"],"fn":["collision_mask","light_mask","merge_pixels_into_rects","mirrored_pixels","pixel_span_to_local_rect","rect","rows"],"struct":["MirroredRows","PixelGrid","PodRect"]};

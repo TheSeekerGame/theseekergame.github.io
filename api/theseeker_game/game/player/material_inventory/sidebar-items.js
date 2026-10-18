@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["CraftMaterial"],"fn":["add_count","cost_totals","take_count"],"struct":["MaterialCost","MaterialDefinition","MaterialInventory"]};

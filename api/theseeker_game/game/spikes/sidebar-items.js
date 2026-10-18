@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["SPIKE_DAMAGE","SPIKE_RESPAWN_DELAY_TICKS"],"fn":["advance_spike_respawns","prepare_spike_contacts","process_spike_hits","recovery_collision_groups","restore_after_recovery","restore_graphics_visibility","set_gent_visibility","suppress_recovery_input"],"struct":["SpikeDamageCooldown","SpikeHazard","SpikeHazardPlugin","SpikeRespawnPending"]};

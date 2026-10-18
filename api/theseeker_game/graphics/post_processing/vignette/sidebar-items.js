@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["VignettePlugin","VignettePostProcessLabel","VignettePostProcessNode","VignettePostProcessPipeline","VignetteSettings"]};
+window.SIDEBAR_ITEMS = {"constant":["MAX_PLAYER_VIGNETTE_OFFSET_UV","OUTER_FOG_STRENGTH","PLAYER_VIGNETTE_FOLLOW_STRENGTH","VIGNETTE_NOISE_TEXTURE_SIZE","VIGNETTE_RADIUS","VIGNETTE_SMOOTHNESS"],"fn":["build_vignette_noise_image","sync_vignette_settings","vignette_pass"],"struct":["VignetteNoiseImage","VignettePipeline","VignettePlugin","VignetteSettings"]};

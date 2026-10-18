@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"enum":["Directed","Direction","Undirected"],"struct":["Bfs","Dfs","DfsPostOrder","EdgeIndex","Graph","GraphMap","NodeIndex","StableGraph"],"trait":["EdgeRef"],"type":["DiGraph","DiGraphMap","StableDiGraph","StableUnGraph","UnGraph","UnGraphMap"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["apply_tiles","apply_visuals","hazard_groups"],"struct":["PreparedAdaptation","PreparedState","TileDelta"]};

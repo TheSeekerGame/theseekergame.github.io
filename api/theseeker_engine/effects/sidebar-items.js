@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":["ghosting","scale_recovery","sprite_stretch"],"struct":["SpriteScale"]};

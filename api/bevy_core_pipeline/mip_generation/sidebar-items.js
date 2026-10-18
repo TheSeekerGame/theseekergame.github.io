@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["can_combine_downsampling_bind_groups","generate_mips_for_phase"],"mod":["experimental"],"struct":["DownsampleShaders","DownsamplingConstants","MipGenerationJobs","MipGenerationPhase","MipGenerationPhaseId","MipGenerationPipelines","MipGenerationPlugin"]};

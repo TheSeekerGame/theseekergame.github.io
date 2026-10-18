@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"mod":["blit","bloom","contrast_adaptive_sharpening","core_2d","core_3d","deferred","experimental","fullscreen_vertex_shader","fxaa","msaa_writeback","prelude","prepass","tonemapping","upscaling"],"struct":["CorePipelinePlugin","Skybox"]};

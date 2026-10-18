@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["on_game_over","update_fade_in"],"struct":["FadeIn","GameOver","GameOverPlugin"]};
+window.SIDEBAR_ITEMS = {"constant":["ACCENT","BUTTON_HEIGHT","FADE_OPACITY","FADE_SECONDS","FIRST_BUTTON","FIRST_STAT","HEIGHT","HINT_TOP","MARGIN","STAT_ROW","WIDTH"],"enum":["GameOverAction"],"fn":["button_rect","draw_game_over","game_over_pointer","handle_game_over_input","on_game_over","present_game_over_menu","update_fade_in"],"struct":["FadeIn","GameOver","GameOverMenu","GameOverPlugin","GameOverUi"]};

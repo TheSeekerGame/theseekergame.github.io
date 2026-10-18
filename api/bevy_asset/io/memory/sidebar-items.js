@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["Value"],"struct":["Data","Dir","DirStream","MemoryAssetReader"]};
+window.SIDEBAR_ITEMS = {"enum":["Value"],"struct":["Data","Dir","DirStream","MemoryAssetReader","MemoryAssetWriter"]};

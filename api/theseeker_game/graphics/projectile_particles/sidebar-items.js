@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["MAX_LIFETIME"],"fn":["attack_particles_setup","projectile_particles","update_velocity"],"struct":["ArcParticleEffectHandle","AttackParticlesPlugin"]};

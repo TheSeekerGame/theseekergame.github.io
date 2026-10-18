@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["FOG_CLEAR_ROWS","LAYERS"],"fn":["place_surface_layers","spawn_surface_backdrop"],"struct":["LayerSpec","SurfaceBackdropImages","SurfaceLayer"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["animation_duration_ticks","set_sprite_flip_for_entity","set_sprite_flip_slots","sprite_flip"],"struct":["EnemyAnimationPlugin","FacingSlots"]};

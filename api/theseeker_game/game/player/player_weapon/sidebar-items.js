@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"enum":["PlayerCombatStyle","PlayerMeleeWeapon","PlayerRangedWeapon"],"fn":["initialize_resources","is_current_weapon_changed","swap_combat_style","swap_melee_weapon"],"struct":["CurrentWeapon","PlayerWeaponPlugin","PushbackValues"]};

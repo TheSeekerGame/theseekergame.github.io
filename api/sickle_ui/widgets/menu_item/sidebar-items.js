@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"struct":["MenuItem","MenuItemConfig","MenuItemPlugin","MenuItemUpdate"],"trait":["UiMenuItemExt"]};

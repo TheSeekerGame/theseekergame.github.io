@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["SPIT_COOLDOWN"],"fn":["try_start_spit_slot"]};

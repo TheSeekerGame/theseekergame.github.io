@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["Passive","RollDirection","StatUnit"],"fn":["decimal","roll"],"struct":["PassiveDefinition","PassiveIter","PassiveRollSpec"]};

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["GlobalTransform","Transform"]};
+window.SIDEBAR_ITEMS = {"struct":["GlobalTransform","Transform","TransformTreeChanged"]};

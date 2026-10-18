@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"fn":["despawn_all","despawn_all_recursive","init_resource","remove_from_all","remove_resource"]};

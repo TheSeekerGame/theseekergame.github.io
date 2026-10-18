@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["activate_interaction","colliders_in_range","select_focus","update_proximity"],"struct":["InInteractionRange","InteractionFocus","InteractionPlugin"]};

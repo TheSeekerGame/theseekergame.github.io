@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["InputKind","Modifier","UserInput"],"struct":["RawInputs"]};
+window.SIDEBAR_ITEMS = {"enum":["UserInputWrapper"],"mod":["chord","gamepad","keyboard","mouse","testing_utils","updating","virtual_axial"],"trait":["Axislike","Buttonlike","DualAxislike","RegisterUserInput","TripleAxislike","UserInput"]};

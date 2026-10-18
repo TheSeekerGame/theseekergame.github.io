@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["DEFAULT_GAMEPLAY_PIXEL_DIVISOR","LETTERBOX","TARGET_VISIBLE_GAME_PIXELS"],"fn":["fit_gameplay_pixel_scale"],"struct":["GameplayPixelScale"]};

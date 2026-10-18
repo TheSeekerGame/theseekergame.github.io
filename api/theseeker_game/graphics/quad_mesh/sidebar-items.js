@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["add_mesh","publish_mesh"],"struct":["QuadMesh"]};

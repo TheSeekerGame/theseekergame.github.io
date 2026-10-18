@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["AIR_JUMP_ANIMATION_SLOT","AIR_SPEED_FACTOR"],"fn":["apply_initial_wall_jump_kick","apply_jumping_air_control","initial_wall_jump_kick","initial_wall_kick_from_input","jumping_enter_system","jumping_update_system","play_jump_animation","play_jump_animation_for_gent"],"struct":["InitialWallKick","JumpingStatePlugin"]};

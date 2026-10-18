@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"fn":["cli_spawn_anim","cli_spawn_script","debug_progress","debug_setup_camera","debug_spawn_player"],"struct":["DevPlugin"]};

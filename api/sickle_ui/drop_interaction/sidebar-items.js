@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"enum":["DropPhase"],"struct":["DropInteractionPlugin","DropZone","Droppable","DroppableUpdate"]};

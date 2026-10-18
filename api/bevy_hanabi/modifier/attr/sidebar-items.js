@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["SetAttributeModifier"]};
+window.SIDEBAR_ITEMS = {"struct":["InheritAttributeModifier","SetAttributeModifier"]};

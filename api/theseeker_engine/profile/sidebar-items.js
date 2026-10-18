@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["profiling_enabled"],"struct":["ProfileScope","TickProfiler","TickSystemProfile"]};

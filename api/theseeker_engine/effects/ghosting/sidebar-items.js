@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["FadeCurve","GhostColorMode","GhostMovement","GhostingSet","ScaleCurve"],"struct":["Ghost","GhostingDefaults","GhostingPlugin","GhostingSource"]};

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["AccessKitAdapters","AccessKitPlugin","WinitActionHandler","WinitActionHandlers"]};
+window.SIDEBAR_ITEMS = {"constant":["ACCESS_KIT_ADAPTERS"],"struct":["AccessKitAdapters","AccessKitPlugin","WinitActionRequestHandler","WinitActionRequestHandlers"]};

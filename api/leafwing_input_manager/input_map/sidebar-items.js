@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["InputMap"]};
+window.SIDEBAR_ITEMS = {"enum":["UpdatedValue"],"struct":["InputMap","UpdatedActions"]};

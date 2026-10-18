@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["buffered_attack_direction_variant","current_attack_direction_variant","try_start_attack_slot","try_start_bow_attack_slot","try_start_melee_attack_slot"]};

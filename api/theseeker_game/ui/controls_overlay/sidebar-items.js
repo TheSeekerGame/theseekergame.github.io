@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["hide_controls_hint","plugin","spawn_control_hint","spawn_control_overlay","toggle_control_overlay"],"struct":["ControlsHint","ControlsOverlay"]};
+window.SIDEBAR_ITEMS = {"constant":["ACCENT","CONTROLS","KEYS_LEFT","MARGIN","ROW"],"fn":["draw_controls","plugin","present_controls","toggle_controls"],"struct":["ControlsPanel","ControlsShown"]};

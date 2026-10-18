@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["batch_and_prepare_render_phase","write_batched_instance_buffer"],"struct":["NoAutomaticBatching"],"trait":["GetBatchData"]};
+window.SIDEBAR_ITEMS = {"fn":["sort_binned_render_phase"],"mod":["gpu_preprocessing","no_gpu_preprocessing"],"struct":["NoAutomaticBatching"],"trait":["GetBatchData","GetFullBatchData"]};

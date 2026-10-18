@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["begin_tick","finish_tick","protect_population","seed_population"],"struct":["PopulationProbe","PopulationProbePlugin","ProbeProtected"]};

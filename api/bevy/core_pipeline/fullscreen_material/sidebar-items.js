@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["fullscreen_material_system"],"struct":["FullscreenMaterialBindGroup","FullscreenMaterialPipeline","FullscreenMaterialPipelineId","FullscreenMaterialPlugin"],"trait":["FullscreenMaterial"]};

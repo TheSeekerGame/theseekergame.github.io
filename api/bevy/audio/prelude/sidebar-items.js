@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["AudioSink","AudioSource","AudioSourceBundle","GlobalVolume","Pitch","PlaybackSettings","SpatialAudioSink","SpatialListener"],"trait":["AudioSinkPlayback","Decodable"],"type":["AudioBundle","PitchBundle"]};
+window.SIDEBAR_ITEMS = {"struct":["AudioPlayer","AudioSink","AudioSource","GlobalVolume","Pitch","PlaybackSettings","SpatialAudioSink","SpatialListener"],"trait":["AudioSinkPlayback","Decodable"]};

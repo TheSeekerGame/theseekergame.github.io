@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["SavedAsset"],"trait":["AssetSaver","ErasedAssetSaver"]};
+window.SIDEBAR_ITEMS = {"enum":["SaveAssetError"],"fn":["save_using_saver"],"struct":["ErasedSavedAsset","SavedAsset","SavedAssetBuilder"],"trait":["AssetSaver","ErasedAssetSaver"]};

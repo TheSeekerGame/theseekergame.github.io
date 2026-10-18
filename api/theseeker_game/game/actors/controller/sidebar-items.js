@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["Activity","Approach","ControllerSpec","PatrolPhase","Recovery"],"fn":["ambush_activity","ambush_direction","ambush_followup","combat_activity","decide","flying_activity","ground_attack_activity","hopper_activity","pursuit_activity"],"struct":["ActorController","DecisionInput","MotorObservations"]};

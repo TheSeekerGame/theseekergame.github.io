@@ -1,0 +1,118 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `game/src/game/player/skills/activation.rs`."><title>activation.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-0c87338a.css"><meta name="rustdoc-vars" data-root-path="../../../../../" data-static-root-path="../../../../../static.files/" data-current-crate="theseeker_game" data-themes="" data-resource-suffix="" data-rustdoc-version="1.99.1 (58cf8f9c3 2026-10-13)" data-channel="1.99.1" data-search-js="search-cf4fc35e.js" data-stringdex-js="stringdex-b5109af9.js" data-settings-js="settings-170eb4bf.js" ><script src="../../../../../static.files/storage-41dd4d93.js"></script><script defer src="../../../../../static.files/src-script-813739b1.js"></script><script defer src="../../../../../src-files.js"></script><script defer src="../../../../../static.files/main-417ebf0a.js"></script><noscript><link rel="stylesheet" href="../../../../../static.files/noscript-9f56287d.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-eab170b8.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><a class="skip-main-content" href="#main-content">Skip to main content</a><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><section id="main-content" class="content" tabindex="-1"><div class="main-heading"><h1><div class="sub-heading">theseeker_game/game/player/skills/</div>activation.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap digits-3"><pre class="rust"><code><a href=#1 id=1 data-nosnippet>1</a><span class="doccomment">//! Input admission is separate from foreground execution and instant effects.
+<a href=#2 id=2 data-nosnippet>2</a>
+<a href=#3 id=3 data-nosnippet>3</a></span><span class="kw">use </span>bevy::{ecs::{query::QueryData, system::SystemParam}, prelude::<span class="kw-2">*</span>};
+<a href=#4 id=4 data-nosnippet>4</a><span class="kw">use </span>leafwing_input_manager::action_state::ActionState;
+<a href=#5 id=5 data-nosnippet>5</a><span class="kw">use </span>theseeker_engine::{time::{GameTickUpdate, GameTime}};
+<a href=#6 id=6 data-nosnippet>6</a><span class="kw">use </span><span class="kw">crate</span>::game::{combat::Health, enemy::Enemy, gentstate::{Dead, Facing}};
+<a href=#7 id=7 data-nosnippet>7</a><span class="kw">use super</span>::{ registry::{activate_skill, SkillActivationContext, SLOT_INPUTS}, types::SkillId};
+<a href=#8 id=8 data-nosnippet>8</a><span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::{autoaim::{effective_facing, RangedAttackFacingLock}, foreground::ForegroundAction,
+<a href=#9 id=9 data-nosnippet>9</a>    sensors::GroundSensor, states::{BurningDashing, Elevator, Gathering, HorizontalInputIntent, LastMoveDir},
+<a href=#10 id=10 data-nosnippet>10</a>    weapon::{PlayerMeleeWeapon, WeaponInventory}, spawns::amplified_bell::Bell,
+<a href=#11 id=11 data-nosnippet>11</a>    FlickerAbility, InputBuffer, MaterialInventory, Player, PlayerAction, PlayerStatMod,
+<a href=#12 id=12 data-nosnippet>12</a>    SkillInventory, WhirlAbility};
+<a href=#13 id=13 data-nosnippet>13</a>
+<a href=#14 id=14 data-nosnippet>14</a><span class="attr">#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+<a href=#15 id=15 data-nosnippet>15</a></span><span class="kw">pub enum </span>ActivationMode { Instant, Foreground }
+<a href=#16 id=16 data-nosnippet>16</a>
+<a href=#17 id=17 data-nosnippet>17</a><span class="attr">#[derive(Default)]
+<a href=#18 id=18 data-nosnippet>18</a></span><span class="kw">struct </span>ActivationBudget { foreground_started: bool }
+<a href=#19 id=19 data-nosnippet>19</a><span class="kw">impl </span>ActivationBudget {
+<a href=#20 id=20 data-nosnippet>20</a>    <span class="kw">fn </span>allows(<span class="kw-2">&amp;</span><span class="self">self</span>, mode: ActivationMode) -&gt; bool { mode == ActivationMode::Instant || !<span class="self">self</span>.foreground_started }
+<a href=#21 id=21 data-nosnippet>21</a>    <span class="kw">fn </span>accept(<span class="kw-2">&amp;mut </span><span class="self">self</span>, mode: ActivationMode) { <span class="self">self</span>.foreground_started |= mode == ActivationMode::Foreground; }
+<a href=#22 id=22 data-nosnippet>22</a>}
+<a href=#23 id=23 data-nosnippet>23</a>
+<a href=#24 id=24 data-nosnippet>24</a><span class="attr">#[derive(QueryData)]
+<a href=#25 id=25 data-nosnippet>25</a>#[query_data(mutable)]
+<a href=#26 id=26 data-nosnippet>26</a></span><span class="kw">struct </span>SkillUser {
+<a href=#27 id=27 data-nosnippet>27</a>    entity: Entity,
+<a href=#28 id=28 data-nosnippet>28</a>    input: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>ActionState&lt;PlayerAction&gt;,
+<a href=#29 id=29 data-nosnippet>29</a>    buffer: <span class="kw-2">&amp;</span><span class="lifetime">'static </span><span class="kw-2">mut </span>InputBuffer,
+<a href=#30 id=30 data-nosnippet>30</a>    skills: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>SkillInventory,
+<a href=#31 id=31 data-nosnippet>31</a>    materials: <span class="kw-2">&amp;</span><span class="lifetime">'static </span><span class="kw-2">mut </span>MaterialInventory,
+<a href=#32 id=32 data-nosnippet>32</a>    weapons: <span class="kw-2">&amp;</span><span class="lifetime">'static </span><span class="kw-2">mut </span>WeaponInventory,
+<a href=#33 id=33 data-nosnippet>33</a>    foreground: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>ForegroundAction,
+<a href=#34 id=34 data-nosnippet>34</a>    whirl: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>WhirlAbility,
+<a href=#35 id=35 data-nosnippet>35</a>    flicker: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>FlickerAbility,
+<a href=#36 id=36 data-nosnippet>36</a>    transform: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>Transform,
+<a href=#37 id=37 data-nosnippet>37</a>    facing: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>Facing,
+<a href=#38 id=38 data-nosnippet>38</a>    facing_lock: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'static </span>RangedAttackFacingLock&gt;,
+<a href=#39 id=39 data-nosnippet>39</a>    horizontal: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>HorizontalInputIntent,
+<a href=#40 id=40 data-nosnippet>40</a>    last_move: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'static </span>LastMoveDir&gt;,
+<a href=#41 id=41 data-nosnippet>41</a>    health: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>Health,
+<a href=#42 id=42 data-nosnippet>42</a>    ground: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>GroundSensor,
+<a href=#43 id=43 data-nosnippet>43</a>    stats: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'static </span>PlayerStatMod&gt;,
+<a href=#44 id=44 data-nosnippet>44</a>}
+<a href=#45 id=45 data-nosnippet>45</a>
+<a href=#46 id=46 data-nosnippet>46</a><span class="attr">#[derive(SystemParam)]
+<a href=#47 id=47 data-nosnippet>47</a></span><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">struct </span>ActivationWorld&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>&gt; {
+<a href=#48 id=48 data-nosnippet>48</a>    <span class="kw">pub </span>instant: <span class="kw">super</span>::instant::InstantWorld&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>&gt;,
+<a href=#49 id=49 data-nosnippet>49</a>    melee_weapon: Res&lt;<span class="lifetime">'w</span>, PlayerMeleeWeapon&gt;,
+<a href=#50 id=50 data-nosnippet>50</a>    time: Res&lt;<span class="lifetime">'w</span>, GameTime&gt;,
+<a href=#51 id=51 data-nosnippet>51</a>    <span class="kw">pub </span>enemies: Query&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, (Entity, <span class="kw-2">&amp;</span><span class="lifetime">'static </span>Transform), (Or&lt;(With&lt;Enemy&gt;, With&lt;Bell&gt;)&gt;, Without&lt;Dead&gt;)&gt;,
+<a href=#52 id=52 data-nosnippet>52</a>    passive_events: MessageWriter&lt;<span class="lifetime">'w</span>, <span class="kw">super</span>::<span class="kw">super</span>::passives::PassiveEvent&gt;,
+<a href=#53 id=53 data-nosnippet>53</a>}
+<a href=#54 id=54 data-nosnippet>54</a>
+<a href=#55 id=55 data-nosnippet>55</a><span class="kw">pub struct </span>SkillActivationPlugin;
+<a href=#56 id=56 data-nosnippet>56</a><span class="kw">impl </span>Plugin <span class="kw">for </span>SkillActivationPlugin {
+<a href=#57 id=57 data-nosnippet>57</a>    <span class="kw">fn </span>build(<span class="kw-2">&amp;</span><span class="self">self</span>, app: <span class="kw-2">&amp;mut </span>App) {
+<a href=#58 id=58 data-nosnippet>58</a>        app.add_systems(GameTickUpdate, skill_dispatch_system.in_set(<span class="kw">super</span>::<span class="kw">super</span>::PlayerBehaviorSet::Activation)
+<a href=#59 id=59 data-nosnippet>59</a>            .after(<span class="kw">super</span>::cooldowns::tick_cooldowns));
+<a href=#60 id=60 data-nosnippet>60</a>    }
+<a href=#61 id=61 data-nosnippet>61</a>}
+<a href=#62 id=62 data-nosnippet>62</a>
+<a href=#63 id=63 data-nosnippet>63</a><span class="kw">fn </span>skill_dispatch_system(
+<a href=#64 id=64 data-nosnippet>64</a>    <span class="kw-2">mut </span>players: Query&lt;SkillUser, (With&lt;Player&gt;, Without&lt;Dead&gt;,
+<a href=#65 id=65 data-nosnippet>65</a>        Without&lt;<span class="kw">crate</span>::game::spikes::SpikeRespawnPending&gt;)&gt;,
+<a href=#66 id=66 data-nosnippet>66</a>    <span class="kw-2">mut </span>world: ActivationWorld,
+<a href=#67 id=67 data-nosnippet>67</a>) {
+<a href=#68 id=68 data-nosnippet>68</a>    <span class="kw">for </span><span class="kw-2">mut </span>player <span class="kw">in </span><span class="kw-2">&amp;mut </span>players {
+<a href=#69 id=69 data-nosnippet>69</a>        <span class="kw">if </span>player.health.current == <span class="number">0 </span>{ <span class="kw">continue</span>; }
+<a href=#70 id=70 data-nosnippet>70</a>        <span class="kw">if </span>player.foreground.state::&lt;Elevator&gt;().is_some() {
+<a href=#71 id=71 data-nosnippet>71</a>            clear_skill_input_buffer(<span class="kw-2">&amp;mut </span>player.buffer);
+<a href=#72 id=72 data-nosnippet>72</a>            <span class="kw">continue</span>;
+<a href=#73 id=73 data-nosnippet>73</a>        }
+<a href=#74 id=74 data-nosnippet>74</a>        dispatch_slots(<span class="kw-2">&amp;mut </span>player, <span class="kw-2">&amp;mut </span>world);
+<a href=#75 id=75 data-nosnippet>75</a>    }
+<a href=#76 id=76 data-nosnippet>76</a>}
+<a href=#77 id=77 data-nosnippet>77</a>
+<a href=#78 id=78 data-nosnippet>78</a><span class="kw">fn </span>dispatch_slots(player: <span class="kw-2">&amp;mut </span>SkillUserItem&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;, world: <span class="kw-2">&amp;mut </span>ActivationWorld) {
+<a href=#79 id=79 data-nosnippet>79</a>    <span class="kw">let </span>tick = world.time.tick();
+<a href=#80 id=80 data-nosnippet>80</a>    <span class="kw">let </span>facing = effective_facing(player.facing, player.facing_lock, tick);
+<a href=#81 id=81 data-nosnippet>81</a>    <span class="kw">let </span>melee_weapon = <span class="kw-2">*</span>world.melee_weapon;
+<a href=#82 id=82 data-nosnippet>82</a>    <span class="kw">let </span><span class="kw-2">mut </span>budget = ActivationBudget::default();
+<a href=#83 id=83 data-nosnippet>83</a>    <span class="kw">for </span>slot <span class="kw">in </span>SLOT_INPUTS {
+<a href=#84 id=84 data-nosnippet>84</a>        <span class="kw">let </span><span class="prelude-val">Some</span>(skill) = requested_skill(player, slot.index, slot.action, tick) <span class="kw">else </span>{ <span class="kw">continue</span>; };
+<a href=#85 id=85 data-nosnippet>85</a>        <span class="kw">let </span>mode = skill.activation_mode();
+<a href=#86 id=86 data-nosnippet>86</a>        <span class="kw">if </span>!budget.allows(mode) { <span class="kw">continue</span>; }
+<a href=#87 id=87 data-nosnippet>87</a>        <span class="kw">let </span><span class="kw-2">mut </span>context = SkillActivationContext {
+<a href=#88 id=88 data-nosnippet>88</a>            entity: player.entity, slot: slot.action,
+<a href=#89 id=89 data-nosnippet>89</a>            action_state: player.input, buffer: <span class="kw-2">&amp;mut </span>player.buffer, melee_weapon: <span class="kw-2">&amp;</span>melee_weapon,
+<a href=#90 id=90 data-nosnippet>90</a>            whirl_ability: player.whirl, flicker_ability: player.flicker, transform: player.transform,
+<a href=#91 id=91 data-nosnippet>91</a>            facing: <span class="kw-2">&amp;</span>facing, last_move_dir: player.last_move.map_or(<span class="number">0.0</span>, |direction| direction.<span class="number">0</span>),
+<a href=#92 id=92 data-nosnippet>92</a>            health: player.health, current_tick: tick, move_dir: player.horizontal.movement,
+<a href=#93 id=93 data-nosnippet>93</a>            stats: player.stats, has_burning_dashing: player.foreground.state::&lt;BurningDashing&gt;().is_some(),
+<a href=#94 id=94 data-nosnippet>94</a>            ground: player.ground, materials: <span class="kw-2">&amp;mut </span>player.materials, weapons: <span class="kw-2">&amp;mut </span>player.weapons,
+<a href=#95 id=95 data-nosnippet>95</a>        };
+<a href=#96 id=96 data-nosnippet>96</a>        <span class="kw">let </span>accepted = activate_skill(skill, world, <span class="kw-2">&amp;mut </span>context);
+<a href=#97 id=97 data-nosnippet>97</a>        <span class="kw">if </span>!accepted { <span class="kw">continue</span>; }
+<a href=#98 id=98 data-nosnippet>98</a>        budget.accept(mode);
+<a href=#99 id=99 data-nosnippet>99</a>        world.passive_events.write(<span class="kw">super</span>::<span class="kw">super</span>::passives::PassiveEvent::SkillUsed { owner: player.entity, skill });
+<a href=#100 id=100 data-nosnippet>100</a>    }
+<a href=#101 id=101 data-nosnippet>101</a>}
+<a href=#102 id=102 data-nosnippet>102</a>
+<a href=#103 id=103 data-nosnippet>103</a><span class="kw">fn </span>requested_skill(player: <span class="kw-2">&amp;</span>SkillUserItem&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;, index: usize, action: PlayerAction, tick: u64) -&gt; <span class="prelude-ty">Option</span>&lt;SkillId&gt; {
+<a href=#104 id=104 data-nosnippet>104</a>    <span class="kw">if </span>!player.input.pressed(<span class="kw-2">&amp;</span>action) &amp;&amp; player.buffer.check_buffered(action, tick).is_none() { <span class="kw">return </span><span class="prelude-val">None</span>; }
+<a href=#105 id=105 data-nosnippet>105</a>    <span class="kw">let </span>skill = player.skills.get_skill_at_slot(index)<span class="question-mark">?</span>;
+<a href=#106 id=106 data-nosnippet>106</a>    <span class="comment">// Placement-preview tools commit their requests on release in their own input systems.
+<a href=#107 id=107 data-nosnippet>107</a>    </span><span class="kw">if </span><span class="macro">matches!</span>(skill, SkillId::PortableTent | SkillId::TetherNode) { <span class="kw">return </span><span class="prelude-val">None</span>; }
+<a href=#108 id=108 data-nosnippet>108</a>    <span class="kw">if </span>player.foreground.state::&lt;Gathering&gt;().is_some() &amp;&amp; !skill.is_instant() { <span class="kw">return </span><span class="prelude-val">None</span>; }
+<a href=#109 id=109 data-nosnippet>109</a>    <span class="prelude-val">Some</span>(skill)
+<a href=#110 id=110 data-nosnippet>110</a>}
+<a href=#111 id=111 data-nosnippet>111</a>
+<a href=#112 id=112 data-nosnippet>112</a><span class="kw">fn </span>clear_skill_input_buffer(buffer: <span class="kw-2">&amp;mut </span>InputBuffer) {
+<a href=#113 id=113 data-nosnippet>113</a>    <span class="kw">for </span>slot <span class="kw">in </span>SLOT_INPUTS { buffer.clear_action(slot.action); }
+<a href=#114 id=114 data-nosnippet>114</a>}
+<a href=#115 id=115 data-nosnippet>115</a>
+<a href=#116 id=116 data-nosnippet>116</a><span class="attr">#[cfg(test)]
+<a href=#117 id=117 data-nosnippet>117</a></span><span class="kw">mod </span>tests;
+</code></pre></div></section></main></body></html>

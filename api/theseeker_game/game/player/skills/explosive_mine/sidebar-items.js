@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["AIR_MINE_MAX_GROUND_DISTANCE","EXPLOSIVE_MINE_METADATA"],"fn":["resolve_spawn_position"]};

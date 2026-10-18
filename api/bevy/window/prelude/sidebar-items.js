@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["CursorIcon","FileDragAndDrop","Ime","MonitorSelection","WindowPosition"],"struct":["CursorEntered","CursorLeft","CursorMoved","ReceivedCharacter","Window","WindowMoved","WindowPlugin","WindowResizeConstraints"]};
+window.SIDEBAR_ITEMS = {"enum":["FileDragAndDrop","Ime","MonitorSelection","VideoModeSelection","WindowPosition"],"struct":["CursorEntered","CursorLeft","CursorMoved","Window","WindowMoved","WindowPlugin","WindowResizeConstraints"]};

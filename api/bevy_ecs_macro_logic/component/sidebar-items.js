@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["HookAttributeKind","StorageAttribute","StorageTy"],"struct":["DeriveComponent","Relationship","RelationshipTarget","Require"]};

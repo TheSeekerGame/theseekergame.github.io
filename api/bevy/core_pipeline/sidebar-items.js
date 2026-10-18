@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["blit","bloom","contrast_adaptive_sharpening","core_2d","core_3d","deferred","experimental","fullscreen_vertex_shader","fxaa","msaa_writeback","prelude","prepass","tonemapping","upscaling"],"struct":["CorePipelinePlugin","Skybox"]};
+window.SIDEBAR_ITEMS = {"enum":["Core2dSystems","Core3dSystems"],"mod":["blit","core_2d","core_3d","deferred","fullscreen_material","mip_generation","oit","prepass","schedule","skybox","tonemapping","upscaling"],"struct":["Core2d","Core3d","CorePipelinePlugin","FullscreenShader","Skybox"]};

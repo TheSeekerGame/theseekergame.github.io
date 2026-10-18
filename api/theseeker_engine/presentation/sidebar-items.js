@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["PresentationAlignment","PresentationSet"],"fn":["clear_presentation","interpolate_transform"],"struct":["PresentationAnchor","PresentationDebug","PresentationJump","PresentationPlugin","PresentationPolicy","PresentationProxy","PresentationProxySource","PresentationSource","SpriteTracks","TickHistory"]};

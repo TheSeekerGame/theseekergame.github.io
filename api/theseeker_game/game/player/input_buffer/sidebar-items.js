@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["InputVariant"],"fn":["buffer_pressed_action","clear_expired_buffers","input_variant","update_input_buffers"],"struct":["BufferConfig","BufferedInput","InputBuffer","InputBufferPlugin"]};

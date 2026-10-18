@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"fn":["manage_audio_delay"],"struct":["AudioPlugin","DelayManagerState"]};

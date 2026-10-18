@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["capture_emitters","clear_emitters","present_emitters","sync_particle_time"],"struct":["EmitterPose","EmitterTrack","Emitters","ParticlePresentationPlugin","PresentedEffect"],"type":["EmitterQuery"]};

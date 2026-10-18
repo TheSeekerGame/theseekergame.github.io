@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["knockback"],"struct":["Knockback"]};
+window.SIDEBAR_ITEMS = {"constant":["GRAVITY_VELOCITIES","JUMP_VELOCITIES"],"fn":["gravity_velocity","jump_velocity","knockback"],"mod":["projectile","tile_collision_debug"],"struct":["Knockback","PhysicsPlugin"]};

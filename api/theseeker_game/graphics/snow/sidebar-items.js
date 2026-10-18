@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["FIELD_PADDING","FIELD_SCALE","IMAGES_PER_LAYER","SCATTER_INTERVAL","SETTLING_SCATTERS","SNOW_LAYERS","TWINKLE_FADE","TWINKLE_PAUSE"],"fn":["flake_image","front_layer","new_flake","pick","spawn_snow_field","update_snow_field"],"struct":["SnowField","SnowFlake","SnowLayer","SnowPlugin","Twinkle"]};

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["ActionDiff"],"struct":["ActionDiffEvent"]};
+window.SIDEBAR_ITEMS = {"enum":["ActionDiff"],"struct":["ActionDiffMessage","SummarizedActionState"]};

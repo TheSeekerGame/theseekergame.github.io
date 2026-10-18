@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"enum":["FluentNumberCurrencyDisplayStyle","FluentNumberStyle","FluentValue"],"struct":["FluentNumber","FluentNumberOptions"],"trait":["AnyEq","FluentType"]};

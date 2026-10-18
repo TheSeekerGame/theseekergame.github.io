@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["ActivationMode"],"fn":["clear_skill_input_buffer","dispatch_slots","requested_skill","skill_dispatch_system"],"struct":["ActivationBudget","ActivationWorld","SkillActivationPlugin","SkillUser","SkillUserItem","SkillUserReadOnly","SkillUserReadOnlyItem"]};

@@ -1,9 +1,9 @@
 (function() {
-    var implementors = Object.fromEntries([["bevy",[]],["bevy_internal",[]],["futures_lite",[]]]);
+    const implementors = Object.fromEntries([["bevy",[]],["futures_lite",[]]]);
     if (window.register_implementors) {
         window.register_implementors(implementors);
     } else {
         window.pending_implementors = implementors;
     }
 })()
-//{"start":57,"fragment_lengths":[11,21,20]}
+//{"start":59,"fragment_lengths":[11,20]}

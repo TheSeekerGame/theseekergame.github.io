@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["BOW","HAMMER","MELEE_PUSHBACK","MELEE_SELF_PUSHBACK","SWORD"],"enum":["PlayerAmmo","PlayerMeleeWeapon","PlayerRangedWeapon","WeaponType"],"fn":["initialize_resources"],"struct":["PlayerWeaponPlugin","Push","Swing","WeaponAttack","WeaponInventory"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["MICRO_GLYPHS","OUTLINE"],"fn":["chamfered_row","gain","lift","multiply","over","points","rect","rgba","text_width"],"struct":["ArtLibrary","Canvas","Raster"],"type":["Art"]};

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["instance","update_number"],"struct":["DmgNumber","DmgNumbersPlugin"]};
+window.SIDEBAR_ITEMS = {"constant":["ABOVE_COLLIDER","DAMAGE_NUMBERS_ENABLED","DIGIT_STEP","DIGIT_WIDTH","FADE_START","LIFETIME","RISE_SPEED","STACK_STEP"],"fn":["rise_and_fade","spawn_damage_numbers"],"struct":["DamageDigit","DamageNumberStack","DmgNumbersPlugin","NoDamageNumbers"]};

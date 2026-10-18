@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["propagate_transforms","sync_simple_transforms"]};
+window.SIDEBAR_ITEMS = {"enum":["StaticTransformOptimizations"],"fn":["mark_dirty_trees","propagate_parent_transforms","propagate_transforms_for","sync_simple_transforms"]};

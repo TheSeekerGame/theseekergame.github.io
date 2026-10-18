@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"macro":["impl_matrix"],"trait":["AsMutMatrixParts","AsRefMatrixParts","FromMatrixParts","MatrixScalar"]};
+window.SIDEBAR_ITEMS = {"macro":[["impl_matrix",1]],"trait":["AsMutMatrixParts","AsRefMatrixParts","FromMatrixParts","MatrixScalar"]};

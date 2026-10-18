@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"derive":["FromTemplate"],"enum":["EntityTemplate","OptionTemplate"],"fn":["template"],"struct":["FnTemplate","InnerSceneEntityReference","SceneEntityReference","SceneEntityReferences","TemplateContext","TemplateTuple","VecTemplate"],"trait":["BuiltInTemplate","FromTemplate","SpecializeFromTemplate","Template"]};

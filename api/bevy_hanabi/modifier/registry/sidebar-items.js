@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["register_reflect_modifier"],"struct":["Modifiers","ReflectModifier"],"type":["ModifierFactory"]};

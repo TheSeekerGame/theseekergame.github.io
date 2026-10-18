@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":["sinc_interpolator_avx","sinc_interpolator_neon","sinc_interpolator_sse"],"struct":["ScalarInterpolator"],"trait":["SincInterpolator"]};

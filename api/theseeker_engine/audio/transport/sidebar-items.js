@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["BEATS_PER_BAR","FUNDAMENTAL_HZ","TICKS_PER_BEAT","TICK_RATE_HZ"],"fn":["duration_sample","next_boundary","tick_sample"]};

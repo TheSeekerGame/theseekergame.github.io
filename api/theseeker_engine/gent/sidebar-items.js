@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["Gent","GentPhysicsBundle","GentPlugin","TransformGfxFromGent"]};
+window.SIDEBAR_ITEMS = {"fn":["transform_gfx_from_gent"],"struct":["Gent","GentPhysicsBundle","GentPlugin","TransformGfxFromGent"]};

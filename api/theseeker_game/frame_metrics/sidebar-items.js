@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["DEFAULT_FRAME_LATENCY"],"fn":["begin_frame","begin_render","begin_submit","finish_frame","finish_render"],"struct":["FrameMetrics","FrameMetricsPlugin","RenderMetrics","RenderSamples","RenderTimer"]};

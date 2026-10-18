@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"derive":["Asset"],"enum":["AssetEvent","AssetId","AssetMode","Handle","UntypedHandle"],"struct":["AssetPlugin","AssetServer","Assets"],"trait":["Asset","AssetApp"]};
+window.SIDEBAR_ITEMS = {"derive":["Asset"],"enum":["AssetEvent","AssetId","AssetMode","Handle","UntypedHandle"],"fn":["asset_value"],"struct":["AssetChanged","AssetPlugin","AssetServer","Assets"],"trait":["Asset","AssetApp","DirectAssetAccessExt"]};

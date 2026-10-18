@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["whirling_enter_system","whirling_update_system"],"struct":["WhirlingStatePlugin"]};

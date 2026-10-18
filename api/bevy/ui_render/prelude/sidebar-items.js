@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["UiAntiAlias"],"struct":["BoxShadowSamples","GlobalUiDebugOptions","MaterialNode","MaterialNodeTemplate","UiDebugOptions","UiMaterialKey","UiMaterialPlugin"],"trait":["UiMaterial"]};

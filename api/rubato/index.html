@@ -1,0 +1,292 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Rubato"><title>rubato - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../static.files/rustdoc-0c87338a.css"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="rubato" data-themes="" data-resource-suffix="" data-rustdoc-version="1.99.1 (58cf8f9c3 2026-10-13)" data-channel="1.99.1" data-search-js="search-cf4fc35e.js" data-stringdex-js="stringdex-b5109af9.js" data-settings-js="settings-170eb4bf.js" ><script src="../static.files/storage-41dd4d93.js"></script><script defer src="../crates.js"></script><script defer src="../static.files/main-417ebf0a.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-9f56287d.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-eab170b8.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-044be391.svg"></head><body class="rustdoc mod crate"><a class="skip-main-content" href="#main-content">Skip to main content</a><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><rustdoc-topbar><h2><a href="#">Crate rubato</a></h2></rustdoc-topbar><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../rubato/index.html">rubato</a><span class="version">0.16.2</span></h2></div><div class="sidebar-elems"><ul class="block"><li><a id="all-types" href="all.html">All Items</a></li></ul><section id="rustdoc-toc"><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#rubato" title="Rubato">Rubato</a><ul><li><a href="#input-and-output-data-format" title="Input and output data format">Input and output data format</a></li><li><a href="#asynchronous-resampling" title="Asynchronous resampling">Asynchronous resampling</a></li><li><a href="#synchronous-resampling" title="Synchronous resampling">Synchronous resampling</a></li><li><a href="#usage" title="Usage">Usage</a></li><li><a href="#simd-acceleration" title="SIMD acceleration">SIMD acceleration</a></li><li><a href="#cargo-features" title="Cargo features">Cargo features</a></li><li><a href="#example" title="Example">Example</a></li><li><a href="#included-examples" title="Included examples">Included examples</a></li><li><a href="#compatibility" title="Compatibility">Compatibility</a></li><li><a href="#changelog" title="Changelog">Changelog</a></li></ul></li></ul><h3><a href="#modules">Crate Items</a></h3><ul class="block"><li><a href="#modules" title="Modules">Modules</a></li><li><a href="#macros" title="Macros">Macros</a></li><li><a href="#structs" title="Structs">Structs</a></li><li><a href="#enums" title="Enums">Enums</a></li><li><a href="#traits" title="Traits">Traits</a></li><li><a href="#functions" title="Functions">Functions</a></li><li><a href="#types" title="Type Aliases">Type Aliases</a></li></ul></section><div id="rustdoc-modnav"></div></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><div class="width-limiter"><section id="main-content" class="content" tabindex="-1"><div class="main-heading"><h1>Crate <span>rubato</span>&nbsp;<button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../src/rubato/lib.rs.html#1-729">Source</a> </span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><h2 id="rubato"><a class="doc-anchor" href="#rubato">§</a>Rubato</h2>
+<p>An audio sample rate conversion library for Rust.</p>
+<p>This library provides resamplers to process audio in chunks.</p>
+<p>The ratio between input and output sample rates is completely free.
+Implementations are available that accept a fixed length input
+while returning a variable length output, and vice versa.</p>
+<p>Rubato can be used in realtime applications without any allocation during
+processing by preallocating a <a href="trait.Resampler.html" title="trait rubato::Resampler">Resampler</a> and using its
+<a href="trait.Resampler.html#method.input_buffer_allocate" title="method rubato::Resampler::input_buffer_allocate">input_buffer_allocate</a> and
+<a href="trait.Resampler.html#method.output_buffer_allocate" title="method rubato::Resampler::output_buffer_allocate">output_buffer_allocate</a> methods before
+beginning processing. The <a href="#log-enable-logging">log feature</a> feature should be disabled
+for realtime use (it is disabled by default).</p>
+<h3 id="input-and-output-data-format"><a class="doc-anchor" href="#input-and-output-data-format">§</a>Input and output data format</h3>
+<p>Input and output data are stored in a non-interleaved format.</p>
+<p>Input and output data are stored as slices of references, <code>&amp;[AsRef&lt;[f32]&gt;]</code> or <code>&amp;[AsRef&lt;[f64]&gt;]</code>.
+The inner references (<code>AsRef&lt;[f32]&gt;</code> or <code>AsRef&lt;[f64]&gt;</code>) hold the sample values for one channel each.</p>
+<p>Since normal vectors implement the <code>AsRef</code> trait,
+<code>Vec&lt;Vec&lt;f32&gt;&gt;</code> and <code>Vec&lt;Vec&lt;f64&gt;&gt;</code> can be used for both input and output.</p>
+<h3 id="asynchronous-resampling"><a class="doc-anchor" href="#asynchronous-resampling">§</a>Asynchronous resampling</h3>
+<p>The asynchronous resamplers are available with and without anti-aliasing filters.</p>
+<p>Resampling with anti-aliasing is based on band-limited interpolation using sinc
+interpolation filters. The sinc interpolation upsamples by an adjustable factor,
+and then the new sample points are calculated by interpolating between these points.
+The resampling ratio can be updated at any time.</p>
+<p>Resampling without anti-aliasing omits the cpu-heavy sinc interpolation.
+This runs much faster but produces a lower quality result.</p>
+<h3 id="synchronous-resampling"><a class="doc-anchor" href="#synchronous-resampling">§</a>Synchronous resampling</h3>
+<p>Synchronous resampling is implemented via FFT. The data is FFT:ed, the spectrum modified,
+and then inverse FFT:ed to get the resampled data.
+This type of resampler is considerably faster but doesn’t support changing the resampling ratio.</p>
+<h3 id="usage"><a class="doc-anchor" href="#usage">§</a>Usage</h3>
+<p>The resamplers provided by this library are intended to process audio in chunks.
+The optimal chunk size is determined by the application,
+but will likely end up somwhere between a few hundred to a few thousand frames.
+This gives a good compromize between efficiency and memory usage.</p>
+<h4 id="real-time-considerations"><a class="doc-anchor" href="#real-time-considerations">§</a>Real time considerations</h4>
+<p>Rubato is suitable for real-time applications when using the <code>Resampler::process_into_buffer()</code> method.
+This stores the output in a pre-allocated output buffer, and performs no allocations or other
+operations that may block the thread.</p>
+<h4 id="resampling-a-given-audio-clip"><a class="doc-anchor" href="#resampling-a-given-audio-clip">§</a>Resampling a given audio clip</h4>
+<p>A suggested simple process for resampling an audio clip of known length to a new sample rate is as follows.
+Here it is assumed that the source data is stored in a vec,
+or some other structure that supports reading arbitrary number of frames at a time.
+For simplicity, the output is stored in a temporary buffer during resampling,
+and copied to the destination afterwards.</p>
+<p>Preparations:</p>
+<ol>
+<li>Create a resampler of suitable type, for example FFTFixedIn which is quite fast and gives good quality.
+Since neither input or output has any restrictions for the number of frames that can be read or written at a time,
+the chunk size can be chosen arbitrarily. Start with a chunk size of for example 1024.</li>
+<li>Create an input buffer.</li>
+<li>Create a temporary buffer for collecting the resampled output data.</li>
+<li>Call <code>Resampler::output_delay()</code> to know how many frames of delay the resampler gives.
+Store the number as <code>delay</code>.</li>
+<li>Calculate the new clip length as <code>new_length = original_length * new_rate / original_rate</code>.</li>
+</ol>
+<p>Now it’s time to process the bulk of the clip by repeated procesing calls. Loop:</p>
+<ol>
+<li>Call <code>Resampler::input_frames_next()</code> to learn how many frames the resampler needs.</li>
+<li>Check the number of available frames in the source. If it is less than the needed input size, break the loop.</li>
+<li>Read the required number of frames from the source, convert the sample values to float, and copy them to the input buffer.</li>
+<li>Call <code>Resampler::process()</code> or <code>Resampler::process_into_buffer()</code>.</li>
+<li>Append the output frames to the temporary output buffer.</li>
+</ol>
+<p>The next step is to process the last remaining frames.</p>
+<ol>
+<li>Read the available frames fom the source, convert the sample values to float, and copy them to the input buffer.</li>
+<li>Call <code>Resampler::process_partial()</code> or <code>Resampler::process_partial_into_buffer()</code>.</li>
+<li>Append the output frames to the temporary buffer.</li>
+</ol>
+<p>At this point, all frames have been sent to the resampler,
+but because of the delay through the resampler,
+it may still have some frames in its internal buffers.
+When all wanted frames have been generated, the length of the temporary
+output buffer should be at least <code>new_length + delay</code>.
+If this is not the case, call <code>Resampler::process_partial()</code>
+or <code>Resampler::process_partial_into_buffer()</code> with <code>None</code> as input,
+and append the output to the temporary output buffer.
+If needed, repeat until the length is sufficient.</p>
+<p>Finally, copy the data from the temporary output buffer to the desired destination.
+Skip the first <code>delay</code> frames, and copy <code>new_length</code> frames.</p>
+<p>If there is more than one clip to resample from and to the same sample rates,
+the same resampler should be reused.
+Creating a new resampler is an expensive task and should be avoided if possible.
+Start the procedire from the start, but instead of creating a new resampler,
+call <code>Resampler::reset()</code> on the existing one to prepare it for a new job.</p>
+<h4 id="resampling-a-stream"><a class="doc-anchor" href="#resampling-a-stream">§</a>Resampling a stream</h4>
+<p>When resamping a stream, the process is normally performed in real time,
+and either the input of output is some API that provides or consumes frames at a given rate.</p>
+<h5 id="example-record-to-file-from-an-audio-api"><a class="doc-anchor" href="#example-record-to-file-from-an-audio-api">§</a>Example, record to file from an audio API</h5>
+<p>Audio APIs such as <a href="https://crates.io/crates/coreaudio-rs">CoreAudio</a> on MacOS,
+or the cross platform <a href="https://crates.io/crates/cpal">cpal</a> crate,
+often use callback functions for data exchange.</p>
+<p>A complete</p>
+<p>When capturing audio from these, the application passes a function to the audio API.
+The API then calls this function periodically, with a pointer to a data buffer containing new audio frames.
+The data buffer size is usually the same on every call, but that varies between APIs.
+It is important that the function does not block,
+since this would block some internal loop of the API and cause loss of some audio data.
+It is recommended to keep the callback function light.
+Ideally it should read the provided audio data from the buffer provided by the API,
+and optionally perform some light processing such as sample format conversion.
+No heavy processing such as resampling should be performed here.
+It should then store the audio data to a shared buffer.
+The buffer may be a <code>Arc&lt;Mutex&lt;VecDeque&lt;T&gt;&gt;&gt;</code>,
+or something more advanced such as <a href="https://crates.io/crates/ringbuf">ringbuf</a>.</p>
+<p>A separate loop, running either in the main or a separate thread,
+should then read from that buffer, resample, and save to file.
+If the Audio API provides a fixed buffer size,
+then this number of frames is a good choice for the resampler chunk size.
+If the size varies, the shared buffer can be used to adapt the chunk sizes of the audio API and the resampler.
+A good starting point for the resampler chunk size is to use an “easy” value
+near the average chunk size of the audio API.
+Make sure that the shared buffer is large enough to not get full
+in case for the loop gets blocked waiting for example for disk access.</p>
+<p>The loop should follow a process similar to <a href="#resampling-a-given-audio-clip">resampling a clip</a>,
+but the input is now the shared buffer.
+The loop needs to wait for the needed number of frames to become available in the buffer,
+before reading and passing them to the resampler.</p>
+<p>It would also be appropriate to omit the temporary output buffer,
+and write the output directly to the destination.
+The <a href="https://crates.io/crates/hound">hound</a> crate is a popular choice
+for reading and writing uncompressed audio formats.</p>
+<h3 id="simd-acceleration"><a class="doc-anchor" href="#simd-acceleration">§</a>SIMD acceleration</h3><h4 id="asynchronous-resampling-with-anti-aliasing"><a class="doc-anchor" href="#asynchronous-resampling-with-anti-aliasing">§</a>Asynchronous resampling with anti-aliasing</h4>
+<p>The asynchronous resampler supports SIMD on x86_64 and on aarch64.
+The SIMD capabilities of the CPU are determined at runtime.
+If no supported SIMD instruction set is available, it falls back to a scalar implementation.</p>
+<p>On x86_64, it will try to use AVX. If AVX isn’t available, it will instead try SSE3.</p>
+<p>On aarch64 (64-bit Arm), it will use Neon if available.</p>
+<h4 id="synchronous-resampling-1"><a class="doc-anchor" href="#synchronous-resampling-1">§</a>Synchronous resampling</h4>
+<p>The synchronous resamplers benefit from the SIMD support of the RustFFT library.</p>
+<h3 id="cargo-features"><a class="doc-anchor" href="#cargo-features">§</a>Cargo features</h3><h4 id="fft_resampler-enable-the-fft-based-synchronous-resamplers"><a class="doc-anchor" href="#fft_resampler-enable-the-fft-based-synchronous-resamplers">§</a><code>fft_resampler</code>: Enable the FFT based synchronous resamplers</h4>
+<p>This feature is enabled by default. Disable it if the FFT resamplers are not needed,
+to save compile time and reduce the resulting binary size.</p>
+<h4 id="log-enable-logging"><a class="doc-anchor" href="#log-enable-logging">§</a><code>log</code>: Enable logging</h4>
+<p>This feature enables logging via the <code>log</code> crate. This is intended for debugging purposes.
+Note that outputting logs allocates a <a href="https://doc.rust-lang.org/1.99.1/alloc/string/struct.String.html" title="struct alloc::string::String">std::string::String</a> and most logging implementations involve various other system calls.
+These calls may take some (unpredictable) time to return, during which the application is blocked.
+This means that logging should be avoided if using this library in a realtime application.</p>
+<p>The <code>log</code> feature can be enabled when running tests, which can be very useful when debugging.
+The logging level can be set via the <code>RUST_LOG</code> environment variable.</p>
+<p>Example:</p>
+<div class="example-wrap"><pre class="language-sh"><code>RUST_LOG=trace cargo test --features log</code></pre></div><h3 id="example"><a class="doc-anchor" href="#example">§</a>Example</h3>
+<p>Resample a single chunk of a dummy audio file from 44100 to 48000 Hz.
+See also the “process_f64” example that can be used to process a file from disk.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>rubato::{Resampler, SincFixedIn, SincInterpolationType, SincInterpolationParameters, WindowFunction};
+<span class="kw">let </span>params = SincInterpolationParameters {
+    sinc_len: <span class="number">256</span>,
+    f_cutoff: <span class="number">0.95</span>,
+    interpolation: SincInterpolationType::Linear,
+    oversampling_factor: <span class="number">256</span>,
+    window: WindowFunction::BlackmanHarris2,
+};
+<span class="kw">let </span><span class="kw-2">mut </span>resampler = SincFixedIn::&lt;f64&gt;::new(
+    <span class="number">48000 </span><span class="kw">as </span>f64 / <span class="number">44100 </span><span class="kw">as </span>f64,
+    <span class="number">2.0</span>,
+    params,
+    <span class="number">1024</span>,
+    <span class="number">2</span>,
+).unwrap();
+
+<span class="kw">let </span>waves_in = <span class="macro">vec!</span>[<span class="macro">vec!</span>[<span class="number">0.0f64</span>; <span class="number">1024</span>];<span class="number">2</span>];
+<span class="kw">let </span>waves_out = resampler.process(<span class="kw-2">&amp;</span>waves_in, <span class="prelude-val">None</span>).unwrap();</code></pre></div><h3 id="included-examples"><a class="doc-anchor" href="#included-examples">§</a>Included examples</h3>
+<p>The <code>examples</code> directory contains a few sample applications for testing the resamplers.
+There are also Python scripts for generating simple test signals as well as analyzing the resampled results.</p>
+<p>The examples read and write raw audio data in 64-bit float format.
+They can be used to process .wav files if the files are first converted to the right format.
+Use <code>sox</code> to convert a .wav to raw samples:</p>
+<div class="example-wrap"><pre class="language-sh"><code>sox some_file.wav -e floating-point -b 64 some_file_f64.raw</code></pre></div>
+<p>After processing, the result can be converted back to new .wav. This examples converts to 16-bits at 44.1 kHz:</p>
+<div class="example-wrap"><pre class="language-sh"><code>sox -e floating-point -b 64 -r 44100 -c 2 resampler_output.raw -e signed-integer -b 16 some_file_resampled.wav</code></pre></div>
+<p>Many audio editors, for example Audacity, are also able to directly import and export the raw samples.</p>
+<h3 id="compatibility"><a class="doc-anchor" href="#compatibility">§</a>Compatibility</h3>
+<p>The <code>rubato</code> crate requires rustc version 1.61 or newer.</p>
+<h3 id="changelog"><a class="doc-anchor" href="#changelog">§</a>Changelog</h3>
+<ul>
+<li>v0.16.2
+<ul>
+<li>Fix issues when using on 32-bit systems.</li>
+</ul>
+</li>
+<li>v0.16.1
+<ul>
+<li>Fix issue in test suite when building without FFT resamplers.</li>
+</ul>
+</li>
+<li>v0.16.0
+<ul>
+<li>Add support for changing the fixed input or output size of the asynchronous resamplers.</li>
+</ul>
+</li>
+<li>v0.15.0
+<ul>
+<li>Make FFT resamplers optional via <code>fft_resampler</code> feature.</li>
+<li>Fix calculation of input and output sizes when creating FftFixedInOut resampler.</li>
+<li>Fix panic when using very small chunksizes (less than 5).</li>
+</ul>
+</li>
+<li>v0.14.1
+<ul>
+<li>More bugfixes for buffer allocation and max output length calculation.</li>
+<li>Fix building with <code>log</code> feature.</li>
+</ul>
+</li>
+<li>v0.14.0
+<ul>
+<li>Add argument to let <code>input/output_buffer_allocate()</code> optionally pre-fill buffers with zeros.</li>
+<li>Add convenience methods for managing buffers.</li>
+<li>Bugfixes for buffer allocation and max output length calculation.</li>
+</ul>
+</li>
+<li>v0.13.0
+<ul>
+<li>Switch to slices of references for input and output data.</li>
+<li>Add faster (lower quality) asynchronous resamplers.</li>
+<li>Add a macro to help implement custom object safe resamplers.</li>
+<li>Optional smooth ramping of ratio changes to avoid audible steps.</li>
+<li>Add convenience methods for handling last frames in a stream.</li>
+<li>Add resampler reset method.</li>
+<li>Refactoring for a more logical structure.</li>
+<li>Add helper function for calculating cutoff frequency.</li>
+<li>Add quadratic interpolation for sinc resampler.</li>
+<li>Add method to get the delay through a resampler as a number of output frames.</li>
+</ul>
+</li>
+<li>v0.12.0
+<ul>
+<li>Always enable all simd acceleration (and remove the simd Cargo features).</li>
+</ul>
+</li>
+<li>v0.11.0
+<ul>
+<li>New api to allow use in realtime applications.</li>
+<li>Configurable adjust range of asynchronous resamplers.</li>
+</ul>
+</li>
+<li>v0.10.1
+<ul>
+<li>Fix compiling with neon feature after changes in latest nightly.</li>
+</ul>
+</li>
+<li>v0.10.0
+<ul>
+<li>Add an object-safe wrapper trait for Resampler.</li>
+</ul>
+</li>
+<li>v0.9.0
+<ul>
+<li>Accept any AsRef&lt;[T]&gt; as input.</li>
+</ul>
+</li>
+</ul>
+<p>License: MIT</p>
+</div></details><h2 id="modules" class="section-header">Modules<a href="#modules" class="anchor">§</a></h2><dl class="item-table"><dt><a class="mod" href="sinc_interpolator/index.html" title="mod rubato::sinc_interpolator">sinc_<wbr>interpolator</a></dt></dl><h2 id="macros" class="section-header">Macros<a href="#macros" class="anchor">§</a></h2><dl class="item-table"><dt><a class="macro" href="macro.implement_resampler.html" title="macro rubato::implement_resampler">implement_<wbr>resampler</a></dt><dd>A macro for implementing wrapper traits for when a <a href="trait.Resampler.html" title="trait rubato::Resampler">Resampler</a> must be object safe.
+The wrapper trait locks the generic type parameters or the <a href="trait.Resampler.html" title="trait rubato::Resampler">Resampler</a> trait to specific types,
+which is needed to make the trait into an object.</dd></dl><h2 id="structs" class="section-header">Structs<a href="#structs" class="anchor">§</a></h2><dl class="item-table"><dt><a class="struct" href="struct.FastFixedIn.html" title="struct rubato::FastFixedIn">Fast<wbr>Fixed<wbr>In</a></dt><dd>An asynchronous resampler that accepts a fixed number of audio frames for input
+and returns a variable number of frames.</dd><dt><a class="struct" href="struct.FastFixedOut.html" title="struct rubato::FastFixedOut">Fast<wbr>Fixed<wbr>Out</a></dt><dd>An asynchronous resampler that returns a fixed number of audio frames.
+The number of input frames required is given by the
+<a href="trait.Resampler.html#tymethod.input_frames_next" title="method rubato::Resampler::input_frames_next">input_frames_next</a> function.</dd><dt><a class="struct" href="struct.FftFixedIn.html" title="struct rubato::FftFixedIn">FftFixed<wbr>In</a></dt><dd>A synchronous resampler that needs a fixed number of audio frames for input
+and returns a variable number of frames.</dd><dt><a class="struct" href="struct.FftFixedInOut.html" title="struct rubato::FftFixedInOut">FftFixed<wbr>InOut</a></dt><dd>A synchronous resampler that accepts a fixed number of audio frames for input
+and returns a fixed number of frames.</dd><dt><a class="struct" href="struct.FftFixedOut.html" title="struct rubato::FftFixedOut">FftFixed<wbr>Out</a></dt><dd>A synchronous resampler that needs a varying number of audio frames for input
+and returns a fixed number of frames.</dd><dt><a class="struct" href="struct.MissingCpuFeature.html" title="struct rubato::MissingCpuFeature">Missing<wbr>CpuFeature</a></dt><dd>Error raised when trying to use a CPU feature which is not supported.</dd><dt><a class="struct" href="struct.SincFixedIn.html" title="struct rubato::SincFixedIn">Sinc<wbr>Fixed<wbr>In</a></dt><dd>An asynchronous resampler that accepts a fixed number of audio frames for input
+and returns a variable number of frames.
+The number of input frames is determined by the chunk size argument to the constructor.
+This value can be changed by the <code>set_chunk_size()</code> method,
+to let the resampler process smaller chunks of audio data.
+Note that the chunk size cannot exceed the value given at creation time.
+The maximum value can be retrieved using the <code>input_size_max()</code> method,
+and <code>input_frames_next()</code> gives the current value.</dd><dt><a class="struct" href="struct.SincFixedOut.html" title="struct rubato::SincFixedOut">Sinc<wbr>Fixed<wbr>Out</a></dt><dd>An asynchronous resampler that returns a fixed number of audio frames.
+The number of input frames required is given by the
+<a href="trait.Resampler.html#tymethod.input_frames_next" title="method rubato::Resampler::input_frames_next">input_frames_next</a> function.</dd><dt><a class="struct" href="struct.SincInterpolationParameters.html" title="struct rubato::SincInterpolationParameters">Sinc<wbr>Interpolation<wbr>Parameters</a></dt><dd>A struct holding the parameters for sinc interpolation.</dd></dl><h2 id="enums" class="section-header">Enums<a href="#enums" class="anchor">§</a></h2><dl class="item-table"><dt><a class="enum" href="enum.CpuFeature.html" title="enum rubato::CpuFeature">CpuFeature</a></dt><dd>An identifier for a cpu feature.</dd><dt><a class="enum" href="enum.PolynomialDegree.html" title="enum rubato::PolynomialDegree">Polynomial<wbr>Degree</a></dt><dd>Degree of the polynomial used for interpolation.
+A higher degree gives a higher quality result, while taking longer to compute.</dd><dt><a class="enum" href="enum.ResampleError.html" title="enum rubato::ResampleError">Resample<wbr>Error</a></dt><dd>The error type used by <code>rubato</code>.</dd><dt><a class="enum" href="enum.ResamplerConstructionError.html" title="enum rubato::ResamplerConstructionError">Resampler<wbr>Construction<wbr>Error</a></dt><dd>The error type returned when constructing <a href="trait.Resampler.html" title="trait rubato::Resampler">Resampler</a>.</dd><dt><a class="enum" href="enum.SincInterpolationType.html" title="enum rubato::SincInterpolationType">Sinc<wbr>Interpolation<wbr>Type</a></dt><dd>Interpolation methods that can be selected. For asynchronous interpolation where the
+ratio between input and output sample rates can be any number, it’s not possible to
+pre-calculate all the needed interpolation filters.
+Instead they have to be computed as needed, which becomes impractical since the
+sincs are very expensive to generate in terms of cpu time.
+It’s more efficient to combine the sinc filters with some other interpolation technique.
+Then, sinc filters are used to provide a fixed number of interpolated points between input samples,
+and then, the new value is calculated by interpolation between those points.</dd><dt><a class="enum" href="enum.WindowFunction.html" title="enum rubato::WindowFunction">Window<wbr>Function</a></dt><dd>Different window functions that can be used to window the sinc function.</dd></dl><h2 id="traits" class="section-header">Traits<a href="#traits" class="anchor">§</a></h2><dl class="item-table"><dt><a class="trait" href="trait.Resampler.html" title="trait rubato::Resampler">Resampler</a></dt><dd>A resampler that is used to resample a chunk of audio to a new sample rate.
+For asynchronous resamplers, the rate can be adjusted as required.</dd><dt><a class="trait" href="trait.Sample.html" title="trait rubato::Sample">Sample</a></dt><dd>The trait governing a single sample.</dd><dt><a class="trait" href="trait.VecResampler.html" title="trait rubato::VecResampler">VecResampler</a></dt><dd>This is an wrapper trait implemented via the <a href="macro.implement_resampler.html" title="macro rubato::implement_resampler">implement_resampler</a> macro.
+The generic input and output types <code>&amp;[AsRef&lt;[T]&gt;]</code> and <code>&amp;mut [AsMut&lt;[T]&gt;]</code>
+are locked to <code>&amp;[Vec&lt;T&gt;]</code> and <code>&amp;mut [Vec&lt;T&gt;]</code>.</dd></dl><h2 id="functions" class="section-header">Functions<a href="#functions" class="anchor">§</a></h2><dl class="item-table"><dt><a class="fn" href="fn.buffer_capacity.html" title="fn rubato::buffer_capacity">buffer_<wbr>capacity</a></dt><dd>Convenience method for getting the current allocated capacity of a buffer in frames.
+Checks the <a href="https://doc.rust-lang.org/1.99.1/alloc/vec/struct.Vec.html#method.capacity" title="method alloc::vec::Vec::capacity">capacity</a> of the vector for each channel and returns the smallest.</dd><dt><a class="fn" href="fn.buffer_length.html" title="fn rubato::buffer_length">buffer_<wbr>length</a></dt><dd>Convenience method for getting the current length of a buffer in frames.
+Checks the <a href="https://doc.rust-lang.org/1.99.1/alloc/vec/struct.Vec.html#method.len" title="method alloc::vec::Vec::len">length</a> of the vector for each channel and returns the smallest.</dd><dt><a class="fn" href="fn.calculate_cutoff.html" title="fn rubato::calculate_cutoff">calculate_<wbr>cutoff</a></dt><dd>Calculate a suitable relative cutoff frequency for the given sinc length using the given window function.
+The result is based on an approximation, which gives good results for sinc lengths from 32 to 2048.</dd><dt><a class="fn" href="fn.make_buffer.html" title="fn rubato::make_buffer">make_<wbr>buffer</a></dt><dd>Convenience method for allocating a buffer to hold a given number of channels and frames.
+The <code>filled</code> argument determines if the vectors should be pre-filled with zeros or not.
+When false, the vectors are only allocated but returned empty.</dd><dt><a class="fn" href="fn.resize_buffer.html" title="fn rubato::resize_buffer">resize_<wbr>buffer</a></dt><dd>Convenience method for resizing a buffer to a new number of frames.
+If the new number of frames is no larger than the buffer capacity,
+no reallocation will occur.
+If the new length is smaller than the current, the excess elements are dropped.
+If it is larger, zeros are inserted for the missing elements.</dd></dl><h2 id="types" class="section-header">Type Aliases<a href="#types" class="anchor">§</a></h2><dl class="item-table"><dt><a class="type" href="type.ResampleResult.html" title="type rubato::ResampleResult">Resample<wbr>Result</a></dt><dd>A result alias for the error type used by <code>rubato</code>.</dd></dl><script type="text/json" id="notable-traits-data">{"IntoIter<T>":"<h3>Notable traits for <code><a class=\"struct\" href=\"https://doc.rust-lang.org/1.99.1/core/result/struct.IntoIter.html\" title=\"struct core::result::IntoIter\">IntoIter</a>&lt;T&gt;</code></h3><pre><code><div class=\"where\">impl&lt;T&gt; <a class=\"trait\" href=\"https://doc.rust-lang.org/1.99.1/core/iter/traits/iterator/trait.Iterator.html\" title=\"trait core::iter::traits::iterator::Iterator\">Iterator</a> for <a class=\"struct\" href=\"https://doc.rust-lang.org/1.99.1/core/result/struct.IntoIter.html\" title=\"struct core::result::IntoIter\">IntoIter</a>&lt;T&gt;</div><div class=\"where\">    type <a href=\"https://doc.rust-lang.org/1.99.1/core/iter/traits/iterator/trait.Iterator.html#associatedtype.Item\" class=\"associatedtype\">Item</a> = T;</div>","Iter<'_, T>":"<h3>Notable traits for <code><a class=\"struct\" href=\"https://doc.rust-lang.org/1.99.1/core/result/struct.Iter.html\" title=\"struct core::result::Iter\">Iter</a>&lt;'a, T&gt;</code></h3><pre><code><div class=\"where\">impl&lt;'a, T&gt; <a class=\"trait\" href=\"https://doc.rust-lang.org/1.99.1/core/iter/traits/iterator/trait.Iterator.html\" title=\"trait core::iter::traits::iterator::Iterator\">Iterator</a> for <a class=\"struct\" href=\"https://doc.rust-lang.org/1.99.1/core/result/struct.Iter.html\" title=\"struct core::result::Iter\">Iter</a>&lt;'a, T&gt;</div><div class=\"where\">    type <a href=\"https://doc.rust-lang.org/1.99.1/core/iter/traits/iterator/trait.Iterator.html#associatedtype.Item\" class=\"associatedtype\">Item</a> = <a class=\"primitive\" href=\"https://doc.rust-lang.org/1.99.1/std/primitive.reference.html\">&amp;'a T</a>;</div>","IterMut<'_, T>":"<h3>Notable traits for <code><a class=\"struct\" href=\"https://doc.rust-lang.org/1.99.1/core/result/struct.IterMut.html\" title=\"struct core::result::IterMut\">IterMut</a>&lt;'a, T&gt;</code></h3><pre><code><div class=\"where\">impl&lt;'a, T&gt; <a class=\"trait\" href=\"https://doc.rust-lang.org/1.99.1/core/iter/traits/iterator/trait.Iterator.html\" title=\"trait core::iter::traits::iterator::Iterator\">Iterator</a> for <a class=\"struct\" href=\"https://doc.rust-lang.org/1.99.1/core/result/struct.IterMut.html\" title=\"struct core::result::IterMut\">IterMut</a>&lt;'a, T&gt;</div><div class=\"where\">    type <a href=\"https://doc.rust-lang.org/1.99.1/core/iter/traits/iterator/trait.Iterator.html#associatedtype.Item\" class=\"associatedtype\">Item</a> = <a class=\"primitive\" href=\"https://doc.rust-lang.org/1.99.1/std/primitive.reference.html\">&amp;'a mut T</a>;</div>"}</script></section></div></main></body></html>

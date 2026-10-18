@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["attack","enemy","game_over","gentstate","merchant","physics","pickups","player","switches","wall","xp_orbs","yak"],"struct":["GameplayPlugin"]};
+window.SIDEBAR_ITEMS = {"mod":["actors","capsule_commerce","combat","effects","enemy","game_over","gentstate","interaction","intro","npc","physics","player","spikes","tick_profile","world_objects","yak"],"struct":["GameplayPlugin"]};

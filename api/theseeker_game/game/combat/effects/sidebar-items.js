@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["apply_damage_flash","apply_damage_flash_to_gent","apply_damage_stretch_reset","damage_flash","reset_damage_stretch_for_gent"],"struct":["DamageFlash","EffectsPlugin"]};

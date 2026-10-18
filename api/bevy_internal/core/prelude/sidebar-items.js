@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"struct":["DebugName","FrameCountPlugin","Name","TaskPoolOptions","TaskPoolPlugin","TypeRegistrationPlugin"]};

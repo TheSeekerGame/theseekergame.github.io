@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["Gizmos","SphereBuilder"]};
+window.SIDEBAR_ITEMS = {"struct":["GizmoBuffer","GizmoBufferView","GizmoStorage","Gizmos","Swap"]};

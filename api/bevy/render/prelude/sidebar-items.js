@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["ClearColorConfig","Color","Msaa","Projection","Visibility"],"struct":["Camera","ClearColor","ExtractSchedule","Image","ImagePlugin","InheritedVisibility","Mesh","MorphWeights","OrthographicProjection","PerspectiveProjection","Shader","SpatialBundle","ViewVisibility","VisibilityBundle"],"trait":["Meshable"]};
+window.SIDEBAR_ITEMS = {"enum":["Msaa"],"struct":["ExtractSchedule","ManualTextureViews","RenderGraph"],"trait":["_"]};

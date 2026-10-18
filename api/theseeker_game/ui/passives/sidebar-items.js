@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"fn":["display_passives","plugin","spawn_passive_ui_container"],"struct":["PassivesUiNode"]};

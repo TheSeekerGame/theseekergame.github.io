@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["DIST_THRESHOLD","MOTION"],"fn":["scatter_direction","spawn_orbs_on_death","tick_explosion_phase","update_orbs_pos","update_orbs_vel_and_pickup","xp_orb_animation_player"],"struct":["XpOrb","XpOrbPickup","XpOrbSet","XpOrbsPlugin"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["SECRET_ROOMS_DIR"],"enum":["RoomTile"],"fn":["anchor_hash","best_placement","carve_secret_rooms","cover_border_tiles","dilate","dilate_lines","fits","load_rule","load_secret_rooms","mirrored","parse_rule","tile_rect"],"struct":["CarvingResult","SecretRoomLibrary","SecretRoomPlacement","SecretRoomRule"]};

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"constant":["MAX_PANIC_MSG_LEN"],"fn":["concat_panic"],"macro":["coerce_fmt","concat_assert","concat_panic","unwrap_err","unwrap_ok","unwrap_some"],"mod":["fmt","utils"],"struct":["PanicVal","StdWrapper"]};
+window.SIDEBAR_ITEMS = {"constant":["MAX_PANIC_MSG_LEN"],"fn":["concat_panic"],"macro":[["coerce_fmt",1],["concat_assert",1],["concat_panic",1],["unwrap_err",1],["unwrap_ok",1],["unwrap_some",1]],"mod":["fmt","utils"],"struct":["PanicVal","StdWrapper"]};

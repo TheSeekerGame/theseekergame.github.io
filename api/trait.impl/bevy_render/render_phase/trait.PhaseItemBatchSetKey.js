@@ -1,0 +1,9 @@
+(function() {
+    const implementors = Object.fromEntries([["bevy",[]],["bevy_core_pipeline",[["impl <a class=\"trait\" href=\"bevy_render/render_phase/trait.PhaseItemBatchSetKey.html\" title=\"trait bevy_render::render_phase::PhaseItemBatchSetKey\">PhaseItemBatchSetKey</a> for <a class=\"struct\" href=\"bevy_core_pipeline/core_2d/struct.BatchSetKey2d.html\" title=\"struct bevy_core_pipeline::core_2d::BatchSetKey2d\">BatchSetKey2d</a>",0],["impl <a class=\"trait\" href=\"bevy_render/render_phase/trait.PhaseItemBatchSetKey.html\" title=\"trait bevy_render::render_phase::PhaseItemBatchSetKey\">PhaseItemBatchSetKey</a> for <a class=\"struct\" href=\"bevy_core_pipeline/core_3d/struct.Opaque3dBatchSetKey.html\" title=\"struct bevy_core_pipeline::core_3d::Opaque3dBatchSetKey\">Opaque3dBatchSetKey</a>",0],["impl <a class=\"trait\" href=\"bevy_render/render_phase/trait.PhaseItemBatchSetKey.html\" title=\"trait bevy_render::render_phase::PhaseItemBatchSetKey\">PhaseItemBatchSetKey</a> for <a class=\"struct\" href=\"bevy_core_pipeline/prepass/struct.OpaqueNoLightmap3dBatchSetKey.html\" title=\"struct bevy_core_pipeline::prepass::OpaqueNoLightmap3dBatchSetKey\">OpaqueNoLightmap3dBatchSetKey</a>",0]]],["bevy_sprite_render",[["impl <a class=\"trait\" href=\"bevy_render/render_phase/trait.PhaseItemBatchSetKey.html\" title=\"trait bevy_render::render_phase::PhaseItemBatchSetKey\">PhaseItemBatchSetKey</a> for <a class=\"struct\" href=\"bevy_sprite_render/struct.Wireframe2dBatchSetKey.html\" title=\"struct bevy_sprite_render::Wireframe2dBatchSetKey\">Wireframe2dBatchSetKey</a>",0]]]]);
+    if (window.register_implementors) {
+        window.register_implementors(implementors);
+    } else {
+        window.pending_implementors = implementors;
+    }
+})()
+//{"start":59,"fragment_lengths":[11,1138,384]}

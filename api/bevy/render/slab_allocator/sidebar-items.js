@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["Slab"],"struct":["AllocationStage","DeallocationStage","GeneralSlab","LargeObjectSlab","SlabAllocationBufferSlice","SlabAllocator","SlabAllocatorSettings","SlabId","SlabToReallocate"],"trait":["SlabItem","SlabItemLayout"]};

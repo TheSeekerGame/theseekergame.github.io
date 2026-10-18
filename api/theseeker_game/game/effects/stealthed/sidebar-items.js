@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["STEALTH_DURATION","STEALTH_SPEED_MULT"],"fn":["has_shadow_cloak","restore_stealth_sprite_alpha","should_remove_stealth_after_damage","start_stealth_cooldown_on_remove","stealth_damage_break_system","stealth_effect_system","stealth_exit_visibility_system"],"struct":["StealthEffect"]};

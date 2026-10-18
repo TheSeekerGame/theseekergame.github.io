@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["ClusterConfig","ClusterFarZMode","ClusterableObjects"],"fn":["add_light_probe_and_decal_aabbs"],"mod":["assign"],"struct":["ClusterVisibilityClass","ClusterZConfig","ClusterableObjectCounts","ClusteredDecal","Clusters","GlobalClusterGpuSettings","GlobalClusterSettings","ObjectsInClusterCpu"]};

@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"enum":["JustifyText","TextError"],"struct":["Font","Text","Text2dBundle","TextSection","TextStyle"]};

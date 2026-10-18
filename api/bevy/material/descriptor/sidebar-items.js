@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["PipelineDescriptor"],"struct":["BindGroupLayoutDescriptor","CachedComputePipelineId","CachedRenderPipelineId","ComputePipelineDescriptor","FragmentState","NoFragmentStateError","RenderPipelineDescriptor","VertexState"]};

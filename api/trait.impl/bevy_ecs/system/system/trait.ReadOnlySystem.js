@@ -1,9 +1,9 @@
 (function() {
-    var implementors = Object.fromEntries([["bevy",[]],["bevy_ecs",[]],["bevy_internal",[]],["theseeker_engine",[]],["theseeker_game",[]]]);
+    const implementors = Object.fromEntries([["bevy",[]],["bevy_ecs",[]],["theseeker_engine",[]],["theseeker_game",[]]]);
     if (window.register_implementors) {
         window.register_implementors(implementors);
     } else {
         window.pending_implementors = implementors;
     }
 })()
-//{"start":57,"fragment_lengths":[11,16,21,24,22]}
+//{"start":59,"fragment_lengths":[11,16,24,22]}

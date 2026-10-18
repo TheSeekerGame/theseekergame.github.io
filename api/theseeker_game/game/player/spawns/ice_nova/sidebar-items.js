@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["ICE_NOVA_BURST_TICK","ICE_NOVA_DAMAGE","ICE_NOVA_FREEZE_TICKS","ICE_NOVA_RADIUS","ICE_NOVA_VISUAL_LIFETIME","ICE_NOVA_Z"],"fn":["apply_ice_nova_burst","frozen_size_for_ice_nova_target","spawn_ice_nova","tick_ice_nova"],"struct":["IceNova","IceNovaPlugin","IceNovaVisual"]};

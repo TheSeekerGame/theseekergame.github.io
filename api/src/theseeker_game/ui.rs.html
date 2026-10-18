@@ -1,291 +1,195 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `game/src/ui.rs`."><title>ui.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-46132b98.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="theseeker_game" data-themes="" data-resource-suffix="" data-rustdoc-version="1.85.1 (4eb161250 2025-03-15)" data-channel="1.85.1" data-search-js="search-75f5ac3e.js" data-settings-js="settings-0f613d39.js" ><script src="../../static.files/storage-59e33391.js"></script><script defer src="../../static.files/src-script-56102188.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-5f194d8c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-893ab5e7.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">theseeker_game/</div>ui.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
-<a href="#1" id="1">1</a>
-<a href="#2" id="2">2</a>
-<a href="#3" id="3">3</a>
-<a href="#4" id="4">4</a>
-<a href="#5" id="5">5</a>
-<a href="#6" id="6">6</a>
-<a href="#7" id="7">7</a>
-<a href="#8" id="8">8</a>
-<a href="#9" id="9">9</a>
-<a href="#10" id="10">10</a>
-<a href="#11" id="11">11</a>
-<a href="#12" id="12">12</a>
-<a href="#13" id="13">13</a>
-<a href="#14" id="14">14</a>
-<a href="#15" id="15">15</a>
-<a href="#16" id="16">16</a>
-<a href="#17" id="17">17</a>
-<a href="#18" id="18">18</a>
-<a href="#19" id="19">19</a>
-<a href="#20" id="20">20</a>
-<a href="#21" id="21">21</a>
-<a href="#22" id="22">22</a>
-<a href="#23" id="23">23</a>
-<a href="#24" id="24">24</a>
-<a href="#25" id="25">25</a>
-<a href="#26" id="26">26</a>
-<a href="#27" id="27">27</a>
-<a href="#28" id="28">28</a>
-<a href="#29" id="29">29</a>
-<a href="#30" id="30">30</a>
-<a href="#31" id="31">31</a>
-<a href="#32" id="32">32</a>
-<a href="#33" id="33">33</a>
-<a href="#34" id="34">34</a>
-<a href="#35" id="35">35</a>
-<a href="#36" id="36">36</a>
-<a href="#37" id="37">37</a>
-<a href="#38" id="38">38</a>
-<a href="#39" id="39">39</a>
-<a href="#40" id="40">40</a>
-<a href="#41" id="41">41</a>
-<a href="#42" id="42">42</a>
-<a href="#43" id="43">43</a>
-<a href="#44" id="44">44</a>
-<a href="#45" id="45">45</a>
-<a href="#46" id="46">46</a>
-<a href="#47" id="47">47</a>
-<a href="#48" id="48">48</a>
-<a href="#49" id="49">49</a>
-<a href="#50" id="50">50</a>
-<a href="#51" id="51">51</a>
-<a href="#52" id="52">52</a>
-<a href="#53" id="53">53</a>
-<a href="#54" id="54">54</a>
-<a href="#55" id="55">55</a>
-<a href="#56" id="56">56</a>
-<a href="#57" id="57">57</a>
-<a href="#58" id="58">58</a>
-<a href="#59" id="59">59</a>
-<a href="#60" id="60">60</a>
-<a href="#61" id="61">61</a>
-<a href="#62" id="62">62</a>
-<a href="#63" id="63">63</a>
-<a href="#64" id="64">64</a>
-<a href="#65" id="65">65</a>
-<a href="#66" id="66">66</a>
-<a href="#67" id="67">67</a>
-<a href="#68" id="68">68</a>
-<a href="#69" id="69">69</a>
-<a href="#70" id="70">70</a>
-<a href="#71" id="71">71</a>
-<a href="#72" id="72">72</a>
-<a href="#73" id="73">73</a>
-<a href="#74" id="74">74</a>
-<a href="#75" id="75">75</a>
-<a href="#76" id="76">76</a>
-<a href="#77" id="77">77</a>
-<a href="#78" id="78">78</a>
-<a href="#79" id="79">79</a>
-<a href="#80" id="80">80</a>
-<a href="#81" id="81">81</a>
-<a href="#82" id="82">82</a>
-<a href="#83" id="83">83</a>
-<a href="#84" id="84">84</a>
-<a href="#85" id="85">85</a>
-<a href="#86" id="86">86</a>
-<a href="#87" id="87">87</a>
-<a href="#88" id="88">88</a>
-<a href="#89" id="89">89</a>
-<a href="#90" id="90">90</a>
-<a href="#91" id="91">91</a>
-<a href="#92" id="92">92</a>
-<a href="#93" id="93">93</a>
-<a href="#94" id="94">94</a>
-<a href="#95" id="95">95</a>
-<a href="#96" id="96">96</a>
-<a href="#97" id="97">97</a>
-<a href="#98" id="98">98</a>
-<a href="#99" id="99">99</a>
-<a href="#100" id="100">100</a>
-<a href="#101" id="101">101</a>
-<a href="#102" id="102">102</a>
-<a href="#103" id="103">103</a>
-<a href="#104" id="104">104</a>
-<a href="#105" id="105">105</a>
-<a href="#106" id="106">106</a>
-<a href="#107" id="107">107</a>
-<a href="#108" id="108">108</a>
-<a href="#109" id="109">109</a>
-<a href="#110" id="110">110</a>
-<a href="#111" id="111">111</a>
-<a href="#112" id="112">112</a>
-<a href="#113" id="113">113</a>
-<a href="#114" id="114">114</a>
-<a href="#115" id="115">115</a>
-<a href="#116" id="116">116</a>
-<a href="#117" id="117">117</a>
-<a href="#118" id="118">118</a>
-<a href="#119" id="119">119</a>
-<a href="#120" id="120">120</a>
-<a href="#121" id="121">121</a>
-<a href="#122" id="122">122</a>
-<a href="#123" id="123">123</a>
-<a href="#124" id="124">124</a>
-<a href="#125" id="125">125</a>
-<a href="#126" id="126">126</a>
-<a href="#127" id="127">127</a>
-<a href="#128" id="128">128</a>
-<a href="#129" id="129">129</a>
-<a href="#130" id="130">130</a>
-<a href="#131" id="131">131</a>
-<a href="#132" id="132">132</a>
-<a href="#133" id="133">133</a>
-<a href="#134" id="134">134</a>
-<a href="#135" id="135">135</a>
-<a href="#136" id="136">136</a>
-<a href="#137" id="137">137</a>
-<a href="#138" id="138">138</a>
-<a href="#139" id="139">139</a>
-<a href="#140" id="140">140</a>
-<a href="#141" id="141">141</a>
-<a href="#142" id="142">142</a>
-<a href="#143" id="143">143</a>
-<a href="#144" id="144">144</a>
-<a href="#145" id="145">145</a></pre></div><pre class="rust"><code><span class="kw">use </span>bevy::ecs::system::EntityCommands;
-<span class="kw">use </span>sickle_ui::ui_builder::UiBuilder;
-<span class="kw">use </span>sickle_ui::widgets::prelude::UiContainerExt;
-
-<span class="kw">use </span><span class="kw">crate</span>::assets::UiAssets;
-<span class="kw">use </span><span class="kw">crate</span>::locale::L10nKey;
-<span class="kw">use </span><span class="kw">crate</span>::prelude::<span class="kw-2">*</span>;
-<span class="kw">use </span><span class="kw">crate</span>::ui::kill_counter::KillCounterPlugin;
-<span class="kw">use </span><span class="kw">crate</span>::ui::skill_toolbar::SkillToolbarPlugin;
-
-<span class="kw">pub mod </span>ability_widget;
-<span class="kw">mod </span>controls_overlay;
-<span class="kw">mod </span>kill_counter;
-<span class="kw">mod </span>mainmenu;
-<span class="kw">mod </span>passives;
-<span class="kw">pub mod </span>popup;
-<span class="kw">mod </span>skill_toolbar;
-
-<span class="attr">#[cfg(not(feature = <span class="string">"release"</span>))]
-</span><span class="kw">mod </span>console;
-
-<span class="kw">pub struct </span>UiPlugin;
-
-<span class="kw">impl </span>Plugin <span class="kw">for </span>UiPlugin {
-    <span class="kw">fn </span>build(<span class="kw-2">&amp;</span><span class="self">self</span>, app: <span class="kw-2">&amp;mut </span>App) {
-        app.add_plugins(iyes_ui::UiExtrasPlugin);
-        app.add_plugins((
-            controls_overlay::plugin,
-            popup::plugin,
-            passives::plugin,
-            <span class="self">self</span>::mainmenu::MainMenuPlugin,
-            SkillToolbarPlugin,
-            KillCounterPlugin,
-        ));
-        <span class="attr">#[cfg(not(feature = <span class="string">"release"</span>))]
-        </span>app.add_plugins((
-            <span class="self">self</span>::console::UiConsolePlugin,
-        ));
-    }
-}
-
-<span class="kw">fn </span>spawn_menuentry(
-    commands: <span class="kw-2">&amp;mut </span>Commands,
-    uiassets: <span class="kw-2">&amp;</span>UiAssets,
-    behavior: OnClick,
-    text: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str,
-) -&gt; Entity {
-    <span class="kw">let </span>color_text = Color::WHITE;
-
-    <span class="kw">let </span>butt = commands
-        .spawn((
-            behavior,
-            ButtonBundle {
-                background_color: BackgroundColor(Color::NONE),
-                style: Style {
-                    justify_content: JustifyContent::Center,
-                    align_items: AlignItems::Center,
-                    padding: UiRect::all(Val::Px(<span class="number">4.0</span>)),
-                    margin: UiRect::all(Val::Px(<span class="number">4.0</span>)),
-                    ..Default::default()
-                },
-                ..Default::default()
-            },
-        ))
-        .id();
-
-    <span class="kw">let </span>text = commands
-        .spawn((
-            L10nKey(text.to_owned()),
-            TextBundle {
-                text: Text::from_section(
-                    text,
-                    TextStyle {
-                        color: color_text,
-                        font_size: <span class="number">32.0</span>,
-                        font: uiassets.font_regular.clone(),
-                    },
-                ),
-                ..Default::default()
-            },
-        ))
-        .id();
-
-    commands.entity(butt).push_children(<span class="kw-2">&amp;</span>[text]);
-
-    butt
-}
-
-<span class="doccomment">/// For use in sickle_ui contexts, use like:
-/// ```rust
-/// button(
-///     row, // any  &amp;mut UiBuilder&lt;Entity&gt; type
-///     OnClick::new().system(new_game),
-///     "YourButtonTextHere",
-///     style.clone(),
-/// );
-/// ```
-</span><span class="kw">pub fn </span>button&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, <span class="lifetime">'a</span>&gt;(
-    parent: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>UiBuilder&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, <span class="lifetime">'_</span>, Entity&gt;,
-    behavior: OnClick,
-    text: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str,
-    style: TextStyle,
-) -&gt; UiBuilder&lt;<span class="lifetime">'w</span>, <span class="lifetime">'s</span>, <span class="lifetime">'a</span>, Entity&gt; {
-    parent.container(
-        (
-            behavior,
-            ButtonBundle {
-                background_color: BackgroundColor(Color::NONE),
-                style: Style {
-                    justify_content: JustifyContent::Center,
-                    align_items: AlignItems::Center,
-                    padding: UiRect::all(Val::Px(<span class="number">4.0</span>)),
-                    margin: UiRect::all(Val::Px(<span class="number">4.0</span>)),
-                    ..Default::default()
-                },
-                ..Default::default()
-            },
-        ),
-        |button| {
-            button.spawn((
-                L10nKey(text.to_owned()),
-                TextBundle {
-                    text: Text::from_section(text, style),
-                    ..Default::default()
-                },
-            ));
-        },
-    )
-}
-
-<span class="kw">trait </span>Spawn {
-    <span class="kw">fn </span>spawn&lt;B: Bundle&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, bundle: B) -&gt; EntityCommands;
-}
-
-<span class="kw">impl </span>Spawn <span class="kw">for </span>Commands&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt; {
-    <span class="kw">fn </span>spawn&lt;B: Bundle&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, bundle: B) -&gt; EntityCommands {
-        Commands::spawn(<span class="self">self</span>, bundle)
-    }
-}
-
-<span class="kw">impl </span>Spawn <span class="kw">for </span>ChildBuilder&lt;<span class="lifetime">'_</span>&gt; {
-    <span class="kw">fn </span>spawn&lt;B: Bundle&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, bundle: B) -&gt; EntityCommands {
-        ChildBuilder::spawn(<span class="self">self</span>, bundle)
-    }
-}
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `game/src/ui.rs`."><title>ui.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-0c87338a.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="theseeker_game" data-themes="" data-resource-suffix="" data-rustdoc-version="1.99.1 (58cf8f9c3 2026-10-13)" data-channel="1.99.1" data-search-js="search-cf4fc35e.js" data-stringdex-js="stringdex-b5109af9.js" data-settings-js="settings-170eb4bf.js" ><script src="../../static.files/storage-41dd4d93.js"></script><script defer src="../../static.files/src-script-813739b1.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-417ebf0a.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-9f56287d.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-eab170b8.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><a class="skip-main-content" href="#main-content">Skip to main content</a><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><section id="main-content" class="content" tabindex="-1"><div class="main-heading"><h1><div class="sub-heading">theseeker_game/</div>ui.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap digits-3"><pre class="rust"><code><a href=#1 id=1 data-nosnippet>1</a><span class="kw">use </span><span class="kw">crate</span>::camera::GameplayPixelScale;
+<a href=#2 id=2 data-nosnippet>2</a><span class="kw">use </span><span class="kw">crate</span>::game::player::{Player, PlayerAction, PlayerStateSet};
+<a href=#3 id=3 data-nosnippet>3</a><span class="kw">use </span><span class="kw">crate</span>::game::player::InputBuffer;
+<a href=#4 id=4 data-nosnippet>4</a><span class="kw">use </span>std::collections::HashSet;
+<a href=#5 id=5 data-nosnippet>5</a><span class="kw">use </span><span class="kw">crate</span>::prelude::<span class="kw-2">*</span>;
+<a href=#6 id=6 data-nosnippet>6</a><span class="kw">use </span><span class="kw">crate</span>::ui::skill_toolbar::SkillToolbarPlugin;
+<a href=#7 id=7 data-nosnippet>7</a><span class="kw">use </span>bevy::ecs::system::SystemParam;
+<a href=#8 id=8 data-nosnippet>8</a><span class="kw">use </span>bevy::ui::UiScale;
+<a href=#9 id=9 data-nosnippet>9</a><span class="kw">use </span>leafwing_input_manager::prelude::ActionState;
+<a href=#10 id=10 data-nosnippet>10</a>
+<a href=#11 id=11 data-nosnippet>11</a><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod </span>capsule_ui;
+<a href=#12 id=12 data-nosnippet>12</a><span class="kw">mod </span>controls_overlay;
+<a href=#13 id=13 data-nosnippet>13</a><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod </span>inventory;
+<a href=#14 id=14 data-nosnippet>14</a><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod </span>mainmenu;
+<a href=#15 id=15 data-nosnippet>15</a><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod </span>pixel_canvas;
+<a href=#16 id=16 data-nosnippet>16</a><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod </span>pixel_font;
+<a href=#17 id=17 data-nosnippet>17</a><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod </span>pixel_panel;
+<a href=#18 id=18 data-nosnippet>18</a><span class="kw">mod </span>planet_status;
+<a href=#19 id=19 data-nosnippet>19</a><span class="kw">mod </span>screen_frame;
+<a href=#20 id=20 data-nosnippet>20</a><span class="kw">mod </span>skill_toolbar;
+<a href=#21 id=21 data-nosnippet>21</a>
+<a href=#22 id=22 data-nosnippet>22</a><span class="kw">pub struct </span>UiPlugin;
+<a href=#23 id=23 data-nosnippet>23</a>
+<a href=#24 id=24 data-nosnippet>24</a><span class="kw">impl </span>Plugin <span class="kw">for </span>UiPlugin {
+<a href=#25 id=25 data-nosnippet>25</a>    <span class="kw">fn </span>build(<span class="kw-2">&amp;</span><span class="self">self</span>, app: <span class="kw-2">&amp;mut </span>App) {
+<a href=#26 id=26 data-nosnippet>26</a>        app.init_resource::&lt;pixel_canvas::ArtLibrary&gt;();
+<a href=#27 id=27 data-nosnippet>27</a>        app.add_systems(Update, sync_ui_scale.after(<span class="kw">crate</span>::camera::update_camera));
+<a href=#28 id=28 data-nosnippet>28</a>        configure_input_ownership(app);
+<a href=#29 id=29 data-nosnippet>29</a>        app.add_systems(OnExit(AppState::InGame), reset_ui);
+<a href=#30 id=30 data-nosnippet>30</a>        app.add_plugins((
+<a href=#31 id=31 data-nosnippet>31</a>            controls_overlay::plugin,
+<a href=#32 id=32 data-nosnippet>32</a>            capsule_ui::CapsuleUiPlugin,
+<a href=#33 id=33 data-nosnippet>33</a>            inventory::InventoryPlugin,
+<a href=#34 id=34 data-nosnippet>34</a>            screen_frame::ScreenFramePlugin,
+<a href=#35 id=35 data-nosnippet>35</a>            planet_status::PlanetStatusHudPlugin,
+<a href=#36 id=36 data-nosnippet>36</a>            <span class="self">self</span>::mainmenu::MainMenuPlugin,
+<a href=#37 id=37 data-nosnippet>37</a>            SkillToolbarPlugin,
+<a href=#38 id=38 data-nosnippet>38</a>        ));
+<a href=#39 id=39 data-nosnippet>39</a>    }
+<a href=#40 id=40 data-nosnippet>40</a>}
+<a href=#41 id=41 data-nosnippet>41</a>
+<a href=#42 id=42 data-nosnippet>42</a><span class="kw">fn </span>configure_input_ownership(app: <span class="kw-2">&amp;mut </span>App) {
+<a href=#43 id=43 data-nosnippet>43</a>    app.init_resource::&lt;GameplayInputGuard&gt;();
+<a href=#44 id=44 data-nosnippet>44</a>    app.configure_sets(PreUpdate, (UiInputSet::Menu, UiInputSet::Inventory, UiInputSet::Panels, UiInputSet::Pause, UiInputSet::Suppress)
+<a href=#45 id=45 data-nosnippet>45</a>        .chain().after(theseeker_engine::input::InputManagerSystem::Update));
+<a href=#46 id=46 data-nosnippet>46</a>    app.add_systems(PreUpdate, suppress_frame_input.in_set(UiInputSet::Suppress).run_if(in_state(AppState::InGame)));
+<a href=#47 id=47 data-nosnippet>47</a>    app.add_systems(GameTickUpdate, suppress_gameplay_input.before(PlayerStateSet::Input)
+<a href=#48 id=48 data-nosnippet>48</a>        .run_if(in_state(GameState::Playing).and_then(in_state(AppState::InGame))));
+<a href=#49 id=49 data-nosnippet>49</a>}
+<a href=#50 id=50 data-nosnippet>50</a>
+<a href=#51 id=51 data-nosnippet>51</a><span class="doccomment">/// Frame input resolves modal ownership before state transitions and simulation admission.
+<a href=#52 id=52 data-nosnippet>52</a></span><span class="attr">#[derive(SystemSet, Debug, Clone, Copy, PartialEq, Eq, Hash)]
+<a href=#53 id=53 data-nosnippet>53</a></span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">enum </span>UiInputSet { Menu, Inventory, Panels, Pause, Suppress }
+<a href=#54 id=54 data-nosnippet>54</a>
+<a href=#55 id=55 data-nosnippet>55</a><span class="doccomment">/// Root of an always-on gameplay HUD element, hidden while a cinematic plays.
+<a href=#56 id=56 data-nosnippet>56</a></span><span class="attr">#[derive(Component)]
+<a href=#57 id=57 data-nosnippet>57</a></span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>GameplayHud;
+<a href=#58 id=58 data-nosnippet>58</a>
+<a href=#59 id=59 data-nosnippet>59</a><span class="doccomment">/// UI scales with the gameplay pixel size.
+<a href=#60 id=60 data-nosnippet>60</a></span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>sync_ui_scale(pixel_scale: <span class="prelude-ty">Option</span>&lt;Res&lt;GameplayPixelScale&gt;&gt;, <span class="kw-2">mut </span>ui_scale: ResMut&lt;UiScale&gt;) {
+<a href=#61 id=61 data-nosnippet>61</a>    <span class="kw">let </span>scale = pixel_scale.map_or(<span class="number">1.0</span>, |scale| scale.ui_scale_factor());
+<a href=#62 id=62 data-nosnippet>62</a>    <span class="kw">if </span>(ui_scale.<span class="number">0 </span>- scale).abs() &gt; f32::EPSILON {
+<a href=#63 id=63 data-nosnippet>63</a>        ui_scale.<span class="number">0 </span>= scale;
+<a href=#64 id=64 data-nosnippet>64</a>    }
+<a href=#65 id=65 data-nosnippet>65</a>}
+<a href=#66 id=66 data-nosnippet>66</a>
+<a href=#67 id=67 data-nosnippet>67</a><span class="doccomment">/// Keyboard panels and the pause menu own gameplay input while open.
+<a href=#68 id=68 data-nosnippet>68</a></span><span class="attr">#[derive(SystemParam)]
+<a href=#69 id=69 data-nosnippet>69</a></span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>OpenPanels&lt;<span class="lifetime">'w</span>&gt; {
+<a href=#70 id=70 data-nosnippet>70</a>    capsule: Res&lt;<span class="lifetime">'w</span>, capsule_ui::CapsuleUiState&gt;,
+<a href=#71 id=71 data-nosnippet>71</a>    inventory: Res&lt;<span class="lifetime">'w</span>, inventory::InventoryState&gt;,
+<a href=#72 id=72 data-nosnippet>72</a>    menu: Res&lt;<span class="lifetime">'w</span>, mainmenu::MenuState&gt;,
+<a href=#73 id=73 data-nosnippet>73</a>}
+<a href=#74 id=74 data-nosnippet>74</a>
+<a href=#75 id=75 data-nosnippet>75</a><span class="kw">impl </span>OpenPanels&lt;<span class="lifetime">'_</span>&gt; {
+<a href=#76 id=76 data-nosnippet>76</a>    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>menu_input_consumed(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool { <span class="self">self</span>.menu.blocks_panel_input() }
+<a href=#77 id=77 data-nosnippet>77</a>
+<a href=#78 id=78 data-nosnippet>78</a>    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>any(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+<a href=#79 id=79 data-nosnippet>79</a>        <span class="self">self</span>.capsule.is_open() || <span class="self">self</span>.inventory.is_open() || <span class="self">self</span>.menu.is_open()
+<a href=#80 id=80 data-nosnippet>80</a>    }
+<a href=#81 id=81 data-nosnippet>81</a>}
+<a href=#82 id=82 data-nosnippet>82</a>
+<a href=#83 id=83 data-nosnippet>83</a><span class="attr">#[derive(Resource, Default)]
+<a href=#84 id=84 data-nosnippet>84</a></span><span class="kw">struct </span>GameplayInputGuard {
+<a href=#85 id=85 data-nosnippet>85</a>    blocked: HashSet&lt;PlayerAction&gt;,
+<a href=#86 id=86 data-nosnippet>86</a>    was_modal: bool,
+<a href=#87 id=87 data-nosnippet>87</a>}
+<a href=#88 id=88 data-nosnippet>88</a>
+<a href=#89 id=89 data-nosnippet>89</a><span class="kw">const </span>GAMEPLAY_ACTIONS: [PlayerAction; <span class="number">13</span>] = [
+<a href=#90 id=90 data-nosnippet>90</a>    PlayerAction::Move, PlayerAction::Jump, PlayerAction::Fall, PlayerAction::Interact,
+<a href=#91 id=91 data-nosnippet>91</a>    PlayerAction::Skill1, PlayerAction::Skill2, PlayerAction::Skill3, PlayerAction::Skill4,
+<a href=#92 id=92 data-nosnippet>92</a>    PlayerAction::Skill5, PlayerAction::SwapMeleeWeapon, PlayerAction::UpModifier,
+<a href=#93 id=93 data-nosnippet>93</a>    PlayerAction::ToggleControlOverlay, PlayerAction::DebugUnlockAllProgression,
+<a href=#94 id=94 data-nosnippet>94</a>];
+<a href=#95 id=95 data-nosnippet>95</a>
+<a href=#96 id=96 data-nosnippet>96</a><span class="doccomment">/// Drops modal input in both action banks, including edges collected on zero-tick frames.
+<a href=#97 id=97 data-nosnippet>97</a></span><span class="kw">fn </span>suppress_frame_input(
+<a href=#98 id=98 data-nosnippet>98</a>    panels: OpenPanels,
+<a href=#99 id=99 data-nosnippet>99</a>    pause: Res&lt;<span class="kw">crate</span>::gamestate::PauseRequests&gt;,
+<a href=#100 id=100 data-nosnippet>100</a>    <span class="kw-2">mut </span>guard: ResMut&lt;GameplayInputGuard&gt;,
+<a href=#101 id=101 data-nosnippet>101</a>    <span class="kw-2">mut </span>players: Query&lt;(<span class="kw-2">&amp;mut </span>ActionState&lt;PlayerAction&gt;, <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;mut </span>InputBuffer&gt;), With&lt;Player&gt;&gt;,
+<a href=#102 id=102 data-nosnippet>102</a>) {
+<a href=#103 id=103 data-nosnippet>103</a>    <span class="kw">let </span>modal = panels.any() || panels.menu.blocks_panel_input() || pause.is_paused();
+<a href=#104 id=104 data-nosnippet>104</a>    <span class="kw">for </span>(<span class="kw-2">mut </span>actions, buffer) <span class="kw">in </span><span class="kw-2">&amp;mut </span>players {
+<a href=#105 id=105 data-nosnippet>105</a>        suppress_frame_actions(<span class="kw-2">&amp;mut </span>actions, <span class="kw-2">&amp;mut </span>guard, modal);
+<a href=#106 id=106 data-nosnippet>106</a>        <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">mut </span>buffer) = buffer.filter(|<span class="kw">_</span>| modal || guard.was_modal) { buffer.clear_all(); }
+<a href=#107 id=107 data-nosnippet>107</a>        <span class="kw">if </span>modal || guard.was_modal {
+<a href=#108 id=108 data-nosnippet>108</a>            actions.set_update_state_from_state();
+<a href=#109 id=109 data-nosnippet>109</a>            actions.set_fixed_update_state_from_state();
+<a href=#110 id=110 data-nosnippet>110</a>        }
+<a href=#111 id=111 data-nosnippet>111</a>    }
+<a href=#112 id=112 data-nosnippet>112</a>    guard.was_modal = modal;
+<a href=#113 id=113 data-nosnippet>113</a>}
+<a href=#114 id=114 data-nosnippet>114</a>
+<a href=#115 id=115 data-nosnippet>115</a><span class="kw">fn </span>suppress_gameplay_input(
+<a href=#116 id=116 data-nosnippet>116</a>    panels: OpenPanels,
+<a href=#117 id=117 data-nosnippet>117</a>    guard: Res&lt;GameplayInputGuard&gt;,
+<a href=#118 id=118 data-nosnippet>118</a>    <span class="kw-2">mut </span>players: Query&lt;<span class="kw-2">&amp;mut </span>ActionState&lt;PlayerAction&gt;, With&lt;Player&gt;&gt;,
+<a href=#119 id=119 data-nosnippet>119</a>) {
+<a href=#120 id=120 data-nosnippet>120</a>    <span class="kw">for </span><span class="kw-2">mut </span>actions <span class="kw">in </span><span class="kw-2">&amp;mut </span>players {
+<a href=#121 id=121 data-nosnippet>121</a>        suppress_tick_actions(<span class="kw-2">&amp;mut </span>actions, panels.any(), <span class="kw-2">&amp;</span>guard);
+<a href=#122 id=122 data-nosnippet>122</a>    }
+<a href=#123 id=123 data-nosnippet>123</a>}
+<a href=#124 id=124 data-nosnippet>124</a>
+<a href=#125 id=125 data-nosnippet>125</a><span class="kw">fn </span>suppress_frame_actions(actions: <span class="kw-2">&amp;mut </span>ActionState&lt;PlayerAction&gt;, guard: <span class="kw-2">&amp;mut </span>GameplayInputGuard, modal: bool) {
+<a href=#126 id=126 data-nosnippet>126</a>    <span class="kw">for </span>action <span class="kw">in </span>GAMEPLAY_ACTIONS {
+<a href=#127 id=127 data-nosnippet>127</a>        <span class="kw">let </span>active = <span class="kw">if </span>action == PlayerAction::Move { actions.value(<span class="kw-2">&amp;</span>action).abs() &gt; f32::EPSILON } <span class="kw">else </span>{ actions.pressed(<span class="kw-2">&amp;</span>action) };
+<a href=#128 id=128 data-nosnippet>128</a>        <span class="kw">if </span>modal &amp;&amp; active {
+<a href=#129 id=129 data-nosnippet>129</a>            guard.blocked.insert(action);
+<a href=#130 id=130 data-nosnippet>130</a>        } <span class="kw">else if </span>!active {
+<a href=#131 id=131 data-nosnippet>131</a>            guard.blocked.remove(<span class="kw-2">&amp;</span>action);
+<a href=#132 id=132 data-nosnippet>132</a>        }
+<a href=#133 id=133 data-nosnippet>133</a>        <span class="kw">if </span>modal || guard.blocked.contains(<span class="kw-2">&amp;</span>action) { actions.reset(<span class="kw-2">&amp;</span>action); }
+<a href=#134 id=134 data-nosnippet>134</a>    }
+<a href=#135 id=135 data-nosnippet>135</a>}
+<a href=#136 id=136 data-nosnippet>136</a>
+<a href=#137 id=137 data-nosnippet>137</a><span class="kw">fn </span>suppress_tick_actions(actions: <span class="kw-2">&amp;mut </span>ActionState&lt;PlayerAction&gt;, modal: bool, guard: <span class="kw-2">&amp;</span>GameplayInputGuard) {
+<a href=#138 id=138 data-nosnippet>138</a>    <span class="kw">for </span>action <span class="kw">in </span>GAMEPLAY_ACTIONS {
+<a href=#139 id=139 data-nosnippet>139</a>        <span class="kw">if </span>modal || guard.blocked.contains(<span class="kw-2">&amp;</span>action) { actions.reset(<span class="kw-2">&amp;</span>action); }
+<a href=#140 id=140 data-nosnippet>140</a>    }
+<a href=#141 id=141 data-nosnippet>141</a>}
+<a href=#142 id=142 data-nosnippet>142</a>
+<a href=#143 id=143 data-nosnippet>143</a><span class="kw">fn </span>reset_ui(
+<a href=#144 id=144 data-nosnippet>144</a>    <span class="kw-2">mut </span>capsule: ResMut&lt;capsule_ui::CapsuleUiState&gt;,
+<a href=#145 id=145 data-nosnippet>145</a>    <span class="kw-2">mut </span>inventory: ResMut&lt;inventory::InventoryState&gt;,
+<a href=#146 id=146 data-nosnippet>146</a>    <span class="kw-2">mut </span>menu: ResMut&lt;mainmenu::MenuState&gt;,
+<a href=#147 id=147 data-nosnippet>147</a>    <span class="kw-2">mut </span>guard: ResMut&lt;GameplayInputGuard&gt;,
+<a href=#148 id=148 data-nosnippet>148</a>) {
+<a href=#149 id=149 data-nosnippet>149</a>    <span class="kw-2">*</span>capsule = default();
+<a href=#150 id=150 data-nosnippet>150</a>    <span class="kw-2">*</span>inventory = default();
+<a href=#151 id=151 data-nosnippet>151</a>    <span class="kw-2">*</span>menu = default();
+<a href=#152 id=152 data-nosnippet>152</a>    <span class="kw-2">*</span>guard = default();
+<a href=#153 id=153 data-nosnippet>153</a>}
+<a href=#154 id=154 data-nosnippet>154</a>
+<a href=#155 id=155 data-nosnippet>155</a><span class="attr">#[cfg(test)]
+<a href=#156 id=156 data-nosnippet>156</a></span><span class="kw">mod </span>tests {
+<a href=#157 id=157 data-nosnippet>157</a>    <span class="kw">use super</span>::<span class="kw-2">*</span>;
+<a href=#158 id=158 data-nosnippet>158</a>    <span class="kw">use </span>bevy::ecs::system::RunSystemOnce;
+<a href=#159 id=159 data-nosnippet>159</a>    <span class="kw">use </span>leafwing_input_manager::systems::{swap_to_fixed_update, swap_to_update};
+<a href=#160 id=160 data-nosnippet>160</a>
+<a href=#161 id=161 data-nosnippet>161</a>    <span class="attr">#[test]
+<a href=#162 id=162 data-nosnippet>162</a>    </span><span class="kw">fn </span>modal_input_is_flushed_from_both_action_banks_and_held_keys_require_release() {
+<a href=#163 id=163 data-nosnippet>163</a>        <span class="kw">let </span><span class="kw-2">mut </span>world = World::new();
+<a href=#164 id=164 data-nosnippet>164</a>        <span class="kw">let </span><span class="kw-2">mut </span>actions = ActionState::default();
+<a href=#165 id=165 data-nosnippet>165</a>        actions.press(<span class="kw-2">&amp;</span>PlayerAction::Jump);
+<a href=#166 id=166 data-nosnippet>166</a>        actions.set_update_state_from_state();
+<a href=#167 id=167 data-nosnippet>167</a>        actions.set_fixed_update_state_from_state();
+<a href=#168 id=168 data-nosnippet>168</a>        <span class="kw">let </span>player = world.spawn(actions).id();
+<a href=#169 id=169 data-nosnippet>169</a>        <span class="kw">let </span><span class="kw-2">mut </span>guard = GameplayInputGuard::default();
+<a href=#170 id=170 data-nosnippet>170</a>        {
+<a href=#171 id=171 data-nosnippet>171</a>            <span class="kw">let </span><span class="kw-2">mut </span>actions = world.get_mut::&lt;ActionState&lt;PlayerAction&gt;&gt;(player).unwrap();
+<a href=#172 id=172 data-nosnippet>172</a>            suppress_frame_actions(<span class="kw-2">&amp;mut </span>actions, <span class="kw-2">&amp;mut </span>guard, <span class="bool-val">true</span>);
+<a href=#173 id=173 data-nosnippet>173</a>            actions.set_update_state_from_state();
+<a href=#174 id=174 data-nosnippet>174</a>            actions.set_fixed_update_state_from_state();
+<a href=#175 id=175 data-nosnippet>175</a>        }
+<a href=#176 id=176 data-nosnippet>176</a>        world.run_system_once(swap_to_fixed_update::&lt;PlayerAction&gt;).unwrap();
+<a href=#177 id=177 data-nosnippet>177</a>        {
+<a href=#178 id=178 data-nosnippet>178</a>            <span class="kw">let </span><span class="kw-2">mut </span>actions = world.get_mut::&lt;ActionState&lt;PlayerAction&gt;&gt;(player).unwrap();
+<a href=#179 id=179 data-nosnippet>179</a>            <span class="macro">assert!</span>(!actions.just_pressed(<span class="kw-2">&amp;</span>PlayerAction::Jump));
+<a href=#180 id=180 data-nosnippet>180</a>            <span class="macro">assert!</span>(!actions.pressed(<span class="kw-2">&amp;</span>PlayerAction::Jump));
+<a href=#181 id=181 data-nosnippet>181</a>            actions.press(<span class="kw-2">&amp;</span>PlayerAction::Jump);
+<a href=#182 id=182 data-nosnippet>182</a>            suppress_tick_actions(<span class="kw-2">&amp;mut </span>actions, <span class="bool-val">false</span>, <span class="kw-2">&amp;</span>guard);
+<a href=#183 id=183 data-nosnippet>183</a>            <span class="macro">assert!</span>(!actions.pressed(<span class="kw-2">&amp;</span>PlayerAction::Jump), <span class="string">"a key held across resume stays owned by the menu"</span>);
+<a href=#184 id=184 data-nosnippet>184</a>        }
+<a href=#185 id=185 data-nosnippet>185</a>        world.run_system_once(swap_to_update::&lt;PlayerAction&gt;).unwrap();
+<a href=#186 id=186 data-nosnippet>186</a>        <span class="kw">let </span><span class="kw-2">mut </span>actions = world.get_mut::&lt;ActionState&lt;PlayerAction&gt;&gt;(player).unwrap();
+<a href=#187 id=187 data-nosnippet>187</a>        <span class="macro">assert!</span>(!actions.pressed(<span class="kw-2">&amp;</span>PlayerAction::Jump));
+<a href=#188 id=188 data-nosnippet>188</a>        actions.release(<span class="kw-2">&amp;</span>PlayerAction::Jump);
+<a href=#189 id=189 data-nosnippet>189</a>        suppress_frame_actions(<span class="kw-2">&amp;mut </span>actions, <span class="kw-2">&amp;mut </span>guard, <span class="bool-val">false</span>);
+<a href=#190 id=190 data-nosnippet>190</a>        actions.press(<span class="kw-2">&amp;</span>PlayerAction::Jump);
+<a href=#191 id=191 data-nosnippet>191</a>        suppress_frame_actions(<span class="kw-2">&amp;mut </span>actions, <span class="kw-2">&amp;mut </span>guard, <span class="bool-val">false</span>);
+<a href=#192 id=192 data-nosnippet>192</a>        <span class="macro">assert!</span>(actions.just_pressed(<span class="kw-2">&amp;</span>PlayerAction::Jump), <span class="string">"a new gameplay press is accepted after release"</span>);
+<a href=#193 id=193 data-nosnippet>193</a>    }
+<a href=#194 id=194 data-nosnippet>194</a>}
 </code></pre></div></section></main></body></html>

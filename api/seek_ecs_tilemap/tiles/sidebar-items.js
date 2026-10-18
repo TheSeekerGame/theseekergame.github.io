@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"struct":["TileBundle","TileColor","TileFlip","TilePos","TilePosOld","TileStorage","TileTextureIndex","TileVisible"]};

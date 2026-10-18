@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["FLICKER_STRIKE_METADATA"],"fn":["flicker_active_tick","flicker_energy_regen","request_flicker_outro","try_start_flicker_strike_slot"],"struct":["FlickerOutroTransition"]};

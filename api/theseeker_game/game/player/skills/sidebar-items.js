@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":["activation","amplified_bell","attack","burning_dash","channeled","consumables","cooldowns","dash","dash_strike","explosive_mine","flicker_strike","ice_nova","instant","item_use","placement_preview","portable_tent","quark_pylon","registry","spinner","spit","stealth","tether_node","types","whirl"],"struct":["SkillsPlugin"]};

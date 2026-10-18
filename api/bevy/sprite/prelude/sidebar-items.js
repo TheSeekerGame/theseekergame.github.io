@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["ImageScaleMode","SliceScaleMode"],"struct":["BorderRect","ColorMaterial","Sprite","SpriteBundle","SpriteSheetBundle","TextureAtlas","TextureAtlasBuilder","TextureAtlasLayout","TextureSlice","TextureSlicer"],"type":["ColorMesh2dBundle"]};
+window.SIDEBAR_ITEMS = {"enum":["SliceScaleMode","SpriteImageMode","SpriteScalingMode"],"struct":["BorderRect","Sprite","SpriteMesh","Text2d","TextureSlice","TextureSlicer"],"type":["Text2dReader","Text2dWriter"]};

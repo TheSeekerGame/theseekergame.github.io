@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"struct":["SizedZone","SizedZoneConfig","SizedZonePlugin","SizedZonePreUpdate","SizedZoneResizeHandle","SizedZoneResizeHandleContainer"],"trait":["UiSizedZoneExt"]};
